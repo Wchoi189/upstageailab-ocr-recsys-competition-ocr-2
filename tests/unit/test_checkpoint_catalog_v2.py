@@ -800,7 +800,7 @@ class TestPerformanceRegression:
 
         # Should complete in <1 second for 10 checkpoints
         assert catalog.catalog_build_time_seconds < 1.0, (
-            f"Catalog build too slow: {catalog.catalog_build_time_seconds:.3f}s " f"(target: <1.0s for {num_checkpoints} checkpoints)"
+            f"Catalog build too slow: {catalog.catalog_build_time_seconds:.3f}s (target: <1.0s for {num_checkpoints} checkpoints)"
         )
 
 
