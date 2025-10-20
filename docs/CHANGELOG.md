@@ -7,6 +7,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed - 2025-10-21
+
+#### BUG-2025-001: Inference padding/scaling mismatch
+
+- Fix: Enforced top-left padding and corrected inverse mapping to use pre-pad resize scale; fallback scales by original/resized dims.
+- Impact: Correct box coordinates; eliminates 0-predictions on clean images and removes oversized annotations.
+- Files: `configs/transforms/base.yaml`, `ui/utils/inference/postprocess.py`
+- Report: [BUG-2025-001_inference_padding_scaling_mismatch.md](bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md)
+
+### Fixed - 2025-10-20
+
+#### Streamlit Inference App - Pandas Import Deadlock (Critical Bug Fix)
+
+**Issue**: App froze immediately after inference completion when attempting to display results table
+**Root Cause**: Lazy `import pandas as pd` inside `_render_results_table()` function caused threading/import deadlock with PyTorch/NumPy
+**Fix**: Moved pandas import to global scope (top of file) to load at startup before any inference
+
+**Impact**:
+- ✅ Results now display immediately after inference
+- ✅ No freezes or hangs
+- ✅ App remains responsive for subsequent inferences
+- ✅ Fixes 100% reproduction rate issue
+
+**Technical Details**:
+- Pandas import attempted after PyTorch inference held NumPy resource locks
+- Import blocked indefinitely waiting for resources
+- Moving to global scope ensures pandas loads before any ML operations
+- Common pattern in Streamlit apps using ML models
+
+**Files Changed**:
+- `ui/apps/inference/components/results.py` - Moved `import pandas as pd` to global imports (line 23)
+
+**See**:
+- [Bug Report](bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md)
+- [Detailed Changelog](ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md)
+
 ### Changed - 2025-10-19
 
 #### Checkpoint Catalog V2 Project Complete ✅ (Major Performance Improvement)

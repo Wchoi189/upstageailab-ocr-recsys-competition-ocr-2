@@ -106,6 +106,16 @@
 │   │       └── ...
 │   └── jsons/
 ├── docs/
+│   ├── ai_handbook/
+│   │   ├── index.md
+│   │   ├── 02_protocols/
+│   │   ├── 04_experiments/
+│   │   └── ...
+│   ├── pipeline/
+│   │   └── data_contracts.md
+│   ├── bug_reports/
+│   ├── CHANGELOG.md
+│   ├── QUICK_FIXES.md
 │   ├── api-reference.md
 │   ├── architecture-overview.md
 │   ├── process-management-guide.md
@@ -123,12 +133,14 @@
 │   ├── metrics/
 │   ├── models/
 │   └── utils/
+├── ablation_study/
 ├── outputs/
 ├── runners/
 │   ├── predict.py
 │   ├── test.py
 │   └── train.py
 ├── scripts/
+│   ├── agent_tools/
 │   └── process_monitor.py
 ├── ui/
 │   ├── command_builder.py
@@ -166,7 +178,7 @@ uv run streamlit run ui/command_builder.py
 
 #### Evaluation Viewer (`ui/evaluation_viewer.py`)
 평가 결과를 시각화하고 분석하는 도구입니다.
-<!--
+
 ### UI 데모 스크린샷
 
 <div align="center">
@@ -195,7 +207,7 @@ uv run streamlit run ui/command_builder.py
 </tr>
 </table>
 
-</div> -->
+</div>
 
 ### 주요 구성 파일
 

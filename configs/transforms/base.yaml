@@ -16,6 +16,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
+        # position: "top_left"
         p: 1.0
       - _target_: albumentations.HorizontalFlip
         p: 0.5
@@ -29,6 +30,9 @@ transforms:
   val_transform:
     _target_: ${dataset_path}.DBTransforms
     transforms:
+  # BugRef: BUG-2025-001 — enforce top-left padding to simplify inverse mapping
+      # Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
+      # Date: 2025-10-20
       - _target_: albumentations.LongestMaxSize
         max_size: 640
         interpolation: ${default_interpolation}
@@ -37,6 +41,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
+        # position: "top_left"
         p: 1.0
       - _target_: albumentations.Normalize
         mean: [0.485, 0.456, 0.406]
@@ -48,6 +53,9 @@ transforms:
   test_transform:
     _target_: ${dataset_path}.DBTransforms
     transforms:
+  # BugRef: BUG-2025-001 — enforce top-left padding to simplify inverse mapping
+      # Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
+      # Date: 2025-10-20
       - _target_: albumentations.LongestMaxSize
         max_size: 640
         interpolation: ${default_interpolation}
@@ -56,6 +64,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
+        # position: "top_left"
         p: 1.0
       - _target_: albumentations.Normalize
         mean: [0.485, 0.456, 0.406]
@@ -67,6 +76,9 @@ transforms:
   predict_transform:
     _target_: ${dataset_path}.DBTransforms
     transforms:
+  # BugRef: BUG-2025-001 — enforce top-left padding to simplify inverse mapping
+      # Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
+      # Date: 2025-10-20
       - _target_: albumentations.LongestMaxSize
         max_size: 640
         interpolation: 1  # cv2.INTER_LINEAR for faster processing
@@ -75,6 +87,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
+        # position: "top_left"
         p: 1.0
       - _target_: albumentations.Normalize
         mean: [0.485, 0.456, 0.406]

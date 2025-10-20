@@ -118,6 +118,14 @@ class InferenceService:
                     temp_path.unlink()
 
         state.inference_results.extend(new_results)
+
+        # Limit session state size to prevent memory issues
+        # Keep only the last 10 results to avoid accumulating large image arrays
+        MAX_RESULTS_IN_MEMORY = 10
+        if len(state.inference_results) > MAX_RESULTS_IN_MEMORY:
+            state.inference_results = state.inference_results[-MAX_RESULTS_IN_MEMORY:]
+            LOGGER.info(f"Trimmed inference results to last {MAX_RESULTS_IN_MEMORY} items")
+
         state.persist()
 
         progress.progress(1.0, text=f"✅ Inference complete! Processed {len(new_results)} new images.")

@@ -259,19 +259,16 @@ class InferenceEngine:
         LOGGER.info("Starting model inference...")
         start_time = time.time()
         try:
+            if self.model is None:
+                raise RuntimeError("Model is not loaded")
 
-            def _inference_func():
-                if self.model is None:
-                    raise RuntimeError("Model is not loaded")
-                with torch.no_grad():
-                    return self.model(return_loss=False, images=batch.to(self.device))
+            # Direct inference without timeout wrapper to avoid threading issues in Streamlit
+            # Streamlit has its own timeout mechanism, and nested threading can cause crashes
+            with torch.no_grad():
+                predictions = self.model(return_loss=False, images=batch.to(self.device))
 
-            predictions = _run_with_timeout(_inference_func, timeout_seconds=60)
             inference_time = time.time() - start_time
             LOGGER.info(f"Model inference completed in {inference_time:.2f} seconds")
-        except TimeoutError:
-            LOGGER.error("Model inference timed out after 60 seconds")
-            return None
         except Exception as e:
             LOGGER.exception(f"Model inference failed: {e}")
             return None

@@ -77,7 +77,7 @@ preprocessing:
   default_enabled: false
   enable_document_detection: true
   enable_perspective_correction: true
-  enable_enhancement: true
+  enable_enhancement: false
   enhancement_method: "conservative"
   target_size: [640, 640]
   enable_final_resize: true

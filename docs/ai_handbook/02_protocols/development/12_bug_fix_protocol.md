@@ -4,6 +4,8 @@
 
 # **Protocol: Bug Fix Documentation**
 
+Last Updated: 2025-10-20
+
 ## **Overview**
 This protocol provides comprehensive guidelines for documenting bug fixes, ensuring consistent reporting, proper categorization, and maintainable documentation structure. All bug fixes must follow this protocol to maintain project quality and debugging traceability.
 
@@ -37,15 +39,20 @@ Determine the appropriate documentation level based on bug impact:
 - Dependency updates
 
 ### **Step 2: Generate Bug ID**
-Use the standardized BUG-YYYY-NNN format:
-- `BUG-YYYY-NNN` where YYYY is the current year and NNN is sequential number
-- Check existing bug reports to determine the next available number
-- Example: `BUG-2025-011` for the 11th bug report in 2025
+Use the standardized per-day counter format: `BUG-YYYYMMDD-###`.
+
+- Format: `BUG-YYYYMMDD-###` where YYYYMMDD is the UTC date and ### is a zero-padded daily counter starting at 001
+- Always generate IDs using the helper script to avoid collisions
+- Helper (optional):
+  - uv run python scripts/bug_tools/next_bug_id.py            # prints next ID and reserves it
+  - uv run python scripts/bug_tools/next_bug_id.py --peek     # prints next ID without reserving
+  - uv run python scripts/bug_tools/next_bug_id.py --reset    # admin only; resets today’s counter
+- Examples: `BUG-20251020-001`, `BUG-20251020-002`
 
 ### **Step 3: Create Bug Report**
 Create a new bug report file following the template:
 
-**Location**: `docs/bug_reports/BUG-YYYY-NNN_descriptive_name.md`
+**Location**: `docs/bug_reports/BUG-YYYYMMDD-###_descriptive_name.md`
 **Template**: Use `docs/bug_reports/BUG_REPORT_TEMPLATE.md`
 
 **Required Sections**:
@@ -62,7 +69,7 @@ Update all relevant documentation files:
 **Changelog Entry** (`docs/CHANGELOG.md`):
 ```markdown
 #### Bug Fixes
-- **BUG-2025-011**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images ([BUG-2025-011_inference_ui_coordinate_transformation.md](bug_reports/BUG-2025-011_inference_ui_coordinate_transformation.md))
+- **BUG-20251020-002**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images ([BUG-20251020-002_inference_ui_coordinate_transformation.md](bug_reports/BUG-20251020-002_inference_ui_coordinate_transformation.md))
 ```
 
 **Quick Fixes Log** (`docs/QUICK_FIXES.md`) - if applicable:
@@ -92,19 +99,19 @@ Ensure all documentation is consistent and properly linked:
 ```
 docs/bug_reports/
 ├── BUG_REPORT_TEMPLATE.md          # Template for new reports
-├── BUG-2025-001_*.md              # Year-based sequential numbering
-├── BUG-2025-002_*.md
-└── BUG-2025-011_*.md              # Current highest number
+├── BUG-20251019-001_*\.md          # Per-day counter examples
+├── BUG-20251019-002_*\.md
+└── BUG-20251020-001_*\.md
 ```
 
 ### **Naming Convention**
-- **Format**: `BUG-YYYY-NNN_descriptive_name.md`
-- **Year**: Current year (YYYY)
-- **Number**: Sequential within year (001, 002, etc.)
+- **Format**: `BUG-YYYYMMDD-###_descriptive_name.md`
+- **Date**: Current date (YYYYMMDD)
+- **Number**: Sequential within day (001, 002, etc.)
 - **Description**: Brief, descriptive name using underscores
 - **Examples**:
-  - `BUG-2025-011_inference_ui_coordinate_transformation.md`
-  - `BUG-2025-012_pydantic_validation_error.md`
+  - `BUG-20251020-001_inference_ui_coordinate_transformation.md`
+  - `BUG-20251020-002_pydantic_validation_error.md`
 
 ### **Cross-Reference Requirements**
 - Changelog entries must reference bug reports
@@ -117,8 +124,8 @@ docs/bug_reports/
 ```markdown
 ## 🐛 Bug Report Template
 
-**Bug ID:** BUG-2025-011
-**Date:** October 19, 2025
+**Bug ID:** BUG-YYYYMMDD-###
+**Date:** YYYY-MM-DD
 **Reporter:** Development Team
 **Severity:** Critical
 **Status:** Fixed
@@ -144,6 +151,25 @@ docs/bug_reports/
 ### Files Changed
 [Affected files list]
 ```
+
+## Index signatures in code (required for core changes)
+
+When a bug fix changes core behavior, add a concise, machine-greppable index signature comment near the changed function(s) or config block(s):
+
+Recommended format:
+
+```
+# BugRef: BUG-YYYYMMDD-### — short-title
+# Report: docs/bug_reports/BUG-YYYYMMDD-###_short-title.md
+# Date: YYYY-MM-DD
+# IndexSig: key1=value1; key2=value2  # brief technical summary of the change
+```
+
+Guidelines:
+- Place directly above the function or config stanza that changed
+- Keep under 3 lines excluding the IndexSig line
+- Use consistent prefixes: `BugRef:`, `Report:`, `Date:`, `IndexSig:`
+- For follow-up changes, append another BugRef block rather than editing history
 
 ### **Changelog Integration**
 ```markdown

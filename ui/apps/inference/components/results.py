@@ -20,6 +20,7 @@ import re
 from typing import Any
 
 import numpy as np
+import pandas as pd
 import streamlit as st
 from PIL import Image, ImageDraw
 
@@ -129,7 +130,7 @@ def _render_results_table(state: InferenceState, config: UIConfig) -> None:
     # Create table data
     table_data = []
 
-    for result in state.inference_results:
+    for idx, result in enumerate(state.inference_results):
         filename = result.filename
         success = result.success
 
@@ -159,10 +160,8 @@ def _render_results_table(state: InferenceState, config: UIConfig) -> None:
             )
 
     # Display as a clean table
-    import pandas as pd
-
     df = pd.DataFrame(table_data)
-    st.dataframe(df, width="stretch")
+    st.dataframe(df, use_container_width=True)
 
 
 def _render_single_result(result: InferenceResult, config: UIConfig) -> None:
@@ -181,6 +180,7 @@ def _render_single_result(result: InferenceResult, config: UIConfig) -> None:
 
     if result.image is not None and predictions:
         _display_image_with_predictions(result.image, predictions, config)
+        # st.warning("Image display disabled for testing")
 
     if result.preprocessing:
         _render_preprocessing_section(result.preprocessing, config)
@@ -192,7 +192,26 @@ def _render_single_result(result: InferenceResult, config: UIConfig) -> None:
 
 def _display_image_with_predictions(image_array: np.ndarray, predictions: Predictions, config: UIConfig) -> None:
     try:
+        # Convert to PIL Image
         pil_image = Image.fromarray(image_array)
+
+        # Downsample large images for display to prevent memory issues
+        MAX_DISPLAY_SIZE = 2048
+        if pil_image.width > MAX_DISPLAY_SIZE or pil_image.height > MAX_DISPLAY_SIZE:
+            # Calculate scaling factor
+            scale = min(MAX_DISPLAY_SIZE / pil_image.width, MAX_DISPLAY_SIZE / pil_image.height)
+            new_width = int(pil_image.width * scale)
+            new_height = int(pil_image.height * scale)
+            pil_image = pil_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+            # Scale polygon coordinates proportionally
+            scaled_predictions = Predictions(
+                polygons=_scale_polygons(predictions.polygons, scale),
+                texts=predictions.texts,
+                confidences=predictions.confidences,
+            )
+            predictions = scaled_predictions
+
         draw = ImageDraw.Draw(pil_image, "RGBA")
 
         if predictions.polygons:
@@ -227,6 +246,7 @@ def _display_image_with_predictions(image_array: np.ndarray, predictions: Predic
             pil_image,
             caption="OCR Predictions",
             width=width_setting,  # type: ignore[arg-type]
+            clamp=True,  # Clamp pixel values to prevent crashes
         )
     except Exception as exc:  # noqa: BLE001
         st.error("Could not render predictions on the image. Displaying original image instead.")
@@ -235,6 +255,8 @@ def _display_image_with_predictions(image_array: np.ndarray, predictions: Predic
             image_array,
             caption="Original Image",
             width=width_setting,  # type: ignore[arg-type]
+            channels="RGB",  # Specify color channel order
+            clamp=True,  # Clamp pixel values to prevent crashes
         )
         raise exc from exc
 
@@ -249,6 +271,36 @@ def _parse_polygon_points(polygon_str: str) -> list[tuple[int, int]]:
     for x, y in zip(coords[0::2], coords[1::2], strict=True):
         points.append((int(round(x)), int(round(y))))
     return points
+
+
+def _scale_polygons(polygons_str: str, scale: float) -> str:
+    """Scale polygon coordinates by a given factor.
+
+    Args:
+        polygons_str: Pipe-separated polygon string
+        scale: Scaling factor to apply to all coordinates
+
+    Returns:
+        Scaled polygon string in same format
+    """
+    if not polygons_str or not polygons_str.strip():
+        return ""
+
+    scaled_polygons = []
+    for polygon_str in polygons_str.split("|"):
+        if not polygon_str.strip():
+            continue
+
+        tokens = re.findall(r"-?\d+(?:\.\d+)?", polygon_str)
+        if len(tokens) < 8 or len(tokens) % 2 != 0:
+            # Invalid polygon, skip it
+            continue
+
+        # Scale all coordinates
+        scaled_coords = [str(int(round(float(token) * scale))) for token in tokens]
+        scaled_polygons.append(" ".join(scaled_coords))
+
+    return "|".join(scaled_polygons)
 
 
 def _render_preprocessing_section(preprocessing: PreprocessingInfo, config: UIConfig) -> None:
@@ -270,12 +322,12 @@ def _render_preprocessing_section(preprocessing: PreprocessingInfo, config: UICo
 
     if original_image is not None:
         overlay = _draw_document_overlay(original_image, metadata, config.preprocessing.show_corner_overlay)
-        col_raw.image(overlay, caption="Original Upload", width="stretch")
+        col_raw.image(overlay, caption="Original Upload", width="stretch", channels="RGB", clamp=True)
     else:
         col_raw.info("Original image unavailable.")
 
     if processed_image is not None:
-        col_processed.image(processed_image, caption="After docTR Preprocessing", width="stretch")
+        col_processed.image(processed_image, caption="After docTR Preprocessing", width="stretch", channels="RGB", clamp=True)
     else:
         col_processed.info("No preprocessed output available.")
 
@@ -354,7 +406,7 @@ def _display_intermediate_images(metadata: dict[str, Any], config: UIConfig) -> 
 
             col1, col2 = st.columns(2)
             with col1:
-                st.image(metadata[image_key], caption=caption, width="stretch")
+                st.image(metadata[image_key], caption=caption, width="stretch", channels="RGB", clamp=True)
 
             # Show processing steps up to this point
             step_mapping = {
