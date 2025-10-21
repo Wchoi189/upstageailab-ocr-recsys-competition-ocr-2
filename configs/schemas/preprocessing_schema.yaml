@@ -1,0 +1,169 @@
+# JSON Schema for Preprocessing Configuration Validation
+$schema: "http://json-schema.org/draft-07/schema#"
+title: "Preprocessing Configuration Schema"
+description: "Validation schema for preprocessing mode parameters"
+type: object
+
+# Required top-level keys
+required:
+  - background_removal
+  - document_detection
+  - perspective_correction
+
+properties:
+  background_removal:
+    type: object
+    required:
+      - enable
+      - model
+      - alpha_matting
+    properties:
+      enable:
+        type: boolean
+        description: "Enable AI background removal"
+
+      model:
+        type: string
+        enum: ["u2net", "u2netp", "silueta"]
+        description: "Background removal model selection"
+
+      alpha_matting:
+        type: boolean
+        description: "Enable alpha matting for better edges"
+
+      advanced:
+        type: object
+        properties:
+          foreground_threshold:
+            type: integer
+            minimum: 0
+            maximum: 255
+            description: "Alpha matting foreground threshold"
+
+          background_threshold:
+            type: integer
+            minimum: 0
+            maximum: 255
+            description: "Alpha matting background threshold"
+
+          erode_size:
+            type: integer
+            minimum: 1
+            maximum: 50
+            description: "Alpha matting erosion size"
+
+    additionalProperties: false
+
+  document_detection:
+    type: object
+    required:
+      - enable
+      - min_area_ratio
+    properties:
+      enable:
+        type: boolean
+        description: "Enable document detection"
+
+      min_area_ratio:
+        type: number
+        minimum: 0.01
+        maximum: 0.95
+        description: "Minimum document area ratio"
+
+      use_adaptive:
+        type: boolean
+        description: "Use adaptive thresholding"
+
+      use_fallback_box:
+        type: boolean
+        description: "Use full image if detection fails"
+
+    additionalProperties: false
+
+  perspective_correction:
+    type: object
+    required:
+      - enable
+    properties:
+      enable:
+        type: boolean
+        description: "Enable perspective correction"
+
+      use_doctr_geometry:
+        type: boolean
+        description: "Use docTR for geometry correction"
+
+    additionalProperties: false
+
+  orientation_correction:
+    type: object
+    properties:
+      enable:
+        type: boolean
+
+      angle_threshold:
+        type: number
+        minimum: 0.5
+        maximum: 10.0
+
+    additionalProperties: false
+
+  noise_elimination:
+    type: object
+    properties:
+      enable:
+        type: boolean
+
+    additionalProperties: false
+
+  brightness_adjustment:
+    type: object
+    properties:
+      enable:
+        type: boolean
+
+    additionalProperties: false
+
+  enhancement:
+    type: object
+    properties:
+      enable:
+        type: boolean
+
+      method:
+        type: string
+        enum: ["conservative", "moderate", "aggressive"]
+
+    additionalProperties: false
+
+# Custom validation rules
+custom_validation:
+  - rule: "alpha_matting_requires_enable"
+    description: "Alpha matting requires background removal to be enabled"
+    condition:
+      path: "background_removal.alpha_matting"
+      equals: true
+    requires:
+      path: "background_removal.enable"
+      equals: true
+    error_message: "Alpha matting requires background removal to be enabled"
+
+  - rule: "min_area_ratio_positive"
+    description: "Min area ratio must be positive when detection is enabled"
+    condition:
+      path: "document_detection.enable"
+      equals: true
+    requires:
+      path: "document_detection.min_area_ratio"
+      greater_than: 0
+    error_message: "Min area ratio must be positive when detection is enabled"
+
+  - rule: "enhancement_method_requires_enable"
+    description: "Enhancement method can only be set when enhancement is enabled"
+    condition:
+      path: "enhancement.method"
+      exists: true
+    requires:
+      path: "enhancement.enable"
+      equals: true
+    error_message: "Enhancement must be enabled to set enhancement method"

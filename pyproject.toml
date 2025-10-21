@@ -1,6 +1,6 @@
 [project]
 name = "upstage-ocr-receipt-text-detection"
-version = "0.1.0"
+version = "0.1.1"
 description = "AI Competition: Receipt Text Detection with DBNet baseline"
 readme = "README.md"
 requires-python = ">=3.10"

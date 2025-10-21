@@ -9,6 +9,7 @@ to prevent zombie processes and ensure clean startup/shutdown.
 import argparse
 import os
 import signal
+import socket
 import subprocess
 import time
 from pathlib import Path
@@ -33,6 +34,7 @@ class StreamlitProcessManager:
             "inference": "ui/inference_ui.py",
             "preprocessing_viewer": "ui/preprocessing_viewer_app.py",
             "resource_monitor": "ui/resource_monitor.py",
+            "unified_app": "ui/apps/unified_ocr_app/app.py",
         }
 
         if ui_name not in ui_paths:
@@ -83,15 +85,39 @@ class StreamlitProcessManager:
         except OSError:
             return False
 
-    def start(self, ui_name: str, port: int = 8501, background: bool = True, enable_logging: bool = True):
+    def _is_port_available(self, port: int) -> bool:
+        """Check if a port is available."""
+        try:
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.settimeout(1)
+            result = sock.connect_ex(("localhost", port))
+            sock.close()
+            return result != 0  # Port is available if connect fails
+        except Exception:
+            return True  # Assume available if we can't check
+
+    def start(self, ui_name: str, port: int = 8501, background: bool = True, enable_logging: bool = True, restart: bool = False):
         """Start a Streamlit UI process."""
         ui_path = self._get_ui_path(ui_name)
 
         # Check if already running
         existing_pid = self._read_pid_file(ui_name, port)
-        if existing_pid and self._is_process_running(existing_pid):
-            print(f"UI {ui_name} is already running on port {port} (PID: {existing_pid})")
-            return existing_pid
+        if existing_pid:
+            if self._is_process_running(existing_pid):
+                if restart:
+                    print(f"Restarting {ui_name} on port {port} (stopping PID: {existing_pid})...")
+                    self.stop(ui_name, port)
+                else:
+                    print(f"UI {ui_name} is already running on port {port} (PID: {existing_pid})")
+                    return existing_pid
+            else:
+                # Clean up stale PID file
+                self._remove_pid_file(ui_name, port)
+
+        # Check if port is available
+        if not self._is_port_available(port):
+            print(f"Port {port} is already in use")
+            return None
 
         # Build command
         cmd = [
@@ -133,7 +159,7 @@ class StreamlitProcessManager:
                 )
 
             # Wait a moment for process to start
-            time.sleep(2)
+            time.sleep(3)
 
             if self._is_process_running(process.pid):
                 self._write_pid_file(ui_name, port, process.pid)
@@ -205,7 +231,7 @@ class StreamlitProcessManager:
 
     def list_running(self):
         """List all managed UI processes."""
-        ui_names = ["command_builder", "evaluation_viewer", "inference", "preprocessing_viewer", "resource_monitor"]
+        ui_names = ["command_builder", "evaluation_viewer", "inference", "preprocessing_viewer", "resource_monitor", "unified_app"]
 
         running = []
         for ui_name in ui_names:
@@ -310,7 +336,7 @@ class StreamlitProcessManager:
 
     def stop_all(self):
         """Stop all managed UI processes."""
-        ui_names = ["command_builder", "evaluation_viewer", "inference", "preprocessing_viewer", "resource_monitor"]
+        ui_names = ["command_builder", "evaluation_viewer", "inference", "preprocessing_viewer", "resource_monitor", "unified_app"]
 
         stopped = []
         for ui_name in ui_names:
@@ -333,6 +359,7 @@ def main():
     parser.add_argument("--port", type=int, default=8501, help="Port number (default: 8501)")
     parser.add_argument("--foreground", action="store_true", help="Run in foreground (only for start action)")
     parser.add_argument("--no-logging", action="store_true", help="Disable logging to files (only for start action)")
+    parser.add_argument("--restart", action="store_true", help="Restart the UI if it's already running (only for start action)")
     parser.add_argument("--lines", type=int, default=50, help="Number of log lines to show (default: 50)")
     parser.add_argument("--follow", action="store_true", help="Follow log files in real-time (only for logs action)")
 
@@ -345,7 +372,7 @@ def main():
             parser.error("UI name required for start action")
         background = not args.foreground
         enable_logging = not args.no_logging
-        manager.start(args.ui_name, args.port, background, enable_logging)
+        manager.start(args.ui_name, args.port, background, enable_logging, args.restart)
 
     elif args.action == "stop":
         if not args.ui_name:

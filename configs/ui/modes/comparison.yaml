@@ -1,0 +1,342 @@
+# Comparison Mode Configuration
+mode_id: "comparison"
+display_name: "Comparison Studio"
+description: "A/B testing and parameter sweep for preprocessing and inference"
+
+# UI Layout
+layout:
+  sidebar:
+    sections:
+      - id: "comparison_type"
+        label: "📊 Comparison Type"
+        order: 1
+        expanded: true
+
+      - id: "parameter_sweep"
+        label: "🔄 Parameter Sweep"
+        order: 2
+        expanded: true
+
+      - id: "comparison_settings"
+        label: "⚙️ Comparison Settings"
+        order: 3
+        expanded: false
+
+  main_area:
+    tabs:
+      - id: "results_comparison"
+        label: "📊 Results Comparison"
+        icon: "📊"
+        default: true
+        description: "Side-by-side comparison of results"
+
+      - id: "metrics_analysis"
+        label: "📈 Metrics Analysis"
+        icon: "📈"
+        description: "Performance metrics and analysis"
+
+      - id: "parameter_impact"
+        label: "🎯 Parameter Impact"
+        icon: "🎯"
+        description: "Analyze parameter impact on results"
+
+# Comparison Types
+comparison_types:
+  - id: "preprocessing"
+    label: "Preprocessing Comparison"
+    icon: "🎨"
+    description: "Compare different preprocessing configurations"
+    default: true
+    available_parameters:
+      - "background_removal"
+      - "document_detection"
+      - "perspective_correction"
+      - "orientation_correction"
+      - "noise_elimination"
+      - "brightness_adjustment"
+      - "enhancement"
+
+  - id: "inference"
+    label: "Inference Comparison"
+    icon: "🤖"
+    description: "Compare different model checkpoints or hyperparameters"
+    available_parameters:
+      - "checkpoint"
+      - "text_threshold"
+      - "link_threshold"
+      - "low_text"
+
+  - id: "end_to_end"
+    label: "End-to-End Comparison"
+    icon: "🔗"
+    description: "Compare full pipeline (preprocessing + inference)"
+    available_parameters:
+      - "preprocessing_preset"
+      - "checkpoint"
+      - "hyperparameters"
+
+# Parameter Sweep Configuration
+parameter_sweep:
+  mode_selector:
+    label: "Sweep Mode"
+    options:
+      - value: "manual"
+        label: "Manual Selection"
+        description: "Manually select specific parameter values to compare"
+        default: true
+
+      - value: "range"
+        label: "Range Sweep"
+        description: "Test range of values for a parameter"
+
+      - value: "grid"
+        label: "Grid Search"
+        description: "Test all combinations of multiple parameters"
+
+  max_configurations:
+    label: "Max Configurations"
+    default: 5
+    min: 2
+    max: 10
+    help_text: "Maximum number of configurations to compare"
+
+  # Preprocessing parameter sweep settings
+  preprocessing_parameters:
+    background_removal.model:
+      type: "categorical"
+      label: "Background Removal Model"
+      values: ["u2net", "u2netp", "silueta"]
+      default_sweep: ["u2net", "u2netp"]
+
+    document_detection.min_area_ratio:
+      type: "numeric"
+      label: "Document Detection Area"
+      min: 0.1
+      max: 0.5
+      step: 0.1
+      default_sweep: [0.18, 0.25, 0.35]
+
+    perspective_correction.use_doctr_geometry:
+      type: "categorical"
+      label: "Perspective Method"
+      values: [true, false]
+      default_sweep: [true, false]
+
+  # Inference parameter sweep settings
+  inference_parameters:
+    text_threshold:
+      type: "numeric"
+      label: "Text Threshold"
+      min: 0.5
+      max: 0.9
+      step: 0.1
+      default_sweep: [0.6, 0.7, 0.8]
+
+    link_threshold:
+      type: "numeric"
+      label: "Link Threshold"
+      min: 0.2
+      max: 0.6
+      step: 0.1
+      default_sweep: [0.3, 0.4, 0.5]
+
+    low_text:
+      type: "numeric"
+      label: "Low Text Threshold"
+      min: 0.2
+      max: 0.6
+      step: 0.1
+      default_sweep: [0.3, 0.4, 0.5]
+
+# Upload Settings
+upload:
+  label: "Upload Test Image"
+  accepted_types: ["jpg", "jpeg", "png", "bmp"]
+  help_text: "Upload a single image to compare different configurations"
+  max_file_size_mb: 10
+
+# Results Comparison Settings
+results_comparison:
+  layout:
+    type: "grid"  # or "side_by_side", "table"
+    columns: 2
+    max_columns: 3
+    auto_layout: true
+
+  display_options:
+    show_parameters: true
+    show_processing_time: true
+    show_image_diff: false  # Difference heatmap
+    show_config_labels: true
+    highlight_best: true  # Highlight best performing config
+
+  image_display:
+    size: "medium"  # small, medium, large
+    show_zoom: true
+    sync_zoom: true  # Synchronize zoom across all images
+
+  sorting:
+    enabled: true
+    default_metric: "processing_time"
+    ascending: true
+
+# Metrics Analysis Settings
+metrics:
+  performance_metrics:
+    - id: "processing_time"
+      label: "Processing Time"
+      unit: "seconds"
+      format: ".3f"
+      lower_is_better: true
+      show_chart: true
+
+    - id: "preprocessing_time"
+      label: "Preprocessing Time"
+      unit: "seconds"
+      format: ".3f"
+      lower_is_better: true
+      show_chart: true
+
+    - id: "inference_time"
+      label: "Inference Time"
+      unit: "seconds"
+      format: ".3f"
+      lower_is_better: true
+      show_chart: true
+
+    - id: "num_detections"
+      label: "Number of Detections"
+      unit: "count"
+      format: "d"
+      lower_is_better: false
+      show_chart: true
+
+    - id: "avg_confidence"
+      label: "Average Confidence"
+      unit: "score"
+      format: ".3f"
+      lower_is_better: false
+      show_chart: true
+
+  quality_metrics:
+    - id: "image_size"
+      label: "Image Size"
+      unit: "pixels"
+      format: "dx%d"
+      show_chart: false
+
+    - id: "preprocessing_stages"
+      label: "Preprocessing Stages"
+      unit: "count"
+      format: "d"
+      show_chart: false
+
+  charts:
+    type: "bar"  # bar, line, radar
+    show_comparison_table: true
+    highlight_differences: true
+    color_scheme: "viridis"
+
+# Export Settings
+export:
+  formats:
+    - value: "json"
+      label: "JSON"
+      default: true
+      description: "Export all results and configurations"
+
+    - value: "csv"
+      label: "CSV"
+      description: "Export metrics comparison table"
+
+    - value: "html"
+      label: "HTML Report"
+      description: "Export interactive HTML report"
+
+    - value: "yaml"
+      label: "YAML Configs"
+      description: "Export all configurations used"
+
+  include_options:
+    include_images: false
+    include_visualizations: true
+    include_raw_results: true
+    include_metrics: true
+    include_timestamps: true
+
+  filename_pattern: "comparison_{timestamp}_{comparison_type}"
+  timestamp_format: "%Y%m%d_%H%M%S"
+
+# Presets for Quick Comparisons
+presets:
+  - id: "preprocessing_quality"
+    label: "Preprocessing Quality Comparison"
+    description: "Compare different preprocessing pipelines for quality"
+    comparison_type: "preprocessing"
+    configurations:
+      - label: "Basic"
+        params:
+          document_detection.enable: true
+          perspective_correction.enable: true
+          background_removal.enable: false
+
+      - label: "With Background Removal"
+        params:
+          document_detection.enable: true
+          perspective_correction.enable: true
+          background_removal.enable: true
+          background_removal.model: "u2net"
+
+      - label: "Full Pipeline"
+        params:
+          document_detection.enable: true
+          perspective_correction.enable: true
+          background_removal.enable: true
+          noise_elimination.enable: true
+          enhancement.enable: true
+
+  - id: "threshold_sweep"
+    label: "Detection Threshold Sweep"
+    description: "Compare different text detection thresholds"
+    comparison_type: "inference"
+    sweep_config:
+      parameter: "text_threshold"
+      values: [0.5, 0.6, 0.7, 0.8, 0.9]
+
+  - id: "model_comparison"
+    label: "Model Checkpoint Comparison"
+    description: "Compare different model checkpoints"
+    comparison_type: "inference"
+    sweep_config:
+      parameter: "checkpoint"
+      mode: "manual_selection"
+
+# Comparison Analysis Settings
+analysis:
+  auto_analyze:
+    enabled: true
+    metrics: ["processing_time", "num_detections", "avg_confidence"]
+
+  recommendations:
+    enabled: true
+    criteria:
+      - metric: "processing_time"
+        weight: 0.3
+        lower_is_better: true
+
+      - metric: "num_detections"
+        weight: 0.3
+        lower_is_better: false
+
+      - metric: "avg_confidence"
+        weight: 0.4
+        lower_is_better: false
+
+  statistical_tests:
+    enabled: false  # For future: t-tests, ANOVA, etc.
+
+# Validation
+validation:
+  schema_file: "schemas/comparison_schema.yaml"
+  strict_mode: true
+  show_warnings: true

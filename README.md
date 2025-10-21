@@ -211,13 +211,16 @@ uv run streamlit run ui/command_builder.py
 
 ### 주요 구성 파일
 
-- `train.yaml`, `test.yaml`, `predict.yaml`: 러너 실행 설정
-<!-- - `preset/example.yaml`: 각 모듈의 구성 파일 지정
-- `preset/datasets/db.yaml`: Dataset, Transform, 데이터 관련 설정
-- `preset/lightning_modules/base.yaml`: PyTorch Lightning 실행 설정
-- `preset/metrics/cleval.yaml`: CLEval 평가 설정
-- `preset/models/model_example.yaml`: 각 모델 모듈과 Optimizer의 구성 파일 지정
-- `preset/models/*`: 모델 구성에 필요한 각 모듈 설정 -->
+- `train.yaml`, `test.yaml`, `predict.yaml`: 러너 실행 설정 (훈련, 테스트, 예측용 기본 구성)
+- `configs/preset/example.yaml`: 각 모듈의 구성 파일 지정 및 기본 실험 설정
+- `configs/preset/datasets/db.yaml`: DBNet 데이터셋, Transform, 데이터 관련 설정
+- `configs/preset/datasets/preprocessing.yaml`: 전처리 파이프라인 설정
+- `configs/preset/lightning_modules/base.yaml`: PyTorch Lightning 모듈 실행 설정
+- `configs/preset/models/model_example.yaml`: 각 모델 모듈과 Optimizer의 구성 파일 지정
+- `configs/preset/models/encoder/`: 다양한 인코더 설정 (MobileNetV3, ResNet 등)
+- `configs/preset/models/decoder/`: 다양한 디코더 설정 (PAN, DBNet++ 등)
+- `configs/preset/models/head/`: 모델 헤드 구성
+- `configs/preset/models/loss/`: 손실 함수 설정
 
 ## 3. 데이터 설명
 
@@ -302,11 +305,20 @@ uv run python scripts/preprocess_maps.py data.train_num_samples=100 data.val_num
 
 더 자세한 내용은 [데이터 전처리 데이터 컨트랙트](docs/preprocessing-data-contracts.md)와 [파이프라인 데이터 컨트랙트](docs/pipeline/data_contracts.md)를 참조하세요.
 
+#### 데이터 증강 및 전처리 (Data Augmentation and Preprocessing)
+- **이미지 향상**: Doctr 라이브러리를 사용하여 텍스트 검출, 크롭핑, 그리고 이미지 향상을 수행하여 검출 성능을 개선했습니다. CamScanner 스타일의 전처리를 적용하여 이미지 품질을 최적화했습니다.
+- **회전 보정**: 검증 및 테스트 데이터셋에서 발견된 회전 불일치를 표준 방향으로 수정했습니다. 이는 데이터 누출이 아니며, 일관된 전처리 단계로 간주됩니다 (훈련 데이터에 영향을 미치지 않음).
+
 ## 4. 모델링
 
 ### 모델 설명
 
-베이스라인 코드는 장면 텍스트 검출에서 효과적인 것으로 알려진 **DBNet** 아키텍처를 기반으로 구축되었습니다. DBNet은 실시간 장면 텍스트 검출을 위해 미분 가능한 이진화를 사용합니다.
+이 프로젝트는 모듈형 OCR 시스템으로, PyTorch Lightning과 Hydra를 기반으로 구축되었습니다. 컴포넌트 기반 아키텍처를 통해 인코더, 디코더, 헤드, 손실 함수를 플러그 앤 플레이 방식으로 교체할 수 있습니다.
+
+#### 아키텍처 모듈화 (Architecture Modularization)
+- **레지스트리 기반 시스템**: 컴포넌트들은 `architectures/registry.py`에 등록되며, Hydra 설정을 통해 동적으로 조립됩니다. 추상 인터페이스 (`BaseEncoder`, `BaseDecoder`, `BaseHead`, `BaseLoss`)를 상속하여 일관성을 유지합니다.
+- **팩토리 패턴**: `ModelFactory`가 등록된 컴포넌트를 사용하여 완전한 모델을 생성합니다. 이는 빠른 실험을 위한 플러그 앤 플레이 교체를 지원합니다.
+- **최종 모델**: DBNet 아키텍처를 기반으로, MobileNetV3 인코더와 PAN 디코더를 사용했습니다. 이는 실시간 텍스트 검출을 위한 미분 가능한 이진화를 활용합니다.
 
 #### DBNet: 미분 가능한 이진화를 통한 실시간 장면 텍스트 검출
 
@@ -366,19 +378,18 @@ uv run python ocr/utils/convert_submission.py --json_path outputs/ocr_training/s
 ```
 
 ### 모델 개선 사항
+- **아키텍처 변경**: 베이스라인 DBNet을 모듈형 컴포넌트 시스템으로 변환하여 유연성을 높였습니다. MobileNetV3 인코더는 경량화로 효율성을, PAN 디코더는 정확한 텍스트 영역 검출을 제공합니다.
+- **하이퍼파라미터 튜닝**: 학습률, 배치 크기, 에폭을 조정하여 최적화했습니다 (예: `trainer.max_epochs=10`, `model.optimizer.lr=0.0005`).
+- **데이터 증강**: Doctr 기반 전처리와 CamScanner 스타일 향상을 적용하여 이미지 품질을 개선하고 검출 성능을 향상시켰습니다.
 
-- _모델 아키텍처 변경 사항을 설명하세요_
-- _하이퍼파라미터 튜닝 과정을 설명하세요_
-- _데이터 증강 기법을 설명하세요_
-- _앙상블 방법을 설명하세요 (해당하는 경우)_
 
 ## 5. 결과
 
 ### 최종 성능
 
-- _최종 모델의 성능 지표를 기록하세요_
-- _공개/비공개 리더보드 점수를 기록하세요_
-- _베이스라인 대비 개선 사항을 설명하세요_
+- **공개 리더보드 (Public Leaderboard)**: H-Mean: 0.9751, 정밀도: 0.9739, 재현율: 0.9773 (3/4위).
+- **비공개 리더보드 (Private Leaderboard)**: H-Mean: 0.9787, 정밀도: 0.9771, 재현율: 0.9809.
+- **베이스라인 대비 개선**: 베이스라인 H-Mean 0.8818에서 크게 향상되었으며, 모듈화와 전처리로 인한 안정성 증가.
 
 ### 제출 과정
 
@@ -425,23 +436,32 @@ uv run python ocr/utils/convert_submission.py --json_path outputs/ocr_training/s
 
 ### 실험 결과 분석
 
-- _다양한 실험 결과를 비교 분석하세요_
-- _실패한 케이스들을 분석하세요_
-- _모델의 한계점을 설명하세요_
+- 다양한 실험에서 PAN 디코더가 DBNet의 정확도를 높였으나, 복잡한 배경에서 재현율이 낮은 경우가 있었습니다. 실패 케이스는 주로 저해상도 이미지였습니다.
+- 모델 한계: 고해상도 이미지에서 계산 비용 증가; 향후 개선으로 EfficientNet 인코더 고려.
 
 ## 6. 결론 및 향후 과제
 
 ### 주요 성과
 
-- _프로젝트의 주요 성과를 요약하세요_
-- _팀원별 기여도를 설명하세요_
-- _배운 점들을 정리하세요_
+- 베이스라인 점수를 크게 개선했습니다 (H-Mean 0.8818 → 0.9751+).
+- 중앙 집중식 구성 관리로 설정 관리를 용이하게 했습니다.
+- 실시간 OCR 추론을 위한 Streamlit UI, 복잡한 훈련 명령어 생성을 위한 Command Builder, 예측 파일 보기 및 낮은 예측 결과 분석을 위한 Evaluation View를 포함한 데이터 분석 도구를 구현했습니다.
+- 성능 병목 현상 분석을 위한 성능 프로파일링을 포함한 고급 성능 기능(.npz 사전 컴파일 이미지, 변환, 캐싱)을 구현했습니다.
+- 실험 추적을 위한 Wandb / Hydra 통합.
+- 10개 이상의 모놀리식 구조를 모듈형 컴포넌트 시스템으로 리팩토링했습니다.
+- 페어 프로그래밍 협업을 개선하기 위한 AI 문서화 및 개발 프로토콜.
+- 버그 보고서 생성 프로토콜 구현.
+
+#### 팀원별 기여도
+- **최웅비**: 오류 분석 도구(Streamlit Inference UI, Evaluation Viewer) 및 기타 UI 개발로 개발을 용이하게 했습니다. 고급 성능 기능 구현, AI 핸드북 개발을 통한 개발 효율성 개선 연구, 데이터 계약 및 전처리 모듈 개발.
+
+<!-- **NEW:** Unified OCR Development Studio 구현 (Preprocessing, Inference 모드 통합, YAML 기반 설정 시스템, 80% 완료). -->
 
 ### 향후 개선 방향
 
-- _모델 성능 개선을 위한 아이디어를 제시하세요_
-- _데이터 품질 향상 방안을 제시하세요_
-- _시스템 최적화 방안을 제시하세요_
+- **모델 성능 개선**: Nvidia DALI 구현으로 훈련/추론 파이프라인 속도를 5~8배 개선하고, EfficientNet 인코더와 같은 더 강력한 아키텍처 탐색.
+- **데이터 품질 향상**: 프로덕션급 전처리 및 합성 데이터 생성 파이프라인 구현으로 데이터 다양성 및 품질 향상.
+- **시스템 최적화**: 분산 훈련 지원, 메모리 최적화, 그리고 실시간 추론을 위한 모델 양자화 구현.
 
 ## 설치 및 설정
 

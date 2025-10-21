@@ -1,0 +1,162 @@
+# Inference mode configuration
+mode_id: "inference"
+display_name: "Model Inference Studio"
+
+# Paths configuration
+paths:
+  outputs_dir: "outputs"
+  checkpoints_dir: "outputs/checkpoints"
+
+# UI Layout
+layout:
+  sidebar:
+    sections:
+      - id: "model_selection"
+        label: "🤖 Model Selection"
+        order: 1
+        expanded: true
+
+      - id: "hyperparameters"
+        label: "⚙️ Hyperparameters"
+        order: 2
+        expanded: true
+
+      - id: "preprocessing_options"
+        label: "🎨 Preprocessing"
+        order: 3
+        expanded: false
+
+  main_content:
+    tabs:
+      - id: "results"
+        label: "📊 Results"
+        default: true
+
+      - id: "visualization"
+        label: "👁️ Visualization"
+
+# Model Selection
+model_selection:
+  checkpoint_selector:
+    label: "Select Checkpoint"
+    help_text: "Choose a trained model checkpoint for inference"
+    show_metadata: true
+    filter_options:
+      - key: "architecture"
+        label: "Architecture"
+      - key: "encoder"
+        label: "Encoder"
+      - key: "epoch"
+        label: "Training Epoch"
+
+  mode_selector:
+    label: "Processing Mode"
+    options:
+      - value: "single"
+        label: "Single Image"
+        icon: "🖼️"
+        default: true
+      - value: "batch"
+        label: "Batch Processing"
+        icon: "📁"
+
+# Hyperparameters (inherit from inference.yaml if exists)
+hyperparameters:
+  text_threshold:
+    min: 0.0
+    max: 1.0
+    default: 0.7
+    step: 0.05
+    label: "Text Threshold"
+    help_text: "Threshold for text region detection"
+
+  link_threshold:
+    min: 0.0
+    max: 1.0
+    default: 0.4
+    step: 0.05
+    label: "Link Threshold"
+    help_text: "Threshold for linking text regions"
+
+  low_text:
+    min: 0.0
+    max: 1.0
+    default: 0.4
+    step: 0.05
+    label: "Low Text Threshold"
+    help_text: "Low confidence threshold for text detection"
+
+# Preprocessing Options
+preprocessing:
+  enable_preprocessing:
+    type: "checkbox"
+    label: "Enable Preprocessing"
+    default: false
+    help_text: "Apply preprocessing pipeline before inference"
+
+  preset_selector:
+    label: "Preprocessing Preset"
+    depends_on: "enable_preprocessing"
+    options:
+      - value: "none"
+        label: "None (Raw Image)"
+      - value: "basic"
+        label: "Basic (Detection + Correction)"
+        default: true
+      - value: "advanced"
+        label: "Advanced (Full Pipeline)"
+      - value: "custom"
+        label: "Custom (Configure)"
+
+# Upload Settings
+upload:
+  single_mode:
+    label: "Upload Image"
+    accepted_types: ["jpg", "jpeg", "png", "bmp"]
+    help_text: "Upload a single image for inference"
+
+  batch_mode:
+    directory_input:
+      label: "Input Directory"
+      placeholder: "/path/to/images"
+      help_text: "Directory containing images to process"
+
+    output_directory:
+      label: "Output Directory"
+      placeholder: "/path/to/output"
+      help_text: "Directory for saving results"
+
+    file_types:
+      label: "File Types"
+      default: ["jpg", "jpeg", "png"]
+      multi_select: true
+
+# Results Display
+results:
+  visualization:
+    show_polygons: true
+    show_scores: true
+    show_labels: false
+    polygon_color: [0, 255, 0]  # Green
+    polygon_thickness: 2
+    font_size: 12
+
+  export:
+    formats:
+      - value: "json"
+        label: "JSON"
+        default: true
+      - value: "csv"
+        label: "CSV"
+      - value: "txt"
+        label: "Text File"
+
+  display_options:
+    show_confidence_scores: true
+    show_processing_time: true
+    show_image_dimensions: true
+    comparison_mode: "side-by-side"  # or "overlay"
+
+# Validation schema reference
+validation:
+  schema_file: "schemas/inference_schema.yaml"
