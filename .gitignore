@@ -83,8 +83,8 @@ ehthumbs.db
 Thumbs.db
 
 # Logs
-# *.log
-# logs/
+*.log
+logs/
 
 # Model checkpoints and outputs
 outputs/
