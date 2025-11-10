@@ -1,6 +1,6 @@
 # Logger config
 wandb:
-  enabled: True
+  enabled: false
   log_model: "all"
 project_name: "receipt-text-recognition-ocr-project"
 exp_version: "v1.0"

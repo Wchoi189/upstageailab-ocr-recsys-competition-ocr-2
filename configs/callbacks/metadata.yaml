@@ -20,5 +20,5 @@
 metadata:
   _target_: ocr.lightning_modules.callbacks.MetadataCallback
   exp_name: ${exp_name}  # From main config
-  outputs_dir: ${paths.outputs_dir}  # From paths config
+  outputs_dir: ${paths.output_dir}  # From paths config
   training_phase: "training"  # Can override for finetuning

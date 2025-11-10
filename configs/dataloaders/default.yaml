@@ -4,28 +4,28 @@
 train_dataloader:
   batch_size: ${batch_size}
   shuffle: true
-  num_workers: 8  # Reduced from 12 to prevent OOM in workers
+  num_workers: 2  # Reduced from 12 to prevent OOM in workers
   pin_memory: true
   persistent_workers: true
-  prefetch_factor: 2  # Adjusted for fewer workers
+  prefetch_factor: 1  # Adjusted for fewer workers
 val_dataloader:
   batch_size: ${batch_size}
   shuffle: false
-  num_workers: 8  # Balanced for fast validation
+  num_workers: 2  # Balanced for fast validation
   pin_memory: true
   persistent_workers: true
-  prefetch_factor: 2
+  prefetch_factor: 1
 test_dataloader:
   batch_size: ${batch_size}
   shuffle: false
-  num_workers: 4  # Balanced for evaluation throughput
+  num_workers: 2  # Balanced for evaluation throughput
   pin_memory: true
   persistent_workers: true
-  prefetch_factor: 2
+  prefetch_factor: 1
 predict_dataloader:
   batch_size: ${batch_size}
   shuffle: false
-  num_workers: 4  # Sufficient for inference pipeline
+  num_workers: 2  # Sufficient for inference pipeline
   pin_memory: true
   persistent_workers: true
-  prefetch_factor: 2
+  prefetch_factor: 1

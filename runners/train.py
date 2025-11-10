@@ -160,7 +160,18 @@ def train(config: DictConfig):
 
     logger: Logger
 
-    if config.logger.wandb:
+    wandb_cfg = getattr(config.logger, "wandb", None)
+    wandb_enabled = False
+    if isinstance(wandb_cfg, DictConfig):
+        wandb_enabled = wandb_cfg.get("enabled", True)
+    elif isinstance(wandb_cfg, dict):
+        wandb_enabled = wandb_cfg.get("enabled", True)
+    elif isinstance(wandb_cfg, bool):
+        wandb_enabled = wandb_cfg
+    elif wandb_cfg is not None:
+        wandb_enabled = bool(wandb_cfg)
+
+    if wandb_enabled:
         from lightning.pytorch.loggers import WandbLogger  # noqa: E402
         from omegaconf import OmegaConf  # noqa: E402
 

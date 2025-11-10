@@ -55,7 +55,7 @@ class CatalogOptions:
 
     @classmethod
     def from_paths(cls, paths: PathConfig) -> CatalogOptions:
-        outputs_dir = paths.outputs_dir
+        outputs_dir = paths.output_dir
         if not outputs_dir.is_absolute():
             outputs_dir = _discover_outputs_path(outputs_dir)
         return cls(outputs_dir=outputs_dir, hydra_config_filenames=tuple(paths.hydra_config_filenames))
