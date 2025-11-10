@@ -3,8 +3,18 @@ from __future__ import annotations
 from pathlib import Path
 
 import lightning.pytorch as pl
-import wandb
 from lightning.pytorch.callbacks import Callback
+
+# BUG-20251109-002: Lazy import wandb to prevent hanging during module import
+def _get_wandb():
+    """
+    Lazy import wandb to prevent hanging during module import.
+
+    BUG-20251109-002: Changed from top-level import to lazy import helper.
+    See: docs/bug_reports/BUG-20251109-002-code-changes.md
+    """
+    import wandb
+    return wandb
 
 
 class WandbCompletionCallback(Callback):
@@ -15,6 +25,7 @@ class WandbCompletionCallback(Callback):
             print("Skipping completion signal for fast_dev_run.")
             return
 
+        wandb = _get_wandb()
         current_run = getattr(wandb, "run", None)
         if current_run:
             try:
@@ -41,6 +52,7 @@ class WandbCompletionCallback(Callback):
             print(f"Warning: Failed to create local sentinel file: {exc}")
 
     def on_exception(self, trainer: pl.Trainer, pl_module: pl.LightningModule, exception: BaseException) -> None:
+        wandb = _get_wandb()
         current_run = getattr(wandb, "run", None)
         if current_run:
             current_run.tags = current_run.tags + ("status:failed",)

@@ -62,7 +62,7 @@ shared:
 
 # Paths
 paths:
-  outputs_dir: "outputs"
+  output_dir: "outputs"
   configs_dir: "configs"
   checkpoints_dir: "outputs/checkpoints"
   presets_dir: "configs/ui/presets"

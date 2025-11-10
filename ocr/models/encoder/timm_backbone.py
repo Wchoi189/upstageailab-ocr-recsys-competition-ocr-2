@@ -95,7 +95,12 @@ class TimmBackbone(BaseEncoder):
         self._strides = [self._feature_info[i]["reduction"] for i in self.select_features]
 
     def forward(self, x: torch.Tensor) -> list[torch.Tensor]:
-        """Extract features from input images.
+        """
+        Extract features from input images.
+
+        BUG-20251109-002: Added validation to detect NaN values in encoder output.
+        NaN values in encoder output cause CUDA illegal instruction errors downstream.
+        See: docs/bug_reports/BUG-20251109-002-code-changes.md
 
         Args:
             x: Input tensor of shape (B, C, H, W)
@@ -103,7 +108,85 @@ class TimmBackbone(BaseEncoder):
         Returns:
             List of feature tensors at selected levels
         """
+        # BUG-20251109-002: Validate input before encoder forward pass
+        if torch.isnan(x).any():
+            raise ValueError(f"NaN values detected in encoder input. Shape: {x.shape}, Device: {x.device}")
+        if torch.isinf(x).any():
+            raise ValueError(f"Inf values detected in encoder input. Shape: {x.shape}, Device: {x.device}")
+
         features = self.model(x)
+
+        # BUG-20251110-001: Validate encoder output to catch NaN values early
+        # Move to CPU before checking to avoid CUDA illegal instruction errors
+        # CUDA memory corruption can cause errors when checking NaN on GPU tensors
+        try:
+            if isinstance(features, (list, tuple)):
+                for i, feat in enumerate(features):
+                    # BUG-20251110-001: Move to CPU before checking for NaN/Inf
+                    # This prevents CUDA illegal instruction errors from corrupted memory
+                    try:
+                        feat_cpu = feat.detach().cpu()
+                        if torch.isnan(feat_cpu).any():
+                            raise ValueError(
+                                f"NaN values detected in TimmBackbone encoder output[{i}]. "
+                                f"Shape: {feat.shape}, Device: {feat.device}. "
+                                f"This suggests gradient explosion or numerical instability in the encoder."
+                            )
+                        if torch.isinf(feat_cpu).any():
+                            raise ValueError(
+                                f"Inf values detected in TimmBackbone encoder output[{i}]. "
+                                f"Shape: {feat.shape}, Device: {feat.device}. "
+                                f"This suggests gradient explosion or numerical instability in the encoder."
+                            )
+                    except RuntimeError as e:
+                        # If CUDA error occurs during validation, the memory is corrupted
+                        error_msg = str(e)
+                        if "CUDA" in error_msg or "cuda" in error_msg or "illegal" in error_msg.lower():
+                            raise RuntimeError(
+                                f"CUDA error detected while validating encoder output[{i}]. "
+                                f"This indicates CUDA memory corruption. "
+                                f"Shape: {feat.shape}, Device: {feat.device}. "
+                                f"Original error: {e}"
+                            ) from e
+                        raise
+            else:
+                # BUG-20251110-001: Move to CPU before checking for NaN/Inf
+                try:
+                    features_cpu = features.detach().cpu()
+                    if torch.isnan(features_cpu).any():
+                        raise ValueError(
+                            f"NaN values detected in TimmBackbone encoder output. "
+                            f"Shape: {features.shape}, Device: {features.device}. "
+                            f"This suggests gradient explosion or numerical instability in the encoder."
+                        )
+                    if torch.isinf(features_cpu).any():
+                        raise ValueError(
+                            f"Inf values detected in TimmBackbone encoder output. "
+                            f"Shape: {features.shape}, Device: {features.device}. "
+                            f"This suggests gradient explosion or numerical instability in the encoder."
+                        )
+                except RuntimeError as e:
+                    # If CUDA error occurs during validation, the memory is corrupted
+                    error_msg = str(e)
+                    if "CUDA" in error_msg or "cuda" in error_msg or "illegal" in error_msg.lower():
+                        raise RuntimeError(
+                            f"CUDA error detected while validating encoder output. "
+                            f"This indicates CUDA memory corruption. "
+                            f"Shape: {features.shape}, Device: {features.device}. "
+                            f"Original error: {e}"
+                        ) from e
+                    raise
+        except RuntimeError as e:
+            # Catch any CUDA errors that occur during validation
+            error_msg = str(e)
+            if "CUDA" in error_msg or "cuda" in error_msg or "illegal" in error_msg.lower():
+                raise RuntimeError(
+                    f"CUDA error detected in TimmBackbone encoder validation. "
+                    f"This indicates CUDA memory corruption. "
+                    f"Original error: {e}"
+                ) from e
+            raise
+
         return [features[i] for i in self.select_features]
 
     @property

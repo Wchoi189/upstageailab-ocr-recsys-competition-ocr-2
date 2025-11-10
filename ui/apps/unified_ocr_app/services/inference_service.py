@@ -253,11 +253,11 @@ def load_checkpoints(config: dict[str, Any]) -> list[Any]:
 
         # Get paths from config
         paths_config = config.get("paths", {})
-        outputs_dir = paths_config.get("outputs_dir", "outputs")
+        output_dir = paths_config.get("output_dir") or paths_config.get("outputs_dir", "outputs")
 
         # Create proper PathConfig instance
         path_config = PathConfig(
-            outputs_dir=Path(outputs_dir),
+            output_dir=Path(output_dir),
             hydra_config_filenames=[
                 "config.yaml",
                 "hparams.yaml",

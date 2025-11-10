@@ -9,7 +9,7 @@ app:
   initial_sidebar_state: "expanded"
 
 paths:
-  outputs_dir: "outputs"
+  output_dir: "outputs"
   hydra_config_filenames:
     - config.yaml
     - hparams.yaml

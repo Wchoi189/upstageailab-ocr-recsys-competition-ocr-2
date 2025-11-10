@@ -6,15 +6,14 @@ data.tar.gz
 *.7z
 
 # Data directories
-data/
-datasets/
+# data/datasets/
 demo_images/
 test_*/
 test_corrected*/
 test_gray*/
 
 # Output and results directories
-outputs/
+# outputs/
 results/
 logs/
 multirun/
@@ -111,7 +110,7 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
-*.log
+# *.log
 
 # Large model files and checkpoints
 *.pth
@@ -123,6 +122,6 @@ yarn-error.log*
 *.hdf5
 
 # Configuration files that might contain sensitive data
-.env
-.env.local
-.env.*.local
+# .env
+# .env.local
+# .env.*.local

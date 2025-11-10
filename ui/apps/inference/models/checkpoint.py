@@ -357,7 +357,7 @@ class CheckpointInfo:
 
         # Create options with default config filenames
         options = CatalogOptions(
-            outputs_dir=self.checkpoint_path.parent.parent.parent,
+            output_dir=self.checkpoint_path.parent.parent.parent,
             hydra_config_filenames=("config.yaml", "hparams.yaml", "train.yaml", "predict.yaml"),
         )
         metadata = _collect_metadata(self.checkpoint_path, options)

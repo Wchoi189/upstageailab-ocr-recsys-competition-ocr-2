@@ -61,9 +61,10 @@ def load_ui_config(config_path: Path | None = None) -> UIConfig:
     results = ResultsConfig(**raw_config.get("results", {}))
     notifications = NotificationConfig(**raw_config.get("notifications", {}))
     path_section = dict(raw_config.get("paths", {}))
-    outputs_dir = path_section.get("outputs_dir")
-    if outputs_dir is not None:
-        path_section["outputs_dir"] = Path(outputs_dir)
+    output_dir = path_section.get("output_dir") or path_section.get("outputs_dir", "outputs")
+    path_section["output_dir"] = Path(output_dir)
+    # Remove old outputs_dir if present
+    path_section.pop("outputs_dir", None)
     paths = PathConfig(**path_section)
 
     hyperparameters_section = raw_config.get("hyperparameters", {})

@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(chmod:*)",
+      "Bash(uv run python:*)",
+      "Bash(python scripts/check_training_data.py:*)",
+      "Bash(nvidia-smi:*)",
+      "Bash(bash:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

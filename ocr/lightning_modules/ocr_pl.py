@@ -3,6 +3,7 @@ from typing import Any
 
 import lightning.pytorch as pl
 import numpy as np
+import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
 from torch.utils.data import DataLoader
@@ -94,8 +95,8 @@ class OCRPLModule(pl.LightningModule):
                     preset_desc = "No optimizations (baseline)"
 
                 # Simple logging without Rich to avoid conflicts
-                print(f"\n🚀 Performance Preset: {preset_name}")
-                print(f"   {preset_desc}\n")
+                print(f"🚀 Performance Preset: {preset_name}")
+                print(f"   {preset_desc}")
 
         except Exception:
             # Silently ignore if we can't determine the preset
@@ -110,11 +111,180 @@ class OCRPLModule(pl.LightningModule):
         return self.model(return_loss=False, **x)
 
     def training_step(self, batch, batch_idx):
+        """
+        Training step for OCR model.
+
+        BUG-20251109-002: Added validation for input images and ground truth maps
+        to detect NaN/Inf values before they cause CUDA errors.
+        See: docs/bug_reports/BUG-20251109-002-code-changes.md
+        """
+        # BUG-20251109-002: Validate input batch before model forward pass
+        # CUDA illegal instruction errors often occur due to invalid input data
+        images = batch.get("images")
+        if images is not None:
+            if torch.isnan(images).any():
+                raise ValueError(f"NaN values detected in batch['images'] at batch_idx={batch_idx}. Shape: {images.shape}")
+            if torch.isinf(images).any():
+                raise ValueError(f"Inf values detected in batch['images'] at batch_idx={batch_idx}. Shape: {images.shape}")
+            # BUG-20251109-002: Check for extreme values that could cause numerical instability
+            # Normalized images should be in range [-3, 3] (ImageNet normalization)
+            # Values outside this range can cause numerical instability in the encoder
+            img_min, img_max = images.min().item(), images.max().item()
+            if img_min < -10.0 or img_max > 10.0:
+                raise ValueError(
+                    f"Extreme values detected in batch['images'] at batch_idx={batch_idx}. "
+                    f"Shape: {images.shape}, Min: {img_min:.4f}, Max: {img_max:.4f}. "
+                    f"Expected normalized values in range [-3, 3]. This may cause numerical instability."
+                )
+
+        # BUG-20251109-002: Validate ground truth tensors if present
+        gt_binary = batch.get("prob_maps")
+        if gt_binary is not None:
+            if torch.isnan(gt_binary).any():
+                raise ValueError(f"NaN values detected in batch['prob_maps'] at batch_idx={batch_idx}. Shape: {gt_binary.shape}")
+            if torch.isinf(gt_binary).any():
+                raise ValueError(f"Inf values detected in batch['prob_maps'] at batch_idx={batch_idx}. Shape: {gt_binary.shape}")
+
+        # BUG-20251109-002: Validate thresh_maps to detect NaN/Inf values
+        gt_thresh = batch.get("thresh_maps")
+        if gt_thresh is not None:
+            if torch.isnan(gt_thresh).any():
+                raise ValueError(f"NaN values detected in batch['thresh_maps'] at batch_idx={batch_idx}. Shape: {gt_thresh.shape}")
+            if torch.isinf(gt_thresh).any():
+                raise ValueError(f"Inf values detected in batch['thresh_maps'] at batch_idx={batch_idx}. Shape: {gt_thresh.shape}")
+
+        gt_prob_mask = batch.get("prob_mask")
+        if gt_prob_mask is not None:
+            if torch.isnan(gt_prob_mask).any():
+                raise ValueError(f"NaN values detected in batch['prob_mask'] at batch_idx={batch_idx}. Shape: {gt_prob_mask.shape}")
+            if torch.isinf(gt_prob_mask).any():
+                raise ValueError(f"Inf values detected in batch['prob_mask'] at batch_idx={batch_idx}. Shape: {gt_prob_mask.shape}")
+
         pred = self.model(**batch)
-        self.log("train/loss", pred["loss"], batch_size=batch["images"].shape[0])
+
+        # BUG-20251110-001: Validate loss values before backward pass
+        # cuDNN errors often occur due to NaN/Inf values in loss or gradients
+        loss = pred["loss"]
+        if torch.isnan(loss):
+            raise ValueError(
+                f"NaN loss detected at batch_idx={batch_idx}. "
+                f"This will cause cuDNN errors during backward pass. "
+                f"Loss dict: {pred.get('loss_dict', {})}"
+            )
+        if torch.isinf(loss):
+            raise ValueError(
+                f"Inf loss detected at batch_idx={batch_idx}. "
+                f"This will cause cuDNN errors during backward pass. "
+                f"Loss dict: {pred.get('loss_dict', {})}"
+            )
+        # Check for extreme loss values that could cause gradient explosion
+        loss_value = loss.item()
+        if loss_value > 1e6 or loss_value < -1e6:
+            raise ValueError(
+                f"Extreme loss value detected at batch_idx={batch_idx}: {loss_value:.4f}. "
+                f"This may cause gradient explosion and cuDNN errors. "
+                f"Loss dict: {pred.get('loss_dict', {})}"
+            )
+
+        # BUG-20251110-001: Validate loss_dict values
+        for key, value in pred.get("loss_dict", {}).items():
+            if torch.is_tensor(value):
+                if torch.isnan(value).any():
+                    raise ValueError(
+                        f"NaN value in loss_dict['{key}'] at batch_idx={batch_idx}. "
+                        f"This will cause cuDNN errors during backward pass."
+                    )
+                if torch.isinf(value).any():
+                    raise ValueError(
+                        f"Inf value in loss_dict['{key}'] at batch_idx={batch_idx}. "
+                        f"This will cause cuDNN errors during backward pass."
+                    )
+
+        self.log("train/loss", loss, batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():
             self.log(f"train/{key}", value, batch_size=batch["images"].shape[0])
-        return pred["loss"]
+        return loss
+
+    def on_before_optimizer_step(self, optimizer, *args, **kwargs):
+        """
+        Validate gradients before optimizer step.
+
+        BUG-20251110-001: Added gradient validation to catch NaN/Inf values
+        that cause cuDNN errors during backward pass.
+        See: docs/bug_reports/BUG-20251110-001_out-of-bounds-polygon-coordinates-in-training-dataset.md
+        """
+        import logging
+
+        logger = logging.getLogger(__name__)
+        trainer = self.trainer
+        batch_idx = getattr(trainer, "global_step", -1) if trainer else -1
+
+        # BUG-20251110-001: Check for NaN/Inf gradients that cause cuDNN errors
+        nan_grads = []
+        inf_grads = []
+        extreme_grads = []
+
+        for param_name, param in self.named_parameters():
+            if param.grad is not None:
+                if torch.isnan(param.grad).any():
+                    nan_grads.append((param_name, param.grad.shape, param.grad.device))
+                elif torch.isinf(param.grad).any():
+                    inf_grads.append((param_name, param.grad.shape, param.grad.device))
+                else:
+                    # Check for extreme gradient values that could cause instability
+                    grad_norm = param.grad.norm().item()
+                    if grad_norm > 1e6:
+                        extreme_grads.append((param_name, grad_norm))
+
+        # Log warnings for extreme gradients (but don't fail)
+        if extreme_grads:
+            for param_name, grad_norm in extreme_grads:
+                logger.warning(
+                    f"Extreme gradient norm detected in {param_name}: {grad_norm:.4f} "
+                    f"at step {batch_idx}. This may cause instability. "
+                    f"Consider reducing learning rate or increasing gradient clipping."
+                )
+
+        # Zero out NaN/Inf gradients as a safety measure
+        # This prevents cuDNN errors while allowing training to continue
+        if nan_grads or inf_grads:
+            for param_name, param in self.named_parameters():
+                if param.grad is not None:
+                    if torch.isnan(param.grad).any() or torch.isinf(param.grad).any():
+                        logger.error(
+                            f"NaN/Inf gradient detected in {param_name} at step {batch_idx}. "
+                            f"Shape: {param.grad.shape}, Device: {param.grad.device}. "
+                            f"Zeroing out gradient to prevent cuDNN errors."
+                        )
+                        param.grad.zero_()
+
+            # After zeroing, log warning with detailed information but continue training
+            # This allows training to recover from numerical instability
+            warning_msg = f"NaN/Inf gradients detected at step {batch_idx}:\n"
+            if nan_grads:
+                warning_msg += f"  NaN gradients ({len(nan_grads)}): {[name for name, _, _ in nan_grads[:5]]}\n"
+            if inf_grads:
+                warning_msg += f"  Inf gradients ({len(inf_grads)}): {[name for name, _, _ in inf_grads[:5]]}\n"
+            warning_msg += (
+                f"\nGradients have been zeroed out to prevent cuDNN errors. "
+                f"This suggests numerical instability. Possible causes:\n"
+                f"  1. Extreme loss values (check loss validation)\n"
+                f"  2. Invalid input data (check data pipeline)\n"
+                f"  3. Learning rate too high\n"
+                f"  4. Numerical instability in model architecture\n"
+                f"\nConsider:\n"
+                f"  - Reducing learning rate\n"
+                f"  - Increasing gradient clipping\n"
+                f"  - Checking for NaN/Inf in loss values\n"
+                f"  - Validating input data pipeline\n"
+                f"\nTraining will continue with zeroed gradients for this step."
+            )
+            logger.warning(warning_msg)
+
+            # Optionally raise error if configured to do so (for debugging)
+            # This can be enabled via config if you want to stop training on NaN/Inf gradients
+            if hasattr(self.config, "stop_on_nan_gradients") and self.config.stop_on_nan_gradients:
+                raise ValueError(warning_msg)
 
     def validation_step(self, batch, batch_idx):
         """Perform validation step for OCR model.

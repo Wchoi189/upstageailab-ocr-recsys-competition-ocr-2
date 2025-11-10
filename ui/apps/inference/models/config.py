@@ -75,7 +75,7 @@ class NotificationConfig(_ConfigBase):
 
 
 class PathConfig(_ConfigBase):
-    outputs_dir: Path = Path("outputs")
+    output_dir: Path = Path("outputs")
     hydra_config_filenames: list[str] = [
         "config.yaml",
         "hparams.yaml",

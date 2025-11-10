@@ -50,7 +50,7 @@ def test(config):
                 print(f"Instantiating callback <{cb_conf._target_}>")
                 callbacks.append(hydra.utils.instantiate(cb_conf))
 
-    if config.logger.wandb:
+    if "wandb" in config.logger and config.logger.wandb.enabled:
         from lightning.pytorch.loggers import WandbLogger as Logger  # noqa: E402
         from omegaconf import OmegaConf  # noqa: E402
 

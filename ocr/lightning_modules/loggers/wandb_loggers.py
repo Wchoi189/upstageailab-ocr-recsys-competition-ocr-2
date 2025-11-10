@@ -208,16 +208,21 @@ class WandbProblemLogger:
                 if len(quad) < 8:
                     continue
                 coords = np.asarray(quad, dtype=np.float32).reshape(-1, 2)
-                x_coords = coords[:, 0]
-                y_coords = coords[:, 1]
+                # BUG-20251110-001: Use centralized out-of-bounds checking and clamping functions
                 if raw_width and raw_height:
-                    if x_coords.max() < 0 or x_coords.min() > raw_width or y_coords.max() < 0 or y_coords.min() > raw_height:
-                        continue
-                clipped_coords: list[float] = []
-                for x, y in coords:
-                    clipped_x = max(0.0, min(float(x), float(raw_width))) if raw_width else float(x)
-                    clipped_y = max(0.0, min(float(y), float(raw_height))) if raw_height else float(y)
-                    clipped_coords.extend([clipped_x, clipped_y])
+                    from ocr.utils.polygon_utils import is_polygon_out_of_bounds, clamp_polygon_to_bounds
+                    # Check if polygon is completely out of bounds (skip it)
+                    # Use tolerance=0.0 for strict checking (completely outside bounds)
+                    if is_polygon_out_of_bounds(coords, float(raw_width), float(raw_height), tolerance=0.0):
+                        # Check if completely outside (all coordinates < 0 or > dimension)
+                        if (coords[:, 0].max() < 0 or coords[:, 0].min() > raw_width or
+                            coords[:, 1].max() < 0 or coords[:, 1].min() > raw_height):
+                            continue
+                    # Clamp coordinates to bounds (handles partially out-of-bounds polygons)
+                    clamped_coords = clamp_polygon_to_bounds(coords, float(raw_width), float(raw_height))
+                    clipped_coords: list[float] = clamped_coords.flatten().tolist()
+                else:
+                    clipped_coords: list[float] = coords.flatten().tolist()
                 filtered_det_quads.append(clipped_coords)
             det_quads = filtered_det_quads
 

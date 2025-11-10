@@ -12,8 +12,19 @@ from typing import Any
 import cv2
 import numpy as np
 import torch
-import wandb
 from omegaconf import DictConfig
+
+# BUG-20251109-002: Lazy import wandb to prevent hanging during module import
+# wandb will be imported lazily when needed in functions that use it
+def _get_wandb():
+    """
+    Lazy import wandb to prevent hanging during module import.
+
+    BUG-20251109-002: Changed from top-level import to lazy import helper.
+    See: docs/bug_reports/BUG-20251109-002-code-changes.md
+    """
+    import wandb
+    return wandb
 
 
 def load_env_variables():
@@ -341,6 +352,7 @@ def generate_run_name(cfg: DictConfig) -> str:
 
 def finalize_run(metrics: Mapping[str, float] | float | None):
     """Finalize the active W&B run with the most relevant metric."""
+    wandb = _get_wandb()
 
     if not wandb.run:
         print("W&B run not initialized. Skipping finalization.")
@@ -422,6 +434,8 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
     Adds a compact legend overlay and samples up to `limit` images with a fixed seed
     for diversity across epochs.
     """
+    wandb = _get_wandb()
+
     if not wandb.run:
         return
 

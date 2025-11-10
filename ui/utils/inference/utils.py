@@ -13,11 +13,11 @@ LOGGER = logging.getLogger(__name__)
 
 
 def get_available_checkpoints() -> list[str]:
-    outputs_dir = PROJECT_ROOT / "outputs"
-    if not outputs_dir.exists():
+    output_dir = PROJECT_ROOT / "outputs"
+    if not output_dir.exists():
         return ["No 'outputs' directory found"]
 
-    checkpoints = [str(path.relative_to(PROJECT_ROOT)) for path in outputs_dir.rglob("*.ckpt")]
+    checkpoints = [str(path.relative_to(PROJECT_ROOT)) for path in output_dir.rglob("*.ckpt")]
     return checkpoints or ["No checkpoints found in 'outputs' directory"]
 
 

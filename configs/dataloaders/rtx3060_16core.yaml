@@ -1,0 +1,96 @@
+# @package dataloaders
+
+# Optimized Dataloader Configuration for RTX 3060 12GB + Intel i5 16-core
+# This configuration is optimized for:
+#   - GPU: RTX 3060 12GB VRAM
+#   - CPU: Intel i5 16-core processor
+#
+# Usage:
+#   python runners/train.py dataloaders=rtx3060_16core batch_size=8
+#
+# Key Optimizations:
+#   - Increased num_workers (12-14) to leverage 16-core CPU
+#   - Optimized prefetch_factor for better GPU utilization
+#   - Persistent workers for faster epoch transitions
+
+train_dataloader:
+  batch_size: ${batch_size}  # Recommended: 4-6 for RTX 3060 12GB with FP32
+  shuffle: true
+  num_workers: 0  # Temporarily disabled for debugging - each worker imports heavy dependencies
+  pin_memory: true  # Critical for GPU transfer speed
+  persistent_workers: false  # Disabled when num_workers=0
+  prefetch_factor: null  # Not used when num_workers=0
+
+val_dataloader:
+  batch_size: ${batch_size}  # Can match training batch size with FP32
+  shuffle: false
+  num_workers: 0  # Temporarily disabled for debugging
+  pin_memory: true
+  persistent_workers: false  # Disabled when num_workers=0
+  prefetch_factor: null  # Not used when num_workers=0
+
+test_dataloader:
+  batch_size: ${batch_size}
+  shuffle: false
+  num_workers: 4  # Balanced for evaluation throughput
+  pin_memory: true
+  persistent_workers: true  # Enabled for faster evaluation
+  prefetch_factor: 2  # Balanced for evaluation
+
+predict_dataloader:
+  batch_size: ${batch_size}
+  shuffle: false
+  num_workers: 4  # Sufficient for inference pipeline
+  pin_memory: true
+  persistent_workers: true  # Enabled for faster inference
+  prefetch_factor: 2  # Balanced for inference
+
+# NOTES:
+#
+# 1. Shared Memory (RAM-based, not GPU VRAM):
+#    - /dev/shm uses RAM, not GPU memory
+#    - WSL/Docker default: 64MB (very limited)
+#    - With 60GB RAM, optimal size is 4-8GB for OCR training
+#    - Each worker uses shared memory for data transfer
+#    - persistent_workers keeps workers alive (uses more memory)
+#    - Calculation: 12 workers × 3 prefetch × 4 images × 5MB = ~720MB + overhead
+#
+# 2. Increasing Shared Memory (REQUIRED for this config):
+#    # For 60GB RAM system, use 4-8GB (optimal for OCR training)
+#    # Temporary (until WSL restart):
+#    sudo mount -o remount,size=4G /dev/shm
+#
+#    # Permanent (add to /etc/wsl.conf):
+#    [boot]
+#    command = "mount -o remount,size=4G /dev/shm"
+#
+#    # Or use 8GB for maximum headroom:
+#    # command = "mount -o remount,size=8G /dev/shm"
+#
+#    # Then restart WSL: wsl --shutdown (from Windows PowerShell)
+#
+# 3. num_workers Tuning:
+#    - With 16 cores and 4GB shared memory: 12 workers optimal
+#    - Leaves 4 cores for system processes
+#    - Monitor CPU usage: htop or top
+#    - Monitor shared memory: df -h /dev/shm
+#    - If bus errors occur, reduce num_workers or increase shm
+#
+# 4. Batch Size Recommendations:
+#    - Start with batch_size=4 (FP32 uses more memory)
+#    - Can increase to 6 if GPU memory allows
+#    - Monitor GPU memory: nvidia-smi -l 1
+#    - Effective batch size = batch_size * accumulate_grad_batches
+#
+# 5. prefetch_factor:
+#    - Higher values (3-4) improve GPU utilization
+#    - Uses more shared memory but improves performance
+#    - Adjust based on available shared memory
+#
+# 6. Performance Monitoring:
+#    - Check GPU utilization: nvidia-smi -l 1 (should be >90%)
+#    - Check shared memory: df -h /dev/shm
+#    - Check CPU usage: htop (should be 75-85% with 12 workers)
+#    - If GPU <80%, increase num_workers or prefetch_factor
+#    - If CPU maxed, reduce num_workers
+

@@ -1,0 +1,213 @@
+---
+alwaysApply: false
+---
+
+# Streamlit App Verification Rules
+
+## 🚨 **CRITICAL**: Never Use Command-Line Tests for Streamlit Verification
+
+**Command-line tests are PROHIBITED for Streamlit app verification.** They run in isolated environments and cannot accurately represent the actual application state, leading to:
+- False positive declarations that fixes are complete
+- Wasted time on unnecessary documentation
+- Context limit exhaustion
+- Unreliable verification results
+
+## ✅ **REQUIRED**: Browser-Based Verification Methods
+
+### **Method 1: Manual Browser Testing (RECOMMENDED)**
+
+When automated tools unavailable:
+1. Start Streamlit: `python run_ui.py <command>` or `uv run streamlit run ui/<app>.py --server.port 8501`
+2. Navigate to page in browser: `http://localhost:8501`
+3. Check browser console (F12) for JavaScript errors
+4. Verify UI components render and function
+5. Document any errors found
+
+**Available UI Commands:**
+```bash
+python run_ui.py command_builder
+python run_ui.py inference
+python run_ui.py evaluation_viewer
+python run_ui.py preprocessing_viewer
+python run_ui.py resource_monitor
+```
+
+### **Method 2: Browser Extension Tools (if available)**
+
+Use Cursor's browser extension MCP tools for interactive verification. These tools provide direct access to the running Streamlit app:
+
+**Available Browser Extension Operations:**
+1. **Navigate to page**: `browser_navigate(url="http://localhost:8501")`
+2. **Wait for content**: `browser_wait_for(text="expected_content", time=5)`
+3. **Capture snapshot**: `browser_snapshot()`
+4. **Check console**: `browser_console_messages()` - Lightweight, usually safe
+5. **Check network**: `browser_network_requests()` - Lightweight, usually safe
+6. **Take screenshot**: `browser_take_screenshot()` - Use sparingly (expensive)
+7. **Interact**: `browser_click()`, `browser_type()`, `browser_select_option()`
+
+**Typical Verification Flow:**
+1. Navigate using `browser_navigate()` - Wait for page load
+2. Check console messages for JavaScript errors (lightweight check)
+3. Verify UI elements render correctly via snapshot
+4. Interact with components to test functionality
+
+**Verification Checklist:**
+- ✅ Page loads without Python exceptions visible in UI
+- ✅ UI components render correctly
+- ✅ No JavaScript console errors
+- ✅ Data binding works (selectboxes populate, actions trigger)
+- ✅ No Streamlit exception widgets (`[data-testid="stException"]`)
+
+### **Method 3: Process Monitoring**
+
+Check Streamlit logs for errors:
+```bash
+# View process logs
+python scripts/process_monitor.py
+
+# Or check logs directory
+ls logs/streamlit/
+cat logs/streamlit/*.err
+```
+
+## 🔍 **Error Investigation**
+
+### **Check Error Logs**
+
+Before declaring fixes complete, review error logs:
+
+```bash
+# View Streamlit error log
+python scripts/process_monitor.py
+
+# Or check logs directory
+ls logs/streamlit/
+cat logs/streamlit/*.err
+```
+
+### **Script Existence Check**
+
+Before creating new test scripts:
+
+```bash
+# Check if test script already exists
+ls scripts/testing/test_*.py
+ls ui/*.py
+```
+
+**Common UI Files:**
+- `ui/command_builder.py`
+- `ui/inference_ui.py`
+- `ui/evaluation_viewer.py`
+- `ui/preprocessing_viewer_app.py`
+- `ui/resource_monitor.py`
+
+## 🚫 **FORBIDDEN Testing Methods**
+
+**NEVER use these for Streamlit verification:**
+- ❌ `subprocess.run()` with Python script execution
+- ❌ `pytest` or unit tests that don't run the actual Streamlit app
+- ❌ Direct Python imports without Streamlit runtime context
+- ❌ `python -m streamlit run` with `--server.headless` and exit codes
+- ❌ Any test that doesn't load the page in a real browser
+
+**Why These Fail:**
+- Streamlit requires a full runtime context (session state, component registry, etc.)
+- UI rendering cannot be verified without a browser
+- State management (session state, component state) is browser-dependent
+- JavaScript errors only appear in browser console
+
+## ✅ **Verification Declaration Requirements**
+
+Before declaring a Streamlit fix as complete, you MUST:
+
+1. **Verify in browser** using one of the required methods above
+2. **Check error logs** for runtime errors
+3. **Document verification method** used (browser, manual, process monitor)
+4. **Include evidence** (console output, log excerpts, or observed behavior)
+5. **State actual app state** (what was observed, not assumed)
+
+**Example Verification Declaration:**
+```
+✅ FIXED: [Issue description]
+
+Verification Method: Manual browser testing
+- Started app: python run_ui.py inference
+- Navigated to http://localhost:8501
+- No [data-testid="stException"] elements visible
+- Console shows 0 errors
+- UI components render correctly
+- Selectbox populates with data
+
+Error Log Check: No new errors in logs/streamlit/
+```
+
+## 📋 **Page-Specific Verification**
+
+### **Inference UI**
+- Verify image upload works
+- Check inference results display correctly
+- Verify coordinate transformation works
+- Test EXIF orientation handling
+
+### **Evaluation Viewer**
+- Verify evaluation results load
+- Check metrics display correctly
+- Test data table rendering
+- Verify chart display
+
+### **Command Builder**
+- Verify command generation works
+- Check config validation
+- Test command execution
+- Verify output display
+
+### **Preprocessing Viewer**
+- Verify preprocessing pipeline works
+- Check image transformation display
+- Test data validation
+- Verify visualization
+
+### **Resource Monitor**
+- Verify resource monitoring works
+- Check metrics display
+- Test real-time updates
+- Verify logging
+
+## 🎯 **Success Criteria**
+
+A Streamlit fix is verified when:
+- ✅ Page loads in browser without exceptions
+- ✅ UI renders correctly
+- ✅ No JavaScript console errors
+- ✅ No Python tracebacks in UI
+- ✅ Error logs show no new errors
+- ✅ Functionality works as expected (interactions, data binding)
+
+**Remember**: If you can't verify in a browser, you cannot declare the fix complete.
+
+## 🚨 **Streamlit API Rules**
+
+**CRITICAL: NEVER use deprecated parameters:**
+- ❌ `use_container_width` (deprecated after 2025-12-31)
+- ✅ `width="stretch"` or `width="content"` (use instead)
+
+**Applies to:**
+- `st.plotly_chart()`
+- `st.dataframe()`
+- `st.button()`
+- All chart/table components
+
+**See**: `docs/agents/coding_protocols/streamlit.md` for detailed coding rules.
+
+## 🔧 **Troubleshooting**
+
+If Streamlit app fails to start:
+
+1. **Check dependencies**: `uv sync`
+2. **Verify Python path**: Check `ocr/utils/path_utils.py`
+3. **Check config files**: Verify Hydra configs exist
+4. **Review logs**: `python scripts/process_monitor.py`
+5. **Test import**: `python -c "from ocr.utils.path_utils import setup_project_paths; setup_project_paths()"`
+
+**See**: `docs/agents/protocols/components.md` for Streamlit protocols and `docs/troubleshooting/` for common issues.

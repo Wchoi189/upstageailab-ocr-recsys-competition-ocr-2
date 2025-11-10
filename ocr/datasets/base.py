@@ -537,6 +537,7 @@ class ValidatedOCRDataset(Dataset):
         transformed_polygons = transformed.get("polygons", []) or []
 
         # Filter degenerate polygons using polygon_utils
+        # BUG-20251110-001: Pass image dimensions to filter out-of-bounds polygons
         from ocr.utils.polygon_utils import ensure_polygon_array, filter_degenerate_polygons
 
         if transformed_polygons:
@@ -545,7 +546,41 @@ class ValidatedOCRDataset(Dataset):
                 poly_array = ensure_polygon_array(np.asarray(poly, dtype=np.float32))
                 if poly_array is not None and poly_array.size > 0:
                     normalized_polygons.append(poly_array)
-            filtered_polygons = filter_degenerate_polygons(normalized_polygons)
+            # BUG-20251110-001: Get transformed image dimensions for bounds checking
+            if isinstance(transformed_image, np.ndarray):
+                transformed_height, transformed_width = transformed_image.shape[:2]
+            else:
+                # Handle torch.Tensor or other types
+                transformed_height, transformed_width = transformed_image.shape[-2:]
+
+            original_polygon_count = len(normalized_polygons)
+            filtered_polygons = filter_degenerate_polygons(
+                normalized_polygons,
+                image_width=float(transformed_width),
+                image_height=float(transformed_height),
+                attempt_fix=True,  # Attempt to fix degenerate polygons before filtering
+            )
+            filtered_polygon_count = len(filtered_polygons)
+
+            # BUG-20251110-001: Only skip if no valid polygons remain after fixing
+            # With polygon fixing enabled, we attempt to repair degenerate polygons using Shapely's buffer(0)
+            # Only skip the image if all polygons were filtered (none could be fixed)
+            if len(filtered_polygons) == 0:
+                self.logger.warning(
+                    f"Skipping image {image_filename}: all {original_polygon_count} polygon(s) were filtered out as degenerate "
+                    f"(none could be fixed). Excluding image to prevent training instability."
+                )
+                # Return None to mark this sample for exclusion
+                # The collate function will filter out None samples
+                return None
+
+            # Log if some polygons were filtered (but not all, so we keep the image)
+            if filtered_polygon_count < original_polygon_count:
+                self.logger.debug(
+                    f"Image {image_filename}: {original_polygon_count - filtered_polygon_count} degenerate polygon(s) "
+                    f"could not be fixed and were filtered ({original_polygon_count} original, {filtered_polygon_count} valid). "
+                    f"Keeping image with {filtered_polygon_count} valid polygon(s)."
+                )
         else:
             filtered_polygons = []
 

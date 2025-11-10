@@ -5,8 +5,18 @@ from datetime import datetime
 from typing import Any
 
 import torch
-import wandb
 from lightning.pytorch.callbacks import ModelCheckpoint
+
+# BUG-20251109-002: Lazy import wandb to prevent hanging during module import
+def _get_wandb():
+    """
+    Lazy import wandb to prevent hanging during module import.
+
+    BUG-20251109-002: Changed from top-level import to lazy import helper.
+    See: docs/bug_reports/BUG-20251109-002-code-changes.md
+    """
+    import wandb
+    return wandb
 
 
 class UniqueModelCheckpoint(ModelCheckpoint):
@@ -406,6 +416,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             self._generate_checkpoint_metadata(checkpoint_path, metrics)
 
         # Log checkpoint directory to wandb
+        wandb = _get_wandb()
         if wandb.run and self.dirpath:
             wandb.log({"checkpoint_dir": self.dirpath})
 

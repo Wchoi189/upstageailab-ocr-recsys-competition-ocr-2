@@ -26,6 +26,7 @@ services:
               count: 1
               capabilities: [gpu]
     command: sleep infinity
+    shm_size: '8gb'  # Set shared memory size for DataLoader workers
     profiles:
       - dev
 

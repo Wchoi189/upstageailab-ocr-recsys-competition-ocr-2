@@ -1,0 +1,73 @@
+# @package dataloaders
+
+# Dataloader Configuration for Limited Shared Memory (WSL/Docker)
+# This configuration is optimized for systems with limited /dev/shm (64MB default)
+#
+# Usage:
+#   python runners/train.py dataloaders=low_shm batch_size=4
+#
+# Key Optimizations:
+#   - Reduced num_workers to minimize shared memory usage
+#   - Disabled persistent_workers to reduce memory footprint
+#   - Reduced prefetch_factor to lower memory per worker
+#   - Optimized for systems with <100MB shared memory
+
+train_dataloader:
+  batch_size: ${batch_size}
+  shuffle: true
+  num_workers: 2  # Reduced for limited shared memory
+  pin_memory: true
+  persistent_workers: false  # Disabled to reduce shared memory usage
+  prefetch_factor: 1  # Reduced to minimize memory per worker
+
+val_dataloader:
+  batch_size: ${batch_size}
+  shuffle: false
+  num_workers: 2  # Reduced for limited shared memory
+  pin_memory: true
+  persistent_workers: false  # Disabled to reduce shared memory usage
+  prefetch_factor: 1  # Reduced to minimize memory per worker
+
+test_dataloader:
+  batch_size: ${batch_size}
+  shuffle: false
+  num_workers: 1  # Minimal for evaluation
+  pin_memory: true
+  persistent_workers: false
+  prefetch_factor: 1
+
+predict_dataloader:
+  batch_size: ${batch_size}
+  shuffle: false
+  num_workers: 1  # Minimal for inference
+  pin_memory: true
+  persistent_workers: false
+  prefetch_factor: 1
+
+# NOTES:
+#
+# 1. Shared Memory Issues:
+#    - WSL/Docker default: 64MB /dev/shm
+#    - Each worker uses shared memory for data transfer
+#    - persistent_workers keeps workers alive (uses more memory)
+#    - prefetch_factor buffers data in shared memory
+#
+# 2. Solutions:
+#    - Reduce num_workers (2-4 max for 64MB shm)
+#    - Disable persistent_workers (saves ~10-20MB)
+#    - Reduce prefetch_factor to 1 (saves ~5-10MB per worker)
+#    - Or increase shared memory: sudo mount -o remount,size=512M /dev/shm
+#
+# 3. Performance Impact:
+#    - Lower num_workers = slower data loading
+#    - But prevents bus errors and crashes
+#    - Still faster than single-threaded (num_workers=0)
+#
+# 4. Alternative: Increase Shared Memory (if possible)
+#    # For WSL, add to /etc/wsl.conf:
+#    [boot]
+#    command = "mount -o remount,size=512M /dev/shm"
+#
+#    # Or manually:
+#    sudo mount -o remount,size=512M /dev/shm
+

@@ -70,6 +70,15 @@ class DBCollateFN:
                 - "thresh_maps": torch.Tensor (batch_size, 1, H, W)
                 - Additional metadata fields
         """
+        # BUG-20251110-001: Filter out None samples (images with no valid polygons)
+        # These samples were marked for exclusion in the dataset __getitem__ method
+        # Degenerate polygons cause CUDA errors when processed by the model
+        valid_batch = [item for item in batch if item is not None]
+        if len(valid_batch) == 0:
+            # If all samples are invalid, raise an error
+            raise ValueError("All samples in batch were invalid (no valid polygons). Cannot create batch.")
+        batch = valid_batch
+
         images = [item["image"] for item in batch]
         metadata_entries = [self._extract_metadata(item) for item in batch]
 
@@ -139,8 +148,21 @@ class DBCollateFN:
         fallback_count = 0
 
         for i, item in enumerate(batch):
+            # BUG-20251110-001: Skip samples with no valid polygons after filtering
+            # Degenerate polygons cause CUDA errors when processed by the model
+            if len(polygons[i]) == 0:
+                import logging
+                logger = logging.getLogger(__name__)
+                logger.warning(
+                    f"Skipping sample {filenames[i]}: no valid polygons after filtering. "
+                    f"This prevents CUDA errors from degenerate polygon data."
+                )
+                # Skip this sample - create empty maps instead
+                # The batch will still be valid, but this sample won't contribute to loss
+                prob_map = torch.zeros((1, images[i].shape[1], images[i].shape[2]), dtype=torch.float32)
+                thresh_map = torch.zeros((1, images[i].shape[1], images[i].shape[2]), dtype=torch.float32)
             # Check if pre-processed maps exist in the item
-            if item.get("prob_map") is not None and item.get("thresh_map") is not None:
+            elif item.get("prob_map") is not None and item.get("thresh_map") is not None:
                 # Use pre-loaded maps
                 prob_map = torch.from_numpy(item["prob_map"]) if isinstance(item["prob_map"], np.ndarray) else item["prob_map"]
                 thresh_map = torch.from_numpy(item["thresh_map"]) if isinstance(item["thresh_map"], np.ndarray) else item["thresh_map"]
@@ -234,6 +256,18 @@ class DBCollateFN:
     def make_prob_thresh_map(self, image, polygons, filename):
         _, h, w = image.shape
 
+        # BUG-20251110-001: Filter out-of-bounds polygons before map generation
+        # This prevents CUDA errors and numerical instability from invalid polygon coordinates
+        # Attempt to fix degenerate polygons using Shapely before filtering
+        from ocr.utils.polygon_utils import filter_degenerate_polygons
+        polygons = filter_degenerate_polygons(
+            polygons,
+            image_width=float(w),
+            image_height=float(h),
+            attempt_fix=True,  # Attempt to fix degenerate polygons before filtering
+        )
+
+
         prob_map = np.zeros((h, w), dtype=np.float32)
         thresh_map = np.zeros((h, w), dtype=np.float32)
 
@@ -260,8 +294,10 @@ class DBCollateFN:
                 continue
 
             eps = np.finfo(float).eps
+            # BUG-20251109-002: Use larger epsilon for numerical stability
+            min_D = max(eps, 1e-6)  # Minimum D to prevent division by very small values
             D = area * (1 - self.shrink_ratio**2) / (L + eps)
-            if D <= eps:
+            if D <= min_D:
                 continue
             pco = pyclipper.PyclipperOffset()  # type: ignore[attr-defined]
             # pyclipper expects list of polygons, so wrap in list: [[N, 2]]
@@ -303,7 +339,8 @@ class DBCollateFN:
                 for i in range(polygon.shape[0]):
                     j = (i + 1) % polygon.shape[0]
                     absolute_distance = self.distance(xs, ys, polygon[i], polygon[j])
-                    distance_map[i] = np.clip(absolute_distance / D, 0, 1)
+                    # BUG-20251109-002: Add epsilon to prevent division by very small D
+                    distance_map[i] = np.clip(absolute_distance / (D + eps), 0, 1)
                 distance_map = distance_map.min(axis=0)
 
                 xmin_valid = min(max(0, xmin), thresh_map.shape[1] - 1)

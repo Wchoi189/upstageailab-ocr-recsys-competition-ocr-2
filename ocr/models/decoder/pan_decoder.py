@@ -66,7 +66,21 @@ class PANDecoder(BaseDecoder):
         if len(features) != len(self.reduce_convs):
             raise ValueError(f"Expected {len(self.reduce_convs)} feature maps, received {len(features)}.")
 
+        # Validate input features
+        for i, feat in enumerate(features):
+            if torch.isnan(feat).any():
+                raise ValueError(f"NaN values detected in PANDecoder input features[{i}]. Shape: {feat.shape}, Device: {feat.device}")
+            if torch.isinf(feat).any():
+                raise ValueError(f"Inf values detected in PANDecoder input features[{i}]. Shape: {feat.shape}, Device: {feat.device}")
+
         reduced = [conv(feat) for conv, feat in zip(self.reduce_convs, features, strict=False)]
+
+        # Validate reduced features
+        for i, red in enumerate(reduced):
+            if torch.isnan(red).any():
+                raise ValueError(f"NaN values detected in PANDecoder reduced[{i}]. Shape: {red.shape}, Device: {red.device}")
+            if torch.isinf(red).any():
+                raise ValueError(f"Inf values detected in PANDecoder reduced[{i}]. Shape: {red.shape}, Device: {red.device}")
 
         # Top-down pathway
         top_down: list[torch.Tensor] = [reduced[-1]]

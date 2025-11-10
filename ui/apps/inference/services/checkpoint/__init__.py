@@ -20,7 +20,7 @@ Key Features:
 
 Usage:
     >>> from ui.apps.inference.services.checkpoint import build_catalog
-    >>> catalog = build_catalog(outputs_dir=Path("outputs"))
+    >>> catalog = build_catalog(output_dir=Path("outputs"))
     >>> print(f"Found {catalog.total_count} checkpoints")
     >>> print(f"Metadata coverage: {catalog.metadata_coverage_percent:.1f}%")
 """

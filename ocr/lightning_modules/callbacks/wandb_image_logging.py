@@ -168,8 +168,19 @@ class WandbImageLoggingCallback(pl.Callback):
 
     @staticmethod
     def _postprocess_polygons(polygons: Sequence[np.ndarray] | None, image_size: tuple[int, int]) -> list[np.ndarray]:
+        """
+        Post-process polygons for wandb logging.
+
+        BUG-20251110-001: Uses centralized out-of-bounds checking and filtering functions.
+        See: docs/bug_reports/BUG-20251110-001_out-of-bounds-polygon-coordinates-in-training-dataset.md
+        """
         if not polygons:
             return []
+
+        # BUG-20251110-001: Use centralized polygon filtering functions
+        from ocr.utils.polygon_utils import filter_degenerate_polygons, is_polygon_out_of_bounds
+
+        width, height = image_size
 
         def _is_degenerate_polygon(polygon: np.ndarray) -> bool:
             """Check if a polygon is degenerate (has duplicate consecutive points or all points same)."""
@@ -190,9 +201,16 @@ class WandbImageLoggingCallback(pl.Callback):
 
             return False
 
-        processed = [np.array(polygon, copy=True) for polygon in polygons if not _is_degenerate_polygon(polygon)]
+        # Filter degenerate polygons and out-of-bounds polygons
+        processed = []
+        for polygon in polygons:
+            if _is_degenerate_polygon(polygon):
+                continue
+            # BUG-20251110-001: Check for out-of-bounds coordinates
+            if is_polygon_out_of_bounds(polygon, float(width), float(height)):
+                continue
+            processed.append(np.array(polygon, copy=True))
 
-        width, height = image_size
         return processed
 
     @staticmethod

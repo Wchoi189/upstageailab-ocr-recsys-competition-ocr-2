@@ -46,7 +46,7 @@ class CheckpointCatalogBuilder:
 
     def __init__(
         self,
-        outputs_dir: Path,
+        output_dir: Path,
         use_cache: bool = True,
         use_wandb_fallback: bool = True,
         config_filenames: tuple[str, ...] = ("config.yaml", "hparams.yaml"),
@@ -54,12 +54,12 @@ class CheckpointCatalogBuilder:
         """Initialize catalog builder.
 
         Args:
-            outputs_dir: Directory containing experiment outputs
+            output_dir: Directory containing experiment outputs
             use_cache: Whether to enable catalog caching
             use_wandb_fallback: Whether to use Wandb API as fallback
             config_filenames: Config filenames to search for
         """
-        self.outputs_dir = outputs_dir
+        self.output_dir = output_dir
         self.config_filenames = config_filenames
         self.validator = MetadataValidator()
         self.use_cache = use_cache
@@ -86,25 +86,25 @@ class CheckpointCatalogBuilder:
         """
         # Check cache first
         if self.cache:
-            cached = self.cache.get(self.outputs_dir)
+            cached = self.cache.get(self.output_dir)
             if cached is not None:
                 return cached
 
         start_time = time()
 
         # List all checkpoints
-        if not self.outputs_dir.exists():
-            LOGGER.info("Outputs directory not found: %s", self.outputs_dir)
+        if not self.output_dir.exists():
+            LOGGER.info("Output directory not found: %s", self.output_dir)
             return CheckpointCatalog(
                 entries=[],
                 total_count=0,
                 metadata_available_count=0,
                 catalog_build_time_seconds=0.0,
-                outputs_dir=self.outputs_dir,
+                output_dir=self.output_dir,
             )
 
-        checkpoint_paths = sorted(self.outputs_dir.rglob("*.ckpt"))
-        LOGGER.info("Found %d checkpoint files in %s", len(checkpoint_paths), self.outputs_dir)
+        checkpoint_paths = sorted(self.output_dir.rglob("*.ckpt"))
+        LOGGER.info("Found %d checkpoint files in %s", len(checkpoint_paths), self.output_dir)
 
         entries: list[CheckpointCatalogEntry] = []
         metadata_count = 0
@@ -146,12 +146,12 @@ class CheckpointCatalogBuilder:
             total_count=len(entries),
             metadata_available_count=metadata_count,
             catalog_build_time_seconds=build_time,
-            outputs_dir=self.outputs_dir,
+            output_dir=self.output_dir,
         )
 
         # Cache result
         if self.cache:
-            self.cache.set(self.outputs_dir, catalog)
+            self.cache.set(self.output_dir, catalog)
 
         return catalog
 
@@ -460,15 +460,15 @@ class CheckpointCatalogBuilder:
 
 # Public API
 def build_catalog(
-    outputs_dir: Path,
+    output_dir: Path,
     use_cache: bool = True,
     use_wandb_fallback: bool = True,
     config_filenames: tuple[str, ...] = ("config.yaml", "hparams.yaml"),
 ) -> CheckpointCatalog:
-    """Build checkpoint catalog for outputs directory.
+    """Build checkpoint catalog for output directory.
 
     Args:
-        outputs_dir: Directory containing experiment outputs
+        output_dir: Directory containing experiment outputs
         use_cache: Whether to use catalog caching
         use_wandb_fallback: Whether to use Wandb API as fallback when metadata unavailable
         config_filenames: Config filenames to search for
@@ -485,7 +485,7 @@ def build_catalog(
         ...     print(entry.to_display_option())
     """
     builder = CheckpointCatalogBuilder(
-        outputs_dir,
+        output_dir,
         use_cache=use_cache,
         use_wandb_fallback=use_wandb_fallback,
         config_filenames=config_filenames,

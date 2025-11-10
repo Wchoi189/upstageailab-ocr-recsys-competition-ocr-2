@@ -85,8 +85,13 @@ Unit tests, integration tests, and validation procedures.
 ### [🔍 Troubleshooting](troubleshooting/common_errors.md)
 Common issues, debugging guides, and problem resolution.
 
-### [🤖 AI Handbook](ai_handbook/index.md)
-Agent operating procedures, debugging frameworks, and development workflows.
+### [🤖 AI Agent Instructions](agents/system.md)
+Ultra-concise agent instructions and protocols. Single source of truth for AI agents.
+
+**Entry Point**: [`AGENT_ENTRY.md`](../AGENT_ENTRY.md) in project root - Single entry point for all agents.
+
+### [👥 Maintainer Documentation](maintainers/)
+Detailed documentation for human maintainers: onboarding, architecture, experiments, changelog.
 
 ## 🏆 Team
 
@@ -131,7 +136,7 @@ Agent operating procedures, debugging frameworks, and development workflows.
 
 ## 🤝 Contributing
 
-We welcome contributions! Please see our [setup guide](setup/SETUP.md) for development environment setup and our [AI handbook](ai_handbook/index.md) for development workflows.
+We welcome contributions! Please see our [setup guide](setup/SETUP.md) for development environment setup and our [AI agent instructions](agents/system.md) for development workflows.
 
 ## 📄 License
 

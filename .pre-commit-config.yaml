@@ -44,3 +44,10 @@ repos:
         language: system
         pass_filenames: false
         files: ^(ocr/|ui/|configs/|scripts/generate_diagrams\.py)$
+
+      - id: check-duplicate-scripts
+        name: check-duplicate-scripts
+        entry: uv run python scripts/agent_tools/compliance/check_duplicate_scripts.py
+        language: system
+        types: [text]
+        files: ^scripts/agent_tools/.*\.py$

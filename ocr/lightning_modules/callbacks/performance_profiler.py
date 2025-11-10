@@ -185,7 +185,7 @@ class PerformanceProfilerCallback(Callback):
 
         # Log to console
         if self.verbose:
-            print("\n=== Validation Performance Summary ===")
+            print("=== Validation Performance Summary ===")
             print(f"Epoch time: {epoch_time:.2f}s")
             print(
                 f"Batch times: mean={metrics['performance/val_batch_mean']:.3f}s, "
@@ -194,7 +194,7 @@ class PerformanceProfilerCallback(Callback):
             )
             if self.profile_memory and torch.cuda.is_available():
                 print(f"GPU memory: {metrics['performance/gpu_memory_gb']:.2f}GB")
-            print("=" * 40 + "\n")
+            print("=" * 40)
 
         # Log to WandB with monotonic step
         if WANDB_AVAILABLE and wandb.run is not None:  # type: ignore
@@ -240,7 +240,7 @@ class PerformanceProfilerCallback(Callback):
 
         # Log to console
         if self.verbose:
-            print("\n=== Test Performance Summary ===")
+            print("=== Test Performance Summary ===")
             print(f"Epoch time: {epoch_time:.2f}s")
             print(
                 f"Batch times: mean={metrics['performance/test_batch_mean']:.3f}s, "
@@ -249,7 +249,7 @@ class PerformanceProfilerCallback(Callback):
             )
             if self.profile_memory and torch.cuda.is_available():
                 print(f"GPU memory: {metrics['performance/test_gpu_memory_gb']:.2f}GB")
-            print("=" * 40 + "\n")
+            print("=" * 40)
 
         # Log to WandB with separate test step counter
         if WANDB_AVAILABLE and wandb.run is not None:  # type: ignore

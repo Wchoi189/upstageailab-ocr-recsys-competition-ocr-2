@@ -5,6 +5,30 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-11-09
+
+### Added - 2025-11-10
+
+#### Dataset Cleaning Script
+
+- **Added dataset cleaning script** - `scripts/data/clean_dataset.py` scans and cleans training datasets for problematic samples (corrupted images, invalid polygons, out-of-bounds coordinates). See `docs/agents/references/commands.md` for usage.
+
+### Fixed - 2025-11-09
+
+#### BUG-20251109-002: CUDA Illegal Memory Access in BCE Loss Computation
+
+- **Fixed CUDA illegal memory access in BCE loss computation** - Added input validation, CUDA synchronization, and moved operations to CPU
+- **Bug ID:** [BUG-20251109-002](bug_reports/BUG-20251109-002-cuda-illegal-memory-access-in-bce-loss-computation.md)
+- **Code Changes:** [BUG-20251109-002-code-changes.md](bug_reports/BUG-20251109-002-code-changes.md)
+- **Files Changed:**
+  - `ocr/models/loss/bce_loss.py` - Added input validation, CUDA synchronization, moved operations to CPU
+  - `runners/train.py` - Fixed wandb import hanging (related issue)
+  - `ocr/utils/wandb_utils.py` - Made wandb import lazy (related issue)
+  - `ocr/lightning_modules/callbacks/unique_checkpoint.py` - Made wandb import lazy (related issue)
+  - `ocr/lightning_modules/callbacks/wandb_completion.py` - Made wandb import lazy (related issue)
+- **Status:** ⚠️ Partial fix - Error persists (even `.cpu()` fails), suggesting CUDA memory corruption happens earlier in pipeline
+- **Next Steps:** Investigate data pipeline (collate function, dataset creation) and model forward pass
+
 ## [0.2.0] - 2025-10-21
 
 ### Changed - 2025-10-21 (Evening)

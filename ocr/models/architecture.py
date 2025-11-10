@@ -1,5 +1,6 @@
 from typing import Any, cast
 
+import torch
 import torch.nn as nn
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
@@ -24,8 +25,67 @@ class OCRModel(nn.Module):
             self._init_from_components(cfg)
 
     def forward(self, images, return_loss=True, **kwargs):
+        # Validate input images
+        if torch.isnan(images).any():
+            raise ValueError(f"NaN values detected in input images. Shape: {images.shape}, Device: {images.device}")
+        if torch.isinf(images).any():
+            raise ValueError(f"Inf values detected in input images. Shape: {images.shape}, Device: {images.device}")
+
         encoded_features = self.encoder(images)
+
+        # BUG-20251110-001: Validate encoder output
+        # Move to CPU before checking to avoid CUDA illegal instruction errors
+        try:
+            if isinstance(encoded_features, list):
+                for i, feat in enumerate(encoded_features):
+                    # BUG-20251110-001: Move to CPU before checking for NaN/Inf
+                    try:
+                        feat_cpu = feat.detach().cpu()
+                        if torch.isnan(feat_cpu).any():
+                            raise ValueError(f"NaN values detected in encoder output[{i}]. Shape: {feat.shape}, Device: {feat.device}")
+                        if torch.isinf(feat_cpu).any():
+                            raise ValueError(f"Inf values detected in encoder output[{i}]. Shape: {feat.shape}, Device: {feat.device}")
+                    except RuntimeError as e:
+                        error_msg = str(e)
+                        if "CUDA" in error_msg or "cuda" in error_msg or "illegal" in error_msg.lower():
+                            raise RuntimeError(
+                                f"CUDA error detected while validating encoder output[{i}]. "
+                                f"This indicates CUDA memory corruption. Original error: {e}"
+                            ) from e
+                        raise
+            else:
+                # BUG-20251110-001: Move to CPU before checking for NaN/Inf
+                try:
+                    features_cpu = encoded_features.detach().cpu()
+                    if torch.isnan(features_cpu).any():
+                        raise ValueError(f"NaN values detected in encoder output. Shape: {encoded_features.shape}, Device: {encoded_features.device}")
+                    if torch.isinf(features_cpu).any():
+                        raise ValueError(f"Inf values detected in encoder output. Shape: {encoded_features.shape}, Device: {encoded_features.device}")
+                except RuntimeError as e:
+                    error_msg = str(e)
+                    if "CUDA" in error_msg or "cuda" in error_msg or "illegal" in error_msg.lower():
+                        raise RuntimeError(
+                            f"CUDA error detected while validating encoder output. "
+                            f"This indicates CUDA memory corruption. Original error: {e}"
+                        ) from e
+                    raise
+        except RuntimeError as e:
+            error_msg = str(e)
+            if "CUDA" in error_msg or "cuda" in error_msg or "illegal" in error_msg.lower():
+                raise RuntimeError(
+                    f"CUDA error detected in encoder validation. "
+                    f"This indicates CUDA memory corruption. Original error: {e}"
+                ) from e
+            raise
+
         decoded_features = self.decoder(encoded_features)
+
+        # Validate decoder output
+        if torch.isnan(decoded_features).any():
+            raise ValueError(f"NaN values detected in decoder output. Shape: {decoded_features.shape}, Device: {decoded_features.device}")
+        if torch.isinf(decoded_features).any():
+            raise ValueError(f"Inf values detected in decoder output. Shape: {decoded_features.shape}, Device: {decoded_features.device}")
+
         pred = self.head(decoded_features, return_loss)
 
         # Loss 계산

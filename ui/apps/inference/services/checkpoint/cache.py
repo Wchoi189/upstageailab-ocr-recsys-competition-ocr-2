@@ -20,7 +20,7 @@ LOGGER = logging.getLogger(__name__)
 class CatalogCache:
     """LRU cache for checkpoint catalog builds.
 
-    Cache invalidation is based on the outputs directory modification time,
+    Cache invalidation is based on the output directory modification time,
     ensuring stale catalogs are rebuilt when new checkpoints are added.
     """
 
@@ -33,55 +33,55 @@ class CatalogCache:
         self.maxsize = maxsize
         self._cache: dict[str, CheckpointCatalog] = {}
 
-    def get_cache_key(self, outputs_dir: Path) -> str:
-        """Generate cache key for outputs directory.
+    def get_cache_key(self, output_dir: Path) -> str:
+        """Generate cache key for output directory.
 
         Cache key includes:
         - Absolute path hash
         - Directory modification time (for invalidation)
 
         Args:
-            outputs_dir: Outputs directory
+            output_dir: Output directory
 
         Returns:
             Cache key string
         """
         try:
-            mtime = outputs_dir.stat().st_mtime
+            mtime = output_dir.stat().st_mtime
         except OSError:
             # Directory doesn't exist or is inaccessible
             mtime = 0
 
-        path_hash = hashlib.md5(str(outputs_dir.absolute()).encode()).hexdigest()[:8]
+        path_hash = hashlib.md5(str(output_dir.absolute()).encode()).hexdigest()[:8]
         return f"{path_hash}:{mtime:.0f}"
 
-    def get(self, outputs_dir: Path) -> CheckpointCatalog | None:
-        """Get cached catalog for outputs directory.
+    def get(self, output_dir: Path) -> CheckpointCatalog | None:
+        """Get cached catalog for output directory.
 
         Args:
-            outputs_dir: Outputs directory
+            output_dir: Output directory
 
         Returns:
             Cached catalog, or None if not in cache or stale
         """
-        cache_key = self.get_cache_key(outputs_dir)
+        cache_key = self.get_cache_key(output_dir)
         catalog = self._cache.get(cache_key)
 
         if catalog is not None:
-            LOGGER.debug("Cache hit for %s", outputs_dir)
+            LOGGER.debug("Cache hit for %s", output_dir)
         else:
-            LOGGER.debug("Cache miss for %s", outputs_dir)
+            LOGGER.debug("Cache miss for %s", output_dir)
 
         return catalog
 
-    def set(self, outputs_dir: Path, catalog: CheckpointCatalog) -> None:
-        """Cache catalog for outputs directory.
+    def set(self, output_dir: Path, catalog: CheckpointCatalog) -> None:
+        """Cache catalog for output directory.
 
         Args:
-            outputs_dir: Outputs directory
+            output_dir: Output directory
             catalog: Catalog to cache
         """
-        cache_key = self.get_cache_key(outputs_dir)
+        cache_key = self.get_cache_key(output_dir)
 
         # Simple LRU: remove oldest if at capacity
         if len(self._cache) >= self.maxsize:
@@ -91,7 +91,7 @@ class CatalogCache:
             LOGGER.debug("Cache eviction: %s", oldest_key)
 
         self._cache[cache_key] = catalog
-        LOGGER.debug("Cached catalog for %s (%d entries)", outputs_dir, catalog.total_count)
+        LOGGER.debug("Cached catalog for %s (%d entries)", output_dir, catalog.total_count)
 
     def clear(self) -> None:
         """Clear all cached catalogs."""

@@ -156,7 +156,52 @@ class DBHead(BaseHead):
             return nn.ConvTranspose2d(in_channels, out_channels, 2, 2)
 
     def _step_function(self, x, y):
-        return torch.reciprocal(1 + torch.exp(-self.k * (x - y)))
+        """
+        Differentiable step function for binarization.
+
+        BUG-20251110-002: Fixed numerical instability causing NaN gradients.
+        Original: torch.reciprocal(1 + torch.exp(-k * (x - y))) with k=50
+        - Caused exp overflow when x - y is negative (e.g., exp(50) ≈ 5e21)
+        - Led to NaN gradients propagating through backprop at step ~122
+
+        Fix: Use torch.sigmoid which is mathematically equivalent but numerically stable.
+        sigmoid(k*z) = 1 / (1 + exp(-k*z)) but with built-in overflow protection.
+
+        See: docs/bug_reports/BUG-20251110-002-nan-gradients-from-step-function-overflow.md
+
+        Args:
+            x: Probability maps from sigmoid, range [0, 1], shape (B, 1, H, W)
+            y: Threshold maps from sigmoid, range [0, 1], shape (B, 1, H, W)
+
+        Returns:
+            Binary map from differentiable binarization, range [0, 1], shape (B, 1, H, W)
+        """
+        # BUG-20251110-002: Clamp inputs to prevent extreme values
+        # Even though x and y are from sigmoid (range [0,1]), numerical errors could produce
+        # values slightly outside this range, which get amplified by k=50
+        x_clamped = torch.clamp(x, 0.0, 1.0)
+        y_clamped = torch.clamp(y, 0.0, 1.0)
+
+        # BUG-20251110-002: Use sigmoid instead of reciprocal + exp for numerical stability
+        # This is mathematically equivalent but handles extreme values gracefully
+        # sigmoid(k*(x-y)) = 1 / (1 + exp(-k*(x-y)))
+        result = torch.sigmoid(self.k * (x_clamped - y_clamped))
+
+        # BUG-20251110-002: Validate output to catch any remaining numerical issues
+        # This should never trigger with sigmoid, but acts as a safety check
+        if torch.isnan(result).any() or torch.isinf(result).any():
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(
+                f"NaN/Inf detected in step function output. "
+                f"x range: [{x.min().item():.6f}, {x.max().item():.6f}], "
+                f"y range: [{y.min().item():.6f}, {y.max().item():.6f}], "
+                f"result range: [{result.min().item():.6f}, {result.max().item():.6f}]"
+            )
+            # Clamp to valid range as fallback
+            result = torch.clamp(result, 0.0, 1.0)
+
+        return result
 
     def forward(self, x: torch.Tensor, return_loss: bool = True) -> dict[str, torch.Tensor]:
         """Produce predictions from decoded features.
@@ -174,6 +219,17 @@ class DBHead(BaseHead):
         else:
             fuse = x
 
+        # Validate input tensor before convolution operations
+        # CUDA illegal instruction errors often occur due to invalid input data
+        if torch.isnan(fuse).any():
+            raise ValueError(f"NaN values detected in input tensor to DBHead.forward(). Shape: {fuse.shape}, Device: {fuse.device}")
+        if torch.isinf(fuse).any():
+            raise ValueError(f"Inf values detected in input tensor to DBHead.forward(). Shape: {fuse.shape}, Device: {fuse.device}")
+        if fuse.numel() == 0:
+            raise ValueError(f"Empty tensor passed to DBHead.forward(). Shape: {fuse.shape}")
+        if fuse.shape[2] < 1 or fuse.shape[3] < 1:
+            raise ValueError(f"Invalid spatial dimensions in input tensor. Shape: {fuse.shape}, expected (B, C, H, W) with H, W >= 1")
+
         # Probability logits and map (alias prob_maps for downstream post-processing)
         binary_logits = self.binarize(fuse)
         prob_maps = self.prob_activation(binary_logits)
@@ -181,6 +237,34 @@ class DBHead(BaseHead):
         if return_loss:
             # Threshold map
             thresh = self.thresh(fuse)
+
+            # BUG-20251110-002: Validate thresh map before step function to catch numerical issues early
+            if torch.isnan(thresh).any():
+                raise ValueError(
+                    f"NaN values detected in thresh map. "
+                    f"Shape: {thresh.shape}, Device: {thresh.device}, "
+                    f"Range: [{thresh.min().item():.6f}, {thresh.max().item():.6f}]"
+                )
+            if torch.isinf(thresh).any():
+                raise ValueError(
+                    f"Inf values detected in thresh map. "
+                    f"Shape: {thresh.shape}, Device: {thresh.device}, "
+                    f"Range: [{thresh.min().item():.6f}, {thresh.max().item():.6f}]"
+                )
+
+            # BUG-20251110-002: Validate prob_maps before step function
+            if torch.isnan(prob_maps).any():
+                raise ValueError(
+                    f"NaN values detected in prob_maps. "
+                    f"Shape: {prob_maps.shape}, Device: {prob_maps.device}, "
+                    f"Range: [{prob_maps.min().item():.6f}, {prob_maps.max().item():.6f}]"
+                )
+            if torch.isinf(prob_maps).any():
+                raise ValueError(
+                    f"Inf values detected in prob_maps. "
+                    f"Shape: {prob_maps.shape}, Device: {prob_maps.device}, "
+                    f"Range: [{prob_maps.min().item():.6f}, {prob_maps.max().item():.6f}]"
+                )
 
             # Approximate Binary map
             thresh_binary = self._step_function(prob_maps, thresh)

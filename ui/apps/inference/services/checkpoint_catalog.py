@@ -50,23 +50,23 @@ _CONFIG_SUFFIXES = (".config.json", ".config.yaml", ".config.yml")
 
 @dataclass(slots=True)
 class CatalogOptions:
-    outputs_dir: Path
+    output_dir: Path
     hydra_config_filenames: tuple[str, ...]
 
     @classmethod
     def from_paths(cls, paths: PathConfig) -> CatalogOptions:
-        outputs_dir = paths.outputs_dir
-        if not outputs_dir.is_absolute():
-            outputs_dir = _discover_outputs_path(outputs_dir)
-        return cls(outputs_dir=outputs_dir, hydra_config_filenames=tuple(paths.hydra_config_filenames))
+        output_dir = paths.output_dir
+        if not output_dir.is_absolute():
+            output_dir = _discover_outputs_path(output_dir)
+        return cls(output_dir=output_dir, hydra_config_filenames=tuple(paths.hydra_config_filenames))
 
 
 def build_catalog(options: CatalogOptions, schema: ModelCompatibilitySchema | None = None) -> list[CheckpointMetadata]:
     if schema is None:
         schema = load_schema()
 
-    if not options.outputs_dir.exists():
-        LOGGER.info("Outputs directory not found at %s", options.outputs_dir)
+    if not options.output_dir.exists():
+        LOGGER.info("Output directory not found at %s", options.output_dir)
         return []
 
     records: list[CheckpointMetadata] = []
@@ -113,11 +113,11 @@ def _build_lightweight_catalog_v2(options: CatalogOptions) -> list[CheckpointInf
     Returns:
         List of CheckpointInfo objects
     """
-    LOGGER.info("Building catalog using V2 system (outputs_dir=%s)", options.outputs_dir)
+    LOGGER.info("Building catalog using V2 system (output_dir=%s)", options.output_dir)
 
     # Use V2 catalog builder
     builder = CheckpointCatalogBuilder(
-        outputs_dir=options.outputs_dir,
+        output_dir=options.output_dir,
         use_cache=True,
         use_wandb_fallback=True,
         config_filenames=options.hydra_config_filenames,
@@ -150,8 +150,8 @@ def _build_lightweight_catalog_legacy(options: CatalogOptions) -> list[Checkpoin
     Returns:
         List of CheckpointInfo objects
     """
-    if not options.outputs_dir.exists():
-        LOGGER.info("Outputs directory not found at %s", options.outputs_dir)
+    if not options.output_dir.exists():
+        LOGGER.info("Output directory not found at %s", options.output_dir)
         return []
 
     infos: list[CheckpointInfo] = []
@@ -192,7 +192,7 @@ def _convert_v2_entry_to_checkpoint_info(entry: CheckpointCatalogEntry) -> Check
 
 
 def _list_checkpoints(options: CatalogOptions) -> list[Path]:
-    return sorted(options.outputs_dir.rglob("*.ckpt"))
+    return sorted(options.output_dir.rglob("*.ckpt"))
 
 
 def _collect_basic_info(checkpoint_path: Path, options: CatalogOptions) -> CheckpointInfo:

@@ -512,7 +512,7 @@ class CheckpointCatalog(BaseModel):
         total_count: Total number of checkpoints found
         metadata_available_count: Number of checkpoints with .metadata.yaml files
         catalog_build_time_seconds: Time taken to build catalog
-        outputs_dir: Outputs directory scanned
+        output_dir: Output directory scanned
     """
 
     entries: list[CheckpointCatalogEntry] = Field(
@@ -538,9 +538,9 @@ class CheckpointCatalog(BaseModel):
         description="Time taken to build catalog",
     )
 
-    outputs_dir: Path = Field(
+    output_dir: Path = Field(
         ...,
-        description="Outputs directory scanned",
+        description="Output directory scanned",
     )
 
     @property

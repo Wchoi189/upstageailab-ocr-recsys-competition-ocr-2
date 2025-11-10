@@ -41,26 +41,26 @@ class MetadataCallback(Callback):
 
     Attributes:
         exp_name: Experiment name (from config)
-        outputs_dir: Outputs directory (from Hydra)
+        output_dir: Output directory (from Hydra)
         training_phase: Training phase identifier
     """
 
     def __init__(
         self,
         exp_name: str | None = None,
-        outputs_dir: str | Path | None = None,
+        output_dir: str | Path | None = None,
         training_phase: str = "training",
     ):
         """Initialize metadata callback.
 
         Args:
             exp_name: Experiment name (usually from config.exp_name)
-            outputs_dir: Outputs directory path
+            output_dir: Output directory path
             training_phase: Training phase ("training", "validation", "finetuning")
         """
         super().__init__()
         self.exp_name = exp_name or "unknown_experiment"
-        self.outputs_dir = Path(outputs_dir) if outputs_dir else None
+        self.output_dir = Path(output_dir) if output_dir else None
         self.training_phase = training_phase
 
     def on_save_checkpoint(
@@ -211,13 +211,13 @@ class MetadataCallback(Callback):
                 # Fallback: use parent directory name
                 exp_name = checkpoint_path.parent.parent.name
 
-            # Get relative checkpoint path (from outputs directory)
-            if self.outputs_dir:
+            # Get relative checkpoint path (from output directory)
+            if self.output_dir:
                 try:
-                    relative_path = checkpoint_path.relative_to(self.outputs_dir)
+                    relative_path = checkpoint_path.relative_to(self.output_dir)
                     checkpoint_path_str = str(relative_path)
                 except ValueError:
-                    # Not relative to outputs_dir
+                    # Not relative to output_dir
                     checkpoint_path_str = str(checkpoint_path)
             else:
                 checkpoint_path_str = str(checkpoint_path)
@@ -483,9 +483,9 @@ class MetadataCallback(Callback):
         hydra_config = checkpoint_path.parent.parent / ".hydra" / "config.yaml"
 
         if hydra_config.exists():
-            if self.outputs_dir:
+            if self.output_dir:
                 try:
-                    return str(hydra_config.relative_to(self.outputs_dir))
+                    return str(hydra_config.relative_to(self.output_dir))
                 except ValueError:
                     return str(hydra_config)
             return str(hydra_config)

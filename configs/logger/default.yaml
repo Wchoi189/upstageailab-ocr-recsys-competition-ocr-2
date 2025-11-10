@@ -4,3 +4,6 @@ defaults:
   - wandb
   - csv
   - _self_
+
+exp_version: "v1.0"
+project_name: "receipt-text-recognition-ocr-project"
