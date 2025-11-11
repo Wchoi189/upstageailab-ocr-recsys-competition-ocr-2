@@ -162,6 +162,91 @@ class PolygonData(BaseModel):
         return value.astype(np.float32)
 
 
+class ValidatedPolygonData(PolygonData):
+    """Polygon with additional bounds validation against image dimensions.
+
+    This model extends PolygonData with validation to ensure all polygon coordinates
+    are within the image boundaries, preventing out-of-bounds access errors
+    (addresses BUG-20251110-001: 26.5% data corruption from invalid coordinates).
+
+    Attributes:
+        points: Polygon coordinates as (N, 2) array
+        confidence: Optional confidence score for the polygon
+        label: Optional text label for the polygon
+        image_width: Width of the image for bounds checking
+        image_height: Height of the image for bounds checking
+
+    Raises:
+        ValueError: If any coordinate falls outside image bounds [0, width) x [0, height)
+
+    Example:
+        >>> polygon = ValidatedPolygonData(
+        ...     points=np.array([[10, 20], [30, 40], [50, 60]]),
+        ...     image_width=100,
+        ...     image_height=100
+        ... )  # Valid polygon
+        >>> polygon = ValidatedPolygonData(
+        ...     points=np.array([[10, 20], [30, 40], [150, 60]]),
+        ...     image_width=100,
+        ...     image_height=100
+        ... )  # Raises ValueError: x-coordinate 150.0 exceeds image width 100
+    """
+
+    image_width: int = Field(gt=0, description="Image width for bounds checking")
+    image_height: int = Field(gt=0, description="Image height for bounds checking")
+
+    @field_validator("points")
+    @classmethod
+    def validate_bounds(cls, points: np.ndarray, info: ValidationInfo) -> np.ndarray:
+        """Validate that all polygon coordinates are within image bounds.
+
+        Args:
+            points: Polygon coordinates as (N, 2) array
+            info: Validation context containing image_width and image_height
+
+        Returns:
+            The validated points array
+
+        Raises:
+            ValueError: If any coordinate is out of bounds with detailed error message
+        """
+        if info.data is None:
+            return points
+
+        image_width = info.data.get("image_width")
+        image_height = info.data.get("image_height")
+
+        if image_width is None or image_height is None:
+            # If dimensions not provided, skip bounds checking
+            return points
+
+        # Check x-coordinates (width)
+        x_coords = points[:, 0]
+        invalid_x = (x_coords < 0) | (x_coords >= image_width)
+        if invalid_x.any():
+            invalid_indices = np.where(invalid_x)[0]
+            invalid_values = x_coords[invalid_indices]
+            raise ValueError(
+                f"Polygon has out-of-bounds x-coordinates: "
+                f"indices {invalid_indices.tolist()} have values {invalid_values.tolist()} "
+                f"(must be in [0, {image_width}))"
+            )
+
+        # Check y-coordinates (height)
+        y_coords = points[:, 1]
+        invalid_y = (y_coords < 0) | (y_coords >= image_height)
+        if invalid_y.any():
+            invalid_indices = np.where(invalid_y)[0]
+            invalid_values = y_coords[invalid_indices]
+            raise ValueError(
+                f"Polygon has out-of-bounds y-coordinates: "
+                f"indices {invalid_indices.tolist()} have values {invalid_values.tolist()} "
+                f"(must be in [0, {image_height}))"
+            )
+
+        return points
+
+
 class TransformInput(BaseModel):
     """Input payload for the OCR transform pipeline."""
 

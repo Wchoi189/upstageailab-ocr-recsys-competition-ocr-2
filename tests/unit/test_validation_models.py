@@ -5,6 +5,7 @@ import pytest
 import torch
 from pydantic import ValidationError
 
+from ocr.datasets.schemas import ValidatedPolygonData
 from ocr.validation.models import (
     BatchSample,
     CollateOutput,
@@ -15,6 +16,148 @@ from ocr.validation.models import (
     TransformOutput,
     validate_predictions,
 )
+
+
+class TestValidatedPolygonData:
+    """Test the ValidatedPolygonData model with bounds checking.
+
+    This model addresses BUG-20251110-001: 26.5% data corruption from out-of-bounds coordinates.
+    """
+
+    def test_valid_polygon_within_bounds(self):
+        """Test that valid polygons within image bounds pass validation."""
+        points = np.array([[10.0, 20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        polygon = ValidatedPolygonData(
+            points=points,
+            image_width=100,
+            image_height=100
+        )
+        assert polygon.points.shape == (3, 2)
+        assert polygon.image_width == 100
+        assert polygon.image_height == 100
+
+    def test_valid_polygon_at_boundaries(self):
+        """Test that polygons with coordinates at exact boundaries are valid."""
+        points = np.array([[0.0, 0.0], [99.0, 99.0], [50.0, 50.0]], dtype=np.float32)
+        polygon = ValidatedPolygonData(
+            points=points,
+            image_width=100,
+            image_height=100
+        )
+        assert polygon.points.shape == (3, 2)
+
+    def test_invalid_x_coordinate_exceeds_width(self):
+        """Test that polygons with x-coordinates exceeding image width raise ValidationError."""
+        points = np.array([[10.0, 20.0], [150.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        assert "out-of-bounds x-coordinates" in error_msg
+        assert "150" in error_msg or "150.0" in error_msg
+        assert "[0, 100)" in error_msg
+
+    def test_invalid_y_coordinate_exceeds_height(self):
+        """Test that polygons with y-coordinates exceeding image height raise ValidationError."""
+        points = np.array([[10.0, 20.0], [30.0, 150.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        assert "out-of-bounds y-coordinates" in error_msg
+        assert "150" in error_msg or "150.0" in error_msg
+        assert "[0, 100)" in error_msg
+
+    def test_invalid_negative_x_coordinate(self):
+        """Test that polygons with negative x-coordinates raise ValidationError."""
+        points = np.array([[-10.0, 20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        assert "out-of-bounds x-coordinates" in error_msg
+
+    def test_invalid_negative_y_coordinate(self):
+        """Test that polygons with negative y-coordinates raise ValidationError."""
+        points = np.array([[10.0, -20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        assert "out-of-bounds y-coordinates" in error_msg
+
+    def test_invalid_multiple_out_of_bounds_coordinates(self):
+        """Test that polygons with multiple out-of-bounds coordinates raise ValidationError."""
+        points = np.array([[-10.0, 20.0], [150.0, 40.0], [50.0, 200.0]], dtype=np.float32)
+        with pytest.raises(ValidationError):
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+
+    def test_valid_polygon_with_confidence_and_label(self):
+        """Test that ValidatedPolygonData with confidence and label works correctly."""
+        points = np.array([[10.0, 20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        polygon = ValidatedPolygonData(
+            points=points,
+            image_width=100,
+            image_height=100,
+            confidence=0.95,
+            label="text"
+        )
+        assert polygon.confidence == 0.95
+        assert polygon.label == "text"
+
+    def test_coordinate_at_exact_width_boundary_is_invalid(self):
+        """Test that coordinates at exactly image_width are invalid (exclusive upper bound)."""
+        points = np.array([[10.0, 20.0], [100.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        assert "out-of-bounds x-coordinates" in error_msg
+
+    def test_coordinate_at_exact_height_boundary_is_invalid(self):
+        """Test that coordinates at exactly image_height are invalid (exclusive upper bound)."""
+        points = np.array([[10.0, 20.0], [30.0, 100.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        assert "out-of-bounds y-coordinates" in error_msg
+
+    def test_error_message_indicates_which_coordinates_are_invalid(self):
+        """Test that error messages clearly indicate which coordinates are out of bounds."""
+        points = np.array([[10.0, 20.0], [150.0, 40.0], [50.0, 60.0]], dtype=np.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedPolygonData(
+                points=points,
+                image_width=100,
+                image_height=100
+            )
+        error_msg = str(exc_info.value)
+        # Should indicate index 1 is invalid
+        assert "indices" in error_msg.lower() or "index" in error_msg.lower()
+        assert "values" in error_msg.lower() or "value" in error_msg.lower()
 
 
 class TestPolygonArray:
