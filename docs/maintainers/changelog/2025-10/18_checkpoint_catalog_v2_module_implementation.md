@@ -2,7 +2,7 @@
 
 **Date**: 2025-10-18
 **Status**: Phase 1 Complete ✅
-**Related**: [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md) | [Analysis](18_checkpoint_catalog_analysis.md) | [Architecture Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+**Related**: Refactor Plan | [Analysis](18_checkpoint_catalog_analysis.md) | Architecture Design
 
 ## Summary
 
@@ -354,22 +354,22 @@ Test catalog builder with:
 ## Files Created
 
 1. **Module Implementation**:
-   - [ui/apps/inference/services/checkpoint/__init__.py](../../../../ui/apps/inference/services/checkpoint/__init__.py)
-   - [ui/apps/inference/services/checkpoint/types.py](../../../../ui/apps/inference/services/checkpoint/types.py)
-   - [ui/apps/inference/services/checkpoint/metadata_loader.py](../../../../ui/apps/inference/services/checkpoint/metadata_loader.py)
-   - [ui/apps/inference/services/checkpoint/config_resolver.py](../../../../ui/apps/inference/services/checkpoint/config_resolver.py)
-   - [ui/apps/inference/services/checkpoint/validator.py](../../../../ui/apps/inference/services/checkpoint/validator.py)
-   - [ui/apps/inference/services/checkpoint/inference_engine.py](../../../../ui/apps/inference/services/checkpoint/inference_engine.py)
-   - [ui/apps/inference/services/checkpoint/cache.py](../../../../ui/apps/inference/services/checkpoint/cache.py)
-   - [ui/apps/inference/services/checkpoint/catalog.py](../../../../ui/apps/inference/services/checkpoint/catalog.py)
+   - ui/apps/inference/services/checkpoint/__init__.py
+   - ui/apps/inference/services/checkpoint/types.py
+   - ui/apps/inference/services/checkpoint/metadata_loader.py
+   - ui/apps/inference/services/checkpoint/config_resolver.py
+   - ui/apps/inference/services/checkpoint/validator.py
+   - ui/apps/inference/services/checkpoint/inference_engine.py
+   - ui/apps/inference/services/checkpoint/cache.py
+   - ui/apps/inference/services/checkpoint/catalog.py
 
 2. **Documentation**:
    - [docs/ai_handbook/05_changelog/2025-10/18_checkpoint_catalog_analysis.md](18_checkpoint_catalog_analysis.md)
-   - [docs/ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+   - docs/ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md
    - [docs/ai_handbook/05_changelog/2025-10/18_checkpoint_catalog_v2_module_implementation.md](18_checkpoint_catalog_v2_module_implementation.md) (this file)
 
 3. **Planning**:
-   - [checkpoint_catalog_refactor_plan.md](../../../../checkpoint_catalog_refactor_plan.md) (updated)
+   - checkpoint_catalog_refactor_plan.md (updated)
 
 ---
 

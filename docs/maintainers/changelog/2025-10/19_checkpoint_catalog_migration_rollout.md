@@ -302,9 +302,9 @@ cat outputs/your_exp/checkpoints/best.ckpt.metadata.yaml
 ## References
 
 - Implementation Plan: [checkpoint_catalog_refactor_plan.md](../../planning/checkpoint_catalog_refactor_plan.md)
-- Conversion Tool: [scripts/generate_checkpoint_metadata.py](../../../../scripts/generate_checkpoint_metadata.py)
-- MetadataCallback: [ocr/lightning_modules/callbacks/metadata_callback.py](../../../../ocr/lightning_modules/callbacks/metadata_callback.py)
-- V2 Architecture Design: [checkpoint_catalog_v2_design.md](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+- Conversion Tool: scripts/generate_checkpoint_metadata.py
+- MetadataCallback: ocr/lightning_modules/callbacks/metadata_callback.py
+- V2 Architecture Design: checkpoint_catalog_v2_design.md
 - CHANGELOG Entry: [docs/CHANGELOG.md](../../../CHANGELOG.md)
 
 ## Author

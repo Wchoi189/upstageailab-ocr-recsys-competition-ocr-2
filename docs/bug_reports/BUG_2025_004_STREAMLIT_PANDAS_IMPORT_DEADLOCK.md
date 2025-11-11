@@ -212,8 +212,8 @@ def _render_results_table(state: InferenceState, config: UIConfig) -> None:
 ## Related Files
 
 - **Fixed:** [`ui/apps/inference/components/results.py`](../../ui/apps/inference/components/results.py)
-- **Changelog:** [`docs/ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md`](../ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md)
-- **Debugging Tools:** [`START_HERE.md`](../../START_HERE.md), [`DEBUGGING_TOOLKIT.md`](../../DEBUGGING_TOOLKIT.md)
+- **Changelog:** `docs/ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md`
+- **Debugging Tools:** `START_HERE.md`, `DEBUGGING_TOOLKIT.md`
 
 ---
 

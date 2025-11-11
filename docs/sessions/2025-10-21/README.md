@@ -19,7 +19,7 @@
 
 ### 📋 Related Planning
 
-- **[../../ai_handbook/08_planning/APP_REFACTOR_PLAN.md](../../ai_handbook/08_planning/APP_REFACTOR_PLAN.md)** - Multi-page refactoring plan
+- **../../ai_handbook/08_planning/APP_REFACTOR_PLAN.md** - Multi-page refactoring plan
 
 ---
 

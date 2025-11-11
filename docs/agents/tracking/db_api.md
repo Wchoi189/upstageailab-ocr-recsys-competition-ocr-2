@@ -674,6 +674,6 @@ print(f"Database location: {DB_PATH}")
 ## See Also
 
 - [Tracking CLI Quick Reference](cli_reference.md) - Tracking commands and status recipes
-- [Tracking Query Module](../../scripts/agent_tools/utilities/tracking/query.py) - Ultra-concise status queries for chat integration (`get_status()`)
-- [Tracking CLI Module](../../scripts/agent_tools/utilities/tracking/cli.py) - Command-line interface for tracking operations
-- [Streamlit Tracking Dashboard](../../streamlit_app/pages/10_Tracking_Dashboard.py) - Visual dashboard
+- Tracking Query Module - Ultra-concise status queries for chat integration (`get_status()`)
+- Tracking CLI Module - Command-line interface for tracking operations
+- Streamlit Tracking Dashboard - Visual dashboard

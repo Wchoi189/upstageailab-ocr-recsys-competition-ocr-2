@@ -2,7 +2,7 @@
 **Date:** 2025-10-07
 **Status:** In Planning
 **Owner:** AI Agent Collaboration
-**Related:** [performance_optimization_plan.md](./performance_optimization_plan.md)
+**Related:** performance_optimization_plan.md
 
 ## Executive Summary
 
@@ -455,10 +455,10 @@ Before merging any phase:
 
 ## References
 
-- **Main Plan:** [performance_optimization_plan.md](./performance_optimization_plan.md)
-- **Modular Refactor Protocol:** [02_protocols/05_modular_refactor.md](../02_protocols/05_modular_refactor.md)
-- **Training Protocol:** [02_protocols/13_training_protocol.md](../02_protocols/13_training_protocol.md)
-- **Existing Tests:** [tests/performance/test_polygon_caching.py](../../tests/performance/test_polygon_caching.py)
+- **Main Plan:** performance_optimization_plan.md
+- **Modular Refactor Protocol:** 02_protocols/05_modular_refactor.md
+- **Training Protocol:** 02_protocols/13_training_protocol.md
+- **Existing Tests:** tests/performance/test_polygon_caching.py
 
 ---
 

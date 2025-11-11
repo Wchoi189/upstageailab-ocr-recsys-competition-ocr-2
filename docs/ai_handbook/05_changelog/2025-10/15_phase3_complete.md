@@ -3,7 +3,7 @@
 **Date**: 2025-10-15
 **Status**: ✅ COMPLETE
 **Branch**: 11_refactor/preprocessing
-**Related Blueprint**: [advanced_preprocessing_living_blueprint.md](../08_planning/advanced_preprocessing_living_blueprint.md)
+**Related Blueprint**: advanced_preprocessing_living_blueprint.md
 
 ## Summary
 
@@ -325,7 +325,7 @@ $ python -m pytest tests/integration/test_phase3_pipeline_integration.py -v
   - Migration guide
 
 **Updated Documentation**:
-- [Advanced Preprocessing Living Blueprint](../08_planning/advanced_preprocessing_living_blueprint.md)
+- Advanced Preprocessing Living Blueprint
   - Updated progress tracker
   - Phase 3 marked complete
   - Next task set to "Production deployment preparation"

@@ -36,15 +36,15 @@ This would have **failed competition evaluation!**
 ### Root Cause
 
 Three locations were using commas instead of spaces:
-1. [engine.py:259](ui/utils/inference/engine.py#L259) - Main inference engine
-2. [inference_runner.py:246](ui/apps/inference/services/inference_runner.py#L246) - Mock predictions
-3. [data_contracts.py:63](ui/apps/inference/models/data_contracts.py#L63) - Pydantic validator
+1. engine.py:259 - Main inference engine
+2. inference_runner.py:246 - Mock predictions
+3. data_contracts.py:63 - Pydantic validator
 
 ### Solution
 
 **Changed all coordinate separators from `,` to ` ` (space)**
 
-#### 1. Inference Engine ([engine.py:260](ui/utils/inference/engine.py#L260))
+#### 1. Inference Engine (engine.py:260)
 ```python
 # Before:
 serialised.append(",".join(str(int(round(value))) for value in flat))
@@ -54,7 +54,7 @@ serialised.append(",".join(str(int(round(value))) for value in flat))
 serialised.append(" ".join(str(int(round(value))) for value in flat))
 ```
 
-#### 2. Mock Predictions ([inference_runner.py:247](ui/apps/inference/services/inference_runner.py#L247))
+#### 2. Mock Predictions (inference_runner.py:247)
 ```python
 # Before:
 polygons="|".join(f"{b[0]},{b[1]},{b[2]},{b[1]},{b[2]},{b[3]},{b[0]},{b[3]}" for b in mock_boxes)
@@ -64,7 +64,7 @@ polygons="|".join(f"{b[0]},{b[1]},{b[2]},{b[1]},{b[2]},{b[3]},{b[0]},{b[3]}" for
 polygons="|".join(f"{b[0]} {b[1]} {b[2]} {b[1]} {b[2]} {b[3]} {b[0]} {b[3]}" for b in mock_boxes)
 ```
 
-#### 3. Pydantic Validator ([data_contracts.py:65](ui/apps/inference/models/data_contracts.py#L65))
+#### 3. Pydantic Validator (data_contracts.py:65)
 ```python
 # Before:
 coords = polygon_str.split(",")
@@ -76,7 +76,7 @@ coords = polygon_str.split()
 
 ### Verification
 
-Updated [test_submission_writer.py](tests/unit/test_submission_writer.py) with space-separated test data:
+Updated test_submission_writer.py with space-separated test data:
 
 ```bash
 $ python -m pytest tests/unit/test_submission_writer.py -v
@@ -87,7 +87,7 @@ $ python -m pytest tests/unit/test_submission_writer.py -v
 ### Impact
 
 - **Before:** 🔴 **100% of submissions would fail** - incorrect format
-- **After:** ✅ **Competition-compliant** - matches [sample_submission.csv](datasets/sample_submission.csv)
+- **After:** ✅ **Competition-compliant** - matches sample_submission.csv
 
 ---
 
@@ -122,7 +122,7 @@ This is a **model architecture change**, not a checkpoint loading bug.
 
 ### Detection
 
-The model loader at [model_loader.py:76-78](ui/utils/inference/model_loader.py#L76-L78) logs warnings:
+The model loader at model_loader.py:76-78 logs warnings:
 
 ```
 WARNING: Dropped 66 keys not present in current model: ['model._orig_mod.decoder.bottom_up.0.0.weight', ...]
@@ -162,26 +162,26 @@ User should either:
 
 ### Polygon Format Fix
 
-1. **[ui/utils/inference/engine.py](ui/utils/inference/engine.py#L260)**
+1. **ui/utils/inference/engine.py**
    - Changed coordinate join from `,` to ` `
    - Added comment explaining competition format
 
-2. **[ui/apps/inference/services/inference_runner.py](ui/apps/inference/services/inference_runner.py#L247)**
+2. **ui/apps/inference/services/inference_runner.py**
    - Updated mock prediction format
    - Maintains consistency with real inference
 
-3. **[ui/apps/inference/models/data_contracts.py](ui/apps/inference/models/data_contracts.py#L65)**
+3. **ui/apps/inference/models/data_contracts.py**
    - Updated Pydantic validator to split on spaces
    - Added docstring explaining competition format
 
-4. **[tests/unit/test_submission_writer.py](tests/unit/test_submission_writer.py)**
+4. **tests/unit/test_submission_writer.py**
    - Updated all test data to use spaces
    - Added comments explaining format
    - All 8 tests passing ✅
 
 ### Documentation
 
-5. **[docs/ai_handbook/02_protocols/governance/19_streamlit_maintenance_protocol_new.md](docs/ai_handbook/02_protocols/governance/19_streamlit_maintenance_protocol_new.md)**
+5. **docs/ai_handbook/02_protocols/governance/19_streamlit_maintenance_protocol_new.md**
    - Added "Model Architecture Mismatch" troubleshooting section
    - Added "Appendix A: Output Format Requirements"
    - Updated last modified date
@@ -208,7 +208,7 @@ tests/unit/test_submission_writer.py::test_generate_summary_stats PASSED
 ### Manual Verification Needed
 
 - [ ] Run batch prediction with real checkpoint
-- [ ] Verify output CSV format matches [sample_submission.csv](datasets/sample_submission.csv)
+- [ ] Verify output CSV format matches sample_submission.csv
 - [ ] Submit test file to competition platform (if available)
 
 ---
@@ -238,7 +238,7 @@ image001.jpg,10 50 100 50 100 150 10 150
 - Confusing error messages
 
 **After:**
-- Clear warnings at [model_loader.py:76-78](ui/utils/inference/model_loader.py#L76-L78)
+- Clear warnings at model_loader.py:76-78
 - Documented troubleshooting in maintenance protocol
 - User can make informed decision
 
@@ -255,10 +255,10 @@ image001.jpg,10 50 100 50 100 150 10 150
 
 ## Related Documents
 
-- [sample_submission.csv](datasets/sample_submission.csv) - Competition format specification
-- [Streamlit Maintenance Protocol](docs/ai_handbook/02_protocols/governance/19_streamlit_maintenance_protocol_new.md) - Updated with troubleshooting
-- [Phase 3 Session Handover](docs/ai_handbook/07_planning/assessments/PHASE3_COMPLETE_SESSION_HANDOVER.md) - Original implementation
-- [test_submission_writer.py](tests/unit/test_submission_writer.py) - Format validation tests
+- sample_submission.csv - Competition format specification
+- Streamlit Maintenance Protocol - Updated with troubleshooting
+- Phase 3 Session Handover - Original implementation
+- test_submission_writer.py - Format validation tests
 
 ---
 

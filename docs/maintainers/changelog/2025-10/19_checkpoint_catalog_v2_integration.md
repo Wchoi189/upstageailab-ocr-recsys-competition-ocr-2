@@ -232,8 +232,8 @@ Created and ran integration test: `/tmp/test_catalog_integration.py`
 ## References
 
 - Implementation plan: [`checkpoint_catalog_refactor_plan.md`](../../planning/checkpoint_catalog_refactor_plan.md)
-- V2 catalog module: [`ui/apps/inference/services/checkpoint/catalog.py`](../../../ui/apps/inference/services/checkpoint/catalog.py)
-- Legacy catalog (adapter): [`ui/apps/inference/services/checkpoint_catalog.py`](../../../ui/apps/inference/services/checkpoint_catalog.py)
+- V2 catalog module: `ui/apps/inference/services/checkpoint/catalog.py`
+- Legacy catalog (adapter): `ui/apps/inference/services/checkpoint_catalog.py`
 - Integration test: `/tmp/test_catalog_integration.py`
 - Performance benchmark: `/tmp/benchmark_catalog.py`
 

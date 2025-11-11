@@ -124,10 +124,10 @@ Task Initiation → Protocol Selection → Detailed Steps → Reference Lookup �
 #### **Reference Patterns**
 ```markdown
 <!-- Link with context -->
-See [Debugging Workflow](./02_protocols/development/03_debugging_workflow.md) for systematic issue resolution.
+See Debugging Workflow for systematic issue resolution.
 
 <!-- Bidirectional reference -->
-Related: [Command Registry](./02_protocols/development/02_command_registry.md#debugging-commands)
+Related: Command Registry
 ```
 
 #### **Automated Cross-Reference System**
@@ -207,16 +207,16 @@ Related: [Command Registry](./02_protocols/development/02_command_registry.md#de
 ## Dependencies
 
 ### Required
-- [Protocol A](./path/to/protocol-a.md) - Must be completed first
-- [Reference B](./path/to/reference-b.md) - Required knowledge
+- Protocol A - Must be completed first
+- Reference B - Required knowledge
 
 ### Recommended
-- [Guide C](./path/to/guide-c.md) - Helpful but not required
-- [Example D](./path/to/example-d.md) - Illustrative only
+- Guide C - Helpful but not required
+- Example D - Illustrative only
 
 ### Related
-- [Protocol E](./path/to/protocol-e.md) - Alternative approach
-- [Reference F](./path/to/reference-f.md) - Additional context
+- Protocol E - Alternative approach
+- Reference F - Additional context
 ```
 
 ---

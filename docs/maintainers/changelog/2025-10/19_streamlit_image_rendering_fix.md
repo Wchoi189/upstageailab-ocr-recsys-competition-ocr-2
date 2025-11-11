@@ -136,7 +136,7 @@ st.image(
 
 ### Files Modified
 
-**[ui/apps/inference/components/results.py](ui/apps/inference/components/results.py)**:
+**ui/apps/inference/components/results.py**:
 - Added `_scale_polygons()` helper function (lines 276-303)
 - Added image downsampling in `_display_image_with_predictions()` (lines 198-213)
 - Added `clamp=True` to all `st.image()` calls (lines 230, 240, 325, 330, 409)

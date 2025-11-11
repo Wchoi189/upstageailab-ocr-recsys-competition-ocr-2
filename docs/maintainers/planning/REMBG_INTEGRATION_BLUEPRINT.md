@@ -33,12 +33,12 @@ blueprint:
 
 ### What We're Building
 Integration of rembg-based AI background removal into:
-1. **Preprocessing Pipeline** ([ui/preprocessing_viewer/pipeline.py](ui/preprocessing_viewer/pipeline.py:1-100))
-2. **Streamlit Real-time Inference App** ([ui/preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py:1-212))
+1. **Preprocessing Pipeline** (ui/preprocessing_viewer/pipeline.py)
+2. **Streamlit Real-time Inference App** (ui/preprocessing_viewer_app.py)
 
 ### Why Now
 - ✅ rembg already installed and tested
-- ✅ `BackgroundRemoval` class already exists ([ocr/datasets/preprocessing/background_removal.py](ocr/datasets/preprocessing/background_removal.py:1-156))
+- ✅ `BackgroundRemoval` class already exists (ocr/datasets/preprocessing/background_removal.py)
 - ✅ Solves real problems (cluttered backgrounds, shadows)
 - ✅ Portfolio differentiator (AI-powered preprocessing)
 
@@ -55,19 +55,19 @@ Integration of rembg-based AI background removal into:
 
 ### What Exists ✅
 
-1. **BackgroundRemoval Transform** ([ocr/datasets/preprocessing/background_removal.py](ocr/datasets/preprocessing/background_removal.py:22-130))
+1. **BackgroundRemoval Transform** (ocr/datasets/preprocessing/background_removal.py)
    - Albumentations-compatible transform
    - Handles RGBA → RGB conversion
    - White background compositing
    - Multiple model support
 
-2. **Preprocessing Pipeline** ([ui/preprocessing_viewer/pipeline.py](ui/preprocessing_viewer/pipeline.py:31-100))
+2. **Preprocessing Pipeline** (ui/preprocessing_viewer/pipeline.py)
    - Sequential stage processing
    - Intermediate result capture
    - Config validation
    - Telemetry integration
 
-3. **Streamlit App** ([ui/preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py:44-212))
+3. **Streamlit App** (ui/preprocessing_viewer_app.py)
    - Parameter controls
    - Side-by-side viewer
    - Config export
@@ -98,7 +98,7 @@ Integration of rembg-based AI background removal into:
 ### Phase 1: Pipeline Integration (Day 1)
 
 #### Task 1.1: Add BackgroundRemoval to Pipeline
-**File**: [ui/preprocessing_viewer/pipeline.py](ui/preprocessing_viewer/pipeline.py:39-82)
+**File**: ui/preprocessing_viewer/pipeline.py
 
 **Changes**:
 ```python
@@ -138,7 +138,7 @@ def background_removal(self) -> BackgroundRemoval:
 ```
 
 #### Task 1.3: Add Stage to Processing Pipeline
-**File**: [ui/preprocessing_viewer/pipeline.py](ui/preprocessing_viewer/pipeline.py:83-100)
+**File**: ui/preprocessing_viewer/pipeline.py
 **Location**: In `process_with_intermediates` method, after line 100
 
 **Changes**:
@@ -206,7 +206,7 @@ def get_stage_description(self, stage: str) -> str:
 ### Phase 2: UI Controls (Day 1-2)
 
 #### Task 2.1: Add Preset Configuration
-**File**: [ui/preprocessing_viewer/preset_manager.py](ui/preprocessing_viewer/preset_manager.py)
+**File**: ui/preprocessing_viewer/preset_manager.py
 **Location**: `get_default_config` method
 
 **Changes**:
@@ -226,7 +226,7 @@ def get_default_config(self) -> dict[str, Any]:
 ```
 
 #### Task 2.2: Add Parameter Controls
-**File**: [ui/preprocessing_viewer/parameter_controls.py](ui/preprocessing_viewer/parameter_controls.py)
+**File**: ui/preprocessing_viewer/parameter_controls.py
 **Location**: `render_parameter_panels` method
 
 **Changes**:
@@ -273,7 +273,7 @@ def render_parameter_panels(self, config: dict[str, Any], on_change: Callable) -
 ```
 
 #### Task 2.3: Update Main App Display
-**File**: [ui/preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py:144-176)
+**File**: ui/preprocessing_viewer_app.py
 **Location**: "Full Pipeline" tab rendering
 
 **Changes**:
@@ -313,7 +313,7 @@ if "background_removed" in pipeline_results:
 ### Phase 3: Performance Optimization (Day 2)
 
 #### Task 3.1: Add Session State Caching
-**File**: [ui/preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py:44-70)
+**File**: ui/preprocessing_viewer_app.py
 **Location**: After `main()` function start
 
 **Changes**:
@@ -333,7 +333,7 @@ def main():
 ```
 
 #### Task 3.2: Add Progress Indicator
-**File**: [ui/preprocessing_viewer/pipeline.py](ui/preprocessing_viewer/pipeline.py)
+**File**: ui/preprocessing_viewer/pipeline.py
 **Location**: In background removal stage
 
 **Changes**:
@@ -357,7 +357,7 @@ if config.get("enable_background_removal", False):
 ```
 
 #### Task 3.3: Add Result Caching
-**File**: [ui/preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py:136-142)
+**File**: ui/preprocessing_viewer_app.py
 **Location**: Before pipeline processing
 
 **Changes**:
@@ -659,7 +659,7 @@ if bg_result.dtype != np.uint8:
 - Monitor performance metrics
 
 ### Phase 4: Documentation (Day 3)
-- Update [background_removal_rembg.md](docs/ai_handbook/03_references/guides/background_removal_rembg.md)
+- Update background_removal_rembg.md
 - Add troubleshooting guide
 - Create demo video/GIF
 
@@ -704,7 +704,7 @@ def get_default_config(self) -> dict[str, Any]:
 ### Required
 - [x] rembg==2.0.67 (installed)
 - [x] onnxruntime (installed)
-- [x] BackgroundRemoval class ([ocr/datasets/preprocessing/background_removal.py](ocr/datasets/preprocessing/background_removal.py))
+- [x] BackgroundRemoval class (ocr/datasets/preprocessing/background_removal.py)
 
 ### Nice to Have
 - [ ] GPU available (10x speedup)
@@ -820,14 +820,14 @@ def get_default_config(self) -> dict[str, Any]:
 ## 12. References
 
 ### Documentation
-- [REMBG_INTEGRATION_SUMMARY.md](docs/ai_handbook/08_planning/REMBG_INTEGRATION_SUMMARY.md)
-- [background_removal_rembg.md](docs/ai_handbook/03_references/guides/background_removal_rembg.md)
-- [preprocessing_viewer_refactor_plan.md](docs/ai_handbook/08_planning/preprocessing_viewer_refactor_plan.md)
+- REMBG_INTEGRATION_SUMMARY.md
+- background_removal_rembg.md
+- preprocessing_viewer_refactor_plan.md
 
 ### Code
-- [background_removal.py](ocr/datasets/preprocessing/background_removal.py) - BackgroundRemoval class
-- [pipeline.py](ui/preprocessing_viewer/pipeline.py) - Preprocessing pipeline
-- [preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py) - Streamlit app
+- background_removal.py - BackgroundRemoval class
+- pipeline.py - Preprocessing pipeline
+- preprocessing_viewer_app.py - Streamlit app
 
 ### External
 - [rembg GitHub](https://github.com/danielgatis/rembg)
@@ -841,7 +841,7 @@ def get_default_config(self) -> dict[str, Any]:
 ### Q1: Should background removal be first or after detection?
 **Decision**: First (before detection)
 **Rationale**: Cleaner input improves detection accuracy
-**Source**: [REMBG_INTEGRATION_SUMMARY.md](docs/ai_handbook/08_planning/REMBG_INTEGRATION_SUMMARY.md:74-98)
+**Source**: REMBG_INTEGRATION_SUMMARY.md
 
 ### Q2: Should it be enabled by default?
 **Decision**: No (disabled by default)

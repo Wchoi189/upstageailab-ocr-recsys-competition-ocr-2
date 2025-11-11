@@ -3,7 +3,7 @@
 **Date**: 2025-10-18
 **Status**: Task 2.1 Complete ✅
 **Phase**: Phase 2 - Core Implementation
-**Related**: [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md) | [Architecture Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+**Related**: Refactor Plan | Architecture Design
 
 ## Summary
 
@@ -15,7 +15,7 @@ Successfully implemented **Task 2.1: Implement Metadata Generation**. Created a 
 
 ### 1. MetadataCallback Class
 
-**File**: [ocr/lightning_modules/callbacks/metadata_callback.py](../../../../ocr/lightning_modules/callbacks/metadata_callback.py)
+**File**: ocr/lightning_modules/callbacks/metadata_callback.py
 
 **Purpose**: Generate .metadata.yaml files alongside checkpoints using Checkpoint Catalog V2 schema
 
@@ -117,7 +117,7 @@ All logged metrics are collected in `additional_metrics` for comprehensive track
 
 ### Hydra Config File
 
-**File**: [configs/callbacks/metadata.yaml](../../../../configs/callbacks/metadata.yaml)
+**File**: configs/callbacks/metadata.yaml
 
 ```yaml
 metadata:
@@ -388,13 +388,13 @@ Add batch validation support:
 ## Files Created/Modified
 
 ### Created
-1. [ocr/lightning_modules/callbacks/metadata_callback.py](../../../../ocr/lightning_modules/callbacks/metadata_callback.py) (470 lines)
-2. [configs/callbacks/metadata.yaml](../../../../configs/callbacks/metadata.yaml)
+1. ocr/lightning_modules/callbacks/metadata_callback.py (470 lines)
+2. configs/callbacks/metadata.yaml
 3. [docs/ai_handbook/05_changelog/2025-10/18_metadata_callback_implementation.md](18_metadata_callback_implementation.md) (this file)
 
 ### Modified
 1. [ocr/lightning_modules/callbacks/__init__.py](../../../../ocr/lightning_modules/callbacks/__init__.py) - Added MetadataCallback export
-2. [checkpoint_catalog_refactor_plan.md](../../../../checkpoint_catalog_refactor_plan.md) - Updated progress
+2. checkpoint_catalog_refactor_plan.md - Updated progress
 
 ---
 

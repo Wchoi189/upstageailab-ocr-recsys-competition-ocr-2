@@ -163,7 +163,7 @@ $ uv run python test_streamlit_inference_debug.py
 
 ## Files Modified
 
-- **[ui/utils/inference/engine.py](ui/utils/inference/engine.py)**
+- **ui/utils/inference/engine.py**
   - Removed `signal` import
   - Added `threading` import
   - Added `Callable` import from `collections.abc`

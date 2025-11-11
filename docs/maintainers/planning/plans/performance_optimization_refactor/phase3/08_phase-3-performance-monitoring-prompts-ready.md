@@ -349,10 +349,10 @@ Implemented comprehensive dataloader throughput monitoring callback that tracks 
 
 ## 📚 References
 
-- **Prompt Index:** [prompts/qwen/INDEX.md](../../../prompts/qwen/INDEX.md)
-- **Previous Phase:** [07_prompts-ready.md](./07_prompts-ready.md)
-- **Changelog Convention:** [05_changelog/README.md](../05_changelog/README.md)
-- **Performance Plan:** [performance_optimization_plan.md](./performance_optimization_plan.md)
+- **Prompt Index:** prompts/qwen/INDEX.md
+- **Previous Phase:** 07_prompts-ready.md
+- **Changelog Convention:** 05_changelog/README.md
+- **Performance Plan:** performance_optimization_plan.md
 
 ---
 

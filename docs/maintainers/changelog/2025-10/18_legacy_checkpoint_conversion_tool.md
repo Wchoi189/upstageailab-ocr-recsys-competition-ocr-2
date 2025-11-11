@@ -3,7 +3,7 @@
 **Date**: 2025-10-18
 **Status**: Task 2.2 Complete ✅
 **Phase**: Phase 2 - Core Implementation
-**Related**: [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md) | [Metadata Callback](18_metadata_callback_implementation.md) | [Architecture Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+**Related**: Refactor Plan | [Metadata Callback](18_metadata_callback_implementation.md) | Architecture Design
 
 ## Summary
 
@@ -15,7 +15,7 @@ Successfully implemented **Task 2.2: Build Conversion Tool**. Created a command-
 
 ### Script Location
 
-**File**: [scripts/convert_legacy_checkpoints.py](../../../../scripts/convert_legacy_checkpoints.py)
+**File**: scripts/convert_legacy_checkpoints.py
 
 ### Key Features
 
@@ -435,7 +435,7 @@ After validation, proceed to:
 ## Files Created/Modified
 
 ### Created
-1. [scripts/convert_legacy_checkpoints.py](../../../../scripts/convert_legacy_checkpoints.py) (580 lines)
+1. scripts/convert_legacy_checkpoints.py (580 lines)
 2. [docs/ai_handbook/05_changelog/2025-10/18_legacy_checkpoint_conversion_tool.md](18_legacy_checkpoint_conversion_tool.md) (this file)
 
 ### Modified

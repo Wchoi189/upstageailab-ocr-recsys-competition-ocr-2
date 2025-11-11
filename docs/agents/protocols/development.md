@@ -121,7 +121,7 @@ When making changes to core project files, **ALWAYS embed the bug ID in the code
 **Update Changelog:**
 ```markdown
 #### Bug Fixes
-- **BUG-YYYYMMDD-###**: Description ([link](bug_reports/BUG-YYYYMMDD-###_name.md))
+- **BUG-YYYYMMDD-###**: Description (link)
 ```
 
 ## Utility Adoption

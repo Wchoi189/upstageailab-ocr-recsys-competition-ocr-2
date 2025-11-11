@@ -2,7 +2,7 @@
 
 **Date**: 2025-10-18
 **Status**: Analysis Complete
-**Related**: [checkpoint_catalog_refactor_plan.md](../../../../checkpoint_catalog_refactor_plan.md)
+**Related**: checkpoint_catalog_refactor_plan.md
 
 ## Executive Summary
 
@@ -349,4 +349,4 @@ ui/apps/inference/services/checkpoint/
 - Current Implementation: [checkpoint_catalog.py:39-1136](../../../../ui/apps/inference/services/checkpoint_catalog.py#L39-L1136)
 - Data Models: [checkpoint.py](../../../../ui/apps/inference/models/checkpoint.py)
 - Schema Validator: [schema_validator.py](../../../../ui/apps/inference/services/schema_validator.py)
-- Master Plan: [checkpoint_catalog_refactor_plan.md](../../../../checkpoint_catalog_refactor_plan.md)
+- Master Plan: checkpoint_catalog_refactor_plan.md

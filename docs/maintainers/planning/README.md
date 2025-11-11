@@ -111,13 +111,13 @@ This directory contains strategic planning documents, debug sessions, and refact
 - [BUG-2025-006: Infinite Rerun Loop](../../CHANGELOG.md) (see CHANGELOG)
 
 ### Architecture Docs
-- [Architecture Overview](../03_references/architecture/01_architecture.md)
+- Architecture Overview
 - [Preprocessing Pipeline](../../pipeline/data_contracts.md)
-- [Hydra Configuration](../03_references/architecture/02_hydra_and_registry.md)
+- Hydra Configuration
 
 ### Performance Guides
-- [Cache Management](../03_references/guides/cache-management-guide.md)
-- [Performance Profiler](../03_references/guides/performance_profiler_usage.md)
+- Cache Management
+- Performance Profiler
 
 ---
 

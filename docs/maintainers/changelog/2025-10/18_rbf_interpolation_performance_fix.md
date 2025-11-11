@@ -23,7 +23,7 @@ Streamlit Preprocessing Viewer hung indefinitely when document flattening was en
 - Last log: `"Initialized IntelligentBrightnessAdjuster with method: auto"`
 
 ### Root Cause Discovery
-Analysis of [document_flattening.py:497-536](../../ocr/datasets/preprocessing/document_flattening.py#L497-L536) revealed:
+Analysis of document_flattening.py:497-536 revealed:
 
 ```python
 # PROBLEMATIC CODE:
@@ -58,7 +58,7 @@ dy_map = rbf_y(x_coords, y_coords)  # Every. Single. Pixel.
 
 **Key Insight**: Thin plate spline warping is smooth by nature, so computing at lower resolution is acceptable.
 
-**Implementation** ([document_flattening.py:515-563](../../ocr/datasets/preprocessing/document_flattening.py#L515-L563)):
+**Implementation** (document_flattening.py:515-563):
 
 ```python
 def _apply_rbf_warping(self, image: np.ndarray, source_points: np.ndarray, target_points: np.ndarray) -> np.ndarray:
@@ -184,7 +184,7 @@ def _apply_rbf_warping(self, image: np.ndarray, source_points: np.ndarray, targe
 
 ### Connection to BUG-2025-004
 
-This fix resolves the **root cause** of [BUG-2025-004 (Streamlit Viewer Hanging)](../../bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md):
+This fix resolves the **root cause** of BUG-2025-004 (Streamlit Viewer Hanging):
 - BUG-2025-004: Symptom (default config mismatch)
 - **BUG-2025-005**: Root cause (RBF performance)
 
@@ -195,7 +195,7 @@ Both fixes were required:
 ### Debug Session
 
 Full investigation documented in:
-- [preprocessing_viewer_debug_session.md](../08_planning/preprocessing_viewer_debug_session.md)
+- preprocessing_viewer_debug_session.md
 
 ---
 
@@ -331,6 +331,6 @@ Successfully resolved critical performance bug in RBF interpolation that was cau
 ---
 
 **Related Issues**:
-- [BUG-2025-005](../../bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md) - Full bug report
-- [BUG-2025-004](../../bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md) - Related symptom
-- [preprocessing_viewer_debug_session.md](../08_planning/preprocessing_viewer_debug_session.md) - Debug session
+- BUG-2025-005 - Full bug report
+- BUG-2025-004 - Related symptom
+- preprocessing_viewer_debug_session.md - Debug session

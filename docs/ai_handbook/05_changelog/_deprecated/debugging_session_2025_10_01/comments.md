@@ -2,7 +2,7 @@
 
 
 
-Comments and KEEP/REVERT notes have moved to [`docs/next_job/comments.md`](../next_job/comments.md).## Porting plan snapshot
+Comments and KEEP/REVERT notes have moved to `docs/next_job/comments.md`.## Porting plan snapshot
 
 - ✅ **Confirmed fix**: Only the explicit `postprocess` block in `configs/model/architectures/dbnet.yaml` improved recall on the dismantled `05_refactor/preprocessor_d` branch. Keep this change and the accompanying regression test when moving back to `05_refactor/preprocessor`.
 

@@ -103,4 +103,4 @@ Create complete documentation and prepare for production deployment:
 - [Coding Standards](01_coding_standards.md) - Development best practices
 - [Modular Refactor](05_modular_refactor.md) - Architecture and integration patterns
 - [Utility Adoption](04_utility_adoption.md) - Code reuse and DRY principles
-- [Data Contracts Reference](../../pipeline/data_contracts.md) - Validation standards and patterns
+- Data Contracts Reference - Validation standards and patterns

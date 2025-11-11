@@ -108,7 +108,7 @@ Complete successful refactor and update project references:
 - When context becomes contaminated, restart with fresh plan document
 
 ## **Related Documents**
-- [Configuration Management](../../configuration/01_hydra_config_system.md) - Hydra configuration patterns
+- Configuration Management - Hydra configuration patterns
 - [Modular Refactor](05_modular_refactor.md) - General refactoring principles
 - [Command Registry](02_command_registry.md) - Available validation and testing tools
 - [Coding Standards](01_coding_standards.md) - Development best practices

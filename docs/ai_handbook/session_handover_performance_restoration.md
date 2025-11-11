@@ -249,11 +249,11 @@ All features have safe defaults (`false`), so removing config = disabling featur
 
 After successful implementation:
 
-1. **[CHANGELOG.md](../../CHANGELOG.md)**:
+1. **CHANGELOG.md**:
    - Add entry: "Restored performance optimizations (6-8x speedup)"
    - Reference this document
 
-2. **[99_current_state.md](./99_current_state.md)**:
+2. **99_current_state.md**:
    - Update performance status
    - Update continuation prompt
 
@@ -270,7 +270,7 @@ After successful implementation:
   - [phase-6b-ram-caching-findings.md](../../logs/2025-10-08_02_refactor_performance_features/phase-6b-ram-caching-findings.md)
   - [phase-6d-mixed-precision-findings.md](../../logs/2025-10-08_02_refactor_performance_features/phase-6d-mixed-precision-findings.md)
   - [phase-6e-tensor-caching-findings.md](../../logs/2025-10-08_02_refactor_performance_features/phase-6e-tensor-caching-findings.md)
-- **Analysis**: [bottleneck_analysis_webdataset_vs_dali.md](./bottleneck_analysis_webdataset_vs_dali.md)
+- **Analysis**: bottleneck_analysis_webdataset_vs_dali.md
 
 ---
 

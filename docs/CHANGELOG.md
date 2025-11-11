@@ -57,14 +57,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Clean, professional multi-page UI
   - Session state preserved across pages
 - **Files Created**:
-  - [ui/apps/unified_ocr_app/app.py](../ui/apps/unified_ocr_app/app.py) - Home page (162 lines)
-  - [ui/apps/unified_ocr_app/shared_utils.py](../ui/apps/unified_ocr_app/shared_utils.py) - Shared utilities (76 lines)
-  - [ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py](../ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py) - Preprocessing mode (136 lines)
-  - [ui/apps/unified_ocr_app/pages/2_🤖_Inference.py](../ui/apps/unified_ocr_app/pages/2_🤖_Inference.py) - Inference mode (247 lines)
-  - [ui/apps/unified_ocr_app/pages/3_📊_Comparison.py](../ui/apps/unified_ocr_app/pages/3_📊_Comparison.py) - Comparison mode (223 lines)
+  - ui/apps/unified_ocr_app/app.py - Home page (162 lines)
+  - ui/apps/unified_ocr_app/shared_utils.py - Shared utilities (76 lines)
+  - ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py - Preprocessing mode (136 lines)
+  - ui/apps/unified_ocr_app/pages/2_🤖_Inference.py - Inference mode (247 lines)
+  - ui/apps/unified_ocr_app/pages/3_📊_Comparison.py - Comparison mode (223 lines)
 - **Backup**: Original monolithic version saved to `ui/apps/unified_ocr_app/backup/app_monolithic_backup_2025-10-21.py`
 - **Status**: ✅ COMPLETED - All pages functional, ready for testing
-- **Plan**: [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](../docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+- **Plan**: docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md
 
 ## [0.1.1] - 2025-10-21
 
@@ -77,8 +77,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Impact**: Could cause circular imports and blocking during UI render
 - **Solution**: Moved 15+ imports to top of `app.py` (lines 67-91)
 - **Status**: ⚠️ Import structure fixed, but app still doesn't load (see Known Issues below)
-- **Files**: [ui/apps/unified_ocr_app/app.py](../ui/apps/unified_ocr_app/app.py)
-- **Related**: [SESSION_HANDOVER_APP_REFACTOR.md](../SESSION_HANDOVER_APP_REFACTOR.md)
+- **Files**: ui/apps/unified_ocr_app/app.py
+- **Related**: SESSION_HANDOVER_APP_REFACTOR.md
 
 ### Known Issues - 2025-10-21
 
@@ -92,7 +92,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `ui/apps/unified_ocr_app/services/comparison_service.py`
 - **Required Fix**: Add `@st.cache_resource` decorators to model loading functions
 - **Status**: 🔴 CRITICAL - Blocks all app functionality
-- **Documentation**: [QUICK_START_DEBUGGING.md](../QUICK_START_DEBUGGING.md)
+- **Documentation**: QUICK_START_DEBUGGING.md
 
 #### Unified OCR App - Monolithic Architecture (Technical Debt)
 
@@ -100,13 +100,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Problems**: Low cohesion, high coupling, difficult to maintain/debug, all imports loaded regardless of active mode
 - **Recommended Solution**: Refactor to Streamlit multi-page app (separate file per mode)
 - **Status**: 🟡 MEDIUM PRIORITY - Should refactor after fixing heavy loading issue
-- **Plan**: [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](../docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+- **Plan**: docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md
 
 ### Changed - 2025-10-21
 
 #### Documentation Organization and Protocol
 
-- **Established documentation management protocol** - Created [documentation-management.md](ai_handbook/02_protocols/documentation-management.md)
+- **Established documentation management protocol** - Created documentation-management.md
 - **Cleaned up project root** - Moved all session docs to [docs/sessions/2025-10-21/](sessions/2025-10-21/)
 - **Organized temporary files** - Relocated 9 test scripts to `scripts/temp/`
 - **Updated CLAUDE.md** - Added concise reference to documentation protocol
@@ -137,7 +137,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - JSON schema validation for preprocessing parameters
 - Service layer with lazy loading and caching
 
-**Phase 3: Preprocessing Mode** ([ui/apps/unified_ocr_app/](ui/apps/unified_ocr_app/))
+**Phase 3: Preprocessing Mode** (ui/apps/unified_ocr_app/)
 - 7-stage preprocessing pipeline (background removal, detection, correction, etc.)
 - Real-time parameter tuning with live preview
 - Side-by-side and step-by-step visualization modes
@@ -181,10 +181,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 **Test Coverage**: Integration test suite with all comparison modes verified
 
 **Documentation**:
-- Architecture: [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- Implementation Plan: [README_IMPLEMENTATION_PLAN.md](ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md)
-- Session Summaries: [SESSION_COMPLETE_2025-10-21_PHASE*.md](../SESSION_COMPLETE_2025-10-21_PHASE6.md)
-- Integration Tests: [test_comparison_integration.py](../test_comparison_integration.py)
+- Architecture: UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
+- Implementation Plan: README_IMPLEMENTATION_PLAN.md
+- Session Summaries: SESSION_COMPLETE_2025-10-21_PHASE*.md
+- Integration Tests: test_comparison_integration.py
 
 **Running the App**:
 ```bash
@@ -199,7 +199,7 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 - **Root Cause**: Widget key `"mode_selector"` used in both main app mode selector and inference processing mode selector
 - **Fix**: Renamed inference processing mode key to `"inference_processing_mode_selector"` for uniqueness
 - **Impact**: Inference mode now loads correctly without key conflicts
-- **Files**: [ui/apps/unified_ocr_app/components/inference/checkpoint_selector.py:186](ui/apps/unified_ocr_app/components/inference/checkpoint_selector.py#L186)
+- **Files**: ui/apps/unified_ocr_app/components/inference/checkpoint_selector.py:186
 - **Report**: [BUG-2025-012_streamlit_duplicate_element_key.md](bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md)
 
 #### BUG-2025-001: Inference padding/scaling mismatch
@@ -250,7 +250,7 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 
 **See**:
 - [Bug Report](bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md)
-- [Detailed Changelog](ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md)
+- Detailed Changelog
 
 ### Changed - 2025-10-19
 
@@ -271,7 +271,7 @@ The Checkpoint Catalog V2 refactor is complete. This major optimization replaced
 - Feature flag system for gradual rollout: `CHECKPOINT_CATALOG_USE_V2=1` (default enabled)
 - Zero breaking changes - UI continues to work seamlessly
 
-**See**: [V2 Final Summary](ai_handbook/05_changelog/2025-10/19_checkpoint_catalog_v2_final_summary.md) for complete details
+**See**: V2 Final Summary for complete details
 
 #### Checkpoint Catalog V2 Integration (Performance Improvement)
 
@@ -296,7 +296,7 @@ The Checkpoint Catalog V2 refactor is complete. This major optimization replaced
 - `ui/apps/inference/services/checkpoint_catalog.py:1-141` - Added V2 integration and adapter
 - `checkpoint_catalog_refactor_plan.md` - Updated progress tracker (Phase 3 Task 3.2 complete)
 
-**References**: See [checkpoint_catalog_refactor_plan.md](../checkpoint_catalog_refactor_plan.md) for implementation details
+**References**: See checkpoint_catalog_refactor_plan.md for implementation details
 
 ### Fixed - 2025-10-19
 
@@ -308,7 +308,7 @@ The Checkpoint Catalog V2 refactor is complete. This major optimization replaced
 **Fix**: Prioritize checkpoint's `epoch` field, only fall back to config `max_epochs` if missing
 
 **Files Changed**:
-- [ui/apps/inference/services/checkpoint/catalog.py:278-332](ui/apps/inference/services/checkpoint/catalog.py) - Fixed epoch extraction priority
+- ui/apps/inference/services/checkpoint/catalog.py:278-332 - Fixed epoch extraction priority
 
 ### Added - 2025-10-19
 
@@ -340,9 +340,9 @@ python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
 **Results**: Successfully generated metadata for 11 existing checkpoints (100% success rate)
 
 **Files Added**:
-- [scripts/generate_checkpoint_metadata.py](../scripts/generate_checkpoint_metadata.py) - Metadata conversion tool (600+ lines)
+- scripts/generate_checkpoint_metadata.py - Metadata conversion tool (600+ lines)
 
-**References**: See [checkpoint_catalog_refactor_plan.md](../checkpoint_catalog_refactor_plan.md) Phase 4 Task 4.2
+**References**: See checkpoint_catalog_refactor_plan.md Phase 4 Task 4.2
 
 #### Checkpoint Catalog V2: Comprehensive Test Suite (Phase 4.1)
 
@@ -369,10 +369,10 @@ python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
 - Validates V2 performance targets maintained
 
 **Files Added**:
-- [tests/unit/test_checkpoint_catalog_v2.py](tests/unit/test_checkpoint_catalog_v2.py) - Unit tests (33 tests)
-- [tests/integration/test_checkpoint_catalog_v2_integration.py](tests/integration/test_checkpoint_catalog_v2_integration.py) - Integration tests (12 tests)
+- tests/unit/test_checkpoint_catalog_v2.py - Unit tests (33 tests)
+- tests/integration/test_checkpoint_catalog_v2_integration.py - Integration tests (12 tests)
 
-**References**: See [checkpoint_catalog_refactor_plan.md](../checkpoint_catalog_refactor_plan.md) Phase 4
+**References**: See checkpoint_catalog_refactor_plan.md Phase 4
 
 ---
 
@@ -394,7 +394,7 @@ python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
 
 **Testing**: Verified fix with test image `drp.en_ko.in_house.selectstar_000699.jpg` (EXIF orientation 6)
 
-**References**: See [Inference UI Coordinate Transformation Bug](ai_handbook/05_changelog/2025-10/19_inference-ui-coordinate-transformation-bug.md) for detailed analysis
+**References**: See Inference UI Coordinate Transformation Bug for detailed analysis
 
 ---
 
@@ -480,13 +480,13 @@ Implemented comprehensive Pydantic-based validation for PyTorch checkpoint loadi
 
 **Solution Architecture:**
 
-1. **Pydantic Validation Models** ([state_dict_models.py](../ui/apps/inference/services/checkpoint/state_dict_models.py))
+1. **Pydantic Validation Models** (state_dict_models.py)
    - `StateDictStructure`: Validates wrapper types (state_dict/model_state_dict/raw)
    - `DecoderKeyPattern`: Detects decoder architecture (PAN/FPN/UNet)
    - `HeadKeyPattern`: Detects head architecture (DB/CRAFT)
    - `safe_get_shape()`: Prevents AttributeError on None/missing weights
 
-2. **Checkpoint Loading Protocol** ([23_checkpoint_loading_protocol.md](ai_handbook/02_protocols/components/23_checkpoint_loading_protocol.md))
+2. **Checkpoint Loading Protocol** (23_checkpoint_loading_protocol.md)
    - 4 loading patterns: Training/Inference/Catalog/Debugging
    - Complete state dict key pattern reference (all architectures)
    - DO NOTs section preventing anti-patterns
@@ -507,12 +507,12 @@ Implemented comprehensive Pydantic-based validation for PyTorch checkpoint loadi
 - ✅ **Clear protocol** ending hours-long debugging sessions
 
 **Files:**
-- NEW: [state_dict_models.py](../ui/apps/inference/services/checkpoint/state_dict_models.py) (444 lines)
-- NEW: [23_checkpoint_loading_protocol.md](ai_handbook/02_protocols/components/23_checkpoint_loading_protocol.md) (800+ lines)
-- UPDATED: [inference_engine.py](../ui/apps/inference/services/checkpoint/inference_engine.py)
+- NEW: state_dict_models.py (444 lines)
+- NEW: 23_checkpoint_loading_protocol.md (800+ lines)
+- UPDATED: inference_engine.py
 
 **Documentation:**
-- [Checkpoint Loading Validation](ai_handbook/05_changelog/2025-10/18_checkpoint_loading_validation.md)
+- Checkpoint Loading Validation
 
 ---
 
@@ -529,7 +529,7 @@ Implemented Wandb API fallback functionality for checkpoint catalog metadata ret
 
 **Solution Architecture:**
 
-1. **Wandb Client Module** ([`ui/apps/inference/services/checkpoint/wandb_client.py`](../ui/apps/inference/services/checkpoint/wandb_client.py))
+1. **Wandb Client Module** (`ui/apps/inference/services/checkpoint/wandb_client.py`)
    - Lazy initialization with automatic availability checking
    - LRU caching (256 entries) for API responses
    - Graceful offline handling without crashes
@@ -569,14 +569,14 @@ print(f"YAML: {fast_count}, Wandb: {wandb_count}, Legacy: {legacy_count}")
 ```
 
 **Files Modified:**
-- NEW: [`ui/apps/inference/services/checkpoint/wandb_client.py`](../ui/apps/inference/services/checkpoint/wandb_client.py)
-- UPDATED: [`ui/apps/inference/services/checkpoint/catalog.py`](../ui/apps/inference/services/checkpoint/catalog.py)
-- UPDATED: [`ui/apps/inference/services/checkpoint/__init__.py`](../ui/apps/inference/services/checkpoint/__init__.py)
-- NEW: [`test_wandb_fallback.py`](../test_wandb_fallback.py)
+- NEW: `ui/apps/inference/services/checkpoint/wandb_client.py`
+- UPDATED: `ui/apps/inference/services/checkpoint/catalog.py`
+- UPDATED: `ui/apps/inference/services/checkpoint/__init__.py`
+- NEW: `test_wandb_fallback.py`
 
 **Documentation:**
-- [Wandb Fallback Implementation](ai_handbook/05_changelog/2025-10/18_wandb_fallback_implementation.md)
-- [Checkpoint Catalog V2 Design](ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md)
+- Wandb Fallback Implementation
+- Checkpoint Catalog V2 Design
 
 **Testing:** 4/4 tests passing with graceful offline handling
 
@@ -1183,7 +1183,7 @@ Replaced on-the-fly polygon caching with an offline pre-processing system that g
    - Removed unused `cache` parameter
 
 4. **Documentation**
-   - Added comprehensive [preprocessing guide](docs/preprocessing_guide.md)
+   - Added comprehensive preprocessing guide
    - Updated [README.md](README.md) with preprocessing workflow
    - Includes troubleshooting and maintenance instructions
 

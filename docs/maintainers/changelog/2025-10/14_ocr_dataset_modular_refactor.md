@@ -131,6 +131,6 @@ The modular architecture enables:
 
 ## Related Documentation
 
-- [OCR Dataset Base API Reference](../02_api_reference/ocr_datasets.md)
-- [Testing Strategy](../03_development/01_testing_strategy.md)
-- [Performance Optimization Guide](../04_performance/01_optimization_guide.md)
+- OCR Dataset Base API Reference
+- Testing Strategy
+- Performance Optimization Guide

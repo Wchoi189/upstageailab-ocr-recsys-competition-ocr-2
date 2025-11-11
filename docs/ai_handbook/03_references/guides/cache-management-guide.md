@@ -371,10 +371,10 @@ Future implementation will use this version to automatically detect and clear in
 
 ## Related Documentation
 
-- [BUG_2025_005_MAP_CACHE_INVALIDATION.md](../bug_reports/BUG_2025_005_MAP_CACHE_INVALIDATION.md) - Cache invalidation bug report
-- [CRITICAL_ISSUES_RESOLUTION_2025_10_14.md](../bug_reports/CRITICAL_ISSUES_RESOLUTION_2025_10_14.md) - Resolution summary
-- [architecture/01_architecture.md](../ai_handbook/03_references/architecture/01_architecture.md) - System architecture
-- [CacheManager source](../../ocr/utils/cache_manager.py) - Implementation details
+- BUG_2025_005_MAP_CACHE_INVALIDATION.md - Cache invalidation bug report
+- CRITICAL_ISSUES_RESOLUTION_2025_10_14.md - Resolution summary
+- architecture/01_architecture.md - System architecture
+- CacheManager source - Implementation details
 
 ## Changelog
 

@@ -184,5 +184,5 @@ This document outlines a systematic approach to resolve the empty predictions is
 **Last Updated**: October 13, 2025
 **Related Documents**:
 - [Bug Report](../bug_reports/BUG-2025-010_empty_predictions_inference.md)
-- [EDA Analysis](../debug_empty_predictions/eda_results/)</content>
+- EDA Analysis</content>
 <parameter name="filePath">/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/docs/bug_reports/BUG-2025-010_empty_predictions_resolution_plan.md

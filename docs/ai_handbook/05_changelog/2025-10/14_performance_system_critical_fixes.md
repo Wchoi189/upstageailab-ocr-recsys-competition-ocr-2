@@ -375,11 +375,11 @@ if epoch % 5 == 0:
 ## References
 
 ### Implementation Files
-- [ocr/datasets/schemas.py](../../../ocr/datasets/schemas.py)
-- [ocr/utils/cache_manager.py](../../../ocr/utils/cache_manager.py)
-- [ocr/datasets/base.py](../../../ocr/datasets/base.py)
-- [configs/trainer/fp16_safe.yaml](../../../configs/trainer/fp16_safe.yaml)
-- [scripts/cache_manager.py](../../../scripts/cache_manager.py)
+- ocr/datasets/schemas.py
+- ocr/utils/cache_manager.py
+- ocr/datasets/base.py
+- configs/trainer/fp16_safe.yaml
+- scripts/cache_manager.py
 
 ### Documentation
 - [cache-management-guide.md](../../03_references/guides/cache-management-guide.md)

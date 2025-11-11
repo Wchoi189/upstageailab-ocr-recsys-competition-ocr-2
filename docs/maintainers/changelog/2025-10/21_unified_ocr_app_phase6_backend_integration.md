@@ -575,11 +575,11 @@ Phase 6 successfully integrated the comparison mode UI with real preprocessing a
 
 ## Related Documents
 
-- **Architecture**: [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](../08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- **Phase 5 Summary**: [SESSION_COMPLETE_2025-10-21_PHASE5.md](../../SESSION_COMPLETE_2025-10-21_PHASE5.md)
-- **Phase 6 Summary**: [SESSION_COMPLETE_2025-10-21_PHASE6.md](../../SESSION_COMPLETE_2025-10-21_PHASE6.md)
-- **Bug Report**: [BUG-2025-012_streamlit_duplicate_element_key.md](../../bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md)
-- **Integration Tests**: [test_comparison_integration.py](../../test_comparison_integration.py)
+- **Architecture**: UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
+- **Phase 5 Summary**: SESSION_COMPLETE_2025-10-21_PHASE5.md
+- **Phase 6 Summary**: SESSION_COMPLETE_2025-10-21_PHASE6.md
+- **Bug Report**: BUG-2025-012_streamlit_duplicate_element_key.md
+- **Integration Tests**: test_comparison_integration.py
 
 ---
 

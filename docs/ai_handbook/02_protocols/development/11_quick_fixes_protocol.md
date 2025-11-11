@@ -206,10 +206,10 @@ grep "Impact:" docs/QUICK_FIXES.md | sort | uniq -c
 ```
 
 ## **Related Documents**
-- [CHANGELOG.md](../../CHANGELOG.md) - Major feature releases and planned changes
+- CHANGELOG.md - Major feature releases and planned changes
 - [Context Logging Protocol](./06_context_logging.md) - Detailed agent action logging
 - [Debugging Workflow](./03_debugging_workflow.md) - Systematic debugging procedures
-- [QUICK_FIXES.md](../../QUICK_FIXES.md) - The actual quick fixes log
+- QUICK_FIXES.md - The actual quick fixes log
 
 ---
 

@@ -3,7 +3,7 @@
 **Date**: 2025-10-15
 **Status**: ✅ COMPLETE
 **Branch**: 11_refactor/preprocessing
-**Related Blueprint**: [advanced_preprocessing_living_blueprint.md](../08_planning/advanced_preprocessing_living_blueprint.md)
+**Related Blueprint**: advanced_preprocessing_living_blueprint.md
 
 ## Summary
 
@@ -263,7 +263,7 @@ transform = A.Compose([
 
 ## Migration Guide
 
-See: [Enhanced Preprocessing Usage Guide](../../03_references/guides/enhanced_preprocessing_usage.md)
+See: Enhanced Preprocessing Usage Guide
 
 ### Quick Migration Steps
 
@@ -312,7 +312,7 @@ $ python -m pytest tests/integration/test_phase3_pipeline_integration.py -v
 ## Documentation
 
 **New Documentation**:
-- [Enhanced Preprocessing Usage Guide](../../03_references/guides/enhanced_preprocessing_usage.md)
+- Enhanced Preprocessing Usage Guide
   - Quick start examples
   - Configuration guide
   - Feature selection
@@ -325,7 +325,7 @@ $ python -m pytest tests/integration/test_phase3_pipeline_integration.py -v
   - Migration guide
 
 **Updated Documentation**:
-- [Advanced Preprocessing Living Blueprint](../08_planning/advanced_preprocessing_living_blueprint.md)
+- Advanced Preprocessing Living Blueprint
   - Updated progress tracker
   - Phase 3 marked complete
   - Next task set to "Production deployment preparation"

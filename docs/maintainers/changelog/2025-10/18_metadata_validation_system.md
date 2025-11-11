@@ -3,7 +3,7 @@
 **Date**: 2025-10-18
 **Status**: Task 2.3 Complete ✅
 **Phase**: Phase 2 - Core Implementation
-**Related**: [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md) | [Metadata Callback](18_metadata_callback_implementation.md) | [Conversion Tool](18_legacy_checkpoint_conversion_tool.md) | [Architecture Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+**Related**: Refactor Plan | [Metadata Callback](18_metadata_callback_implementation.md) | [Conversion Tool](18_legacy_checkpoint_conversion_tool.md) | Architecture Design
 
 ## Summary
 
@@ -15,7 +15,7 @@ Successfully implemented **Task 2.3: Implement Scalable Validation**. Created a 
 
 ### 1. Enhanced Validator Module
 
-**File**: [ui/apps/inference/services/checkpoint/validator.py](../../../../ui/apps/inference/services/checkpoint/validator.py)
+**File**: ui/apps/inference/services/checkpoint/validator.py
 
 **Key Components**:
 
@@ -62,7 +62,7 @@ class ValidationReport:
 
 ### 2. Validation CLI Tool
 
-**File**: [scripts/validate_metadata.py](../../../../scripts/validate_metadata.py)
+**File**: scripts/validate_metadata.py
 
 **Purpose**: Command-line tool for manual validation of checkpoint metadata files
 
@@ -491,11 +491,11 @@ With validation complete, proceed to integration tasks:
 ## Files Created/Modified
 
 ### Created
-1. [scripts/validate_metadata.py](../../../../scripts/validate_metadata.py) (180 lines)
+1. scripts/validate_metadata.py (180 lines)
 2. [docs/ai_handbook/05_changelog/2025-10/18_metadata_validation_system.md](18_metadata_validation_system.md) (this file)
 
 ### Modified
-1. [ui/apps/inference/services/checkpoint/validator.py](../../../../ui/apps/inference/services/checkpoint/validator.py) - Added ValidationResult, ValidationReport, and batch validation methods
+1. ui/apps/inference/services/checkpoint/validator.py - Added ValidationResult, ValidationReport, and batch validation methods
 
 ---
 

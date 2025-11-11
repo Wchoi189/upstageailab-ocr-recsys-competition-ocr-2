@@ -11,7 +11,7 @@ Implemented comprehensive unit and integration test suites for the Checkpoint Ca
 ## Test Coverage
 
 ### Unit Tests (33 tests)
-Located in: [`tests/unit/test_checkpoint_catalog_v2.py`](../../../../tests/unit/test_checkpoint_catalog_v2.py)
+Located in: `tests/unit/test_checkpoint_catalog_v2.py`
 
 #### TestMetadataLoader (6 tests)
 - ✅ Save and load metadata YAML files
@@ -59,7 +59,7 @@ Located in: [`tests/unit/test_checkpoint_catalog_v2.py`](../../../../tests/unit/
 - ✅ Catalog build performance (<1s for 10 checkpoints)
 
 ### Integration Tests (12 tests)
-Located in: [`tests/integration/test_checkpoint_catalog_v2_integration.py`](../../../../tests/integration/test_checkpoint_catalog_v2_integration.py)
+Located in: `tests/integration/test_checkpoint_catalog_v2_integration.py`
 
 #### TestFallbackHierarchy (7 tests)
 - ✅ Fast path: All checkpoints have metadata YAML
@@ -84,7 +84,7 @@ Located in: [`tests/integration/test_checkpoint_catalog_v2_integration.py`](../.
 ### Epoch Extraction Priority Bug
 **Issue**: Legacy path incorrectly prioritized config's `max_epochs` over checkpoint's actual `epoch` field
 **Impact**: Catalog entries showed wrong epoch numbers for checkpoints without metadata files
-**Fix**: Modified [`catalog.py:278-332`](../../../../ui/apps/inference/services/checkpoint/catalog.py) to prioritize checkpoint epoch field
+**Fix**: Modified `catalog.py:278-332` to prioritize checkpoint epoch field
 
 **Before**:
 ```python
@@ -177,17 +177,17 @@ if epochs is None and max_epochs_from_config is not None:
 
 ## Files Created
 
-1. [`tests/unit/test_checkpoint_catalog_v2.py`](../../../../tests/unit/test_checkpoint_catalog_v2.py) - 33 unit tests
-2. [`tests/integration/test_checkpoint_catalog_v2_integration.py`](../../../../tests/integration/test_checkpoint_catalog_v2_integration.py) - 12 integration tests
+1. `tests/unit/test_checkpoint_catalog_v2.py` - 33 unit tests
+2. `tests/integration/test_checkpoint_catalog_v2_integration.py` - 12 integration tests
 
 ## Files Modified
 
-1. [`ui/apps/inference/services/checkpoint/catalog.py:278-332`](../../../../ui/apps/inference/services/checkpoint/catalog.py) - Fixed epoch extraction bug
+1. `ui/apps/inference/services/checkpoint/catalog.py:278-332` - Fixed epoch extraction bug
 
 ## Documentation Updated
 
 1. [`docs/CHANGELOG.md`](../../../CHANGELOG.md) - Added test suite and bug fix entries
-2. [`checkpoint_catalog_refactor_plan.md`](../../../../checkpoint_catalog_refactor_plan.md) - Updated Phase 4 progress
+2. `checkpoint_catalog_refactor_plan.md` - Updated Phase 4 progress
 
 ## Next Steps (Phase 4, Task 4.2: Migration & Rollout)
 
@@ -199,7 +199,7 @@ if epochs is None and max_epochs_from_config is not None:
 
 ## References
 
-- **Architecture**: [`docs/ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md`](../../../ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md)
+- **Architecture**: `docs/ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md`
 - **Analysis**: [`docs/ai_handbook/05_changelog/2025-10/18_checkpoint_catalog_analysis.md`](18_checkpoint_catalog_analysis.md)
-- **Master Plan**: [`checkpoint_catalog_refactor_plan.md`](../../../../checkpoint_catalog_refactor_plan.md)
+- **Master Plan**: `checkpoint_catalog_refactor_plan.md`
 - **Previous Changes**: [`docs/CHANGELOG.md`](../../../CHANGELOG.md)

@@ -25,7 +25,7 @@ Success: no issues found in 1 source file
 **Resolution**: No changes needed. The code is already correct.
 
 **Files**:
-- [ui/apps/inference/services/checkpoint/wandb_client.py](ui/apps/inference/services/checkpoint/wandb_client.py)
+- ui/apps/inference/services/checkpoint/wandb_client.py
 
 ---
 
@@ -44,7 +44,7 @@ ValueError: signal only works in main thread of the main interpreter
 #### Issue 2a: Signal-Based Timeout (CRITICAL)
 The inference engine used `signal.signal()` for timeout handling, which **only works in the main thread**. Streamlit runs in separate threads, causing the error.
 
-**Resolution**: Replaced signal-based timeout with thread-safe threading-based timeout in [ui/utils/inference/engine.py](ui/utils/inference/engine.py):
+**Resolution**: Replaced signal-based timeout with thread-safe threading-based timeout in ui/utils/inference/engine.py:
 
 ```python
 # Before (signal-based - main thread only):
@@ -102,9 +102,9 @@ if st.button("🚀 Run Inference", type="primary", use_container_width=True):
 ```
 
 **Files Modified**:
-- [ui/utils/inference/engine.py](ui/utils/inference/engine.py) - **CRITICAL**: Threading timeout fix
-- [ui/apps/inference/components/sidebar.py:490](ui/apps/inference/components/sidebar.py#L490) - Button fix
-- [ui/apps/inference/components/sidebar.py:507](ui/apps/inference/components/sidebar.py#L507) - Button fix
+- ui/utils/inference/engine.py - **CRITICAL**: Threading timeout fix
+- ui/apps/inference/components/sidebar.py:490 - Button fix
+- ui/apps/inference/components/sidebar.py:507 - Button fix
 
 **Test Results**:
 ```
@@ -122,7 +122,7 @@ Result keys: ['polygons', 'texts', 'confidences']
 Number of polygons detected: 85
 ```
 
-**Detailed Documentation**: See [19_streamlit_inference_threading_fix.md](docs/ai_handbook/05_changelog/2025-10/19_streamlit_inference_threading_fix.md)
+**Detailed Documentation**: See 19_streamlit_inference_threading_fix.md
 
 ---
 
@@ -151,7 +151,7 @@ Metadata file exists: True
 **Requirement**: Compare `remap_polygons()` outputs between Streamlit and normal workflows to ensure identical results.
 
 **Implementation**: Created comprehensive coordinate validation script:
-- Script: [scripts/validate_coordinate_consistency.py](scripts/validate_coordinate_consistency.py)
+- Script: scripts/validate_coordinate_consistency.py
 - Features:
   - Single image validation
   - Batch validation with sampling
@@ -180,7 +180,7 @@ Validating: drp.en_ko.in_house.selectstar_003949.jpg
 
 **Findings**:
 1. Both workflows use the **same** `remap_polygons()` function from `ocr/utils/orientation.py`
-2. Streamlit engine ([ui/utils/inference/engine.py:273](ui/utils/inference/engine.py#L273)) correctly applies orientation transformations
+2. Streamlit engine (ui/utils/inference/engine.py:273) correctly applies orientation transformations
 3. EXIF orientation handling is identical between workflows
 4. **Zero pixel difference** in coordinate outputs - perfect alignment!
 
@@ -193,7 +193,7 @@ Validating: drp.en_ko.in_house.selectstar_003949.jpg
 ### Test Infrastructure
 
 Created comprehensive debug script for future troubleshooting:
-- File: [test_streamlit_inference_debug.py](test_streamlit_inference_debug.py)
+- File: test_streamlit_inference_debug.py
 - Tests:
   - Import validation
   - Inference engine availability

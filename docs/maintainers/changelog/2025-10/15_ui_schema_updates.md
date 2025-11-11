@@ -184,9 +184,9 @@ UI unable to load checkpoints with DBNet++ ResNet18
 
 ## **References**
 
-- [UI Inference Compatibility Schema](../../03_references/guides/ui_inference_compatibility_schema.md)
-- [Checkpoint Naming Scheme](../../03_references/architecture/07_checkpoint_naming_scheme.md)
-- [UI Architecture](../../03_references/architecture/05_ui_architecture.md)
+- UI Inference Compatibility Schema
+- Checkpoint Naming Scheme
+- UI Architecture
 
 ---
 

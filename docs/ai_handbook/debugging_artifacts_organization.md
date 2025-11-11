@@ -190,14 +190,14 @@ cat > "$SESSION_DIR/README.md" << EOF
 [Brief description of the debugging session]
 
 ## Key Documents
-- [01_initial_analysis.md](01_initial_analysis.md) - Problem statement
-- [02_investigation.md](02_investigation.md) - Investigation steps
-- [03_findings.md](03_findings.md) - Results and insights
+- 01_initial_analysis.md - Problem statement
+- 02_investigation.md - Investigation steps
+- 03_findings.md - Results and insights
 
 ## Artifacts
-- [artifacts/](artifacts/) - Debugging artifacts
-- [logs/](logs/) - Session logs
-- [scripts/](scripts/) - Investigation scripts
+- artifacts/ - Debugging artifacts
+- logs/ - Session logs
+- scripts/ - Investigation scripts
 EOF
 
 echo "Debugging session setup complete: $SESSION_DIR"

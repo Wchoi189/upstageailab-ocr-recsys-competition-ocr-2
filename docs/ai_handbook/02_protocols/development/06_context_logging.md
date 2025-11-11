@@ -109,6 +109,6 @@ Leverage generated summaries for efficient knowledge transfer and debugging:
 
 ## **Related Documents**
 - [Command Registry](02_command_registry.md) - Available logging and context tools
-- [Experiment Template](../../experiments/TEMPLATE.md) - Long-running experiment documentation
+- Experiment Template - Long-running experiment documentation
 - [Context Checkpointing](08_context_checkpointing.md) - Advanced context management
 - [Iterative Debugging](07_iterative_debugging.md) - Debugging workflow integration

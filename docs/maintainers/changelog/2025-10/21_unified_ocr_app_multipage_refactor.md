@@ -312,13 +312,13 @@ rm shared_utils.py
 ## References
 
 ### Documentation
-- [APP_REFACTOR_PLAN.md](../08_planning/APP_REFACTOR_PLAN.md) - Original refactoring plan
+- APP_REFACTOR_PLAN.md - Original refactoring plan
 - [Streamlit Multi-Page Apps](https://docs.streamlit.io/library/get-started/multipage-apps) - Official documentation
-- [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](../08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md) - Architecture overview
+- UNIFIED_STREAMLIT_APP_ARCHITECTURE.md - Architecture overview
 
 ### Related Changes
 - [CHANGELOG.md](../../../CHANGELOG.md) - Version 0.2.0 entry
-- [SESSION_COMPLETE_2025-10-21.md](../../../SESSION_COMPLETE_2025-10-21.md) - Session summary
+- SESSION_COMPLETE_2025-10-21.md - Session summary
 
 ---
 

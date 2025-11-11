@@ -93,5 +93,5 @@ Apply targeted fixes for frequent issues:
 ## **Related Documents**
 - [Command Registry](02_command_registry.md) - Available debugging and inspection tools
 - [Coding Standards](01_coding_standards.md) - Development best practices
-- [Configuration Management](../../configuration/01_hydra_config_system.md) - Config validation and debugging
-- [Data Pipeline](../../data/01_data_processing_pipeline.md) - Data-related debugging guidance
+- Configuration Management - Config validation and debugging
+- Data Pipeline - Data-related debugging guidance

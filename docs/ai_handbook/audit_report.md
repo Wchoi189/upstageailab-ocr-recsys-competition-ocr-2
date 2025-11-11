@@ -139,9 +139,9 @@ The validation script identified systematic non-compliance across all documentat
 
 ## Related Documents
 
-- [AI Collaboration Documentation Living Blueprint](ai_collaboration_documentation_living_blueprint.md)
+- AI Collaboration Documentation Living Blueprint
 - [Template Usage Guidelines](_templates/README.md)
-- [Validation Script Documentation](scripts/validate_templates.py)
+- Validation Script Documentation
 
 ---
 

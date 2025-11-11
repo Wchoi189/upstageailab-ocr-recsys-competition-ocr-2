@@ -272,11 +272,11 @@ Integrate PolygonCache with DBCollateFN to achieve the **5-8x validation speedup
 
 ## 📚 References
 
-- **Baseline Report:** [docs/performance/baseline_2025-10-07_final.md](../../../performance/baseline_2025-10-07_final.md)
-- **Raw Metrics:** [docs/performance/raw_metrics_final.json](../../../performance/raw_metrics_final.json)
-- **Execution Plan:** [performance_optimization_execution_plan.md](./performance_optimization_execution_plan.md)
-- **Delegation Log:** [qwen_delegation_log.md](./qwen_delegation_log.md)
-- **Prompt Index:** [../../../prompts/qwen/INDEX.md](../../../prompts/qwen/INDEX.md)
+- **Baseline Report:** docs/performance/baseline_2025-10-07_final.md
+- **Raw Metrics:** docs/performance/raw_metrics_final.json
+- **Execution Plan:** performance_optimization_execution_plan.md
+- **Delegation Log:** qwen_delegation_log.md
+- **Prompt Index:** ../../../prompts/qwen/INDEX.md
 
 ---
 

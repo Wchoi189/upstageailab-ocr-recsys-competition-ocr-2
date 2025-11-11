@@ -24,7 +24,7 @@ Establish clear objectives and target architecture before making changes:
 - Identify code smells: large files, mixed responsibilities, tight coupling, duplicated logic
 
 **Review Architecture:**
-- Consult [Architecture](../../references/architecture/01_architecture.md)
+- Consult Architecture
 - Understand component relationships and dependencies
 - Define scope and target module boundaries
 
@@ -97,8 +97,8 @@ Complete the refactor and update all references:
 - When performance degrades, profile before and after changes
 
 ## **Related Documents**
-- [Architecture Reference](../../references/architecture/01_architecture.md) - System architecture overview
+- Architecture Reference - System architecture overview
 - [Utility Adoption](04_utility_adoption.md) - Code reuse and DRY principles
 - [Refactoring Guide](10_refactoring_guide.md) - Advanced refactoring techniques
 - [Coding Standards](01_coding_standards.md) - Development best practices
-- [Configuration Management](../../configuration/01_hydra_config_system.md) - Hydra configuration patterns
+- Configuration Management - Hydra configuration patterns

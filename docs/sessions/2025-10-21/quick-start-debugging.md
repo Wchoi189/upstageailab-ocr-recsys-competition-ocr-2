@@ -147,7 +147,7 @@ cp ui/apps/unified_ocr_app/app.py ui/apps/unified_ocr_app/app.py.backup
 
 **Problem**: 725-line app.py file handles all 3 modes
 
-**Solution**: See [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+**Solution**: See docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md
 
 **When to refactor**: After fixing the loading issue!
 
@@ -157,12 +157,12 @@ cp ui/apps/unified_ocr_app/app.py ui/apps/unified_ocr_app/app.py.backup
 
 ### Main Documents (in order to read them):
 
-1. **[SESSION_HANDOVER_APP_REFACTOR.md](SESSION_HANDOVER_APP_REFACTOR.md)** ← START HERE
+1. **SESSION_HANDOVER_APP_REFACTOR.md** ← START HERE
    - Full context of debugging session
    - What was fixed, what wasn't
    - Next steps
 
-2. **[docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)**
+2. **docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md**
    - Detailed refactoring plan
    - Multi-page architecture design
    - Implementation steps
@@ -216,7 +216,7 @@ Before moving to refactoring, ensure:
 
 ## Need Help?
 
-1. Check [SESSION_HANDOVER_APP_REFACTOR.md](SESSION_HANDOVER_APP_REFACTOR.md) for full context
+1. Check SESSION_HANDOVER_APP_REFACTOR.md for full context
 2. Check `/tmp/streamlit_debug.log` to see where execution stopped
 3. Add more debug prints to narrow down the issue
 4. Search the services for blocking operations

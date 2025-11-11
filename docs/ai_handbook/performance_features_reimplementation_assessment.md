@@ -597,5 +597,5 @@ uv run python runners/train.py --cfg job --resolve | grep cache_config
 - **Code Implementation**: [ocr/datasets/base.py](../../ocr/datasets/base.py), [ocr/utils/cache_manager.py](../../ocr/utils/cache_manager.py)
 - **Pydantic Schemas**: [ocr/datasets/schemas.py](../../ocr/datasets/schemas.py)
 - **Original Documentation**: [phase-6e-tensor-caching-findings.md](../../logs/2025-10-08_02_refactor_performance_features/phase-6e-tensor-caching-findings.md)
-- **Bottleneck Analysis**: [bottleneck_analysis_webdataset_vs_dali.md](./bottleneck_analysis_webdataset_vs_dali.md)
-- **Changelog**: [CHANGELOG.md](../../CHANGELOG.md)
+- **Bottleneck Analysis**: bottleneck_analysis_webdataset_vs_dali.md
+- **Changelog**: CHANGELOG.md

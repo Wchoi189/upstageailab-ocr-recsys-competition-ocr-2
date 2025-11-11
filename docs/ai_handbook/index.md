@@ -34,7 +34,7 @@ Use these curated "context bundles" to load the most relevant files for common t
 #### **For Launching Streamlit Apps:**
 
 1. **Protocol:** [Command Registry](./02_protocols/development/02_command_registry.md)
-2. **Runner:** [`run_ui.py`](../run_ui.py) commands `evaluation_viewer`, `inference`, `command_builder`, `resource_monitor`
+2. **Runner:** `run_ui.py` commands `evaluation_viewer`, `inference`, `command_builder`, `resource_monitor`
 3. **Doc Bundle:** `uv run python scripts/agent_tools/get_context.py --bundle streamlit-maintenance`
 
 #### **For Managing Agent Context Logs:**
@@ -62,7 +62,7 @@ Use these curated "context bundles" to load the most relevant files for common t
 
 #### **For Bug Reporting and Issue Tracking:**
 
-1. **Template:** [Bug Report Template](./bug_reports/BUG_REPORT_TEMPLATE.md)
+1. **Template:** Bug Report Template
 2. **Reference:** [Changelog](../CHANGELOG.md)
 
 #### **For AI Agent Collaboration:**
@@ -71,7 +71,7 @@ Use these curated "context bundles" to load the most relevant files for common t
 
 ## **3. 🤖 Command Registry**
 
-For safe, autonomous execution of tasks, refer to the [**Command Registry**](./02_protocols/02_command_registry.md). It contains a list of approved scripts, their functions, and examples.
+For safe, autonomous execution of tasks, refer to the **Command Registry**. It contains a list of approved scripts, their functions, and examples.
 
 ## **4. 📚 Table of Contents**
 
@@ -127,7 +127,7 @@ For safe, autonomous execution of tasks, refer to the [**Command Registry**](./0
 ### **04. Experiments**
 
 * [Experiment Log Template](./04_experiments/experiment_logs/templates/experiment_log_template.md)
-* [Bug Report Template](./bug_reports/BUG_REPORT_TEMPLATE.md)
+* Bug Report Template
 * [View All Experiments](./04_experiments/)
 
 ### **05. Changelog**

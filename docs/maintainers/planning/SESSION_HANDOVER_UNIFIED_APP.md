@@ -46,25 +46,25 @@ configs/ui/
 ```
 
 #### 3. Configuration System ✅
-- **Main Config**: [configs/ui/unified_app.yaml](../../../configs/ui/unified_app.yaml)
+- **Main Config**: configs/ui/unified_app.yaml
   - App metadata (title, icon, layout)
   - Mode definitions (3 modes configured)
   - Shared settings (upload, display, session)
   - Paths and validation settings
 
-- **Mode Config**: [configs/ui/modes/preprocessing.yaml](../../../configs/ui/modes/preprocessing.yaml)
+- **Mode Config**: configs/ui/modes/preprocessing.yaml
   - Complete preprocessing pipeline configuration
   - All parameter definitions with metadata
   - UI layout specification
   - Export settings
 
-- **Schema Validation**: [configs/schemas/preprocessing_schema.yaml](../../../configs/schemas/preprocessing_schema.yaml)
+- **Schema Validation**: configs/schemas/preprocessing_schema.yaml
   - JSON Schema for type validation
   - Custom validation rules
   - Error messages
 
 #### 4. Service Layer ✅
-- **ConfigLoader**: [ui/apps/unified_ocr_app/services/config_loader.py](../../../ui/apps/unified_ocr_app/services/config_loader.py)
+- **ConfigLoader**: ui/apps/unified_ocr_app/services/config_loader.py
   - YAML loading with error handling
   - JSON Schema validation
   - Config inheritance support
@@ -72,21 +72,21 @@ configs/ui/
   - Cached loading functions
 
 #### 5. Data Models ✅
-- **UnifiedAppState**: [ui/apps/unified_ocr_app/models/app_state.py](../../../ui/apps/unified_ocr_app/models/app_state.py)
+- **UnifiedAppState**: ui/apps/unified_ocr_app/models/app_state.py
   - Centralized state management
   - Type-safe Streamlit session state wrapper
   - Mode switching logic
   - Image management
   - Preference persistence
 
-- **PreprocessingConfig**: [ui/apps/unified_ocr_app/models/preprocessing_config.py](../../../ui/apps/unified_ocr_app/models/preprocessing_config.py)
+- **PreprocessingConfig**: ui/apps/unified_ocr_app/models/preprocessing_config.py
   - Pydantic models for all preprocessing parameters
   - Field validation (ranges, dependencies)
   - Enum types for selections
   - YAML serialization support
 
 #### 6. Application Scaffold ✅
-- **app.py**: [ui/apps/unified_ocr_app/app.py](../../../ui/apps/unified_ocr_app/app.py)
+- **app.py**: ui/apps/unified_ocr_app/app.py
   - Mode selection UI
   - Config loading and error handling
   - Placeholder mode renderers
@@ -316,21 +316,21 @@ __all__ = [
 - [REMBG_INTEGRATION_SUMMARY.md](REMBG_INTEGRATION_SUMMARY.md) - rembg overview
 
 ### Configuration
-- [configs/ui/unified_app.yaml](../../../configs/ui/unified_app.yaml) - Main app config
-- [configs/ui/modes/preprocessing.yaml](../../../configs/ui/modes/preprocessing.yaml) - Preprocessing mode config
-- [configs/schemas/preprocessing_schema.yaml](../../../configs/schemas/preprocessing_schema.yaml) - Validation schema
+- configs/ui/unified_app.yaml - Main app config
+- configs/ui/modes/preprocessing.yaml - Preprocessing mode config
+- configs/schemas/preprocessing_schema.yaml - Validation schema
 
 ### Code
-- [ui/apps/unified_ocr_app/app.py](../../../ui/apps/unified_ocr_app/app.py) - Main app (scaffold)
-- [ui/apps/unified_ocr_app/services/config_loader.py](../../../ui/apps/unified_ocr_app/services/config_loader.py) - Config loading
-- [ui/apps/unified_ocr_app/models/app_state.py](../../../ui/apps/unified_ocr_app/models/app_state.py) - State management
-- [ui/apps/unified_ocr_app/models/preprocessing_config.py](../../../ui/apps/unified_ocr_app/models/preprocessing_config.py) - Preprocessing models
+- ui/apps/unified_ocr_app/app.py - Main app (scaffold)
+- ui/apps/unified_ocr_app/services/config_loader.py - Config loading
+- ui/apps/unified_ocr_app/models/app_state.py - State management
+- ui/apps/unified_ocr_app/models/preprocessing_config.py - Preprocessing models
 
 ### Existing Code to Migrate
-- [ui/preprocessing_viewer_app.py](../../../ui/preprocessing_viewer_app.py) - Old preprocessing viewer
+- ui/preprocessing_viewer_app.py - Old preprocessing viewer
 - [ui/preprocessing_viewer/pipeline.py](../../../ui/preprocessing_viewer/pipeline.py) - Preprocessing pipeline
 - [ui/apps/inference/app.py](../../../ui/apps/inference/app.py) - Old inference app
-- [ocr/datasets/preprocessing/background_removal.py](../../../ocr/datasets/preprocessing/background_removal.py) - rembg class
+- ocr/datasets/preprocessing/background_removal.py - rembg class
 
 ---
 

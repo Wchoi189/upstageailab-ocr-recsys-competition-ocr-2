@@ -94,9 +94,9 @@ All documentation files must contain the following sections in order:
 - Use inline code with single backticks: `code`
 
 ### Links and References
-- Use relative paths for internal links: `[Link Text](./path/to/file.md)`
+- Use relative paths for internal links: `Link Text`
 - Use absolute URLs for external links
-- Cross-reference other documents with full path: `[Document Name](./02_protocols/development/example.md)`
+- Cross-reference other documents with full path: `Document Name`
 
 ## Content Standards
 

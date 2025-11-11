@@ -36,8 +36,8 @@ image001.jpg,10,50,100,50,100,150,10,150
 ```
 
 **Changes Made:**
-- [submission_writer.py:37](ui/apps/inference/services/submission_writer.py#L37) - Changed `image_name` → `filename` in SubmissionEntry model
-- [submission_writer.py:170](ui/apps/inference/services/submission_writer.py#L170) - Updated CSV header to use `filename`
+- submission_writer.py:37 - Changed `image_name` → `filename` in SubmissionEntry model
+- submission_writer.py:170 - Updated CSV header to use `filename`
 - All existing output was using wrong column name!
 
 ### 2. **Added Optional Confidence Score Support**
@@ -50,11 +50,11 @@ image002.jpg,20,60,120,60,120,160,20,160,0.92
 ```
 
 **Implementation:**
-- [submission_writer.py:46](ui/apps/inference/services/submission_writer.py#L46) - Added `include_confidence` field to `BatchOutputConfig`
-- [submission_writer.py:63](ui/apps/inference/services/submission_writer.py#L63) - Added confidence parameter to `write_json()`
-- [submission_writer.py:118](ui/apps/inference/services/submission_writer.py#L118) - Added confidence parameter to `write_csv()`
-- [submission_writer.py:83-85](ui/apps/inference/services/submission_writer.py#L83-L85) - Calculates average confidence from all detections
-- [sidebar.py:154-159](ui/apps/inference/components/sidebar.py#L154-L159) - Added UI checkbox for confidence option
+- submission_writer.py:46 - Added `include_confidence` field to `BatchOutputConfig`
+- submission_writer.py:63 - Added confidence parameter to `write_json()`
+- submission_writer.py:118 - Added confidence parameter to `write_csv()`
+- submission_writer.py:83-85 - Calculates average confidence from all detections
+- sidebar.py:154-159 - Added UI checkbox for confidence option
 
 **Confidence Calculation:**
 - Takes average of all `confidences` list in `Predictions`
@@ -64,9 +64,9 @@ image002.jpg,20,60,120,60,120,160,20,160,0.92
 ### 3. **Coordinate System Validation**
 
 **Key Discovery:** Coordinates are **already aligned!** Both workflows use:
-- [engine.py:13](ui/utils/inference/engine.py#L13) imports `remap_polygons` from `ocr.utils.orientation`
-- [engine.py:221-263](ui/utils/inference/engine.py#L221-L263) applies `_remap_predictions_if_needed()`
-- [orientation.py:129-145](ocr/utils/orientation.py#L129-L145) defines the canonical transformation
+- engine.py:13 imports `remap_polygons` from `ocr.utils.orientation`
+- engine.py:221-263 applies `_remap_predictions_if_needed()`
+- orientation.py:129-145 defines the canonical transformation
 
 **No changes needed** - the coordinate transformation logic is shared between:
 1. Streamlit inference (`ui/utils/inference/engine.py`)
@@ -74,7 +74,7 @@ image002.jpg,20,60,120,60,120,160,20,160,0.92
 
 ### 4. **Comprehensive Unit Tests**
 
-Created [test_submission_writer.py](tests/unit/test_submission_writer.py) with 8 tests:
+Created test_submission_writer.py with 8 tests:
 
 ```bash
 ✅ test_submission_entry_model - Pydantic model validation
@@ -92,10 +92,10 @@ All 8 tests PASSING ✅
 ### 5. **State Management Updates**
 
 Extended `InferenceState` to track confidence preference:
-- [state.py:35](ui/apps/inference/state.py#L35) - Added `batch_include_confidence` session key
-- [state.py:55](ui/apps/inference/state.py#L55) - Added field to dataclass
-- [state.py:86](ui/apps/inference/state.py#L86) - Added to `from_session()`
-- [state.py:106](ui/apps/inference/state.py#L106) - Added to `persist()`
+- state.py:35 - Added `batch_include_confidence` session key
+- state.py:55 - Added field to dataclass
+- state.py:86 - Added to `from_session()`
+- state.py:106 - Added to `persist()`
 
 ---
 
@@ -106,7 +106,7 @@ Extended `InferenceState` to track confidence preference:
 ### Why Batch Mode is Superior for Preprocessing:
 
 1. **File-based I/O**: Images read from disk, not uploaded buffers
-   - Clean temp file creation at [inference_runner.py:161](ui/apps/inference/services/inference_runner.py#L161)
+   - Clean temp file creation at inference_runner.py:161
    - Proper cleanup in finally block
 
 2. **Memory Efficient**: One image at a time
@@ -114,7 +114,7 @@ Extended `InferenceState` to track confidence preference:
    - Perfect for heavy preprocessing operations
 
 3. **Error Isolation**: Individual failures don't crash batch
-   - Per-image try/catch at [inference_runner.py:331-360](ui/apps/inference/services/inference_runner.py#L331-L360)
+   - Per-image try/catch at inference_runner.py:331-360
    - Failed images get empty polygons, batch continues
 
 4. **Consistent with Training**: Uses same `DocumentPreprocessor`
@@ -128,26 +128,26 @@ Extended `InferenceState` to track confidence preference:
 ## 📁 Modified Files Summary
 
 ### Core Implementation:
-1. [ui/apps/inference/services/submission_writer.py](ui/apps/inference/services/submission_writer.py)
+1. ui/apps/inference/services/submission_writer.py
    - Fixed `image_name` → `filename` (competition requirement)
    - Added confidence score support
    - Updated CSV/JSON writers with `include_confidence` parameter
 
-2. [ui/apps/inference/models/batch_request.py](ui/apps/inference/models/batch_request.py)
+2. ui/apps/inference/models/batch_request.py
    - Added `include_confidence: bool` to `BatchOutputConfig`
 
-3. [ui/apps/inference/state.py](ui/apps/inference/state.py)
+3. ui/apps/inference/state.py
    - Added `batch_include_confidence` field throughout
 
-4. [ui/apps/inference/components/sidebar.py](ui/apps/inference/components/sidebar.py)
+4. ui/apps/inference/components/sidebar.py
    - Added confidence checkbox at line 154-159
    - Pass confidence option to `BatchOutputConfig` at line 185
 
-5. [ui/apps/inference/services/inference_runner.py](ui/apps/inference/services/inference_runner.py)
+5. ui/apps/inference/services/inference_runner.py
    - Pass `include_confidence` to `write_batch_results()` at line 383
 
 ### Testing:
-6. [tests/unit/test_submission_writer.py](tests/unit/test_submission_writer.py) - NEW
+6. tests/unit/test_submission_writer.py - NEW
    - 8 comprehensive unit tests
    - Validates competition format compliance
    - Tests confidence score calculation

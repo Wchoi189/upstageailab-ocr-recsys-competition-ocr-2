@@ -166,10 +166,10 @@ tests/integration/
 
 ## References
 
-- **Execution Plan:** [performance_optimization_execution_plan.md](./performance_optimization_execution_plan.md)
-- **Delegation Log:** [qwen_delegation_log.md](./qwen_delegation_log.md)
-- **Original Plan:** [performance_optimization_plan.md](./performance_optimization_plan.md)
-- **Qwen Prompt:** [prompts/qwen/01_performance_profiler_callback.md](../../../prompts/qwen/01_performance_profiler_callback.md)
+- **Execution Plan:** performance_optimization_execution_plan.md
+- **Delegation Log:** qwen_delegation_log.md
+- **Original Plan:** performance_optimization_plan.md
+- **Qwen Prompt:** prompts/qwen/01_performance_profiler_callback.md
 
 ---
 

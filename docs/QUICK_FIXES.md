@@ -1,7 +1,7 @@
 # Quick Fixes Log
 
 This log tracks quick fixes, patches, and hotfixes applied to the codebase.
-Format follows the [Quick Fixes Protocol](docs/ai_handbook/02_protocols/development/11_quick_fixes_protocol.md).
+Format follows the Quick Fixes Protocol.
 
 ---
 

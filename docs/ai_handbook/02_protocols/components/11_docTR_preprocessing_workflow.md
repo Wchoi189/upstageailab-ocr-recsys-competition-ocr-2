@@ -241,7 +241,7 @@ This script renders synthetic document imagery, processes it with docTR on/off, 
 
 | Original Upload | After docTR Preprocessing |
 | --- | --- |
-| ![Original synthetic document](outputs/protocols/doctr_preprocessing/demo_original.png) | ![docTR rectified output](outputs/protocols/doctr_preprocessing/demo_doctr.png) |
+| !Original synthetic document | !docTR rectified output |
 
 For a baseline comparison, `demo_opencv.png` showcases the OpenCV-only pathway when docTR features are disabled. Metadata exports (`*.metadata.json`) capture the processing steps and corner geometry used in the UI visualisations.
 

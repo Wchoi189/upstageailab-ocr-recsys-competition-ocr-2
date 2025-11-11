@@ -87,7 +87,7 @@ with torch.no_grad():
 - ✅ CUDA context stays in same thread
 - ✅ Streamlit's built-in timeout still protects against hangs
 
-**File**: [ui/utils/inference/engine.py](ui/utils/inference/engine.py) lines 259-274
+**File**: ui/utils/inference/engine.py lines 259-274
 
 ---
 
@@ -114,7 +114,7 @@ state.persist()
 - ✅ App can run indefinitely without memory issues
 - ✅ User still sees recent results
 
-**File**: [ui/apps/inference/services/inference_runner.py](ui/apps/inference/services/inference_runner.py) lines 122-127
+**File**: ui/apps/inference/services/inference_runner.py lines 122-127
 
 ---
 
@@ -145,7 +145,7 @@ if pil_image.width > MAX_DISPLAY_SIZE or pil_image.height > MAX_DISPLAY_SIZE:
 - ✅ Less network bandwidth
 - ✅ Polygon coordinates scaled automatically
 
-**File**: [ui/apps/inference/components/results.py](ui/apps/inference/components/results.py) lines 198-213
+**File**: ui/apps/inference/components/results.py lines 198-213
 
 ---
 
@@ -168,7 +168,7 @@ st.image(
 - ✅ Proper color channel handling
 - ✅ Consistent rendering across image types
 
-**File**: [ui/apps/inference/components/results.py](ui/apps/inference/components/results.py) multiple locations
+**File**: ui/apps/inference/components/results.py multiple locations
 
 ---
 
@@ -215,26 +215,26 @@ st.image(
 ## Files Modified
 
 ### Critical Fixes
-1. **[ui/utils/inference/engine.py](ui/utils/inference/engine.py)**
+1. **ui/utils/inference/engine.py**
    - Removed threading timeout wrapper (lines 259-274)
    - Direct inference call instead
 
-2. **[ui/apps/inference/services/inference_runner.py](ui/apps/inference/services/inference_runner.py)**
+2. **ui/apps/inference/services/inference_runner.py**
    - Added session state size limit (lines 122-127)
    - MAX_RESULTS_IN_MEMORY = 10
 
-3. **[ui/apps/inference/components/results.py](ui/apps/inference/components/results.py)**
+3. **ui/apps/inference/components/results.py**
    - Added image downsampling (lines 198-213)
    - Added `_scale_polygons()` helper (lines 276-303)
    - Added proper `st.image()` parameters throughout
 
 ### Documentation
-4. **[INFERENCE_CRASH_SUSPECTS.md](INFERENCE_CRASH_SUSPECTS.md)**
+4. **INFERENCE_CRASH_SUSPECTS.md**
    - Comprehensive diagnostic guide
    - Prioritized suspect list
    - Test procedures
 
-5. **[docs/ai_handbook/05_changelog/2025-10/19_streamlit_crash_fixes_complete.md](docs/ai_handbook/05_changelog/2025-10/19_streamlit_crash_fixes_complete.md)**
+5. **docs/ai_handbook/05_changelog/2025-10/19_streamlit_crash_fixes_complete.md**
    - This file - complete fix documentation
 
 ---
@@ -262,10 +262,10 @@ MAX_DISPLAY_SIZE = 2048  # Adjust based on needs
 ### From Earlier Today
 These fixes were also applied earlier in the session:
 
-1. **Button parameter consistency** ([ui/apps/inference/components/sidebar.py](ui/apps/inference/components/sidebar.py))
+1. **Button parameter consistency** (ui/apps/inference/components/sidebar.py)
    - Fixed `width="stretch"` → `use_container_width=True`
 
-2. **Coordinate validation** ([scripts/validate_coordinate_consistency.py](scripts/validate_coordinate_consistency.py))
+2. **Coordinate validation** (scripts/validate_coordinate_consistency.py)
    - Created validation tool
    - Verified 0.000px difference between workflows
 
@@ -328,7 +328,7 @@ If app is slow:
 - [19_streamlit_inference_threading_fix.md](19_streamlit_inference_threading_fix.md) - Threading timeout details
 - [19_streamlit_image_rendering_fix.md](19_streamlit_image_rendering_fix.md) - Image rendering details
 - [19_streamlit_batch_prediction_phase3_summary.md](19_streamlit_batch_prediction_phase3_summary.md) - Phase 3 summary
-- [INFERENCE_CRASH_SUSPECTS.md](../../INFERENCE_CRASH_SUSPECTS.md) - Diagnostic guide
+- INFERENCE_CRASH_SUSPECTS.md - Diagnostic guide
 
 ---
 

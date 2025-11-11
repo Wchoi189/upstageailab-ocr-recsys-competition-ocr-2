@@ -27,8 +27,8 @@ Successfully completed the Checkpoint Catalog Refactor project, achieving a **40
 - ✅ Created comprehensive design document
 
 **Key Deliverables**:
-- [checkpoint_catalog_v2_design.md](../../03_references/architecture/checkpoint_catalog_v2_design.md)
-- [checkpoint_catalog_analysis.md](2025-10/18_checkpoint_catalog_analysis.md)
+- checkpoint_catalog_v2_design.md
+- checkpoint_catalog_analysis.md
 
 ### Phase 2: Core Implementation ✅
 **Duration**: Day 1
@@ -39,9 +39,9 @@ Successfully completed the Checkpoint Catalog Refactor project, achieving a **40
 - ✅ Implemented Pydantic-based validation
 
 **Key Deliverables**:
-- [metadata_callback.py](../../../../ocr/lightning_modules/callbacks/metadata_callback.py)
-- [scripts/generate_checkpoint_metadata.py](../../../../scripts/generate_checkpoint_metadata.py)
-- [validator.py](../../../../ui/apps/inference/services/checkpoint/validator.py)
+- metadata_callback.py
+- scripts/generate_checkpoint_metadata.py
+- validator.py
 
 ### Phase 3: Integration & Fallbacks ✅
 **Duration**: Day 1-2
@@ -51,8 +51,8 @@ Successfully completed the Checkpoint Catalog Refactor project, achieving a **40
 - ✅ Integrated V2 system into UI inference catalog
 
 **Key Deliverables**:
-- [wandb_client.py](../../../../ui/apps/inference/services/checkpoint/wandb_client.py)
-- [catalog.py](../../../../ui/apps/inference/services/checkpoint/catalog.py)
+- wandb_client.py
+- catalog.py
 - [checkpoint_catalog.py](../../../../ui/apps/inference/services/checkpoint_catalog.py) (V2 adapter)
 
 ### Phase 4: Testing & Deployment ✅
@@ -64,8 +64,8 @@ Successfully completed the Checkpoint Catalog Refactor project, achieving a **40
 - ✅ Deployed with feature flags for gradual rollout
 
 **Key Deliverables**:
-- [test_checkpoint_catalog_v2.py](../../../../tests/unit/test_checkpoint_catalog_v2.py) (33 unit tests)
-- [test_checkpoint_catalog_v2_integration.py](../../../../tests/integration/test_checkpoint_catalog_v2_integration.py) (12 integration tests)
+- test_checkpoint_catalog_v2.py (33 unit tests)
+- test_checkpoint_catalog_v2_integration.py (12 integration tests)
 - Feature flag: `CHECKPOINT_CATALOG_USE_V2` (default: enabled)
 
 ## Performance Results
@@ -332,15 +332,15 @@ MetadataCallback is now enabled by default in `configs/callbacks/default.yaml`. 
 ### Implementation Documents
 
 - [Refactor Plan](../../planning/checkpoint_catalog_refactor_plan.md)
-- [V2 Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
-- [Analysis Report](2025-10/18_checkpoint_catalog_analysis.md)
+- V2 Design
+- Analysis Report
 
 ### Changelog Entries
 
-- [Module Implementation](2025-10/18_checkpoint_catalog_v2_module_implementation.md)
-- [V2 Integration](2025-10/19_checkpoint_catalog_v2_integration.md)
-- [Testing](2025-10/19_checkpoint_catalog_v2_testing.md)
-- [Migration & Rollout](2025-10/19_checkpoint_catalog_migration_rollout.md)
+- Module Implementation
+- V2 Integration
+- Testing
+- Migration & Rollout
 
 ### Code Locations
 

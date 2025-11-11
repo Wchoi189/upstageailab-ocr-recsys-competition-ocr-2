@@ -4,7 +4,7 @@
 **Status**: Completed
 **Phase**: Phase 3, Task 3.2 - Refactor Catalog Service
 **Priority**: Critical
-**Related**: [Checkpoint Loading Protocol](../../02_protocols/components/23_checkpoint_loading_protocol.md) | [Checkpoint Catalog V2](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+**Related**: Checkpoint Loading Protocol | Checkpoint Catalog V2
 
 ## Summary
 
@@ -42,7 +42,7 @@ Implemented comprehensive Pydantic-based validation for checkpoint loading to el
 
 ### 1. Pydantic Validation Models
 
-Created [state_dict_models.py](../../../../ui/apps/inference/services/checkpoint/state_dict_models.py) with:
+Created state_dict_models.py with:
 
 #### Core Models
 
@@ -107,7 +107,7 @@ def validate_checkpoint_structure(checkpoint_data: dict) -> StateDictStructure:
 
 ### 2. Checkpoint Loading Protocol
 
-Created comprehensive protocol document [23_checkpoint_loading_protocol.md](../../02_protocols/components/23_checkpoint_loading_protocol.md) with:
+Created comprehensive protocol document 23_checkpoint_loading_protocol.md with:
 
 #### Critical AI Cues
 
@@ -149,7 +149,7 @@ Complete pattern catalog for all supported architectures:
 
 ### 3. Refactored Inference Engine
 
-Updated [inference_engine.py](../../../../ui/apps/inference/services/checkpoint/inference_engine.py):
+Updated inference_engine.py:
 
 #### AI Cues Added
 
@@ -338,7 +338,7 @@ if shape_obj:
 ### For New Code
 
 **Always start with**:
-1. Read [checkpoint_loading_protocol.md](../../02_protocols/components/23_checkpoint_loading_protocol.md)
+1. Read checkpoint_loading_protocol.md
 2. Choose appropriate pattern (A, B, C, or D)
 3. Use validated models from `state_dict_models.py`
 4. Add AI cues if implementing new checkpoint handling
@@ -347,12 +347,12 @@ if shape_obj:
 
 ### Files Created
 
-1. **[state_dict_models.py](../../../../ui/apps/inference/services/checkpoint/state_dict_models.py)** (444 lines)
+1. **state_dict_models.py** (444 lines)
    - Pydantic models for validation
    - AI cues throughout
    - Complete docstrings
 
-2. **[23_checkpoint_loading_protocol.md](../../02_protocols/components/23_checkpoint_loading_protocol.md)** (800+ lines)
+2. **23_checkpoint_loading_protocol.md** (800+ lines)
    - Comprehensive guide
    - 4 pattern catalog
    - DO NOTs section
@@ -362,13 +362,13 @@ if shape_obj:
 
 ### Files Updated
 
-1. **[inference_engine.py](../../../../ui/apps/inference/services/checkpoint/inference_engine.py)**
+1. **inference_engine.py**
    - Added AI cues
    - Refactored to use validated models
    - Enhanced documentation
    - Added inline pattern comments
 
-2. **[__init__.py](../../../../ui/apps/inference/services/checkpoint/__init__.py)**
+2. **__init__.py**
    - Exported validation utilities
    - Updated docstring
 
@@ -462,9 +462,9 @@ AI cues placed at:
 
 ## References
 
-- [Checkpoint Loading Protocol](../../02_protocols/components/23_checkpoint_loading_protocol.md)
-- [State Dict Models](../../../../ui/apps/inference/services/checkpoint/state_dict_models.py)
-- [Checkpoint Catalog V2 Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+- Checkpoint Loading Protocol
+- State Dict Models
+- Checkpoint Catalog V2 Design
 - [Wandb Fallback Implementation](18_wandb_fallback_implementation.md)
 - [Pydantic Documentation](https://docs.pydantic.dev/latest/)
 

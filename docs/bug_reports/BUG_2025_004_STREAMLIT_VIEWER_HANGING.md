@@ -28,7 +28,7 @@ The Streamlit Preprocessing Viewer app hangs indefinitely when running the full 
 
 ## Root Cause
 
-**Bug Location**: [ui/preprocessing_viewer/pipeline.py:185](ui/preprocessing_viewer/pipeline.py:185)
+**Bug Location**: ui/preprocessing_viewer/pipeline.py:185
 
 ### The Bug
 
@@ -64,7 +64,7 @@ When the config key exists, it uses the value (False). But if there's any code p
 
 ### 1. Corrected Default Value
 
-**File**: [ui/preprocessing_viewer/pipeline.py:185](ui/preprocessing_viewer/pipeline.py:185)
+**File**: ui/preprocessing_viewer/pipeline.py:185
 
 ```python
 # AFTER (FIXED)
@@ -105,7 +105,7 @@ except Exception as e:
 
 ## Files Changed
 
-1. [ui/preprocessing_viewer/pipeline.py](ui/preprocessing_viewer/pipeline.py:1)
+1. ui/preprocessing_viewer/pipeline.py
    - Line 99: Added pipeline start logging
    - Line 185: Fixed document flattening default (True → False)
    - Line 186-196: Added progress logging for flattening
@@ -167,13 +167,13 @@ This is the same category of bug as:
 4. **Caching**: Cache intermediate results for faster re-processing
 5. **Async Processing**: Run expensive operations in background
 
-See: [preprocessing_viewer_debug_session.md](../08_planning/preprocessing_viewer_debug_session.md) for detailed improvement plan
+See: preprocessing_viewer_debug_session.md for detailed improvement plan
 
 ## References
 
-- **Debug Session**: [docs/ai_handbook/08_planning/preprocessing_viewer_debug_session.md](../08_planning/preprocessing_viewer_debug_session.md)
-- **Phase 2 Performance**: [docs/ai_handbook/05_changelog/2025-10/15_phase2_complete.md:101-111](../05_changelog/2025-10/15_phase2_complete.md)
-- **Document Flattening**: [ocr/datasets/preprocessing/document_flattening.py](../../ocr/datasets/preprocessing/document_flattening.py:1)
+- **Debug Session**: docs/ai_handbook/08_planning/preprocessing_viewer_debug_session.md
+- **Phase 2 Performance**: docs/ai_handbook/05_changelog/2025-10/15_phase2_complete.md:101-111
+- **Document Flattening**: ocr/datasets/preprocessing/document_flattening.py
 
 ## Resolution
 

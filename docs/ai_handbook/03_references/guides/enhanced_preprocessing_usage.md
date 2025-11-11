@@ -489,8 +489,8 @@ config.enable_document_flattening = True
 
 ## See Also
 
-- [Advanced Noise Elimination](../../../datasets/preprocessing/advanced_noise_elimination.py)
-- [Document Flattening](../../../datasets/preprocessing/document_flattening.py)
-- [Intelligent Brightness](../../../datasets/preprocessing/intelligent_brightness.py)
-- [Base Pipeline](../../../datasets/preprocessing/pipeline.py)
+- Advanced Noise Elimination
+- Document Flattening
+- Intelligent Brightness
+- Base Pipeline
 - [Data Contracts](../../../pipeline/preprocessing-data-contracts.md)

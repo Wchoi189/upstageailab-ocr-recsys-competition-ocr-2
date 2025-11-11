@@ -20,7 +20,7 @@
 
 ### Phase 4: TurboJPEG Image Loading ✅
 - Optimized JPEG decoding with TurboJPEG
-- Findings: [logs/.../phase-4-findings.md](../../logs/2025-10-08_02_refactor_performance_features/)
+- Findings: logs/.../phase-4-findings.md
 
 ### Phase 5: Map Preloading Investigation ✅
 - Investigated pre-loading .npz probability maps to RAM
@@ -31,18 +31,18 @@
 - Implemented image preloading to RAM
 - Performance: 158.9s → 141.6s (1.12x speedup)
 - Files modified:
-  - [ocr/datasets/base.py](../../ocr/datasets/base.py) - Added image caching
-  - [configs/data/base.yaml](../../configs/data/base.yaml) - Added `preload_images` param
+  - ocr/datasets/base.py - Added image caching
+  - configs/data/base.yaml - Added `preload_images` param
 - Status: **Production-ready, currently disabled**
 - **Action**: Enable for validation dataset
 
 ### Phase 6C: Transform Pipeline Profiling ✅ **COMPLETED**
-- Created profiling script: [scripts/profile_transforms.py](../../scripts/profile_transforms.py)
+- Created profiling script: scripts/profile_transforms.py
 - Identified bottleneck: Normalization = 87.84% of transform time
 - Attempted pre-normalization optimization
 - Result: No additional speedup (CPU/GPU parallelism)
 - **Cleanup**: Reverted ConditionalNormalize usage and prenormalize_images param
-- **Kept**: [scripts/profile_transforms.py](../../scripts/profile_transforms.py) - Useful profiling tool
+- **Kept**: scripts/profile_transforms.py - Useful profiling tool
 
 ---
 
@@ -61,7 +61,7 @@
 
 1. **Validation step canonical_size bug** ✅ **RESOLVED**:
    - Type confusion between PIL.Image.size (tuple) and np.ndarray.size (int) in cached image pipeline
-   - Fixed: Added type-aware shape extraction in dataset; see [BUG-2025-10-09-001](../../bug_reports/BUG-2025-10-09-001_canonical_size_typeerror.md)
+   - Fixed: Added type-aware shape extraction in dataset; see BUG-2025-10-09-001
 
 2. **Map preloading minimal benefit**:
    - Preloading .npz maps to RAM provides <1% speedup
@@ -139,24 +139,24 @@ e3ac30b feature: Rich style color logging added
 ## Key Files Reference
 
 ### Core Data Pipeline
-- [ocr/datasets/base.py](../../ocr/datasets/base.py) - OCRDataset with image caching
-- [ocr/datasets/transforms.py](../../ocr/datasets/transforms.py) - Albumentations transforms
-- [ocr/utils/image_loading.py](../../ocr/utils/image_loading.py) - TurboJPEG image loading
-- [ocr/utils/orientation.py](../../ocr/utils/orientation.py) - EXIF handling
+- ocr/datasets/base.py - OCRDataset with image caching
+- ocr/datasets/transforms.py - Albumentations transforms
+- ocr/utils/image_loading.py - TurboJPEG image loading
+- ocr/utils/orientation.py - EXIF handling
 
 ### Configuration
-- [configs/data/base.yaml](../../configs/data/base.yaml) - Dataset configs
-- [configs/transforms/base.yaml](../../configs/transforms/base.yaml) - Transform configs
-- [configs/trainer/default.yaml](../../configs/trainer/default.yaml) - Trainer configs
+- configs/data/base.yaml - Dataset configs
+- configs/transforms/base.yaml - Transform configs
+- configs/trainer/default.yaml - Trainer configs
 
 ### Scripts & Tools
-- [scripts/profile_transforms.py](../../scripts/profile_transforms.py) - Transform profiling
-- [runners/train.py](../../runners/train.py) - Training entry point
+- scripts/profile_transforms.py - Transform profiling
+- runners/train.py - Training entry point
 
 ### Documentation
-- [logs/2025-10-08_02_refactor_performance_features/](../../logs/2025-10-08_02_refactor_performance_features/) - Session findings
-- [docs/ai_handbook/07_planning/plans/refactor/](../07_planning/plans/refactor/) - Planning docs
-- [docs/CHANGELOG.md](../../docs/CHANGELOG.md) - Feature changelog
+- logs/2025-10-08_02_refactor_performance_features/ - Session findings
+- docs/ai_handbook/07_planning/plans/refactor/ - Planning docs
+- docs/CHANGELOG.md - Feature changelog
 
 ---
 

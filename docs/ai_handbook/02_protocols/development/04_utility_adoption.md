@@ -92,7 +92,7 @@ If you develop generic logic useful across the codebase, contribute it back:
 - If tests fail after adoption, verify parameter compatibility
 
 ## **Related Documents**
-- [Utility Functions Reference](../../references/architecture/03_utility_functions.md) - Catalog of available utilities
+- Utility Functions Reference - Catalog of available utilities
 - [Coding Standards](01_coding_standards.md) - Development best practices
 - [Modular Refactor](05_modular_refactor.md) - Code organization principles
 - [Refactoring Guide](10_refactoring_guide.md) - Advanced refactoring techniques

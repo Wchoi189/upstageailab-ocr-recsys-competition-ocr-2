@@ -15,7 +15,7 @@ Restored and properly configured the performance optimization infrastructure tha
 
 ### 1. Mixed Precision Training (FP16)
 **Status**: Already enabled in configs
-**File**: [configs/trainer/default.yaml](../../../configs/trainer/default.yaml)
+**File**: configs/trainer/default.yaml
 **Impact**: ~2x speedup from FP32 → FP16 computation
 
 ```yaml
@@ -31,8 +31,8 @@ trainer:
 ### 2. RAM Image Preloading
 **Status**: ✅ Implemented
 **Files Modified**:
-- [ocr/datasets/base.py](../../../ocr/datasets/base.py) (lines 538-574, 497-500)
-- [configs/data/base.yaml](../../../configs/data/base.yaml) (lines 24-27)
+- ocr/datasets/base.py (lines 538-574, 497-500)
+- configs/data/base.yaml (lines 24-27)
 
 **Implementation Details**:
 
@@ -108,14 +108,14 @@ datasets:
 ### 3. Tensor Caching
 **Status**: ✅ Configured
 **Files Modified**:
-- [configs/data/base.yaml](../../../configs/data/base.yaml) (lines 28-33)
+- configs/data/base.yaml (lines 28-33)
 
 **Implementation Details**:
 
 The tensor caching infrastructure was already implemented in:
-- [ocr/utils/cache_manager.py](../../../ocr/utils/cache_manager.py) - Cache storage and retrieval
-- [ocr/datasets/base.py](../../../ocr/datasets/base.py#L300-L305) - Cache lookup in `__getitem__`
-- [ocr/datasets/base.py](../../../ocr/datasets/base.py#L454-L455) - Cache storage after transform
+- ocr/utils/cache_manager.py - Cache storage and retrieval
+- ocr/datasets/base.py - Cache lookup in `__getitem__`
+- ocr/datasets/base.py - Cache storage after transform
 
 **Configuration**:
 
@@ -159,7 +159,7 @@ cache_config:
 
 ### CacheConfig Schema
 
-**File**: [ocr/datasets/schemas.py](../../../ocr/datasets/schemas.py)
+**File**: ocr/datasets/schemas.py
 
 ```python
 class CacheConfig(BaseModel):
@@ -173,7 +173,7 @@ class CacheConfig(BaseModel):
 
 ### DatasetConfig Schema
 
-**File**: [ocr/datasets/schemas.py](../../../ocr/datasets/schemas.py)
+**File**: ocr/datasets/schemas.py
 
 ```python
 class DatasetConfig(BaseModel):
@@ -192,7 +192,7 @@ class DatasetConfig(BaseModel):
 
 ### ImageData Contract
 
-**File**: [ocr/datasets/schemas.py](../../../ocr/datasets/schemas.py)
+**File**: ocr/datasets/schemas.py
 
 ```python
 class ImageData(BaseModel):
@@ -430,12 +430,12 @@ uv run python runners/train.py \
 
 ## Related Documentation
 
-- [Performance Benchmark Commands](../../../docs/performance/BENCHMARK_COMMANDS.md) - Ready-to-run benchmark tests
-- [Cache Verification Guide](../../../docs/performance/CACHE_VERIFICATION_GUIDE.md) - How to verify caching is working
-- [Session Handover](../../../docs/ai_handbook/session_handover_performance_restoration.md) - Original implementation plan
-- [Data Contracts](../../../docs/pipeline/data_contracts.md) - Schema validation standards
-- [Dataset Base Implementation](../../../ocr/datasets/base.py) - Core dataset with caching logic
-- [Cache Manager](../../../ocr/utils/cache_manager.py) - Cache infrastructure
+- Performance Benchmark Commands - Ready-to-run benchmark tests
+- Cache Verification Guide - How to verify caching is working
+- Session Handover - Original implementation plan
+- Data Contracts - Schema validation standards
+- Dataset Base Implementation - Core dataset with caching logic
+- Cache Manager - Cache infrastructure
 
 ---
 

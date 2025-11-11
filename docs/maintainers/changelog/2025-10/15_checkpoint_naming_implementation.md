@@ -177,9 +177,9 @@ find outputs -name "*.ckpt" -type f | sort
 
 ## **References**
 
-- [Checkpoint Naming Scheme](../../03_references/architecture/07_checkpoint_naming_scheme.md)
-- [Migration Protocol](../../02_protocols/components/18_checkpoint_migration_protocol.md)
-- [Training Protocol](../../02_protocols/components/13_training_protocol.md)
+- Checkpoint Naming Scheme
+- Migration Protocol
+- Training Protocol
 
 ---
 

@@ -3,7 +3,7 @@
 
 # **Enhanced Actionable Refactor Plan: Consolidate Redundant Configurations**
 
-**Objective:** Refactor the configs directory to eliminate duplication, improve modularity, and align with best practices from the [lightning-hydra-template](docs/external/lightning-hydra-template). The goal is to make the configuration more intuitive and maintainable.
+**Objective:** Refactor the configs directory to eliminate duplication, improve modularity, and align with best practices from the lightning-hydra-template. The goal is to make the configuration more intuitive and maintainable.
 
 ### **Prerequisites for Qwen Coder**
 - **Context Files to Attach:**

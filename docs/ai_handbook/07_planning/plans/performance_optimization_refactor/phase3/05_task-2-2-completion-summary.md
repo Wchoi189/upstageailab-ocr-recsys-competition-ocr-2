@@ -273,10 +273,10 @@ test_cache_speedup.sh
 
 ## 📚 References
 
-- **Phase 1 & 2.1 Summary:** [phase_1_2_completion_summary.md](./phase_1_2_completion_summary.md)
-- **Baseline Report:** [docs/performance/baseline_2025-10-07_final.md](../../../performance/baseline_2025-10-07_final.md)
-- **Execution Plan:** [performance_optimization_execution_plan.md](./performance_optimization_execution_plan.md)
-- **PolygonCache Implementation:** [ocr/datasets/polygon_cache.py](../../../ocr/datasets/polygon_cache.py)
+- **Phase 1 & 2.1 Summary:** phase_1_2_completion_summary.md
+- **Baseline Report:** docs/performance/baseline_2025-10-07_final.md
+- **Execution Plan:** performance_optimization_execution_plan.md
+- **PolygonCache Implementation:** ocr/datasets/polygon_cache.py
 
 ---
 

@@ -744,6 +744,6 @@ WandbLogger(
 ## Related Documentation
 
 - [Hydra Configuration Guide](02_hydra_and_registry.md)
-- [Experiment Logging](04_experiments/)
-- [PyTorch Lightning Integration](../external/lightning-hydra-template/)
+- Experiment Logging
+- PyTorch Lightning Integration
 - [Wandb Official Documentation](https://docs.wandb.ai/)

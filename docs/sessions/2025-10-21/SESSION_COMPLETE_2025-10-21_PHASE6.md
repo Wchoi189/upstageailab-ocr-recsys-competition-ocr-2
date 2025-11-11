@@ -26,7 +26,7 @@
 
 #### **PreprocessingService Integration** (~60 lines modified)
 
-**File**: [ui/apps/unified_ocr_app/services/comparison_service.py](ui/apps/unified_ocr_app/services/comparison_service.py)
+**File**: ui/apps/unified_ocr_app/services/comparison_service.py
 
 **Changes**:
 - Added service initialization with lazy loading
@@ -159,7 +159,7 @@ def _create_inference_visualization(
 
 #### **Created Integration Test Suite**
 
-**File**: [test_comparison_integration.py](test_comparison_integration.py) (190 lines)
+**File**: test_comparison_integration.py (190 lines)
 
 **Test Coverage**:
 1. ✅ Preprocessing comparison with multiple configurations
@@ -207,8 +207,8 @@ def _create_inference_visualization(
 
 | File | Lines Changed | Purpose |
 |------|--------------|---------|
-| [comparison_service.py](ui/apps/unified_ocr_app/services/comparison_service.py:33-46) | +220 lines | Backend integration + visualization |
-| [test_comparison_integration.py](test_comparison_integration.py) | +190 lines | Integration test suite |
+| comparison_service.py | +220 lines | Backend integration + visualization |
+| test_comparison_integration.py | +190 lines | Integration test suite |
 
 **Total**: 2 files, ~410 lines added/modified
 
@@ -356,10 +356,10 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 
 ## 📚 Documentation Updates Needed
 
-- [ ] Update [CHANGELOG.md](docs/CHANGELOG.md)
+- [ ] Update CHANGELOG.md
 - [ ] Create changelog entry: `docs/ai_handbook/05_changelog/2025-10/21_phase6_backend_integration.md`
-- [ ] Update [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- [ ] Update [README_IMPLEMENTATION_PLAN.md](docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md)
+- [ ] Update UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
+- [ ] Update README_IMPLEMENTATION_PLAN.md
 
 ---
 
@@ -431,8 +431,8 @@ Overall Progress: ████████████████████�
 
 ## 🔗 Related Documentation
 
-- **Architecture**: [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- **Implementation Plan**: [README_IMPLEMENTATION_PLAN.md](docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md)
+- **Architecture**: UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
+- **Implementation Plan**: README_IMPLEMENTATION_PLAN.md
 - **Phase 5 Summary**: [SESSION_COMPLETE_2025-10-21_PHASE5.md](SESSION_COMPLETE_2025-10-21_PHASE5.md)
 - **Phase 4 Summary**: [SESSION_COMPLETE_2025-10-21_PHASE4.md](SESSION_COMPLETE_2025-10-21_PHASE4.md)
 

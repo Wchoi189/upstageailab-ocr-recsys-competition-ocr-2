@@ -377,15 +377,15 @@ All functionality remains the same, just better organized.
 
 - **Architecture**: [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
 - **Implementation Plan**: [README_IMPLEMENTATION_PLAN.md](README_IMPLEMENTATION_PLAN.md)
-- **Session Summaries**: [SESSION_COMPLETE_2025-10-21_PHASE*.md](../../SESSION_COMPLETE_2025-10-21_PHASE6.md)
+- **Session Summaries**: SESSION_COMPLETE_2025-10-21_PHASE*.md
 - **Changelog**: [docs/CHANGELOG.md](../../CHANGELOG.md)
 - **Bug Reports**: [docs/bug_reports/](../../bug_reports/)
 
 ### Configuration References
 
-- **Main Config**: [configs/ui/unified_app.yaml](../../../configs/ui/unified_app.yaml)
-- **Mode Configs**: [configs/ui/modes/](../../../configs/ui/modes/)
-- **Schema**: [configs/schemas/preprocessing_schema.yaml](../../../configs/schemas/preprocessing_schema.yaml)
+- **Main Config**: configs/ui/unified_app.yaml
+- **Mode Configs**: configs/ui/modes/
+- **Schema**: configs/schemas/preprocessing_schema.yaml
 
 ### Getting Help
 

@@ -284,6 +284,6 @@ All three bugs related to inconsistent data type contracts and shape handling th
 - Working Commit: `8252600e22929802ead538672d2f137e2da0781d`
 - Session Log: `logs/2025-10-09_transforms_caching_debug/00_ROLLING_LOG.md`
 - Continuation Summary: `SESSION_SUMMARY_2025-10-10_CONTINUATION.md`
-- Fix: [ocr/datasets/transforms.py:74-80](ocr/datasets/transforms.py#L74-L80)
+- Fix: ocr/datasets/transforms.py:74-80
 
 ---

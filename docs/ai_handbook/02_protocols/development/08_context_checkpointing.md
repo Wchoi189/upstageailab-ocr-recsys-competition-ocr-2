@@ -110,5 +110,5 @@ This file has been saved to: logs/continuation_prompts/<filename>.md
 ## **Related Documents**
 - [Context Logging](06_context_logging.md) - Session logging and summarization
 - [Iterative Debugging](07_iterative_debugging.md) - Complex debugging session management
-- [Experiment Template](../../experiments/TEMPLATE.md) - Long-running experiment documentation
+- Experiment Template - Long-running experiment documentation
 - [Command Registry](02_command_registry.md) - Context management tools

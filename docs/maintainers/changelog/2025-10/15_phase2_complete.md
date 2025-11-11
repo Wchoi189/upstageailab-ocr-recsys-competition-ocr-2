@@ -3,7 +3,7 @@
 **Date**: 2025-10-15
 **Status**: ✅ COMPLETE
 **Branch**: 11_refactor/preprocessing
-**Related Blueprint**: [advanced_preprocessing_living_blueprint.md](../08_planning/advanced_preprocessing_living_blueprint.md)
+**Related Blueprint**: advanced_preprocessing_living_blueprint.md
 
 ## Summary
 

@@ -47,17 +47,17 @@
 ## Essential Files
 
 **Reference Code:**
-- [PerformanceProfilerCallback](ocr/lightning_modules/callbacks/performance_profiler.py) - Main pattern
-- [Lightning Module](ocr/lightning_modules/ocr_pl.py:587-605) - Dataloader methods
-- [Baseline Report](../../../docs/performance/baseline_2025-10-07_final.md) - Current metrics
+- PerformanceProfilerCallback - Main pattern
+- Lightning Module - Dataloader methods
+- Baseline Report - Current metrics
 
 **Reference Config:**
-- [Base Config](configs/data/base.yaml) - Structure pattern
-- [Callback Config](configs/callbacks/performance_profiler.yaml) - Callback pattern
+- Base Config - Structure pattern
+- Callback Config - Callback pattern
 
 **Reference Tests:**
-- [Integration Tests](tests/integration/test_performance_profiler.py) - Test pattern
-- [Performance Tests](tests/performance/test_regression.py) - Assertion pattern
+- Integration Tests - Test pattern
+- Performance Tests - Assertion pattern
 
 ## Quick Start Commands
 
@@ -167,11 +167,11 @@ uv run python -m ocr.train trainer.fast_dev_run=true +callbacks.new_callback.ena
 
 ## Next Session Startup
 
-1. Read [phase_3_continuation_prompt.md](phase_3_continuation_prompt.md) (full context)
+1. Read phase_3_continuation_prompt.md (full context)
 2. Review this quick reference
 3. Choose implementation approach
 4. Start with Task 3.1 (easiest win)
 
 ---
 
-**For Full Details:** See [phase_3_continuation_prompt.md](phase_3_continuation_prompt.md)
+**For Full Details:** See phase_3_continuation_prompt.md

@@ -82,7 +82,7 @@ Benchmarking commands, performance optimization guides, and timing analysis.
 ### [🧪 Testing Framework](testing/pipeline_validation.md)
 Unit tests, integration tests, and validation procedures.
 
-### [🔍 Troubleshooting](troubleshooting/common_errors.md)
+### 🔍 Troubleshooting
 Common issues, debugging guides, and problem resolution.
 
 ### [🤖 AI Agent Instructions](agents/system.md)

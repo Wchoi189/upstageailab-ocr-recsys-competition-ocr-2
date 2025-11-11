@@ -10,7 +10,7 @@
 
 ### What's Happening Every Epoch (WASTEFUL!)
 
-Based on code analysis of [ocr/datasets/base.py](../../ocr/datasets/base.py):
+Based on code analysis of ocr/datasets/base.py:
 
 ```python
 def __getitem__(self, idx):
@@ -299,5 +299,5 @@ Want me to implement Phase 6E (tensor caching) now? It's a quick win that solves
 
 - **WebDataset Docs**: https://github.com/webdataset/webdataset
 - **DALI Docs**: https://docs.nvidia.com/deeplearning/dali/
-- **Current Pipeline**: [ocr/datasets/base.py](../../ocr/datasets/base.py)
-- **Phase 6D Results**: [phase-6d-mixed-precision-findings.md](../../logs/2025-10-08_02_refactor_performance_features/phase-6d-mixed-precision-findings.md)
+- **Current Pipeline**: ocr/datasets/base.py
+- **Phase 6D Results**: phase-6d-mixed-precision-findings.md

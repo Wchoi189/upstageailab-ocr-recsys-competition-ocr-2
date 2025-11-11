@@ -11,7 +11,7 @@ Continued debugging from earlier session. **Found and fixed critical polygon sha
 
 ### Key Findings
 
-1. ✅ **FIXED**: Critical bug in [ocr/datasets/transforms.py:74](ocr/datasets/transforms.py#L74) - wrong dimension used for polygon point count
+1. ✅ **FIXED**: Critical bug in ocr/datasets/transforms.py:74 - wrong dimension used for polygon point count
 2. ✅ **FIXED**: Simplified config back to working baseline
 3. ⚠️ **REMAINING ISSUE**: Excessive polygon filtering causing val/test metrics to stay at 0.0
 
@@ -21,7 +21,7 @@ Continued debugging from earlier session. **Found and fixed critical polygon sha
 
 ### Root Cause
 
-In [ocr/datasets/transforms.py:74](ocr/datasets/transforms.py#L74), the code was using `polygon.shape[1]` to get the number of points:
+In ocr/datasets/transforms.py:74, the code was using `polygon.shape[1]` to get the number of points:
 
 ```python
 # ❌ BROKEN CODE (before fix)
@@ -67,7 +67,7 @@ This handles both `(N, 2)` and `(1, N, 2)` polygon shapes correctly.
 
 ### Changes Made
 
-Reverted [configs/data/base.yaml](configs/data/base.yaml) to simple baseline configuration, removing all performance optimization features that were added after the working commit:
+Reverted configs/data/base.yaml to simple baseline configuration, removing all performance optimization features that were added after the working commit:
 
 **Removed**:
 - `preload_maps`, `load_maps`, `preload_images` - Performance caching features
@@ -79,7 +79,7 @@ Reverted [configs/data/base.yaml](configs/data/base.yaml) to simple baseline con
 
 ### Default Values Fixed
 
-Changed [ocr/datasets/base.py:35](ocr/datasets/base.py#L35):
+Changed ocr/datasets/base.py:35:
 ```python
 load_maps=False  # Changed from True to False
 ```
@@ -106,7 +106,7 @@ This explains why:
 
 ### Root Cause Analysis
 
-The filtering logic in [ocr/datasets/base.py:498](ocr/datasets/base.py#L498):
+The filtering logic in ocr/datasets/base.py:498:
 
 ```python
 if width_span < min_side or height_span < min_side:  # min_side=1.0 pixels
@@ -129,13 +129,13 @@ This is likely **NOT the same issue** as the working commit 8252600. The working
 
 ### Source Code (3 files)
 
-1. ✅ **[ocr/datasets/transforms.py:74-80](ocr/datasets/transforms.py#L74-L80)** - Fixed polygon point count dimension bug
-2. ✅ **[ocr/datasets/base.py:35](ocr/datasets/base.py#L35)** - Changed `load_maps` default from True to False
-3. ✅ **[ocr/datasets/base.py:59](ocr/datasets/base.py#L59)** - Changed `use_turbojpeg` default from True to False
+1. ✅ **ocr/datasets/transforms.py:74-80** - Fixed polygon point count dimension bug
+2. ✅ **ocr/datasets/base.py:35** - Changed `load_maps` default from True to False
+3. ✅ **ocr/datasets/base.py:59** - Changed `use_turbojpeg` default from True to False
 
 ### Configuration (1 file)
 
-1. ✅ **[configs/data/base.yaml](configs/data/base.yaml)** - Simplified to baseline configuration
+1. ✅ **configs/data/base.yaml** - Simplified to baseline configuration
 
 ---
 

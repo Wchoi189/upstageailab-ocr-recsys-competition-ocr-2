@@ -3,7 +3,7 @@
 **Date**: 2025-10-18
 **Status**: Completed
 **Phase**: Phase 3 - Integration & Fallbacks
-**Related**: [Checkpoint Catalog V2 Design](../../03_references/architecture/checkpoint_catalog_v2_design.md) | [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md)
+**Related**: Checkpoint Catalog V2 Design | Refactor Plan
 
 ## Summary
 
@@ -259,11 +259,11 @@ Legacy inference (config + checkpoint loading)
 
 ### Files Modified
 
-1. [ui/apps/inference/services/checkpoint/wandb_client.py](../../../../ui/apps/inference/services/checkpoint/wandb_client.py) - NEW
-2. [ui/apps/inference/services/checkpoint/catalog.py](../../../../ui/apps/inference/services/checkpoint/catalog.py) - UPDATED
-3. [ui/apps/inference/services/checkpoint/__init__.py](../../../../ui/apps/inference/services/checkpoint/__init__.py) - UPDATED
-4. [test_wandb_fallback.py](../../../../test_wandb_fallback.py) - NEW
-5. [checkpoint_catalog_refactor_plan.md](../../../../checkpoint_catalog_refactor_plan.md) - UPDATED
+1. ui/apps/inference/services/checkpoint/wandb_client.py - NEW
+2. ui/apps/inference/services/checkpoint/catalog.py - UPDATED
+3. ui/apps/inference/services/checkpoint/__init__.py - UPDATED
+4. test_wandb_fallback.py - NEW
+5. checkpoint_catalog_refactor_plan.md - UPDATED
 
 ### Architecture Documentation
 
@@ -301,10 +301,10 @@ Legacy inference (config + checkpoint loading)
 
 ## References
 
-- [Checkpoint Catalog V2 Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
+- Checkpoint Catalog V2 Design
 - [Metadata Callback Implementation](18_metadata_callback_implementation.md)
 - [Metadata Validation System](18_metadata_validation_system.md)
-- [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md)
+- Refactor Plan
 - [Wandb API Documentation](https://docs.wandb.ai/ref/python/public-api)
 
 ---

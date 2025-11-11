@@ -39,7 +39,7 @@ Moved `import pandas as pd` to the global scope (top of file) so it loads once a
 
 ### Changes Made
 
-**File:** [`ui/apps/inference/components/results.py`](../../../ui/apps/inference/components/results.py)
+**File:** `ui/apps/inference/components/results.py`
 
 **Before:**
 ```python

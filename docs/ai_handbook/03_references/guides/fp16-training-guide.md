@@ -395,10 +395,10 @@ Before enabling FP16 in production:
 
 ## Related Documentation
 
-- [BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md](../bug_reports/BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md) - Original FP16 issue
-- [baseline_vs_optimized_comparison.md](baseline_vs_optimized_comparison.md) - Performance comparison
-- [configs/trainer/fp16_safe.yaml](../../configs/trainer/fp16_safe.yaml) - Safe FP16 configuration
-- [configs/trainer/default.yaml](../../configs/trainer/default.yaml) - FP32 baseline
+- BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md - Original FP16 issue
+- baseline_vs_optimized_comparison.md - Performance comparison
+- configs/trainer/fp16_safe.yaml - Safe FP16 configuration
+- configs/trainer/default.yaml - FP32 baseline
 
 ## References
 

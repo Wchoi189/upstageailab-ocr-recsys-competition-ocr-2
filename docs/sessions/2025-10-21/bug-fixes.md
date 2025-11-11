@@ -15,13 +15,13 @@ Fixed three critical issues with the Unified OCR App:
 
 ### Root Cause
 
-The `load_checkpoints()` function in [inference_service.py](ui/apps/unified_ocr_app/services/inference_service.py:229-270) was creating a minimal `PathsConfig` class that only had `checkpoints_dir` attribute, but the `CatalogOptions.from_paths()` method expected both `outputs_dir` and `hydra_config_filenames`.
+The `load_checkpoints()` function in inference_service.py was creating a minimal `PathsConfig` class that only had `checkpoints_dir` attribute, but the `CatalogOptions.from_paths()` method expected both `outputs_dir` and `hydra_config_filenames`.
 
 ### Fix
 
 **Files Modified**:
-- [ui/apps/unified_ocr_app/services/inference_service.py](ui/apps/unified_ocr_app/services/inference_service.py:229-270)
-- [configs/ui/modes/inference.yaml](configs/ui/modes/inference.yaml:5-8)
+- ui/apps/unified_ocr_app/services/inference_service.py
+- configs/ui/modes/inference.yaml
 
 **Changes**:
 
@@ -69,8 +69,8 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 ### Fix
 
 **Files Modified**:
-- [scripts/process_manager.py](scripts/process_manager.py:28-40)
-- [Makefile](Makefile)
+- scripts/process_manager.py
+- Makefile
 
 **Changes**:
 
@@ -159,11 +159,11 @@ make stop-unified-app PORT=8503
 
 ### Root Cause
 
-The image loading code in [image_upload.py](ui/apps/unified_ocr_app/components/shared/image_upload.py:76-89) was using `PIL.Image.open()` without applying EXIF orientation transformation. This caused rotated images to display incorrectly.
+The image loading code in image_upload.py was using `PIL.Image.open()` without applying EXIF orientation transformation. This caused rotated images to display incorrectly.
 
 ### Fix
 
-**File Modified**: [ui/apps/unified_ocr_app/components/shared/image_upload.py](ui/apps/unified_ocr_app/components/shared/image_upload.py)
+**File Modified**: ui/apps/unified_ocr_app/components/shared/image_upload.py
 
 **Changes**:
 
@@ -238,11 +238,11 @@ print(f"After: {image.size}")   # e.g., (640, 480) - portrait (correctly rotated
 
 ### Files Modified (7 files)
 
-1. **[ui/apps/unified_ocr_app/services/inference_service.py](ui/apps/unified_ocr_app/services/inference_service.py)** - Fixed checkpoint loading
-2. **[configs/ui/modes/inference.yaml](configs/ui/modes/inference.yaml)** - Added paths configuration
-3. **[ui/apps/unified_ocr_app/components/shared/image_upload.py](ui/apps/unified_ocr_app/components/shared/image_upload.py)** - Fixed EXIF orientation
-4. **[scripts/process_manager.py](scripts/process_manager.py)** - Added unified_app support
-5. **[Makefile](Makefile)** - Added unified_app targets
+1. **ui/apps/unified_ocr_app/services/inference_service.py** - Fixed checkpoint loading
+2. **configs/ui/modes/inference.yaml** - Added paths configuration
+3. **ui/apps/unified_ocr_app/components/shared/image_upload.py** - Fixed EXIF orientation
+4. **scripts/process_manager.py** - Added unified_app support
+5. **Makefile** - Added unified_app targets
 
 ### Impact
 
@@ -274,9 +274,9 @@ uv run mypy ui/apps/unified_ocr_app/
 
 ## Related Documentation
 
-- **Architecture**: [docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
+- **Architecture**: docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
 - **Phase 6 Summary**: [SESSION_COMPLETE_2025-10-21_PHASE6.md](SESSION_COMPLETE_2025-10-21_PHASE6.md)
-- **CHANGELOG**: [docs/CHANGELOG.md](docs/CHANGELOG.md)
+- **CHANGELOG**: docs/CHANGELOG.md
 
 ---
 
