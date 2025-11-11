@@ -97,6 +97,11 @@ def ensure_polygon_array(polygon: np.ndarray) -> np.ndarray | None:
 def filter_degenerate_polygons(
     polygons: list[np.ndarray],
     min_side: float = 1.0,
+    *,
+    image_width: int | None = None,
+    image_height: int | None = None,
+    attempt_fix: bool | None = None,
+    **_: dict,
 ) -> list[np.ndarray]:
     """
     AI_DOCS: Degenerate Polygon Filtering
@@ -110,6 +115,10 @@ def filter_degenerate_polygons(
     - RETURN filtered list (may be shorter)
 
     Geometric Requirement: Polygons need ≥ 3 points for area calculation
+    NOTE ON SIGNATURE COMPATIBILITY:
+    - Some callers pass image_width/image_height/attempt_fix keyword arguments.
+      These parameters are accepted for backward compatibility but are not used
+      by this simplified implementation.
     """
     from collections import Counter
 
