@@ -14,6 +14,7 @@ from ocr.validation.models import (
     ModelOutput,
     PolygonArray,
     TransformOutput,
+    ValidatedTensorData,
     validate_predictions,
 )
 
@@ -158,6 +159,188 @@ class TestValidatedPolygonData:
         # Should indicate index 1 is invalid
         assert "indices" in error_msg.lower() or "index" in error_msg.lower()
         assert "values" in error_msg.lower() or "value" in error_msg.lower()
+
+
+class TestValidatedTensorData:
+    """Test the ValidatedTensorData model with tensor validation.
+
+    This model addresses BUG-20251112-001 (Dice loss errors) and BUG-20251112-013 (CUDA errors).
+    """
+
+    def test_valid_tensor_basic(self):
+        """Test that valid tensors pass validation."""
+        tensor = torch.rand(2, 3, 224, 224)
+        validated = ValidatedTensorData(tensor=tensor)
+        assert validated.tensor.shape == (2, 3, 224, 224)
+
+    def test_valid_tensor_with_shape_validation(self):
+        """Test tensor with expected shape validation."""
+        tensor = torch.rand(2, 3, 224, 224)
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            expected_shape=(2, 3, 224, 224)
+        )
+        assert validated.tensor.shape == (2, 3, 224, 224)
+
+    def test_invalid_tensor_shape_mismatch(self):
+        """Test that tensor with wrong shape raises ValidationError."""
+        tensor = torch.rand(2, 3, 224, 224)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                expected_shape=(2, 3, 256, 256)
+            )
+        error_msg = str(exc_info.value)
+        assert "shape mismatch" in error_msg.lower()
+        assert "(2, 3, 224, 224)" in error_msg
+        assert "(2, 3, 256, 256)" in error_msg
+
+    def test_valid_tensor_with_device_validation(self):
+        """Test tensor with expected device validation."""
+        tensor = torch.rand(2, 3, 224, 224)
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            expected_device="cpu"
+        )
+        assert validated.tensor.device.type == "cpu"
+
+    def test_invalid_tensor_device_mismatch(self):
+        """Test that tensor with wrong device raises ValidationError."""
+        tensor = torch.rand(2, 3, 224, 224)  # CPU tensor
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                expected_device="cuda"
+            )
+        error_msg = str(exc_info.value)
+        assert "device mismatch" in error_msg.lower()
+
+    def test_valid_tensor_with_dtype_validation(self):
+        """Test tensor with expected dtype validation."""
+        tensor = torch.rand(2, 3, 224, 224, dtype=torch.float32)
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            expected_dtype=torch.float32
+        )
+        assert validated.tensor.dtype == torch.float32
+
+    def test_invalid_tensor_dtype_mismatch(self):
+        """Test that tensor with wrong dtype raises ValidationError."""
+        tensor = torch.rand(2, 3, 224, 224, dtype=torch.float32)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                expected_dtype=torch.float64
+            )
+        error_msg = str(exc_info.value)
+        assert "dtype mismatch" in error_msg.lower()
+
+    def test_valid_tensor_with_value_range(self):
+        """Test tensor with valid value range."""
+        tensor = torch.rand(2, 3, 224, 224)  # Values in [0, 1]
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            value_range=(0.0, 1.0)
+        )
+        assert validated.tensor.min() >= 0.0
+        assert validated.tensor.max() <= 1.0
+
+    def test_invalid_tensor_values_below_range(self):
+        """Test that tensor with values below range raises ValidationError."""
+        tensor = torch.tensor([-0.5, 0.5, 1.0])
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                value_range=(0.0, 1.0)
+            )
+        error_msg = str(exc_info.value)
+        assert "out of range" in error_msg.lower()
+        assert "[0.0, 1.0]" in error_msg or "[0, 1]" in error_msg
+
+    def test_invalid_tensor_values_above_range(self):
+        """Test that tensor with values above range raises ValidationError."""
+        tensor = torch.tensor([0.0, 0.5, 1.5])
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                value_range=(0.0, 1.0)
+            )
+        error_msg = str(exc_info.value)
+        assert "out of range" in error_msg.lower()
+
+    def test_invalid_tensor_contains_nan(self):
+        """Test that tensor with NaN values raises ValidationError."""
+        tensor = torch.tensor([0.0, float('nan'), 1.0])
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                allow_nan=False
+            )
+        error_msg = str(exc_info.value)
+        assert "nan" in error_msg.lower()
+
+    def test_valid_tensor_with_nan_allowed(self):
+        """Test that tensor with NaN values passes when allowed."""
+        tensor = torch.tensor([0.0, float('nan'), 1.0])
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            allow_nan=True
+        )
+        assert torch.isnan(validated.tensor).any()
+
+    def test_invalid_tensor_contains_inf(self):
+        """Test that tensor with infinite values raises ValidationError."""
+        tensor = torch.tensor([0.0, float('inf'), 1.0])
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                allow_inf=False
+            )
+        error_msg = str(exc_info.value)
+        assert "inf" in error_msg.lower()
+
+    def test_valid_tensor_with_inf_allowed(self):
+        """Test that tensor with infinite values passes when allowed."""
+        tensor = torch.tensor([0.0, float('inf'), 1.0])
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            allow_inf=True
+        )
+        assert torch.isinf(validated.tensor).any()
+
+    def test_invalid_value_range_min_greater_than_max(self):
+        """Test that invalid value_range format raises ValidationError."""
+        tensor = torch.rand(2, 3, 224, 224)
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(
+                tensor=tensor,
+                value_range=(1.0, 0.0)  # min > max
+            )
+        error_msg = str(exc_info.value)
+        assert "min" in error_msg.lower() and "max" in error_msg.lower()
+
+    def test_valid_tensor_with_all_validations(self):
+        """Test tensor with all validation options enabled."""
+        tensor = torch.rand(2, 3, 224, 224, dtype=torch.float32)
+        validated = ValidatedTensorData(
+            tensor=tensor,
+            expected_shape=(2, 3, 224, 224),
+            expected_device="cpu",
+            expected_dtype=torch.float32,
+            value_range=(0.0, 1.0),
+            allow_inf=False,
+            allow_nan=False
+        )
+        assert validated.tensor.shape == (2, 3, 224, 224)
+        assert validated.tensor.device.type == "cpu"
+        assert validated.tensor.dtype == torch.float32
+
+    def test_invalid_not_a_tensor(self):
+        """Test that non-tensor input raises ValidationError."""
+        with pytest.raises(ValidationError) as exc_info:
+            ValidatedTensorData(tensor=np.array([1, 2, 3]))
+        error_msg = str(exc_info.value)
+        assert "tensor" in error_msg.lower()
 
 
 class TestPolygonArray:

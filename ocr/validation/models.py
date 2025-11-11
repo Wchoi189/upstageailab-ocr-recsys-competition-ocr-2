@@ -444,6 +444,153 @@ class MetricConfig(_ModelBase):
         return value
 
 
+class ValidatedTensorData(_ModelBase):
+    """Validate tensor data with shape, device, dtype, and value range checks.
+
+    This model addresses critical tensor validation issues:
+    - BUG-20251112-001: Dice loss assertion errors from out-of-range predictions
+    - BUG-20251112-013: CUDA memory access errors from device mismatches
+
+    Attributes:
+        tensor: The tensor to validate
+        expected_shape: Expected tensor shape (optional, validates if provided)
+        expected_device: Expected device ("cpu", "cuda", "cuda:0", etc.) (optional)
+        expected_dtype: Expected data type (optional)
+        value_range: Valid value range as (min, max) tuple (optional)
+        allow_inf: Whether to allow infinite values (default: False)
+        allow_nan: Whether to allow NaN values (default: False)
+
+    Example:
+        >>> import torch
+        >>> # Valid tensor with range checking
+        >>> data = ValidatedTensorData(
+        ...     tensor=torch.rand(2, 3, 224, 224),
+        ...     expected_shape=(2, 3, 224, 224),
+        ...     expected_device="cuda",
+        ...     value_range=(0.0, 1.0)
+        ... )
+        >>> # Invalid: out of range
+        >>> data = ValidatedTensorData(
+        ...     tensor=torch.tensor([1.5, 2.0]),
+        ...     value_range=(0.0, 1.0)
+        ... )  # Raises ValidationError
+    """
+
+    tensor: torch.Tensor = Field(..., description="Tensor to validate")
+    expected_shape: tuple[int, ...] | None = Field(default=None, description="Expected tensor shape")
+    expected_device: torch.device | str | None = Field(default=None, description="Expected device")
+    expected_dtype: torch.dtype | None = Field(default=None, description="Expected data type")
+    value_range: tuple[float, float] | None = Field(default=None, description="Valid value range (min, max)")
+    allow_inf: bool = Field(default=False, description="Whether to allow infinite values")
+    allow_nan: bool = Field(default=False, description="Whether to allow NaN values")
+
+    @field_validator("tensor")
+    @classmethod
+    def _validate_tensor_type(cls, value: Any) -> torch.Tensor:
+        """Validate that value is a torch.Tensor."""
+        if not isinstance(value, torch.Tensor):
+            raise TypeError(f"Expected torch.Tensor, got {type(value).__name__}")
+        return value
+
+    @field_validator("tensor")
+    @classmethod
+    def _validate_tensor_shape(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
+        """Validate tensor shape matches expected shape."""
+        data = _info_data(info)
+        expected_shape = data.get("expected_shape")
+
+        if expected_shape is not None:
+            if tuple(tensor.shape) != tuple(expected_shape):
+                raise ValueError(
+                    f"Tensor shape mismatch: expected {tuple(expected_shape)}, "
+                    f"got {tuple(tensor.shape)}"
+                )
+        return tensor
+
+    @field_validator("tensor")
+    @classmethod
+    def _validate_tensor_device(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
+        """Validate tensor device matches expected device."""
+        data = _info_data(info)
+        expected_device = data.get("expected_device")
+
+        if expected_device is not None:
+            expected_device_str = str(expected_device)
+            actual_device_str = str(tensor.device)
+
+            # Normalize device strings for comparison (e.g., "cuda" vs "cuda:0")
+            if expected_device_str == "cuda" and actual_device_str.startswith("cuda"):
+                return tensor
+            if expected_device_str != actual_device_str:
+                raise ValueError(
+                    f"Tensor device mismatch: expected {expected_device_str}, "
+                    f"got {actual_device_str}"
+                )
+        return tensor
+
+    @field_validator("tensor")
+    @classmethod
+    def _validate_tensor_dtype(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
+        """Validate tensor dtype matches expected dtype."""
+        data = _info_data(info)
+        expected_dtype = data.get("expected_dtype")
+
+        if expected_dtype is not None:
+            if tensor.dtype != expected_dtype:
+                raise ValueError(
+                    f"Tensor dtype mismatch: expected {expected_dtype}, "
+                    f"got {tensor.dtype}"
+                )
+        return tensor
+
+    @field_validator("tensor")
+    @classmethod
+    def _validate_tensor_values(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
+        """Validate tensor values are within expected range and check for inf/nan."""
+        data = _info_data(info)
+        value_range = data.get("value_range")
+        allow_inf = data.get("allow_inf", False)
+        allow_nan = data.get("allow_nan", False)
+
+        # Check for NaN values
+        if not allow_nan and torch.isnan(tensor).any():
+            raise ValueError("Tensor contains NaN values (not allowed)")
+
+        # Check for infinite values
+        if not allow_inf and torch.isinf(tensor).any():
+            raise ValueError("Tensor contains infinite values (not allowed)")
+
+        # Check value range if specified
+        if value_range is not None:
+            min_val, max_val = value_range
+            tensor_min = tensor.min().item()
+            tensor_max = tensor.max().item()
+
+            if tensor_min < min_val or tensor_max > max_val:
+                raise ValueError(
+                    f"Tensor values out of range [{min_val}, {max_val}]: "
+                    f"found values in [{tensor_min:.6f}, {tensor_max:.6f}]"
+                )
+
+        return tensor
+
+    @field_validator("value_range")
+    @classmethod
+    def _validate_value_range_format(cls, value: tuple[float, float] | None) -> tuple[float, float] | None:
+        """Validate value_range format is (min, max) with min <= max."""
+        if value is None:
+            return None
+
+        if not isinstance(value, tuple) or len(value) != 2:
+            raise ValueError("value_range must be a tuple of (min, max)")
+
+        min_val, max_val = value
+        if min_val > max_val:
+            raise ValueError(f"value_range min ({min_val}) must be <= max ({max_val})")
+
+        return value
+
+
 def validate_predictions(filenames: Sequence[str], predictions: Sequence[dict[str, Any]]) -> list[LightningStepPrediction]:
     """Validate a collection of predictions against the expected schema."""
 
