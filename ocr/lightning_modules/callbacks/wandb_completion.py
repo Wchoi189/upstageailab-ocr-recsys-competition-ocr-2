@@ -5,13 +5,14 @@ from pathlib import Path
 import lightning.pytorch as pl
 from lightning.pytorch.callbacks import Callback
 
-import wandb
+# wandb imported lazily inside methods to avoid slow imports
 
 
 class WandbCompletionCallback(Callback):
     """Signal run completion to W&B and the filesystem."""
 
     def on_train_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
+        import wandb
         if trainer.fast_dev_run:  # type: ignore[attr-defined]
             print("Skipping completion signal for fast_dev_run.")
             return
