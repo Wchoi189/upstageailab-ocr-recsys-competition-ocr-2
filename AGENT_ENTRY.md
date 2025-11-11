@@ -21,9 +21,15 @@ All rules, instructions, and guidelines are in `system.md`. This file is just a 
 - **Detailed Context**: [`docs/maintainers/`](docs/maintainers/) - Detailed documentation for humans
 
 ### Tools
-- **Tool Discovery**: `python scripts/agent_tools/core/discover.py --list`
-- **Artifact Guide**: `python scripts/agent_tools/core/artifact_guide.py`
-- **Index Generator**: `python scripts/agent_tools/documentation/auto_generate_index.py`
+- Unified CLI (recommended):
+  - List: `python -m scripts.agent_tools list`
+  - Prune links: `python -m scripts.agent_tools prune-links --root docs`
+  - Update artifact indexes: `python -m scripts.agent_tools update-artifact-indexes`
+  - Generate sitemap: `python -m scripts.agent_tools sitemap --root docs`
+- Advanced:
+  - Tool Discovery: `python scripts/agent_tools/core/discover.py --list`
+  - Artifact Guide: `python scripts/agent_tools/core/artifact_guide.py`
+  - Index Generator: `python scripts/agent_tools/documentation/auto_generate_index.py`
 
 ---
 
