@@ -67,7 +67,7 @@ uv run python runners/train.py
 ### [📋 Documentation Guide](README.md)
 Complete guide to all project documentation, organized by intent and use case.
 
-### [🏗️ Project Overview](project/project-overview.md)
+### 🏗️ Project Overview
 High-level project information, competition details, and architecture overview.
 
 ### [⚙️ Setup Guide](setup/SETUP.md)
@@ -76,7 +76,7 @@ Environment setup, dependency installation, and development environment configur
 ### [🔄 Pipeline Documentation](pipeline/data_contracts.md)
 Data processing pipeline, model training workflow, and inference procedures.
 
-### [📊 Performance Analysis](performance/BENCHMARK_COMMANDS.md)
+### 📊 Performance Analysis
 Benchmarking commands, performance optimization guides, and timing analysis.
 
 ### [🧪 Testing Framework](testing/pipeline_validation.md)

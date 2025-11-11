@@ -462,7 +462,7 @@ python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
 - `docs/ai_handbook/03_references/guides/enhanced_preprocessing_usage.md` - Usage guide
 - `docs/ai_handbook/05_changelog/2025-10/15_phase3_complete.md` - Phase 3 changelog
 
-**References**: See [Phase 3 Complete](ai_handbook/05_changelog/2025-10/15_phase3_complete.md) for details
+**References**: See Phase 3 Complete for details
 
 ### Added - 2025-10-18
 

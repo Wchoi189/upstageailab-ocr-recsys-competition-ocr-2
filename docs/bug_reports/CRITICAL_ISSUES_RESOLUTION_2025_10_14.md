@@ -37,7 +37,7 @@ precision: "32-true" # 32-true | 16-mixed | bf16 | bf16-mixed
 
 ### References
 - Bug Report: [BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md](BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md)
-- Performance Comparison: [baseline_vs_optimized_comparison.md](../performance/baseline_vs_optimized_comparison.md)
+- Performance Comparison: baseline_vs_optimized_comparison.md
 
 ---
 
