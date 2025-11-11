@@ -172,6 +172,164 @@ def filter_degenerate_polygons(
     return filtered
 
 
+def validate_polygon_finite(polygon: np.ndarray) -> bool:
+    """
+    Check if polygon has finite coordinate values.
+
+    Args:
+        polygon: Polygon array of shape (N, 2) or (1, N, 2)
+
+    Returns:
+        True if all coordinate values are finite, False otherwise
+    """
+    if polygon is None or polygon.size == 0:
+        return False
+    return np.isfinite(polygon).all()
+
+
+def validate_polygon_area(polygon: np.ndarray, min_area: float = 1.0) -> bool:
+    """
+    Check if polygon has positive area using OpenCV's contourArea.
+
+    Args:
+        polygon: Polygon array of shape (N, 2) or (1, N, 2)
+        min_area: Minimum acceptable area (default: 1.0)
+
+    Returns:
+        True if area > min_area, False otherwise
+    """
+    import cv2
+
+    if polygon is None or polygon.size == 0:
+        return False
+
+    # Reshape to (N, 2) if needed
+    poly_2d = polygon.reshape(-1, 2) if polygon.ndim == 3 else polygon
+
+    if poly_2d.shape[0] < 3:
+        return False
+
+    try:
+        area = cv2.contourArea(poly_2d.astype(np.float32))
+        return area > min_area
+    except Exception:
+        return False
+
+
+def has_duplicate_consecutive_points(polygon: np.ndarray, tolerance: float = 1e-6) -> bool:
+    """
+    Check if polygon has duplicate consecutive points.
+
+    Args:
+        polygon: Polygon array of shape (N, 2) or (1, N, 2)
+        tolerance: Distance tolerance for considering points as duplicates
+
+    Returns:
+        True if duplicate consecutive points found, False otherwise
+    """
+    if polygon is None or polygon.size == 0:
+        return True
+
+    # Reshape to (N, 2) if needed
+    poly_2d = polygon.reshape(-1, 2) if polygon.ndim == 3 else polygon
+
+    if poly_2d.shape[0] < 2:
+        return False
+
+    # Check if all points are the same
+    if np.allclose(poly_2d[0], poly_2d, rtol=0, atol=tolerance):
+        return True
+
+    # Check for duplicate consecutive points
+    for i in range(len(poly_2d)):
+        next_idx = (i + 1) % len(poly_2d)
+        if np.allclose(poly_2d[i], poly_2d[next_idx], rtol=0, atol=tolerance):
+            return True
+
+    return False
+
+
+def is_valid_polygon(
+    polygon: np.ndarray,
+    min_points: int = 3,
+    min_side: float = 1.0,
+    check_finite: bool = True,
+    check_area: bool = False,
+    check_duplicates: bool = False,
+    min_area: float = 1.0,
+) -> bool:
+    """
+    Comprehensive polygon validation with configurable checks.
+
+    This function consolidates all polygon validation logic into a single,
+    configurable validator. It can be used to replace inline validation
+    code across the codebase.
+
+    Args:
+        polygon: Polygon array of shape (N, 2) or (1, N, 2)
+        min_points: Minimum number of points required (default: 3)
+        min_side: Minimum side length for bounding box (default: 1.0)
+        check_finite: Check for finite coordinate values (default: True)
+        check_area: Check for positive area using cv2.contourArea (default: False)
+        check_duplicates: Check for duplicate consecutive points (default: False)
+        min_area: Minimum acceptable area if check_area=True (default: 1.0)
+
+    Returns:
+        True if polygon passes all enabled checks, False otherwise
+
+    Example:
+        >>> poly = np.array([[0, 0], [10, 0], [10, 10], [0, 10]])
+        >>> is_valid_polygon(poly)  # Basic validation
+        True
+        >>> is_valid_polygon(poly, check_area=True)  # With area check
+        True
+    """
+    # Check None and empty
+    if polygon is None or polygon.size == 0:
+        return False
+
+    # Reshape to (N, 2) if needed
+    poly_2d = polygon.reshape(-1, 2) if polygon.ndim == 3 else polygon
+
+    # Check shape
+    if poly_2d.ndim != 2 or poly_2d.shape[1] != 2:
+        return False
+
+    # Check minimum points
+    if poly_2d.shape[0] < min_points:
+        return False
+
+    # Check finite values
+    if check_finite and not validate_polygon_finite(poly_2d):
+        return False
+
+    # Check dimensions (width and height spans)
+    width_span = float(poly_2d[:, 0].max() - poly_2d[:, 0].min())
+    height_span = float(poly_2d[:, 1].max() - poly_2d[:, 1].min())
+
+    if width_span < min_side or height_span < min_side:
+        return False
+
+    # Check for zero span (integer coordinates)
+    rounded = np.rint(poly_2d).astype(np.int32, copy=False)
+    width_span_int = int(rounded[:, 0].ptp())
+    height_span_int = int(rounded[:, 1].ptp())
+
+    if width_span_int == 0 or height_span_int == 0:
+        return False
+
+    # Check area if requested
+    if check_area and not validate_polygon_area(poly_2d, min_area=min_area):
+        return False
+
+    # Check for duplicate consecutive points if requested
+    if check_duplicates and has_duplicate_consecutive_points(poly_2d):
+        return False
+
+    return True
+
+
+
 def validate_map_shapes(
     prob_map: np.ndarray,
     thresh_map: np.ndarray,
