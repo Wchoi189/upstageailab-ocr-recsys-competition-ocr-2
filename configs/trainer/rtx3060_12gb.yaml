@@ -1,0 +1,39 @@
+# @package trainer
+
+# Optimized trainer configuration for RTX 3060 12GB VRAM
+# Focuses on stability and memory efficiency
+
+max_steps: -1  # Unlimited (controlled by max_epochs)
+max_epochs: 200
+num_sanity_val_steps: 1
+log_every_n_steps: 20
+val_check_interval: null
+check_val_every_n_epoch: 1
+
+# Training stability settings
+deterministic: true  # Reproducible results
+accumulate_grad_batches: 2  # Effective batch size = batch_size * 2
+precision: "32-true"  # FP32 for numerical stability (critical for training)
+# NOTE: FP32 uses more memory but is more stable than FP16
+# RTX 3060 12GB has enough VRAM for FP32 with batch_size=4
+
+# Performance optimization
+benchmark: true  # Enable cudnn benchmarking for faster training
+
+# Gradient management
+gradient_clip_val: 5.0  # Prevent gradient explosion
+
+# Hardware settings
+accelerator: gpu
+devices: 1  # Single GPU
+strategy: auto  # Let PyTorch Lightning choose optimal strategy
+
+# Dataloader batch limits (null = no limit)
+limit_train_batches: null
+limit_val_batches: null
+limit_test_batches: null
+
+# Memory optimization notes:
+# - FP32 uses ~2x memory vs FP16 but is numerically stable
+# - batch_size=4 with accumulate_grad_batches=2 gives effective_batch_size=8
+# - 12GB VRAM is sufficient for this configuration with DBNet/DBNet++ models
