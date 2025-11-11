@@ -43,32 +43,26 @@ uv run python scripts/data/clean_dataset.py --image-dir data/datasets/images/tra
 ## Organization
 
 ### `agent_tools/`
-Scripts and tools for AI agent integration and automation.
-
-### `analysis_validation/`
-Scripts for analyzing experiments, validating pipeline contracts, and profiling performance.
-- `analyze_experiment.py` - Analyze training runs and detect anomalies
-- `validate_pipeline_contracts.py` - Validate data contracts across OCR pipeline
-- `profile_data_loading.py` - Profile data loading performance
-- `profile_transforms.py` - Profile data transformation performance
+Scripts and tools for AI agent integration and automation (run with `python -m scripts.agent_tools ...`).
 
 ### `bug_tools/`
-Bug-related tools and utilities.
+Bug-related tools (e.g., `next_bug_id.py`).
 
 ### `checkpoints/` ⭐ NEW
 All checkpoint-related operations.
 - `migrate.py` - Migrate checkpoints to new hierarchical naming scheme
 - `generate_metadata.py` - Generate checkpoint metadata
 
-### `data/` ⭐ RENAMED (from `data_processing/`)
-Scripts for preprocessing and transforming data.
-- `preprocess.py` - Preprocess data (moved from `preprocess_data.py`)
+### `data/`
+Data preprocessing and diagnostics.
+- `preprocess.py` - End-to-end preprocessing entrypoint
 - `preprocess_maps.py` - Generate probability/threshold maps for training
 - `fix_canonical_orientation_images.py` - Fix image orientation issues
 - `report_orientation_mismatches.py` - Report orientation mismatch issues
 - `clean_dataset.py` - Scan and clean training dataset for problematic samples
+- `check_training_data.py` - Quick validation of dataset integrity
 
-### `documentation/` ⭐ NEW
+### `documentation/`
 Documentation generation and management tools.
 - `generate_diagrams.py` - Generate documentation diagrams
 - `manage_diagrams.sh` - Manage diagram files
@@ -86,9 +80,9 @@ System monitoring and resource management tools.
 - `monitor_resources.sh` - Resource monitoring script
 - `process_monitor.py` - Process monitoring utilities
 
-### `performance/` ⭐ MERGED (includes `performance_benchmarking/`)
+### `performance/`
 All performance analysis, benchmarking, and reporting tools.
-- `benchmark.py` - Performance benchmarking (moved from `benchmark_performance.py`)
+- `benchmark.py` - Performance benchmarking
 - `generate_baseline_report.py` - Generate performance baseline reports
 - `compare_baseline_vs_optimized.py` - Compare baseline vs optimized runs
 - `compare_three_runs.py` - Compare three different runs
@@ -119,12 +113,20 @@ Project setup and configuration scripts.
 - `qwen-version.sh` - Qwen version management
 - `setup_mcp_github_only.sh` - MCP GitHub setup
 
-### `utilities/` ⭐ NEW
+### `troubleshooting/`
+Interactive debugging and hardware diagnostics.
+- `debug_cuda.sh` / `diagnose_cuda_issue.py` - CUDA troubleshooting helpers
+- `debug_imports.py` / `debug_wandb_import.py` - Import diagnostics
+- `test_basic_cuda.py` / `test_cudnn_stability.sh` - CUDA sanity checks
+- `test_model_forward_backward.py` - Training loop smoke test
+- `test_wandb_multiprocessing_fix.sh` etc. - Targeted regression scripts
+
+### `utilities/`
 General utility scripts.
 - `cache_manager.py` - Cache management utilities
 - `process_manager.py` - Process management utilities
 
-### `validation/` ⭐ NEW
+### `validation/`
 All validation scripts organized by type.
 - `checkpoints/` - Checkpoint validation scripts
   - `validate_coordinate_consistency.py` - Validate coordinate consistency
@@ -134,17 +136,6 @@ All validation scripts organized by type.
   - `validate_ui_schema.py` - Validate UI inference compatibility schema
 - `templates/` - Template validation scripts
   - `validate_templates.py` - Validate template files
-
-### `setup/`
-Project setup and configuration scripts.
-- `00_setup-environment.sh` - Environment setup
-- `01_setup-professional-linting.sh` - Linting setup
-- `02_setup-bash-aliases.sh` - Bash aliases setup
-- `code-quality.sh` - Automated code quality maintenance
-- `qwen-advanced.sh` - Advanced Qwen memory optimization
-- `qwen-memfix.sh` - Qwen memory fixes
-- `qwen-version.sh` - Qwen version management
-- `setup_mcp_github_only.sh` - MCP GitHub setup
 
 ## Usage
 
@@ -171,10 +162,9 @@ python ./scripts/seroost/setup_seroost_indexing.py
 
 ## Root Scripts
 
-The following scripts remain in the root directory for backward compatibility or debugging:
-- `debug_cuda.sh` - CUDA debugging utilities
-- `debug_imports.py` - Import debugging utilities
-- `debug_wandb_import.py` - Weights & Biases import debugging
+Only compatibility shims remain at the top level:
+- `_bootstrap.py` - Ensures project modules resolve when scripts run directly
+- `preprocess_data.py` - Delegates to `scripts/data/preprocess.py`
 
 ## Contributing
 
