@@ -63,7 +63,7 @@ from torch.utils.data import Dataset
 # This prevents repetitive logging when multiple datasets are created with the same config
 _logged_warnings: set[str] = set()
 
-from ocr.datasets.schemas import DatasetConfig, ImageData, ImageMetadata, PolygonData, TransformInput
+from ocr.datasets.schemas import DatasetConfig, ImageData, ImageMetadata, PolygonData, TransformInput, ValidatedPolygonData
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
     normalize_pil_image,
@@ -521,11 +521,36 @@ class ValidatedOCRDataset(Dataset):
         polygon_models = None
         if processed_polygons is not None:
             polygon_models = []
-            for poly in processed_polygons:
+            invalid_polygon_count = 0
+            for poly_idx, poly in enumerate(processed_polygons):
                 try:
-                    polygon_models.append(PolygonData(points=poly))
+                    # Use ValidatedPolygonData with bounds checking to catch out-of-bounds coordinates
+                    # This prevents BUG-20251110-001: 26.5% data corruption from invalid coordinates
+                    validated_polygon = ValidatedPolygonData(
+                        points=poly,
+                        image_width=width,
+                        image_height=height
+                    )
+                    polygon_models.append(validated_polygon)
                 except ValidationError as exc:
-                    self.logger.warning("Dropping invalid polygon for %s: %s", image_filename, exc)
+                    invalid_polygon_count += 1
+                    # Log detailed validation error for debugging
+                    self.logger.warning(
+                        "Dropping invalid polygon %d/%d for %s: %s",
+                        poly_idx + 1,
+                        len(processed_polygons),
+                        image_filename,
+                        exc
+                    )
+
+            # Log summary if multiple polygons were invalid
+            if invalid_polygon_count > 0:
+                self.logger.warning(
+                    "Image %s: Dropped %d/%d invalid polygons (validation failures)",
+                    image_filename,
+                    invalid_polygon_count,
+                    len(processed_polygons)
+                )
 
         transform_input = TransformInput(image=image_array, polygons=polygon_models, metadata=metadata)
 
