@@ -9,6 +9,7 @@ This addresses Phase 1.1.3 in the data pipeline testing plan.
 
 import os
 import tempfile
+from pathlib import Path
 from unittest.mock import Mock
 
 import numpy as np
@@ -16,8 +17,9 @@ import pytest
 import torch
 from torch.utils.data import DataLoader
 
-from ocr.datasets.base import Dataset as OCRDataset
+from ocr.datasets.base import ValidatedOCRDataset
 from ocr.datasets.db_collate_fn import DBCollateFN
+from ocr.datasets.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
 from ocr.models.head.db_head import DBHead
 from ocr.models.loss.db_loss import DBLoss
 
@@ -85,8 +87,15 @@ class TestCollateIntegration:
         ann_path = self.create_annotation_file(temp_dataset_dir, annotations)
         img_dir = os.path.join(temp_dataset_dir, "images")
 
+        # Create dataset config
+        cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
+        image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
+        config = DatasetConfig(
+            image_path=Path(img_dir), annotation_path=Path(ann_path), cache_config=cache_config, image_loading_config=image_loading_config
+        )
+
         # Create dataset
-        dataset = OCRDataset(image_path=img_dir, annotation_path=ann_path, transform=mock_transform)
+        dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
         # Create DataLoader with collate function
         collate_fn = DBCollateFN()
@@ -138,8 +147,15 @@ class TestCollateIntegration:
         ann_path = self.create_annotation_file(temp_dataset_dir, annotations)
         img_dir = os.path.join(temp_dataset_dir, "images")
 
+        # Create dataset config
+        cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
+        image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
+        config = DatasetConfig(
+            image_path=Path(img_dir), annotation_path=Path(ann_path), cache_config=cache_config, image_loading_config=image_loading_config
+        )
+
         # Create dataset
-        dataset = OCRDataset(image_path=img_dir, annotation_path=ann_path, transform=mock_transform)
+        dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
         # Create DataLoader
         collate_fn = DBCollateFN()
