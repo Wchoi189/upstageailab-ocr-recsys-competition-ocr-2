@@ -10,7 +10,7 @@ from typing import Any
 import numpy as np
 from PIL import Image
 
-from ocr.datasets.base import Dataset as OCRDataset
+from ocr.datasets.base import ValidatedOCRDataset as OCRDataset
 from ocr.utils.orientation import normalize_pil_image, remap_polygons
 
 # The EXIF orientation tag constant
@@ -45,7 +45,7 @@ def analyze_polygon_loss(dataset: OCRDataset, limit: int | None = None) -> None:
     raw_total = 0
     transformed_total = 0
     filtered_images_count = 0
-    loss_counts = Counter()
+    loss_counts: Counter[tuple[int, int]] = Counter()
     processed_images = 0
 
     for idx, (filename, raw_polys) in enumerate(dataset.anns.items()):
