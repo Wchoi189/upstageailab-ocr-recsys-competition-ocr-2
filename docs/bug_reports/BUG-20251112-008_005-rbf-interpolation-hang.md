@@ -222,7 +222,7 @@ The problem wasn't just "slow execution" - it was **O(N×M) complexity explosion
 
 ### Comparison to BUG_2025_004
 
-See [BUG_2025_004_STREAMLIT_VIEWER_HANGING.md](BUG_2025_004_STREAMLIT_VIEWER_HANGING.md) for the broader context of the Streamlit viewer hanging issue. This bug (BUG_2025_005) is the **root cause** identified during that investigation.
+See BUG_2025_004_STREAMLIT_VIEWER_HANGING.md for the broader context of the Streamlit viewer hanging issue. This bug (BUG_2025_005) is the **root cause** identified during that investigation.
 
 ---
 
@@ -348,7 +348,7 @@ See [BUG_2025_004_STREAMLIT_VIEWER_HANGING.md](BUG_2025_004_STREAMLIT_VIEWER_HAN
 
 **Related Documentation**:
 - preprocessing_viewer_debug_session.md - Debug session
-- [BUG_2025_004_STREAMLIT_VIEWER_HANGING.md](BUG_2025_004_STREAMLIT_VIEWER_HANGING.md) - Parent issue
+- BUG_2025_004_STREAMLIT_VIEWER_HANGING.md - Parent issue
 
 ---
 

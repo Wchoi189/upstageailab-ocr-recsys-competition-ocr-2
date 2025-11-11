@@ -106,8 +106,8 @@ This directory contains strategic planning documents, debug sessions, and refact
 ## 📖 Related Documentation
 
 ### Bug Reports
-- [BUG-2025-004: Streamlit Viewer Hanging](../../bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md)
-- [BUG-2025-005: RBF Interpolation Hang](../../bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md)
+- BUG-2025-004: Streamlit Viewer Hanging
+- BUG-2025-005: RBF Interpolation Hang
 - [BUG-2025-006: Infinite Rerun Loop](../../CHANGELOG.md) (see CHANGELOG)
 
 ### Architecture Docs

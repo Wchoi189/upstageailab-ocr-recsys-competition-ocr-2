@@ -71,3 +71,26 @@ The documentation and scripting layout still carries multiple legacy surfaces al
 - Run usage scans (ripgrep for import/call references) to confirm legacy directories are unused before deletion.
 - After pruning, regenerate indexes with `python scripts/agent_tools/documentation/update_artifact_indexes.py` and re-run link validation.
 - Communicate the new command surface to collaborators, updating `AGENT_ENTRY.md` and any setup docs accordingly.
+
+---
+
+## Progress Tracker
+
+- Completed
+  - Migrated AgentQMS toolbelt and `docs/agents/**`
+  - Pruned and archived legacy docs; removed `docs/ai_handbook/**`, `docs/_deprecated/**`, old `docs/performance/**`, `docs/project/**`
+  - Implemented link pruning and fixed broken links after deletions
+  - Reorganized `scripts/`:
+    - Deprecated root duplicates; moved troubleshooting/test utilities to `scripts/troubleshooting/`
+    - Moved `check_training_data.py` to `scripts/data/`
+    - Added unified CLI `python -m scripts.agent_tools ...`
+  - Seeded `docs/artifacts/MASTER_INDEX.md` and category indexes; updater now passes
+  - Wired CLI usage into `AGENT_ENTRY.md`
+  - Imported implementation plans into `artifacts/implementation_plans/**` and refreshed indexes
+
+- In Scope (remaining)
+  - Optional: add a short section in `docs/agents/index.md` linking to `docs/sitemap.md`
+  - Optional: retire any lingering ad-hoc validation scripts if discovered later
+
+- Out of Scope (future)
+  - Deeper code-level refactors referenced by imported implementation plans (training stabilization, import-time optimizations, inference service consolidation)

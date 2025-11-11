@@ -307,8 +307,8 @@ Ask yourself:
 - **Full Refactor Plan**: [`preprocessing_viewer_refactor_plan.md`](preprocessing_viewer_refactor_plan.md)
 - **Debug Session History**: [`preprocessing_viewer_debug_session.md`](preprocessing_viewer_debug_session.md)
 - **Bug Reports**:
-  - [BUG-2025-004: Streamlit Viewer Hanging](../../bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md)
-  - [BUG-2025-005: RBF Interpolation Hang](../../bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md)
+  - BUG-2025-004: Streamlit Viewer Hanging
+  - BUG-2025-005: RBF Interpolation Hang
 
 ---
 

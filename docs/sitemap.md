@@ -220,24 +220,24 @@
   - [bug_reports/BUG-20251109-002-code-changes.md](bug_reports/BUG-20251109-002-code-changes.md)
   - [bug_reports/BUG-20251109-002-cuda-illegal-memory-access-in-bce-loss-computation.md](bug_reports/BUG-20251109-002-cuda-illegal-memory-access-in-bce-loss-computation.md)
   - [bug_reports/BUG-20251110-001_out-of-bounds-polygon-coordinates-in-training-dataset.md](bug_reports/BUG-20251110-001_out-of-bounds-polygon-coordinates-in-training-dataset.md)
-  - [bug_reports/BUG_2025_001_DICE_LOSS_ASSERTION_ERROR.md](bug_reports/BUG_2025_001_DICE_LOSS_ASSERTION_ERROR.md)
-  - [bug_reports/BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md](bug_reports/BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md)
-  - [bug_reports/BUG_2025_003_RUN_ID_CONFUSION.md](bug_reports/BUG_2025_003_RUN_ID_CONFUSION.md)
-  - [bug_reports/BUG_2025_004_CACHING_PERFORMANCE_IMPACT.md](bug_reports/BUG_2025_004_CACHING_PERFORMANCE_IMPACT.md)
-  - [bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md](bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md)
-  - [bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md](bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md)
-  - [bug_reports/BUG_2025_005_MAP_CACHE_INVALIDATION.md](bug_reports/BUG_2025_005_MAP_CACHE_INVALIDATION.md)
-  - [bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md](bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md)
-  - [bug_reports/BUG_2025_11_09_001_DICE_LOSS_ASSERTION_ERROR.md](bug_reports/BUG_2025_11_09_001_DICE_LOSS_ASSERTION_ERROR.md)
+  - bug_reports/BUG_2025_001_DICE_LOSS_ASSERTION_ERROR.md
+  - bug_reports/BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md
+  - bug_reports/BUG_2025_003_RUN_ID_CONFUSION.md
+  - bug_reports/BUG_2025_004_CACHING_PERFORMANCE_IMPACT.md
+  - bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md
+  - bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md
+  - bug_reports/BUG_2025_005_MAP_CACHE_INVALIDATION.md
+  - bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md
+  - bug_reports/BUG_2025_11_09_001_DICE_LOSS_ASSERTION_ERROR.md
   - [bug_reports/BUG_REPORT_TEMPLATE.md](bug_reports/BUG_REPORT_TEMPLATE.md)
-  - [bug_reports/BUG_REPORT_WANDB_STEP_LOGGING.md](bug_reports/BUG_REPORT_WANDB_STEP_LOGGING.md)
-  - [bug_reports/CRITICAL_ISSUES_RESOLUTION_2025_10_14.md](bug_reports/CRITICAL_ISSUES_RESOLUTION_2025_10_14.md)
-  - [bug_reports/DEBUGGING_REPORT_CACHE_ANALYSIS.md](bug_reports/DEBUGGING_REPORT_CACHE_ANALYSIS.md)
-  - [bug_reports/SESSION_SUMMARY_2025-10-10_CONTINUATION.md](bug_reports/SESSION_SUMMARY_2025-10-10_CONTINUATION.md)
+  - bug_reports/BUG_REPORT_WANDB_STEP_LOGGING.md
+  - bug_reports/CRITICAL_ISSUES_RESOLUTION_2025_10_14.md
+  - bug_reports/DEBUGGING_REPORT_CACHE_ANALYSIS.md
+  - bug_reports/SESSION_SUMMARY_2025-10-10_CONTINUATION.md
   - [bug_reports/bug-20251110-002-code-changes.md](bug_reports/bug-20251110-002-code-changes.md)
   - [bug_reports/bug-20251110-002-nan-gradients-from-step-function-overflow.md](bug_reports/bug-20251110-002-nan-gradients-from-step-function-overflow.md)
   - [bug_reports/bug-20251110-003-cudnn-workspace-memory-exhaustion.md](bug_reports/bug-20251110-003-cudnn-workspace-memory-exhaustion.md)
-  - [bug_reports/cuda-illegal-memory-access-in-bce-loss-computation.md](bug_reports/cuda-illegal-memory-access-in-bce-loss-computation.md)
+  - bug_reports/cuda-illegal-memory-access-in-bce-loss-computation.md
   - [hardware/rtx3060-12gb-i5-16core-recommendations.md](hardware/rtx3060-12gb-i5-16core-recommendations.md)
   - [hardware/shared-memory-setup.md](hardware/shared-memory-setup.md)
 - [index.md](index.md)
@@ -259,7 +259,7 @@
       - [maintainers/experiments/sessions/2025-10-08_performance_resolution_handover.md](maintainers/experiments/sessions/2025-10-08_performance_resolution_handover.md)
     - [maintainers/onboarding/01_setup_and_tooling.md](maintainers/onboarding/01_setup_and_tooling.md)
     - [maintainers/onboarding/02_data_overview.md](maintainers/onboarding/02_data_overview.md)
-  - [maintainers/phase2_tools_comparison.md](maintainers/phase2_tools_comparison.md)
+  - maintainers/phase2_tools_comparison.md
     - [maintainers/planning/2025-10-19_future-project-roadmap-assessment.md](maintainers/planning/2025-10-19_future-project-roadmap-assessment.md)
     - [maintainers/planning/APP_REFACTOR_PLAN.md](maintainers/planning/APP_REFACTOR_PLAN.md)
     - [maintainers/planning/MIGRATION_GUIDE.md](maintainers/planning/MIGRATION_GUIDE.md)

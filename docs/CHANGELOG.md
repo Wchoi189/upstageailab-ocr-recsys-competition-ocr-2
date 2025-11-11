@@ -249,7 +249,7 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 - `ui/apps/inference/components/results.py` - Moved `import pandas as pd` to global imports (line 23)
 
 **See**:
-- [Bug Report](bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md)
+- Bug Report
 - Detailed Changelog
 
 ### Changed - 2025-10-19
@@ -414,7 +414,7 @@ python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
 - `ocr/datasets/preprocessing/document_flattening.py:497-563` - Added downsampling to `_apply_rbf_warping`
 - `docs/bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md` - Detailed bug report
 
-**References**: See [BUG-2025-005](bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md) for technical analysis
+**References**: See BUG-2025-005 for technical analysis
 
 ---
 
@@ -435,7 +435,7 @@ python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
 - `docs/bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md` - Bug report
 - `docs/ai_handbook/08_planning/preprocessing_viewer_debug_session.md` - Debug session handover
 
-**References**: See [BUG-2025-004](bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md) for full analysis
+**References**: See BUG-2025-004 for full analysis
 
 ### Added - 2025-10-18
 
