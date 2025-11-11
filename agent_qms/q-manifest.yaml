@@ -1,0 +1,32 @@
+version: 1.0
+framework_name: "AgentQMS"
+
+artifact_types:
+  - name: "implementation_plan"
+    description: "A detailed plan for implementing a new feature or change."
+    template: "templates/implementation_plan.md"
+    schema: "schemas/implementation_plan.json"
+    location: "artifacts/implementation_plans/"
+  - name: "assessment"
+    description: "An evaluation of a specific aspect of the system."
+    template: "templates/assessment.md"
+    schema: "schemas/assessment.json"
+    location: "artifacts/assessments/"
+  - name: "bug_report"
+    description: "A bug report documenting an issue, root cause, and resolution."
+    template: "templates/bug_report.md"
+    schema: "schemas/bug_report.json"
+    location: "docs/bug_reports/"
+
+tool_registry:
+  - name: "create_artifact"
+    entrypoint: "agent_qms.toolbelt.core.create_artifact"
+    description: "Create a new quality artifact."
+  - name: "validate_artifact"
+    entrypoint: "agent_qms.toolbelt.core.validate_artifact"
+    description: "Validate an artifact against its schema."
+
+validation_rules:
+  - rule: "enforce_timestamped_filenames"
+    enabled: true
+    description: "Assessments, implementation plans, and guides must use timestamped filenames (YYYY-MM-DD_HHMM_name.md). All frontmatters must include timestamp with hour and minute in KST."

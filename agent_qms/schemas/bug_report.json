@@ -1,0 +1,52 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Bug Report",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "author": {
+            "type": "string"
+        },
+        "date": {
+            "type": "string",
+            "format": "date"
+        },
+        "timestamp": {
+            "type": "string",
+            "description": "Timestamp with hour and minute in KST format (YYYY-MM-DD HH:MM KST)"
+        },
+        "type": {
+            "type": "string",
+            "enum": ["bug_report"]
+        },
+        "category": {
+            "type": "string",
+            "enum": ["troubleshooting", "bug", "issue"]
+        },
+        "status": {
+            "type": "string",
+            "enum": ["open", "investigating", "fix_in_progress", "fixed", "verified", "deferred"]
+        },
+        "version": {
+            "type": "string"
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        },
+        "bug_id": {
+            "type": "string",
+            "pattern": "^BUG-[0-9]{8}-[0-9]{3}$"
+        },
+        "severity": {
+            "type": "string",
+            "enum": ["Critical", "High", "Medium", "Low"]
+        }
+    },
+    "required": ["title", "author", "date", "timestamp", "type", "category", "status", "bug_id", "severity"]
+}
+

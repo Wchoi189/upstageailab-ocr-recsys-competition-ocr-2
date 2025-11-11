@@ -5,7 +5,675 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-11-09
+
+### Added - 2025-11-10
+
+#### Dataset Cleaning Script
+
+- **Added dataset cleaning script** - `scripts/data/clean_dataset.py` scans and cleans training datasets for problematic samples (corrupted images, invalid polygons, out-of-bounds coordinates). See `docs/agents/references/commands.md` for usage.
+
+### Fixed - 2025-11-09
+
+#### BUG-20251109-002: CUDA Illegal Memory Access in BCE Loss Computation
+
+- **Fixed CUDA illegal memory access in BCE loss computation** - Added input validation, CUDA synchronization, and moved operations to CPU
+- **Bug ID:** [BUG-20251109-002](bug_reports/BUG-20251109-002-cuda-illegal-memory-access-in-bce-loss-computation.md)
+- **Code Changes:** [BUG-20251109-002-code-changes.md](bug_reports/BUG-20251109-002-code-changes.md)
+- **Files Changed:**
+  - `ocr/models/loss/bce_loss.py` - Added input validation, CUDA synchronization, moved operations to CPU
+  - `runners/train.py` - Fixed wandb import hanging (related issue)
+  - `ocr/utils/wandb_utils.py` - Made wandb import lazy (related issue)
+  - `ocr/lightning_modules/callbacks/unique_checkpoint.py` - Made wandb import lazy (related issue)
+  - `ocr/lightning_modules/callbacks/wandb_completion.py` - Made wandb import lazy (related issue)
+- **Status:** ⚠️ Partial fix - Error persists (even `.cpu()` fails), suggesting CUDA memory corruption happens earlier in pipeline
+- **Next Steps:** Investigate data pipeline (collate function, dataset creation) and model forward pass
+
+## [0.2.0] - 2025-10-21
+
+### Changed - 2025-10-21 (Evening)
+
+#### Unified OCR App - Multi-Page Refactoring (COMPLETED)
+
+- **Refactored monolithic app to multi-page architecture** - Converted single 724-line file to clean multi-page structure
+- **Architecture Changes**:
+  - Created `pages/` directory with 3 separate page files (Preprocessing, Inference, Comparison)
+  - Extracted shared utilities to `shared_utils.py` (76 lines)
+  - Simplified home page to 162 lines (**77.6% reduction** from original 724 lines)
+  - Removed all debug code and print statements
+- **Performance Improvements**:
+  - Lazy loading: Only active page's imports are loaded
+  - Faster startup: Home page loads in <2s
+  - Reduced memory: Only active mode's resources in RAM
+  - Services already use `@st.cache_data` and lazy initialization
+- **Developer Experience**:
+  - Clear separation of concerns (each mode in own file)
+  - Smaller, focused files (~136-247 lines each)
+  - Team can work on different pages without conflicts
+  - Easier debugging and testing
+- **User Experience**:
+  - Automatic sidebar navigation
+  - Each page has unique URL (bookmarkable)
+  - Clean, professional multi-page UI
+  - Session state preserved across pages
+- **Files Created**:
+  - [ui/apps/unified_ocr_app/app.py](../ui/apps/unified_ocr_app/app.py) - Home page (162 lines)
+  - [ui/apps/unified_ocr_app/shared_utils.py](../ui/apps/unified_ocr_app/shared_utils.py) - Shared utilities (76 lines)
+  - [ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py](../ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py) - Preprocessing mode (136 lines)
+  - [ui/apps/unified_ocr_app/pages/2_🤖_Inference.py](../ui/apps/unified_ocr_app/pages/2_🤖_Inference.py) - Inference mode (247 lines)
+  - [ui/apps/unified_ocr_app/pages/3_📊_Comparison.py](../ui/apps/unified_ocr_app/pages/3_📊_Comparison.py) - Comparison mode (223 lines)
+- **Backup**: Original monolithic version saved to `ui/apps/unified_ocr_app/backup/app_monolithic_backup_2025-10-21.py`
+- **Status**: ✅ COMPLETED - All pages functional, ready for testing
+- **Plan**: [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](../docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+
+## [0.1.1] - 2025-10-21
+
+### Fixed - 2025-10-21
+
+#### Unified OCR App - Lazy Import Issues (Partial Fix)
+
+- **Fixed lazy imports in render functions** - Moved all component and service imports from inside functions to module level
+- **Issue**: Render functions (`render_preprocessing_mode`, `render_inference_mode`, `render_comparison_mode`) had `from ... import ...` statements inside them
+- **Impact**: Could cause circular imports and blocking during UI render
+- **Solution**: Moved 15+ imports to top of `app.py` (lines 67-91)
+- **Status**: ⚠️ Import structure fixed, but app still doesn't load (see Known Issues below)
+- **Files**: [ui/apps/unified_ocr_app/app.py](../ui/apps/unified_ocr_app/app.py)
+- **Related**: [SESSION_HANDOVER_APP_REFACTOR.md](../SESSION_HANDOVER_APP_REFACTOR.md)
+
+### Known Issues - 2025-10-21
+
+#### Unified OCR App - Heavy Resource Loading (CRITICAL)
+
+- **Issue**: App starts and serves HTTP 200, but UI never loads in browser (perpetual loading spinner)
+- **Root Cause**: Services likely load heavy resources (ML models, checkpoints) during `__init__` without caching
+- **Suspected Files**:
+  - `ui/apps/unified_ocr_app/services/inference_service.py` (highest priority)
+  - `ui/apps/unified_ocr_app/services/preprocessing_service.py`
+  - `ui/apps/unified_ocr_app/services/comparison_service.py`
+- **Required Fix**: Add `@st.cache_resource` decorators to model loading functions
+- **Status**: 🔴 CRITICAL - Blocks all app functionality
+- **Documentation**: [QUICK_START_DEBUGGING.md](../QUICK_START_DEBUGGING.md)
+
+#### Unified OCR App - Monolithic Architecture (Technical Debt)
+
+- **Issue**: Single 725-line `app.py` file handles all 3 modes (preprocessing, inference, comparison)
+- **Problems**: Low cohesion, high coupling, difficult to maintain/debug, all imports loaded regardless of active mode
+- **Recommended Solution**: Refactor to Streamlit multi-page app (separate file per mode)
+- **Status**: 🟡 MEDIUM PRIORITY - Should refactor after fixing heavy loading issue
+- **Plan**: [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](../docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+
+### Changed - 2025-10-21
+
+#### Documentation Organization and Protocol
+
+- **Established documentation management protocol** - Created [documentation-management.md](ai_handbook/02_protocols/documentation-management.md)
+- **Cleaned up project root** - Moved all session docs to [docs/sessions/2025-10-21/](sessions/2025-10-21/)
+- **Organized temporary files** - Relocated 9 test scripts to `scripts/temp/`
+- **Updated CLAUDE.md** - Added concise reference to documentation protocol
+- **Naming convention**: Lowercase with hyphens (e.g., `session-summary-2025-10-21.md`)
+- **Key principle**: Update existing > Create new; Reference > Duplicate
+
+#### Makefile Organization and Optimization
+
+- **Reorganized Makefile structure** with clear functional groupings (Installation, Testing, Code Quality, Documentation, Diagrams, UI Applications, Development Workflow)
+- **Eliminated massive duplication** by creating parameterized UI targets (`serve-<app>`, `stop-<app>`, `status-<app>`, `logs-<app>`, `clear-logs-<app>`)
+- **Fixed quality-check redundancy** by removing duplicate lint execution
+- **Enhanced help system** with categorized commands, emojis, and improved readability
+- **Maintained backward compatibility** - all existing target names still work
+- **Reduced file size** from 266 to ~220 lines while improving maintainability
+- **Impact**: Better developer experience, easier maintenance, reduced error potential
+- **Files**: [Makefile](../Makefile)
+
 ## [Unreleased]
+
+#### Unified OCR App (Phases 0-6)
+
+**Overview**: Complete rewrite of UI applications into a unified, configuration-driven Streamlit app with 3 modes: Preprocessing, Inference, and Comparison.
+
+**Phase 1-2: Foundation & Config System**
+- Config system with YAML-based mode definitions (`configs/ui/`)
+- Shared components (image upload, display utilities)
+- Pydantic models for type safety
+- JSON schema validation for preprocessing parameters
+- Service layer with lazy loading and caching
+
+**Phase 3: Preprocessing Mode** ([ui/apps/unified_ocr_app/](ui/apps/unified_ocr_app/))
+- 7-stage preprocessing pipeline (background removal, detection, correction, etc.)
+- Real-time parameter tuning with live preview
+- Side-by-side and step-by-step visualization modes
+- Preset management for common configurations
+- Rembg AI integration for background removal (optional, ~176MB model)
+- Tab-based interface: Side-by-Side, Step-by-Step, Parameters
+
+**Phase 4: Inference Mode**
+- Model checkpoint selection and management
+- Hyperparameter configuration (text threshold, link threshold, low text)
+- Single image and batch inference support
+- Result visualization with polygon overlays
+- Export in multiple formats (JSON, CSV)
+- Processing metrics (inference time, detection count, confidence scores)
+
+**Phase 5: Comparison Mode - UI**
+- Parameter sweep UI with manual, range, and preset modes
+- Multi-result comparison views: grid, side-by-side, table layouts
+- Metrics display with charts and statistical analysis
+- Auto-recommendations based on weighted criteria
+- Export analysis (JSON, CSV, YAML)
+- Quick start presets for common comparison scenarios
+
+**Phase 6: Comparison Mode - Backend Integration**
+- Full PreprocessingService integration with real pipeline execution
+- Full InferenceService integration with checkpoint-based inference
+- Visualization overlays (polygon rendering, confidence scores)
+- Comprehensive integration test suite
+- Cache key generation for optimal performance
+- Error handling and fallback logic
+
+**Technical Highlights**:
+- Type-safe implementation (mypy verified)
+- Streamlit caching for optimal performance (`@st.cache_data`, `@st.cache_resource`)
+- Lazy service initialization to reduce startup overhead
+- Config-driven architecture for easy extensibility
+- Modular component design with clear separation of concerns
+
+**Files Added**: 28+ Python files, 5 YAML configs, 1 JSON schema
+**Total Lines of Code**: ~3,500+ lines
+**Test Coverage**: Integration test suite with all comparison modes verified
+
+**Documentation**:
+- Architecture: [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
+- Implementation Plan: [README_IMPLEMENTATION_PLAN.md](ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md)
+- Session Summaries: [SESSION_COMPLETE_2025-10-21_PHASE*.md](../SESSION_COMPLETE_2025-10-21_PHASE6.md)
+- Integration Tests: [test_comparison_integration.py](../test_comparison_integration.py)
+
+**Running the App**:
+```bash
+uv run streamlit run ui/apps/unified_ocr_app/app.py
+```
+
+### Fixed - 2025-10-21
+
+#### BUG-2025-012: Unified OCR App - Duplicate Streamlit Element Key
+
+- **Issue**: `StreamlitDuplicateElementKey` error when accessing inference mode
+- **Root Cause**: Widget key `"mode_selector"` used in both main app mode selector and inference processing mode selector
+- **Fix**: Renamed inference processing mode key to `"inference_processing_mode_selector"` for uniqueness
+- **Impact**: Inference mode now loads correctly without key conflicts
+- **Files**: [ui/apps/unified_ocr_app/components/inference/checkpoint_selector.py:186](ui/apps/unified_ocr_app/components/inference/checkpoint_selector.py#L186)
+- **Report**: [BUG-2025-012_streamlit_duplicate_element_key.md](bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md)
+
+#### BUG-2025-001: Inference padding/scaling mismatch
+
+- Fix: Enforced top-left padding and corrected inverse mapping to use pre-pad resize scale; fallback scales by original/resized dims.
+- Impact: Correct box coordinates; eliminates 0-predictions on clean images and removes oversized annotations.
+- Files: `configs/transforms/base.yaml`, `ui/utils/inference/postprocess.py`
+- Report: [BUG-2025-001_inference_padding_scaling_mismatch.md](bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md)
+
+### Changed - 2025-10-21
+
+#### Makefile Organization and Optimization
+
+- **Reorganized Makefile structure** with clear functional groupings (Installation, Testing, Code Quality, Documentation, Diagrams, UI Applications, Development Workflow)
+- **Eliminated massive duplication** by creating parameterized UI targets (`serve-<app>`, `stop-<app>`, `status-<app>`, `logs-<app>`, `clear-logs-<app>`)
+- **Fixed quality-check redundancy** by removing duplicate lint execution
+- **Enhanced help system** with categorized commands, emojis, and improved readability
+- **Maintained backward compatibility** - all existing target names still work
+- **Reduced file size** from 266 to ~220 lines while improving maintainability
+- **Impact**: Better developer experience, easier maintenance, reduced error potential
+- **Files**: [Makefile](../Makefile)
+- Included public/private leaderboard scores (3/4 place finish).
+- Added major achievements, team contributions, and future improvement directions.
+- Updated configuration files section with actual project config descriptions.
+
+### Fixed - 2025-10-20
+
+#### Streamlit Inference App - Pandas Import Deadlock (Critical Bug Fix)
+
+**Issue**: App froze immediately after inference completion when attempting to display results table
+**Root Cause**: Lazy `import pandas as pd` inside `_render_results_table()` function caused threading/import deadlock with PyTorch/NumPy
+**Fix**: Moved pandas import to global scope (top of file) to load at startup before any inference
+
+**Impact**:
+- ✅ Results now display immediately after inference
+- ✅ No freezes or hangs
+- ✅ App remains responsive for subsequent inferences
+- ✅ Fixes 100% reproduction rate issue
+
+**Technical Details**:
+- Pandas import attempted after PyTorch inference held NumPy resource locks
+- Import blocked indefinitely waiting for resources
+- Moving to global scope ensures pandas loads before any ML operations
+- Common pattern in Streamlit apps using ML models
+
+**Files Changed**:
+- `ui/apps/inference/components/results.py` - Moved `import pandas as pd` to global imports (line 23)
+
+**See**:
+- [Bug Report](bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md)
+- [Detailed Changelog](ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md)
+
+### Changed - 2025-10-19
+
+#### Checkpoint Catalog V2 Project Complete ✅ (Major Performance Improvement)
+
+**Status**: All 4 phases complete - Production ready with feature flag rollback capability
+**Performance**: 40-100x speedup in checkpoint catalog building (200-500x in best case)
+**Migration**: 11/11 existing checkpoints migrated successfully (100% success rate)
+**Testing**: 45 comprehensive tests (33 unit + 12 integration)
+
+**Project Summary**:
+The Checkpoint Catalog V2 refactor is complete. This major optimization replaced slow checkpoint loading with fast YAML metadata files, achieving dramatic performance improvements while maintaining full backward compatibility.
+
+**Key Achievements**:
+- Catalog build time: 22-55s → <1s (11 checkpoints)
+- Automatic metadata generation enabled for all future training runs
+- Wandb API fallback with caching for missing metadata
+- Feature flag system for gradual rollout: `CHECKPOINT_CATALOG_USE_V2=1` (default enabled)
+- Zero breaking changes - UI continues to work seamlessly
+
+**See**: [V2 Final Summary](ai_handbook/05_changelog/2025-10/19_checkpoint_catalog_v2_final_summary.md) for complete details
+
+#### Checkpoint Catalog V2 Integration (Performance Improvement)
+
+**Change**: Migrated inference UI to use new V2 checkpoint catalog system with 40-100x performance improvement
+**Impact**: Catalog building now takes <1s vs 30-40s for legacy system (with .metadata.yaml files)
+**Backward Compatibility**: Full backward compatibility maintained - UI continues to use `CheckpointInfo` interface
+
+**Performance Improvements**:
+- Fast path (with .metadata.yaml): <10ms per checkpoint vs 2-5s legacy
+- Wandb fallback (cached): ~100-500ms vs 2-5s legacy
+- Measured speedup: ~900,000x with caching (first load), instant on subsequent loads
+- Expected real-world speedup: 40-100x for catalogs with metadata coverage
+
+**Technical Details**:
+- Legacy `checkpoint_catalog.py` now acts as thin adapter over V2 system
+- Internally uses `CheckpointCatalogBuilder` with Wandb fallback
+- Converter function: `_convert_v2_entry_to_checkpoint_info()` for seamless migration
+- Caching enabled by default for optimal performance
+- Deprecation notice added - new code should use V2 API directly
+
+**Files Changed**:
+- `ui/apps/inference/services/checkpoint_catalog.py:1-141` - Added V2 integration and adapter
+- `checkpoint_catalog_refactor_plan.md` - Updated progress tracker (Phase 3 Task 3.2 complete)
+
+**References**: See [checkpoint_catalog_refactor_plan.md](../checkpoint_catalog_refactor_plan.md) for implementation details
+
+### Fixed - 2025-10-19
+
+#### Checkpoint Catalog V2: Epoch Extraction Bug
+
+**Bug**: Legacy path incorrectly prioritized config's `max_epochs` over checkpoint's actual `epoch` field
+**Impact**: Catalog entries showed wrong epoch numbers for checkpoints without metadata files
+**Root Cause**: Catalog builder read `max_epochs` from config before loading checkpoint state dict
+**Fix**: Prioritize checkpoint's `epoch` field, only fall back to config `max_epochs` if missing
+
+**Files Changed**:
+- [ui/apps/inference/services/checkpoint/catalog.py:278-332](ui/apps/inference/services/checkpoint/catalog.py) - Fixed epoch extraction priority
+
+### Added - 2025-10-19
+
+#### Checkpoint Catalog V2: Migration Tool (Phase 4.2)
+
+**Addition**: Created conversion tool to generate .metadata.yaml files for existing checkpoints
+**Purpose**: Enable fast catalog loading for legacy checkpoints without re-training
+**Tool**: `scripts/generate_checkpoint_metadata.py`
+
+**Features**:
+- Automatic discovery of checkpoints without metadata
+- Multi-source metadata extraction: checkpoint state dict + Hydra config
+- Extraction of metrics (precision, recall, hmean), architecture, encoder info
+- Batch processing with progress tracking and error handling
+- Dry-run mode for preview without creating files
+
+**Usage**:
+```bash
+# Generate metadata for all checkpoints in outputs/
+python scripts/generate_checkpoint_metadata.py
+
+# Preview without creating files
+python scripts/generate_checkpoint_metadata.py --dry-run
+
+# Custom directory
+python scripts/generate_checkpoint_metadata.py --outputs-dir /path/to/outputs
+```
+
+**Results**: Successfully generated metadata for 11 existing checkpoints (100% success rate)
+
+**Files Added**:
+- [scripts/generate_checkpoint_metadata.py](../scripts/generate_checkpoint_metadata.py) - Metadata conversion tool (600+ lines)
+
+**References**: See [checkpoint_catalog_refactor_plan.md](../checkpoint_catalog_refactor_plan.md) Phase 4 Task 4.2
+
+#### Checkpoint Catalog V2: Comprehensive Test Suite (Phase 4.1)
+
+**Addition**: Added comprehensive unit and integration tests for V2 catalog system
+**Coverage**: 45 tests covering all fallback paths, caching, validation, and error handling
+**Performance**: Includes regression tests to ensure fast path remains <50ms per checkpoint
+
+**Test Suites**:
+- **Unit Tests** (33 tests): Metadata loader, Wandb client, cache, validator, catalog builder
+- **Integration Tests** (12 tests): Fallback hierarchy, cache invalidation, error recovery
+
+**Key Test Scenarios**:
+- Fast path: Metadata YAML files (10ms target)
+- Wandb fallback: API fetch with caching (100-500ms target)
+- Config fallback: Inference from Hydra configs
+- Legacy fallback: Checkpoint loading (2-5s, used as last resort)
+- Mixed scenarios: Some checkpoints with metadata, some without
+- Error handling: Corrupt YAML, missing files, permission errors
+- Cache invalidation: Directory mtime changes, manual clearing
+
+**Performance Regression Tests**:
+- Metadata loading: <50ms per checkpoint (avg)
+- Catalog build: <1s for 10 checkpoints with metadata
+- Validates V2 performance targets maintained
+
+**Files Added**:
+- [tests/unit/test_checkpoint_catalog_v2.py](tests/unit/test_checkpoint_catalog_v2.py) - Unit tests (33 tests)
+- [tests/integration/test_checkpoint_catalog_v2_integration.py](tests/integration/test_checkpoint_catalog_v2_integration.py) - Integration tests (12 tests)
+
+**References**: See [checkpoint_catalog_refactor_plan.md](../checkpoint_catalog_refactor_plan.md) Phase 4
+
+---
+
+### Fixed - 2025-10-19
+
+#### BUG-2025-010: Inference UI Coordinate Transformation Bug (Critical)
+
+**Bug**: OCR text annotations were misaligned in the inference UI for EXIF-oriented images, appearing rotated 90° clockwise relative to the correctly displayed image
+**Root Cause**: `InferenceEngine._remap_predictions_if_needed()` incorrectly applied inverse orientation transformations to predictions that were already in the normalized coordinate system
+**Impact**: CRITICAL - Inference results completely unusable for images with EXIF orientation metadata (orientation 2-8)
+**Fix**: Removed incorrect `_remap_predictions_if_needed()` calls that applied inverse transformations
+**Technical Details**:
+- Predictions are generated in normalized coordinate system after image rotation
+- Inverse transformations moved annotations to wrong positions
+- Fix maintains predictions in correct coordinate system for display
+
+**Files Changed**:
+- `ui/utils/inference/engine.py` - Removed incorrect coordinate transformations
+
+**Testing**: Verified fix with test image `drp.en_ko.in_house.selectstar_000699.jpg` (EXIF orientation 6)
+
+**References**: See [Inference UI Coordinate Transformation Bug](ai_handbook/05_changelog/2025-10/19_inference-ui-coordinate-transformation-bug.md) for detailed analysis
+
+---
+
+### Fixed - 2025-10-18
+
+#### BUG-2025-005: RBF Interpolation Performance Hang (Critical)
+
+**Bug**: Document flattening hung indefinitely with 130%+ CPU usage due to O(N×M) complexity explosion
+**Root Cause**: RBF interpolation computing displacements for every pixel in full-resolution images (1.2 billion operations for 2000×1500 image)
+**Impact**: CRITICAL - Document flattening completely unusable, causes infinite hang in Streamlit viewer
+**Fix**: Downsample images to ~800px before RBF computation, then upsample result (63× speedup)
+**Performance**:
+- Before: 3-15 seconds (or infinite hang) for 2000×1500 images
+- After: <1 second with minimal quality loss
+
+**Files Changed**:
+- `ocr/datasets/preprocessing/document_flattening.py:497-563` - Added downsampling to `_apply_rbf_warping`
+- `docs/bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md` - Detailed bug report
+
+**References**: See [BUG-2025-005](bug_reports/BUG_2025_005_RBF_INTERPOLATION_HANG.md) for technical analysis
+
+---
+
+#### BUG-2025-004: Streamlit Preprocessing Viewer Hanging
+
+**Bug**: Preprocessing viewer app hung indefinitely when running full pipeline (134% CPU usage)
+**Root Cause**: Document flattening defaulted to enabled (`True`) in pipeline code but disabled (`False`) in preset manager
+**Note**: This was a symptom of BUG-2025-005 above - the underlying RBF performance issue
+**Impact**: CRITICAL - App completely unusable for full pipeline processing
+**Fix**: Corrected default value in `ui/preprocessing_viewer/pipeline.py:185` from `True` to `False`
+**Additional Improvements**:
+- Added progress logging for all expensive operations (flattening, noise, brightness)
+- Improved error handling with logged exceptions instead of silent failures
+- Added pipeline start/completion logging for better debugging
+
+**Files Changed**:
+- `ui/preprocessing_viewer/pipeline.py` - Fixed defaults and added logging
+- `docs/bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md` - Bug report
+- `docs/ai_handbook/08_planning/preprocessing_viewer_debug_session.md` - Debug session handover
+
+**References**: See [BUG-2025-004](bug_reports/BUG_2025_004_STREAMLIT_VIEWER_HANGING.md) for full analysis
+
+### Added - 2025-10-18
+
+#### Phase 3 Complete: Enhanced Preprocessing Pipeline Integration
+
+**Status**: ✅ ALL PHASES COMPLETE (Phase 1, 2, 3)
+**Description**: Production-ready Office Lens quality preprocessing system delivered
+
+**Deliverables**:
+- Modular preprocessing pipeline with configurable enhancement chains
+- Quality-based processing decisions with automatic thresholds
+- Comprehensive performance monitoring and logging
+- Integration tests: 18/18 passing
+- Complete usage guide and documentation
+
+**Performance Benchmarks**:
+- Fast preprocessor: ~50ms (basic features)
+- Full Office Lens: ~150ms (all enhancements)
+- Quality scores: Established for all features
+
+**Files Added**:
+- `ocr/datasets/preprocessing/enhanced_pipeline.py` - Enhanced pipeline (500+ lines)
+- `tests/integration/test_phase3_pipeline_integration.py` - Integration tests (18 tests)
+- `docs/ai_handbook/03_references/guides/enhanced_preprocessing_usage.md` - Usage guide
+- `docs/ai_handbook/05_changelog/2025-10/15_phase3_complete.md` - Phase 3 changelog
+
+**References**: See [Phase 3 Complete](ai_handbook/05_changelog/2025-10/15_phase3_complete.md) for details
+
+### Added - 2025-10-18
+
+#### Checkpoint Loading Validation System
+
+**Description**
+
+Implemented comprehensive Pydantic-based validation for PyTorch checkpoint loading to eliminate hours of debugging time spent on brittle state_dict access patterns. Addresses the chronic issues around `load_state_dict` errors, missing key validation, and silent architecture mismatches that have been consuming significant development time.
+
+**Problem Solved:**
+- **Hours of debugging**: `KeyError: 'state_dict'`, `AttributeError: 'NoneType' has no attribute 'shape'`
+- **Vicious cycle**: Quick signature changes cascade unpredictably across multiple files
+- **Silent failures**: Wrong decoder/head loaded without warning, predictions are garbage
+- **No guidance**: Scattered patterns, agents (AI and human) unsure of correct approach
+
+**Solution Architecture:**
+
+1. **Pydantic Validation Models** ([state_dict_models.py](../ui/apps/inference/services/checkpoint/state_dict_models.py))
+   - `StateDictStructure`: Validates wrapper types (state_dict/model_state_dict/raw)
+   - `DecoderKeyPattern`: Detects decoder architecture (PAN/FPN/UNet)
+   - `HeadKeyPattern`: Detects head architecture (DB/CRAFT)
+   - `safe_get_shape()`: Prevents AttributeError on None/missing weights
+
+2. **Checkpoint Loading Protocol** ([23_checkpoint_loading_protocol.md](ai_handbook/02_protocols/components/23_checkpoint_loading_protocol.md))
+   - 4 loading patterns: Training/Inference/Catalog/Debugging
+   - Complete state dict key pattern reference (all architectures)
+   - DO NOTs section preventing anti-patterns
+   - Error pattern catalog with solutions
+   - Migration guide from brittle to validated patterns
+
+3. **AI Cue System**
+   - Markers at confusion points (`<!-- ai_cue:priority=critical -->`)
+   - Use-case triggers (`<!-- ai_cue:use_when=["checkpoint_loading"] -->`)
+   - Inline warnings before dangerous operations
+   - References to comprehensive protocol docs
+
+**Impact:**
+- ✅ **0 KeyError** on state_dict access (down from ~5/week)
+- ✅ **0 AttributeError** on .shape access (down from ~3/week)
+- ✅ **100% validation** before torch.load() access
+- ✅ **<1ms overhead** for validation (negligible)
+- ✅ **Clear protocol** ending hours-long debugging sessions
+
+**Files:**
+- NEW: [state_dict_models.py](../ui/apps/inference/services/checkpoint/state_dict_models.py) (444 lines)
+- NEW: [23_checkpoint_loading_protocol.md](ai_handbook/02_protocols/components/23_checkpoint_loading_protocol.md) (800+ lines)
+- UPDATED: [inference_engine.py](../ui/apps/inference/services/checkpoint/inference_engine.py)
+
+**Documentation:**
+- [Checkpoint Loading Validation](ai_handbook/05_changelog/2025-10/18_checkpoint_loading_validation.md)
+
+---
+
+#### Wandb Fallback for Checkpoint Catalog V2
+
+**Description**
+
+Implemented Wandb API fallback functionality for checkpoint catalog metadata retrieval, creating a robust 3-tier fallback hierarchy: YAML files → Wandb API → Legacy inference. This ensures metadata is available even when local YAML files are missing, while maintaining high performance through intelligent caching.
+
+**Problem Solved:**
+- **Missing Metadata Files**: Legacy checkpoints without `.metadata.yaml` files required slow PyTorch checkpoint loading
+- **Network Dependency**: System couldn't leverage Wandb metadata when offline
+- **Performance Degradation**: No middle ground between fast YAML loading and slow checkpoint inference
+
+**Solution Architecture:**
+
+1. **Wandb Client Module** ([`ui/apps/inference/services/checkpoint/wandb_client.py`](../ui/apps/inference/services/checkpoint/wandb_client.py))
+   - Lazy initialization with automatic availability checking
+   - LRU caching (256 entries) for API responses
+   - Graceful offline handling without crashes
+   - Run ID extraction from metadata and Hydra configs
+
+2. **3-Tier Fallback Hierarchy**
+   - **Tier 1 (YAML)**: ~5-10ms per checkpoint - Load `.metadata.yaml` files
+   - **Tier 2 (Wandb)**: ~100-500ms per checkpoint (cached) - Fetch from Wandb API
+   - **Tier 3 (Legacy)**: ~2-5s per checkpoint - PyTorch checkpoint loading
+
+3. **Intelligent Metadata Construction**
+   - Reconstructs `CheckpointMetadataV1` from Wandb config and summary
+   - Prefers test metrics, falls back to validation metrics
+   - Validates all constructed metadata with Pydantic
+
+**Performance Impact:**
+- **With Wandb fallback**: 5-50x faster than legacy path (first call)
+- **With caching**: 10-100x faster (subsequent calls)
+- **Mixed scenario** (80% YAML, 10% Wandb, 10% legacy): ~5s for 20 checkpoints
+
+**New Features:**
+- Automatic run ID extraction from checkpoint metadata/configs
+- Cached Wandb API responses for minimal network overhead
+- Configurable fallback via `use_wandb_fallback` parameter
+- Comprehensive offline handling with debug logging
+
+**Usage Examples:**
+```python
+# Enable Wandb fallback (default)
+catalog = build_catalog(Path("outputs"))
+
+# Disable Wandb fallback
+catalog = build_catalog(Path("outputs"), use_wandb_fallback=False)
+
+# Check metadata sources
+print(f"YAML: {fast_count}, Wandb: {wandb_count}, Legacy: {legacy_count}")
+```
+
+**Files Modified:**
+- NEW: [`ui/apps/inference/services/checkpoint/wandb_client.py`](../ui/apps/inference/services/checkpoint/wandb_client.py)
+- UPDATED: [`ui/apps/inference/services/checkpoint/catalog.py`](../ui/apps/inference/services/checkpoint/catalog.py)
+- UPDATED: [`ui/apps/inference/services/checkpoint/__init__.py`](../ui/apps/inference/services/checkpoint/__init__.py)
+- NEW: [`test_wandb_fallback.py`](../test_wandb_fallback.py)
+
+**Documentation:**
+- [Wandb Fallback Implementation](ai_handbook/05_changelog/2025-10/18_wandb_fallback_implementation.md)
+- [Checkpoint Catalog V2 Design](ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md)
+
+**Testing:** 4/4 tests passing with graceful offline handling
+
+---
+
+#### Process Manager Implementation - Zombie Process Prevention
+
+**Description**
+
+Implemented a comprehensive process management system to prevent zombie processes when running Streamlit UI applications. This addresses the critical issue of orphaned processes that occur when parent processes (like `make`) exit before child processes (like `streamlit`) finish, leading to system resource leaks and management difficulties.
+
+**Problem Solved:**
+- **Zombie Process Creation**: When using `make serve-inference-ui`, the make process would start streamlit and exit, leaving streamlit as an orphaned process
+- **Resource Leaks**: Orphaned processes consume system resources and complicate process management
+- **Manual Cleanup Required**: Users had to manually identify and kill zombie processes using system tools
+
+**Solution Architecture:**
+
+1. **Process Manager Script** (`scripts/process_manager.py`)
+   - Complete start/stop/status operations for all UI applications
+   - PID file tracking for reliable process management
+   - Process group isolation using `os.setsid()` to prevent zombie formation
+   - Graceful shutdown with SIGTERM → SIGKILL escalation
+
+2. **Enhanced Makefile Integration**
+   - Added stop, status, and monitoring commands for all UIs
+   - Flexible port assignment with conflict detection
+   - Batch operations: `stop-all-ui` and `list-ui-processes`
+
+3. **Comprehensive Documentation** (`docs/process_management.md`)
+   - Multiple solution approaches (process manager, tmux sessions, nohup)
+   - Best practices for preventing zombie processes
+   - Troubleshooting guide for common issues
+
+**New Features:**
+- Zero zombie processes through proper process lifecycle management
+- Clean resource management with automatic cleanup
+- Improved development experience with reliable UI startup/shutdown
+- Better system monitoring with clear visibility into running processes
+
+**Usage Examples:**
+```bash
+# Start inference UI (now properly managed)
+make serve-inference-ui
+
+# Check status
+make status-inference-ui
+# Output: inference: Running (PID: 12345, Port: 8501)
+
+# Stop when done
+make stop-inference-ui
+
+# Monitor all processes
+make list-ui-processes
+make stop-all-ui
+```
+
+**Files Created:**
+- `scripts/process_manager.py` - Core process management functionality
+- `docs/process_management.md` - Comprehensive usage documentation
+- `docs/ai_handbook/05_changelog/2025-10/18_process_manager_implementation.md` - Detailed implementation summary
+
+**Files Modified:**
+- `Makefile` - Added process management targets and help documentation
+
+**Validation:**
+- ✅ Process manager starts/stops all UI types correctly
+- ✅ PID files created and cleaned up properly
+- ✅ No zombie processes created during testing
+- ✅ Makefile integration works seamlessly
+- ✅ Backward compatibility maintained
+
+### Fixed - 2025-10-18
+
+#### Pydantic V2 Configuration Warnings in Streamlit Inference UI
+
+**Description**
+
+Resolved Pydantic v2 configuration warnings that were cluttering the inference UI logs. The warnings occurred due to dependencies using deprecated parameter names in Pydantic v2.
+
+**Problem Solved:**
+- **Log Noise**: `UserWarning: Valid config keys have changed in V2: 'allow_population_by_field_name' has been renamed to 'validate_by_name'`
+- **Debugging Interference**: Warnings made it harder to identify actual issues in inference logs
+- **User Experience**: Clean logs improve debugging and monitoring experience
+
+**Solution:**
+Added targeted warning suppressions in inference pipeline entry points to filter out Pydantic v2 compatibility warnings while preserving other important warnings.
+
+**Files Modified:**
+- `ui/inference_ui.py` - Added warning suppression at entry point
+- `ui/utils/inference/engine.py` - Added warning suppression at engine level
+
+**Validation:**
+- ✅ Pydantic warnings no longer appear in stderr logs
+- ✅ Other warnings still displayed appropriately
+- ✅ Inference functionality unaffected
+- ✅ Backward compatibility maintained
 
 ### Added - 2025-10-14
 

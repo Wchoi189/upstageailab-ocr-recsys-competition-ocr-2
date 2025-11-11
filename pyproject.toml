@@ -1,6 +1,6 @@
 [project]
 name = "upstage-ocr-receipt-text-detection"
-version = "0.1.0"
+version = "0.1.1"
 description = "AI Competition: Receipt Text Detection with DBNet baseline"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -69,6 +69,7 @@ dependencies = [
     "mkdocs-minify-plugin>=0.8.0",
     "mkdocs-git-revision-date-localized-plugin>=1.2.0",
     "mkdocs-git-committers-plugin-2>=2.2.0",
+    "Jinja2>=3.1.0",
 ]
 
 

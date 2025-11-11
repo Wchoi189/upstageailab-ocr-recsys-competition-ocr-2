@@ -1,10 +1,12 @@
 ## 🐛 Bug Report Template
 
-**Bug ID:** BUG-2025-011
-**Date:** October 14, 2025
+<!-- Last Updated: 2025-10-20 -->
+
+**Bug ID:** BUG-YYYYMMDD-###
+**Date:** YYYY-MM-DD
 **Reporter:** Development Team
-**Severity:** Medium
-**Status:** Fixed
+**Severity:** Critical | High | Medium | Low
+**Status:** New | Investigating | Fixed | Deferred
 
 ### Summary
 WandB step logging violates monotonic step requirement, causing warnings: "Tried to log to step 817 that is less than the current step 821".
@@ -60,14 +62,15 @@ class PerformanceProfilerCallback(Callback):
 ```
 
 ### Testing
-- [x] WandB warnings eliminated
-- [x] Performance metrics still logged correctly
-- [x] Step values remain monotonic across training/validation
+- [ ] Reproduction confirmed
+- [ ] Unit tests updated/added
+- [ ] Integration/E2E validated
+- [ ] Performance validated (if applicable)
 
 ### Prevention
-- Implement monotonic step counters for all WandB logging
-- Add validation for step monotonicity in logging utilities
-- Document WandB step requirements in logging guidelines
+- Add guardrails and validation checks
+- Add tests to prevent regressions
+- Update documentation and examples where relevant
 
 ---
 
