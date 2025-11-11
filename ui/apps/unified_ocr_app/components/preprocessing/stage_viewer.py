@@ -190,7 +190,7 @@ def _render_step_by_step_view(
         "Pipeline stage",
         options=stage_options,
         value=state.get_preference("current_step_stage", 0),
-        format_func=lambda i: f"Step {i+1}: {stage_labels[i]}",
+        format_func=lambda i: f"Step {i + 1}: {stage_labels[i]}",
         key="step_stage_selector",
     )
 

@@ -58,7 +58,7 @@ def render_results(state: InferenceState, config: UIConfig) -> None:
         **Result {idx}**
         - Predictions: {result.num_predictions}
         - Confidence: {result.avg_confidence:.1f}%
-        - Checkpoint: {result.checkpoint_name if hasattr(result, 'checkpoint_name') else 'N/A'}
+        - Checkpoint: {result.checkpoint_name if hasattr(result, "checkpoint_name") else "N/A"}
         """)
 
     print("<<< MINIMAL render_results COMPLETED", file=sys.stderr, flush=True)

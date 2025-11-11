@@ -2,7 +2,6 @@ import warnings
 
 import hydra
 import lightning.pytorch as pl
-from omegaconf import DictConfig
 
 # Setup project paths automatically
 from ocr.utils.path_utils import get_path_resolver, setup_project_paths

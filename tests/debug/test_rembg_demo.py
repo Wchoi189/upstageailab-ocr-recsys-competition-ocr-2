@@ -35,7 +35,7 @@ def test_rembg_basic():
 
     print(f"✅ Input shape: {img.shape}")
     print(f"✅ Output shape: {output_array.shape} (includes alpha channel)")
-    print(f"✅ Alpha channel min: {output_array[:,:,3].min()}, max: {output_array[:,:,3].max()}")
+    print(f"✅ Alpha channel min: {output_array[:, :, 3].min()}, max: {output_array[:, :, 3].max()}")
 
     # Save result
     output.save("rembg_test_output.png")
@@ -107,7 +107,7 @@ def test_rembg_on_image(image_path: str):
 
     print("\n📊 Statistics:")
     print(f"   Foreground ratio: {foreground_ratio:.1%}")
-    print(f"   Background removed: {(1-foreground_ratio):.1%}")
+    print(f"   Background removed: {(1 - foreground_ratio):.1%}")
 
     return output_array
 

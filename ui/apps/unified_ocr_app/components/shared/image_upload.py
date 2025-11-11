@@ -38,7 +38,7 @@ def render_image_upload(state: UnifiedAppState, config: dict[str, Any]) -> None:
     # Show instructions if enabled
     if show_instructions:
         st.markdown(f"**{help_text}**")
-        st.caption(f"Supported formats: {', '.join(enabled_types).upper()} | " f"Max size: {max_size_mb}MB per file")
+        st.caption(f"Supported formats: {', '.join(enabled_types).upper()} | Max size: {max_size_mb}MB per file")
 
     # File uploader
     uploaded_files = st.file_uploader(
@@ -70,7 +70,7 @@ def render_image_upload(state: UnifiedAppState, config: dict[str, Any]) -> None:
                     # Check file size
                     file_size_mb = uploaded_file.size / (1024 * 1024)
                     if file_size_mb > max_size_mb:
-                        st.error(f"File {uploaded_file.name} is too large " f"({file_size_mb:.1f}MB > {max_size_mb}MB)")
+                        st.error(f"File {uploaded_file.name} is too large ({file_size_mb:.1f}MB > {max_size_mb}MB)")
                         continue
 
                     # Load image
@@ -96,7 +96,7 @@ def render_image_upload(state: UnifiedAppState, config: dict[str, Any]) -> None:
                     # Add to state
                     state.add_image(image_bgr)
 
-                    logger.info(f"Loaded {uploaded_file.name}: " f"{image_bgr.shape[1]}x{image_bgr.shape[0]} " f"({file_size_mb:.1f}MB)")
+                    logger.info(f"Loaded {uploaded_file.name}: {image_bgr.shape[1]}x{image_bgr.shape[0]} ({file_size_mb:.1f}MB)")
 
                 except Exception as e:
                     logger.error(f"Failed to load {uploaded_file.name}: {e}")

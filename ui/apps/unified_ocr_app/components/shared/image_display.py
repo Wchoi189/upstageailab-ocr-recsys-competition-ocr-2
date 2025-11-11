@@ -47,11 +47,11 @@ def display_image_grid(
 
     # Create labels if not provided
     if labels is None:
-        labels = [f"Image {i+1}" for i in range(len(images))]
+        labels = [f"Image {i + 1}" for i in range(len(images))]
 
     # Ensure labels match images
     if len(labels) < len(images):
-        labels.extend([f"Image {i+1}" for i in range(len(labels), len(images))])
+        labels.extend([f"Image {i + 1}" for i in range(len(labels), len(images))])
 
     # Display in grid
     num_images = len(images)

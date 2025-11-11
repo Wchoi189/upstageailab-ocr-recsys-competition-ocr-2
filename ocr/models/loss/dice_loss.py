@@ -41,13 +41,9 @@ class DiceLoss(nn.Module):
             mask = weights * mask
         # Input validation for numerical stability
         if torch.isnan(pred).any() or torch.isinf(pred).any():
-            raise ValueError(
-                f"Invalid values in pred: nan={torch.isnan(pred).any().item()}, inf={torch.isinf(pred).any().item()}"
-            )
+            raise ValueError(f"Invalid values in pred: nan={torch.isnan(pred).any().item()}, inf={torch.isinf(pred).any().item()}")
         if torch.isnan(gt).any() or torch.isinf(gt).any():
-            raise ValueError(
-                f"Invalid values in gt: nan={torch.isnan(gt).any().item()}, inf={torch.isinf(gt).any().item()}"
-            )
+            raise ValueError(f"Invalid values in gt: nan={torch.isnan(gt).any().item()}, inf={torch.isinf(gt).any().item()}")
         # Clamp predictions to valid probability range
         pred = pred.clamp(0.0, 1.0)
         intersection = (pred * gt * mask).sum()
@@ -61,7 +57,6 @@ class DiceLoss(nn.Module):
         loss = torch.clamp(loss, min=0.0, max=1.0 + 1e-6)
         if torch.isnan(loss) or torch.isinf(loss):
             raise ValueError(
-                f"Invalid Dice loss computed: nan/inf encountered. "
-                f"intersection={intersection.item():.6e}, union={union.item():.6e}"
+                f"Invalid Dice loss computed: nan/inf encountered. intersection={intersection.item():.6e}, union={union.item():.6e}"
             )
         return loss
