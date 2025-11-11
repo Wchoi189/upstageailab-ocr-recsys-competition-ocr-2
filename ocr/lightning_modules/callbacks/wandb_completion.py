@@ -43,6 +43,8 @@ class WandbCompletionCallback(Callback):
             print(f"Warning: Failed to create local sentinel file: {exc}")
 
     def on_exception(self, trainer: pl.Trainer, pl_module: pl.LightningModule, exception: BaseException) -> None:
+        import wandb
+
         current_run = getattr(wandb, "run", None)
         if current_run:
             current_run.tags = current_run.tags + ("status:failed",)
