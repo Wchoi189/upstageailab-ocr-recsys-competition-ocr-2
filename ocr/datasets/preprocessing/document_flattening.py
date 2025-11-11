@@ -177,11 +177,24 @@ class DocumentFlattener:
 
             processing_time_ms = (time.time() - start_time) * 1000
 
+            # Provide quality metrics only if assessment is enabled
+            if self.config.enable_quality_assessment:
+                quality_metrics = FlatteningQualityMetrics(
+                    distortion_score=0.0,  # No distortion since already flat
+                    edge_preservation_score=1.0,  # Perfect since no transformation
+                    smoothness_score=1.0,  # Perfect since no transformation
+                    overall_quality=1.0,  # Perfect quality since already flat
+                    residual_curvature=surface_normals.mean_curvature,
+                    processing_successful=True,
+                )
+            else:
+                quality_metrics = None
+
             return FlatteningResult(
                 flattened_image=image.copy(),
                 warping_transform=warping_transform,
                 surface_normals=surface_normals,
-                quality_metrics=None,
+                quality_metrics=quality_metrics,
                 method_used=self.config.method,
                 processing_time_ms=processing_time_ms,
                 metadata={"skipped_reason": "already_flat"},
@@ -199,10 +212,11 @@ class DocumentFlattener:
         else:
             raise ValueError(f"Unknown flattening method: {self.config.method}")
 
-        # Assess quality if enabled
-        quality_metrics = None
+        # Assess quality if enabled, otherwise set to None
         if self.config.enable_quality_assessment:
             quality_metrics = self._assess_flattening_quality(image, result_image, surface_normals)
+        else:
+            quality_metrics = None
 
         processing_time_ms = (time.time() - start_time) * 1000
 
@@ -606,3 +620,7 @@ def flatten_crumpled_document(
     """
     flattener = DocumentFlattener(config)
     return flattener.flatten_document(image, corners)
+
+
+# Alias for backward compatibility with tests
+FlatteningMetrics = FlatteningQualityMetrics

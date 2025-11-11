@@ -40,8 +40,28 @@ class DiceLoss(nn.Module):
             assert weights.shape == mask.shape
             mask = weights * mask
 
+        # Clamp predictions to valid range [0, 1] to prevent extreme values
+        pred = pred.clamp(0, 1)
+
+        # Validate inputs for NaN/Inf before computation
+        if torch.isnan(pred).any():
+            raise ValueError("NaN detected in predictions before Dice loss computation")
+        if torch.isinf(pred).any():
+            raise ValueError("Inf detected in predictions before Dice loss computation")
+        if torch.isnan(gt).any():
+            raise ValueError("NaN detected in ground truth before Dice loss computation")
+        if torch.isinf(gt).any():
+            raise ValueError("Inf detected in ground truth before Dice loss computation")
+
         intersection = (pred * gt * mask).sum()
         union = (pred * mask).sum() + (gt * mask).sum() + self.eps
         loss = 1 - 2.0 * intersection / union
+
+        # Validate output for NaN/Inf after computation
+        if torch.isnan(loss):
+            raise ValueError("NaN detected in Dice loss output")
+        if torch.isinf(loss):
+            raise ValueError("Inf detected in Dice loss output")
+
         assert loss <= 1
         return loss

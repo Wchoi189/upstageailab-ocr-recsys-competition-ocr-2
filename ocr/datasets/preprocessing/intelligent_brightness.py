@@ -464,3 +464,7 @@ def create_brightness_adjuster(config: BrightnessConfig | None = None) -> Intell
         Configured IntelligentBrightnessAdjuster instance
     """
     return IntelligentBrightnessAdjuster(config)
+
+
+# Alias for backward compatibility with tests
+BrightnessMetrics = BrightnessQuality

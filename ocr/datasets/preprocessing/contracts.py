@@ -140,14 +140,20 @@ class ContractEnforcer:
     @staticmethod
     def validate_image_input_contract(image: np.ndarray, contract_name: str = "image_input") -> np.ndarray:
         """Validate image input against contract requirements."""
-        # Skip validation for now to avoid Pydantic v2 compatibility issues
-        return image
+        try:
+            ImageInputContract(image=image)
+            return image
+        except Exception as e:
+            raise ValueError(f"Image input contract validation failed: {e}") from e
 
     @staticmethod
     def validate_preprocessing_result_contract(result: dict[str, Any], contract_name: str = "preprocessing_result") -> dict[str, Any]:
         """Validate preprocessing result against contract requirements."""
-        # Skip validation for now to avoid Pydantic v2 compatibility issues
-        return result
+        try:
+            PreprocessingResultContract(**result)
+            return result
+        except Exception as e:
+            raise ValueError(f"Preprocessing result contract validation failed: {e}") from e
 
     @staticmethod
     def validate_detection_result_contract(
@@ -166,8 +172,18 @@ def validate_image_input_with_fallback(func):
     """Decorator that validates image inputs and provides fallback for invalid inputs."""
 
     def wrapper(self, image: np.ndarray, *args, **kwargs):
-        # Skip validation for now to avoid Pydantic v2 compatibility issues
-        return func(self, image, *args, **kwargs)
+        try:
+            ImageInputContract(image=image)
+            return func(self, image, *args, **kwargs)
+        except Exception:
+            # Fallback: return error response instead of raising
+            return {
+                "image": image,
+                "metadata": {
+                    "error": "Image input validation failed",
+                    "processing_steps": ["fallback"],
+                },
+            }
 
     return wrapper
 

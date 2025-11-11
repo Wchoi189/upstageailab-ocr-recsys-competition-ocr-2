@@ -329,9 +329,9 @@ class DBCollateFN:
 
     def _validate_batch_polygons(self, batch_polygons, filenames):
         """
-        Validate polygons in a batch and filter out invalid ones.
+        Validate polygons in a batch and filter out invalid ones using shared validators.
 
-        Performs comprehensive validation of polygon data including:
+        Uses ocr.utils.polygon_utils.is_valid_polygon() for comprehensive validation:
         - Shape normalization: (1, N, 2) → (N, 2)
         - Geometric validation: minimum points, positive area
         - Data integrity: finite values, correct dimensions
@@ -344,6 +344,8 @@ class DBCollateFN:
             List of validated polygon lists with invalid polygons removed.
             Each polygon is normalized to (N, 2) shape.
         """
+        from ocr.utils.polygon_utils import is_valid_polygon
+
         validated_batch = []
 
         for sample_idx, (polygons, filename) in enumerate(zip(batch_polygons, filenames, strict=True)):
@@ -351,38 +353,15 @@ class DBCollateFN:
 
             for poly_idx, poly in enumerate(polygons):
                 try:
-                    # Handle different polygon shapes
+                    # Normalize shape: (1, N, 2) → (N, 2)
                     if poly.ndim == 3 and poly.shape[0] == 1:
-                        poly = poly[0]  # Normalize (1, N, 2) -> (N, 2)
+                        poly = poly[0]
 
-                    # Check basic shape requirements
-                    if poly.ndim != 2 or poly.shape[1] != 2:
-                        print(f"⚠ Skipping invalid polygon shape {poly.shape} in {filename}, polygon {poly_idx}")
-                        continue
-
-                    # Check minimum points for a valid polygon
-                    if poly.shape[0] < 3:
-                        print(f"⚠ Skipping degenerate polygon with {poly.shape[0]} points in {filename}, polygon {poly_idx}")
-                        continue
-
-                    # Check for valid numeric values
-                    if not np.isfinite(poly).all():
-                        print(f"⚠ Skipping polygon with invalid values in {filename}, polygon {poly_idx}")
-                        continue
-
-                    # Additional validation: check area is positive
-                    if poly.shape[0] >= 3:
-                        try:
-                            area = cv2.contourArea(poly.astype(np.float32))
-                            if area <= 0:
-                                print(f"⚠ Skipping polygon with non-positive area {area:.2f} in {filename}, polygon {poly_idx}")
-                                continue
-                        except Exception as e:
-                            print(f"⚠ Error calculating area for polygon in {filename}, polygon {poly_idx}: {e}")
-                            continue
-
-                    # Polygon is valid
-                    validated_polygons.append(poly)
+                    # Use shared validator with comprehensive checks
+                    if is_valid_polygon(poly, min_points=3, check_finite=True, check_area=True, min_area=0.0):
+                        validated_polygons.append(poly)
+                    else:
+                        print(f"⚠ Skipping invalid polygon in {filename}, polygon {poly_idx}")
 
                 except Exception as e:
                     print(f"⚠ Error validating polygon in {filename}, polygon {poly_idx}: {e}")

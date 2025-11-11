@@ -156,7 +156,17 @@ class DBHead(BaseHead):
             return nn.ConvTranspose2d(in_channels, out_channels, 2, 2)
 
     def _step_function(self, x, y):
-        return torch.reciprocal(1 + torch.exp(-self.k * (x - y)))
+        """Numerically stable differentiable step function.
+
+        Uses torch.sigmoid instead of reciprocal(1 + exp(-k*(x-y))) for numerical stability.
+        Clamps inputs to prevent extreme values that could cause NaN/Inf.
+        """
+        # Clamp inputs to prevent extreme values
+        x_clamped = torch.clamp(x, min=-10.0, max=10.0)
+        y_clamped = torch.clamp(y, min=-10.0, max=10.0)
+
+        # Use stable sigmoid instead of reciprocal + exp
+        return torch.sigmoid(self.k * (x_clamped - y_clamped))
 
     def forward(self, x: torch.Tensor, return_loss: bool = True) -> dict[str, torch.Tensor]:
         """Produce predictions from decoded features.

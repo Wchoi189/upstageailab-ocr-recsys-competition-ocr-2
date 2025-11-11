@@ -25,10 +25,7 @@ try:
 except ImportError:
     pass  # In case the warning class is not available in future pydantic versions
 
-import wandb
-
-# Clean up any lingering W&B session to prevent warnings
-wandb.finish()
+# wandb imported lazily inside train() to avoid slow imports
 
 from ocr.utils.path_utils import get_path_resolver, setup_project_paths
 
@@ -106,6 +103,10 @@ def train(config: DictConfig):
         `config` (DictConfig): A dictionary containing configuration settings for training.
     """
     global trainer, data_module
+
+    # Clean up any lingering W&B session to prevent warnings (lazy import)
+    import wandb
+    wandb.finish()
 
     pl.seed_everything(config.get("seed", 42), workers=True)
 
