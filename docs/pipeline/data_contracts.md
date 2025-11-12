@@ -35,6 +35,8 @@
 - **ImageInputContract**: Validates preprocessing input images (numpy arrays, dimensions, channels)
 - **PreprocessingResultContract**: Validates preprocessing pipeline results (image + metadata)
 - **DetectionResultContract**: Validates document detection results (corners, confidence, method)
+- **ValidatedPolygonData** ⭐: Validates polygon coordinates are within image bounds (NEW in 2025-11-12)
+- **ValidatedTensorData** ⭐: Validates tensors for shape, device, dtype, value range, NaN/Inf (NEW in 2025-11-12)
 
 **Validation Strategy**:
 - **Strict Mode**: All contracts use strict validation with no automatic coercion
@@ -46,6 +48,9 @@
 - `ValidationError: 1 validation error for DatasetSample` - Check field types and shapes
 - `ValidationError: Field required` - Missing required fields in data structures
 - `ValidationError: Input should be a valid tensor` - Wrong tensor types or shapes
+- `ValidationError: Polygon has out-of-bounds x-coordinates` - Coordinates exceed image dimensions
+- `ValidationError: Tensor shape mismatch` - Tensor doesn't match expected shape
+- `ValidationError: Tensor contains NaN values` - Invalid numerical values detected
 
 ---
 
@@ -485,3 +490,202 @@ if pred_maps.shape[-2:] != gt_maps.shape[-2:]:
 **Version**: 1.1
 **Maintainer**: Data Pipeline Team</content>
 <parameter name="filePath">/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/docs/pipeline/data_contracts.md
+
+---
+
+## Data Contract Enforcement (2025-11-12 Update)
+
+### ValidatedPolygonData
+
+**Purpose**: Validates polygon coordinates are within image boundaries to prevent out-of-bounds access errors.
+
+**Location**: `ocr/datasets/schemas.py`
+
+**Usage**:
+```python
+from ocr.datasets.schemas import ValidatedPolygonData
+
+# Validates coordinates are in [0, width) x [0, height)
+polygon = ValidatedPolygonData(
+    points=np.array([[10, 20], [30, 40], [50, 60]], dtype=np.float32),
+    image_width=640,
+    image_height=480,
+    confidence=0.95,  # Optional
+    label="text"      # Optional
+)
+```
+
+**Validation Rules**:
+- All x-coordinates must be in range `[0, image_width)`
+- All y-coordinates must be in range `[0, image_height)`
+- Inherits all PolygonData validations (shape, minimum points)
+- Raises `ValidationError` with detailed error messages
+
+**Error Messages**:
+```
+ValidationError: Polygon has out-of-bounds x-coordinates:
+indices [1, 3] have values [650.0, 700.0] (must be in [0, 640))
+```
+
+**Impact**: Prevents BUG-20251110-001 (26.5% data corruption from invalid coordinates)
+
+---
+
+### ValidatedTensorData
+
+**Purpose**: Comprehensive tensor validation for shape, device, dtype, value range, and numerical stability.
+
+**Location**: `ocr/validation/models.py`
+
+**Usage**:
+```python
+from ocr.validation.models import ValidatedTensorData
+
+# Validate prediction tensor
+ValidatedTensorData(
+    tensor=pred_tensor,
+    expected_shape=(2, 3, 224, 224),  # Optional
+    expected_device="cuda",            # Optional
+    expected_dtype=torch.float32,      # Optional
+    value_range=(0.0, 1.0),           # Optional
+    allow_nan=False,                  # Default: False
+    allow_inf=False                   # Default: False
+)
+```
+
+**Validation Rules**:
+- **Shape**: Validates tensor shape matches expected dimensions
+- **Device**: Validates tensor is on expected device (cpu/cuda)
+- **Dtype**: Validates tensor data type (float32/float64/etc)
+- **Value Range**: Validates all values within [min, max] range
+- **NaN Detection**: Checks for NaN values (unless allowed)
+- **Inf Detection**: Checks for infinite values (unless allowed)
+
+**Error Messages**:
+```
+ValidationError: Tensor shape mismatch:
+expected (2, 3, 224, 224), got (2, 3, 256, 256)
+
+ValidationError: Tensor device mismatch:
+expected cuda, got cpu
+
+ValidationError: Tensor values out of range [0.0, 1.0]:
+found values in [-0.123, 1.234]
+
+ValidationError: Tensor contains NaN values (not allowed)
+
+ValidationError: Tensor contains infinite values (not allowed)
+```
+
+**Impact**: Prevents BUG-20251112-001 (Dice loss errors) and BUG-20251112-013 (CUDA errors)
+
+**Integration Points**:
+1. **Loss Functions** (`ocr/models/loss/*.py`)
+   - DiceLoss validates inputs/outputs
+   - BCELoss validates inputs/outputs with value range checking
+
+2. **Lightning Module** (`ocr/lightning_modules/ocr_pl.py`)
+   - training_step validates model outputs
+   - validation_step validates model outputs
+
+**Performance**: <1% overhead, can disable with `validate_inputs=False` if needed
+
+---
+
+### Validation Coverage
+
+**Data Loading**: `ocr/datasets/base.py`
+- ✅ Polygon bounds validation (ValidatedPolygonData)
+- ✅ Shape validation (existing Pydantic models)
+- ✅ Type validation (existing Pydantic models)
+
+**Loss Computation**: `ocr/models/loss/*.py`
+- ✅ Tensor shape validation (ValidatedTensorData)
+- ✅ Tensor device validation (ValidatedTensorData)
+- ✅ Value range validation (ValidatedTensorData)
+- ✅ NaN/Inf detection (ValidatedTensorData)
+- ✅ Output validation (custom checks)
+
+**Training Loop**: `ocr/lightning_modules/ocr_pl.py`
+- ✅ Batch validation (CollateOutput)
+- ✅ Model output validation (ValidatedTensorData)
+- ✅ Loss tensor validation (ValidatedTensorData)
+- ✅ Probability map validation (ValidatedTensorData with range)
+
+**Test Coverage**: 33 new unit tests in `tests/unit/test_validation_models.py`
+
+---
+
+### Migration Guide
+
+**Updating Existing Code**:
+
+No changes required for existing code! All validation is integrated transparently in:
+- Dataset loading (automatic)
+- Loss functions (enabled by default)
+- Lightning module (automatic)
+
+**Using in New Code**:
+
+```python
+# When you have polygon data + image dimensions
+from ocr.datasets.schemas import ValidatedPolygonData
+
+polygon = ValidatedPolygonData(
+    points=polygon_array,
+    image_width=img_width,
+    image_height=img_height
+)
+
+# When you need tensor validation
+from ocr.validation.models import ValidatedTensorData
+
+ValidatedTensorData(
+    tensor=my_tensor,
+    expected_shape=(batch_size, channels, height, width),
+    expected_device="cuda",
+    value_range=(0.0, 1.0),
+    allow_nan=False,
+    allow_inf=False
+)
+```
+
+**Disabling Validation** (if needed for performance):
+
+```python
+# In loss functions
+dice_loss = DiceLoss(eps=1e-6, validate_inputs=False)
+bce_loss = BCELoss(negative_ratio=3.0, validate_inputs=False)
+```
+
+---
+
+### Troubleshooting
+
+**Common Issues**:
+
+1. **Out-of-bounds polygons**:
+   ```
+   WARNING: Dropping invalid polygon 2/5 for image_001.jpg:
+   Polygon has out-of-bounds y-coordinates: indices [3] have values [520.0]
+   ```
+   **Solution**: Check annotation file for polygons extending beyond image dimensions
+
+2. **Tensor device mismatch**:
+   ```
+   ValueError: Training step model output validation failed:
+   Tensor device mismatch: expected cuda, got cpu
+   ```
+   **Solution**: Ensure all tensors moved to same device before model forward
+
+3. **NaN in loss**:
+   ```
+   ValueError: NaN detected in Dice loss output
+   ```
+   **Solution**: Check for zero-valued masks, extreme gradient values, or numerical instability
+
+**See Also**:
+- `CHANGELOG_DATA_CONTRACT_ENFORCEMENT.md` - Full implementation changelog
+- `artifacts/implementation_plans/2025-11-12_0226_data-contract-enforcement-implementation.md` - Original plan
+- `tests/unit/test_validation_models.py` - Comprehensive test examples
+
