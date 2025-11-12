@@ -8,10 +8,10 @@ This directory contains various utility scripts and tools for the OCR project.
 Migrate existing checkpoints to the new naming scheme:
 ```bash
 # Dry run (preview changes)
-python scripts/migrate_checkpoints.py --dry-run --verbose
+python scripts/checkpoints/migrate.py --dry-run --verbose
 
 # Migrate and cleanup (delete early epochs)
-python scripts/migrate_checkpoints.py --delete-old
+python scripts/checkpoints/migrate.py --delete-old
 ```
 
 See `docs/CHECKPOINT_MIGRATION_GUIDE.md` for details.
@@ -20,69 +20,54 @@ See `docs/CHECKPOINT_MIGRATION_GUIDE.md` for details.
 Validate the UI inference compatibility schema:
 ```bash
 # Validate schema correctness
-python scripts/validate_ui_schema.py
+python scripts/validation/schemas/validate_ui_schema.py
 ```
 
 See `docs/UI_INFERENCE_COMPATIBILITY_SCHEMA.md` for details.
+
+### Data Cleaning
+Scan and clean training dataset for problematic samples:
+```bash
+# Scan and report issues (dry run)
+uv run python scripts/data/clean_dataset.py --image-dir data/datasets/images/train --annotation-file data/datasets/jsons/train.json
+
+# Generate report and save to file
+uv run python scripts/data/clean_dataset.py --image-dir data/datasets/images/train --annotation-file data/datasets/jsons/train.json --output-report reports/data_cleaning_report.json
+
+# Remove problematic samples (with backup)
+uv run python scripts/data/clean_dataset.py --image-dir data/datasets/images/train --annotation-file data/datasets/jsons/train.json --remove-bad --backup
+```
 
 ---
 
 ## Organization
 
-### Root Scripts
-
-#### `migrate_checkpoints.py` ⭐ NEW
-Migrate checkpoints to the new hierarchical naming scheme.
-
-**Features:**
-- Rename checkpoints: `epoch_epoch_XX_...` → `epoch-XX_step-XXXXXX.ckpt`
-- Delete early-epoch checkpoints (configurable threshold)
-- Dry-run mode for safe preview
-- Detailed reporting and statistics
-
-**Usage:**
-```bash
-# Preview changes
-python migrate_checkpoints.py --dry-run
-
-# Apply changes
-python migrate_checkpoints.py --delete-old --keep-min-epoch 10
-```
-
-See `docs/CHECKPOINT_MIGRATION_GUIDE.md` for full documentation.
-
-#### `validate_ui_schema.py` ⭐ NEW
-Validate the UI inference compatibility schema.
-
-**Features:**
-- Validate schema YAML syntax
-- Check for required fields in each model family
-- Verify encoder, decoder, and head configurations
-- Report errors and warnings
-
-**Usage:**
-```bash
-# Validate schema
-python validate_ui_schema.py
-```
-
-See `docs/UI_INFERENCE_COMPATIBILITY_SCHEMA.md` for full documentation.
-
 ### `agent_tools/`
-Scripts and tools for AI agent integration and automation.
+Scripts and tools for AI agent integration and automation (run with `python -m scripts.agent_tools ...`).
 
-### `analysis_validation/`
-Scripts for analyzing experiments, validating pipeline contracts, and profiling performance.
-- `analyze_experiment.py` - Analyze training runs and detect anomalies
-- `validate_pipeline_contracts.py` - Validate data contracts across OCR pipeline
-- `profile_data_loading.py` - Profile data loading performance
-- `profile_transforms.py` - Profile data transformation performance
+### `bug_tools/`
+Bug-related tools (e.g., `next_bug_id.py`).
 
-### `data_processing/`
-Scripts for preprocessing and transforming data.
+### `checkpoints/` ⭐ NEW
+All checkpoint-related operations.
+- `migrate.py` - Migrate checkpoints to new hierarchical naming scheme
+- `generate_metadata.py` - Generate checkpoint metadata
+
+### `data/`
+Data preprocessing and diagnostics.
+- `preprocess.py` - End-to-end preprocessing entrypoint
 - `preprocess_maps.py` - Generate probability/threshold maps for training
 - `fix_canonical_orientation_images.py` - Fix image orientation issues
 - `report_orientation_mismatches.py` - Report orientation mismatch issues
+- `clean_dataset.py` - Scan and clean training dataset for problematic samples
+- `check_training_data.py` - Quick validation of dataset integrity
+
+### `documentation/`
+Documentation generation and management tools.
+- `generate_diagrams.py` - Generate documentation diagrams
+- `manage_diagrams.sh` - Manage diagram files
+- `ci_update_diagrams.sh` - CI script for updating diagrams
+- `standardize_content.py` - Standardize documentation content
 
 ### `migration_refactoring/`
 Scripts for migrating data formats and refactoring code.
@@ -96,11 +81,11 @@ System monitoring and resource management tools.
 - `process_monitor.py` - Process monitoring utilities
 
 ### `performance/`
-Performance analysis and baseline reporting tools.
+All performance analysis, benchmarking, and reporting tools.
+- `benchmark.py` - Performance benchmarking
 - `generate_baseline_report.py` - Generate performance baseline reports
-
-### `performance_benchmarking/`
-Scripts for benchmarking and measuring performance.
+- `compare_baseline_vs_optimized.py` - Compare baseline vs optimized runs
+- `compare_three_runs.py` - Compare three different runs
 - `benchmark_optimizations.py` - Benchmark data loading optimizations
 - `benchmark_validation.py` - Validate benchmarking results
 - `decoder_benchmark.py` - Benchmark decoder performance
@@ -128,6 +113,30 @@ Project setup and configuration scripts.
 - `qwen-version.sh` - Qwen version management
 - `setup_mcp_github_only.sh` - MCP GitHub setup
 
+### `troubleshooting/`
+Interactive debugging and hardware diagnostics.
+- `debug_cuda.sh` / `diagnose_cuda_issue.py` - CUDA troubleshooting helpers
+- `debug_imports.py` / `debug_wandb_import.py` - Import diagnostics
+- `test_basic_cuda.py` / `test_cudnn_stability.sh` - CUDA sanity checks
+- `test_model_forward_backward.py` - Training loop smoke test
+- `test_wandb_multiprocessing_fix.sh` etc. - Targeted regression scripts
+
+### `utilities/`
+General utility scripts.
+- `cache_manager.py` - Cache management utilities
+- `process_manager.py` - Process management utilities
+
+### `validation/`
+All validation scripts organized by type.
+- `checkpoints/` - Checkpoint validation scripts
+  - `validate_coordinate_consistency.py` - Validate coordinate consistency
+- `docs/` - Documentation validation scripts
+  - `validate_links.py` - Validate documentation links
+- `schemas/` - Schema validation scripts
+  - `validate_ui_schema.py` - Validate UI inference compatibility schema
+- `templates/` - Template validation scripts
+  - `validate_templates.py` - Validate template files
+
 ## Usage
 
 ### System Monitoring
@@ -150,6 +159,12 @@ Project setup and configuration scripts.
 # Manual setup
 python ./scripts/seroost/setup_seroost_indexing.py
 ```
+
+## Root Scripts
+
+Only compatibility shims remain at the top level:
+- `_bootstrap.py` - Ensures project modules resolve when scripts run directly
+- `preprocess_data.py` - Delegates to `scripts/data/preprocess.py`
 
 ## Contributing
 
