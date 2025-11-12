@@ -32,7 +32,7 @@ Determine the appropriate documentation level based on bug impact:
 - UI/UX issues affecting usability
 - Configuration errors
 
-**Quick Fixes** (use QUICK_FIXES.md):
+**Quick Fixes** (use `docs/quick_reference/QUICK_FIXES.md`):
 - Minor patches (< 5 lines changed)
 - Hotfixes applied during development
 - Cosmetic fixes
@@ -72,7 +72,7 @@ Update all relevant documentation files:
 - **BUG-20251020-002**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images ([BUG-20251020-002_inference_ui_coordinate_transformation.md](bug_reports/BUG-20251020-002_inference_ui_coordinate_transformation.md))
 ```
 
-**Quick Fixes Log** (`docs/QUICK_FIXES.md`) - if applicable:
+**Quick Fixes Log** (`docs/quick_reference/QUICK_FIXES.md`) - if applicable:
 ```markdown
 ## 2025-10-19 10:30 BUG - Inference UI coordinate transformation
 

@@ -9,7 +9,7 @@ Usage:
     python fix_categories.py --auto-correct
     python fix_categories.py --dry-run
     python fix_categories.py --file path/to/file.md
-    python fix_categories.py --directory docs/artifacts/
+    python fix_categories.py --directory artifacts/
 """
 
 import argparse
@@ -33,7 +33,7 @@ class CategoryFix:
 class CategoryTypeFixer:
     """Automatically fixes invalid category and type values"""
 
-    def __init__(self, artifacts_root: str = "docs/artifacts"):
+    def __init__(self, artifacts_root: str = "artifacts"):
         self.artifacts_root = Path(artifacts_root)
 
         # Valid categories
@@ -584,7 +584,7 @@ def main():
     parser = argparse.ArgumentParser(description="Fix invalid category and type values")
     parser.add_argument("--file", help="Fix specific file")
     parser.add_argument(
-        "--directory", default="docs/artifacts", help="Directory to process"
+        "--directory", default="artifacts", help="Directory to process"
     )
     parser.add_argument(
         "--auto-correct", action="store_true", help="Apply automatic corrections"
@@ -600,7 +600,7 @@ def main():
     parser.add_argument("--output", help="Output file for report")
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
 

@@ -7,7 +7,7 @@ to maintain accurate listings of all artifacts.
 
 Usage:
     python update_artifact_indexes.py
-    python update_artifact_indexes.py --directory docs/artifacts/assessments/
+    python update_artifact_indexes.py --directory artifacts/assessments/
     python update_artifact_indexes.py --all
 """
 
@@ -20,7 +20,7 @@ class ArtifactIndexUpdater:
     """Updates INDEX.md files in artifact directories."""
 
     def __init__(
-        self, artifacts_root: str = "docs/artifacts", public_only: bool = True
+        self, artifacts_root: str = "artifacts", public_only: bool = True
     ):
         self.artifacts_root = Path(artifacts_root)
         self.public_only = public_only
@@ -434,7 +434,7 @@ def main():
     )
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
     parser.add_argument(

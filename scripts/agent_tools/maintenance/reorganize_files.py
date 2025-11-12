@@ -9,7 +9,7 @@ Usage:
     python reorganize_files.py --move-to-correct-dirs
     python reorganize_files.py --dry-run
     python reorganize_files.py --file path/to/file.md
-    python reorganize_files.py --directory docs/artifacts/
+    python reorganize_files.py --directory artifacts/
 """
 
 import argparse
@@ -32,7 +32,7 @@ class MoveOperation:
 class FileReorganizer:
     """Automatically reorganizes misplaced artifact files"""
 
-    def __init__(self, artifacts_root: str = "docs/artifacts"):
+    def __init__(self, artifacts_root: str = "artifacts"):
         self.artifacts_root = Path(artifacts_root)
         self.backup_dir = Path("backups/file_reorganization")
 
@@ -477,7 +477,7 @@ def main():
     parser = argparse.ArgumentParser(description="Reorganize misplaced artifact files")
     parser.add_argument("--file", help="Reorganize specific file")
     parser.add_argument(
-        "--directory", default="docs/artifacts", help="Directory to process"
+        "--directory", default="artifacts", help="Directory to process"
     )
     parser.add_argument(
         "--move-to-correct-dirs",
@@ -503,7 +503,7 @@ def main():
     parser.add_argument("--output", help="Output file for report")
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
 

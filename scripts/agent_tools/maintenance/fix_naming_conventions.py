@@ -13,7 +13,7 @@ Usage:
     python fix_naming_conventions.py --auto-fix
     python fix_naming_conventions.py --dry-run
     python fix_naming_conventions.py --file path/to/file.md
-    python fix_naming_conventions.py --directory docs/artifacts/
+    python fix_naming_conventions.py --directory artifacts/
 """
 
 import argparse
@@ -37,7 +37,7 @@ class RenameOperation:
 class NamingConventionFixer:
     """Automatically fixes naming convention violations"""
 
-    def __init__(self, artifacts_root: str = "docs/artifacts"):
+    def __init__(self, artifacts_root: str = "artifacts"):
         self.artifacts_root = Path(artifacts_root)
         self.backup_dir = Path("backups/naming_fixes")
 
@@ -435,7 +435,7 @@ def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Fix naming convention violations")
     parser.add_argument("--file", help="Fix specific file")
-    parser.add_argument("--directory", default="docs/artifacts", help="Fix directory")
+    parser.add_argument("--directory", default="artifacts", help="Fix directory")
     parser.add_argument("--auto-fix", action="store_true", help="Apply automatic fixes")
     parser.add_argument(
         "--dry-run",
@@ -445,7 +445,7 @@ def main():
     parser.add_argument("--output", help="Output file for report")
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
 

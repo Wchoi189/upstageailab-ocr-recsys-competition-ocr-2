@@ -8,7 +8,7 @@ and organizational structure defined in the project.
 Usage:
     python validate_artifacts.py --check-naming
     python validate_artifacts.py --file path/to/artifact.md
-    python validate_artifacts.py --directory docs/artifacts/
+    python validate_artifacts.py --directory artifacts/
     python validate_artifacts.py --all
 """
 
@@ -62,7 +62,7 @@ except ImportError:
 class ArtifactValidator:
     """Validates artifacts against project naming conventions and structure."""
 
-    def __init__(self, artifacts_root: str = "docs/artifacts"):
+    def __init__(self, artifacts_root: str = "artifacts"):
         self.artifacts_root = Path(artifacts_root)
         self.violations = []
 
@@ -500,7 +500,7 @@ def main():
     )
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
     parser.add_argument("--output", help="Output file for report")

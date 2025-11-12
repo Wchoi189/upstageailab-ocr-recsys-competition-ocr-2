@@ -14,22 +14,22 @@ Your mentor is absolutely right to emphasize understanding the data loading phas
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -42,20 +42,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 
@@ -69,22 +69,22 @@ The data loading phase is where your model's robustness is established or broken
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -97,20 +97,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 
@@ -122,22 +122,22 @@ graph TD
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -150,20 +150,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 
@@ -178,22 +178,22 @@ graph TD
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -206,20 +206,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 
@@ -234,22 +234,22 @@ graph TD
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -262,20 +262,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 
@@ -294,22 +294,22 @@ Your concern about black boxes is valid. Here's what becomes opaque without prop
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -322,20 +322,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 
@@ -347,22 +347,22 @@ graph TD
 graph TD
     A[JPG on Disk] --> B{File Exists?}
     B -->|No| C[FileNotFoundError]
-    B -->|Yes| D["Read Bytes<br/>cv2.imread/OpenCV"]
+    B -->|Yes| D[Read Bytes<br/>cv2.imread/OpenCV]
 
     D --> E{Valid Image?}
     E -->|No| F[CorruptFileError]
     E -->|Yes| G[Decode Image<br/>JPEG decompression]
 
     G --> H[Color Space Check<br/>RGB/BGR/Grayscale]
-    H --> I["Geometric Preprocessing<br/>Document detection & correction"]
+    H --> I[Geometric Preprocessing<br/>Document detection & correction]
 
-    I --> J["Polygon Loading<br/>JSON/annotation parsing"]
-    J --> K["Shape Validation<br/>Polygon format checks"]
+    I --> J[Polygon Loading<br/>JSON/annotation parsing]
+    J --> K[Shape Validation<br/>Polygon format checks]
 
-    K --> L["Batch Collation<br/>Tensor stacking & alignment"]
-    L --> M["GPU Transfer<br/>Pinned memory & async copy"]
+    K --> L[Batch Collation<br/>Tensor stacking & alignment]
+    L --> M[GPU Transfer<br/>Pinned memory & async copy]
 
-    M --> N["Training Ready<br/>But wait, there's more..."]
+    M --> N[Training Ready<br/>But wait, there's more...]
 
     subgraph "Filesystem Layer"
         D1[Path Resolution] --> D2[Permission Checks]
@@ -375,20 +375,20 @@ graph TD
     end
 
     subgraph "Geometric Transforms"
-        I1["Document Detection<br/>Corner finding"] --> I2[Perspective Correction<br/>Homography matrix]
+        I1[Document Detection<br/>Corner finding] --> I2[Perspective Correction<br/>Homography matrix]
         I2 --> I3[Orientation Fix<br/>Rotation detection]
         I3 --> I4[Canvas Expansion<br/>Size normalization]
     end
 
     subgraph "Annotation Processing"
         J1[JSON Parsing] --> J2[Coordinate Validation]
-        J2 --> J3["Shape Normalization<br/>(N,2) format"]
-        J3 --> J4["Area Filtering<br/>Degenerate removal"]
+        J2 --> J3[Shape Normalization<br/>(N,2) format]
+        J3 --> J4[Area Filtering<br/>Degenerate removal]
     end
 
     subgraph "Batch Optimization"
-        L1[Memory Layout<br/>Contiguous tensors] --> L2["Type Conversion<br/>float32/int64"]
-        L2 --> L3["Shape Padding<br/>Variable length handling"]
+        L1[Memory Layout<br/>Contiguous tensors] --> L2[Type Conversion<br/>float32/int64]
+        L2 --> L3[Shape Padding<br/>Variable length handling]
     end
 ```
 

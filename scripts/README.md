@@ -48,10 +48,11 @@ Scripts and tools for AI agent integration and automation (run with `python -m s
 ### `bug_tools/`
 Bug-related tools (e.g., `next_bug_id.py`).
 
-### `checkpoints/` ⭐ NEW
+### `checkpoints/`
 All checkpoint-related operations.
 - `migrate.py` - Migrate checkpoints to new hierarchical naming scheme
 - `generate_metadata.py` - Generate checkpoint metadata
+- `convert_legacy_checkpoints.py` - Convert legacy checkpoints to V2 metadata format
 
 ### `data/`
 Data preprocessing and diagnostics.
@@ -64,10 +65,11 @@ Data preprocessing and diagnostics.
 
 ### `documentation/`
 Documentation generation and management tools.
-- `generate_diagrams.py` - Generate documentation diagrams
 - `manage_diagrams.sh` - Manage diagram files
 - `ci_update_diagrams.sh` - CI script for updating diagrams
 - `standardize_content.py` - Standardize documentation content
+
+**Note:** `generate_diagrams.py` is located at the root level for backward compatibility with Makefile and CI scripts.
 
 ### `migration_refactoring/`
 Scripts for migrating data formats and refactoring code.
@@ -124,7 +126,8 @@ Interactive debugging and hardware diagnostics.
 ### `utilities/`
 General utility scripts.
 - `cache_manager.py` - Cache management utilities
-- `process_manager.py` - Process management utilities
+
+**Note:** `process_manager.py` is located at the root level for backward compatibility with Makefile and documentation.
 
 ### `validation/`
 All validation scripts organized by type.
@@ -162,9 +165,11 @@ python ./scripts/seroost/setup_seroost_indexing.py
 
 ## Root Scripts
 
-Only compatibility shims remain at the top level:
+Scripts at the root level for backward compatibility and convenience:
 - `_bootstrap.py` - Ensures project modules resolve when scripts run directly
 - `preprocess_data.py` - Delegates to `scripts/data/preprocess.py`
+- `process_manager.py` - Streamlit process management (used by Makefile and documentation)
+- `generate_diagrams.py` - Automated Mermaid diagram generation (used by Makefile and CI scripts)
 
 ## Contributing
 

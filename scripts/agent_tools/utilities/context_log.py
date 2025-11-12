@@ -71,7 +71,7 @@ def log_agent_action(
 
 
 def summarize_log(log_path: Path) -> None:
-    from scripts.agent_tools.summarize_run import summarize_log_file  # Late import to avoid API dependency when not needed
+    from scripts.agent_tools.ocr.summarize_run import summarize_log_file  # Late import to avoid API dependency when not needed
 
     summarize_log_file(log_path)
 

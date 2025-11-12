@@ -2,6 +2,9 @@
 title: "{{ title }}"
 author: "{{ author }}"
 date: "{{ date }}"
+timestamp: "{{ timestamp }}"
+type: "{{ type }}"
+category: "{{ category }}"
 status: "draft"
 tags: []
 ---

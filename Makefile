@@ -274,14 +274,14 @@ stop-all-ui:
 # ============================================================================
 
 context-log-start:
-	uv run python scripts/agent_tools/context_log.py start $(if $(LABEL),--label "$(LABEL)")
+	uv run python scripts/agent_tools/utilities/context_log.py start $(if $(LABEL),--label "$(LABEL)")
 
 context-log-summarize:
 	@if [ -z "$(LOG)" ]; then \
 		echo "Usage: make context-log-summarize LOG=logs/agent_runs/<file>.jsonl"; \
 		exit 1; \
 	fi
-	uv run python scripts/agent_tools/context_log.py summarize --log-file $(LOG)
+	uv run python scripts/agent_tools/utilities/context_log.py summarize --log-file $(LOG)
 
 quick-fix-log:
 	@if [ -z "$(TYPE)" ] || [ -z "$(TITLE)" ] || [ -z "$(ISSUE)" ] || [ -z "$(FIX)" ] || [ -z "$(FILES)" ]; then \
@@ -290,7 +290,7 @@ quick-fix-log:
 		echo "Example: make quick-fix-log TYPE=bug TITLE=\"Pydantic compatibility\" ISSUE=\"replace() error\" FIX=\"Use model_copy\" FILES=\"ui/state.py\""; \
 		exit 1; \
 	fi
-	uv run python scripts/agent_tools/quick_fix_log.py $(TYPE) "$(TITLE)" --issue "$(ISSUE)" --fix "$(FIX)" --files "$(FILES)" $(if $(IMPACT),--impact $(IMPACT)) $(if $(TEST),--test $(TEST))
+	uv run python scripts/agent_tools/utilities/quick_fix_log.py $(TYPE) "$(TITLE)" --issue "$(ISSUE)" --fix "$(FIX)" --files "$(FILES)" $(if $(IMPACT),--impact $(IMPACT)) $(if $(TEST),--test $(TEST))
 
 # ============================================================================
 # CI SIMULATION

@@ -325,7 +325,7 @@ def main():
         result = subprocess.run(
             [
                 "find",
-                "docs/artifacts",
+                "artifacts",
                 "-name",
                 "*.md",
                 "-exec",

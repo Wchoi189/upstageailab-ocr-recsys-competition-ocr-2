@@ -9,30 +9,29 @@
 This diagram shows the complete geometric preprocessing pipeline that transforms raw input images into properly oriented, flattened documents ready for OCR processing.
 
 ```mermaid
-graph TD
-    A[Raw Image<br/>JPG/PNG/BMP] --> B[Load Image<br/>OpenCV/cv2.imread]
-    B --> C[Document Detection<br/>Find document boundaries]
-    C --> D[Perspective Correction<br/>Warp to rectangle]
-    D --> E[Orientation Correction<br/>Fix rotation]
-    E --> F[Enhancement<br/>Brightness/contrast]
-    F --> G[Final Resize<br/>Standardize dimensions]
+graph LR
+    A[Raw Image] --> B[Load Image]
+    B --> C[Geometric Preprocessing]
 
-    subgraph "Detection Phase"
-        C1[Corner Detection] --> C2[Document Modeling]
-        C2 --> C3[Boundary Extraction]
+    subgraph "Transform Pipeline"
+        C --> D[2 Transforms]
+        D --> E[Warping]
+        E --> F[LensStylePreprocessorAlbumentations]
+        D --> F[LensStylePreprocessorAlbumentations]
     end
 
-    subgraph "Correction Phase"
-        D1[Homography Matrix] --> D2[Perspective Transform]
-        D2 --> D3[Canvas Expansion]
+    Z --> F[DB Collate Function]
+    F --> G[Batch Assembly]
+    G --> H[DataLoader]
+    H --> I[Lightning Module]
+
+    subgraph "Data Contracts"
+        J[DatasetSample] --> K[(H,W,3) uint8]
+        J --> L[List of polygons]
+        J --> M[Metadata dict]
     end
 
-    subgraph "Enhancement Phase"
-        F1[Adaptive Brightness] --> F2[Noise Reduction]
-        F2 --> F3[Contrast Optimization]
-    end
-
-    G --> H[Validated Output<br/>DatasetSample]
+    I --> N[Training Loop]
 ```
 
 ## Transform Operations Chain
@@ -41,29 +40,28 @@ Detailed view of individual transform operations and their data flow validation.
 
 ```mermaid
 graph LR
-    A["Input Image<br/>(H,W,3) uint8"] --> B["DocumentDetector<br/>Find document corners"]
+    A[Raw Image] --> B[Load Image]
+    B --> C[Geometric Preprocessing]
 
-    B --> C{Polygon Found?}
-    C -->|Yes| D["PerspectiveCorrector<br/>Warp to rectangle"]
-    C -->|No| E[Fallback Box<br/>Full image rectangle]
-
-    D --> F[OrientationCorrector<br/>Fix document rotation]
-    E --> F
-
-    F --> G[ImageEnhancer<br/>Brightness/contrast]
-    G --> H[FinalResizer<br/>Resize to target]
-
-    H --> I[PaddingCleanup<br/>Remove excess padding]
-
-    subgraph "Validation Points"
-        B -.-> V1[Contract Validation]
-        D -.-> V2[Shape Validation]
-        F -.-> V3[Orientation Check]
-        G -.-> V4[Quality Metrics]
-        H -.-> V5[Size Validation]
+    subgraph "Transform Pipeline"
+        C --> D[2 Transforms]
+        D --> E[Warping]
+        E --> F[LensStylePreprocessorAlbumentations]
+        D --> F[LensStylePreprocessorAlbumentations]
     end
 
-    I --> J[Output Image<br/>Ready for OCR]
+    Z --> F[DB Collate Function]
+    F --> G[Batch Assembly]
+    G --> H[DataLoader]
+    H --> I[Lightning Module]
+
+    subgraph "Data Contracts"
+        J[DatasetSample] --> K[(H,W,3) uint8]
+        J --> L[List of polygons]
+        J --> M[Metadata dict]
+    end
+
+    I --> N[Training Loop]
 ```
 
 ## DB Collate Function Flow
@@ -71,39 +69,29 @@ graph LR
 This diagram illustrates how the DB (Differentiable Binarization) collate function processes polygon annotations and generates training targets for the detection model.
 
 ```mermaid
-graph TD
-    A[Batch of Samples] --> B["Extract Images<br/>Stack to tensor"]
-    A --> C["Extract Polygons<br/>List of text regions"]
-    A --> D["Extract Metadata<br/>Filenames, sizes, etc."]
+graph LR
+    A[Raw Image] --> B[Load Image]
+    B --> C[Geometric Preprocessing]
 
-    B --> E["Image Batch<br/>(N,C,H,W)"]
-    C --> F["Polygon Validation<br/>Filter invalid shapes"]
-    D --> G[Metadata Collation<br/>Batch metadata]
-
-    F --> H{Pre-computed Maps?}
-    H -->|Yes| I["Load Prob/Thresh Maps<br/>From dataset cache"]
-    H -->|No| J["Generate Maps<br/>On-the-fly computation"]
-
-    I --> K[Map Validation<br/>Shape and type checks]
-    J --> K
-
-    K --> L[Batch Assembly<br/>OrderedDict creation]
-    L --> M[Training Batch<br/>Ready for model]
-
-    subgraph "Polygon Processing"
-        F1["Shape Normalization<br/>(N,2) format"] --> F2["Area Filtering<br/>Remove degenerate"]
-        F2 --> F3[Validation Logging<br/>Statistics tracking]
+    subgraph "Transform Pipeline"
+        C --> D[2 Transforms]
+        D --> E[Warping]
+        E --> F[LensStylePreprocessorAlbumentations]
+        D --> F[LensStylePreprocessorAlbumentations]
     end
 
-    subgraph "Map Generation"
-        J1["Shrink Polygons<br/>ratio=0.4"] --> J2["Distance Transform<br/>Gaussian blur"]
-        J2 --> J3[Threshold Computation<br/>min=0.3, max=0.7]
+    Z --> F[DB Collate Function]
+    F --> G[Batch Assembly]
+    G --> H[DataLoader]
+    H --> I[Lightning Module]
+
+    subgraph "Data Contracts"
+        J[DatasetSample] --> K[(H,W,3) uint8]
+        J --> L[List of polygons]
+        J --> M[Metadata dict]
     end
 
-    subgraph "Batch Validation"
-        L1[Shape Consistency] --> L2[Type Checking]
-        L2 --> L3[Memory Layout<br/>Contiguous tensors]
-    end
+    I --> N[Training Loop]
 ```
 
 ## Data Loading Pipeline
@@ -112,29 +100,28 @@ Complete data flow from disk to GPU training batch, showing the full pipeline in
 
 ```mermaid
 graph LR
-    A[Filesystem<br/>JPG/PNG files] --> B[Dataset.__getitem__<br/>Load single sample]
-    B --> C[Geometric Pipeline<br/>Document preprocessing]
-    C --> D[DB Collate Function<br/>Batch processing]
-    D --> E[DataLoader<br/>PyTorch batching]
-    E --> F[Lightning Module<br/>GPU training]
+    A[Raw Image] --> B[Load Image]
+    B --> C[Geometric Preprocessing]
 
-    subgraph "Single Sample Processing"
-        B1[Image Loading] --> B2[Metadata Extraction]
-        B2 --> B3[Polygon Loading<br/>JSON/annotation files]
-        B3 --> B4[Validation Checks]
+    subgraph "Transform Pipeline"
+        C --> D[2 Transforms]
+        D --> E[Warping]
+        E --> F[LensStylePreprocessorAlbumentations]
+        D --> F[LensStylePreprocessorAlbumentations]
     end
 
-    subgraph "Batch Formation"
-        D1[Image Stacking] --> D2[Polygon Batching]
-        D2 --> D3[Map Generation] --> D4[Metadata Collation]
+    Z --> F[DB Collate Function]
+    F --> G[Batch Assembly]
+    G --> H[DataLoader]
+    H --> I[Lightning Module]
+
+    subgraph "Data Contracts"
+        J[DatasetSample] --> K[(H,W,3) uint8]
+        J --> L[List of polygons]
+        J --> M[Metadata dict]
     end
 
-    subgraph "GPU Transfer"
-        F1[CUDA Tensors] --> F2[Memory Pinning]
-        F2 --> F3[Async Transfer]
-    end
-
-    F --> G[Training Step<br/>Model forward pass]
+    I --> N[Training Loop]
 ```
 
 ## Key Data Contracts
@@ -177,48 +164,29 @@ graph LR
 This diagram shows the Pydantic data contracts that enforce type safety and shape validation throughout the data pipeline.
 
 ```mermaid
-graph TD
-    A[Raw Data] --> B[Contract Validation]
+graph LR
+    A[Raw Image] --> B[Load Image]
+    B --> C[Geometric Preprocessing]
 
-    subgraph "Input Contracts"
-        B1[ImageInputContract] --> B2[validate_image]
-        B2 --> B3["Shape: (H,W,3) uint8"]
-        B3 --> B4["Channels: 1-4 allowed"]
-        B4 --> B5["Non-empty arrays"]
+    subgraph "Transform Pipeline"
+        C --> D[2 Transforms]
+        D --> E[Warping]
+        E --> F[LensStylePreprocessorAlbumentations]
+        D --> F[LensStylePreprocessorAlbumentations]
     end
 
-    subgraph "Processing Contracts"
-        C1[PreprocessingResultContract] --> C2[validate_result_image]
-        C2 --> C3["Output: np.ndarray"]
-        C3 --> C4["Metadata: dict"]
+    Z --> F[DB Collate Function]
+    F --> G[Batch Assembly]
+    G --> H[DataLoader]
+    H --> I[Lightning Module]
+
+    subgraph "Data Contracts"
+        J[DatasetSample] --> K[(H,W,3) uint8]
+        J --> L[List of polygons]
+        J --> M[Metadata dict]
     end
 
-    subgraph "Dataset Contracts"
-        D1[DatasetSample] --> D2["image: (H,W,3) uint8"]
-        D2 --> D3["polygons: List[(N,2)]"]
-        D3 --> D4["prob_map: (H,W) float32"]
-        D4 --> D5["thresh_map: (H,W) float32"]
-        D5 --> D6["metadata: dict"]
-    end
-
-    subgraph "Batch Contracts"
-        E1[DBCollateBatch] --> E2["images: (N,C,H,W)"]
-        E2 --> E3["polygons: List[List[(N,2)]]"]
-        E3 --> E4["prob_maps: (N,1,H,W)"]
-        E4 --> E5["thresh_maps: (N,1,H,W)"]
-    end
-
-    B --> F[Validated Pipeline]
-    F --> G[Type-Safe Processing]
-
-    subgraph "Validation Flow"
-        V1[Runtime Checks] --> V2[Pydantic Models]
-        V2 --> V3[Shape Assertions]
-        V3 --> V4[Type Enforcement]
-        V4 --> V5[Error Handling]
-    end
-
-    G --> H[Model Input<br/>Guaranteed Valid]
+    I --> N[Training Loop]
 ```
 
 ### **Contract Enforcement Points**

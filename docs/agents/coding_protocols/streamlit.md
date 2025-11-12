@@ -77,7 +77,7 @@ make status        # Check system status
 node scripts/browser-automation/verify_fixes.js
 
 # Logs
-python3 scripts/utilities/process_manager.py logs --port 8501 --lines 100
+python3 scripts/process_manager.py logs --port 8501 --lines 100
 ```
 
 ### Code Quality

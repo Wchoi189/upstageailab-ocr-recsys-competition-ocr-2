@@ -30,7 +30,7 @@ graph TD
     N --> I
 
     subgraph "UI Components"
-        O[194 Functions]
+        O[203 Functions]
         O --> P[State Management]
         O --> Q[Service Integration]
     end
@@ -68,7 +68,7 @@ graph TD
     N --> I
 
     subgraph "UI Components"
-        O[194 Functions]
+        O[203 Functions]
         O --> P[State Management]
         O --> Q[Service Integration]
     end
@@ -106,7 +106,7 @@ graph TD
     N --> I
 
     subgraph "UI Components"
-        O[194 Functions]
+        O[203 Functions]
         O --> P[State Management]
         O --> Q[Service Integration]
     end

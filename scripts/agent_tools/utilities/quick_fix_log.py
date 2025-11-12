@@ -31,7 +31,7 @@ def log_quick_fix(
 """
 
     # Read existing content
-    quick_fixes_file = Path("docs/QUICK_FIXES.md")
+    quick_fixes_file = Path("docs/quick_reference/QUICK_FIXES.md")
     if quick_fixes_file.exists():
         content = quick_fixes_file.read_text()
         # Find the separator line and insert before it

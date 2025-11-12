@@ -1,8 +1,4 @@
 ```mermaid
----
-config:
-  theme: "forest"
----
 graph TD
     A[Original Image] --> B{Preprocessing - predict_transform};
     B --> B1["LongestMaxSize(640)"];

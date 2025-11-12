@@ -51,7 +51,7 @@ from scripts.agent_tools.compliance.validate_artifacts import ArtifactValidator
 class ArtifactMonitor:
     """Monitors artifact organization and compliance."""
 
-    def __init__(self, artifacts_root: str = "docs/artifacts"):
+    def __init__(self, artifacts_root: str = "artifacts"):
         self.artifacts_root = Path(artifacts_root)
         self.validator = ArtifactValidator(str(artifacts_root))
         self.violations_history_file = Path("artifacts_violations_history.json")
@@ -349,7 +349,7 @@ def main():
     )
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
     parser.add_argument("--output", help="Output file for report")

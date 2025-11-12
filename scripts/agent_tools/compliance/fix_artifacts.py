@@ -190,7 +190,7 @@ def main():
     parser.add_argument("--all", action="store_true", help="Fix all artifacts")
     parser.add_argument(
         "--artifacts-root",
-        default="docs/artifacts",
+        default="artifacts",
         help="Root directory for artifacts",
     )
     parser.add_argument("--dry-run", action="store_true", help="Don't write changes")

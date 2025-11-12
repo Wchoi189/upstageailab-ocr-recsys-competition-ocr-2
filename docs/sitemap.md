@@ -1,7 +1,7 @@
 # Documentation Sitemap
 
 - [CHANGELOG.md](CHANGELOG.md)
-- [QUICK_FIXES.md](QUICK_FIXES.md)
+- [quick_reference/QUICK_FIXES.md](quick_reference/QUICK_FIXES.md)
 - [README.md](README.md)
     - [agents/automation/changelog_process.md](agents/automation/changelog_process.md)
     - [agents/automation/tool_catalog.md](agents/automation/tool_catalog.md)
