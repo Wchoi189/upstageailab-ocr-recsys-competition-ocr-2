@@ -428,12 +428,12 @@ class TestPhase2BrightnessAdjustment:
             elapsed = time.time() - start_time
 
             processing_times.append(elapsed)
-            print(f"{brightness_type}: {elapsed * 1000:.1f}ms")
+            print(f"{brightness_type}: {elapsed*1000:.1f}ms")
 
         avg_time = np.mean(processing_times)
 
         print("\n=== BRIGHTNESS ADJUSTMENT PERFORMANCE ===")
-        print(f"Average Processing Time: {avg_time * 1000:.1f}ms")
+        print(f"Average Processing Time: {avg_time*1000:.1f}ms")
         print("Target: <100ms (real-time)")
         print(f"Status: {'✅ REAL-TIME' if avg_time < 0.1 else '⚠️  ACCEPTABLE' if avg_time < 1.0 else '❌ SLOW'}")
 
@@ -469,9 +469,27 @@ class TestPhase2QualityMetrics:
         # Check that metrics classes exist and have required fields
 
         # Verify metrics structure (these should not raise AttributeError)
-        sample_noise = NoiseEliminationMetrics(overall_quality=0.8)
-        sample_flattening = FlatteningMetrics(overall_quality=0.7)
-        sample_brightness = BrightnessMetrics(overall_quality=0.9)
+        sample_noise = NoiseEliminationMetrics(
+            noise_reduction_score=0.8,
+            edge_preservation_score=0.8,
+            text_preservation_score=0.8,
+            overall_quality=0.8,
+        )
+        sample_flattening = FlatteningMetrics(
+            distortion_score=0.3,
+            edge_preservation_score=0.7,
+            smoothness_score=0.7,
+            overall_quality=0.7,
+            residual_curvature=0.1,
+            processing_successful=True,
+        )
+        sample_brightness = BrightnessMetrics(
+            contrast_score=0.9,
+            brightness_uniformity=0.9,
+            histogram_spread=0.9,
+            text_preservation_score=0.9,
+            overall_quality=0.9,
+        )
 
         assert sample_noise.overall_quality == 0.8
         assert sample_flattening.overall_quality == 0.7

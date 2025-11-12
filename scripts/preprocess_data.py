@@ -15,71 +15,7 @@ artifacts configured in ``DatasetConfig.cache_config`` (e.g., tensor cache,
 preloaded images) while exercising the full transform stack.
 """
 
-from __future__ import annotations
-
-import logging
-from typing import Any
-
-import hydra
-from omegaconf import DictConfig
-
-from ocr.datasets import ValidatedOCRDataset
-
-log = logging.getLogger(__name__)
-
-
-def _materialise_dataset(dataset: ValidatedOCRDataset, *, limit: int | None) -> int:
-    """Iterate the dataset to trigger preprocessing and caching side-effects."""
-    processed = 0
-    total = len(dataset)
-    target = min(limit, total) if limit is not None else total
-
-    for index in range(target):
-        try:
-            dataset[index]
-        except Exception as exc:  # noqa: BLE001 - emit detailed context for CLI users
-            raise RuntimeError(f"Dataset preprocessing failed at index {index}: {exc}") from exc
-        processed += 1
-
-    return processed
-
-
-def _resolve_dataset_cfg(cfg: DictConfig, dataset_key: str) -> DictConfig:
-    datasets = cfg.get("datasets")
-    if datasets is None:
-        raise KeyError("'datasets' section is missing from the loaded Hydra config")
-
-    if dataset_key not in datasets:
-        available = ", ".join(sorted(datasets.keys()))
-        raise KeyError(f"Dataset '{dataset_key}' not found. Available keys: {available}")
-
-    dataset_cfg = datasets[dataset_key]
-    if "config" not in dataset_cfg:
-        raise KeyError(f"Dataset '{dataset_key}' is missing the 'config' block required for instantiation")
-
-    return dataset_cfg
-
-
-@hydra.main(config_path="../configs", config_name="preprocessing", version_base=None)
-def main(cfg: DictConfig) -> None:
-    """Entry point executed by Hydra."""
-    logging.basicConfig(level=logging.INFO)
-
-    dataset_key: str = cfg.get("dataset_key", "train_dataset")
-    limit_value: Any = cfg.get("limit")
-    limit: int | None = int(limit_value) if limit_value is not None else None
-
-    dataset_cfg = _resolve_dataset_cfg(cfg, dataset_key)
-    log.info("Instantiating dataset '%s' via Hydra", dataset_key)
-
-    dataset: ValidatedOCRDataset = hydra.utils.instantiate(dataset_cfg)
-
-    log.info("Dataset ready (size=%d, cache tensors=%s)", len(dataset), dataset.cache_transformed_tensors)
-
-    processed = _materialise_dataset(dataset, limit=limit)
-
-    log.info("Preprocessing finished: %d samples processed", processed)
-
+from scripts.data.preprocess import main  # re-export entrypoint for backward compatibility
 
 if __name__ == "__main__":
     main()

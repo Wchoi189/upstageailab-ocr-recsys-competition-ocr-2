@@ -9,6 +9,7 @@ import pytest
 from ocr.datasets.preprocessing.advanced_noise_elimination import (
     AdvancedNoiseEliminator,
     NoiseEliminationConfig,
+    NoiseEliminationQualityMetrics,
     NoiseEliminationResult,
     NoiseReductionMethod,
     validate_noise_elimination_result,
@@ -238,8 +239,20 @@ class TestNoiseEliminationResult:
         """Test creating a noise elimination result."""
         cleaned = np.ones((100, 100), dtype=np.uint8) * 255
         noise_mask = np.zeros((100, 100), dtype=np.uint8)
+        quality_metrics = NoiseEliminationQualityMetrics(
+            noise_reduction_score=0.8,
+            edge_preservation_score=0.9,
+            text_preservation_score=0.85,
+            overall_quality=0.85,
+        )
 
-        result = NoiseEliminationResult(cleaned_image=cleaned, noise_mask=noise_mask, effectiveness_score=0.85, metadata={"test": "data"})
+        result = NoiseEliminationResult(
+            cleaned_image=cleaned,
+            noise_mask=noise_mask,
+            effectiveness_score=0.85,
+            quality_metrics=quality_metrics,
+            metadata={"test": "data"},
+        )
 
         assert result.cleaned_image is not None
         assert result.noise_mask is not None
@@ -249,17 +262,25 @@ class TestNoiseEliminationResult:
     def test_result_validation_effectiveness_range(self):
         """Test that effectiveness score must be in valid range."""
         cleaned = np.ones((100, 100), dtype=np.uint8) * 255
+        quality_metrics = NoiseEliminationQualityMetrics(
+            noise_reduction_score=0.8,
+            edge_preservation_score=0.9,
+            text_preservation_score=0.85,
+            overall_quality=0.85,
+        )
 
         with pytest.raises(ValueError):
             NoiseEliminationResult(
                 cleaned_image=cleaned,
                 effectiveness_score=1.5,  # Invalid: > 1.0
+                quality_metrics=quality_metrics,
             )
 
         with pytest.raises(ValueError):
             NoiseEliminationResult(
                 cleaned_image=cleaned,
                 effectiveness_score=-0.1,  # Invalid: < 0.0
+                quality_metrics=quality_metrics,
             )
 
 
@@ -269,20 +290,38 @@ class TestResultValidation:
     def test_validate_result_valid(self):
         """Test validation of valid result."""
         cleaned = np.ones((100, 100), dtype=np.uint8) * 255
-        result = NoiseEliminationResult(cleaned_image=cleaned, effectiveness_score=0.9)
+        quality_metrics = NoiseEliminationQualityMetrics(
+            noise_reduction_score=0.8,
+            edge_preservation_score=0.9,
+            text_preservation_score=0.85,
+            overall_quality=0.9,
+        )
+        result = NoiseEliminationResult(cleaned_image=cleaned, effectiveness_score=0.9, quality_metrics=quality_metrics)
 
         assert validate_noise_elimination_result(result, min_effectiveness=0.5)
 
     def test_validate_result_below_threshold(self):
         """Test validation fails for result below effectiveness threshold."""
         cleaned = np.ones((100, 100), dtype=np.uint8) * 255
-        result = NoiseEliminationResult(cleaned_image=cleaned, effectiveness_score=0.3)
+        quality_metrics = NoiseEliminationQualityMetrics(
+            noise_reduction_score=0.3,
+            edge_preservation_score=0.3,
+            text_preservation_score=0.3,
+            overall_quality=0.3,
+        )
+        result = NoiseEliminationResult(cleaned_image=cleaned, effectiveness_score=0.3, quality_metrics=quality_metrics)
 
         assert not validate_noise_elimination_result(result, min_effectiveness=0.5)
 
     def test_validate_result_no_cleaned_image(self):
         """Test validation fails when cleaned image is None."""
-        result = NoiseEliminationResult(cleaned_image=None, effectiveness_score=0.9)
+        quality_metrics = NoiseEliminationQualityMetrics(
+            noise_reduction_score=0.8,
+            edge_preservation_score=0.9,
+            text_preservation_score=0.85,
+            overall_quality=0.9,
+        )
+        result = NoiseEliminationResult(cleaned_image=None, effectiveness_score=0.9, quality_metrics=quality_metrics)
 
         assert not validate_noise_elimination_result(result)
 
@@ -290,8 +329,14 @@ class TestResultValidation:
         """Test validation fails when mask shapes don't match."""
         cleaned = np.ones((100, 100), dtype=np.uint8) * 255
         noise_mask = np.zeros((50, 50), dtype=np.uint8)  # Wrong shape
+        quality_metrics = NoiseEliminationQualityMetrics(
+            noise_reduction_score=0.8,
+            edge_preservation_score=0.9,
+            text_preservation_score=0.85,
+            overall_quality=0.9,
+        )
 
-        result = NoiseEliminationResult(cleaned_image=cleaned, noise_mask=noise_mask, effectiveness_score=0.9)
+        result = NoiseEliminationResult(cleaned_image=cleaned, noise_mask=noise_mask, effectiveness_score=0.9, quality_metrics=quality_metrics)
 
         assert not validate_noise_elimination_result(result)
 

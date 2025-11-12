@@ -1,0 +1,317 @@
+{
+  "source": "docs/agents/",
+  "version": "1.0",
+  "generated_at": "2025-11-08T18:12:11.874223+00:00",
+  "entries": [
+    {
+      "id": "index",
+      "title": "AI Agent Documentation Map",
+      "path": "docs/agents/index.md",
+      "category": "core",
+      "tags": [
+        "core"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "system",
+      "title": "AI Agent System – Single Source of Truth",
+      "path": "docs/agents/system.md",
+      "category": "core",
+      "tags": [
+        "ai_agent",
+        "rules",
+        "operations"
+      ],
+      "priority": "critical",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-10-29"
+    },
+    {
+      "id": "changelog_process",
+      "title": "Changelog Automation Process",
+      "path": "docs/agents/automation/changelog_process.md",
+      "category": "automation",
+      "tags": [
+        "changelog",
+        "automation",
+        "versioning"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-06"
+    },
+    {
+      "id": "tooling_overview",
+      "title": "Agent Tooling Overview",
+      "path": "docs/agents/automation/tooling_overview.md",
+      "category": "automation",
+      "tags": [
+        "agent-tools",
+        "tracking",
+        "artifacts"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-06"
+    },
+    {
+      "id": "tool_catalog",
+      "title": "Agent Tool Catalog (generated)",
+      "path": "docs/agents/automation/tool_catalog.md",
+      "category": "automation",
+      "tags": [
+        "agent-tools",
+        "catalog"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "streamlit",
+      "title": "Streamlit Coding Protocol",
+      "path": "docs/agents/coding_protocols/streamlit.md",
+      "category": "protocols",
+      "tags": [
+        "ai_agent",
+        "coding",
+        "protocol",
+        "reference"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-01"
+    },
+    {
+      "id": "components",
+      "title": "Component Protocols",
+      "path": "docs/agents/protocols/components.md",
+      "category": "protocols",
+      "tags": [
+        "protocols"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "configuration",
+      "title": "Configuration Protocols",
+      "path": "docs/agents/protocols/configuration.md",
+      "category": "protocols",
+      "tags": [
+        "configuration"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "development",
+      "title": "Development Protocols",
+      "path": "docs/agents/protocols/development.md",
+      "category": "protocols",
+      "tags": [
+        "protocols"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "governance",
+      "title": "Governance Protocols",
+      "path": "docs/agents/protocols/governance.md",
+      "category": "protocols",
+      "tags": [
+        "protocols"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "architecture",
+      "title": "Architecture Reference",
+      "path": "docs/agents/references/architecture.md",
+      "category": "references",
+      "tags": [
+        "references"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "commands",
+      "title": "Command Reference",
+      "path": "docs/agents/references/commands.md",
+      "category": "references",
+      "tags": [
+        "references"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "tools",
+      "title": "Tools Reference",
+      "path": "docs/agents/references/tools.md",
+      "category": "references",
+      "tags": [
+        "references"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    },
+    {
+      "id": "cli_reference",
+      "title": "Tracking CLI Quick Reference",
+      "path": "docs/agents/tracking/cli_reference.md",
+      "category": "tracking",
+      "tags": [
+        "reference",
+        "agent-tools",
+        "tracking",
+        "docs"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-06"
+    },
+    {
+      "id": "db_api",
+      "title": "Tracking Database API Reference",
+      "path": "docs/agents/tracking/db_api.md",
+      "category": "tracking",
+      "tags": [
+        "tracking"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-08"
+    }
+  ],
+  "bundles": {
+    "core": {
+      "entries": [
+        "index"
+      ]
+    },
+    "ai_agent": {
+      "entries": [
+        "system",
+        "streamlit"
+      ]
+    },
+    "rules": {
+      "entries": [
+        "system"
+      ]
+    },
+    "operations": {
+      "entries": [
+        "system"
+      ]
+    },
+    "changelog": {
+      "entries": [
+        "changelog_process"
+      ]
+    },
+    "automation": {
+      "entries": [
+        "changelog_process"
+      ]
+    },
+    "versioning": {
+      "entries": [
+        "changelog_process"
+      ]
+    },
+    "agent-tools": {
+      "entries": [
+        "tooling_overview",
+        "tool_catalog",
+        "cli_reference"
+      ]
+    },
+    "tracking": {
+      "entries": [
+        "tooling_overview",
+        "cli_reference",
+        "db_api"
+      ]
+    },
+    "artifacts": {
+      "entries": [
+        "tooling_overview"
+      ]
+    },
+    "catalog": {
+      "entries": [
+        "tool_catalog"
+      ]
+    },
+    "coding": {
+      "entries": [
+        "streamlit"
+      ]
+    },
+    "protocol": {
+      "entries": [
+        "streamlit"
+      ]
+    },
+    "reference": {
+      "entries": [
+        "streamlit",
+        "cli_reference"
+      ]
+    },
+    "protocols": {
+      "entries": [
+        "components",
+        "development",
+        "governance"
+      ]
+    },
+    "configuration": {
+      "entries": [
+        "configuration"
+      ]
+    },
+    "references": {
+      "entries": [
+        "architecture",
+        "commands",
+        "tools"
+      ]
+    },
+    "docs": {
+      "entries": [
+        "cli_reference"
+      ]
+    }
+  }
+}
