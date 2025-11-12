@@ -13,17 +13,52 @@
 
 import torch
 import torch.nn as nn
+from pydantic import ValidationError
+
+from ocr.validation.models import ValidatedTensorData
 
 
 class BCELoss(nn.Module):
-    def __init__(self, negative_ratio=3.0, eps=1e-6):
+    def __init__(self, negative_ratio=3.0, eps=1e-6, validate_inputs=True):
         super().__init__()
         self.negative_ratio = negative_ratio
         self.eps = eps
+        self.validate_inputs = validate_inputs
 
     def forward(self, pred_logits, gt, mask=None):
         if mask is None:
             mask = torch.ones_like(gt, device=gt.device, dtype=gt.dtype)
+
+        # Validate inputs using ValidatedTensorData (BUG-20251112-013 prevention)
+        if self.validate_inputs:
+            try:
+                # Validate prediction logits: shape, device, no NaN/Inf
+                ValidatedTensorData(
+                    tensor=pred_logits,
+                    expected_shape=tuple(pred_logits.shape),
+                    expected_device=pred_logits.device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+                # Validate ground truth tensor: shape, device, value range [0, 1]
+                ValidatedTensorData(
+                    tensor=gt,
+                    expected_shape=tuple(gt.shape),
+                    expected_device=gt.device,
+                    value_range=(0.0, 1.0),
+                    allow_nan=False,
+                    allow_inf=False
+                )
+                # Validate mask tensor: shape, device, no NaN/Inf
+                ValidatedTensorData(
+                    tensor=mask,
+                    expected_shape=tuple(mask.shape),
+                    expected_device=mask.device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+            except ValidationError as exc:
+                raise ValueError(f"BCE loss input validation failed: {exc}") from exc
 
         positive = (gt * mask) > 0
         negative = ((1 - gt) * mask) > 0
@@ -43,5 +78,11 @@ class BCELoss(nn.Module):
             negative_loss_sum = torch.zeros((), device=loss.device, dtype=loss.dtype)
 
         balance_loss = (positive_loss.sum() + negative_loss_sum) / (positive_count + negative_count + self.eps)
+
+        # Validate output for NaN/Inf after computation
+        if torch.isnan(balance_loss):
+            raise ValueError("NaN detected in BCE loss output")
+        if torch.isinf(balance_loss):
+            raise ValueError("Inf detected in BCE loss output")
 
         return balance_loss

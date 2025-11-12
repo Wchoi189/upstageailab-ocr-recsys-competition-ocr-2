@@ -13,12 +13,16 @@
 
 import torch
 import torch.nn as nn
+from pydantic import ValidationError
+
+from ocr.validation.models import ValidatedTensorData
 
 
 class DiceLoss(nn.Module):
-    def __init__(self, eps=1e-6):
+    def __init__(self, eps=1e-6, validate_inputs=True):
         super().__init__()
         self.eps = eps
+        self.validate_inputs = validate_inputs
 
     def forward(self, pred: torch.Tensor, gt, mask, weights=None):
         """
@@ -31,6 +35,37 @@ class DiceLoss(nn.Module):
         assert pred.dim() == 4, pred.dim()
         if mask is None:
             mask = torch.ones_like(gt).to(device=gt.device)
+
+        # Validate inputs using ValidatedTensorData (BUG-20251112-001 prevention)
+        if self.validate_inputs:
+            try:
+                # Validate prediction tensor: shape, device, no NaN/Inf
+                ValidatedTensorData(
+                    tensor=pred,
+                    expected_shape=tuple(pred.shape),
+                    expected_device=pred.device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+                # Validate ground truth tensor
+                ValidatedTensorData(
+                    tensor=gt,
+                    expected_shape=tuple(gt.shape),
+                    expected_device=gt.device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+                # Validate mask tensor
+                ValidatedTensorData(
+                    tensor=mask,
+                    expected_shape=tuple(mask.shape),
+                    expected_device=mask.device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+            except ValidationError as exc:
+                raise ValueError(f"Dice loss input validation failed: {exc}") from exc
+
         return self._compute(pred, gt, mask, weights)
 
     def _compute(self, pred, gt, mask, weights):
