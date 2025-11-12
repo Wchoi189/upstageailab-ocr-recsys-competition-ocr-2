@@ -13,6 +13,7 @@ on:
       - 'tests/**'
       - 'docs/**'
       - 'scripts/**'
+      - 'agent_qms/**'
       - 'pyproject.toml'
       - 'setup.cfg'
       - 'pytest.ini'
