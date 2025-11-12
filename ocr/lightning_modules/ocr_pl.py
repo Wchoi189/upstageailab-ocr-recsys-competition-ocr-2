@@ -3,8 +3,10 @@ from typing import Any
 
 import lightning.pytorch as pl
 import numpy as np
+import torch
 from hydra.utils import instantiate
 from omegaconf import DictConfig
+from pydantic import ValidationError
 from torch.utils.data import DataLoader
 
 from ocr.evaluation import CLEvalEvaluator
@@ -12,7 +14,7 @@ from ocr.lightning_modules.loggers import WandbProblemLogger
 from ocr.lightning_modules.utils import CheckpointHandler, extract_metric_kwargs, extract_normalize_stats, format_predictions
 from ocr.metrics import CLEvalMetric
 from ocr.utils.submission import SubmissionWriter
-from ocr.validation.models import CollateOutput
+from ocr.validation.models import CollateOutput, ValidatedTensorData
 
 
 class OCRPLModule(pl.LightningModule):
@@ -111,6 +113,38 @@ class OCRPLModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         pred = self.model(**batch)
+
+        # Validate model outputs using ValidatedTensorData (BUG-20251112-001/013 prevention)
+        try:
+            # Validate loss tensor
+            ValidatedTensorData(
+                tensor=pred["loss"],
+                expected_device=batch["images"].device,
+                allow_nan=False,
+                allow_inf=False
+            )
+
+            # Validate probability maps if present
+            if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
+                ValidatedTensorData(
+                    tensor=pred["prob_maps"],
+                    expected_device=batch["images"].device,
+                    value_range=(0.0, 1.0),
+                    allow_nan=False,
+                    allow_inf=False
+                )
+
+            # Validate threshold maps if present
+            if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
+                ValidatedTensorData(
+                    tensor=pred["thresh_maps"],
+                    expected_device=batch["images"].device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+        except ValidationError as exc:
+            raise ValueError(f"Training step model output validation failed at step {batch_idx}: {exc}") from exc
+
         self.log("train/loss", pred["loss"], batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():
             self.log(f"train/{key}", value, batch_size=batch["images"].shape[0])
@@ -137,7 +171,40 @@ class OCRPLModule(pl.LightningModule):
             CollateOutput(**batch)
         except Exception as e:
             raise ValueError(f"Batch validation failed: {e}") from e
+
         pred = self.model(**batch)
+
+        # Validate model outputs using ValidatedTensorData (BUG-20251112-001/013 prevention)
+        try:
+            # Validate loss tensor
+            ValidatedTensorData(
+                tensor=pred["loss"],
+                expected_device=batch["images"].device,
+                allow_nan=False,
+                allow_inf=False
+            )
+
+            # Validate probability maps if present
+            if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
+                ValidatedTensorData(
+                    tensor=pred["prob_maps"],
+                    expected_device=batch["images"].device,
+                    value_range=(0.0, 1.0),
+                    allow_nan=False,
+                    allow_inf=False
+                )
+
+            # Validate threshold maps if present
+            if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
+                ValidatedTensorData(
+                    tensor=pred["thresh_maps"],
+                    expected_device=batch["images"].device,
+                    allow_nan=False,
+                    allow_inf=False
+                )
+        except ValidationError as exc:
+            raise ValueError(f"Validation step model output validation failed at step {batch_idx}: {exc}") from exc
+
         self.log("val_loss", pred["loss"], batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():
             self.log(f"val_{key}", value, batch_size=batch["images"].shape[0])
