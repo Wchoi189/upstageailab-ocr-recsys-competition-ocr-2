@@ -16,7 +16,7 @@
    - App starts successfully with all 3 modes
 
 2. **✅ Created Comparison Mode Configuration**
-   - File: configs/ui/modes/comparison.yaml
+   - File: [configs/ui/modes/comparison.yaml](configs/ui/modes/comparison.yaml)
    - Comprehensive YAML configuration (~300 lines)
    - Comparison types: preprocessing, inference, end-to-end
    - Parameter sweep modes: manual, range, grid (placeholder)
@@ -25,21 +25,21 @@
 
 3. **✅ Implemented Comparison Components** (3 files, ~1,190 lines)
 
-   **Parameter Sweep** (parameter_sweep.py - ~350 lines)
+   **Parameter Sweep** ([parameter_sweep.py](ui/apps/unified_ocr_app/components/comparison/parameter_sweep.py) - ~350 lines)
    - Manual configuration mode
    - Range sweep mode (numeric and categorical)
    - Grid search mode (placeholder)
    - Preset selector with quick start options
    - Dynamic parameter configuration UI
 
-   **Results Comparison** (results_comparison.py - ~470 lines)
+   **Results Comparison** ([results_comparison.py](ui/apps/unified_ocr_app/components/comparison/results_comparison.py) - ~470 lines)
    - Multiple layout modes: grid, side-by-side, table
    - Results sorting and filtering
    - Best result highlighting
    - Export controls (JSON, CSV, YAML, HTML)
    - Visual difference highlighting
 
-   **Metrics Display** (metrics_display.py - ~370 lines)
+   **Metrics Display** ([metrics_display.py](ui/apps/unified_ocr_app/components/comparison/metrics_display.py) - ~370 lines)
    - Performance metrics visualization
    - Quality metrics display
    - Comprehensive metrics comparison tables
@@ -47,7 +47,7 @@
    - Auto-recommendations based on weighted criteria
 
 4. **✅ Created Comparison Service**
-   - File: comparison_service.py (~300 lines)
+   - File: [comparison_service.py](ui/apps/unified_ocr_app/services/comparison_service.py) (~300 lines)
    - Preprocessing comparison orchestration
    - Inference comparison orchestration
    - End-to-end pipeline comparison
@@ -55,7 +55,7 @@
    - Stub implementations (ready for full integration)
 
 5. **✅ Integrated with Main App**
-   - Updated app.py (~185 lines added)
+   - Updated [app.py](ui/apps/unified_ocr_app/app.py) (~185 lines added)
    - Replaced placeholder with full implementation
    - 3-tab interface:
      - Results Comparison
@@ -309,9 +309,9 @@ def _run_preprocessing_pipeline(...) -> np.ndarray:
 
 - [SESSION_COMPLETE_2025-10-21_PHASE4.md](SESSION_COMPLETE_2025-10-21_PHASE4.md) - Phase 4 summary
 - [SESSION_COMPLETE_2025-10-21.md](SESSION_COMPLETE_2025-10-21.md) - Phase 3 summary
-- UNIFIED_STREAMLIT_APP_ARCHITECTURE.md - Architecture reference
-- SESSION_HANDOVER_UNIFIED_APP.md - Implementation guide
-- README_IMPLEMENTATION_PLAN.md - Overview & checklist
+- [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md) - Architecture reference
+- [SESSION_HANDOVER_UNIFIED_APP.md](docs/ai_handbook/08_planning/SESSION_HANDOVER_UNIFIED_APP.md) - Implementation guide
+- [README_IMPLEMENTATION_PLAN.md](docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md) - Overview & checklist
 
 ---
 

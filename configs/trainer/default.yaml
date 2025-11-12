@@ -1,7 +1,7 @@
 
 # Trainer config
 max_steps: -1  # -1 means unlimited (controlled by max_epochs)
-max_epochs: 200
+max_epochs: 1
 num_sanity_val_steps: 1
 log_every_n_steps: 20
 val_check_interval: null
@@ -11,7 +11,7 @@ accumulate_grad_batches: 2
 precision: "32-true" # 32-true | 16-mixed | bf16 | bf16-mixed
 # NOTE: 16-mixed precision requires gradient scaling to prevent accuracy degradation
 # See docs/bug_reports/BUG_2025_002_MIXED_PRECISION_PERFORMANCE.md for details
-benchmark: true
+benchmark: false
 gradient_clip_val: 5.0
 accelerator: gpu
 devices: 1

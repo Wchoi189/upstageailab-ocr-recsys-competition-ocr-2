@@ -24,7 +24,7 @@ seed: 42
 exp_name: "ocr_prediction"
 checkpoint_path: null #"outputs/ocr_training-dbnet-pan_decoder-resnet34/checkpoints/epoch_28_step_023722.ckpt" # resnet18 · step_014454 works too
 image_dir: "LOW_PERFORMANCE_IMGS"
-max_images: 1
+max_images: null
 score_threshold: 0.01
 save_dir: "outputs/prediction_visualization"
 minified_json: False

@@ -15,7 +15,7 @@ exp_name: "decoder_benchmark"
 resume: null
 
 logger:
-  wandb: true
+  wandb: false
   project_name: "decoder-benchmark"
   exp_version: "v1.0"
   entity: null
@@ -60,7 +60,7 @@ benchmark:
     max_epochs: 3
     accelerator: auto
     devices: 1
-    precision: 16-mixed
+    precision: 32-true
     enable_checkpointing: false
     enable_model_summary: false
     log_every_n_steps: 25

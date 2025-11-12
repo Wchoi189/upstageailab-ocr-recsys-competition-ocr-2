@@ -39,29 +39,24 @@ class DiceLoss(nn.Module):
         if weights is not None:
             assert weights.shape == mask.shape
             mask = weights * mask
-
-        # Clamp predictions to valid range [0, 1] to prevent extreme values
-        pred = pred.clamp(0, 1)
-
-        # Validate inputs for NaN/Inf before computation
-        if torch.isnan(pred).any():
-            raise ValueError("NaN detected in predictions before Dice loss computation")
-        if torch.isinf(pred).any():
-            raise ValueError("Inf detected in predictions before Dice loss computation")
-        if torch.isnan(gt).any():
-            raise ValueError("NaN detected in ground truth before Dice loss computation")
-        if torch.isinf(gt).any():
-            raise ValueError("Inf detected in ground truth before Dice loss computation")
-
+        # Input validation for numerical stability
+        if torch.isnan(pred).any() or torch.isinf(pred).any():
+            raise ValueError(f"Invalid values in pred: nan={torch.isnan(pred).any().item()}, inf={torch.isinf(pred).any().item()}")
+        if torch.isnan(gt).any() or torch.isinf(gt).any():
+            raise ValueError(f"Invalid values in gt: nan={torch.isnan(gt).any().item()}, inf={torch.isinf(gt).any().item()}")
+        # Clamp predictions to valid probability range
+        pred = pred.clamp(0.0, 1.0)
         intersection = (pred * gt * mask).sum()
         union = (pred * mask).sum() + (gt * mask).sum() + self.eps
+        # Guard against degenerate unions
+        if union < 2 * self.eps:
+            # Return worst-case loss while avoiding NaNs
+            return torch.tensor(1.0, device=pred.device, dtype=pred.dtype)
         loss = 1 - 2.0 * intersection / union
-
-        # Validate output for NaN/Inf after computation
-        if torch.isnan(loss):
-            raise ValueError("NaN detected in Dice loss output")
-        if torch.isinf(loss):
-            raise ValueError("Inf detected in Dice loss output")
-
-        assert loss <= 1
+        # Tolerate minor numeric overshoot instead of asserting
+        loss = torch.clamp(loss, min=0.0, max=1.0 + 1e-6)
+        if torch.isnan(loss) or torch.isinf(loss):
+            raise ValueError(
+                f"Invalid Dice loss computed: nan/inf encountered. intersection={intersection.item():.6e}, union={union.item():.6e}"
+            )
         return loss

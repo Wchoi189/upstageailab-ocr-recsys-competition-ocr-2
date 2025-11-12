@@ -3,6 +3,11 @@ from __future__ import annotations
 """High-level inference engine orchestration."""
 
 import logging
+import re
+import threading
+import time
+import warnings
+from collections.abc import Callable
 from pathlib import Path
 from typing import Any
 
@@ -10,7 +15,12 @@ import cv2
 import numpy as np
 from PIL import Image
 
+# Suppress Pydantic v2 configuration warnings from dependencies
+warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:", category=UserWarning)
+warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has been renamed to 'validate_by_name'", category=UserWarning)
+
 from ocr.utils.orientation import normalize_pil_image, orientation_requires_rotation, remap_polygons
+from ocr.utils.orientation_constants import ORIENTATION_INVERSE_INT
 
 from .config_loader import ModelConfigBundle, PostprocessSettings, load_model_config, resolve_config_path
 from .dependencies import OCR_MODULES_AVAILABLE, torch
@@ -22,7 +32,50 @@ from .utils import get_available_checkpoints as scan_checkpoints
 
 LOGGER = logging.getLogger(__name__)
 
-_ORIENTATION_INVERSE = {1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 8, 7: 7, 8: 6}
+_POLYGON_TOKEN_PATTERN = re.compile(r"-?\d+(?:\.\d+)?")
+
+
+def _run_with_timeout(func: Callable, timeout_seconds: int = 30) -> Any:
+    """Run a function with a timeout using threading (thread-safe for Streamlit).
+
+    This implementation uses threading instead of signal.signal() to be compatible
+    with Streamlit's threading model. signal.signal() only works in the main thread,
+    but Streamlit runs in a separate thread.
+
+    Args:
+        func: Function to execute
+        timeout_seconds: Timeout in seconds
+
+    Returns:
+        Result of the function
+
+    Raises:
+        TimeoutError: If function execution exceeds timeout
+        Exception: Any exception raised by the function
+    """
+    result = [None]
+    exception = [None]
+
+    def _wrapper():
+        try:
+            result[0] = func()
+        except Exception as e:
+            exception[0] = e
+
+    thread = threading.Thread(target=_wrapper)
+    thread.daemon = True
+    thread.start()
+    thread.join(timeout=timeout_seconds)
+
+    if thread.is_alive():
+        # Thread is still running - timeout occurred
+        LOGGER.error(f"Function timed out after {timeout_seconds} seconds")
+        raise TimeoutError(f"Inference operation timed out after {timeout_seconds} seconds")
+
+    if exception[0] is not None:
+        raise exception[0]
+
+    return result[0]
 
 
 class InferenceEngine:
@@ -45,7 +98,8 @@ class InferenceEngine:
             LOGGER.error("OCR modules are not installed. Cannot load a real model.")
             return False
 
-        search_dirs: tuple[Path, ...] = ()
+        # Include configs directory in search paths for config files
+        search_dirs = (Path("configs"),)
         resolved_config = resolve_config_path(checkpoint_path, config_path, search_dirs)
         if resolved_config is None:
             LOGGER.error("Could not find a valid config file for checkpoint: %s", checkpoint_path)
@@ -57,8 +111,14 @@ class InferenceEngine:
 
         model_config = getattr(bundle.raw_config, "model", None)
         if model_config is None:
-            LOGGER.error("Configuration missing 'model' section: %s", resolved_config)
-            return False
+            # Fallback: Try to extract model config from root level (for Hydra configs with defaults)
+            LOGGER.warning("Configuration missing direct 'model' section, trying root level extraction: %s", resolved_config)
+            model_config = bundle.raw_config
+            # Check if this config has model-like attributes
+            model_attrs = ["architecture", "encoder", "decoder", "head"]
+            if not any(hasattr(model_config, attr) for attr in model_attrs):
+                LOGGER.error("Configuration has neither 'model' section nor model attributes at root level: %s", resolved_config)
+                return False
 
         try:
             model = instantiate_model(model_config)
@@ -133,6 +193,8 @@ class InferenceEngine:
         max_candidates: int | None = None,
         min_detection_size: int | None = None,
     ) -> dict[str, Any] | None:
+        LOGGER.info(f"Starting prediction for image: {image_path}")
+
         if self.model is None:
             LOGGER.warning("Model not loaded. Returning mock predictions.")
             return generate_mock_predictions()
@@ -148,9 +210,12 @@ class InferenceEngine:
         orientation = 1
         canonical_width = 0
         canonical_height = 0
+        raw_width = 0
+        raw_height = 0
 
         try:
             with Image.open(image_path) as pil_image:
+                raw_width, raw_height = pil_image.size
                 normalized_image, orientation = normalize_pil_image(pil_image)
 
                 rgb_image = normalized_image
@@ -169,6 +234,8 @@ class InferenceEngine:
             LOGGER.error("Failed to read image at path: %s", image_path)
             return None
 
+        LOGGER.info(f"Image loaded successfully. Shape: {image.shape}, Orientation: {orientation}")
+
         bundle = self._config_bundle
         if bundle is None:
             LOGGER.error("Model configuration bundle missing; load_model must be called first.")
@@ -183,33 +250,43 @@ class InferenceEngine:
             LOGGER.exception("Failed to preprocess image %s", image_path)
             return None
 
+        LOGGER.info(f"Image preprocessing completed. Batch shape: {batch.shape if hasattr(batch, 'shape') else 'unknown'}")
+
         if torch is None:
             LOGGER.error("Torch is not available to run inference.")
             return None
 
-        with torch.no_grad():
-            predictions = self.model(return_loss=False, images=batch.to(self.device))
+        LOGGER.info("Starting model inference...")
+        start_time = time.time()
+        try:
+            if self.model is None:
+                raise RuntimeError("Model is not loaded")
+
+            # Direct inference without timeout wrapper to avoid threading issues in Streamlit
+            # Streamlit has its own timeout mechanism, and nested threading can cause crashes
+            with torch.no_grad():
+                predictions = self.model(return_loss=False, images=batch.to(self.device))
+
+            inference_time = time.time() - start_time
+            LOGGER.info(f"Model inference completed in {inference_time:.2f} seconds")
+        except Exception as e:
+            LOGGER.exception(f"Model inference failed: {e}")
+            return None
 
         decoded = decode_polygons_with_head(self.model, batch, predictions, image.shape)
         if decoded is not None:
-            return self._remap_predictions_if_needed(
-                decoded,
-                orientation,
-                canonical_width,
-                canonical_height,
-            )
+            LOGGER.info("Primary decoding successful")
+            return decoded
 
+        LOGGER.info("Primary decoding failed, trying fallback postprocessing...")
         try:
             result = fallback_postprocess(predictions, image.shape, bundle.postprocess)
         except Exception:  # noqa: BLE001
             LOGGER.exception("Error in post-processing for %s", image_path)
             return generate_mock_predictions()
-        return self._remap_predictions_if_needed(
-            result,
-            orientation,
-            canonical_width,
-            canonical_height,
-        )
+
+        LOGGER.info("Fallback postprocessing completed")
+        return result
 
     # Internal helpers ---------------------------------------------------
     def _apply_config_bundle(self, bundle: ModelConfigBundle) -> None:
@@ -223,6 +300,8 @@ class InferenceEngine:
         orientation: int,
         canonical_width: int,
         canonical_height: int,
+        raw_width: int,
+        raw_height: int,
     ) -> dict[str, Any]:
         if not result:
             return result
@@ -234,14 +313,14 @@ class InferenceEngine:
         if not polygons_str:
             return result
 
-        inverse_orientation = _ORIENTATION_INVERSE.get(orientation, 1)
+        inverse_orientation = ORIENTATION_INVERSE_INT.get(orientation, 1)
         if inverse_orientation == 1:
             return result
 
         remapped_polygons = []
         for polygon_entry in polygons_str.split("|"):
-            tokens = [token for token in polygon_entry.split(",") if token]
-            if len(tokens) < 8:
+            tokens = _POLYGON_TOKEN_PATTERN.findall(polygon_entry)
+            if len(tokens) < 8 or len(tokens) % 2 != 0:
                 continue
             try:
                 coords = np.array([float(value) for value in tokens], dtype=np.float32).reshape(-1, 2)
@@ -252,11 +331,12 @@ class InferenceEngine:
         if not remapped_polygons:
             return result
 
-        transformed = remap_polygons(remapped_polygons, canonical_width, canonical_height, inverse_orientation)
+        transformed = remap_polygons(remapped_polygons, raw_width, raw_height, inverse_orientation)
         serialised: list[str] = []
         for polygon in transformed:
             flat = polygon.reshape(-1)
-            serialised.append(",".join(str(int(round(value))) for value in flat))
+            # Competition format uses space-separated coordinates, not commas
+            serialised.append(" ".join(str(int(round(value))) for value in flat))
 
         updated = dict(result)
         updated["polygons"] = "|".join(serialised)
@@ -266,13 +346,14 @@ class InferenceEngine:
 def run_inference_on_image(
     image_path: str,
     checkpoint_path: str,
+    config_path: str | None = None,
     binarization_thresh: float | None = None,
     box_thresh: float | None = None,
     max_candidates: int | None = None,
     min_detection_size: int | None = None,
 ) -> dict[str, Any] | None:
     engine = InferenceEngine()
-    if not engine.load_model(checkpoint_path):
+    if not engine.load_model(checkpoint_path, config_path):
         LOGGER.error("Failed to load model in convenience function.")
         return None
     return engine.predict_image(

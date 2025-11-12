@@ -161,8 +161,19 @@ def train(config: DictConfig):
 
     logger: Logger
 
-    if config.logger.wandb:
-        from lightning.pytorch.loggers import WandbLogger as Logger  # noqa: E402
+    wandb_cfg = getattr(config.logger, "wandb", None)
+    wandb_enabled = False
+    if isinstance(wandb_cfg, DictConfig):
+        wandb_enabled = wandb_cfg.get("enabled", True)
+    elif isinstance(wandb_cfg, dict):
+        wandb_enabled = wandb_cfg.get("enabled", True)
+    elif isinstance(wandb_cfg, bool):
+        wandb_enabled = wandb_cfg
+    elif wandb_cfg is not None:
+        wandb_enabled = bool(wandb_cfg)
+
+    if wandb_enabled:
+        from lightning.pytorch.loggers import WandbLogger  # noqa: E402
         from omegaconf import OmegaConf  # noqa: E402
 
         from ocr.utils.wandb_utils import generate_run_name, load_env_variables  # noqa: E402
@@ -183,8 +194,8 @@ def train(config: DictConfig):
             # Fall back to unresolved config if resolution fails
             wandb_config = OmegaConf.to_container(config, resolve=False)
 
-        logger = Logger(
-            run_name,
+        logger = WandbLogger(
+            name=run_name,
             project=config.logger.project_name,
             config=wandb_config,
         )
@@ -212,7 +223,16 @@ def train(config: DictConfig):
                 if cb_conf.get("enabled", True):
                     # Commented out: Callback instantiation logging to reduce noise
                     # print(f"Instantiating callback <{cb_conf._target_}>")
-                    callbacks.append(hydra.utils.instantiate(cb_conf))
+                    callback = hydra.utils.instantiate(cb_conf)
+
+                    # Pass resolved config to checkpoint callback for saving alongside checkpoints
+                    if hasattr(callback, "_resolved_config"):
+                        from omegaconf import OmegaConf
+
+                        resolved_config = OmegaConf.to_container(config, resolve=True)
+                        callback._resolved_config = resolved_config
+
+                    callbacks.append(callback)
 
     # Always add LearningRateMonitor
     callbacks.append(LearningRateMonitor(logging_interval="step"))
@@ -243,7 +263,7 @@ def train(config: DictConfig):
 
         metrics: dict[str, float] = {}
 
-        def _to_float(value) -> float | None:
+        def _to_float(value) -> float | None:  # Changed from float | None to Optional[float]
             try:
                 if isinstance(value, torch.Tensor):
                     return float(value.detach().cpu().item())

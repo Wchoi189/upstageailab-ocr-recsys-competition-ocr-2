@@ -7,19 +7,51 @@
 [![UV](https://img.shields.io/badge/UV-0.8+-purple.svg)](https://github.com/astral-sh/uv)
 [![Hydra](https://img.shields.io/badge/Hydra-1.3+-green.svg)](https://hydra.cc)
 [![PyTorch Lightning](https://img.shields.io/badge/PyTorch_Lightning-2.1+-orange.svg)](https://lightning.ai)
+[![Competition](https://img.shields.io/badge/Competition-Upstage_AI_Lab-blue.svg)](https://upstage.ai)
 </div>
 
-# OCR: 영수증 텍스트 검출
+# AI 경진대회: 영수증 텍스트 검출
 
-이 프로젝트는 영수증 이미지에서 텍스트 위치를 추출하는 OCR 시스템입니다. 영수증 이미지에서 텍스트 요소 주변에 경계 다각형을 정확하게 식별하고 생성할 수 있는 모델을 제공합니다.
+이 프로젝트는 영수증 이미지에서 텍스트 위치를 추출하는 것에 중점을 둡니다. 주어진 영수증 이미지에서 텍스트 요소 주변에 경계 다각형을 정확하게 식별하고 생성할 수 있는 모델을 구축하는 것이 목표입니다.
+
+* **대회 기간:** 2025년 9월 22일 (10:00) - 2025년 10월 16일 (19:00)
+* **주요 과제:** 영수증 이미지 내 텍스트 영역 식별 및 윤곽 그리기
 
 ## 📋 목차
 
 - [0. 개요](#0-개요)
-- [1. 구성 요소](#1-구성-요소)
-- [2. 데이터 설명](#2-데이터-설명)
-- [3. 모델링](#3-모델링)
-- [4. 설치 및 설정](#4-설치-및-설정)
+- [1. 대회 정보](#1-대회-정보)
+- [2. 구성 요소](#2-구성-요소)
+- [3. 데이터 설명](#3-데이터-설명)
+- [4. 모델링](#4-모델링)
+- [5. 결과](#5-결과)
+- [6. 결론 및 향후 과제](#6-결론-및-향후-과제)
+
+
+## 👥 팀 소개
+<table>
+    <tr>
+        <td align="center"><img src="https://avatars.githubusercontent.com/u/156163982?v=4" width="180" height="180"/></td>
+        <td align="center"><img src="https://github.com/AIBootcamp13/upstageailab-ir-competition-ir-2/blob/main/docs/assets/images/team/hskimh1982.png" width="180" height="180"/></td>
+        <td align="center"><img src="https://github.com/Wchoi189/document-classifier/blob/dev-hydra/docs/images/team/AI13_%EC%B5%9C%EC%9A%A9%EB%B9%84.png?raw=true" width="180" height="180"/>
+        <td align="center"><img src="https://github.com/AIBootcamp13/upstageailab-ir-competition-ir-2/blob/main/docs/assets/images/team/YeonkyungKang.png" width="180" height="180"/></td>
+        <td align="center"><img src="https://github.com/AIBootcamp13/upstageailab-ir-competition-ir-2/blob/main/docs/assets/images/team/jungjaehoon.jpg" width="180" height="180"/></td>
+    </tr>
+    <tr>
+        <td align="center"><a href="https://github.com/SuWuKIM">AI13_이상원</a></td>
+        <td align="center"><a href="https://github.com/YOUR_GITHUB">AI13_김효석</a></td>
+        <td align="center"><a href="https://github.com/Wchoi189">AI13_최용비</a></td>
+        <td align="center"><a href="https://github.com/YeonkyungKang">AI13_강연경</a></td>
+        <td align="center"><a href="https://github.com/YOUR_GITHUB">AI13_정재훈</a></td>
+    </tr>
+    <tr>
+        <td align="center">팀장, 일정관리, 성능 최적화</td>
+        <td align="center">EDA, 데이터셋 증강</td>
+        <td align="center">베이스라인, CI</td>
+        <td align="center">연구/실험 설계 및 추론 분석</td>
+        <td align="center">아키텍처 리뷰 및 설계</td>
+    </tr>
+ </table>
 
 ## 0. 개요
 
@@ -34,7 +66,16 @@
 - UV 패키지 관리자
 - CUDA 호환 GPU (훈련 시 권장)
 
-## 1. 구성 요소
+## 1. 대회 정보
+
+### 개요
+영수증 텍스트 검출에 중점을 둔 AI 경진대회입니다. 참가자들은 경계 다각형을 사용하여 영수증 이미지에서 텍스트 영역을 정확하게 검출하고 위치를 파악할 수 있는 모델을 개발해야 합니다.
+
+### 일정
+- **시작일:** 2025년 9월 22일 (10:00)
+- **최종 제출 마감일:** 2025년 10월 16일 (19:00)
+
+## 2. 구성 요소
 
 ### 디렉토리 구조
 
@@ -59,6 +100,7 @@
 │           └── loss/
 ├── data/
 │   ├── datasets/
+│   │   ├── sample_submission.csv
 │   │   └── images/
 │   │       ├── test/
 │   │       └── ...
@@ -137,6 +179,36 @@ uv run streamlit run ui/command_builder.py
 #### Evaluation Viewer (`ui/evaluation_viewer.py`)
 평가 결과를 시각화하고 분석하는 도구입니다.
 
+### UI 데모 스크린샷
+
+<div align="center">
+
+<table style="border-collapse: collapse; border: none;">
+<tr>
+<td style="border: none; padding: 20px; text-align: center; vertical-align: top;">
+<strong>Command Builder</strong><br><br>
+<img src="docs/assets/images/demo/command-builder-predict-command-generate.png" alt="Command Builder Interface" style="width: 800px; height: 500px; object-fit: contain; border: 1px solid #ddd; border-radius: 8px;"><br><br>
+<small>훈련 및 예측 명령어를 직관적인 UI로 구축하고 실행할 수 있는 인터페이스</small>
+</td>
+</tr>
+<tr>
+<td style="border: none; padding: 20px; text-align: center; vertical-align: top;">
+<strong>Real-time OCR Inference</strong><br><br>
+<img src="docs/assets/images/demo/real-time-ocr-inference-select-img.png.jpg" alt="Real-time OCR Inference Interface" style="width: 800px; height: 500px; object-fit: contain; border: 1px solid #ddd; border-radius: 8px;"><br><br>
+<small>실시간으로 영수증 이미지에서 텍스트를 검출하고 결과를 확인할 수 있는 인터페이스</small>
+</td>
+</tr>
+<tr>
+<td style="border: none; padding: 20px; text-align: center; vertical-align: top;">
+<strong>Evaluation Viewer</strong><br><br>
+<img src="docs/assets/images/demo/ocr-eval-results-viewer-gallery.png" alt="Evaluation Viewer Interface" style="width: 800px; height: 500px; object-fit: contain; border: 1px solid #ddd; border-radius: 8px;"><br><br>
+<small>모델 평가 결과를 시각화하고 상세하게 분석할 수 있는 갤러리 뷰 인터페이스</small>
+</td>
+</tr>
+</table>
+
+</div>
+
 ### 주요 구성 파일
 
 - `train.yaml`, `test.yaml`, `predict.yaml`: 러너 실행 설정 (훈련, 테스트, 예측용 기본 구성)
@@ -150,7 +222,7 @@ uv run streamlit run ui/command_builder.py
 - `configs/preset/models/head/`: 모델 헤드 구성
 - `configs/preset/models/loss/`: 손실 함수 설정
 
-## 2. 데이터 설명
+## 3. 데이터 설명
 
 ### 데이터셋 개요
 
@@ -180,7 +252,11 @@ JSON 파일은 이미지 파일명을 텍스트 경계 상자의 좌표에 매�
 * **IMAGE_FILENAME**: 각 이미지 레코드의 키
 * **words**: 이미지에 대해 감지된 모든 텍스트 인스턴스를 포함하는 객체
 * **nnnn**: 각 단어 인스턴스의 고유한 4자리 인덱스 (0001부터 시작)
-* **points**: 텍스트 주변의 다각형을 정의하는 [X, Y] 좌표 쌍의 배열. 원점 (0,0)은 이미지의 왼쪽 상단 모서리. 유효한 다각형이 되려면 최소 4개의 점이 필요
+* **points**: 텍스트 주변의 다각형을 정의하는 [X, Y] 좌표 쌍의 배열. 원점 (0,0)은 이미지의 왼쪽 상단 모서리. 평가에 유효한 다각형이 되려면 최소 4개의 점이 필요
+
+### EDA
+
+- _EDA 과정과 단계별 결론을 설명하세요_
 
 ### 데이터 처리
 
@@ -231,9 +307,9 @@ uv run python scripts/preprocess_maps.py data.train_num_samples=100 data.val_num
 
 #### 데이터 증강 및 전처리 (Data Augmentation and Preprocessing)
 - **이미지 향상**: Doctr 라이브러리를 사용하여 텍스트 검출, 크롭핑, 그리고 이미지 향상을 수행하여 검출 성능을 개선했습니다. CamScanner 스타일의 전처리를 적용하여 이미지 품질을 최적화했습니다.
-- **회전 보정**: 검증 및 테스트 데이터셋에서 발견된 회전 불일치를 표준 방향으로 수정했습니다. 이는 일관된 전처리 단계로 간주됩니다 (훈련 데이터에 영향을 미치지 않음).
+- **회전 보정**: 검증 및 테스트 데이터셋에서 발견된 회전 불일치를 표준 방향으로 수정했습니다. 이는 데이터 누출이 아니며, 일관된 전처리 단계로 간주됩니다 (훈련 데이터에 영향을 미치지 않음).
 
-## 3. 모델링
+## 4. 모델링
 
 ### 모델 설명
 
@@ -248,9 +324,18 @@ uv run python scripts/preprocess_maps.py data.train_num_samples=100 data.val_num
 
 ![DBNet](docs/assets/images/banner/flow-chart-of-the-dbnet.png)
 
+### 베이스라인 성능
+
+V100 GPU에서 10 에포크 훈련 후, 베이스라인 모델은 공개 테스트 세트에서 다음과 같은 성능을 달성했습니다:
+
+* **훈련 시간:** 약 22분
+* **H-Mean:** 0.8818
+* **정밀도:** 0.9651
+* **재현율:** 0.8194
+
 ### 평가 지표
 
-이 프로젝트는 텍스트 검출 결과 평가를 위해 **CLEval**을 사용합니다.
+이 대회는 텍스트 검출 결과 평가를 위해 **CLEval**을 사용합니다.
 
 #### CLEval: 텍스트 검출 및 인식 작업을 위한 문자 수준 평가
 
@@ -285,6 +370,11 @@ uv run python runners/train.py preset=example trainer.max_epochs=10 dataset_base
 
 # 3. Generate predictions
 uv run python runners/predict.py preset=example checkpoint_path="outputs/ocr_training/checkpoints/best.ckpt" dataset_base_path="/path/to/data/datasets/"
+
+# 4. Convert to submission format
+uv run python ocr/utils/convert_submission.py --json_path outputs/ocr_training/submissions/latest.json --output_path submission.csv
+
+
 ```
 
 ### 모델 개선 사항
@@ -292,7 +382,88 @@ uv run python runners/predict.py preset=example checkpoint_path="outputs/ocr_tra
 - **하이퍼파라미터 튜닝**: 학습률, 배치 크기, 에폭을 조정하여 최적화했습니다 (예: `trainer.max_epochs=10`, `model.optimizer.lr=0.0005`).
 - **데이터 증강**: Doctr 기반 전처리와 CamScanner 스타일 향상을 적용하여 이미지 품질을 개선하고 검출 성능을 향상시켰습니다.
 
-## 4. 설치 및 설정
+
+## 5. 결과
+
+### 최종 성능
+
+- **공개 리더보드 (Public Leaderboard)**: H-Mean: 0.9751, 정밀도: 0.9739, 재현율: 0.9773 (3/4위).
+- **비공개 리더보드 (Private Leaderboard)**: H-Mean: 0.9787, 정밀도: 0.9771, 재현율: 0.9809.
+- **베이스라인 대비 개선**: 베이스라인 H-Mean 0.8818에서 크게 향상되었으며, 모듈화와 전처리로 인한 안정성 증가.
+
+### 제출 과정
+
+#### 제출 파일 생성
+
+예측 스크립트는 JSON 파일을 생성합니다. 이 파일은 제출하기 전에 제공된 유틸리티 스크립트를 사용하여 필요한 CSV 형식으로 변환해야 합니다.
+
+```bash
+# 사용 예시
+uv run python ocr/utils/convert_submission.py --json_path outputs/ocr_training/submissions/your_submission.json --output_path submission.csv
+```
+
+#### CSV 형식
+
+제출 파일은 `filename`과 `polygons` 두 열이 있는 CSV여야 합니다.
+
+* **filename**: 테스트 세트의 이미지 파일명
+* **polygons**: 해당 이미지에서 예측된 모든 텍스트 영역의 좌표를 포함하는 단일 문자열
+  * 하나의 다각형에 대한 좌표는 공백으로 구분 (예: `X1 Y1 X2 Y2 X3 Y3 X4 Y4`)
+  * 같은 이미지의 다른 다각형들은 파이프 문자(`|`)로 구분
+
+#### 출력 파일 구조
+
+```
+└─── outputs
+    └── {exp_name}
+        ├── .hydra
+        │   ├── overrides.yaml
+        │   ├── config.yaml
+        │   └── hydra.yaml
+        ├── checkpoints
+        │   └── epoch={epoch}-step={step}.ckpt
+        ├── logs
+        │   └── {exp_name}
+        │       └── {exp_version}
+        │           └── events.out.tfevents.{timestamp}.{hostname}.{pid}.v2
+        └── submissions
+            └── {timestamp}.json
+```
+
+### 평가 기준
+
+대회 리더보드는 공개 및 비공개 순위로 나뉩니다. 대회 기간 중에는 공개 세트에 대한 점수가 표시됩니다. 최종 우승자는 대회 종료 후 공개되는 비공개 테스트 세트에서의 모델 성능으로 결정됩니다. 테스트 데이터는 공개 및 비공개 세트 간에 동등하게(50/50) 분할됩니다.
+
+### 실험 결과 분석
+
+- 다양한 실험에서 PAN 디코더가 DBNet의 정확도를 높였으나, 복잡한 배경에서 재현율이 낮은 경우가 있었습니다. 실패 케이스는 주로 저해상도 이미지였습니다.
+- 모델 한계: 고해상도 이미지에서 계산 비용 증가; 향후 개선으로 EfficientNet 인코더 고려.
+
+## 6. 결론 및 향후 과제
+
+### 주요 성과
+
+- 베이스라인 점수를 크게 개선했습니다 (H-Mean 0.8818 → 0.9751+).
+- 중앙 집중식 구성 관리로 설정 관리를 용이하게 했습니다.
+- 실시간 OCR 추론을 위한 Streamlit UI, 복잡한 훈련 명령어 생성을 위한 Command Builder, 예측 파일 보기 및 낮은 예측 결과 분석을 위한 Evaluation View를 포함한 데이터 분석 도구를 구현했습니다.
+- 성능 병목 현상 분석을 위한 성능 프로파일링을 포함한 고급 성능 기능(.npz 사전 컴파일 이미지, 변환, 캐싱)을 구현했습니다.
+- 실험 추적을 위한 Wandb / Hydra 통합.
+- 10개 이상의 모놀리식 구조를 모듈형 컴포넌트 시스템으로 리팩토링했습니다.
+- 페어 프로그래밍 협업을 개선하기 위한 AI 문서화 및 개발 프로토콜.
+- 버그 보고서 생성 프로토콜 구현.
+
+#### 팀원별 기여도
+- **최웅비**: 오류 분석 도구(Streamlit Inference UI, Evaluation Viewer) 및 기타 UI 개발로 개발을 용이하게 했습니다. 고급 성능 기능 구현, AI 핸드북 개발을 통한 개발 효율성 개선 연구, 데이터 계약 및 전처리 모듈 개발.
+
+<!-- **NEW:** Unified OCR Development Studio 구현 (Preprocessing, Inference 모드 통합, YAML 기반 설정 시스템, 80% 완료). -->
+
+### 향후 개선 방향
+
+- **모델 성능 개선**: Nvidia DALI 구현으로 훈련/추론 파이프라인 속도를 5~8배 개선하고, EfficientNet 인코더와 같은 더 강력한 아키텍처 탐색.
+- **데이터 품질 향상**: 프로덕션급 전처리 및 합성 데이터 생성 파이프라인 구현으로 데이터 다양성 및 품질 향상.
+- **시스템 최적화**: 분산 훈련 지원, 메모리 최적화, 그리고 실시간 추론을 위한 모델 양자화 구현.
+
+## 설치 및 설정
 
 ### 🚨 환경 설정 (중요)
 
@@ -301,7 +472,7 @@ uv run python runners/predict.py preset=example checkpoint_path="outputs/ocr_tra
 ```bash
 # 자동 환경 설정 (권장)
 ./scripts/setup/00_setup-environment.sh
-```
+
 
 ### VS Code 설정
 
@@ -328,6 +499,7 @@ uv run pytest tests/
 # 모든 테스트 실행
 uv run pytest tests/
 
+```markdown
 # 특정 테스트 파일 실행
 uv run pytest tests/test_metrics.py
 
@@ -351,5 +523,14 @@ uv run pytest tests/ --cov=ocr
 ## 참고 논문:
 - CLEval: Character-Level Evaluation for Text Detection and Recognition Tasks
   https://arxiv.org/pdf/2006.06244.pdf
+
+
+## 연락처
+
+프로젝트에 대한 질문이나 제안사항이 있으시면 다음을 통해 연락해 주세요:
+
+- **이슈 트래커**: [GitHub Issues](https://github.com/AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2/issues)
+<!-- - **이메일**: [팀 대표 이메일 주소]
+- **디스코드**: [팀 디스코드 채널] -->
 
 ---

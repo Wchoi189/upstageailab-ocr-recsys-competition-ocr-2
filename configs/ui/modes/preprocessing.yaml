@@ -1,0 +1,279 @@
+# Preprocessing Mode Configuration
+mode_id: "preprocessing"
+display_name: "Preprocessing Studio"
+description: "Interactive preprocessing pipeline tuning and visualization"
+
+# UI Layout
+layout:
+  sidebar:
+    sections:
+      - id: "image_upload"
+        label: "📤 Image Upload"
+        order: 1
+        expanded: true
+
+      - id: "preprocessing_controls"
+        label: "⚙️ Preprocessing Parameters"
+        order: 2
+        expanded: true
+
+      - id: "stage_selector"
+        label: "🎯 Stage Selection"
+        order: 3
+        expanded: false
+
+      - id: "preset_management"
+        label: "💾 Presets"
+        order: 4
+        expanded: false
+
+  main_area:
+    tabs:
+      - id: "side_by_side"
+        label: "🎬 Side-by-Side"
+        icon: "🎬"
+        default: true
+        description: "Compare preprocessing stages side-by-side"
+
+      - id: "step_by_step"
+        label: "🎯 Step-by-Step"
+        icon: "🎯"
+        description: "Execute pipeline stages one at a time"
+
+      - id: "parameters"
+        label: "🛠️ Parameters"
+        icon: "🛠️"
+        description: "Detailed parameter controls and validation"
+
+# Preprocessing Pipeline Configuration
+pipeline:
+  stages:
+    - id: "background_removal"
+      label: "Background Removal (AI)"
+      enabled: false
+      order: 1
+      config_key: "background_removal"
+      description: "AI-powered background removal using rembg U²-Net"
+      performance_note: "First use downloads ~176MB model"
+
+    - id: "document_detection"
+      label: "Document Detection"
+      enabled: true
+      order: 2
+      config_key: "document_detection"
+      description: "Detect document boundaries in the image"
+
+    - id: "perspective_correction"
+      label: "Perspective Correction"
+      enabled: true
+      order: 3
+      config_key: "perspective_correction"
+      description: "Correct perspective distortion"
+
+    - id: "orientation_correction"
+      label: "Orientation Correction"
+      enabled: false
+      order: 4
+      config_key: "orientation_correction"
+      description: "Rotate image to correct orientation"
+
+    - id: "noise_elimination"
+      label: "Noise Elimination"
+      enabled: false
+      order: 5
+      config_key: "noise_elimination"
+      description: "Remove image noise"
+
+    - id: "brightness_adjustment"
+      label: "Brightness Adjustment"
+      enabled: false
+      order: 6
+      config_key: "brightness_adjustment"
+      description: "Adjust image brightness and contrast"
+
+    - id: "enhancement"
+      label: "Enhancement"
+      enabled: false
+      order: 7
+      config_key: "enhancement"
+      description: "Apply final image enhancements"
+
+# Parameter Definitions (with validation metadata)
+parameters:
+  background_removal:
+    enable:
+      type: bool
+      default: false
+      label: "Enable Background Removal"
+      help: "Use AI (rembg) to remove cluttered backgrounds"
+      performance_warning: "⚠️ First use downloads ~176MB model. Processing: 1-3s per image (CPU)"
+
+    model:
+      type: select
+      default: "u2net"
+      options:
+        - value: "u2net"
+          label: "U²-Net (Best Quality)"
+          performance: "~2-3s per image (CPU)"
+        - value: "u2netp"
+          label: "U²-Net+ (Faster)"
+          performance: "~1-2s per image (CPU)"
+        - value: "silueta"
+          label: "Silueta (Lightweight)"
+          performance: "~0.5-1s per image (CPU)"
+      label: "Model Selection"
+      help: "Choose background removal model"
+      depends_on: "enable"
+
+    alpha_matting:
+      type: bool
+      default: true
+      label: "Alpha Matting (Better Edges)"
+      help: "Improves edge quality, adds ~0.5s processing time"
+      depends_on: "enable"
+
+    advanced:
+      foreground_threshold:
+        type: int
+        default: 240
+        min: 0
+        max: 255
+        step: 1
+        label: "Foreground Threshold"
+        help: "Alpha matting foreground threshold"
+        depends_on: "alpha_matting"
+        show_advanced: true
+
+      background_threshold:
+        type: int
+        default: 10
+        min: 0
+        max: 255
+        step: 1
+        label: "Background Threshold"
+        help: "Alpha matting background threshold"
+        depends_on: "alpha_matting"
+        show_advanced: true
+
+      erode_size:
+        type: int
+        default: 10
+        min: 1
+        max: 50
+        step: 1
+        label: "Erode Size"
+        help: "Alpha matting erosion size"
+        depends_on: "alpha_matting"
+        show_advanced: true
+
+  document_detection:
+    enable:
+      type: bool
+      default: true
+      label: "Enable Document Detection"
+      help: "Automatically detect document boundaries"
+
+    min_area_ratio:
+      type: float
+      default: 0.18
+      min: 0.01
+      max: 0.95
+      step: 0.01
+      label: "Min Area Ratio"
+      help: "Minimum document size as fraction of image area"
+      depends_on: "enable"
+
+    use_adaptive:
+      type: bool
+      default: true
+      label: "Use Adaptive Thresholding"
+      help: "Better for varying lighting conditions"
+      depends_on: "enable"
+
+    use_fallback_box:
+      type: bool
+      default: true
+      label: "Use Fallback Box"
+      help: "Use full image if detection fails"
+      depends_on: "enable"
+
+  perspective_correction:
+    enable:
+      type: bool
+      default: true
+      label: "Enable Perspective Correction"
+      help: "Correct perspective distortion in detected document"
+
+    use_doctr_geometry:
+      type: bool
+      default: false
+      label: "Use docTR Geometry"
+      help: "Use docTR for geometry correction"
+      depends_on: "enable"
+
+  orientation_correction:
+    enable:
+      type: bool
+      default: false
+      label: "Enable Orientation Correction"
+      help: "Rotate image to correct orientation"
+
+    angle_threshold:
+      type: float
+      default: 2.0
+      min: 0.5
+      max: 10.0
+      step: 0.5
+      label: "Angle Threshold"
+      help: "Minimum angle (degrees) to trigger rotation"
+      depends_on: "enable"
+
+  noise_elimination:
+    enable:
+      type: bool
+      default: false
+      label: "Enable Noise Elimination"
+      help: "Remove image noise using morphological operations"
+
+  brightness_adjustment:
+    enable:
+      type: bool
+      default: false
+      label: "Enable Brightness Adjustment"
+      help: "Adjust image brightness and contrast"
+
+  enhancement:
+    enable:
+      type: bool
+      default: false
+      label: "Enable Enhancement"
+      help: "Apply final image enhancements"
+
+    method:
+      type: select
+      default: "conservative"
+      options:
+        - value: "conservative"
+          label: "Conservative (Safe)"
+        - value: "moderate"
+          label: "Moderate (Balanced)"
+        - value: "aggressive"
+          label: "Aggressive (Maximum)"
+      label: "Enhancement Method"
+      help: "Enhancement intensity"
+      depends_on: "enable"
+
+# Export Settings
+export:
+  formats:
+    - yaml
+    - json
+  include_metadata: true
+  include_timestamp: true
+  timestamp_format: "%Y%m%d_%H%M%S"
+  preset_name_pattern: "preprocessing_{timestamp}"
+  download_button_label: "💾 Download Config"
+
+# Validation Schema Reference
+validation:
+  schema_file: "preprocessing_schema.yaml"

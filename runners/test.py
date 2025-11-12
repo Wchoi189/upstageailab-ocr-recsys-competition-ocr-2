@@ -1,3 +1,5 @@
+import warnings
+
 import hydra
 import lightning.pytorch as pl
 
@@ -5,6 +7,21 @@ import lightning.pytorch as pl
 from ocr.utils.path_utils import get_path_resolver, setup_project_paths
 
 setup_project_paths()
+
+# Suppress known wandb Pydantic compatibility warnings
+# This is a known issue where wandb uses incorrect Field() syntax in Annotated types
+# The warnings come from Pydantic when processing wandb's type annotations
+warnings.filterwarnings("ignore", message=r"The '(repr|frozen)' attribute.*Field.*function.*no effect", category=UserWarning)
+warnings.filterwarnings("ignore", message=r".*(repr|frozen).*Field.*function.*no effect", category=UserWarning)
+
+# Also suppress by category for more reliable filtering
+try:
+    from pydantic.warnings import UnsupportedFieldAttributeWarning
+
+    warnings.filterwarnings("ignore", category=UnsupportedFieldAttributeWarning)
+except ImportError:
+    # Pydantic v1 doesn't have this warning class
+    pass
 
 from ocr.lightning_modules import get_pl_modules_by_cfg  # noqa: E402
 
@@ -33,7 +50,18 @@ def test(config):
                 print(f"Instantiating callback <{cb_conf._target_}>")
                 callbacks.append(hydra.utils.instantiate(cb_conf))
 
-    if config.logger.wandb:
+    wandb_cfg = getattr(config.logger, "wandb", None)
+    wandb_enabled = False
+    if isinstance(wandb_cfg, DictConfig):
+        wandb_enabled = wandb_cfg.get("enabled", True)
+    elif isinstance(wandb_cfg, dict):
+        wandb_enabled = wandb_cfg.get("enabled", True)
+    elif isinstance(wandb_cfg, bool):
+        wandb_enabled = wandb_cfg
+    elif wandb_cfg is not None:
+        wandb_enabled = bool(wandb_cfg)
+
+    if wandb_enabled:
         from lightning.pytorch.loggers import WandbLogger as Logger  # noqa: E402
         from omegaconf import OmegaConf  # noqa: E402
 

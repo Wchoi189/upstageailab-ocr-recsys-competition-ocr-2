@@ -10,33 +10,225 @@ that configs and schemas stay authoritative.
 """
 
 from collections.abc import Sequence
+from pathlib import Path
 
 import streamlit as st
 from streamlit.runtime.uploaded_file_manager import UploadedFile
 
+from ..models.batch_request import (
+    BatchHyperparameters,
+    BatchOutputConfig,
+    BatchPredictionRequest,
+)
 from ..models.checkpoint import CheckpointInfo, CheckpointMetadata
 from ..models.config import SliderConfig, UIConfig
 from ..models.ui_events import InferenceRequest
-from ..state import InferenceState, init_hyperparameters, init_preprocessing
+from ..state import InferenceState, clear_session_state, init_hyperparameters, init_preprocessing
 
 
 def render_controls(
     state: InferenceState,
     config: UIConfig,
     checkpoints: Sequence[CheckpointInfo],
-) -> InferenceRequest | None:
+) -> InferenceRequest | BatchPredictionRequest | None:
     init_hyperparameters(config.hyperparameters)
     init_preprocessing(config.preprocessing)
+
+    # Mode selector at the top
+    _render_mode_selector(state)
+    _render_session_controls(state)
 
     selected_metadata = _render_model_selector(state, config, checkpoints)
     _render_model_status(selected_metadata, config)
     _render_hyperparameter_sliders(state, config)
     _render_preprocessing_controls(state, config)
-    inference_request = _render_upload_section(state, selected_metadata, config)
-    _render_clear_results(state)
+
+    # Render either single image upload or batch mode controls
+    if state.batch_mode:
+        batch_request = _render_batch_mode_controls(state, selected_metadata, config)
+        _render_clear_results(state)
+        state.persist()
+        return batch_request
+    else:
+        inference_request = _render_upload_section(state, selected_metadata, config)
+        _render_clear_results(state)
+        state.persist()
+        return inference_request
+
+
+def _render_mode_selector(state: InferenceState) -> None:
+    """Render mode toggle between Single Image and Batch Prediction."""
+    st.subheader("Processing Mode")
+    mode = st.radio(
+        "Select mode",
+        options=["Single Image", "Batch Prediction"],
+        index=1 if state.batch_mode else 0,
+        help="Choose between processing individual images or batch processing a directory",
+        horizontal=True,
+    )
+    state.batch_mode = mode == "Batch Prediction"
+    st.divider()
+
+
+def _render_session_controls(state: InferenceState) -> None:
+    col1, col2 = st.columns(2)
+    with col1:
+        if st.button("🗑️ Clear Results", key="session_clear_results", use_container_width=True):
+            _clear_inference_results(state)
+            st.rerun()
+    with col2:
+        if st.button("♻️ Reset Session", key="session_reset", use_container_width=True):
+            clear_session_state()
+            st.rerun()
+    st.divider()
+
+
+def _clear_inference_results(state: InferenceState) -> None:
+    state.inference_results.clear()
+    state.selected_images.clear()
+    state.processed_images.clear()
+    state.batch_output_files.clear()
     state.persist()
 
-    return inference_request
+
+def _clear_image_list(state: InferenceState) -> None:
+    """Clear only the uploaded image list while keeping inference results."""
+    state.selected_images.clear()
+    state.processed_images.clear()
+    # Clear the previous_uploaded_files from session state to reset file uploader
+    if "previous_uploaded_files" in st.session_state:
+        st.session_state.previous_uploaded_files = set()
+    state.persist()
+
+
+def _render_batch_mode_controls(
+    state: InferenceState,
+    metadata: CheckpointMetadata | None,
+    config: UIConfig,
+) -> BatchPredictionRequest | None:
+    """Render batch prediction mode controls."""
+    st.subheader("Batch Prediction")
+
+    if metadata is None:
+        st.warning("⚠️ No model selected. Please select a model first.")
+        return None
+
+    # Input directory
+    input_dir = st.text_input(
+        "Input Directory",
+        value=state.batch_input_dir,
+        help="Path to directory containing images to process",
+        placeholder="/path/to/images",
+    )
+    state.batch_input_dir = input_dir
+
+    # Validate input directory in real-time
+    input_dir_valid = False
+    if input_dir:
+        input_path = Path(input_dir)
+        if not input_path.exists():
+            st.error(f"❌ Directory does not exist: {input_dir}")
+        elif not input_path.is_dir():
+            st.error(f"❌ Path is not a directory: {input_dir}")
+        else:
+            # Try to count images
+            try:
+                supported_exts = (".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".tif")
+                image_files: list[Path] = []
+                for ext in supported_exts:
+                    image_files.extend(input_path.glob(f"*{ext}"))
+                    image_files.extend(input_path.glob(f"*{ext.upper()}"))
+                image_count = len(set(image_files))
+                if image_count == 0:
+                    st.warning("⚠️ No image files found in directory")
+                else:
+                    st.success(f"✅ Found {image_count} images in directory")
+                    input_dir_valid = True
+            except Exception as e:
+                st.error(f"❌ Error reading directory: {e}")
+
+    # Output configuration
+    st.subheader("Output Configuration")
+
+    output_dir = st.text_input(
+        "Output Directory",
+        value=state.batch_output_dir,
+        help="Directory where submission files will be saved",
+    )
+    state.batch_output_dir = output_dir
+
+    filename_prefix = st.text_input(
+        "Filename Prefix",
+        value=state.batch_filename_prefix,
+        help="Prefix for output files (timestamp will be appended)",
+    )
+    state.batch_filename_prefix = filename_prefix
+
+    col1, col2 = st.columns(2)
+    with col1:
+        save_json = st.checkbox(
+            "Save JSON",
+            value=state.batch_save_json,
+            help="Generate JSON submission file",
+        )
+        state.batch_save_json = save_json
+
+    with col2:
+        save_csv = st.checkbox(
+            "Save CSV",
+            value=state.batch_save_csv,
+            help="Generate CSV submission file",
+        )
+        state.batch_save_csv = save_csv
+
+    # Confidence score option
+    include_confidence = st.checkbox(
+        "Include confidence scores",
+        value=state.batch_include_confidence,
+        help="Add average confidence score as third column (optional per competition format)",
+    )
+    state.batch_include_confidence = include_confidence
+
+    # Validate at least one output format is selected
+    if not save_json and not save_csv:
+        st.error("❌ At least one output format (JSON or CSV) must be selected")
+
+    # Run batch prediction button
+    st.divider()
+    can_run = input_dir_valid and (save_json or save_csv) and filename_prefix.strip()
+
+    if not can_run:
+        st.button("🚀 Run Batch Prediction", disabled=True, help="Please complete all required fields")
+        return None
+
+    if st.button("🚀 Run Batch Prediction", type="primary", use_container_width=True):
+        try:
+            # Build BatchPredictionRequest with validation
+            request = BatchPredictionRequest(
+                input_dir=input_dir,
+                model_path=str(metadata.checkpoint_path),
+                config_path=str(metadata.config_path) if metadata.config_path else None,
+                use_preprocessing=state.preprocessing_enabled,
+                output_config=BatchOutputConfig(
+                    output_dir=output_dir,
+                    filename_prefix=filename_prefix,
+                    save_json=save_json,
+                    save_csv=save_csv,
+                    include_confidence=include_confidence,
+                ),
+                hyperparameters=BatchHyperparameters(
+                    binarization_thresh=state.hyperparams.get("binarization_thresh", 0.3),
+                    box_thresh=state.hyperparams.get("box_thresh", 0.7),
+                    max_candidates=int(state.hyperparams.get("max_candidates", 1000)),
+                    min_detection_size=int(state.hyperparams.get("min_detection_size", 3)),
+                ),
+            )
+            return request
+        except Exception as e:
+            st.error(f"❌ Validation error: {e}")
+            return None
+
+    return None
 
 
 def _render_model_selector(
@@ -48,16 +240,22 @@ def _render_model_selector(
 
     options, mapping = _build_display_mapping(checkpoints, config)
 
+    if state.selected_model_label in options:
+        default_index = options.index(state.selected_model_label)
+    else:
+        default_index = 0
+
     selected_label = st.selectbox(
         "Select Trained Model",
         options,
-        index=options.index(state.selected_model) if state.selected_model in options else 0,
+        index=default_index,
         help="Choose a trained OCR model for inference. Models are organized using metadata derived from checkpoints.",
     )
 
     info = mapping.get(selected_label)
     if info is None:
-        state.reset_for_model(selected_label)
+        state.reset_for_model(None, selected_label)
+        state.persist()
         return None
 
     # Load full metadata for the selected checkpoint
@@ -68,7 +266,8 @@ def _render_model_selector(
         metadata = info.load_full_metadata(schema)
 
     selected_model_path = metadata.checkpoint_path
-    state.reset_for_model(str(selected_model_path))
+    state.reset_for_model(str(selected_model_path), selected_label)
+    state.persist()
 
     return metadata
 
@@ -298,10 +497,11 @@ def _render_upload_section(
     if len(uploaded_files) == 1 and config.upload.immediate_inference_for_single:
         file = uploaded_files[0]
         st.success("✅ 1 image uploaded and ready for inference")
-        if st.button("🚀 Run Inference", width="stretch"):
+        if st.button("🚀 Run Inference", type="primary", use_container_width=True):
             return InferenceRequest(
                 files=[file],
                 model_path=str(metadata.checkpoint_path),
+                config_path=str(metadata.config_path) if metadata.config_path else None,
                 use_preprocessing=state.preprocessing_enabled,
                 preprocessing_config=state.build_preprocessing_config(config.preprocessing),
             )
@@ -314,10 +514,11 @@ def _render_upload_section(
 
     if selected_files:
         st.success(f"✅ {len(selected_files)} of {len(uploaded_files)} images selected for inference")
-        if st.button("🚀 Run Inference", width="stretch"):
+        if st.button("🚀 Run Inference", type="primary", use_container_width=True):
             return InferenceRequest(
                 files=selected_files,
                 model_path=str(metadata.checkpoint_path),
+                config_path=str(metadata.config_path) if metadata.config_path else None,
                 use_preprocessing=state.preprocessing_enabled,
                 preprocessing_config=state.build_preprocessing_config(config.preprocessing),
             )
@@ -348,11 +549,19 @@ def _render_selection_checkboxes(state: InferenceState, uploaded_files: Sequence
 
 
 def _render_clear_results(state: InferenceState) -> None:
-    if not state.inference_results:
+    if not (state.inference_results or state.processed_images or state.selected_images):
         return
     st.divider()
-    if st.button("🗑️ Clear Results", width="stretch"):
-        state.inference_results.clear()
-        state.processed_images.clear()
-        state.persist()
-    st.rerun()
+    col1, col2, col3 = st.columns(3)
+    with col1:
+        if st.button("🗑️ Clear Results", use_container_width=True):
+            _clear_inference_results(state)
+            st.rerun()
+    with col2:
+        if st.button("📋 Clear Image List", use_container_width=True):
+            _clear_image_list(state)
+            st.rerun()
+    with col3:
+        if st.button("♻️ Reset Session", use_container_width=True):
+            clear_session_state()
+            st.rerun()

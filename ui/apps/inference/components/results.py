@@ -16,9 +16,11 @@ refactor protocols documented in ``docs/ai_handbook/02_protocols``.
 #   path: docs/ai_handbook/02_protocols/02_command_registry.md#5-streamlit-ui-launchers
 # ]
 
+import re
 from typing import Any
 
 import numpy as np
+import pandas as pd
 import streamlit as st
 from PIL import Image, ImageDraw
 
@@ -33,6 +35,9 @@ def render_results(state: InferenceState, config: UIConfig) -> None:
     if not state.inference_results:
         st.info("No inference results yet. Upload images and run inference to see results.")
         return
+
+    # Check if we have batch prediction output files to display
+    _render_batch_output_section(state)
 
     if config.results.show_summary:
         _render_summary(state)
@@ -49,6 +54,56 @@ def render_results(state: InferenceState, config: UIConfig) -> None:
         expanded = config.results.expand_first_result and index == 0
         with st.expander(title, expanded=expanded):
             _render_single_result(result, config)
+
+
+def _clear_state_results(state: InferenceState) -> None:
+    state.inference_results.clear()
+    state.processed_images.clear()
+    state.selected_images.clear()
+    state.batch_output_files.clear()
+    state.persist()
+
+
+def _render_batch_output_section(state: InferenceState) -> None:
+    """Render batch prediction output files with download buttons."""
+    from pathlib import Path
+
+    if not state.batch_output_files:
+        return
+
+    st.subheader("📦 Batch Prediction Outputs")
+
+    # Display download buttons for each output file
+    for format_name, file_path in state.batch_output_files.items():
+        file_path_obj = Path(file_path)
+
+        if not file_path_obj.exists():
+            st.warning(f"⚠️ Output file not found: {file_path}")
+            continue
+
+        # Read file content for download button
+        try:
+            with open(file_path_obj, "rb") as f:
+                file_content = f.read()
+
+            # Determine MIME type
+            mime_type = "application/json" if format_name.lower() == "json" else "text/csv"
+
+            col1, col2 = st.columns([3, 1])
+            with col1:
+                st.success(f"✅ **{format_name.upper()}**: `{file_path}`")
+            with col2:
+                st.download_button(
+                    label=f"⬇️ Download {format_name.upper()}",
+                    data=file_content,
+                    file_name=file_path_obj.name,
+                    mime=mime_type,
+                    use_container_width=True,
+                )
+        except Exception as e:
+            st.error(f"❌ Error reading {format_name.upper()} file: {e}")
+
+    st.divider()
 
 
 def _render_summary(state: InferenceState) -> None:
@@ -75,7 +130,7 @@ def _render_results_table(state: InferenceState, config: UIConfig) -> None:
     # Create table data
     table_data = []
 
-    for result in state.inference_results:
+    for idx, result in enumerate(state.inference_results):
         filename = result.filename
         success = result.success
 
@@ -105,10 +160,8 @@ def _render_results_table(state: InferenceState, config: UIConfig) -> None:
             )
 
     # Display as a clean table
-    import pandas as pd
-
     df = pd.DataFrame(table_data)
-    st.dataframe(df, width="stretch")
+    st.dataframe(df, use_container_width=True)
 
 
 def _render_single_result(result: InferenceResult, config: UIConfig) -> None:
@@ -127,6 +180,7 @@ def _render_single_result(result: InferenceResult, config: UIConfig) -> None:
 
     if result.image is not None and predictions:
         _display_image_with_predictions(result.image, predictions, config)
+        # st.warning("Image display disabled for testing")
 
     if result.preprocessing:
         _render_preprocessing_section(result.preprocessing, config)
@@ -138,7 +192,26 @@ def _render_single_result(result: InferenceResult, config: UIConfig) -> None:
 
 def _display_image_with_predictions(image_array: np.ndarray, predictions: Predictions, config: UIConfig) -> None:
     try:
+        # Convert to PIL Image
         pil_image = Image.fromarray(image_array)
+
+        # Downsample large images for display to prevent memory issues
+        MAX_DISPLAY_SIZE = 2048
+        if pil_image.width > MAX_DISPLAY_SIZE or pil_image.height > MAX_DISPLAY_SIZE:
+            # Calculate scaling factor
+            scale = min(MAX_DISPLAY_SIZE / pil_image.width, MAX_DISPLAY_SIZE / pil_image.height)
+            new_width = int(pil_image.width * scale)
+            new_height = int(pil_image.height * scale)
+            pil_image = pil_image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+            # Scale polygon coordinates proportionally
+            scaled_predictions = Predictions(
+                polygons=_scale_polygons(predictions.polygons, scale),
+                texts=predictions.texts,
+                confidences=predictions.confidences,
+            )
+            predictions = scaled_predictions
+
         draw = ImageDraw.Draw(pil_image, "RGBA")
 
         if predictions.polygons:
@@ -147,10 +220,9 @@ def _display_image_with_predictions(image_array: np.ndarray, predictions: Predic
             confidences = predictions.confidences
 
             for index, polygon_str in enumerate(polygons):
-                coords = [int(value) for value in polygon_str.split(",") if value]
-                if len(coords) < 8 or len(coords) % 2 != 0:
+                points = _parse_polygon_points(polygon_str)
+                if not points:
                     continue
-                points = [(coords[i], coords[i + 1]) for i in range(0, len(coords), 2)]
 
                 draw.polygon(points, outline=(255, 0, 0, 255), fill=(255, 0, 0, 30))
 
@@ -174,6 +246,7 @@ def _display_image_with_predictions(image_array: np.ndarray, predictions: Predic
             pil_image,
             caption="OCR Predictions",
             width=width_setting,  # type: ignore[arg-type]
+            clamp=True,  # Clamp pixel values to prevent crashes
         )
     except Exception as exc:  # noqa: BLE001
         st.error("Could not render predictions on the image. Displaying original image instead.")
@@ -182,8 +255,52 @@ def _display_image_with_predictions(image_array: np.ndarray, predictions: Predic
             image_array,
             caption="Original Image",
             width=width_setting,  # type: ignore[arg-type]
+            channels="RGB",  # Specify color channel order
+            clamp=True,  # Clamp pixel values to prevent crashes
         )
         raise exc from exc
+
+
+def _parse_polygon_points(polygon_str: str) -> list[tuple[int, int]]:
+    tokens = re.findall(r"-?\d+(?:\.\d+)?", polygon_str)
+    if len(tokens) < 8 or len(tokens) % 2 != 0:
+        return []
+
+    coords = [float(token) for token in tokens]
+    points: list[tuple[int, int]] = []
+    for x, y in zip(coords[0::2], coords[1::2], strict=True):
+        points.append((int(round(x)), int(round(y))))
+    return points
+
+
+def _scale_polygons(polygons_str: str, scale: float) -> str:
+    """Scale polygon coordinates by a given factor.
+
+    Args:
+        polygons_str: Pipe-separated polygon string
+        scale: Scaling factor to apply to all coordinates
+
+    Returns:
+        Scaled polygon string in same format
+    """
+    if not polygons_str or not polygons_str.strip():
+        return ""
+
+    scaled_polygons = []
+    for polygon_str in polygons_str.split("|"):
+        if not polygon_str.strip():
+            continue
+
+        tokens = re.findall(r"-?\d+(?:\.\d+)?", polygon_str)
+        if len(tokens) < 8 or len(tokens) % 2 != 0:
+            # Invalid polygon, skip it
+            continue
+
+        # Scale all coordinates
+        scaled_coords = [str(int(round(float(token) * scale))) for token in tokens]
+        scaled_polygons.append(" ".join(scaled_coords))
+
+    return "|".join(scaled_polygons)
 
 
 def _render_preprocessing_section(preprocessing: PreprocessingInfo, config: UIConfig) -> None:
@@ -205,12 +322,12 @@ def _render_preprocessing_section(preprocessing: PreprocessingInfo, config: UICo
 
     if original_image is not None:
         overlay = _draw_document_overlay(original_image, metadata, config.preprocessing.show_corner_overlay)
-        col_raw.image(overlay, caption="Original Upload", width="stretch")
+        col_raw.image(overlay, caption="Original Upload", width="stretch", channels="RGB", clamp=True)
     else:
         col_raw.info("Original image unavailable.")
 
     if processed_image is not None:
-        col_processed.image(processed_image, caption="After docTR Preprocessing", width="stretch")
+        col_processed.image(processed_image, caption="After docTR Preprocessing", width="stretch", channels="RGB", clamp=True)
     else:
         col_processed.info("No preprocessed output available.")
 
@@ -289,7 +406,7 @@ def _display_intermediate_images(metadata: dict[str, Any], config: UIConfig) -> 
 
             col1, col2 = st.columns(2)
             with col1:
-                st.image(metadata[image_key], caption=caption, width="stretch")
+                st.image(metadata[image_key], caption=caption, width="stretch", channels="RGB", clamp=True)
 
             # Show processing steps up to this point
             step_mapping = {

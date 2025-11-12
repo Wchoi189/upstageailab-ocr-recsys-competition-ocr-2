@@ -9,7 +9,7 @@
 ## Executive Summary
 
 ### Problem Statement
-The Unified OCR App (ui/apps/unified_ocr_app/app.py) fails to load in the browser - the UI shows a perpetual loading spinner. Investigation revealed **critical architectural issues** that require a complete refactoring.
+The Unified OCR App ([ui/apps/unified_ocr_app/app.py](ui/apps/unified_ocr_app/app.py)) fails to load in the browser - the UI shows a perpetual loading spinner. Investigation revealed **critical architectural issues** that require a complete refactoring.
 
 ### Root Causes Identified
 
@@ -52,7 +52,7 @@ from ui.apps.unified_ocr_app.components.preprocessing.parameter_panel import ren
 ```
 
 **Files Modified**:
-- ui/apps/unified_ocr_app/app.py - Moved imports, removed duplicate imports from functions
+- [ui/apps/unified_ocr_app/app.py](ui/apps/unified_ocr_app/app.py) - Moved imports, removed duplicate imports from functions
 
 **Testing**:
 - ✅ Direct Python import works: `python -c "import ui.apps.unified_ocr_app.app"`
@@ -404,17 +404,17 @@ DEBUG: Logger initialized
 ## Key Files Reference
 
 ### Modified This Session
-- **ui/apps/unified_ocr_app/app.py** - Moved imports to module level, added debug code
+- **[ui/apps/unified_ocr_app/app.py](ui/apps/unified_ocr_app/app.py)** - Moved imports to module level, added debug code
 
 ### Needs Investigation
-- **ui/apps/unified_ocr_app/services/inference_service.py** - Likely culprit for heavy loading
-- **ui/apps/unified_ocr_app/services/preprocessing_service.py** - Check for heavy init
-- **ui/apps/unified_ocr_app/services/comparison_service.py** - Check `get_comparison_service()`
+- **[ui/apps/unified_ocr_app/services/inference_service.py](ui/apps/unified_ocr_app/services/inference_service.py)** - Likely culprit for heavy loading
+- **[ui/apps/unified_ocr_app/services/preprocessing_service.py](ui/apps/unified_ocr_app/services/preprocessing_service.py)** - Check for heavy init
+- **[ui/apps/unified_ocr_app/services/comparison_service.py](ui/apps/unified_ocr_app/services/comparison_service.py)** - Check `get_comparison_service()`
 
 ### Related Documentation
 - **[SESSION_COMPLETE_2025-10-21_PHASE7.md](SESSION_COMPLETE_2025-10-21_PHASE7.md)** - Phase 7 completion
-- **docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md** - Original architecture
-- **docs/ai_handbook/08_planning/MIGRATION_GUIDE.md** - User migration guide
+- **[docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)** - Original architecture
+- **[docs/ai_handbook/08_planning/MIGRATION_GUIDE.md](docs/ai_handbook/08_planning/MIGRATION_GUIDE.md)** - User migration guide
 
 ---
 

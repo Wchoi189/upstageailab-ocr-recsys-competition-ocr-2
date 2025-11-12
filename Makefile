@@ -145,23 +145,23 @@ docs-deploy:
 
 diagrams-check:
 	@echo "🔍 Checking for diagram updates..."
-	python scripts/documentation/generate_diagrams.py --check-changes
+	python scripts/generate_diagrams.py --check-changes
 
 diagrams-update:
 	@echo "🔄 Updating diagrams that have changed..."
-	python scripts/documentation/generate_diagrams.py --update
+	python scripts/generate_diagrams.py --update
 
 diagrams-force-update:
 	@echo "🔄 Force updating all diagrams..."
-	python scripts/documentation/generate_diagrams.py --update --force
+	python scripts/generate_diagrams.py --update --force
 
 diagrams-validate:
 	@echo "✅ Validating diagram syntax..."
-	python scripts/documentation/generate_diagrams.py --validate
+	python scripts/generate_diagrams.py --validate
 
 diagrams-update-specific:
 	@echo "🔄 Updating specific diagrams: $(DIAGRAMS)"
-	python scripts/documentation/generate_diagrams.py --update $(DIAGRAMS)
+	python scripts/generate_diagrams.py --update $(DIAGRAMS)
 
 # ============================================================================
 # UI APPLICATIONS (Parameterized)
@@ -169,119 +169,119 @@ diagrams-update-specific:
 
 # Start UI applications
 serve-command_builder serve-ui:
-	uv run python scripts/utilities/process_manager.py start command_builder --port=$(PORT)
+	uv run python scripts/process_manager.py start command_builder --port=$(PORT)
 
 serve-evaluation_viewer serve-evaluation-ui:
-	uv run python scripts/utilities/process_manager.py start evaluation_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py start evaluation_viewer --port=$(PORT)
 
 serve-inference serve-inference-ui:
-	uv run python scripts/utilities/process_manager.py start inference --port=$(PORT)
+	uv run python scripts/process_manager.py start inference --port=$(PORT)
 
 serve-preprocessing_viewer serve-preprocessing-viewer:
-	uv run python scripts/utilities/process_manager.py start preprocessing_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py start preprocessing_viewer --port=$(PORT)
 
 serve-resource_monitor serve-resource-monitor:
-	uv run python scripts/utilities/process_manager.py start resource_monitor --port=$(PORT)
+	uv run python scripts/process_manager.py start resource_monitor --port=$(PORT)
 
 serve-unified_app serve-unified-app:
-	uv run python scripts/utilities/process_manager.py start unified_app --port=$(PORT)
+	uv run python scripts/process_manager.py start unified_app --port=$(PORT)
 
 # Stop UI applications
 stop-command_builder stop-ui:
-	uv run python scripts/utilities/process_manager.py stop command_builder --port=$(PORT)
+	uv run python scripts/process_manager.py stop command_builder --port=$(PORT)
 
 stop-evaluation_viewer stop-evaluation-ui:
-	uv run python scripts/utilities/process_manager.py stop evaluation_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py stop evaluation_viewer --port=$(PORT)
 
 stop-inference stop-inference-ui:
-	uv run python scripts/utilities/process_manager.py stop inference --port=$(PORT)
+	uv run python scripts/process_manager.py stop inference --port=$(PORT)
 
 stop-preprocessing_viewer stop-preprocessing-viewer:
-	uv run python scripts/utilities/process_manager.py stop preprocessing_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py stop preprocessing_viewer --port=$(PORT)
 
 stop-resource_monitor stop-resource-monitor:
-	uv run python scripts/utilities/process_manager.py stop resource_monitor --port=$(PORT)
+	uv run python scripts/process_manager.py stop resource_monitor --port=$(PORT)
 
 stop-unified_app stop-unified-app:
-	uv run python scripts/utilities/process_manager.py stop unified_app --port=$(PORT)
+	uv run python scripts/process_manager.py stop unified_app --port=$(PORT)
 
 # Check UI application status
 status-command_builder status-ui:
-	uv run python scripts/utilities/process_manager.py status command_builder --port=$(PORT)
+	uv run python scripts/process_manager.py status command_builder --port=$(PORT)
 
 status-evaluation_viewer status-evaluation-ui:
-	uv run python scripts/utilities/process_manager.py status evaluation_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py status evaluation_viewer --port=$(PORT)
 
 status-inference status-inference-ui:
-	uv run python scripts/utilities/process_manager.py status inference --port=$(PORT)
+	uv run python scripts/process_manager.py status inference --port=$(PORT)
 
 status-preprocessing_viewer status-preprocessing-viewer:
-	uv run python scripts/utilities/process_manager.py status preprocessing_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py status preprocessing_viewer --port=$(PORT)
 
 status-resource_monitor status-resource-monitor:
-	uv run python scripts/utilities/process_manager.py status resource_monitor --port=$(PORT)
+	uv run python scripts/process_manager.py status resource_monitor --port=$(PORT)
 
 status-unified_app status-unified-app:
-	uv run python scripts/utilities/process_manager.py status unified_app --port=$(PORT)
+	uv run python scripts/process_manager.py status unified_app --port=$(PORT)
 
 # View UI application logs
 logs-command_builder logs-ui:
-	uv run python scripts/utilities/process_manager.py logs command_builder --port=$(PORT)
+	uv run python scripts/process_manager.py logs command_builder --port=$(PORT)
 
 logs-evaluation_viewer logs-evaluation-ui:
-	uv run python scripts/utilities/process_manager.py logs evaluation_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py logs evaluation_viewer --port=$(PORT)
 
 logs-inference logs-inference-ui:
-	uv run python scripts/utilities/process_manager.py logs inference --port=$(PORT)
+	uv run python scripts/process_manager.py logs inference --port=$(PORT)
 
 logs-preprocessing_viewer logs-preprocessing-viewer:
-	uv run python scripts/utilities/process_manager.py logs preprocessing_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py logs preprocessing_viewer --port=$(PORT)
 
 logs-resource_monitor logs-resource-monitor:
-	uv run python scripts/utilities/process_manager.py logs resource_monitor --port=$(PORT)
+	uv run python scripts/process_manager.py logs resource_monitor --port=$(PORT)
 
 logs-unified_app logs-unified-app:
-	uv run python scripts/utilities/process_manager.py logs unified_app --port=$(PORT)
+	uv run python scripts/process_manager.py logs unified_app --port=$(PORT)
 
 # Clear UI application logs
 clear-logs-command_builder clear-logs-ui:
-	uv run python scripts/utilities/process_manager.py clear-logs command_builder --port=$(PORT)
+	uv run python scripts/process_manager.py clear-logs command_builder --port=$(PORT)
 
 clear-logs-evaluation_viewer clear-logs-evaluation-ui:
-	uv run python scripts/utilities/process_manager.py clear-logs evaluation_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py clear-logs evaluation_viewer --port=$(PORT)
 
 clear-logs-inference clear-logs-inference-ui:
-	uv run python scripts/utilities/process_manager.py clear-logs inference --port=$(PORT)
+	uv run python scripts/process_manager.py clear-logs inference --port=$(PORT)
 
 clear-logs-preprocessing_viewer clear-logs-preprocessing-viewer:
-	uv run python scripts/utilities/process_manager.py clear-logs preprocessing_viewer --port=$(PORT)
+	uv run python scripts/process_manager.py clear-logs preprocessing_viewer --port=$(PORT)
 
 clear-logs-resource_monitor clear-logs-resource-monitor:
-	uv run python scripts/utilities/process_manager.py clear-logs resource_monitor --port=$(PORT)
+	uv run python scripts/process_manager.py clear-logs resource_monitor --port=$(PORT)
 
 clear-logs-unified_app clear-logs-unified-app:
-	uv run python scripts/utilities/process_manager.py clear-logs unified_app --port=$(PORT)
+	uv run python scripts/process_manager.py clear-logs unified_app --port=$(PORT)
 
 # UI process management
 list-ui-processes:
-	uv run python scripts/utilities/process_manager.py list
+	uv run python scripts/process_manager.py list
 
 stop-all-ui:
-	uv run python scripts/utilities/process_manager.py stop-all
+	uv run python scripts/process_manager.py stop-all
 
 # ============================================================================
 # DEVELOPMENT WORKFLOW
 # ============================================================================
 
 context-log-start:
-	uv run python scripts/agent_tools/utilities/context_log.py start $(if $(LABEL),--label "$(LABEL)")
+	uv run python scripts/agent_tools/context_log.py start $(if $(LABEL),--label "$(LABEL)")
 
 context-log-summarize:
 	@if [ -z "$(LOG)" ]; then \
 		echo "Usage: make context-log-summarize LOG=logs/agent_runs/<file>.jsonl"; \
 		exit 1; \
 	fi
-	uv run python scripts/agent_tools/utilities/context_log.py summarize --log-file $(LOG)
+	uv run python scripts/agent_tools/context_log.py summarize --log-file $(LOG)
 
 quick-fix-log:
 	@if [ -z "$(TYPE)" ] || [ -z "$(TITLE)" ] || [ -z "$(ISSUE)" ] || [ -z "$(FIX)" ] || [ -z "$(FILES)" ]; then \
@@ -290,7 +290,7 @@ quick-fix-log:
 		echo "Example: make quick-fix-log TYPE=bug TITLE=\"Pydantic compatibility\" ISSUE=\"replace() error\" FIX=\"Use model_copy\" FILES=\"ui/state.py\""; \
 		exit 1; \
 	fi
-	uv run python scripts/agent_tools/utilities/quick_fix_log.py $(TYPE) "$(TITLE)" --issue "$(ISSUE)" --fix "$(FIX)" --files "$(FILES)" $(if $(IMPACT),--impact $(IMPACT)) $(if $(TEST),--test $(TEST))
+	uv run python scripts/agent_tools/quick_fix_log.py $(TYPE) "$(TITLE)" --issue "$(ISSUE)" --fix "$(FIX)" --files "$(FILES)" $(if $(IMPACT),--impact $(IMPACT)) $(if $(TEST),--test $(TEST))
 
 # ============================================================================
 # CI SIMULATION

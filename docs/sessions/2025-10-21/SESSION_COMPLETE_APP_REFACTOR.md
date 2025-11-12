@@ -27,31 +27,31 @@ Successfully refactored the Unified OCR App from a monolithic 724-line single-fi
 
 ### New Files Created
 
-1. **Home Page** - `ui/apps/unified_ocr_app/app.py`
+1. **Home Page** - [`ui/apps/unified_ocr_app/app.py`](../../ui/apps/unified_ocr_app/app.py)
    - 162 lines (was 724)
    - Clean welcome screen
    - Mode descriptions
    - Quick stats dashboard
 
-2. **Shared Utilities** - `ui/apps/unified_ocr_app/shared_utils.py`
+2. **Shared Utilities** - [`ui/apps/unified_ocr_app/shared_utils.py`](../../ui/apps/unified_ocr_app/shared_utils.py)
    - 76 lines
    - `get_app_config()` - Cached configuration
    - `get_app_state()` - Session state management
    - `setup_page()` - Page configuration
 
-3. **Preprocessing Page** - `ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py`
+3. **Preprocessing Page** - [`ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py`](../../ui/apps/unified_ocr_app/pages/1_🎨_Preprocessing.py)
    - 136 lines
    - Interactive parameter tuning
    - Pipeline visualization
    - Preset management
 
-4. **Inference Page** - `ui/apps/unified_ocr_app/pages/2_🤖_Inference.py`
+4. **Inference Page** - [`ui/apps/unified_ocr_app/pages/2_🤖_Inference.py`](../../ui/apps/unified_ocr_app/pages/2_🤖_Inference.py)
    - 247 lines
    - Single image inference
    - Batch processing
    - Checkpoint selection
 
-5. **Comparison Page** - `ui/apps/unified_ocr_app/pages/3_📊_Comparison.py`
+5. **Comparison Page** - [`ui/apps/unified_ocr_app/pages/3_📊_Comparison.py`](../../ui/apps/unified_ocr_app/pages/3_📊_Comparison.py)
    - 223 lines
    - A/B testing
    - Metrics analysis
@@ -59,7 +59,7 @@ Successfully refactored the Unified OCR App from a monolithic 724-line single-fi
 
 ### Backup Created
 
-- **Original monolithic version**: `ui/apps/unified_ocr_app/backup/app_monolithic_backup_2025-10-21.py`
+- **Original monolithic version**: [`ui/apps/unified_ocr_app/backup/app_monolithic_backup_2025-10-21.py`](../../ui/apps/unified_ocr_app/backup/app_monolithic_backup_2025-10-21.py)
 - Can be restored if needed (see Rollback Plan)
 
 ---
@@ -102,9 +102,9 @@ Successfully refactored the Unified OCR App from a monolithic 724-line single-fi
 - [x] No changes needed (already using `@st.cache_data`)
 
 ### ✅ Documentation
-- [x] Updated CHANGELOG.md with v0.2.0
-- [x] Created detailed changelog entry
-- [x] Updated APP_REFACTOR_PLAN.md status
+- [x] Updated [CHANGELOG.md](../../../CHANGELOG.md) with v0.2.0
+- [x] Created detailed [changelog entry](../../ai_handbook/05_changelog/2025-10/21_unified_ocr_app_multipage_refactor.md)
+- [x] Updated [APP_REFACTOR_PLAN.md](../../ai_handbook/08_planning/APP_REFACTOR_PLAN.md) status
 
 ---
 
@@ -248,15 +248,15 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 
 ## 📚 Documentation Updated
 
-1. **Main Changelog**: docs/CHANGELOG.md
+1. **Main Changelog**: [docs/CHANGELOG.md](../../../CHANGELOG.md)
    - Added v0.2.0 entry with full details
 
-2. **Detailed Entry**: docs/ai_handbook/05_changelog/2025-10/21_unified_ocr_app_multipage_refactor.md
+2. **Detailed Entry**: [docs/ai_handbook/05_changelog/2025-10/21_unified_ocr_app_multipage_refactor.md](../../ai_handbook/05_changelog/2025-10/21_unified_ocr_app_multipage_refactor.md)
    - Complete refactoring documentation
    - Before/after comparison
    - Benefits and metrics
 
-3. **Refactor Plan**: docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md
+3. **Refactor Plan**: [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](../../ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
    - Updated status to ✅ COMPLETED
    - Noted actual vs estimated effort
 
@@ -307,14 +307,14 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py
 ## 📖 References
 
 ### Plans & Documentation
-- APP_REFACTOR_PLAN.md - Original plan
-- UNIFIED_STREAMLIT_APP_ARCHITECTURE.md - Architecture
+- [APP_REFACTOR_PLAN.md](../../ai_handbook/08_planning/APP_REFACTOR_PLAN.md) - Original plan
+- [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](../../ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md) - Architecture
 - [Streamlit Multi-Page Apps](https://docs.streamlit.io/library/get-started/multipage-apps) - Official docs
 
 ### Code References
-- app.py - New home page
-- shared_utils.py - Utilities
-- pages/ - All mode pages
+- [app.py](../../ui/apps/unified_ocr_app/app.py) - New home page
+- [shared_utils.py](../../ui/apps/unified_ocr_app/shared_utils.py) - Utilities
+- [pages/](../../ui/apps/unified_ocr_app/pages/) - All mode pages
 
 ### Related Sessions
 - [SESSION_COMPLETE_2025-10-21.md](./SESSION_COMPLETE_2025-10-21.md) - Main session

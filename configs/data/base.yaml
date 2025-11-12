@@ -2,7 +2,7 @@
 
 dataset_base_path: "${hydra:runtime.cwd}/data/datasets/"
 
-batch_size: 16
+batch_size: 4
 
 data:
   train_num_samples: null
