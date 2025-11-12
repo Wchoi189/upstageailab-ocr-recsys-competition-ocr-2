@@ -346,7 +346,7 @@ git checkout main -- docs/agents/
 
 1. **polygon_utils.py** (2025-11-12)
    - **Decision**: Merge both versions
-   - **Action**: 
+   - **Action**:
      - Preserved streamlit's `filter_degenerate_polygons()` signature with backward-compatible parameters
      - Added main's validation functions after `filter_degenerate_polygons()`
      - All functions are now available in the merged version
