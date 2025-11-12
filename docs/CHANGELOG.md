@@ -5,6 +5,62 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-11-12
+
+### Added - 2025-11-12
+
+#### Branch Merge: Main + 12_refactor/streamlit
+
+- **AgentQMS System** - Ported artifact management system from main (163 files)
+  - Artifact creation and validation tools
+  - Schema validation for assessments, bug reports, and implementation plans
+  - Template system for consistent documentation
+  - Quality manifest tracking
+- **Scripts Refactor** - Ported reorganized scripts directory from main (110 files, 20,846+ lines)
+  - Better tool organization (core, compliance, documentation, utilities, maintenance, OCR)
+  - Improved tool discovery and documentation
+  - Enhanced automation capabilities
+- **Documentation Structure** - Ported `docs/agents/` system from main (17 files, 2,795+ lines)
+  - AI agent instructions and protocols
+  - Development and governance protocols
+  - Architecture and tool references
+- **Test Coverage** - Merged additional test files from main
+  - Enhanced integration tests
+  - Additional unit test coverage
+- **Polygon Validation** - Added PLAN-002 improvements from main
+  - `validate_polygon_finite()` - Check for finite coordinate values
+  - `validate_polygon_area()` - Validate polygon area using OpenCV
+  - `has_duplicate_consecutive_points()` - Detect duplicate points
+  - `is_valid_polygon()` - Comprehensive configurable validation
+
+### Changed - 2025-11-12
+
+#### Dependencies
+
+- **Added Jinja2>=3.1.0** - Required dependency for AgentQMS template system
+
+#### Polygon Utilities
+
+- **Enhanced `filter_degenerate_polygons()`** - Preserved backward-compatible signature from streamlit branch while adding validation functions from main
+- **Merged polygon validation logic** - Combined improvements from both branches
+
+### Preserved from Streamlit Branch
+
+- **Unified OCR App** - Multi-page Streamlit application (29 files, 6,400+ lines)
+- **Checkpoint Catalog System** - Enhanced checkpoint management (10 files, 2,774+ lines)
+- **Experiment Registry** - New experiment tracking feature
+- **Metadata Callback** - Enhanced Lightning callback for metadata
+- **Enhanced preprocessing dependencies** - `rembg` and `onnxruntime` for advanced preprocessing
+- **WandB fixes** - Proper enable/disable checks in training runner
+
+### Technical Details
+
+- **Merge Strategy**: Used `12_refactor/streamlit` as base branch
+- **Approach**: Selective cherry-picking of improvements from main
+- **Backup**: Created `merge-backup-streamlit` branch before merge
+- **Working Branch**: `merge-main-into-streamlit`
+- **Status**: All critical merges complete, verification in progress
+
 ## [0.2.0] - 2025-10-21
 
 ### Changed - 2025-10-21 (Evening)
