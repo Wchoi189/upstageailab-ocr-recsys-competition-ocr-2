@@ -8,7 +8,7 @@ from typing import Any
 
 import numpy as np
 import torch
-from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
 
 
 class CacheConfig(BaseModel):
@@ -195,30 +195,19 @@ class ValidatedPolygonData(PolygonData):
     image_width: int = Field(gt=0, description="Image width for bounds checking")
     image_height: int = Field(gt=0, description="Image height for bounds checking")
 
-    @field_validator("points")
-    @classmethod
-    def validate_bounds(cls, points: np.ndarray, info: ValidationInfo) -> np.ndarray:
+    @model_validator(mode="after")
+    def validate_bounds(self) -> "ValidatedPolygonData":
         """Validate that all polygon coordinates are within image bounds.
 
-        Args:
-            points: Polygon coordinates as (N, 2) array
-            info: Validation context containing image_width and image_height
-
         Returns:
-            The validated points array
+            The validated model instance
 
         Raises:
             ValueError: If any coordinate is out of bounds with detailed error message
         """
-        if info.data is None:
-            return points
-
-        image_width = info.data.get("image_width")
-        image_height = info.data.get("image_height")
-
-        if image_width is None or image_height is None:
-            # If dimensions not provided, skip bounds checking
-            return points
+        points = self.points
+        image_width = self.image_width
+        image_height = self.image_height
 
         # Check x-coordinates (width)
         x_coords = points[:, 0]
@@ -244,7 +233,7 @@ class ValidatedPolygonData(PolygonData):
                 f"(must be in [0, {image_height}))"
             )
 
-        return points
+        return self
 
 
 class TransformInput(BaseModel):

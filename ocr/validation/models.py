@@ -12,7 +12,7 @@ from typing import Any
 
 import numpy as np
 import torch
-from pydantic import BaseModel, ConfigDict, Field, ValidationError, ValidationInfo, field_validator
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, ValidationInfo, field_validator, model_validator
 from pydantic_core import InitErrorDetails, PydanticCustomError
 
 from ocr.datasets.schemas import ImageMetadata
@@ -484,95 +484,65 @@ class ValidatedTensorData(_ModelBase):
     allow_inf: bool = Field(default=False, description="Whether to allow infinite values")
     allow_nan: bool = Field(default=False, description="Whether to allow NaN values")
 
-    @field_validator("tensor")
-    @classmethod
-    def _validate_tensor_type(cls, value: Any) -> torch.Tensor:
-        """Validate that value is a torch.Tensor."""
-        if not isinstance(value, torch.Tensor):
-            raise TypeError(f"Expected torch.Tensor, got {type(value).__name__}")
-        return value
-
-    @field_validator("tensor")
-    @classmethod
-    def _validate_tensor_shape(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
-        """Validate tensor shape matches expected shape."""
-        data = _info_data(info)
-        expected_shape = data.get("expected_shape")
-
-        if expected_shape is not None:
-            if tuple(tensor.shape) != tuple(expected_shape):
+    @model_validator(mode="after")
+    def _validate_tensor(self) -> "ValidatedTensorData":
+        """Validate tensor with all constraints: type, shape, device, dtype, values."""
+        tensor = self.tensor
+        
+        # Type validation (should already be validated by field type, but double-check)
+        if not isinstance(tensor, torch.Tensor):
+            raise TypeError(f"Expected torch.Tensor, got {type(tensor).__name__}")
+        
+        # Shape validation
+        if self.expected_shape is not None:
+            if tuple(tensor.shape) != tuple(self.expected_shape):
                 raise ValueError(
-                    f"Tensor shape mismatch: expected {tuple(expected_shape)}, "
+                    f"Tensor shape mismatch: expected {tuple(self.expected_shape)}, "
                     f"got {tuple(tensor.shape)}"
                 )
-        return tensor
-
-    @field_validator("tensor")
-    @classmethod
-    def _validate_tensor_device(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
-        """Validate tensor device matches expected device."""
-        data = _info_data(info)
-        expected_device = data.get("expected_device")
-
-        if expected_device is not None:
-            expected_device_str = str(expected_device)
+        
+        # Device validation
+        if self.expected_device is not None:
+            expected_device_str = str(self.expected_device)
             actual_device_str = str(tensor.device)
-
+            
             # Normalize device strings for comparison (e.g., "cuda" vs "cuda:0")
             if expected_device_str == "cuda" and actual_device_str.startswith("cuda"):
-                return tensor
-            if expected_device_str != actual_device_str:
+                pass  # Valid
+            elif expected_device_str != actual_device_str:
                 raise ValueError(
                     f"Tensor device mismatch: expected {expected_device_str}, "
                     f"got {actual_device_str}"
                 )
-        return tensor
-
-    @field_validator("tensor")
-    @classmethod
-    def _validate_tensor_dtype(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
-        """Validate tensor dtype matches expected dtype."""
-        data = _info_data(info)
-        expected_dtype = data.get("expected_dtype")
-
-        if expected_dtype is not None:
-            if tensor.dtype != expected_dtype:
+        
+        # Dtype validation
+        if self.expected_dtype is not None:
+            if tensor.dtype != self.expected_dtype:
                 raise ValueError(
-                    f"Tensor dtype mismatch: expected {expected_dtype}, "
+                    f"Tensor dtype mismatch: expected {self.expected_dtype}, "
                     f"got {tensor.dtype}"
                 )
-        return tensor
-
-    @field_validator("tensor")
-    @classmethod
-    def _validate_tensor_values(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
-        """Validate tensor values are within expected range and check for inf/nan."""
-        data = _info_data(info)
-        value_range = data.get("value_range")
-        allow_inf = data.get("allow_inf", False)
-        allow_nan = data.get("allow_nan", False)
-
-        # Check for NaN values
-        if not allow_nan and torch.isnan(tensor).any():
+        
+        # Value validation (NaN/Inf and range)
+        if not self.allow_nan and torch.isnan(tensor).any():
             raise ValueError("Tensor contains NaN values (not allowed)")
-
-        # Check for infinite values
-        if not allow_inf and torch.isinf(tensor).any():
+        
+        if not self.allow_inf and torch.isinf(tensor).any():
             raise ValueError("Tensor contains infinite values (not allowed)")
-
-        # Check value range if specified
-        if value_range is not None:
-            min_val, max_val = value_range
+        
+        # Value range validation
+        if self.value_range is not None:
+            min_val, max_val = self.value_range
             tensor_min = tensor.min().item()
             tensor_max = tensor.max().item()
-
+            
             if tensor_min < min_val or tensor_max > max_val:
                 raise ValueError(
                     f"Tensor values out of range [{min_val}, {max_val}]: "
                     f"found values in [{tensor_min:.6f}, {tensor_max:.6f}]"
                 )
-
-        return tensor
+        
+        return self
 
     @field_validator("value_range")
     @classmethod
