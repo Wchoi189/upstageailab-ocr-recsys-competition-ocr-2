@@ -5,8 +5,16 @@ from datetime import datetime
 from typing import Any
 
 import torch
-import wandb
 from lightning.pytorch.callbacks import ModelCheckpoint
+
+
+def _get_wandb():
+    """Lazy import wandb to avoid slow startup times.
+
+    See: artifacts/implementation_plans/2025-11-11_plan-003-import-time-optimization.md
+    """
+    import wandb
+    return wandb
 
 
 class UniqueModelCheckpoint(ModelCheckpoint):
@@ -406,6 +414,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             self._generate_checkpoint_metadata(checkpoint_path, metrics)
 
         # Log checkpoint directory to wandb
+        wandb = _get_wandb()
         if wandb.run and self.dirpath:
             wandb.log({"checkpoint_dir": self.dirpath})
 

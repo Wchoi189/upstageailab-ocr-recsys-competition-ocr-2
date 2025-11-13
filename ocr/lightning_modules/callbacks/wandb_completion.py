@@ -3,8 +3,16 @@ from __future__ import annotations
 from pathlib import Path
 
 import lightning.pytorch as pl
-import wandb
 from lightning.pytorch.callbacks import Callback
+
+
+def _get_wandb():
+    """Lazy import wandb to avoid slow startup times.
+
+    See: artifacts/implementation_plans/2025-11-11_plan-003-import-time-optimization.md
+    """
+    import wandb
+    return wandb
 
 
 class WandbCompletionCallback(Callback):
@@ -15,6 +23,7 @@ class WandbCompletionCallback(Callback):
             print("Skipping completion signal for fast_dev_run.")
             return
 
+        wandb = _get_wandb()
         current_run = getattr(wandb, "run", None)
         if current_run:
             try:
@@ -41,6 +50,7 @@ class WandbCompletionCallback(Callback):
             print(f"Warning: Failed to create local sentinel file: {exc}")
 
     def on_exception(self, trainer: pl.Trainer, pl_module: pl.LightningModule, exception: BaseException) -> None:
+        wandb = _get_wandb()
         current_run = getattr(wandb, "run", None)
         if current_run:
             current_run.tags = current_run.tags + ("status:failed",)
