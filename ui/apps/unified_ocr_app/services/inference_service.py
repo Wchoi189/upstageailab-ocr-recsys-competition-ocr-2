@@ -120,56 +120,43 @@ class InferenceService:
         """Internal inference execution.
 
         Args:
-            image: Input image
+            image: Input image (BGR numpy array)
             checkpoint: Checkpoint object
             hyperparameters: Inference hyperparameters
             engine: Inference engine instance
 
         Returns:
             Dict with 'polygons' and 'scores'
+
+        Note:
+            Uses optimized numpy array path (no tempfile overhead).
+            See: artifacts/implementation_plans/2025-11-12_plan-004-revised-inference-consolidation.md
         """
         try:
-            # Use the underlying inference utility directly instead of the UI service
-            import tempfile
-            from pathlib import Path
-
-            import cv2
-
             from ui.utils.inference import run_inference_on_image
 
             # Get checkpoint path
             checkpoint_path = checkpoint.checkpoint_path if hasattr(checkpoint, "checkpoint_path") else checkpoint
 
-            # Save image to temporary file (the underlying engine expects file paths)
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".jpg") as tmp_file:
-                tmp_path = Path(tmp_file.name)
-                cv2.imwrite(str(tmp_path), image)
+            # NEW: Pass numpy array directly (eliminates tempfile overhead)
+            result = run_inference_on_image(
+                image_path=image,  # Pass numpy array directly
+                checkpoint_path=str(checkpoint_path),
+                **hyperparameters,
+            )
 
-            try:
-                # Run inference directly
-                result = run_inference_on_image(
-                    image_path=str(tmp_path),
-                    checkpoint_path=str(checkpoint_path),
-                    **hyperparameters,
-                )
+            # Extract polygons and scores
+            polygons = []
+            scores = []
 
-                # Extract polygons and scores
-                polygons = []
-                scores = []
+            if result and "polygons" in result:
+                polygons = result["polygons"]
+                scores = result.get("scores", [1.0] * len(polygons))
 
-                if result and "polygons" in result:
-                    polygons = result["polygons"]
-                    scores = result.get("scores", [1.0] * len(polygons))
-
-                return {
-                    "polygons": polygons,
-                    "scores": scores,
-                }
-
-            finally:
-                # Clean up temp file
-                if tmp_path.exists():
-                    tmp_path.unlink()
+            return {
+                "polygons": polygons,
+                "scores": scores,
+            }
 
         except Exception as e:
             self.logger.error(f"Internal inference execution failed: {e}", exc_info=True)

@@ -185,6 +185,53 @@ class InferenceEngine:
         if hasattr(postprocess, "min_size") and min_detection_size is not None:
             postprocess.min_size = int(min_detection_size)
 
+    def predict_array(
+        self,
+        image_array: np.ndarray,
+        binarization_thresh: float | None = None,
+        box_thresh: float | None = None,
+        max_candidates: int | None = None,
+        min_detection_size: int | None = None,
+    ) -> dict[str, Any] | None:
+        """Predict on an image array (numpy) directly.
+
+        New optimized path that accepts numpy arrays directly without file I/O.
+        Eliminates tempfile overhead from the inference pipeline.
+
+        Args:
+            image_array: Image as numpy array (RGB or BGR format)
+            binarization_thresh: Binarization threshold override
+            box_thresh: Box threshold override
+            max_candidates: Max candidates override
+            min_detection_size: Minimum detection size override
+
+        Returns:
+            Predictions dict with 'polygons', 'texts', 'confidences' keys
+
+        See: artifacts/implementation_plans/2025-11-12_plan-004-revised-inference-consolidation.md
+        """
+        LOGGER.info("Starting prediction for numpy array with shape: %s", image_array.shape)
+
+        if self.model is None:
+            LOGGER.warning("Model not loaded. Returning mock predictions.")
+            return generate_mock_predictions()
+
+        if any(value is not None for value in (binarization_thresh, box_thresh, max_candidates, min_detection_size)):
+            self.update_postprocessor_params(
+                binarization_thresh=binarization_thresh,
+                box_thresh=box_thresh,
+                max_candidates=max_candidates,
+                min_detection_size=min_detection_size,
+            )
+
+        # Assume image is already in BGR format (OpenCV standard)
+        # If RGB, caller should convert before calling this method
+        image = image_array
+
+        LOGGER.info(f"Image array received successfully. Shape: {image.shape}")
+
+        return self._predict_from_array(image)
+
     def predict_image(
         self,
         image_path: str,
@@ -193,6 +240,20 @@ class InferenceEngine:
         max_candidates: int | None = None,
         min_detection_size: int | None = None,
     ) -> dict[str, Any] | None:
+        """Predict on an image file (legacy file path-based API).
+
+        Kept for backward compatibility. New code should use predict_array() directly.
+
+        Args:
+            image_path: Path to image file
+            binarization_thresh: Binarization threshold override
+            box_thresh: Box threshold override
+            max_candidates: Max candidates override
+            min_detection_size: Minimum detection size override
+
+        Returns:
+            Predictions dict with 'polygons', 'texts', 'confidences' keys
+        """
         LOGGER.info(f"Starting prediction for image: {image_path}")
 
         if self.model is None:
@@ -236,6 +297,17 @@ class InferenceEngine:
 
         LOGGER.info(f"Image loaded successfully. Shape: {image.shape}, Orientation: {orientation}")
 
+        return self._predict_from_array(image)
+
+    def _predict_from_array(self, image: np.ndarray) -> dict[str, Any] | None:
+        """Internal method: shared prediction logic for both file and array paths.
+
+        Args:
+            image: Image as BGR numpy array
+
+        Returns:
+            Predictions dict or None on failure
+        """
         bundle = self._config_bundle
         if bundle is None:
             LOGGER.error("Model configuration bundle missing; load_model must be called first.")
@@ -247,7 +319,7 @@ class InferenceEngine:
         try:
             batch = preprocess_image(image, self._transform)
         except Exception:  # noqa: BLE001
-            LOGGER.exception("Failed to preprocess image %s", image_path)
+            LOGGER.exception("Failed to preprocess image")
             return None
 
         LOGGER.info(f"Image preprocessing completed. Batch shape: {batch.shape if hasattr(batch, 'shape') else 'unknown'}")
@@ -344,7 +416,7 @@ class InferenceEngine:
 
 
 def run_inference_on_image(
-    image_path: str,
+    image_path: str | np.ndarray,
     checkpoint_path: str,
     config_path: str | None = None,
     binarization_thresh: float | None = None,
@@ -352,10 +424,41 @@ def run_inference_on_image(
     max_candidates: int | None = None,
     min_detection_size: int | None = None,
 ) -> dict[str, Any] | None:
+    """Run inference on an image (file path or numpy array).
+
+    Supports both legacy file path API and new numpy array API for eliminating
+    tempfile overhead.
+
+    Args:
+        image_path: Either file path (str) or numpy array (optimized path)
+        checkpoint_path: Path to model checkpoint
+        config_path: Optional path to config file
+        binarization_thresh: Binarization threshold override
+        box_thresh: Box threshold override
+        max_candidates: Max candidates override
+        min_detection_size: Minimum detection size override
+
+    Returns:
+        Predictions dict with 'polygons', 'texts', 'confidences' keys
+
+    See: artifacts/implementation_plans/2025-11-12_plan-004-revised-inference-consolidation.md
+    """
     engine = InferenceEngine()
     if not engine.load_model(checkpoint_path, config_path):
         LOGGER.error("Failed to load model in convenience function.")
         return None
+
+    # NEW: Support numpy array input (eliminates tempfile overhead)
+    if isinstance(image_path, np.ndarray):
+        return engine.predict_array(
+            image_array=image_path,
+            binarization_thresh=binarization_thresh,
+            box_thresh=box_thresh,
+            max_candidates=max_candidates,
+            min_detection_size=min_detection_size,
+        )
+
+    # LEGACY: Support file path input (backward compatible)
     return engine.predict_image(
         image_path=image_path,
         binarization_thresh=binarization_thresh,
