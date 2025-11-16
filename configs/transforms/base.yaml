@@ -16,7 +16,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
-        # position: "top_left"
+        position: "top_left"
         p: 1.0
       - _target_: albumentations.HorizontalFlip
         p: 0.5
@@ -41,7 +41,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
-        # position: "top_left"
+        position: "top_left"
         p: 1.0
       - _target_: albumentations.Normalize
         mean: [0.485, 0.456, 0.406]
@@ -64,7 +64,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
-        # position: "top_left"
+        position: "top_left"
         p: 1.0
       - _target_: albumentations.Normalize
         mean: [0.485, 0.456, 0.406]
@@ -87,7 +87,7 @@ transforms:
         min_width: 640
         min_height: 640
         border_mode: 0
-        # position: "top_left"
+        position: "top_left"
         p: 1.0
       - _target_: albumentations.Normalize
         mean: [0.485, 0.456, 0.406]

@@ -29,3 +29,23 @@ UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
   trainer.log_every_n_steps=10 \
   seed=123
 ```
+
+## Batch size 16
+```
+UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
+  data=canonical \
+  batch_size=16 \
+  trainer.max_epochs=16 \
+  dataloaders.train_dataloader.num_workers=8 \
+  dataloaders.val_dataloader.num_workers=8
+```
+
+## Batch size 8
+```
+UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
+  data=canonical \
+  batch_size=8 \
+  trainer.max_epochs=16 \
+  dataloaders.train_dataloader.num_workers=8 \
+  dataloaders.val_dataloader.num_workers=8
+```

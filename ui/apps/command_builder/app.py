@@ -5,9 +5,9 @@ import streamlit as st
 from ui.utils.command import CommandBuilder
 from ui.utils.config_parser import ConfigParser
 
-from .components import render_predict_page, render_sidebar, render_test_page, render_training_page
-from .services.recommendations import UseCaseRecommendationService
-from .state import CommandBuilderState, CommandType
+from ui.apps.command_builder.components import render_predict_page, render_sidebar, render_test_page, render_training_page
+from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
+from ui.apps.command_builder.state import CommandBuilderState, CommandType
 
 
 def run() -> None:

@@ -15,61 +15,48 @@ from .dependencies import torch
 LOGGER = logging.getLogger(__name__)
 
 
-# BugRef: BUG-2025-001 — inference inverse-mapping uses pre-pad scale
-# Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
-# Date: 2025-10-20
+# BugRef: BUG-20251116-001 — inference inverse-mapping must match padding position
+# Report: docs/bug_reports/BUG-20251116-001_DEBUGGING_HANDOVER.md
+# Date: 2025-11-17
 # IndexSig: pad=top_left; scale=640/max(H0,W0); translation=0
+# BUG-2025-001: Original bug report (superseded by BUG-20251116-001)
 def compute_inverse_matrix(processed_tensor, original_shape: Sequence[int]):
     """Compute inverse mapping from processed (padded 640x640) tensor space to original image space.
+
+    🚨 CRITICAL FUNCTION - DO NOT MODIFY WITHOUT TESTS
+
+    BUG-20251116-001: This function MUST match the padding position used in transforms.
+    The transforms use PadIfNeeded with position="top_left", so padding is at bottom/right only.
+    Therefore, there is NO translation needed (translation = 0, 0).
 
     Assumptions per transforms:
     - LongestMaxSize(max_size=640) followed by PadIfNeeded(640, 640, position="top_left").
     - Therefore, there is no translation (padding is at bottom/right only), and we only need 1/scale.
     - scale = 640 / max(original_h, original_w)
+
+    See: docs/bug_reports/BUG-20251116-001_DEBUGGING_HANDOVER.md
     """
     if torch is None:
         return [np.eye(3, dtype=np.float32)]
 
-    # original_height = int(original_shape[0])
-    # original_width = int(original_shape[1])
-    # if original_height <= 0 or original_width <= 0:
-    #     return [np.eye(3, dtype=np.float32)]
-
-    # # Pre-pad resize scale used by LongestMaxSize
-    # max_side = float(max(original_height, original_width))
-    # if max_side == 0:
-    #     return [np.eye(3, dtype=np.float32)]
-    # scale = 640.0 / max_side
-    # inv_scale = 1.0 / scale
-
-    # matrix = np.array(
-    #     [[inv_scale, 0.0, 0.0], [0.0, inv_scale, 0.0], [0.0, 0.0, 1.0]],
-    #     dtype=np.float32,
-    # )
-    # return [matrix]
-    # Reverting the bug fix above due to low performance
-    # 1. Calculate the scale and the intermediate (pre-pad) dimensions
     original_height, original_width = original_shape[:2]
-    scale = 640.0 / max(original_height, original_width)
-    resized_width = int(round(original_width * scale))
-    resized_height = int(round(original_height * scale))
+    if original_height <= 0 or original_width <= 0:
+        return [np.eye(3, dtype=np.float32)]
 
-    # 2. Calculate the padding that Albumentations *would have added*
-    pad_left = (640 - resized_width) // 2
-    pad_top = (640 - resized_height) // 2
-
-    # 3. Create the inverse transformation matrix
-    # This matrix first translates to remove the padding, then scales up.
+    # Pre-pad resize scale used by LongestMaxSize
+    max_side = float(max(original_height, original_width))
+    if max_side == 0:
+        return [np.eye(3, dtype=np.float32)]
+    scale = 640.0 / max_side
     inv_scale = 1.0 / scale
+
+    # BUG-20251116-001 FIX: For top_left padding, there is NO translation
+    # Padding is at bottom/right only, so content starts at (0, 0) in padded space
+    # Translation components must be (0, 0) - no offset needed
     matrix = np.array(
-        [
-            [inv_scale, 0.0, -pad_left * inv_scale],
-            [0.0, inv_scale, -pad_top * inv_scale],
-            [0.0, 0.0, 1.0],
-        ],
+        [[inv_scale, 0.0, 0.0], [0.0, inv_scale, 0.0], [0.0, 0.0, 1.0]],
         dtype=np.float32,
     )
-
     return [matrix]
 
 

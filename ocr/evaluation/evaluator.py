@@ -92,11 +92,19 @@ class CLEvalEvaluator:
         for filename in iterator:
             gt_words = self._get_annotations(dataset, filename)
             prediction = self.predictions[filename]
-            det_quads = [polygon.reshape(-1).tolist() for polygon in prediction.boxes if polygon.size > 0]
+
+            # Get prediction boxes as numpy arrays
+            det_polygons = [np.asarray(polygon, dtype=np.float32).reshape(-1, 2) for polygon in prediction.boxes if polygon.size > 0]
 
             raw_width, raw_height = self._resolve_raw_size(prediction, dataset, filename)
             canonical_gt = self._remap_ground_truth(gt_words, raw_width, raw_height, prediction.orientation)
             gt_quads = [poly.reshape(-1).tolist() for poly in canonical_gt if poly.size > 0]
+
+            # BUG-20251116-001: Root cause fixed - inverse_matrix now computed correctly
+            # with proper padding position in transforms.py, so no compensation needed here
+
+            # Convert back to list format for metric computation
+            det_quads = [polygon.reshape(-1).tolist() for polygon in det_polygons]
 
             self.metric.reset()
             self.metric(det_quads, gt_quads)

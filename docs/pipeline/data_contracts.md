@@ -19,7 +19,8 @@
 7. [Common Data Types](#common-data-types)
 8. [Validation Rules](#validation-rules)
 9. [Pydantic v2 Data Validation](#pydantic-v2-data-validation)
-10. [Debugging Guide](#debugging-guide)
+10. [Critical Areas - DO NOT MODIFY WITHOUT TESTS](#critical-areas---do-not-modify-without-tests)
+11. [Debugging Guide](#debugging-guide)
 
 ---
 
@@ -74,6 +75,14 @@ DatasetSample(
 )
 ```
 
+**🚨 CRITICAL: Inverse Matrix Validation**
+
+The `inverse_matrix` must correctly map coordinates from transformed space (640x640) back to original image space. Incorrect computation causes:
+- Negative coordinates
+- Out-of-bounds coordinates
+- Incorrect evaluation metrics
+- Misaligned visualizations
+
 **Validation Rules** (enforced by Pydantic):
 - `image.shape[2] == 3` (RGB channels)
 - `len(polygons)` ≥ 0 (can be empty for images without text)
@@ -117,6 +126,22 @@ DatasetSample(
     "metadata": dict | None,       # Merged metadata from dataset + transforms
 }
 ```
+
+**🚨 CRITICAL: Inverse Matrix Computation**
+
+**BUG-20251116-001**: The `inverse_matrix` MUST be computed with the correct padding position matching the actual transforms used. Failure to match padding position causes coordinate transformation errors (negative coordinates, out-of-bounds values, incorrect metrics).
+
+**Requirements**:
+- `inverse_matrix` MUST match the padding position used in `PadIfNeeded` transform (`position="top_left"` or `position="center"`)
+- `DBTransforms.__init__()` MUST extract padding position from transform list
+- `calculate_cropbox()` MUST receive correct `position` parameter
+- `calculate_inverse_transform()` MUST receive correct `padding_position` parameter
+- **DO NOT modify** `calculate_inverse_transform()` or `calculate_cropbox()` without:
+  1. Understanding the coordinate transformation math
+  2. Adding tests for both padding positions
+  3. Verifying coordinate correctness with validation metrics
+
+**See**: `docs/bug_reports/BUG-20251116-001_DEBUGGING_HANDOVER.md` for details.
 
 **Key Transformations**:
 - Image: `uint8 (H,W,3)` → `float32 (3,H',W')` (normalized to [-2.1, 2.6])
@@ -420,6 +445,87 @@ All contracts validated by:
 - `tests/ocr/datasets/test_polygon_filtering.py` - Polygon shape handling
 - `tests/ocr/datasets/test_transform_pipeline_contracts.py` - Transform contracts
 - `scripts/validate_pipeline_contracts.py` - Runtime validation utility
+
+---
+
+## Critical Areas - DO NOT MODIFY WITHOUT TESTS
+
+**⚠️ WARNING**: The following areas are critical to pipeline correctness. Modifying them without proper tests can cause subtle bugs that are difficult to detect but severely impact model performance.
+
+### Coordinate Transformation (`ocr/utils/geometry_utils.py`)
+
+**Functions**:
+- `calculate_inverse_transform()` - Computes inverse transformation matrix
+- `calculate_cropbox()` - Computes crop box for padding
+
+**Why Critical**:
+- BUG-20251116-001: Incorrect padding position matching causes coordinate transformation errors
+- Errors manifest as: negative coordinates, out-of-bounds values, incorrect metrics, misaligned visualizations
+- These errors are NOT caught by shape validation (coordinates are valid shapes but wrong values)
+
+**Requirements Before Modification**:
+1. ✅ Understand coordinate transformation mathematics
+2. ✅ Add tests for both `padding_position="top_left"` and `padding_position="center"`
+3. ✅ Verify coordinate roundtrip correctness (transform → inverse transform → original)
+4. ✅ Verify no negative coordinates are produced
+5. ✅ Verify coordinates stay within image bounds
+6. ✅ Run full validation pipeline and check metrics don't degrade
+
+**Test File**: `tests/unit/test_geometry_utils_coordinate_transformation.py`
+
+**See**: `docs/bug_reports/BUG-20251116-001_DEBUGGING_HANDOVER.md` for details
+
+### Transform Pipeline (`ocr/datasets/transforms.py`)
+
+**Function**: `DBTransforms.__init__()` and `DBTransforms.__call__()`
+
+**Why Critical**:
+- Must extract padding position from transform list
+- Must pass correct padding position to `calculate_cropbox()` and `calculate_inverse_transform()`
+- Mismatch between transform configuration and inverse matrix computation causes coordinate errors
+
+**Requirements Before Modification**:
+1. ✅ Verify padding position extraction logic
+2. ✅ Test with both `position="top_left"` and `position="center"` in config
+3. ✅ Verify inverse_matrix is computed with correct padding position
+4. ✅ Run coordinate transformation tests
+
+### Post-Processing (`ocr/models/head/db_postprocess.py`)
+
+**Function**: `DBPostProcessor.__transform_coordinates()`
+
+**Why Critical**:
+- Applies inverse_matrix to transform prediction coordinates back to original space
+- Incorrect inverse_matrix causes all predictions to have wrong coordinates
+
+**Requirements Before Modification**:
+1. ✅ Understand matrix multiplication for coordinate transformation
+2. ✅ Verify transformation preserves coordinate validity
+3. ✅ Test with known coordinate values
+
+### General Guidelines for Critical Areas
+
+**Before Modifying Any Critical Area**:
+1. Read the bug report/documentation for that area
+2. Understand the mathematical/algorithmic requirements
+3. Write tests that verify correctness (not just shape validation)
+4. Run existing tests to ensure no regressions
+5. Test with real data and verify metrics don't degrade
+6. Document your changes and rationale
+
+**Red Flags** (indicates you may have broken something):
+- Negative coordinates in predictions
+- Coordinates outside image bounds
+- Sudden metric degradation (recall/precision/hmean drop)
+- Misaligned visualizations in WandB
+- Many degenerate polygons being filtered
+
+**If You Suspect a Critical Area Issue**:
+1. Check if inverse_matrix computation matches padding position
+2. Verify coordinate transformation roundtrip
+3. Check for negative or out-of-bounds coordinates
+4. Review recent changes to critical functions
+5. Run coordinate transformation tests
 
 ---
 

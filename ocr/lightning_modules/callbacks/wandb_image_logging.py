@@ -8,10 +8,11 @@ import lightning.pytorch as pl
 import numpy as np
 from PIL import Image
 
+from ocr.lightning_modules.processors.image_processor import ImageProcessor
+from ocr.utils.geometry_utils import apply_padding_offset_to_polygons, compute_padding_offsets
 from ocr.utils.orientation import normalize_pil_image, remap_polygons
 from ocr.utils.polygon_utils import ensure_polygon_array
 from ocr.utils.wandb_utils import log_validation_images
-from ocr.lightning_modules.processors.image_processor import ImageProcessor
 
 
 class WandbImageLoggingCallback(pl.Callback):
@@ -64,40 +65,72 @@ class WandbImageLoggingCallback(pl.Callback):
                 if "raw_size" in metadata and metadata["raw_size"] is not None:
                     raw_size_hint = metadata["raw_size"]
 
+            if not hasattr(val_dataset, "anns") or filename not in val_dataset.anns:  # type: ignore
+                continue
+
             # Get ground truth boxes
             gt_boxes = val_dataset.anns[filename]  # type: ignore
             gt_quads = self._normalise_polygons(gt_boxes)
             pred_quads = self._normalise_polygons(pred_boxes)
 
-            image = None
-            orientation = 1
-            raw_width = raw_height = None
-
-            # Check if we have the transformed image stored
+            # BUG-20251116-001: Check if transformed_image is available (640x640 tensor)
             transformed_image = entry.get("transformed_image")
-            if transformed_image is not None:
-                # Use the exact transformed image from training
-                try:
-                    # BUG-20251116-001: Use proper ImageNet denormalization
-                    # Default ImageNet normalization: mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+            using_transformed_image = transformed_image is not None
+
+            # Get image - prefer transformed_image if available, otherwise load from disk
+            try:
+                if using_transformed_image:
+                    # Use transformed_image (640x640, CHW, normalized with ImageNet stats)
+                    # Convert tensor to PIL Image with proper denormalization
                     mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
                     std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
-                    pil_image = ImageProcessor.tensor_to_pil_image(transformed_image, mean=mean, std=std)
-                    if pil_image.mode != "RGB":
-                        image = pil_image.convert("RGB")
-                        pil_image.close()
-                    else:
-                        image = pil_image
-                    raw_width, raw_height = image.size
-                except Exception as e:
-                    print(f"Warning: Failed to convert transformed image for {filename}: {e}")
-                    continue
-            else:
-                # Fallback to original method (load from disk and transform)
-                if not hasattr(val_dataset, "anns") or filename not in val_dataset.anns:  # type: ignore
-                    continue
+                    image = ImageProcessor.tensor_to_pil_image(transformed_image, mean=mean, std=std)
+                    # Image is now 640x640 RGB PIL Image
 
-                try:
+                    # BUG-20251116-001: Handle GT polygon orientation remapping if needed
+                    # GT polygons might be in raw coordinates and need remapping to canonical
+                    polygon_frame = metadata.get("polygon_frame") if metadata else None
+                    if gt_quads and polygon_frame != "canonical" and orientation_hint != 1:
+                        # Remap GT polygons to canonical frame if needed
+                        if raw_size_hint and len(raw_size_hint) == 2:
+                            raw_w, raw_h = raw_size_hint
+                            if raw_w > 0 and raw_h > 0:
+                                gt_quads = remap_polygons(gt_quads, raw_w, raw_h, orientation_hint)
+
+                    # BUG-20251116-001: Both GT and pred polygons are in original/canonical coordinates
+                    # We need to scale them to match the 640x640 transformed image
+                    # NOTE: canonical_size in batch is already 640x640 (after transforms), so we use raw_size
+                    # The scale factor is computed from LongestMaxSize(640) transform: 640.0 / max(raw_w, raw_h)
+                    if raw_size_hint and len(raw_size_hint) == 2:
+                        raw_w, raw_h = raw_size_hint
+                        if raw_w > 0 and raw_h > 0:
+                            # Scale factor: LongestMaxSize scales longest side to 640
+                            # Use max dimension to compute scale (orientation doesn't matter for max)
+                            scale = 640.0 / max(raw_w, raw_h)
+
+                            # Scale both GT and pred polygons
+                            gt_quads = self._scale_polygons(gt_quads, scale)
+                            pred_quads = self._scale_polygons(pred_quads, scale)
+
+                            # BUG-20251116-001: Apply padding offset to polygons to match transformed image
+                            # Transform config now uses position: "top_left" (uncommented)
+                            # For models trained before this change, they may have used "center" padding
+                            # TODO: Read padding position from transform metadata or make configurable
+                            padding_position = "top_left"  # Matches configs/transforms/base.yaml
+                            pad_x, pad_y = compute_padding_offsets(
+                                (raw_w, raw_h),
+                                target_size=640,
+                                position=padding_position,
+                            )
+
+                            # Apply padding offset to GT polygons
+                            if pad_x != 0 or pad_y != 0:
+                                gt_quads = apply_padding_offset_to_polygons(gt_quads, pad_x, pad_y)
+
+                            # BUG-20251116-001: Root cause fixed - inverse_matrix now computed correctly
+                            # with proper padding position in transforms.py, so no compensation needed here
+                else:
+                    # Fallback: Get image directly from filesystem (similar to dataset loading)
                     image_path = self._resolve_image_path(entry, metadata, val_dataset, filename)
                     with Image.open(image_path) as pil_image:
                         raw_width, raw_height = pil_image.size
@@ -109,37 +142,32 @@ class WandbImageLoggingCallback(pl.Callback):
                         else:
                             image = normalized_image.copy()
                             normalized_image.close()
-                except Exception as e:
-                    print(f"Warning: Failed to load image {filename}: {e}")
-                    continue
 
-            if image is None:
+                    polygon_frame = metadata.get("polygon_frame") if metadata else None
+                    if gt_quads:
+                        if polygon_frame == "canonical":
+                            pass
+                        elif orientation != 1:
+                            gt_quads = remap_polygons(gt_quads, raw_width, raw_height, orientation)
+                        elif orientation_hint != 1:
+                            hint_width, hint_height = raw_size_hint or (raw_width, raw_height)
+                            gt_quads = remap_polygons(gt_quads, hint_width, hint_height, orientation_hint)
+
+                gt_quads = self._postprocess_polygons(gt_quads, image.size)
+                pred_quads = self._postprocess_polygons(pred_quads, image.size)
+
+                images.append(image)
+                gt_bboxes.append(gt_quads)
+                pred_bboxes.append(pred_quads)
+                filenames.append((filename, image.size[0], image.size[1]))  # (filename, width, height)
+                count += 1
+
+                if count >= self.max_images:
+                    break
+            except Exception as e:
+                # If we can't get the image, skip this sample
+                print(f"Warning: Failed to load image {filename}: {e}")
                 continue
-
-            # Handle polygon remapping only when loading from disk (not using transformed_image)
-            # When using transformed_image, polygons are used as-is
-            polygon_frame = metadata.get("polygon_frame") if metadata else None
-            if gt_quads and transformed_image is None:
-                if polygon_frame == "canonical":
-                    pass
-                elif orientation != 1:
-                    gt_quads = remap_polygons(gt_quads, raw_width, raw_height, orientation)
-                elif orientation_hint != 1:
-                    hint_width, hint_height = raw_size_hint or (raw_width, raw_height)
-                    gt_quads = remap_polygons(gt_quads, hint_width, hint_height, orientation_hint)
-
-            # Postprocess polygons (filter degenerate ones)
-            gt_quads = self._postprocess_polygons(gt_quads, image.size)
-            pred_quads = self._postprocess_polygons(pred_quads, image.size)
-
-            images.append(image)
-            gt_bboxes.append(gt_quads)
-            pred_bboxes.append(pred_quads)
-            filenames.append((filename, image.size[0], image.size[1]))  # (filename, width, height)
-            count += 1
-
-            if count >= self.max_images:
-                break
 
         # Log images with bounding boxes if we have data
         if images and gt_bboxes and pred_bboxes:
@@ -175,6 +203,29 @@ class WandbImageLoggingCallback(pl.Callback):
             normalised.append(np.array(polygon_array, copy=True))
 
         return normalised
+
+    @staticmethod
+    def _scale_polygons(polygons: list[np.ndarray], scale: float) -> list[np.ndarray]:
+        """Scale polygon coordinates by a scale factor.
+
+        Args:
+            polygons: List of polygon arrays, each of shape (N, 2)
+            scale: Scale factor to apply
+
+        Returns:
+            List of scaled polygon arrays
+        """
+        if not polygons or scale == 1.0:
+            return polygons
+
+        scaled = []
+        for polygon in polygons:
+            if polygon.size == 0:
+                continue
+            scaled_polygon = polygon * scale
+            scaled.append(scaled_polygon)
+
+        return scaled
 
     @staticmethod
     def _postprocess_polygons(polygons: Sequence[np.ndarray] | None, image_size: tuple[int, int]) -> list[np.ndarray]:
@@ -235,44 +286,6 @@ class WandbImageLoggingCallback(pl.Callback):
             return int(width), int(height)
         except Exception:  # noqa: BLE001
             return None
-
-    @staticmethod
-    def _tensor_to_pil(tensor):
-        """Convert a normalized tensor (C, H, W) back to PIL Image."""
-        import numpy as np
-        import torch
-        from PIL import Image
-
-        # Convert to numpy and transpose to HWC
-        if torch.is_tensor(tensor):
-            arr = tensor.detach().cpu().numpy()
-        else:
-            arr = np.array(tensor)
-
-        # Handle different tensor shapes
-        if arr.shape[0] == 3:  # CHW format
-            arr = np.transpose(arr, (1, 2, 0))  # HWC
-        elif arr.shape[-1] == 3:  # HWC format already
-            pass
-        else:  # Grayscale or other
-            arr = arr.squeeze()
-
-        # Un-normalize from [-1, 1] or [0, 1] to [0, 255]
-        if arr.max() <= 1.0:
-            if arr.min() < 0:  # Likely in [-1, 1] range
-                arr = (arr + 1) * 127.5
-            else:  # Likely in [0, 1] range
-                arr = arr * 255.0
-
-        arr = np.clip(arr, 0, 255).astype(np.uint8)
-
-        # Convert to PIL Image
-        if arr.ndim == 3 and arr.shape[-1] == 3:
-            return Image.fromarray(arr, mode="RGB")
-        elif arr.ndim == 2:
-            return Image.fromarray(arr, mode="L")
-        else:
-            raise ValueError(f"Unsupported tensor shape: {arr.shape}")
 
     @staticmethod
     def _resolve_image_path(entry: dict[str, Any], metadata: dict[str, Any] | None, dataset: Any, filename: str) -> Path:

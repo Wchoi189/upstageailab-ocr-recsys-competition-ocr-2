@@ -15,6 +15,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Annotation files fixed** - Clamped 160 out-of-bounds polygons (146 train, 14 val) to valid bounds
 - **Checkpoint config** - Reduced `save_top_k` from 3 to 1, disabled verbose logging
 
+### Changed - 2025-11-16
+
+- **Degenerate polygon filtering logs** - Reduced log level from INFO to DEBUG in `filter_degenerate_polygons()` to reduce log noise during training
+
 ### Added - 2025-11-12
 
 #### Branch Merge: Main + 12_refactor/streamlit

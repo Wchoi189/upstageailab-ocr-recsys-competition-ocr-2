@@ -29,9 +29,9 @@ class StreamlitProcessManager:
     def _get_ui_path(self, ui_name: str) -> Path:
         """Get the path to a UI script."""
         ui_paths = {
-            "command_builder": "ui/command_builder.py",
-            "evaluation_viewer": "ui/evaluation_viewer.py",
-            "inference": "ui/inference_ui.py",
+            "command_builder": "ui/apps/command_builder/app.py",
+            "evaluation_viewer": "ui/evaluation/app.py",
+            "inference": "ui/apps/inference/app.py",
             "preprocessing_viewer": "ui/preprocessing_viewer_app.py",
             "resource_monitor": "ui/resource_monitor.py",
             "unified_app": "ui/apps/unified_ocr_app/app.py",
