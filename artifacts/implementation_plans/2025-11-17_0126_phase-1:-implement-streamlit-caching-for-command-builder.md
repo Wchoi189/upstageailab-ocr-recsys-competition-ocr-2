@@ -29,85 +29,87 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 1
 ## Progress Tracker
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
+- **STATUS:** Not Started
+- **CURRENT STEP:** Phase 1, Task 1.1 - Create Cached Service Factories
+- **LAST COMPLETED TASK:** None
+- **NEXT TASK:** Create `ui/apps/command_builder/utils.py` with cached service factory functions
 
 ### Implementation Outline (Checklist)
 
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
+#### **Phase 1: Implement Streamlit Caching (Week 1)**
+1. [ ] **Task 1.1: Create Cached Service Factories**
+   - [ ] Create `ui/apps/command_builder/utils.py` file
+   - [ ] Add `@st.cache_resource` decorators to service factories
+   - [ ] Add `@st.cache_data` decorators to ConfigParser method wrappers
+   - [ ] Test imports work correctly
 
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
+2. [ ] **Task 1.2: Update app.py to Use Cached Services**
+   - [ ] Update imports in `app.py`
+   - [ ] Replace direct instantiation with cached factories
+   - [ ] Test app still works correctly
 
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
+3. [ ] **Task 1.3: Update UI Generator to Use Cached Methods**
+   - [ ] Update `_get_options_from_source()` in `ui_generator.py`
+   - [ ] Import cached methods from utils
+   - [ ] Test UI generation still works
 
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
+4. [ ] **Task 1.4: Add Cache Invalidation (Optional)**
+   - [ ] Add cache clear button in sidebar (development)
+   - [ ] Test cache clearing works
+   - [ ] Document for development use
 
 ---
 
 ## 📋 **Technical Requirements Checklist**
 
 ### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
+- [ ] Modular Design: Separate cached factories in utils module
+- [ ] Streamlit Caching: Use `@st.cache_resource` for services, `@st.cache_data` for data
+- [ ] Cache TTL: 1 hour (3600s) for config data, persistent for services
+- [ ] State Management: No changes to existing state management
 
 ### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
+- [ ] Integration with Streamlit caching system
+- [ ] Use existing ConfigParser, CommandBuilder, UseCaseRecommendationService
+- [ ] Maintain compatibility with existing UI generator
 
 ### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
+- [ ] Functional Testing: All pages work correctly
+- [ ] Performance Testing: Page switch time < 200ms
+- [ ] Cache Testing: Verify caching works and invalidation works
+- [ ] Regression Testing: No functionality broken
 
 ---
 
 ## 🎯 **Success Criteria Validation**
 
 ### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
+- [ ] All pages (Train/Test/Predict) load and function correctly
+- [ ] Command generation works on all pages
+- [ ] Form validation works correctly
+- [ ] No regressions in existing functionality
 
 ### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
+- [ ] Page switch time reduced from 470-810ms to < 200ms
+- [ ] Cached operations complete in < 10ms
+- [ ] Memory usage increase < 100MB
+- [ ] Code is type-hinted and documented
+- [ ] Cache invalidation works correctly
 
 ---
 
 ## 📊 **Risk Mitigation & Fallbacks**
 
-### **Current Risk Level**: LOW / MEDIUM / HIGH
+### **Current Risk Level**: LOW
 ### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
+1. Incremental Development: Implement one step at a time, test after each
+2. Comprehensive Testing: Test all pages and functionality after changes
+3. Rollback Plan: Easy to revert if issues occur (just remove utils.py and revert app.py)
 
 ### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
+1. If caching causes issues: Revert to direct instantiation (simple rollback)
+2. If memory usage too high: Reduce TTL or remove some caches
+3. If cache invalidation issues: Use shorter TTL or manual cache clearing
 
 ---
 
@@ -129,18 +131,22 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 1
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** [Description of the immediate next task]
+**TASK:** Create `ui/apps/command_builder/utils.py` with cached service factory functions
 
-**OBJECTIVE:** [Clear, concise goal of the task]
+**OBJECTIVE:** Create a new utils module that provides cached access to CommandBuilder, ConfigParser, and UseCaseRecommendationService instances, plus cached wrappers for expensive ConfigParser methods.
 
 **APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
+1. Create new file `ui/apps/command_builder/utils.py`
+2. Add imports for streamlit, CommandBuilder, ConfigParser, UseCaseRecommendationService
+3. Create `get_command_builder()`, `get_config_parser()`, `get_recommendation_service()` with `@st.cache_resource`
+4. Create cached wrappers for `get_architecture_metadata()`, `get_available_models()`, `get_available_architectures()` with `@st.cache_data`
+5. Test that imports work correctly
 
 **SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
+- File `ui/apps/command_builder/utils.py` exists
+- All factory functions are defined with proper decorators
+- Imports work without errors
+- Functions return correct types
 
 ---
 
@@ -258,7 +264,7 @@ def _get_options_from_source(source: str) -> list[str]:
         get_available_models,
         get_available_architectures
     )
-    
+
     cp = get_config_parser()
     model_source_map = {
         "models.backbones": "backbones",
@@ -291,13 +297,13 @@ def run() -> None:
     st.caption("Build and execute training, testing, and prediction commands with metadata-aware defaults.")
 
     state = CommandBuilderState.from_session()
-    
+
     # Development: Add cache clear button (remove in production)
     if st.sidebar.button("🔄 Clear Cache", help="Clear all cached data (development only)"):
         st.cache_resource.clear()
         st.cache_data.clear()
         st.rerun()
-    
+
     # ... rest of existing code ...
 ```
 

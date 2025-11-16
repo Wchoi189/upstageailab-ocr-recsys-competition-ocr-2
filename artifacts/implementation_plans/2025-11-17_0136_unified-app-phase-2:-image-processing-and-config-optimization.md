@@ -29,85 +29,86 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Unified
 ## Progress Tracker
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
+- **STATUS:** Not Started
+- **CURRENT STEP:** Unified App Phase 2, Task 2.1 - Optimize Image Processing Caching
+- **LAST COMPLETED TASK:** None (Requires Unified App Phase 1 completion)
+- **NEXT TASK:** Optimize image processing caching with hash-based approach
 
 ### Implementation Outline (Checklist)
 
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
+#### **Unified App Phase 2: Image Processing and Config Optimization (Week 2)**
+1. [ ] **Task 2.1: Optimize Image Processing Caching**
+   - [ ] Implement hash-based caching for image processing
+   - [ ] Update preprocessing service to use hash-based cache
+   - [ ] Update preprocessing page to generate image hashes
+   - [ ] Test image processing caching works correctly
 
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
+2. [ ] **Task 2.2: Optimize Config Loading**
+   - [ ] Add module-level cache for configs in shared_utils
+   - [ ] Update pages to use cached config loader
+   - [ ] Test config loading performance
 
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
+3. [ ] **Task 2.3: Optimize State Persistence**
+   - [ ] Add `persist_if_changed()` method to UnifiedAppState
+   - [ ] Update pages to use optimized persistence
+   - [ ] Test state persistence works correctly
 
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
+4. [ ] **Task 2.4: Add Loading Indicators**
+   - [ ] Add spinners for config loading
+   - [ ] Add spinners for checkpoint loading
+   - [ ] Test loading indicators appear correctly
 
 ---
 
 ## 📋 **Technical Requirements Checklist**
 
 ### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
+- [ ] Hash-Based Caching: Use image hash for cache keys (numpy arrays challenging)
+- [ ] Module-Level Config Cache: Shared cache for configs across pages
+- [ ] State Persistence: Only persist when changed
+- [ ] Loading Indicators: Show progress for heavy operations
 
 ### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
+- [ ] Integration with Phase 1 cached services
+- [ ] Use existing PreprocessingService and state management
+- [ ] Maintain compatibility with existing pages
 
 ### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
+- [ ] Functional Testing: All pages work correctly
+- [ ] Performance Testing: Image processing < 1s cached, config loading < 10ms
+- [ ] Cache Testing: Verify image processing caching works
+- [ ] Regression Testing: No functionality broken
 
 ---
 
 ## 🎯 **Success Criteria Validation**
 
 ### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
+- [ ] All pages work correctly
+- [ ] Image processing results are cached correctly
+- [ ] Config loading is optimized
+- [ ] State only persists when changed
 
 ### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
+- [ ] Image processing cached operations < 1s (from 1-5s)
+- [ ] Config loading < 10ms (from 50-100ms)
+- [ ] State persistence optimized (only updates when changed)
+- [ ] Code is type-hinted and documented
 
 ---
 
 ## 📊 **Risk Mitigation & Fallbacks**
 
-### **Current Risk Level**: LOW / MEDIUM / HIGH
+### **Current Risk Level**: LOW
 ### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
+1. Incremental Development: Implement one optimization at a time
+2. Comprehensive Testing: Test each optimization independently
+3. Dependency on Phase 1: Requires Unified App Phase 1 completion
 
 ### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
+1. If image caching causes issues: Revert to no caching or use simpler approach
+2. If config caching breaks: Revert to Streamlit cache only
+3. If state persistence issues: Revert to always persisting
 
 ---
 
@@ -129,18 +130,21 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Unified
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** [Description of the immediate next task]
+**TASK:** Optimize image processing caching with hash-based approach
 
-**OBJECTIVE:** [Clear, concise goal of the task]
+**OBJECTIVE:** Implement hash-based caching for image processing to avoid repeated processing of the same image with the same parameters, since numpy arrays are challenging to cache directly.
 
 **APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
+1. Update `process_image()` in preprocessing_service.py to use hash-based caching
+2. Generate image hash in preprocessing page before calling service
+3. Use hash as cache key instead of numpy array
+4. Test that caching works correctly for repeated operations
 
 **SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
+- Image processing uses hash-based caching
+- Cached image processing < 1s (from 1-5s)
+- Same image with same params processes instantly on second run
+- All functionality works correctly
 
 ---
 
@@ -194,19 +198,19 @@ def process_image(
     _image_hash: str,
 ) -> dict[str, Any]:
     """Process image through preprocessing pipeline with improved caching.
-    
+
     Args:
         image_bytes: Serialized image (numpy array as bytes)
         parameters: Preprocessing parameters
         _image_hash: Hash for cache busting
-        
+
     Returns:
         Dict with 'stages' and 'metadata'
     """
     # Deserialize image
     import numpy as np
     image = pickle.loads(image_bytes)
-    
+
     # ... rest of existing processing logic ...
 ```
 
@@ -256,10 +260,10 @@ _CONFIG_CACHE: dict[str, dict[str, Any]] = {}
 
 def get_mode_config_cached(mode_id: str) -> dict[str, Any]:
     """Get mode config with module-level caching.
-    
+
     Args:
         mode_id: Mode identifier
-        
+
     Returns:
         Mode configuration dictionary
     """
@@ -292,16 +296,16 @@ Add method to only persist when changed:
 @dataclass
 class UnifiedAppState:
     # ... existing fields ...
-    
+
     def to_session(self) -> None:
         """Save state to Streamlit session_state."""
         st.session_state.unified_app_state = self
-    
+
     def persist_if_changed(self) -> None:
         """Only persist state if it actually changed."""
         import hashlib
         import pickle
-        
+
         current_state = st.session_state.get("unified_app_state")
         if current_state != self:
             # State changed, persist it

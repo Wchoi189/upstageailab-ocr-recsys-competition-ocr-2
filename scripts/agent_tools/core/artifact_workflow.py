@@ -595,7 +595,8 @@ def main():
     create_parser.add_argument("--name", required=True, help="Artifact name")
     create_parser.add_argument("--title", required=True, help="Artifact title")
     create_parser.add_argument("--description", help="Artifact description")
-    create_parser.add_argument("--content-file", help="Path to file containing full markdown content (for bug reports with detailed content)")
+    create_parser.add_argument("--content", help="Markdown content (alternative to --content-file)")
+    create_parser.add_argument("--content-file", help="Path to file containing full markdown content (alternative to --content)")
     create_parser.add_argument("--tags", help="Comma-separated tags")
     create_parser.add_argument("--bug-id", help="Bug ID (for bug_report type, auto-generated if not provided)")
     create_parser.add_argument("--severity", help="Severity level (for bug_report type, default: Medium)")
@@ -660,6 +661,8 @@ def main():
                 kwargs = {}
                 if args.description:
                     kwargs["description"] = args.description
+                if args.content:
+                    kwargs["content"] = args.content
                 if args.content_file:
                     kwargs["content_file"] = args.content_file
                 if args.tags:

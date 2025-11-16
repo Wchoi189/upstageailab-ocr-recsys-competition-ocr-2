@@ -29,85 +29,85 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 2
 ## Progress Tracker
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
+- **STATUS:** Not Started
+- **CURRENT STEP:** Phase 2, Task 2.1 - Refactor app.py for Lazy Loading
+- **LAST COMPLETED TASK:** None (Requires Phase 1 completion)
+- **NEXT TASK:** Refactor app.py to lazy-load services based on active page
 
 ### Implementation Outline (Checklist)
 
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
+#### **Phase 2: Lazy Loading and Progressive Rendering (Week 2)**
+1. [ ] **Task 2.1: Refactor app.py for Lazy Loading**
+   - [ ] Move service initialization after sidebar render
+   - [ ] Add conditional imports based on active page
+   - [ ] Test all pages still work correctly
 
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
+2. [ ] **Task 2.2: Implement Progressive Rendering**
+   - [ ] Update training page to render UI first
+   - [ ] Add loading spinners for heavy operations
+   - [ ] Update test and predict pages similarly
 
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
+3. [ ] **Task 2.3: Optimize State Persistence**
+   - [ ] Add `persist_if_changed()` method to state
+   - [ ] Update all pages to use optimized persistence
+   - [ ] Test state persistence works correctly
 
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
+4. [ ] **Task 2.4: Add Loading Indicators**
+   - [ ] Add spinners for config loading
+   - [ ] Add spinners for schema generation
+   - [ ] Test loading indicators appear correctly
 
 ---
 
 ## 📋 **Technical Requirements Checklist**
 
 ### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
+- [ ] Lazy Loading: Services only loaded for active page
+- [ ] Progressive Rendering: UI structure first, then data
+- [ ] State Management: Only persist when changed
+- [ ] Conditional Imports: Import services only when needed
 
 ### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
+- [ ] Integration with Phase 1 cached services
+- [ ] Use existing page components (training, test, predict)
+- [ ] Maintain compatibility with existing state management
 
 ### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
+- [ ] Functional Testing: All pages work correctly
+- [ ] Performance Testing: Page switch time < 150ms
+- [ ] UI/UX Testing: Loading indicators work correctly
+- [ ] Regression Testing: No functionality broken
 
 ---
 
 ## 🎯 **Success Criteria Validation**
 
 ### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
+- [ ] All pages (Train/Test/Predict) load and function correctly
+- [ ] Services only loaded for active page
+- [ ] UI structure appears within 100ms
+- [ ] Loading indicators show for heavy operations
 
 ### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
+- [ ] Page switch time < 150ms (from Phase 1's < 200ms)
+- [ ] State only persists when changed
+- [ ] Code is type-hinted and documented
+- [ ] No regressions in functionality
 
 ---
 
 ## 📊 **Risk Mitigation & Fallbacks**
 
-### **Current Risk Level**: LOW / MEDIUM / HIGH
+### **Current Risk Level**: LOW
 ### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
+1. Incremental Development: Implement one page at a time, test after each
+2. Comprehensive Testing: Test all pages and functionality after changes
+3. Dependency on Phase 1: Requires Phase 1 completion first
 
 ### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
+1. If lazy loading causes issues: Revert to loading all services upfront
+2. If progressive rendering breaks: Revert to synchronous rendering
+3. If state persistence issues: Revert to always persisting
 
 ---
 
@@ -129,18 +129,21 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 2
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** [Description of the immediate next task]
+**TASK:** Refactor app.py to lazy-load services based on active page
 
-**OBJECTIVE:** [Clear, concise goal of the task]
+**OBJECTIVE:** Restructure app.py so that services are only initialized for the active page, reducing initialization overhead for unused pages.
 
 **APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
+1. Move `render_sidebar()` call before service initialization
+2. Add conditional service loading based on `command_type`
+3. Move imports inside conditional blocks
+4. Test all pages work correctly
 
 **SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
+- Services only loaded for active page
+- All pages (Train/Test/Predict) work correctly
+- Page switch time improved (50-150ms reduction)
+- No regressions in functionality
 
 ---
 
@@ -188,10 +191,10 @@ def run() -> None:
     st.caption("Build and execute training, testing, and prediction commands with metadata-aware defaults.")
 
     state = CommandBuilderState.from_session()
-    
+
     # Render sidebar FIRST (fast, no heavy operations)
     command_type = render_sidebar(state)
-    
+
     # Lazy load services only for the active page
     if command_type == CommandType.TRAIN:
         from ui.apps.command_builder.utils import (
@@ -230,17 +233,17 @@ def render_training_page(
     config_parser: ConfigParser,
 ) -> None:
     page: CommandPageData = state.get_page(CommandType.TRAIN)
-    
+
     # Render UI structure immediately
     st.markdown("### 🚀 Training configuration")
-    
+
     # Load recommendations in background (with spinner)
     current_architecture = st.session_state.get(f"{SCHEMA_PREFIX}__architecture") or page.generated.values.get("architecture")
-    
+
     # Show spinner only if recommendations are loading
     with st.spinner("Loading recommendations..."):
         recommendations = recommendation_service.for_architecture(current_architecture)
-    
+
     # Render recommendations after UI is visible
     render_use_case_recommendations(
         recommendations,
@@ -248,14 +251,14 @@ def render_training_page(
         schema_prefix=SCHEMA_PREFIX,
         auxiliary_state_keys={"preprocessing_profile": PREPROCESSING_STATE_KEY},
     )
-    
+
     # Rest of existing code...
     if st.button("Reset form", key="command_builder_train_reset"):
         state.active_use_case = None
         state.reset_command(CommandType.TRAIN)
         _reset_form_state()
         rerun_app()
-    
+
     # Schema generation (this is cached from Phase 1, but show spinner for first load)
     schema_result = generate_ui_from_schema(str(SCHEMA_PATH))
     # ... rest of existing code ...
@@ -271,23 +274,23 @@ Add method to only persist when state actually changes:
 @dataclass(slots=True)
 class CommandBuilderState:
     # ... existing fields ...
-    
+
     def persist(self) -> None:
         """Persist state to session. Only updates if state changed."""
         current_state = st.session_state.get(SESSION_KEY)
-        
+
         # Only update if state actually changed
         if current_state != self:
             st.session_state[SESSION_KEY] = self
-    
+
     def persist_if_changed(self) -> None:
         """Alternative: Use hash-based change detection for better performance."""
         import hashlib
         import pickle
-        
+
         current_hash = hashlib.md5(pickle.dumps(self)).hexdigest()
         stored_hash = st.session_state.get(f"{SESSION_KEY}_hash")
-        
+
         if stored_hash != current_hash:
             st.session_state[SESSION_KEY] = self
             st.session_state[f"{SESSION_KEY}_hash"] = current_hash

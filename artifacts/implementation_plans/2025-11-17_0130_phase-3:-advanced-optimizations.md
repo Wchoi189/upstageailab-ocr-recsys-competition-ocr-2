@@ -29,85 +29,87 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 3
 ## Progress Tracker
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
+- **STATUS:** Not Started
+- **CURRENT STEP:** Phase 3, Task 3.1 - Module-Level Caching for ConfigParser
+- **LAST COMPLETED TASK:** None (Requires Phase 1 and Phase 2 completion)
+- **NEXT TASK:** Implement module-level caching for ConfigParser
 
 ### Implementation Outline (Checklist)
 
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
+#### **Phase 3: Advanced Optimizations (Week 3)**
+1. [ ] **Task 3.1: Module-Level Caching for ConfigParser**
+   - [ ] Add module-level cache dictionary
+   - [ ] Update `get_available_models()` with module cache
+   - [ ] Update other expensive methods similarly
+   - [ ] Test cache sharing across instances
 
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
+2. [ ] **Task 3.2: Optimize Checkpoint Scanning**
+   - [ ] Add timestamp-based cache for checkpoints
+   - [ ] Implement incremental scanning
+   - [ ] Add cache TTL (5 minutes)
+   - [ ] Test checkpoint loading performance
 
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
+3. [ ] **Task 3.3: Background Prefetching**
+   - [ ] Add prefetching for likely-needed services
+   - [ ] Test prefetching doesn't impact current page
+   - [ ] Verify subsequent page loads are instant
 
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
+4. [ ] **Task 3.4: Additional Micro-Optimizations**
+   - [ ] Optimize YAML schema loading
+   - [ ] Add performance monitoring (optional)
+   - [ ] Test all optimizations together
 
 ---
 
 ## 📋 **Technical Requirements Checklist**
 
 ### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
+- [ ] Module-Level Caching: Shared cache across ConfigParser instances
+- [ ] Incremental Scanning: Optimized checkpoint directory scanning
+- [ ] Background Prefetching: Pre-load likely-needed data
+- [ ] Performance Monitoring: Optional metrics for development
 
 ### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
+- [ ] Integration with Phase 1 and Phase 2 optimizations
+- [ ] Use existing ConfigParser class
+- [ ] Maintain compatibility with existing code
 
 ### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
+- [ ] Functional Testing: All features work correctly
+- [ ] Performance Testing: Page switch time < 100ms
+- [ ] Memory Testing: Monitor memory usage
+- [ ] Regression Testing: No functionality broken
 
 ---
 
 ## 🎯 **Success Criteria Validation**
 
 ### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
+- [ ] All pages load and function correctly
+- [ ] Module-level caching works across instances
+- [ ] Checkpoint scanning is optimized
+- [ ] Prefetching improves perceived performance
 
 ### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
+- [ ] Page switch time < 100ms (from Phase 2's < 150ms)
+- [ ] Checkpoint scanning < 50ms (from 200-500ms)
+- [ ] Memory usage acceptable (no leaks)
+- [ ] Code is type-hinted and documented
 
 ---
 
 ## 📊 **Risk Mitigation & Fallbacks**
 
-### **Current Risk Level**: LOW / MEDIUM / HIGH
+### **Current Risk Level**: LOW
 ### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
+1. Incremental Development: Implement one optimization at a time
+2. Comprehensive Testing: Test each optimization independently
+3. Dependency Management: Requires Phase 1 and Phase 2 completion
 
 ### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
+1. If module-level cache causes issues: Revert to instance-level cache
+2. If checkpoint optimization fails: Revert to full directory scan
+3. If prefetching causes problems: Disable prefetching
 
 ---
 
@@ -129,18 +131,21 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 3
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** [Description of the immediate next task]
+**TASK:** Implement module-level caching for ConfigParser
 
-**OBJECTIVE:** [Clear, concise goal of the task]
+**OBJECTIVE:** Add module-level cache shared across all ConfigParser instances to reduce redundant file I/O and computation.
 
 **APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
+1. Add `_MODULE_CACHE` dictionary at module level in `config_parser.py`
+2. Update `get_available_models()` to check module cache first
+3. Apply same pattern to other expensive methods
+4. Test cache sharing works across instances
 
 **SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
+- Module-level cache implemented
+- Cache shared across ConfigParser instances
+- No redundant file I/O operations
+- All functionality works correctly
 
 ---
 
@@ -190,38 +195,38 @@ _CACHE_LOCK = threading.Lock()  # For thread safety if needed
 
 class ConfigParser:
     """Parser for extracting configuration options from Hydra configs."""
-    
+
     def __init__(self, config_dir: str | None = None):
         # ... existing __init__ code ...
         # Keep instance cache for backward compatibility
         self._cache: dict[str, Any] = {}
-    
+
     def get_available_models(self) -> dict[str, list[str]]:
         """Get available model components with module-level caching."""
         cache_key = "models"
-        
+
         # Check module-level cache first
         if cache_key in _MODULE_CACHE:
             return _MODULE_CACHE[cache_key]
-        
+
         # Check instance cache
         if cache_key in self._cache:
             # Also store in module cache for future instances
             _MODULE_CACHE[cache_key] = self._cache[cache_key]
             return self._cache[cache_key]
-        
+
         # Compute (existing logic)
         models: dict[str, list[str]] = {
             "encoders": [],
             "decoders": [],
             # ... rest of existing code ...
         }
-        
+
         # Store in both caches
         self._cache[cache_key] = models
         _MODULE_CACHE[cache_key] = models
         return models
-    
+
     # Apply same pattern to other expensive methods:
     # - get_architecture_metadata()
     # - get_optimizer_metadata()
@@ -247,26 +252,26 @@ _CHECKPOINT_CACHE_TTL = 300  # 5 minutes
 def get_available_checkpoints(self) -> list[str]:
     """Get available checkpoint files with optimized scanning."""
     import time
-    
+
     cache_key = "checkpoints"
     current_time = time.time()
-    
+
     # Check if cache is still valid
     if cache_key in _CHECKPOINT_CACHE:
         cached_checkpoints, cache_time = _CHECKPOINT_CACHE[cache_key]
         if current_time - cache_time < _CHECKPOINT_CACHE_TTL:
             return cached_checkpoints
-    
+
     # Only scan if cache expired or missing
     checkpoints = []
     outputs_dir = self.config_dir.parent / "outputs"
-    
+
     if outputs_dir.exists():
         # Use os.walk for better performance than glob
         for root, dirs, files in os.walk(outputs_dir):
             # Skip hidden directories
             dirs[:] = [d for d in dirs if not d.startswith('.')]
-            
+
             if 'checkpoints' in root:
                 for file in files:
                     if file.endswith('.ckpt'):
@@ -275,7 +280,7 @@ def get_available_checkpoints(self) -> list[str]:
                             self.config_dir.parent
                         )
                         checkpoints.append(rel_path)
-    
+
     # Update cache
     _CHECKPOINT_CACHE[cache_key] = (checkpoints, current_time)
     return checkpoints
@@ -295,12 +300,12 @@ def run() -> None:
 
     state = CommandBuilderState.from_session()
     command_type = render_sidebar(state)
-    
+
     # Prefetch data for other pages in background (non-blocking)
     if command_type == CommandType.TRAIN:
         # Load Train page (current)
         # ... existing code ...
-        
+
         # Prefetch Test and Predict services in background
         # (Streamlit will cache them, so they're ready when needed)
         if "prefetch_done" not in st.session_state:
@@ -355,7 +360,7 @@ Optimize recommendation rendering:
 def render_use_case_recommendations(...):
     if not recommendations:
         return  # Early return, skip rendering
-    
+
     # ... existing rendering code ...
 ```
 
@@ -371,9 +376,9 @@ import time
 def run() -> None:
     if st.session_state.get("enable_perf_monitoring", False):
         start_time = time.time()
-    
+
     # ... existing code ...
-    
+
     if st.session_state.get("enable_perf_monitoring", False):
         elapsed = time.time() - start_time
         st.sidebar.metric("Page Render Time", f"{elapsed*1000:.0f}ms")

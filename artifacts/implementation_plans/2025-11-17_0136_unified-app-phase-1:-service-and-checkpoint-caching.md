@@ -29,85 +29,88 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Unified
 ## Progress Tracker
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
+- **STATUS:** Not Started
+- **CURRENT STEP:** Unified App Phase 1, Task 1.1 - Create Cached Service Factories
+- **LAST COMPLETED TASK:** None
+- **NEXT TASK:** Create cached service factory functions in services/__init__.py
 
 ### Implementation Outline (Checklist)
 
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
+#### **Unified App Phase 1: Service and Checkpoint Caching (Week 1)**
+1. [ ] **Task 1.1: Create Cached Service Factories**
+   - [ ] Create or update `services/__init__.py`
+   - [ ] Add `@st.cache_resource` to `get_preprocessing_service()`
+   - [ ] Add `@st.cache_resource` to `get_inference_service()`
+   - [ ] Test imports work correctly
 
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
+2. [ ] **Task 1.2: Update Pages to Use Cached Services**
+   - [ ] Update preprocessing page to use cached service
+   - [ ] Update inference page to use cached service
+   - [ ] Update batch inference to use cached service
+   - [ ] Test all pages work correctly
 
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
+3. [ ] **Task 1.3: Cache Checkpoint Loading**
+   - [ ] Add `@st.cache_data` to `load_checkpoints()`
+   - [ ] Set appropriate TTL (5 minutes)
+   - [ ] Test checkpoint loading performance
 
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
+4. [ ] **Task 1.4: Add Cache Invalidation Utilities**
+   - [ ] Add cache clearing functions to shared_utils
+   - [ ] Add optional cache clear button (development)
+   - [ ] Test cache invalidation works
 
 ---
 
 ## 📋 **Technical Requirements Checklist**
 
 ### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
+- [ ] Modular Design: Cached service factories in services module
+- [ ] Streamlit Caching: Use `@st.cache_resource` for services, `@st.cache_data` for checkpoints
+- [ ] Cache TTL: 5 minutes (300s) for checkpoints, persistent for services
+- [ ] State Management: No changes to existing state management
 
 ### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
+- [ ] Integration with Streamlit caching system
+- [ ] Use existing PreprocessingService and InferenceService
+- [ ] Maintain compatibility with existing pages
 
 ### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
+- [ ] Functional Testing: All pages work correctly
+- [ ] Performance Testing: Page load time < 200ms, service creation < 10ms
+- [ ] Cache Testing: Verify caching works and invalidation works
+- [ ] Regression Testing: No functionality broken
 
 ---
 
 ## 🎯 **Success Criteria Validation**
 
 ### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
+- [ ] All pages (Preprocessing/Inference/Comparison) work correctly
+- [ ] Service instances are cached and reused
+- [ ] Checkpoint loading is cached
+- [ ] No regressions in existing functionality
 
 ### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
+- [ ] Page load time < 200ms (from 330-720ms)
+- [ ] Service creation < 10ms (from 100-200ms)
+- [ ] Checkpoint loading < 50ms (from 200-500ms)
+- [ ] Code is type-hinted and documented
+- [ ] Cache invalidation works correctly
 
 ---
 
 ## 📊 **Risk Mitigation & Fallbacks**
 
-### **Current Risk Level**: LOW / MEDIUM / HIGH
+### **Current Risk Level**: LOW
 ### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
+1. Incremental Development: Implement one service at a time, test after each
+2. Comprehensive Testing: Test all pages and functionality after changes
+3. Rollback Plan: Easy to revert if issues occur
 
 ### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
+1. If caching causes issues: Revert to direct instantiation (simple rollback)
+2. If memory usage too high: Reduce TTL or remove some caches
+3. If cache invalidation issues: Use shorter TTL or manual cache clearing
 
 ---
 
@@ -129,18 +132,21 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Unified
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** [Description of the immediate next task]
+**TASK:** Create cached service factory functions in services/__init__.py
 
-**OBJECTIVE:** [Clear, concise goal of the task]
+**OBJECTIVE:** Create cached factory functions for PreprocessingService and InferenceService to avoid recreating service instances on every action.
 
 **APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
+1. Create or update `ui/apps/unified_ocr_app/services/__init__.py`
+2. Add `get_preprocessing_service()` with `@st.cache_resource`
+3. Add `get_inference_service()` with `@st.cache_resource`
+4. Test that imports work correctly
 
 **SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
+- Factory functions exist with proper decorators
+- Imports work without errors
+- Functions return correct types
+- Services can be instantiated via factories
 
 ---
 
@@ -190,10 +196,10 @@ from ui.apps.unified_ocr_app.services.preprocessing_service import Preprocessing
 @st.cache_resource
 def get_preprocessing_service(mode_config: dict[str, Any]) -> PreprocessingService:
     """Get cached PreprocessingService instance.
-    
+
     Args:
         mode_config: Mode configuration dictionary
-        
+
     Returns:
         Cached PreprocessingService instance
     """
@@ -202,10 +208,10 @@ def get_preprocessing_service(mode_config: dict[str, Any]) -> PreprocessingServi
 @st.cache_resource
 def get_inference_service(mode_config: dict[str, Any]) -> InferenceService:
     """Get cached InferenceService instance.
-    
+
     Args:
         mode_config: Mode configuration dictionary
-        
+
     Returns:
         Cached InferenceService instance
     """
@@ -264,13 +270,13 @@ Add caching to `load_checkpoints()` function:
 @st.cache_data(show_spinner=False, ttl=300)  # Cache for 5 minutes
 def load_checkpoints(config: dict[str, Any]) -> list[Any]:
     """Load available model checkpoints with caching.
-    
+
     Args:
         config: App configuration with paths
-        
+
     Returns:
         List of CheckpointInfo objects
-        
+
     Note:
         Cached for 5 minutes to balance freshness and performance.
         Clear cache if checkpoints are added/removed.
