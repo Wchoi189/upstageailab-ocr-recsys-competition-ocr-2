@@ -9,150 +9,19 @@ status: "draft"
 tags: []
 ---
 
-# Master Prompt
-
-You are an autonomous AI agent, my Chief of Staff for implementing the **Web Worker Prompt: Streamlit Performance Optimization**. Your primary responsibility is to execute the "Living Implementation Blueprint" systematically, handle outcomes, and keep track of our progress. Do not ask for clarification on what to do next; your next task is always explicitly defined.
-
----
-
-**Your Core Workflow is a Goal-Execute-Update Loop:**
-1. **Goal:** A clear `🎯 Goal` will be provided for you to achieve.
-2. **Execute:** You will start working on the task defined in the `NEXT TASK`
-3. **Handle Outcome & Update:** Based on the success or failure of the command, you will follow the specified contingency plan. Your response must be in two parts:
-   * **Part 1: Execution Report:** Provide a concise summary of the results and analysis of the outcome (e.g., "All tests passed" or "Test X failed due to an IndexError...").
-   * **Part 2: Blueprint Update Confirmation:** Confirm that the living blueprint has been updated with the new progress status and next task. The updated blueprint is available in the workspace file.
-
----
-
-# Living Implementation Blueprint: Web Worker Prompt: Streamlit Performance Optimization
-
-## Progress Tracker
-**⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
-
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
-
-### Implementation Outline (Checklist)
-
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
-
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
-
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
-
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
-
----
-
-## 📋 **Technical Requirements Checklist**
-
-### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
-
-### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
-
-### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
-
----
-
-## 🎯 **Success Criteria Validation**
-
-### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
-
-### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
-
----
-
-## 📊 **Risk Mitigation & Fallbacks**
-
-### **Current Risk Level**: LOW / MEDIUM / HIGH
-### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
-
-### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
-
----
-
-## 🔄 **Blueprint Update Protocol**
-
-**Update Triggers:**
-- Task completion (move to next task)
-- Blocker encountered (document and propose solution)
-- Technical discovery (update approach if needed)
-- Quality gate failure (address issues before proceeding)
-
-**Update Format:**
-1. Update Progress Tracker (STATUS, CURRENT STEP, LAST COMPLETED TASK, NEXT TASK)
-2. Mark completed items with [x]
-3. Add any new discoveries or changes to approach
-4. Update risk assessment if needed
-
----
-
-## 🚀 **Immediate Next Action**
-
-**TASK:** [Description of the immediate next task]
-
-**OBJECTIVE:** [Clear, concise goal of the task]
-
-**APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
-
-**SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
-
----
-
-*This implementation plan follows the Blueprint Protocol Template (PROTO-GOV-003) for systematic, autonomous execution with clear progress tracking.*
-# Web Worker Prompt: Streamlit Command Builder Performance Optimization
+# Web Worker Prompt: Streamlit Performance Optimization
 
 ## Overview
 
-You are tasked with optimizing the Streamlit Command Builder app to reduce page switch delays from 470-810ms to under 100ms. This is a multi-phase project with clear implementation plans and success criteria.
+You are tasked with optimizing Streamlit apps to reduce page switch/load delays. This covers two apps:
+1. **Command Builder App** - Reduce page switch delays from 470-810ms to under 100ms
+2. **Unified OCR App** - Reduce page load delays from 330-720ms to under 200ms
+
+This is a multi-phase project with clear implementation plans and success criteria for each app.
 
 ## Project Context
 
+### Command Builder App
 **App Location:** `ui/apps/command_builder/app.py`
 
 **Current Problem:**
@@ -162,11 +31,28 @@ You are tasked with optimizing the Streamlit Command Builder app to reduce page 
 - UI blocks while loading data
 
 **Target Performance:**
-- Page switch time: < 100ms
+- Page switch time: < 100ms (after all phases)
 - UI appears within 50ms
 - Smooth, responsive user experience
 
+### Unified OCR App
+**App Location:** `ui/apps/unified_ocr_app/app.py`
+
+**Current Problem:**
+- Page load time: 330-720ms (inference page worst case)
+- Service creation on every action: 100-200ms
+- Checkpoint loading on every render: 200-500ms
+- Image processing not cached: 1-5 seconds
+
+**Target Performance:**
+- Page load time: < 200ms
+- Service creation: < 10ms
+- Checkpoint loading: < 50ms
+- Cached image processing: < 1s
+
 ## Implementation Phases
+
+### Command Builder App Phases
 
 ### Phase 1: Quick Wins - Caching (Priority: HIGH)
 **Estimated Time:** 1-2 hours
@@ -188,7 +74,7 @@ You are tasked with optimizing the Streamlit Command Builder app to reduce page 
 
 ### Phase 2: Lazy Loading & Progressive Rendering (Priority: MEDIUM)
 **Estimated Time:** 2-3 hours
-**Plan:** `artifacts/implementation_plans/2025-11-17_XXXX_phase-2:-lazy-loading-and-progressive-rendering.md`
+**Plan:** `artifacts/implementation_plans/2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md`
 
 **Key Tasks:**
 1. Refactor `app.py` to lazy-load services based on active page
@@ -207,7 +93,7 @@ You are tasked with optimizing the Streamlit Command Builder app to reduce page 
 
 ### Phase 3: Advanced Optimizations (Priority: LOW)
 **Estimated Time:** 3-4 hours
-**Plan:** `artifacts/implementation_plans/2025-11-17_XXXX_phase-3:-advanced-optimizations.md`
+**Plan:** `artifacts/implementation_plans/2025-11-17_0130_phase-3:-advanced-optimizations.md`
 
 **Key Tasks:**
 1. Implement module-level caching for ConfigParser
@@ -224,11 +110,52 @@ You are tasked with optimizing the Streamlit Command Builder app to reduce page 
 
 **Dependencies:** Requires Phase 1 and Phase 2 completion
 
+### Unified OCR App Phases
+
+### Unified App Phase 1: Service and Checkpoint Caching (Priority: HIGH)
+**Estimated Time:** 1-2 hours
+**Plan:** `artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md`
+
+**Key Tasks:**
+1. Create cached service factories in `services/__init__.py`
+2. Add `@st.cache_resource` to service initialization
+3. Add `@st.cache_data` to checkpoint loading
+4. Update pages to use cached services
+
+**Expected Impact:** 200-500ms reduction in page load, 100-200ms reduction in actions
+
+**Success Criteria:**
+- All pages work correctly
+- Page load time < 200ms
+- Service creation < 10ms
+- Checkpoint loading < 50ms
+
+### Unified App Phase 2: Image Processing and Config Optimization (Priority: MEDIUM)
+**Estimated Time:** 2-3 hours
+**Plan:** `artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md`
+
+**Key Tasks:**
+1. Implement hash-based caching for image processing
+2. Optimize config loading with module-level cache
+3. Optimize state persistence
+4. Add loading indicators
+
+**Expected Impact:** Image processing < 1s cached, config loading < 10ms
+
+**Success Criteria:**
+- Image processing cached correctly
+- Config loading < 10ms
+- State only persists when changed
+
+**Dependencies:** Requires Unified App Phase 1 completion
+
 ## Getting Started
 
 ### Prerequisites
-1. Read the assessment: `artifacts/assessments/2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md`
-2. Read the Phase 1 implementation plan (link above)
+1. Read the assessments:
+   - Command Builder: `artifacts/assessments/2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md`
+   - Unified App: `artifacts/assessments/2025-11-17_0136_unified-ocr-app-performance-assessment.md`
+2. Read the Phase 1 implementation plan for the app you're working on
 3. Understand the current codebase structure
 
 ### Development Setup
@@ -236,18 +163,30 @@ You are tasked with optimizing the Streamlit Command Builder app to reduce page 
 # Navigate to project root
 cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2
 
-# Run the app to understand current behavior
+# Run Command Builder app
 uv run streamlit run ui/apps/command_builder/app.py
 
-# Test page switching and measure current performance
+# Run Unified OCR App
+uv run streamlit run ui/apps/unified_ocr_app/app.py
+
+# Test page switching/loading and measure current performance
 ```
 
 ### Key Files to Understand
+
+**Command Builder:**
 - `ui/apps/command_builder/app.py` - Main app entry point
 - `ui/utils/config_parser.py` - ConfigParser class (needs caching)
 - `ui/utils/ui_generator.py` - UI generation (needs caching)
 - `ui/apps/command_builder/components/` - Page components
 - `ui/apps/command_builder/state.py` - State management
+
+**Unified OCR App:**
+- `ui/apps/unified_ocr_app/app.py` - Main app entry point
+- `ui/apps/unified_ocr_app/pages/` - Page files (Preprocessing, Inference, Comparison)
+- `ui/apps/unified_ocr_app/services/` - Service classes (PreprocessingService, InferenceService)
+- `ui/apps/unified_ocr_app/shared_utils.py` - Shared utilities
+- `ui/apps/unified_ocr_app/models/app_state.py` - State management
 
 ## Implementation Guidelines
 
@@ -349,16 +288,30 @@ For each phase, provide:
 
 ## Additional Resources
 
-- **Assessment:** `artifacts/assessments/2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md`
+- **Command Builder Assessment:** `artifacts/assessments/2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md`
+- **Unified App Assessment:** `artifacts/assessments/2025-11-17_0136_unified-ocr-app-performance-assessment.md`
+- **Additional Optimizations:** `artifacts/implementation_plans/2025-11-17_0131_additional-performance-optimization-suggestions.md`
 - **Streamlit Caching Docs:** https://docs.streamlit.io/library/advanced-features/caching
 - **Streamlit Performance:** https://docs.streamlit.io/knowledge-base/using-streamlit/how-to-improve-streamlit-app-performance
 
 ## Notes
 
-- Work on phases sequentially (don't skip ahead)
-- Test thoroughly after each phase
-- Document any issues or unexpected behavior
-- Ask questions if anything is unclear
+- **Choose your app:** You can work on Command Builder or Unified App independently
+- **Work on phases sequentially:** Don't skip ahead within an app
+- **Test thoroughly:** After each phase, test all functionality
+- **Document issues:** Any deviations from plan or unexpected behavior
+- **Ask questions:** If anything is unclear, refer to the assessment documents
+
+## Quick Reference
+
+**Command Builder Plans:**
+- Phase 1: `2025-11-17_0126_phase-1:-implement-streamlit-caching-for-command-builder.md`
+- Phase 2: `2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md`
+- Phase 3: `2025-11-17_0130_phase-3:-advanced-optimizations.md`
+
+**Unified App Plans:**
+- Phase 1: `2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md`
+- Phase 2: `2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md`
 
 Good luck! 🚀
 
