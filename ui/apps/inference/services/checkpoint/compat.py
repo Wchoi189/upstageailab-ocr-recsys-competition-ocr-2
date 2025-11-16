@@ -28,7 +28,7 @@ class CatalogOptions:
     @classmethod
     def from_paths(cls, paths) -> CatalogOptions:
         """Create CatalogOptions from PathConfig (legacy compatibility)."""
-        outputs_dir = paths.output_dir
+        outputs_dir = paths.outputs_dir
         if not outputs_dir.is_absolute():
             # Try to discover outputs path relative to project root
             from ocr.utils.path_utils import get_path_resolver

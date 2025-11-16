@@ -28,3 +28,4 @@ Collecting usage statistics. To deactivate, set browser.gatherUsageStats to fals
 [31m [0m   [2m11 [0m                                                                                [31m [0m
 [31m────────────────────────────────────────────────────────────────────────────────────────[0m
 [1;91mImportError: [0mattempted relative import with no known parent package
+  Stopping...
