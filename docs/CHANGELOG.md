@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - 2025-11-12
 
+### Fixed - 2025-11-16
+
+#### BUG-20251116-001: Excessive Invalid Polygons During Training
+- **Polygon validation tolerance** - Increased from 1.5 to 3.0 pixels in `polygons_in_canonical_frame()` to prevent double-remapping
+- **Coordinate clamping** - Added 3-pixel tolerance in `ValidatedPolygonData.validate_bounds()` with automatic clamping
+- **Annotation files fixed** - Clamped 160 out-of-bounds polygons (146 train, 14 val) to valid bounds
+- **Checkpoint config** - Reduced `save_top_k` from 3 to 1, disabled verbose logging
+
 ### Added - 2025-11-12
 
 #### Branch Merge: Main + 12_refactor/streamlit

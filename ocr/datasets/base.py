@@ -526,6 +526,8 @@ class ValidatedOCRDataset(Dataset):
                 try:
                     # Use ValidatedPolygonData with bounds checking to catch out-of-bounds coordinates
                     # This prevents BUG-20251110-001: 26.5% data corruption from invalid coordinates
+                    # BUG-20251116-001: Validation now allows boundary coordinates and clamps small errors
+                    # instead of rejecting polygons, reducing excessive data loss during training
                     validated_polygon = ValidatedPolygonData(
                         points=poly,
                         image_width=width,

@@ -163,7 +163,7 @@ def polygons_in_canonical_frame(
     height: float,
     orientation: int,
     *,
-    tolerance: float = 1.5,
+    tolerance: float = 3.0,  # BUG-20251116-001: Increased from 1.5 to 3.0 to match validation tolerance
 ) -> bool:
     """Detect whether polygon coordinates already correspond to the rotation-corrected frame.
 
@@ -172,6 +172,20 @@ def polygons_in_canonical_frame(
     polygons again would rotate them twice. This helper checks polygon extrema against
     both the raw sensor dimensions and the canonical (orientation-corrected) dimensions
     to spot that situation.
+
+    BUG-20251116-001: Tolerance increased to 3.0 pixels to handle:
+    - Floating-point precision errors from coordinate transformations
+    - Small annotation tool rounding errors (1-2 pixels)
+    - EXIF remapping transformation errors (especially for rotated images where dimensions swap)
+    - Matches the tolerance used in ValidatedPolygonData.validate_bounds() for consistency
+
+    Why tolerance is needed even for canonical images:
+    - Annotation tools may create coordinates slightly outside bounds due to rounding
+    - Floating-point arithmetic in transformations can introduce small errors (0.1-2 pixels)
+    - For rotated images (orientations 5,6,7,8), dimension swapping and coordinate remapping
+      can produce coordinates 1-3 pixels outside bounds even when polygons are correctly
+      in canonical frame
+    - Without tolerance, valid polygons would be incorrectly remapped, causing double-rotation
     """
 
     if not orientation_requires_rotation(orientation):

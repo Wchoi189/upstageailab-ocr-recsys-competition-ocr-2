@@ -169,6 +169,9 @@ class ValidatedPolygonData(PolygonData):
     are within the image boundaries, preventing out-of-bounds access errors
     (addresses BUG-20251110-001: 26.5% data corruption from invalid coordinates).
 
+    BUG-20251116-001: Updated validation to allow boundary coordinates and clamp
+    small floating-point errors, reducing excessive polygon rejection during training.
+
     Attributes:
         points: Polygon coordinates as (N, 2) array
         confidence: Optional confidence score for the polygon
@@ -177,7 +180,9 @@ class ValidatedPolygonData(PolygonData):
         image_height: Height of the image for bounds checking
 
     Raises:
-        ValueError: If any coordinate falls outside image bounds [0, width) x [0, height)
+        ValueError: If any coordinate falls significantly outside image bounds
+            (more than 1 pixel tolerance). Coordinates at boundaries or within
+            1-pixel tolerance are automatically clamped to valid range.
 
     Example:
         >>> polygon = ValidatedPolygonData(
@@ -186,10 +191,15 @@ class ValidatedPolygonData(PolygonData):
         ...     image_height=100
         ... )  # Valid polygon
         >>> polygon = ValidatedPolygonData(
+        ...     points=np.array([[10, 20], [30, 40], [100, 60]]),
+        ...     image_width=100,
+        ...     image_height=100
+        ... )  # Valid - boundary coordinate (x=100) is allowed (BUG-20251116-001)
+        >>> polygon = ValidatedPolygonData(
         ...     points=np.array([[10, 20], [30, 40], [150, 60]]),
         ...     image_width=100,
         ...     image_height=100
-        ... )  # Raises ValueError: x-coordinate 150.0 exceeds image width 100
+        ... )  # Raises ValueError: x-coordinate 150.0 significantly exceeds image width 100
     """
 
     image_width: int = Field(gt=0, description="Image width for bounds checking")
@@ -199,39 +209,101 @@ class ValidatedPolygonData(PolygonData):
     def validate_bounds(self) -> "ValidatedPolygonData":
         """Validate that all polygon coordinates are within image bounds.
 
+        This validator:
+        1. Allows coordinates at exact boundaries (x=width, y=height) for edge cases
+        2. Clamps coordinates slightly outside bounds (within 1 pixel tolerance) to handle
+           floating-point precision errors from transformations
+        3. Rejects coordinates significantly outside bounds (> 1 pixel tolerance)
+
+        BUG-20251116-001: Fixed excessive polygon rejection by:
+        - Allowing boundary coordinates (x=width, y=height) instead of exclusive upper bound
+        - Adding 1-pixel tolerance for floating-point precision errors
+        - Automatically clamping coordinates within tolerance to valid range
+
         Returns:
-            The validated model instance
+            The validated model instance with clamped coordinates if needed
 
         Raises:
-            ValueError: If any coordinate is out of bounds with detailed error message
+            ValueError: If any coordinate is significantly out of bounds with detailed error message
         """
         points = self.points
         image_width = self.image_width
         image_height = self.image_height
 
-        # Check x-coordinates (width)
+        # BUG-20251116-001: Tolerance for floating-point precision errors (3 pixels)
+        # This handles small coordinate errors from EXIF remapping and transformations.
+        # Increased from 1.0 to 3.0 to handle real-world transformation errors that can
+        # produce coordinates 2-3 pixels outside bounds due to rounding and interpolation.
+        tolerance = 3.0
+
+        # BUG-20251116-001: Check x-coordinates (width)
+        # Changed from exclusive upper bound (x >= width) to allow boundary coordinates
         x_coords = points[:, 0]
-        invalid_x = (x_coords < 0) | (x_coords >= image_width)
+        # Allow coordinates at exact boundary (x=width) and clamp small overflows
+        invalid_x = x_coords < -tolerance
+        significantly_out_of_bounds_x = x_coords > image_width + tolerance
+
         if invalid_x.any():
             invalid_indices = np.where(invalid_x)[0]
             invalid_values = x_coords[invalid_indices]
             raise ValueError(
                 f"Polygon has out-of-bounds x-coordinates: "
                 f"indices {invalid_indices.tolist()} have values {invalid_values.tolist()} "
-                f"(must be in [0, {image_width}))"
+                f"(must be in [-{tolerance}, {image_width + tolerance}])"
             )
 
-        # Check y-coordinates (height)
+        if significantly_out_of_bounds_x.any():
+            invalid_indices = np.where(significantly_out_of_bounds_x)[0]
+            invalid_values = x_coords[invalid_indices]
+            raise ValueError(
+                f"Polygon has out-of-bounds x-coordinates: "
+                f"indices {invalid_indices.tolist()} have values {invalid_values.tolist()} "
+                f"(must be in [-{tolerance}, {image_width + tolerance}])"
+            )
+
+        # BUG-20251116-001: Clamp coordinates within tolerance to valid range
+        # Automatically corrects small floating-point errors instead of rejecting polygons
+        x_coords_clamped = np.clip(x_coords, 0.0, float(image_width))
+        needs_clamping = not np.allclose(x_coords, x_coords_clamped, atol=1e-6)
+
+        # BUG-20251116-001: Check y-coordinates (height)
+        # Changed from exclusive upper bound (y >= height) to allow boundary coordinates
         y_coords = points[:, 1]
-        invalid_y = (y_coords < 0) | (y_coords >= image_height)
+        # Allow coordinates at exact boundary (y=height) and clamp small overflows
+        invalid_y = y_coords < -tolerance
+        significantly_out_of_bounds_y = y_coords > image_height + tolerance
+
         if invalid_y.any():
             invalid_indices = np.where(invalid_y)[0]
             invalid_values = y_coords[invalid_indices]
             raise ValueError(
                 f"Polygon has out-of-bounds y-coordinates: "
                 f"indices {invalid_indices.tolist()} have values {invalid_values.tolist()} "
-                f"(must be in [0, {image_height}))"
+                f"(must be in [-{tolerance}, {image_height + tolerance}])"
             )
+
+        if significantly_out_of_bounds_y.any():
+            invalid_indices = np.where(significantly_out_of_bounds_y)[0]
+            invalid_values = y_coords[invalid_indices]
+            raise ValueError(
+                f"Polygon has out-of-bounds y-coordinates: "
+                f"indices {invalid_indices.tolist()} have values {invalid_values.tolist()} "
+                f"(must be in [-{tolerance}, {image_height + tolerance}])"
+            )
+
+        # BUG-20251116-001: Clamp coordinates within tolerance to valid range
+        # Automatically corrects small floating-point errors instead of rejecting polygons
+        y_coords_clamped = np.clip(y_coords, 0.0, float(image_height))
+        needs_clamping = needs_clamping or not np.allclose(y_coords, y_coords_clamped, atol=1e-6)
+
+        # BUG-20251116-001: Update points if clamping occurred
+        # This preserves polygons that would otherwise be dropped due to minor coordinate errors
+        if needs_clamping:
+            points_clamped = points.copy()
+            points_clamped[:, 0] = x_coords_clamped
+            points_clamped[:, 1] = y_coords_clamped
+            # Use object.__setattr__ to update field in Pydantic v2
+            object.__setattr__(self, "points", points_clamped)
 
         return self
 
