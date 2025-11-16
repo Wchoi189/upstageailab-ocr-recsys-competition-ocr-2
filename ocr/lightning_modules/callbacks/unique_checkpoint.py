@@ -19,17 +19,17 @@ def _get_wandb():
 
 class UniqueModelCheckpoint(ModelCheckpoint):
     """
-    Enhanced ModelCheckpoint with timestamp-based directory organization.
+    Enhanced ModelCheckpoint with index-based directory organization.
 
-    Implements the naming scheme for timestamp-based structure:
-    outputs/YYYY-MM-DD/HH-MM-SS/checkpoints/<type>-<epoch>_<step>_<metric>.ckpt
+    Implements the naming scheme for index-based structure:
+    outputs/<index>/checkpoints/<type>-<epoch>_<step>_<metric>.ckpt
 
     This callback extends PyTorch Lightning's ModelCheckpoint to provide:
-    - Timestamp-based directory organization (managed by Hydra)
+    - Index-based directory organization (managed by Hydra)
     - Clear checkpoint naming with model information
     - Automatic metadata generation alongside checkpoints
     - Prevention of overwrites through unique identifiers
-    - Improved searchability and filtering
+    - Improved searchability and filtering (easier to sort by date)
 
     Example checkpoint names:
     - Epoch checkpoint: epoch-03_step-000103.ckpt
@@ -47,11 +47,11 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         **kwargs,
     ):
         """
-        Initialize checkpoint callback with timestamp-based organization.
+        Initialize checkpoint callback with index-based organization.
 
         Args:
             add_timestamp: Whether to add timestamp to checkpoint filenames (legacy, kept for compatibility)
-            experiment_tag: Optional experiment identifier (deprecated in favor of timestamp-based structure)
+            experiment_tag: Optional experiment identifier (deprecated in favor of index-based structure)
             training_phase: Stage of the experiment (e.g., "training", "validation", "finetuning")
             config: Resolved training configuration to save alongside checkpoints
             **kwargs: Additional arguments passed to ModelCheckpoint
@@ -339,10 +339,10 @@ class UniqueModelCheckpoint(ModelCheckpoint):
 
     def _setup_dirpath(self) -> str:
         """
-        Set up the directory path for timestamp-based structure.
+        Set up the directory path for index-based structure.
 
-        With the new timestamp-based organization, Hydra creates the directory structure:
-        outputs/YYYY-MM-DD/HH-MM-SS/checkpoints/
+        With the new index-based organization, Hydra creates the directory structure:
+        outputs/<index>/checkpoints/
 
         This method now simply ensures the directory exists and can optionally
         add model information to checkpoint filenames.
@@ -356,18 +356,18 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         # Convert dirpath to string if it's a Path object
         dirpath_str = str(self.dirpath)
 
-        # For timestamp-based structure, use the dirpath as-is
-        # Hydra already creates: outputs/YYYY-MM-DD/HH-MM-SS/checkpoints/
+        # For index-based structure, use the dirpath as-is
+        # Hydra already creates: outputs/<index>/checkpoints/
         # No need to manipulate directory names with experiment tags
 
         return dirpath_str
 
     def setup(self, trainer, pl_module, stage: str | None = None) -> None:
         """
-        Setup callback for timestamp-based directory structure.
+        Setup callback for index-based directory structure.
 
         With the new structure, directory setup is simplified since Hydra
-        handles the timestamp-based organization.
+        handles the index-based organization.
         """
         # Call parent setup with stage
         if stage is not None:
@@ -376,7 +376,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             # Avoid the type issue by not passing None
             super().setup(trainer, pl_module, "fit")
 
-        # For timestamp-based structure, dirpath is already set by Hydra
+        # For index-based structure, dirpath is already set by Hydra
         # No need to enhance directory naming
 
     def load_state_dict(self, state_dict: dict) -> None:

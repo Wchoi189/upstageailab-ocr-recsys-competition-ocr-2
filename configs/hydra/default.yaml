@@ -5,8 +5,9 @@ defaults:
   - _self_
 
 # output directory, generated dynamically on each run
+# Using index-based numbering for better sorting and to avoid overlaps
 run:
-  dir: outputs/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  dir: outputs/${exp_index:}
 sweep:
   dir: multirun/${now:%Y-%m-%d}/${now:%H-%M-%S}
   subdir: ${hydra.job.num}

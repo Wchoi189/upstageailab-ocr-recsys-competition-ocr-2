@@ -1,5 +1,5 @@
 
-# Paths config - Timestamp-based structure for reliability
+# Paths config - Index-based structure for reliability and easy sorting
 experiment_dir: 'outputs'
 log_dir: '${hydra:runtime.output_dir}/logs'
 output_dir: '${hydra:runtime.output_dir}'

@@ -35,6 +35,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed - 2025-11-12
 
+#### Checkpoint Output Configuration
+
+- **Index-based output directories** - Changed from timestamp-based (`outputs/YYYY-MM-DD/HH-MM-SS/`) to sequential index-based (`outputs/1/`, `outputs/2/`, etc.) for easier sorting and to prevent overlaps
+
 #### Dependencies
 
 - **Added Jinja2>=3.1.0** - Required dependency for AgentQMS template system

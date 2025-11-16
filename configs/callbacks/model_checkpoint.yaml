@@ -1,7 +1,7 @@
 # https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.ModelCheckpoint.html
 #
 # Enhanced checkpoint naming scheme for better organization and clarity
-# Structure: <experiment_tag>-<model>_<phase>_<timestamp>/checkpoints/<type>-<epoch>_<step>_<metric>.ckpt
+# Structure: <index>/checkpoints/<type>-<epoch>_<step>_<metric>.ckpt
 #
 # Example checkpoint names:
 #   - Epoch: epoch-03_step-000103.ckpt
@@ -9,7 +9,10 @@
 #   - Best:  best-hmean-0.8920.ckpt
 #
 # Directory structure:
-#   outputs/ocr_pl_refactor_phase1-resnet18_training_20251015_120000/checkpoints/
+#   outputs/1/checkpoints/
+#   outputs/2/checkpoints/
+#   outputs/3/checkpoints/
+#   (Index-based numbering for easy sorting and to avoid overlaps)
 
 model_checkpoint:
   _target_: ocr.lightning_modules.callbacks.unique_checkpoint.UniqueModelCheckpoint
@@ -25,10 +28,11 @@ model_checkpoint:
   filename: "best" # Template for best checkpoints
 
   # Monitoring and saving configuration
+  # BUG-20251116-001: Reduced checkpoint saving to prevent excessive disk usage
   monitor: "val/hmean" # name of the logged metric which determines when model is improving
-  verbose: True # verbosity mode - set to True to see when checkpoints are saved
-  save_last: true # additionally always save an exact copy of the last checkpoint to a file last.ckpt
-  save_top_k: 3 # save k best models (determined by above metric) - increased to keep more best models
+  verbose: False # verbosity mode - set to False to reduce log spam (BUG-20251116-001)
+  save_last: True # save last checkpoint for resuming training
+  save_top_k: 1 # save only the best model to reduce disk usage (BUG-20251116-001)
   mode: "max" # "max" means higher metric value is better, can be also "min"
   auto_insert_metric_name: True # Add metric name and value to checkpoint filename
   save_weights_only: False # if True, then only the model's weights will be saved
