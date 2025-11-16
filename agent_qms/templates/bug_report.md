@@ -1,8 +1,8 @@
 ---
 title: "{{ title }}"
 author: "{{ author }}"
-date: "{{ date }}"
 timestamp: "{{ timestamp }}"
+branch: "{{ branch }}"
 type: "bug_report"
 category: "troubleshooting"
 status: "{{ status }}"

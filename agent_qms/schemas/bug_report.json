@@ -9,13 +9,13 @@
         "author": {
             "type": "string"
         },
-        "date": {
-            "type": "string",
-            "format": "date"
-        },
         "timestamp": {
             "type": "string",
             "description": "Timestamp with hour and minute in KST format (YYYY-MM-DD HH:MM KST)"
+        },
+        "branch": {
+            "type": "string",
+            "description": "Git branch name where artifact was created"
         },
         "type": {
             "type": "string",
@@ -47,6 +47,6 @@
             "enum": ["Critical", "High", "Medium", "Low"]
         }
     },
-    "required": ["title", "author", "date", "timestamp", "type", "category", "status", "bug_id", "severity"]
+    "required": ["title", "author", "timestamp", "branch", "type", "category", "status", "bug_id", "severity"]
 }
 

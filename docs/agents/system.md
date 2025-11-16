@@ -58,12 +58,22 @@ python scripts/agent_tools/core/artifact_workflow.py create \
   --tags "bug,issue"
 ```
 
-**Types:** `implementation_plan`, `assessment`, `bug_report` (see `agent_qms/q-manifest.yaml`)
+**Types:** `implementation_plan`, `assessment`, `bug_report`, `data_contract` (see `agent_qms/q-manifest.yaml`)
 
 **Naming Convention:**
 - **Assessments, Implementation Plans, Guides**: Must use timestamped filenames (YYYY-MM-DD_HHMM_name.md)
-- **All Artifacts**: Frontmatter must include `timestamp` field with hour and minute in KST format (YYYY-MM-DD HH:MM KST)
-- **Example**: `2025-11-09_1430_architecture-reorganization-plan.md` with `timestamp: "2025-11-09 14:30 KST"` in frontmatter
+- **All Artifacts**: Frontmatter must include `timestamp` field (YYYY-MM-DD HH:MM KST) and `branch` field (git branch name)
+- **Example**: `2025-11-09_1430_architecture-reorganization-plan.md` with frontmatter:
+  ```yaml
+  ---
+  title: "Architecture Reorganization Plan"
+  author: "ai-agent"
+  timestamp: "2025-11-09 14:30 KST"
+  branch: "main"
+  status: "draft"
+  tags: []
+  ---
+  ```
 
 **Validation:** Before using `write` tool, check path:
 ```python

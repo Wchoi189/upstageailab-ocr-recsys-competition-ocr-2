@@ -1,5 +1,8 @@
 #!/bin/bash
 # Script to test different scenarios for finding the freeze point
+#
+# NOTE: The Streamlit freeze issue was resolved in October 2025 (see docs/sessions/2025-10-21/issue-resolved.md).
+# This script is kept for future debugging purposes.
 
 set -e
 
@@ -107,7 +110,7 @@ run_background() {
     echo "  tail -f logs/ui/inference_8504.err"
     echo ""
     echo "After freeze, check logs with:"
-    echo "  bash CHECK_LOGS.sh"
+    echo "  bash scripts/troubleshooting/check_streamlit_logs.sh"
     echo ""
 }
 

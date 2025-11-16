@@ -17,6 +17,11 @@ artifact_types:
     template: "templates/bug_report.md"
     schema: "schemas/bug_report.json"
     location: "docs/bug_reports/"
+  - name: "data_contract"
+    description: "A data contract defining input/output shapes, types, validation rules, and constraints for core project areas."
+    template: "templates/data_contract.md"
+    schema: "schemas/data_contract.json"
+    location: "artifacts/data_contracts/"
 
 tool_registry:
   - name: "create_artifact"
@@ -29,4 +34,4 @@ tool_registry:
 validation_rules:
   - rule: "enforce_timestamped_filenames"
     enabled: true
-    description: "Assessments, implementation plans, and guides must use timestamped filenames (YYYY-MM-DD_HHMM_name.md). All frontmatters must include timestamp with hour and minute in KST."
+    description: "Assessments, implementation plans, and guides must use timestamped filenames (YYYY-MM-DD_HHMM_name.md). All frontmatters must include timestamp (YYYY-MM-DD HH:MM KST) and branch (git branch name) fields."

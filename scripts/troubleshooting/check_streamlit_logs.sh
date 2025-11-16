@@ -1,5 +1,8 @@
 #!/bin/bash
 # Script to check logs and find freeze point
+#
+# NOTE: The Streamlit freeze issue was resolved in October 2025 (see docs/sessions/2025-10-21/issue-resolved.md).
+# This script is kept for future debugging purposes.
 
 echo "=================================="
 echo "CHECKING STREAMLIT LOGS FOR FREEZE"
@@ -27,7 +30,7 @@ echo "=================================="
 echo "1. Start the app: make ui-infer"
 echo "2. Run ONE inference"
 echo "3. Wait for freeze"
-echo "4. Run this script: bash CHECK_LOGS.sh"
+echo "4. Run this script: bash scripts/troubleshooting/check_streamlit_logs.sh"
 echo "5. Share the LAST log message before freeze"
 echo ""
 echo "The last message will tell us EXACTLY where it freezes."

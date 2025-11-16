@@ -1,6 +1,6 @@
 {
     "$schema": "http://json-schema.org/draft-07/schema#",
-    "title": "Implementation Plan",
+    "title": "Data Contract",
     "type": "object",
     "properties": {
         "title": {
@@ -30,3 +30,4 @@
     },
     "required": ["title", "author", "timestamp", "branch", "status"]
 }
+

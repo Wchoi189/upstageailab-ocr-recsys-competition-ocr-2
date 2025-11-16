@@ -9,13 +9,13 @@
         "author": {
             "type": "string"
         },
-        "date": {
-            "type": "string",
-            "format": "date"
-        },
         "timestamp": {
             "type": "string",
             "description": "Timestamp with hour and minute in KST format (YYYY-MM-DD HH:MM KST)"
+        },
+        "branch": {
+            "type": "string",
+            "description": "Git branch name where artifact was created"
         },
         "status": {
             "type": "string",
@@ -28,5 +28,5 @@
             }
         }
     },
-    "required": ["title", "author", "date", "timestamp", "status"]
+    "required": ["title", "author", "timestamp", "branch", "status"]
 }

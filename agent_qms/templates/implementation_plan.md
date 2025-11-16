@@ -1,8 +1,8 @@
 ---
 title: "{{ title }}"
 author: "{{ author }}"
-date: "{{ date }}"
 timestamp: "{{ timestamp }}"
+branch: "{{ branch }}"
 type: "{{ type }}"
 category: "{{ category }}"
 status: "draft"

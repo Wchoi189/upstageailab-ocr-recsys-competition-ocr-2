@@ -1,6 +1,7 @@
 import datetime
 import json
 import re
+import subprocess
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -18,6 +19,21 @@ class AgentQMSToolbelt:
         self.root_path = Path(manifest_path).parent
         with open(manifest_path, 'r') as f:
             self.manifest = yaml.safe_load(f)
+
+    def _get_git_branch(self) -> str:
+        """Get the current git branch name."""
+        try:
+            result = subprocess.run(
+                ["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                capture_output=True,
+                text=True,
+                check=True,
+                cwd=self.root_path.parent  # Run from project root
+            )
+            return result.stdout.strip()
+        except (subprocess.CalledProcessError, FileNotFoundError):
+            # If git is not available or not in a git repo, return "unknown"
+            return "unknown"
 
     def list_artifact_types(self):
         """Returns a list of available artifact types."""
@@ -141,14 +157,14 @@ class AgentQMSToolbelt:
         # Create frontmatter with timestamp in KST (includes hour and minute)
         now_kst = datetime.datetime.now(ZoneInfo("Asia/Seoul"))
         timestamp_kst = now_kst.strftime("%Y-%m-%d %H:%M KST")
-        date_kst = now_kst.strftime("%Y-%m-%d")
+        branch_name = self._get_git_branch()
 
-        # Create frontmatter with default values
+        # Create frontmatter with default values (standardized format)
         frontmatter = {
             "title": title,
             "author": author,
-            "date": date_kst,
-            "timestamp": timestamp_kst,  # Includes hour and minute in KST
+            "timestamp": timestamp_kst,  # Single timestamp field in KST format
+            "branch": branch_name,  # Git branch name
             "status": "draft",
             "tags": tags
         }
@@ -167,6 +183,10 @@ class AgentQMSToolbelt:
         elif artifact_type == "assessment":
             frontmatter["type"] = "assessment"
             frontmatter["category"] = "evaluation"
+        elif artifact_type == "data_contract":
+            # Ensure data-contract tag is present
+            if "data-contract" not in frontmatter.get("tags", []):
+                frontmatter["tags"] = frontmatter.get("tags", []) + ["data-contract"]
 
         # Merge any additional kwargs into frontmatter
         frontmatter.update(kwargs)
@@ -240,6 +260,10 @@ class AgentQMSToolbelt:
         # Validate timestamp is present in frontmatter (required for all artifacts)
         if "timestamp" not in frontmatter:
             raise ValidationError("Frontmatter must include 'timestamp' field with hour and minute in KST format (YYYY-MM-DD HH:MM KST).")
+
+        # Validate branch is present in frontmatter (required for all artifacts)
+        if "branch" not in frontmatter:
+            raise ValidationError("Frontmatter must include 'branch' field with git branch name.")
 
         # Determine artifact type from path
         artifact_type_name = file_path_obj.parent.name
@@ -317,6 +341,10 @@ class AgentQMSToolbelt:
         if 'timestamp' not in frontmatter:
             now_kst = datetime.datetime.now(ZoneInfo("Asia/Seoul"))
             frontmatter['timestamp'] = now_kst.strftime("%Y-%m-%d %H:%M KST")
+
+        # Ensure branch is present (required for all artifacts)
+        if 'branch' not in frontmatter:
+            frontmatter['branch'] = self._get_git_branch()
 
         # Determine artifact type from path
         artifact_type_name = file_path_obj.parent.name

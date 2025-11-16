@@ -209,3 +209,5 @@ zero_prediction_bg_removal_test/
 # Temporary system files
 *.pid
 *.err
+reports/polygon_bounds_investigation.json
+framework_export/

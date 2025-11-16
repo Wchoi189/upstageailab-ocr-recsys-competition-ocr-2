@@ -31,6 +31,7 @@
 - `references/architecture.md` - System architecture key facts
 - `references/commands.md` - Command reference
 - `references/tools.md` - Tool reference
+- `references/framework-export.md` - Framework export script maintenance guide
 
 ## Tracking
 

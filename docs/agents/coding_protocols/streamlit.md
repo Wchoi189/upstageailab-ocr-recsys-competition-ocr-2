@@ -59,7 +59,7 @@ make create-design NAME=my-design TITLE="My Design"
 
 **Requirements**:
 - Naming: `YYYY-MM-DD_HHMM_[TYPE]_descriptive-name.md`
-- Must include frontmatter (title, date, type, category, status, version)
+- Must include frontmatter (title, timestamp, branch, status, and type-specific fields as required)
 - Files go to `artifacts/[type]s/` directory (project root, NOT docs/artifacts/)
 - Never create files in project root
 

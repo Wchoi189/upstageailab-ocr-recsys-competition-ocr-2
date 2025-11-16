@@ -121,10 +121,11 @@ artifact_path = toolbelt.create_artifact(
 - Resolution, Testing, Prevention
 
 ### **File Format**
-- **Naming**: Use AgentQMS naming conventions (semantic, not timestamp-based)
-- **Frontmatter**: Required with title, date, type, category, status, version (validated against schema)
-- **Directory**: Must match type prefix (`artifacts/implementation_plans/`, `artifacts/assessments/`, `docs/bug_reports/`)
+- **Naming**: Use AgentQMS naming conventions (timestamped for assessments/implementation_plans, semantic for others)
+- **Frontmatter**: Required with title, timestamp (YYYY-MM-DD HH:MM KST), branch (git branch name), status (validated against schema)
+- **Directory**: Must match type prefix (`artifacts/implementation_plans/`, `artifacts/assessments/`, `artifacts/data_contracts/`, `docs/bug_reports/`)
 - **Bug Reports**: Use `docs/bug_reports/` (AgentQMS-managed)
+- **Data Contracts**: Use `artifacts/data_contracts/` (AgentQMS-managed)
 
 ## 🚫 **NEVER**
 - Create files manually (use AgentQMS toolbelt!)
