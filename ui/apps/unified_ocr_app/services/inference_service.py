@@ -223,14 +223,19 @@ class InferenceService:
             }
 
 
+@st.cache_data(show_spinner=False, ttl=300)
 def load_checkpoints(config: dict[str, Any]) -> list[Any]:
-    """Load available model checkpoints.
+    """Load available model checkpoints with caching.
 
     Args:
         config: App configuration with paths
 
     Returns:
         List of CheckpointInfo objects
+
+    Note:
+        Cached for 5 minutes to balance freshness and performance.
+        Clear cache if checkpoints are added/removed.
     """
     try:
         from pathlib import Path

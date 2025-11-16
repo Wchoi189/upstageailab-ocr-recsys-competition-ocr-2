@@ -28,7 +28,7 @@ from ui.apps.unified_ocr_app.components.shared import render_image_upload
 
 # Import only what THIS PAGE needs (lazy loading!)
 from ui.apps.unified_ocr_app.services.config_loader import load_mode_config
-from ui.apps.unified_ocr_app.services.preprocessing_service import PreprocessingService
+from ui.apps.unified_ocr_app.services import get_preprocessing_service
 
 # Import shared utilities
 from ui.apps.unified_ocr_app.shared_utils import get_app_config, get_app_state, setup_page
@@ -106,8 +106,8 @@ processing_results = None
 # Process image if button clicked
 if process_button:
     with st.spinner("Processing image through pipeline..."):
-        # Create service
-        service = PreprocessingService(mode_config)
+        # Get cached service for better performance
+        service = get_preprocessing_service(mode_config)
 
         # Generate cache key based on image and parameters
         param_str = json.dumps(current_params, sort_keys=True)

@@ -46,10 +46,16 @@ def _load_schema(schema_path: str) -> dict[str, Any]:
         return yaml.safe_load(f) or {}
 
 
-@st.cache_data(show_spinner=False)
+@st.cache_data(show_spinner=False, ttl=3600)
 def _get_options_from_source(source: str) -> list[str]:
     """Resolve dynamic options list by a simple registry backed by ConfigParser."""
-    cp = ConfigParser()
+    from ui.apps.command_builder.utils import (
+        get_config_parser,
+        get_available_models,
+        get_available_architectures,
+    )
+
+    cp = get_config_parser()
     model_source_map = {
         "models.backbones": "backbones",
         "models.encoders": "encoders",
@@ -59,10 +65,10 @@ def _get_options_from_source(source: str) -> list[str]:
         "models.losses": "losses",
     }
     if source in model_source_map:
-        models = cp.get_available_models()
+        models = get_available_models()
         return models.get(model_source_map[source], [])
     if source == "models.architectures":
-        return cp.get_available_architectures()
+        return get_available_architectures()
     if source == "checkpoints":
         return cp.get_available_checkpoints()
     return cp.get_available_datasets() if source == "datasets" else []
@@ -171,13 +177,19 @@ def generate_ui_from_schema(schema_path: str) -> UIGenerateResult:
     Returns:
         UIGenerateResult with values, overrides, and constant_overrides.
     """
+    from ui.apps.command_builder.utils import (
+        get_config_parser,
+        get_architecture_metadata,
+        get_optimizer_metadata,
+    )
+
     schema = _load_schema(schema_path)
     elements: list[dict[str, Any]] = schema.get("ui_elements", [])
     constant_overrides: list[str] = schema.get("constant_overrides", [])
 
-    config_parser = ConfigParser()
-    architecture_metadata = config_parser.get_architecture_metadata()
-    optimizer_metadata = config_parser.get_optimizer_metadata()
+    config_parser = get_config_parser()
+    architecture_metadata = get_architecture_metadata()
+    optimizer_metadata = get_optimizer_metadata()
 
     values: dict[str, Any] = {}
     schema_prefix = Path(schema_path).stem.replace("-", "_")
