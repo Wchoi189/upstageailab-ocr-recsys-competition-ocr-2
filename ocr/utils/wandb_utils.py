@@ -14,6 +14,7 @@ import numpy as np
 import torch
 import wandb
 from omegaconf import DictConfig
+from PIL import Image as PILImage
 
 
 def load_env_variables():
@@ -132,6 +133,11 @@ def _deduplicate_labeled_tokens(tokens: list[tuple[str, str]]) -> list[tuple[str
 
 
 def _crop_to_content(image: np.ndarray, threshold: int = 4) -> np.ndarray:
+    """Crop image to content, removing black borders.
+
+    BUG-20251116-001: This function may crop too aggressively if images are incorrectly
+    denormalized and appear dark. Ensure proper denormalization before calling this.
+    """
     if image.size == 0:
         return image
 
@@ -141,6 +147,7 @@ def _crop_to_content(image: np.ndarray, threshold: int = 4) -> np.ndarray:
         mask = np.max(image, axis=2) > threshold
 
     if not np.any(mask):
+        # BUG-20251116-001: If no content found, return original image to avoid cropping everything
         return image
 
     coords = np.argwhere(mask)
@@ -458,7 +465,11 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
     for rank, i in enumerate(idxs):
         image, gt_boxes, pred_boxes = images[i], gt_bboxes[i], pred_bboxes[i]
 
-        # Convert to a proper RGB uint8 image for drawing and logging
+        # Convert to a proper BGR uint8 image for OpenCV drawing
+        # BUG-20251116-001: PIL Images are in RGB format, but OpenCV expects BGR
+        # We need to convert RGB→BGR for drawing, then BGR→RGB for WandB logging
+        needs_rgb_conversion = False  # Track if we need to convert back to RGB for WandB
+
         if torch.is_tensor(image):
             # image expected as CHW normalized with mean=std=0.5
             arr = image.detach().cpu().float().numpy()  # C,H,W
@@ -467,8 +478,25 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
             # Un-normalize from (-1,1) back to (0,1)
             arr = arr * 0.5 + 0.5
             arr = np.clip(arr * 255.0, 0, 255).astype(np.uint8)
+            # BUG-20251116-001: Tensor images are typically RGB, convert to BGR for OpenCV
+            if arr.ndim == 3 and arr.shape[2] == 3:
+                arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+                needs_rgb_conversion = True  # Mark for conversion back to RGB for WandB
+        elif isinstance(image, PILImage.Image):
+            # BUG-20251116-001: PIL Images are in RGB format
+            # Convert to numpy array (RGB) then to BGR for OpenCV
+            arr = np.array(image)
+            if arr.ndim == 3 and arr.shape[2] == 3:
+                # PIL Image is RGB, convert to BGR for OpenCV drawing
+                arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+                needs_rgb_conversion = True  # Mark for conversion back to RGB for WandB
+            if arr.dtype != np.uint8:
+                arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
         elif isinstance(image, np.ndarray):
             arr = image.copy()
+            # BUG-20251116-001: Numpy arrays may be RGB or BGR depending on source
+            # We assume they're already in the correct format (BGR if from OpenCV, RGB if from PIL)
+            # Only PIL Images are explicitly converted since we know they're RGB
             if arr.dtype != np.uint8:
                 # Try to scale float images in [0,1]
                 maxv = float(arr.max()) if arr.size > 0 else 1.0
@@ -504,6 +532,7 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
                 )
 
         # Draw predicted boxes (in red)
+        # BUG-20251116-001: In BGR format, red is (0, 0, 255), not (255, 0, 0)
         for box in pred_iter:
             box_array = np.array(box).reshape(-1, 2).astype(np.int32)
             # Handle polygons with different numbers of points
@@ -512,7 +541,7 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
                     img_to_draw,
                     [box_array],
                     isClosed=True,
-                    color=(255, 0, 0),
+                    color=(0, 0, 255),  # BGR: Red = (0, 0, 255)
                     thickness=2,
                 )
 
@@ -535,7 +564,7 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
             1,
             cv2.LINE_AA,
         )
-        cv2.line(img_to_draw, (8, 26), (32, 26), (255, 0, 0), 3)
+        cv2.line(img_to_draw, (8, 26), (32, 26), (0, 0, 255), 3)  # BGR: Red = (0, 0, 255)
         cv2.putText(
             img_to_draw,
             "Pred",
@@ -546,6 +575,10 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
             1,
             cv2.LINE_AA,
         )
+
+        # BUG-20251116-001: Convert BGR back to RGB for WandB logging (WandB expects RGB)
+        if needs_rgb_conversion and img_to_draw.ndim == 3 and img_to_draw.shape[2] == 3:
+            img_to_draw = cv2.cvtColor(img_to_draw, cv2.COLOR_BGR2RGB)
 
         # Ensure image is uint8 and in [0,255] range
         img_uint8 = np.clip(img_to_draw, 0, 255).astype(np.uint8)

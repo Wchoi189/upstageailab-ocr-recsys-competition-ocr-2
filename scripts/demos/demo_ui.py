@@ -11,7 +11,7 @@ from ocr.utils.path_utils import setup_project_paths
 
 setup_project_paths()
 
-from ui.utils.command_builder import CommandBuilder
+from ui.utils.command import CommandBuilder
 from ui.utils.config_parser import ConfigParser
 
 

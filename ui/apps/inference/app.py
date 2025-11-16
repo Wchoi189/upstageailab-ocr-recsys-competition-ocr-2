@@ -19,7 +19,7 @@ from .components import sidebar as sidebar_component
 from .models.batch_request import BatchPredictionRequest
 from .models.checkpoint import CheckpointInfo
 from .models.ui_events import InferenceRequest
-from .services.checkpoint_catalog import CatalogOptions, build_lightweight_catalog
+from .services.checkpoint import CatalogOptions, build_lightweight_catalog
 from .services.config_loader import load_ui_config
 from .services.inference_runner import InferenceService
 from .state import InferenceState

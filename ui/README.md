@@ -1,6 +1,24 @@
 # OCR Project Streamlit UI
 
 This directory contains Streamlit applications for managing OCR training workflows and real-time inference.
+
+## ⚠️ Legacy Files Warning
+
+**IMPORTANT**: Some files in this directory are **deprecated wrappers** that will be removed in future versions. These files exist only for backward compatibility and should **NOT** be updated.
+
+### Deprecated Wrapper Files (DO NOT UPDATE)
+
+- ⚠️ **`ui/command_builder.py`** - Deprecated wrapper for `ui/apps/command_builder/app.py`
+- ⚠️ **`ui/inference_ui.py`** - Deprecated wrapper for `ui/apps/inference/app.py`
+- ⚠️ **`ui/evaluation_viewer.py`** - Deprecated wrapper for `ui/evaluation/app.py`
+
+**For new code**: Always import directly from the actual implementations:
+- Use `ui.apps.command_builder` instead of `ui.command_builder`
+- Use `ui.apps.inference` instead of `ui.inference_ui`
+- Use `ui.evaluation` instead of `ui.evaluation_viewer`
+
+**Migration Guide**: See [Architecture](#architecture) section below for details.
+
 ## Table of Contents
 
 - [Applications](#applications)
@@ -32,7 +50,10 @@ This directory contains Streamlit applications for managing OCR training workflo
 
 ## Applications
 
-### Command Builder (`command_builder.py`)
+### Command Builder ⚠️ DEPRECATED WRAPPER
+
+> **⚠️ WARNING**: `ui/command_builder.py` is a deprecated wrapper. Use `ui/apps/command_builder/app.py` instead.
+
 A user-friendly interface for building and executing training, testing, and prediction commands.
 
 **Features:**
@@ -51,14 +72,17 @@ A user-friendly interface for building and executing training, testing, and pred
 
 **Usage:**
 ```bash
-# Run the command builder UI
+# Run the command builder UI (recommended)
 python run_ui.py command_builder
 
-# Or directly with streamlit
-uv run streamlit run ui/command_builder.py
+# Or directly with streamlit (deprecated - use run_ui.py instead)
+uv run streamlit run ui/apps/command_builder/app.py
 ```
 
-### Inference UI (`inference_ui.py`) - ✅ New!
+### Inference UI ⚠️ DEPRECATED WRAPPER
+
+> **⚠️ WARNING**: `ui/inference_ui.py` is a deprecated wrapper. Use `ui/apps/inference/app.py` instead.
+
 Real-time OCR inference interface for instant predictions on uploaded images.
 
 **Features:**
@@ -92,11 +116,11 @@ uv sync
 
 **Usage:**
 ```bash
-# Run the inference UI
+# Run the inference UI (recommended)
 python run_ui.py inference
 
-# Or directly with streamlit
-uv run streamlit run ui/inference_ui.py
+# Or directly with streamlit (deprecated - use run_ui.py instead)
+uv run streamlit run ui/apps/inference/app.py
 ```
 
 **Inference Workflow:**
@@ -110,7 +134,10 @@ uv run streamlit run ui/inference_ui.py
 **Demo Mode:**
 If no trained models are available, the UI automatically switches to demo mode with mock predictions, allowing you to test the interface and workflow before training models.
 
-### Evaluation Viewer (`ui/evaluation/`) - ✅ Implemented
+### Evaluation Viewer
+
+> **⚠️ WARNING**: `ui/evaluation_viewer.py` is a deprecated wrapper. Use `ui/evaluation/app.py` instead.
+
 A modular interface for viewing and analyzing OCR evaluation results.
 
 **Architecture:**
@@ -131,8 +158,11 @@ A modular interface for viewing and analyzing OCR evaluation results.
 
 **사용법:**
 ```bash
-# 평가 결과 뷰어 실행
+# 평가 결과 뷰어 실행 (recommended)
 python run_ui.py evaluation_viewer
+
+# Or directly with streamlit (deprecated - use run_ui.py instead)
+uv run streamlit run ui/evaluation/app.py
 
 # 데모 실행
 python demo_evaluation_viewer.py
@@ -144,29 +174,19 @@ python demo_evaluation_viewer.py
 - 바운딩 박스 면적 및 종횡비 분석
 - 개별 이미지 예측 결과 시각화
 
-## Applications
+## Applications (Continued)
 
-### Command Builder (`command_builder.py`)
-A user-friendly interface for building and executing training, testing, and prediction commands.
+### Command Builder ⚠️ DEPRECATED WRAPPER
 
-**Features:**
-- Interactive model architecture selection (encoders, decoders, heads, losses)
-- Training parameter adjustment (learning rate, batch size, epochs)
-- Experiment configuration (W&B integration, checkpoint resuming)
-- Real-time command validation and preview
-- One-click command execution with progress monitoring
+> **⚠️ WARNING**: `ui/command_builder.py` is a deprecated wrapper. Use `ui/apps/command_builder/app.py` instead.
 
-**Usage:**
-```bash
-# Run the command builder UI
-python run_ui.py command_builder
+See [Command Builder section above](#command-builder--deprecated-wrapper) for details.
 
-# Or directly with streamlit
-uv run streamlit run ui/command_builder.py
-```
+### Evaluation Viewer ⚠️ DEPRECATED WRAPPER
 
-### Evaluation Viewer (`evaluation_viewer.py`) - Coming Soon
-An interface for viewing and analyzing evaluation results.
+> **⚠️ WARNING**: `ui/evaluation_viewer.py` is a deprecated wrapper. Use `ui/evaluation/app.py` instead.
+
+See [Evaluation Viewer section above](#evaluation-viewer) for details.
 
 ### Resource Monitor (`resource_monitor.py`) - ✅ New!
 A comprehensive monitoring interface for system resources, training processes, and GPU utilization.
@@ -196,25 +216,61 @@ uv run streamlit run ui/resource_monitor.py
 
 ## Architecture
 
-The UI is built with a modular design:
+The UI is built with a modular design. **Important**: Some files are deprecated wrappers that will be removed.
+
+### Architecture Diagram
 
 ```
 ui/
-├── command_builder.py          # Main command builder app
-├── evaluation/                 # Evaluation results viewer (modular)
+├── ⚠️ command_builder.py          # DEPRECATED: Wrapper for apps/command_builder/app.py
+├── ⚠️ inference_ui.py             # DEPRECATED: Wrapper for apps/inference/app.py
+├── ⚠️ evaluation_viewer.py        # DEPRECATED: Wrapper for evaluation/app.py
+│
+├── apps/                          # Actual implementations (USE THESE)
+│   ├── command_builder/
+│   │   └── app.py                # ✅ Main command builder app
+│   └── inference/
+│       └── app.py                # ✅ Real-time inference interface
+│
+├── evaluation/                    # ✅ Evaluation results viewer (modular)
 │   ├── __init__.py
-│   ├── app.py                  # Main application
-│   ├── single_run.py           # Single model analysis
-│   ├── comparison.py           # Model comparison
-│   └── gallery.py              # Image gallery
-├── evaluation_viewer.py        # Legacy wrapper for evaluation/
-├── inference_ui.py            # Real-time inference interface
-├── resource_monitor.py         # System resource and process monitor
-├── components/                 # Reusable UI components
-├── utils/                      # Utility modules
-│   ├── config_parser.py        # Parses Hydra configurations
-│   └── command_builder.py      # Builds CLI commands
+│   ├── app.py                    # ✅ Main application
+│   ├── single_run.py             # Single model analysis
+│   ├── comparison.py             # Model comparison
+│   └── gallery.py                # Image gallery
+│
+├── resource_monitor.py            # ✅ System resource and process monitor
+├── components/                    # Reusable UI components
+├── utils/                         # Utility modules
+│   ├── config_parser.py          # Parses Hydra configurations
+│   └── ⚠️ command_builder.py     # DEPRECATED: Use utils/command instead
+│   └── command/                  # ✅ Command building utilities
 └── __init__.py
+```
+
+### Migration Guide
+
+**For Developers:**
+- **DO NOT** update deprecated wrapper files (`command_builder.py`, `inference_ui.py`, `evaluation_viewer.py`)
+- **DO** update the actual implementations in `apps/` and `evaluation/` directories
+- **DO** import directly from actual implementations in new code
+
+**For Users:**
+- Use `python run_ui.py <command>` to launch UI apps (recommended)
+- Avoid using `streamlit run ui/<wrapper_file>.py` directly
+- Wrapper files will be removed in future versions (target: Month 3-6)
+
+**Import Examples:**
+```python
+# ❌ DON'T (deprecated)
+from ui.command_builder import main
+from ui.inference_ui import main
+from ui.evaluation_viewer import main
+
+# ✅ DO (correct)
+from ui.apps.command_builder import main
+from ui.apps.inference.app import main
+from ui.evaluation import main
 ```
 
 ## Dependencies

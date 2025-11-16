@@ -11,6 +11,7 @@ from PIL import Image
 from ocr.utils.orientation import normalize_pil_image, remap_polygons
 from ocr.utils.polygon_utils import ensure_polygon_array
 from ocr.utils.wandb_utils import log_validation_images
+from ocr.lightning_modules.processors.image_processor import ImageProcessor
 
 
 class WandbImageLoggingCallback(pl.Callback):
@@ -72,10 +73,16 @@ class WandbImageLoggingCallback(pl.Callback):
             orientation = 1
             raw_width = raw_height = None
 
+            # Check if we have the transformed image stored
             transformed_image = entry.get("transformed_image")
             if transformed_image is not None:
+                # Use the exact transformed image from training
                 try:
-                    pil_image = self._tensor_to_pil(transformed_image)
+                    # BUG-20251116-001: Use proper ImageNet denormalization
+                    # Default ImageNet normalization: mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]
+                    mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)
+                    std = np.array([0.229, 0.224, 0.225], dtype=np.float32)
+                    pil_image = ImageProcessor.tensor_to_pil_image(transformed_image, mean=mean, std=std)
                     if pil_image.mode != "RGB":
                         image = pil_image.convert("RGB")
                         pil_image.close()
@@ -86,6 +93,7 @@ class WandbImageLoggingCallback(pl.Callback):
                     print(f"Warning: Failed to convert transformed image for {filename}: {e}")
                     continue
             else:
+                # Fallback to original method (load from disk and transform)
                 if not hasattr(val_dataset, "anns") or filename not in val_dataset.anns:  # type: ignore
                     continue
 
@@ -108,17 +116,19 @@ class WandbImageLoggingCallback(pl.Callback):
             if image is None:
                 continue
 
+            # Handle polygon remapping only when loading from disk (not using transformed_image)
+            # When using transformed_image, polygons are used as-is
             polygon_frame = metadata.get("polygon_frame") if metadata else None
-            if gt_quads:
+            if gt_quads and transformed_image is None:
                 if polygon_frame == "canonical":
                     pass
-                elif orientation != 1 and raw_width is not None and raw_height is not None:
+                elif orientation != 1:
                     gt_quads = remap_polygons(gt_quads, raw_width, raw_height, orientation)
                 elif orientation_hint != 1:
-                    hint_width, hint_height = raw_size_hint or (raw_width or 0, raw_height or 0)
-                    if hint_width and hint_height:
-                        gt_quads = remap_polygons(gt_quads, hint_width, hint_height, orientation_hint)
+                    hint_width, hint_height = raw_size_hint or (raw_width, raw_height)
+                    gt_quads = remap_polygons(gt_quads, hint_width, hint_height, orientation_hint)
 
+            # Postprocess polygons (filter degenerate ones)
             gt_quads = self._postprocess_polygons(gt_quads, image.size)
             pred_quads = self._postprocess_polygons(pred_quads, image.size)
 

@@ -15,21 +15,24 @@ setup_project_paths()
 
 def run_command_builder():
     """Run the command builder UI."""
-    ui_path = get_path_resolver().config.project_root / "ui" / "command_builder.py"
+    # Use actual implementation instead of deprecated wrapper
+    ui_path = get_path_resolver().config.project_root / "ui" / "apps" / "command_builder" / "app.py"
     cmd = ["uv", "run", "streamlit", "run", str(ui_path)]
     subprocess.run(cmd)
 
 
 def run_evaluation_viewer():
     """Run the evaluation results viewer UI."""
-    ui_path = get_path_resolver().config.project_root / "ui" / "evaluation_viewer.py"
+    # Use actual implementation instead of deprecated wrapper
+    ui_path = get_path_resolver().config.project_root / "ui" / "evaluation" / "app.py"
     cmd = ["uv", "run", "streamlit", "run", str(ui_path)]
     subprocess.run(cmd)
 
 
 def run_inference_ui():
     """Run the real-time inference UI."""
-    ui_path = get_path_resolver().config.project_root / "ui" / "inference_ui.py"
+    # Use actual implementation instead of deprecated wrapper
+    ui_path = get_path_resolver().config.project_root / "ui" / "apps" / "inference" / "app.py"
     cmd = ["uv", "run", "streamlit", "run", str(ui_path)]
     subprocess.run(cmd)
 
@@ -46,6 +49,9 @@ def run_resource_monitor():
     ui_path = get_path_resolver().config.project_root / "ui" / "resource_monitor.py"
     cmd = ["uv", "run", "streamlit", "run", str(ui_path)]
     subprocess.run(cmd)
+
+
+if __name__ == "__main__":
     if len(sys.argv) < 2:
         print("Usage: python run_ui.py <command>")
         print("Commands:")

@@ -13,7 +13,8 @@
 make serve-inference-ui
 
 # ❌ WRONG: No logging, debugging impossible
-uv run streamlit run ui/inference_ui.py --server.port=8501
+# Use: python run_ui.py inference
+# Or: uv run streamlit run ui/apps/inference/app.py --server.port=8501
 ```
 
 ### **2. View Logs Immediately**

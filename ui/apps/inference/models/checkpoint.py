@@ -352,7 +352,20 @@ class CheckpointInfo:
         return concise_name
 
     def load_full_metadata(self, schema: Any = None) -> CheckpointMetadata:
-        """Load the complete metadata for this checkpoint."""
+        """Load the complete metadata for this checkpoint.
+
+        NOTE: This method still uses legacy checkpoint_catalog._collect_metadata.
+        This will be migrated to V2 catalog system in a future update.
+        """
+        import warnings
+
+        warnings.warn(
+            "load_full_metadata uses legacy checkpoint_catalog. "
+            "This will be migrated to V2 catalog system.",
+            DeprecationWarning,
+            stacklevel=2,
+        )
+
         from ..services.checkpoint_catalog import CatalogOptions, _collect_metadata
 
         # Create options with default config filenames

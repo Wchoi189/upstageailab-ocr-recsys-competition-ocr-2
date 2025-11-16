@@ -195,13 +195,16 @@ uv run python runners/predict.py preset=example checkpoint_path="outputs/ocr_tra
 
 ```bash
 # Command Builder - Build and execute training commands
-uv run streamlit run ui/command_builder.py
+python run_ui.py command_builder
+# Or directly: uv run streamlit run ui/apps/command_builder/app.py
 
 # Real-time Inference - Test models interactively
-uv run streamlit run ui/inference_ui.py
+python run_ui.py inference
+# Or directly: uv run streamlit run ui/apps/inference/app.py
 
 # Evaluation Viewer - Visualize and analyze results
-uv run streamlit run ui/evaluation_viewer.py
+python run_ui.py evaluation_viewer
+# Or directly: uv run streamlit run ui/evaluation/app.py
 ```
 
 ---
@@ -282,7 +285,8 @@ uv run python runners/predict.py \
 
 ```bash
 # Launch the inference UI to test interactively
-uv run streamlit run ui/inference_ui.py
+python run_ui.py inference
+# Or directly: uv run streamlit run ui/apps/inference/app.py
 ```
 
 **Next Steps**: Check out the [Documentation](#-documentation) section for more advanced usage.

@@ -7,6 +7,7 @@ even after tolerance increase.
 
 import numpy as np
 import pytest
+from pydantic import ValidationError
 
 from ocr.datasets.schemas import ValidatedPolygonData
 from ocr.utils.orientation import polygons_in_canonical_frame, remap_polygons
@@ -133,7 +134,7 @@ class TestPolygonRemappingIntegration:
         polygon_processed = polygon
 
         # Step 3: Validate - should fail because x=-6.0 is beyond tolerance
-        with pytest.raises(Exception):  # Should raise ValidationError
+        with pytest.raises(ValidationError):
             ValidatedPolygonData(
                 points=polygon_processed,
                 image_width=canonical_width,
@@ -207,7 +208,7 @@ class TestPolygonRemappingIntegration:
         assert np.any(polygon_wrongly_remapped[:, 0] < 0), "Double remapping produces negative x"
 
         # And validation should fail
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             ValidatedPolygonData(
                 points=polygon_wrongly_remapped,
                 image_width=canonical_width,
@@ -229,7 +230,7 @@ class TestPolygonRemappingIntegration:
             [300.0, 40.0],
             [-6.0, 40.0]
         ], dtype=np.float32)
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             ValidatedPolygonData(
                 points=polygon1,
                 image_width=605,
@@ -244,7 +245,7 @@ class TestPolygonRemappingIntegration:
             [1290.0, 200.0],
             [1260.0, 200.0]
         ], dtype=np.float32)
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             ValidatedPolygonData(
                 points=polygon2,
                 image_width=1280,

@@ -354,7 +354,7 @@ class InferenceEngine:
         try:
             result = fallback_postprocess(predictions, image.shape, bundle.postprocess)
         except Exception:  # noqa: BLE001
-            LOGGER.exception("Error in post-processing for %s", image_path)
+            LOGGER.exception("Error in post-processing for image with shape %s", image.shape)
             return generate_mock_predictions()
 
         LOGGER.info("Fallback postprocessing completed")

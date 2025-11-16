@@ -111,8 +111,9 @@ tmux attach -t streamlit-ui  # Reattach to see output
 
 #### Nohup (Simple Alternative)
 ```bash
-# Start with output to files
-nohup uv run streamlit run ui/inference_ui.py --server.port=8501 > inference.log 2>&1 &
+# Start with output to files (using actual implementation)
+nohup uv run streamlit run ui/apps/inference/app.py --server.port=8501 > inference.log 2>&1 &
+# Or use the runner: python run_ui.py inference
 ```
 
 ## Best Practices
@@ -256,8 +257,10 @@ tmux kill-session -t streamlit-ui
 For simple cases, use `nohup` to detach processes:
 
 ```bash
-# Start UI with nohup
-nohup uv run streamlit run ui/inference_ui.py --server.port=8501 > /dev/null 2>&1 &
+# Start UI with nohup (using actual implementation)
+nohup uv run streamlit run ui/apps/inference/app.py --server.port=8501 > /dev/null 2>&1 &
+# Or use the runner: python run_ui.py inference
+```
 
 # Find and kill later
 ps aux | grep streamlit

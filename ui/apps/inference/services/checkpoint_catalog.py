@@ -1,6 +1,12 @@
 from __future__ import annotations
 
-"""Legacy checkpoint catalog service (V1).
+"""
+⚠️⚠️⚠️ DEPRECATED - DO NOT UPDATE THIS FILE ⚠️⚠️⚠️
+
+Legacy checkpoint catalog service (V1).
+
+This module is maintained for backward compatibility only and will be REMOVED.
+New code MUST use: ui.apps.inference.services.checkpoint.build_catalog()
 
 This module provides backward-compatible catalog building for the UI.
 Internally uses the V2 catalog system for improved performance.
@@ -8,6 +14,7 @@ Internally uses the V2 catalog system for improved performance.
 DEPRECATION NOTICE:
     This module is maintained for backward compatibility only.
     New code should use: ui.apps.inference.services.checkpoint.build_catalog()
+    This module will be PURGED after migration is complete (target: Month 3).
 
 Performance:
     - With .metadata.yaml files: 40-100x faster than legacy
@@ -18,6 +25,15 @@ Feature Flags:
     - CHECKPOINT_CATALOG_USE_V2: Enable V2 catalog (default: True)
       Set to "0" or "false" to disable V2 and use legacy implementation
 """
+import warnings
+
+warnings.warn(
+    "ui.apps.inference.services.checkpoint_catalog is deprecated. "
+    "Use ui.apps.inference.services.checkpoint instead. "
+    "This module will be removed in a future version.",
+    DeprecationWarning,
+    stacklevel=2,
+)
 
 import json
 import logging

@@ -236,7 +236,7 @@ def load_checkpoints(config: dict[str, Any]) -> list[Any]:
         from pathlib import Path
 
         from ui.apps.inference.models.config import PathConfig
-        from ui.apps.inference.services.checkpoint_catalog import CatalogOptions, build_lightweight_catalog
+        from ui.apps.inference.services.checkpoint import CatalogOptions, build_lightweight_catalog
 
         # Get paths from config
         paths_config = config.get("paths", {})

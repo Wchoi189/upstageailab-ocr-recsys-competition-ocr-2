@@ -162,7 +162,7 @@ def test_data_loading(args: argparse.Namespace):
         # Instantiate datasets and collate function to match training pipeline
         datasets = get_datasets_by_cfg(cfg.datasets, getattr(cfg, "data", None), cfg)
         train_dataset = datasets["train"]
-        print("✓ Dataset created: %d samples" % len(train_dataset))
+        print(f"✓ Dataset created: {len(train_dataset)} samples")
 
         collate_fn = instantiate(cfg.collate_fn)
         if hasattr(collate_fn, "inference_mode"):

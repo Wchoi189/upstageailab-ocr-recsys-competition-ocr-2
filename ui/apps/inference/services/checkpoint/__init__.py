@@ -51,9 +51,14 @@ from .types import (
 from .validator import MetadataValidator
 from .wandb_client import WandbClient, extract_run_id_from_checkpoint, get_wandb_client
 
+# Compatibility helper for legacy CheckpointInfo
+from .compat import CatalogOptions, build_lightweight_catalog
+
 __all__ = [
     # Primary API
     "build_catalog",
+    "build_lightweight_catalog",  # Compatibility wrapper
+    "CatalogOptions",  # Compatibility wrapper
     "CheckpointCatalogBuilder",
     # Models
     "CheckpointMetadataV1",
