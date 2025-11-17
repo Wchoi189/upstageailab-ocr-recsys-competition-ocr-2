@@ -138,11 +138,23 @@ class InferenceService:
             # Get checkpoint path
             checkpoint_path = checkpoint.checkpoint_path if hasattr(checkpoint, "checkpoint_path") else checkpoint
 
+            # Filter hyperparameters to only include valid ones for run_inference_on_image
+            # Valid parameters: binarization_thresh, box_thresh, max_candidates, min_detection_size
+            valid_params = {
+                "binarization_thresh",
+                "box_thresh",
+                "max_candidates",
+                "min_detection_size",
+            }
+            filtered_hyperparams = {
+                k: v for k, v in hyperparameters.items() if k in valid_params
+            }
+
             # NEW: Pass numpy array directly (eliminates tempfile overhead)
             result = run_inference_on_image(
                 image_path=image,  # Pass numpy array directly
                 checkpoint_path=str(checkpoint_path),
-                **hyperparameters,
+                **filtered_hyperparams,
             )
 
             # Extract polygons and scores
