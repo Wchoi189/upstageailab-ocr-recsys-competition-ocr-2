@@ -8,7 +8,7 @@ PORT ?= 8501
 # UI Apps
 UI_APPS := command_builder evaluation_viewer inference preprocessing_viewer resource_monitor unified_app
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci context-log-start context-log-summarize quick-fix-log
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua
 
 # ============================================================================
 # HELP
@@ -55,6 +55,9 @@ help:
 	@echo "  clear-logs-<app>    - Clear UI app logs"
 	@echo "  list-ui-processes   - List all running UI processes"
 	@echo "  stop-all-ui         - Stop all UI processes"
+	@echo "  Shortcuts           - cb eval infer prep monitor ua (start Unified App)"
+	@echo "  Stop Shortcuts      - stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua"
+	@echo "  start / stop        - Start/Stop Unified App (aliases for ua)"
 	@echo ""
 	@echo "🔧 DEVELOPMENT WORKFLOW"
 	@echo "  clean               - Clean up cache files and build artifacts"
@@ -167,99 +170,117 @@ diagrams-update-specific:
 # UI APPLICATIONS (Parameterized)
 # ============================================================================
 
+# Friendly aliases (one-word shortcuts)
+cb: serve-command_builder
+eval: serve-evaluation_viewer
+infer: serve-inference
+prep: serve-preprocessing_viewer
+monitor: serve-resource_monitor
+ua: serve-unified_app
+
+stop-cb: stop-command_builder
+stop-eval: stop-evaluation_viewer
+stop-infer: stop-inference
+stop-prep: stop-preprocessing_viewer
+stop-monitor: stop-resource_monitor
+stop-ua: stop-unified_app
+
+start: ua
+stop: stop-unified_app
+
 # Start UI applications
-serve-command_builder serve-ui:
+serve-command_builder:
 	uv run python scripts/process_manager.py start command_builder --port=$(PORT)
 
-serve-evaluation_viewer serve-evaluation-ui:
+serve-evaluation_viewer:
 	uv run python scripts/process_manager.py start evaluation_viewer --port=$(PORT)
 
-serve-inference serve-inference-ui:
+serve-inference:
 	uv run python scripts/process_manager.py start inference --port=$(PORT)
 
-serve-preprocessing_viewer serve-preprocessing-viewer:
+serve-preprocessing_viewer:
 	uv run python scripts/process_manager.py start preprocessing_viewer --port=$(PORT)
 
-serve-resource_monitor serve-resource-monitor:
+serve-resource_monitor:
 	uv run python scripts/process_manager.py start resource_monitor --port=$(PORT)
 
-serve-unified_app serve-unified-app:
+serve-unified_app:
 	uv run python scripts/process_manager.py start unified_app --port=$(PORT)
 
 # Stop UI applications
-stop-command_builder stop-ui:
+stop-command_builder:
 	uv run python scripts/process_manager.py stop command_builder --port=$(PORT)
 
-stop-evaluation_viewer stop-evaluation-ui:
+stop-evaluation_viewer:
 	uv run python scripts/process_manager.py stop evaluation_viewer --port=$(PORT)
 
-stop-inference stop-inference-ui:
+stop-inference:
 	uv run python scripts/process_manager.py stop inference --port=$(PORT)
 
-stop-preprocessing_viewer stop-preprocessing-viewer:
+stop-preprocessing_viewer:
 	uv run python scripts/process_manager.py stop preprocessing_viewer --port=$(PORT)
 
-stop-resource_monitor stop-resource-monitor:
+stop-resource_monitor:
 	uv run python scripts/process_manager.py stop resource_monitor --port=$(PORT)
 
-stop-unified_app stop-unified-app:
+stop-unified_app:
 	uv run python scripts/process_manager.py stop unified_app --port=$(PORT)
 
 # Check UI application status
-status-command_builder status-ui:
+status-command_builder:
 	uv run python scripts/process_manager.py status command_builder --port=$(PORT)
 
-status-evaluation_viewer status-evaluation-ui:
+status-evaluation_viewer:
 	uv run python scripts/process_manager.py status evaluation_viewer --port=$(PORT)
 
-status-inference status-inference-ui:
+status-inference:
 	uv run python scripts/process_manager.py status inference --port=$(PORT)
 
-status-preprocessing_viewer status-preprocessing-viewer:
+status-preprocessing_viewer:
 	uv run python scripts/process_manager.py status preprocessing_viewer --port=$(PORT)
 
-status-resource_monitor status-resource-monitor:
+status-resource_monitor:
 	uv run python scripts/process_manager.py status resource_monitor --port=$(PORT)
 
-status-unified_app status-unified-app:
+status-unified_app:
 	uv run python scripts/process_manager.py status unified_app --port=$(PORT)
 
 # View UI application logs
-logs-command_builder logs-ui:
+logs-command_builder:
 	uv run python scripts/process_manager.py logs command_builder --port=$(PORT)
 
-logs-evaluation_viewer logs-evaluation-ui:
+logs-evaluation_viewer:
 	uv run python scripts/process_manager.py logs evaluation_viewer --port=$(PORT)
 
-logs-inference logs-inference-ui:
+logs-inference:
 	uv run python scripts/process_manager.py logs inference --port=$(PORT)
 
-logs-preprocessing_viewer logs-preprocessing-viewer:
+logs-preprocessing_viewer:
 	uv run python scripts/process_manager.py logs preprocessing_viewer --port=$(PORT)
 
-logs-resource_monitor logs-resource-monitor:
+logs-resource_monitor:
 	uv run python scripts/process_manager.py logs resource_monitor --port=$(PORT)
 
-logs-unified_app logs-unified-app:
+logs-unified_app:
 	uv run python scripts/process_manager.py logs unified_app --port=$(PORT)
 
 # Clear UI application logs
-clear-logs-command_builder clear-logs-ui:
+clear-logs-command_builder:
 	uv run python scripts/process_manager.py clear-logs command_builder --port=$(PORT)
 
-clear-logs-evaluation_viewer clear-logs-evaluation-ui:
+clear-logs-evaluation_viewer:
 	uv run python scripts/process_manager.py clear-logs evaluation_viewer --port=$(PORT)
 
-clear-logs-inference clear-logs-inference-ui:
+clear-logs-inference:
 	uv run python scripts/process_manager.py clear-logs inference --port=$(PORT)
 
-clear-logs-preprocessing_viewer clear-logs-preprocessing-viewer:
+clear-logs-preprocessing_viewer:
 	uv run python scripts/process_manager.py clear-logs preprocessing_viewer --port=$(PORT)
 
-clear-logs-resource_monitor clear-logs-resource-monitor:
+clear-logs-resource_monitor:
 	uv run python scripts/process_manager.py clear-logs resource_monitor --port=$(PORT)
 
-clear-logs-unified_app clear-logs-unified-app:
+clear-logs-unified_app:
 	uv run python scripts/process_manager.py clear-logs unified_app --port=$(PORT)
 
 # UI process management
