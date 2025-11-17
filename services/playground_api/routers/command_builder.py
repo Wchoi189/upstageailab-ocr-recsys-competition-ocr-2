@@ -14,7 +14,7 @@ from ui.utils.command import CommandBuilder, CommandValidator
 from ui.utils.config_parser import ConfigParser
 from ui.utils.ui_generator import compute_overrides
 
-from ...utils.paths import PROJECT_ROOT
+from ..utils.paths import PROJECT_ROOT
 
 router = APIRouter()
 
@@ -95,7 +95,7 @@ def _load_schema_data(schema_id: SchemaId) -> dict[str, Any]:
     schema_path = entry["path"]
     if not schema_path.exists():
         raise FileNotFoundError(f"Schema not found: {schema_path}")
-    with open(schema_path, "r", encoding="utf-8") as fh:
+    with open(schema_path, encoding="utf-8") as fh:
         return yaml.safe_load(fh) or {}
 
 

@@ -30,9 +30,9 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
 - **STATUS:** In Progress
-- **CURRENT STEP:** Phase 0 - Foundation Complete, Starting Phase 1
-- **LAST COMPLETED TASK:** Created FastAPI backend stubs, worker TypeScript prototypes, parity matrix, ADR, design system docs, and migration roadmap. Added `run_spa.py` for dev server orchestration.
-- **NEXT TASK:** Phase 1, Task 1.1 - Set up Vite + React SPA scaffold with routing and connect to FastAPI backend
+- **CURRENT STEP:** Phase 1 - SPA Scaffold & Command Builder Parity
+- **LAST COMPLETED TASK:** Phase 1, Task 1.1 - Set up Vite + React SPA with routing, API client, ESLint/Prettier config, and verified FastAPI connectivity. Fixed import paths in router modules.
+- **NEXT TASK:** Phase 1, Task 1.2 - Build Command Console Module with schema-driven form generator
 
 ### Implementation Outline (Checklist)
 
@@ -72,12 +72,16 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
    - [x] Added beta CTA banners to Streamlit apps
 
 #### **Phase 1: SPA Scaffold & Command Builder Parity (IN PROGRESS)**
-1. [ ] **Task 1.1: Vite + React SPA Setup**
-   - [ ] Initialize Vite project in `frontend/` with React + TypeScript
-   - [ ] Configure routing (React Router) for unified shell vs. micro-apps
-   - [ ] Set up API client layer with typed fetch wrappers
-   - [ ] Connect to FastAPI backend at `http://127.0.0.1:8000`
-   - [ ] Verify `/api/commands/schemas` endpoint returns schema metadata
+1. [x] **Task 1.1: Vite + React SPA Setup**
+   - [x] Initialize Vite project in `frontend/` with React + TypeScript
+   - [x] Configure routing (React Router) for unified shell vs. micro-apps
+   - [x] Set up API client layer with typed fetch wrappers
+   - [x] Connect to FastAPI backend at `http://127.0.0.1:8000`
+   - [x] Verify `/api/commands/schemas` endpoint returns schema metadata
+   - [x] Configure ESLint/Prettier with 100-char line length
+   - [x] Configure Ruff linter with 140-char line length
+   - [x] Fixed router import paths (changed `...utils` to `..utils`)
+   - [x] Added uvicorn dependency and tested full stack connectivity
 
 2. [ ] **Task 1.2: Command Console Module**
    - [ ] Build schema-driven form generator (mirrors `ui.utils.ui_generator`)
