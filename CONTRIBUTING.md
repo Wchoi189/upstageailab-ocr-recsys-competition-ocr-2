@@ -137,12 +137,14 @@ We welcome various types of contributions:
 
 ## 📝 Coding Standards
 
-### Python Style Guide
+**See [CODING_STANDARDS.md](docs/CODING_STANDARDS.md) for comprehensive coding standards covering Python, TypeScript/React, code length guidelines, and best practices.**
 
-- Follow [PEP 8](https://pep8.org/) style guidelines
-- Use type hints for function signatures
-- Maximum line length: 100 characters (soft limit)
-- Use meaningful variable and function names
+### Quick Reference
+
+- **Python**: 140 character line length, type hints required, Ruff for linting/formatting
+- **TypeScript/React**: 100 character line length, explicit types required, Prettier/ESLint
+- **Function length**: Python < 50 lines (target), TypeScript < 40 lines (target)
+- **File length**: Python < 500 lines (target), TypeScript < 300 lines (target)
 
 ### Code Formatting
 
