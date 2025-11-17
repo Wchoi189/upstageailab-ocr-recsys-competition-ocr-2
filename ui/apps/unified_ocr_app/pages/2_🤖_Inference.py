@@ -28,7 +28,8 @@ from ui.apps.unified_ocr_app.components.shared import render_image_upload
 
 # Import only what THIS PAGE needs (lazy loading!)
 from ui.apps.unified_ocr_app.services.config_loader import load_mode_config
-from ui.apps.unified_ocr_app.services.inference_service import InferenceService, load_checkpoints
+from ui.apps.unified_ocr_app.services import get_inference_service
+from ui.apps.unified_ocr_app.services.inference_service import load_checkpoints
 
 # Import shared utilities
 from ui.apps.unified_ocr_app.shared_utils import get_app_config, get_app_state, setup_page
@@ -137,8 +138,8 @@ if processing_mode == "single":
     if run_button:
         try:
             with st.spinner("Running inference..."):
-                # Create service
-                service = InferenceService(mode_config)
+                # Get cached service for better performance
+                service = get_inference_service(mode_config)
 
                 # Generate cache key
                 param_str = json.dumps(hyperparameters, sort_keys=True)
@@ -226,7 +227,8 @@ elif processing_mode == "batch":
 
                         # Run batch inference
                         with st.spinner(f"Processing {len(image_paths)} images..."):
-                            service = InferenceService(mode_config)
+                            # Get cached service for better performance
+                            service = get_inference_service(mode_config)
                             result = service.run_batch_inference(
                                 [str(p) for p in image_paths], selected_checkpoint, hyperparameters, output_dir
                             )

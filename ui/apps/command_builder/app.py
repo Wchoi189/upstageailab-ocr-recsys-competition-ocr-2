@@ -2,11 +2,7 @@ from __future__ import annotations
 
 import streamlit as st
 
-from ui.utils.command import CommandBuilder
-from ui.utils.config_parser import ConfigParser
-
 from ui.apps.command_builder.components import render_predict_page, render_sidebar, render_test_page, render_training_page
-from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
 from ui.apps.command_builder.state import CommandBuilderState, CommandType
 
 
@@ -16,17 +12,32 @@ def run() -> None:
     st.caption("Build and execute training, testing, and prediction commands with metadata-aware defaults.")
 
     state = CommandBuilderState.from_session()
-    command_builder = CommandBuilder()
-    config_parser = ConfigParser()
-    recommendation_service = UseCaseRecommendationService(config_parser)
 
+    # Render sidebar FIRST (fast, no heavy operations)
     command_type = render_sidebar(state)
 
+    # Lazy load services only for the active page (Phase 2 optimization)
+    # This reduces initialization overhead for unused pages
     if command_type == CommandType.TRAIN:
+        from ui.apps.command_builder.utils import (
+            get_command_builder,
+            get_config_parser,
+            get_recommendation_service,
+        )
+
+        command_builder = get_command_builder()
+        config_parser = get_config_parser()
+        recommendation_service = get_recommendation_service()
         render_training_page(state, command_builder, recommendation_service, config_parser)
     elif command_type == CommandType.TEST:
+        from ui.apps.command_builder.utils import get_command_builder
+
+        command_builder = get_command_builder()
         render_test_page(state, command_builder)
-    else:
+    else:  # PREDICT
+        from ui.apps.command_builder.utils import get_command_builder
+
+        command_builder = get_command_builder()
         render_predict_page(state, command_builder)
 
     state.persist()
