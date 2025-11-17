@@ -21,6 +21,7 @@ Pages:
 from __future__ import annotations
 
 import logging
+import os
 import sys
 from pathlib import Path
 from typing import Literal, cast
@@ -37,6 +38,7 @@ from ui.apps.unified_ocr_app.shared_utils import get_app_config, get_app_state
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s", stream=sys.stderr)
 logger = logging.getLogger(__name__)
+PLAYGROUND_BETA_URL = os.environ.get("PLAYGROUND_BETA_URL", "").strip()
 
 
 def main() -> None:
@@ -71,6 +73,11 @@ def main() -> None:
     st.divider()
 
     st.info("👈 Select a mode from the sidebar to begin")
+    if PLAYGROUND_BETA_URL:
+        st.success(
+            f"✨ Preview the upcoming playground experience [here]({PLAYGROUND_BETA_URL}). "
+            "This beta delivers Albumentations-style previews and faster rembg routing.",
+        )
 
     # Mode descriptions
     col1, col2, col3 = st.columns(3)

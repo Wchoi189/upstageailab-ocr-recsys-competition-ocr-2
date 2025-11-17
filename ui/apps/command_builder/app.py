@@ -1,15 +1,26 @@
 from __future__ import annotations
 
+import os
+
 import streamlit as st
 
 from ui.apps.command_builder.components import render_predict_page, render_sidebar, render_test_page, render_training_page
 from ui.apps.command_builder.state import CommandBuilderState, CommandType
 
 
+PLAYGROUND_BETA_URL = os.environ.get("PLAYGROUND_BETA_URL", "").strip()
+
+
 def run() -> None:
     st.set_page_config(page_title="OCR Command Builder", page_icon="🔍", layout="wide")
     st.title("🔍 OCR Training Command Builder")
     st.caption("Build and execute training, testing, and prediction commands with metadata-aware defaults.")
+
+    if PLAYGROUND_BETA_URL:
+        st.info(
+            f"🚀 A faster playground is available. [Open beta SPA]({PLAYGROUND_BETA_URL}) for Albumentations-style previews.",
+            icon="✨",
+        )
 
     state = CommandBuilderState.from_session()
 

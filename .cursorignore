@@ -108,6 +108,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# Allow dataset tooling scripts
+!scripts/datasets/
+!scripts/datasets/**
+
 # Temporary files
 *.tmp
 *.temp
