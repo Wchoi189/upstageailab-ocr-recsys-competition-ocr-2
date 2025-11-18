@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
+from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
 from ui.utils.command import CommandBuilder, CommandValidator
 from ui.utils.config_parser import ConfigParser
 from ui.utils.ui_generator import compute_overrides
@@ -73,6 +74,16 @@ class CommandBuildResponse(BaseModel):
     validation_error: str | None = None
 
 
+class RecommendationResponse(BaseModel):
+    """Response model for use case recommendations."""
+
+    id: str
+    title: str
+    description: str
+    architecture: str | None = None
+    parameters: dict[str, Any] = Field(default_factory=dict)
+
+
 @lru_cache(maxsize=1)
 def _get_command_builder() -> CommandBuilder:
     return CommandBuilder(project_root=str(PROJECT_ROOT))
@@ -86,6 +97,11 @@ def _get_validator() -> CommandValidator:
 @lru_cache(maxsize=1)
 def _get_config_parser() -> ConfigParser:
     return ConfigParser()
+
+
+@lru_cache(maxsize=1)
+def _get_recommendation_service() -> UseCaseRecommendationService:
+    return UseCaseRecommendationService(_get_config_parser())
 
 
 @lru_cache(maxsize=8)
@@ -113,6 +129,53 @@ def list_schemas() -> list[SchemaSummary]:
             )
         )
     return summaries
+
+
+@router.get("/schemas/{schema_id}")
+def get_schema(schema_id: SchemaId) -> dict[str, Any]:
+    """Get full schema definition with UI elements."""
+    if schema_id not in SCHEMA_REGISTRY:
+        raise HTTPException(status_code=404, detail=f"Unknown schema_id '{schema_id}'")
+    schema_data = _load_schema_data(schema_id)
+    # Populate options for selectboxes
+    schema_data = _populate_options(schema_data)
+    return schema_data
+
+
+def _populate_options(schema: dict[str, Any]) -> dict[str, Any]:
+    """Populate options for selectbox elements."""
+    config_parser = _get_config_parser()
+
+    for element in schema.get("ui_elements", []):
+        if element.get("type") == "selectbox" and element.get("options_source"):
+            source = element["options_source"]
+            element["options"] = _get_options_from_source(source, config_parser)
+
+    return schema
+
+
+def _get_options_from_source(source: str, config_parser: ConfigParser) -> list[str]:
+    """Get dynamic options list from config parser."""
+    model_source_map = {
+        "models.backbones": "backbones",
+        "models.encoders": "encoders",
+        "models.decoders": "decoders",
+        "models.heads": "heads",
+        "models.optimizers": "optimizers",
+        "models.losses": "losses",
+    }
+
+    if source in model_source_map:
+        models = config_parser.get_available_models()
+        return models.get(model_source_map[source], [])
+    if source == "models.architectures":
+        return config_parser.get_available_architectures()
+    if source == "checkpoints":
+        return config_parser.get_available_checkpoints()
+    if source == "datasets":
+        return config_parser.get_available_datasets()
+
+    return []
 
 
 @router.post("/build", response_model=CommandBuildResponse)
@@ -147,5 +210,23 @@ def build_command(payload: CommandBuildRequest) -> CommandBuildResponse:
         constant_overrides=constant_overrides,
         validation_error=validation_error,
     )
+
+
+@router.get("/recommendations", response_model=list[RecommendationResponse])
+def get_recommendations(architecture: str | None = None) -> list[RecommendationResponse]:
+    """Get use case recommendations, optionally filtered by architecture."""
+    service = _get_recommendation_service()
+    recommendations = service.for_architecture(architecture)
+
+    return [
+        RecommendationResponse(
+            id=rec.id,
+            title=rec.title,
+            description=rec.description,
+            architecture=rec.architecture,
+            parameters=rec.parameters,
+        )
+        for rec in recommendations
+    ]
 
 
