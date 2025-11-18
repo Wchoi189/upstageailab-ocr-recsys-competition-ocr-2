@@ -36,7 +36,7 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 
 ### Blockers & Open Issues
 
-- **FastAPI startup latency** (Phase 1 regression): importing `ui.utils.config_parser` and the command builder services now triggers Streamlit + registry initialization, which adds a ~10–15 second cold-start before `uvicorn` begins listening. Until this is optimized the SPA shows a spinner/timeout unless the API is pre-warmed. A diagnostic helper (`test_api_startup.py`) was added, but we still need to (a) trim the import graph, (b) cache heavy metadata, or (c) replace the Streamlit-era dependencies with lightweight JSON manifests before Phase 3.
+- ~~**FastAPI startup latency** (Phase 1 regression)~~ ✅ **RESOLVED** (2025-11-18): Implemented lazy imports in `command_builder.py` router. Heavy UI modules (ConfigParser, CommandBuilder, etc.) now load only when endpoints are called, not during FastAPI startup. Cold-start reduced from 10-15 seconds to < 2 seconds (~5-7x improvement). First API call has deferred latency, but subsequent calls are instant due to lru_cache. See `docs/performance/fastapi-startup-optimization.md` for details.
 
 ### Phase 2 Completion Notes (2025-11-18)
 

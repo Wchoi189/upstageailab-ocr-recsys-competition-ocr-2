@@ -1,4 +1,4 @@
-"""Command Builder API router."""
+"""Command Builder API router with lazy imports for fast startup."""
 
 from __future__ import annotations
 
@@ -9,11 +9,8 @@ import yaml
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
-from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
-from ui.utils.command import CommandBuilder, CommandValidator
-from ui.utils.config_parser import ConfigParser
-from ui.utils.ui_generator import compute_overrides
+# Lazy imports: Only import heavy UI modules when actually needed
+# This prevents Streamlit initialization during FastAPI startup
 
 from ..utils.paths import PROJECT_ROOT
 
@@ -85,22 +82,34 @@ class RecommendationResponse(BaseModel):
 
 
 @lru_cache(maxsize=1)
-def _get_command_builder() -> CommandBuilder:
+def _get_command_builder():
+    """Lazy load CommandBuilder (triggers heavy imports on first call)."""
+    from ui.utils.command import CommandBuilder
+
     return CommandBuilder(project_root=str(PROJECT_ROOT))
 
 
 @lru_cache(maxsize=1)
-def _get_validator() -> CommandValidator:
+def _get_validator():
+    """Lazy load CommandValidator."""
+    from ui.utils.command import CommandValidator
+
     return CommandValidator()
 
 
 @lru_cache(maxsize=1)
-def _get_config_parser() -> ConfigParser:
+def _get_config_parser():
+    """Lazy load ConfigParser (triggers Streamlit/registry initialization)."""
+    from ui.utils.config_parser import ConfigParser
+
     return ConfigParser()
 
 
 @lru_cache(maxsize=1)
-def _get_recommendation_service() -> UseCaseRecommendationService:
+def _get_recommendation_service():
+    """Lazy load UseCaseRecommendationService."""
+    from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
+
     return UseCaseRecommendationService(_get_config_parser())
 
 
@@ -154,7 +163,7 @@ def _populate_options(schema: dict[str, Any]) -> dict[str, Any]:
     return schema
 
 
-def _get_options_from_source(source: str, config_parser: ConfigParser) -> list[str]:
+def _get_options_from_source(source: str, config_parser) -> list[str]:
     """Get dynamic options list from config parser."""
     model_source_map = {
         "models.backbones": "backbones",
@@ -181,6 +190,10 @@ def _get_options_from_source(source: str, config_parser: ConfigParser) -> list[s
 @router.post("/build", response_model=CommandBuildResponse)
 def build_command(payload: CommandBuildRequest) -> CommandBuildResponse:
     """Build and validate a CLI command from the provided values."""
+    # Lazy imports for heavy modules
+    from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
+    from ui.utils.ui_generator import compute_overrides
+
     if payload.schema_id not in SCHEMA_REGISTRY:
         raise HTTPException(status_code=404, detail=f"Unknown schema_id '{payload.schema_id}'")
 
