@@ -43,6 +43,7 @@ export function CommandBuilder(): JSX.Element {
   useEffect(() => {
     loadSchema(activeTab);
     loadRecommendations();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeTab]);
 
   // Reload recommendations when architecture changes
@@ -69,8 +70,13 @@ export function CommandBuilder(): JSX.Element {
       setValues({});
       setCommandResult(null);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to load schema");
+      const errorMessage =
+        err instanceof Error
+          ? err.message
+          : "Failed to load schema. Make sure the API server is running at http://127.0.0.1:8000";
+      setError(errorMessage);
       console.error("Error loading schema:", err);
+      setSchema(null);
     } finally {
       setLoading(false);
     }
@@ -143,19 +149,37 @@ export function CommandBuilder(): JSX.Element {
       </div>
 
       {/* Content */}
-      {loading && <p>Loading schema...</p>}
+      {loading && (
+        <div style={{ padding: "2rem", textAlign: "center" }}>
+          <p>Loading schema...</p>
+          <p style={{ fontSize: "0.875rem", color: "#6b7280", marginTop: "0.5rem" }}>
+            If this takes too long, make sure the API server is running at http://127.0.0.1:8000
+          </p>
+        </div>
+      )}
 
       {error && (
         <div
           style={{
-            padding: "1rem",
+            padding: "1.5rem",
             backgroundColor: "#fef2f2",
-            border: "1px solid #fecaca",
+            border: "2px solid #fecaca",
             borderRadius: "0.5rem",
             color: "#991b1b",
+            marginTop: "1rem",
           }}
         >
-          {error}
+          <h3 style={{ marginTop: 0, marginBottom: "0.5rem" }}>⚠️ Error Loading Schema</h3>
+          <p style={{ margin: 0 }}>{error}</p>
+          <p style={{ marginTop: "1rem", fontSize: "0.875rem", color: "#7f1d1d" }}>
+            <strong>To fix this:</strong>
+            <br />
+            1. Make sure the API server is running: <code>uv run python run_spa.py --api-only</code>
+            <br />
+            2. Check that the server is accessible at <code>http://127.0.0.1:8000</code>
+            <br />
+            3. Check the browser console (F12) for more details
+          </p>
         </div>
       )}
 

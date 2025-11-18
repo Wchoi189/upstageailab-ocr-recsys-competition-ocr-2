@@ -10,7 +10,6 @@ from typing import Any
 
 import yaml
 
-from ocr.models.core import registry
 from ocr.utils.path_utils import get_path_resolver
 
 
@@ -67,19 +66,23 @@ class ConfigParser:
             for yaml_file in optimizer_dir.glob("*.yaml"):
                 models["optimizers"].append(yaml_file.stem)
 
-        # Add registry-discovered components (if not already present)
-        for enc in registry.list_encoders():
-            if enc not in models["encoders"]:
-                models["encoders"].append(enc)
-        for dec in registry.list_decoders():
-            if dec not in models["decoders"]:
-                models["decoders"].append(dec)
-        for head in registry.list_heads():
-            if head not in models["heads"]:
-                models["heads"].append(head)
-        for loss in registry.list_losses():
-            if loss not in models["losses"]:
-                models["losses"].append(loss)
+        # Add registry-discovered components (if not already present) - lazy import
+        try:
+            from ocr.models.core import registry
+            for enc in registry.list_encoders():
+                if enc not in models["encoders"]:
+                    models["encoders"].append(enc)
+            for dec in registry.list_decoders():
+                if dec not in models["decoders"]:
+                    models["decoders"].append(dec)
+            for head in registry.list_heads():
+                if head not in models["heads"]:
+                    models["heads"].append(head)
+            for loss in registry.list_losses():
+                if loss not in models["losses"]:
+                    models["losses"].append(loss)
+        except Exception:
+            pass
 
         # Also check timm backbones for encoders
         encoder_config = self.config_dir / "preset" / "models" / "encoder" / "timm_backbone.yaml"
@@ -105,6 +108,8 @@ class ConfigParser:
 
     def get_available_architectures(self) -> list[str]:
         """Get available architecture presets from the registry for UI selection."""
+        # Lazy import to avoid blocking during module import
+        from ocr.models.core import registry
         # Ensure architectures are registered by importing the module
         from ocr.models import architectures  # noqa: F401
 

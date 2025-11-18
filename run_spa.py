@@ -16,17 +16,28 @@ setup_project_paths()
 
 def run_api_server(host: str = "127.0.0.1", port: int = 8000, reload: bool = True):
     """Run the FastAPI playground API server."""
-    from services.playground_api.app import app
-
     import uvicorn
 
-    uvicorn.run(
-        app,
-        host=host,
-        port=port,
-        reload=reload,
-        log_level="info",
-    )
+    if reload:
+        # When reload is enabled, uvicorn requires an import string
+        uvicorn.run(
+            "services.playground_api.app:app",
+            host=host,
+            port=port,
+            reload=reload,
+            log_level="info",
+        )
+    else:
+        # When reload is disabled, we can pass the app object directly
+        from services.playground_api.app import app
+
+        uvicorn.run(
+            app,
+            host=host,
+            port=port,
+            reload=reload,
+            log_level="info",
+        )
 
 
 def run_frontend_dev_server():
