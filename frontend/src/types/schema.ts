@@ -73,3 +73,11 @@ export interface BuildCommandResponse {
 }
 
 export type FormValues = Record<string, unknown>;
+
+export interface Recommendation {
+  id: string;
+  title: string;
+  description: string;
+  architecture?: string;
+  parameters: Record<string, unknown>;
+}

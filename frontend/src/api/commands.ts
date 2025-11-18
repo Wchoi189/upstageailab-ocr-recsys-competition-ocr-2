@@ -9,6 +9,7 @@ import type {
   BuildCommandRequest,
   BuildCommandResponse,
   SchemaId,
+  Recommendation,
 } from "@/types/schema";
 
 /**
@@ -38,8 +39,11 @@ export async function buildCommand(
 }
 
 /**
- * Get command recommendations
+ * Get command recommendations, optionally filtered by architecture
  */
-export async function getCommandRecommendations(): Promise<unknown[]> {
-  return apiGet<unknown[]>("/commands/recommendations");
+export async function getCommandRecommendations(
+  architecture?: string
+): Promise<Recommendation[]> {
+  const query = architecture ? `?architecture=${architecture}` : "";
+  return apiGet<Recommendation[]>(`/commands/recommendations${query}`);
 }

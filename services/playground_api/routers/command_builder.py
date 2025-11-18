@@ -10,6 +10,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
+from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
 from ui.utils.command import CommandBuilder, CommandValidator
 from ui.utils.config_parser import ConfigParser
 from ui.utils.ui_generator import compute_overrides
@@ -73,6 +74,16 @@ class CommandBuildResponse(BaseModel):
     validation_error: str | None = None
 
 
+class RecommendationResponse(BaseModel):
+    """Response model for use case recommendations."""
+
+    id: str
+    title: str
+    description: str
+    architecture: str | None = None
+    parameters: dict[str, Any] = Field(default_factory=dict)
+
+
 @lru_cache(maxsize=1)
 def _get_command_builder() -> CommandBuilder:
     return CommandBuilder(project_root=str(PROJECT_ROOT))
@@ -86,6 +97,11 @@ def _get_validator() -> CommandValidator:
 @lru_cache(maxsize=1)
 def _get_config_parser() -> ConfigParser:
     return ConfigParser()
+
+
+@lru_cache(maxsize=1)
+def _get_recommendation_service() -> UseCaseRecommendationService:
+    return UseCaseRecommendationService(_get_config_parser())
 
 
 @lru_cache(maxsize=8)
@@ -194,5 +210,23 @@ def build_command(payload: CommandBuildRequest) -> CommandBuildResponse:
         constant_overrides=constant_overrides,
         validation_error=validation_error,
     )
+
+
+@router.get("/recommendations", response_model=list[RecommendationResponse])
+def get_recommendations(architecture: str | None = None) -> list[RecommendationResponse]:
+    """Get use case recommendations, optionally filtered by architecture."""
+    service = _get_recommendation_service()
+    recommendations = service.for_architecture(architecture)
+
+    return [
+        RecommendationResponse(
+            id=rec.id,
+            title=rec.title,
+            description=rec.description,
+            architecture=rec.architecture,
+            parameters=rec.parameters,
+        )
+        for rec in recommendations
+    ]
 
 

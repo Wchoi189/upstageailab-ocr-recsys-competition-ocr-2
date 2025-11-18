@@ -9,13 +9,19 @@ import type {
   CommandSchema,
   FormValues,
   BuildCommandResponse,
+  Recommendation,
 } from "@/types/schema";
-import { getSchemaDetails, buildCommand } from "@/api/commands";
+import {
+  getSchemaDetails,
+  buildCommand,
+  getCommandRecommendations,
+} from "@/api/commands";
 import { SchemaForm } from "@/components/forms/SchemaForm";
 import {
   CommandDisplay,
   CommandDiffViewer,
 } from "@/components/commands/CommandDisplay";
+import { RecommendationsGrid } from "@/components/recommendations/RecommendationCard";
 
 export function CommandBuilder(): JSX.Element {
   const [activeTab, setActiveTab] = useState<SchemaId>("train");
@@ -25,13 +31,27 @@ export function CommandBuilder(): JSX.Element {
     null
   );
   const [previousCommand, setPreviousCommand] = useState<string>("");
+  const [recommendations, setRecommendations] = useState<Recommendation[]>([]);
+  const [selectedRecommendationId, setSelectedRecommendationId] = useState<
+    string | undefined
+  >();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [showRecommendations, setShowRecommendations] = useState(true);
 
   // Load schema when tab changes
   useEffect(() => {
     loadSchema(activeTab);
+    loadRecommendations();
   }, [activeTab]);
+
+  // Reload recommendations when architecture changes
+  useEffect(() => {
+    const architecture = values.architecture as string | undefined;
+    if (architecture) {
+      loadRecommendations(architecture);
+    }
+  }, [values.architecture]);
 
   // Build command when values change
   useEffect(() => {
@@ -54,6 +74,21 @@ export function CommandBuilder(): JSX.Element {
     } finally {
       setLoading(false);
     }
+  };
+
+  const loadRecommendations = async (architecture?: string): Promise<void> => {
+    try {
+      const recs = await getCommandRecommendations(architecture);
+      setRecommendations(recs);
+    } catch (err) {
+      console.error("Error loading recommendations:", err);
+    }
+  };
+
+  const handleRecommendationSelect = (rec: Recommendation): void => {
+    setSelectedRecommendationId(rec.id);
+    // Merge recommendation parameters into form values
+    setValues((prev) => ({ ...prev, ...rec.parameters }));
   };
 
   const buildCommandFromValues = async (): Promise<void> => {
@@ -129,6 +164,53 @@ export function CommandBuilder(): JSX.Element {
           <h2 style={{ fontSize: "1.25rem", marginBottom: "1.5rem" }}>
             {schema.title}
           </h2>
+
+          {/* Recommendations Panel */}
+          {activeTab === "train" && recommendations.length > 0 && (
+            <div style={{ marginBottom: "2rem" }}>
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "center",
+                  marginBottom: "1rem",
+                }}
+              >
+                <h3
+                  style={{
+                    margin: 0,
+                    fontSize: "1rem",
+                    fontWeight: 600,
+                    color: "#374151",
+                  }}
+                >
+                  Recommended Configurations
+                </h3>
+                <button
+                  onClick={() => setShowRecommendations(!showRecommendations)}
+                  style={{
+                    padding: "0.25rem 0.75rem",
+                    fontSize: "0.75rem",
+                    border: "1px solid #d1d5db",
+                    borderRadius: "0.375rem",
+                    backgroundColor: "white",
+                    cursor: "pointer",
+                    color: "#6b7280",
+                  }}
+                >
+                  {showRecommendations ? "Hide" : "Show"}
+                </button>
+              </div>
+
+              {showRecommendations && (
+                <RecommendationsGrid
+                  recommendations={recommendations}
+                  onSelect={handleRecommendationSelect}
+                  selectedId={selectedRecommendationId}
+                />
+              )}
+            </div>
+          )}
 
           <SchemaForm schema={schema} values={values} onChange={setValues} />
 

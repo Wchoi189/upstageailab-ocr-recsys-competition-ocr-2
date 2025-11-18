@@ -4,12 +4,14 @@
  */
 
 import type { ChangeEvent } from "react";
+import { InfoIcon } from "@/components/ui/Tooltip";
 
 export interface FormFieldProps {
   value: unknown;
   onChange: (value: unknown) => void;
   label: string;
   help?: string;
+  tooltip?: string;
   disabled?: boolean;
   error?: string;
 }
@@ -21,7 +23,7 @@ export interface TextInputProps extends FormFieldProps {
 }
 
 export function TextInput(props: TextInputProps): JSX.Element {
-  const { value, onChange, label, help, disabled, error, placeholder } = props;
+  const { value, onChange, label, help, disabled, error, placeholder, tooltip } = props;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     onChange(e.target.value);
@@ -29,8 +31,17 @@ export function TextInput(props: TextInputProps): JSX.Element {
 
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 500 }}>
-        {label}
+      <label
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          marginBottom: "0.25rem",
+          fontWeight: 500,
+        }}
+      >
+        <span>{label}</span>
+        {tooltip && <InfoIcon tooltip={tooltip} />}
       </label>
       <input
         type="text"
@@ -66,7 +77,7 @@ export interface CheckboxProps extends FormFieldProps {
 }
 
 export function Checkbox(props: CheckboxProps): JSX.Element {
-  const { value, onChange, label, help, disabled, error } = props;
+  const { value, onChange, label, help, disabled, error, tooltip } = props;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     onChange(e.target.checked);
@@ -83,6 +94,7 @@ export function Checkbox(props: CheckboxProps): JSX.Element {
           style={{ width: "1rem", height: "1rem" }}
         />
         <span style={{ fontWeight: 500 }}>{label}</span>
+        {tooltip && <InfoIcon tooltip={tooltip} />}
       </label>
       {help && (
         <p style={{ fontSize: "0.75rem", color: "#6b7280", marginTop: "0.25rem" }}>
@@ -105,7 +117,7 @@ export interface SelectBoxProps extends FormFieldProps {
 }
 
 export function SelectBox(props: SelectBoxProps): JSX.Element {
-  const { value, onChange, label, help, disabled, error, options } = props;
+  const { value, onChange, label, help, disabled, error, options, tooltip } = props;
 
   const handleChange = (e: ChangeEvent<HTMLSelectElement>): void => {
     onChange(e.target.value);
@@ -113,8 +125,17 @@ export function SelectBox(props: SelectBoxProps): JSX.Element {
 
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 500 }}>
-        {label}
+      <label
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          marginBottom: "0.25rem",
+          fontWeight: 500,
+        }}
+      >
+        <span>{label}</span>
+        {tooltip && <InfoIcon tooltip={tooltip} />}
       </label>
       <select
         value={value}
@@ -158,7 +179,7 @@ export interface NumberInputProps extends FormFieldProps {
 }
 
 export function NumberInput(props: NumberInputProps): JSX.Element {
-  const { value, onChange, label, help, disabled, error, min, max, step } = props;
+  const { value, onChange, label, help, disabled, error, min, max, step, tooltip } = props;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     onChange(parseFloat(e.target.value));
@@ -166,8 +187,17 @@ export function NumberInput(props: NumberInputProps): JSX.Element {
 
   return (
     <div style={{ marginBottom: "1rem" }}>
-      <label style={{ display: "block", marginBottom: "0.25rem", fontWeight: 500 }}>
-        {label}
+      <label
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "0.5rem",
+          marginBottom: "0.25rem",
+          fontWeight: 500,
+        }}
+      >
+        <span>{label}</span>
+        {tooltip && <InfoIcon tooltip={tooltip} />}
       </label>
       <input
         type="number"

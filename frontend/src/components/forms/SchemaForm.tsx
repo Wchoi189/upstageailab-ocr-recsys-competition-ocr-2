@@ -74,6 +74,11 @@ interface FormFieldProps {
 function FormField(props: FormFieldProps): JSX.Element | null {
   const { element, value, onChange, error } = props;
 
+  // Build tooltip from metadata_help_key if available
+  const tooltip = element.metadata_help_key
+    ? `Metadata: ${element.metadata_help_key}`
+    : undefined;
+
   switch (element.type) {
     case "text_input":
       return (
@@ -82,6 +87,7 @@ function FormField(props: FormFieldProps): JSX.Element | null {
           onChange={onChange}
           label={element.label}
           help={element.help}
+          tooltip={tooltip}
           error={error}
         />
       );
@@ -93,6 +99,7 @@ function FormField(props: FormFieldProps): JSX.Element | null {
           onChange={onChange}
           label={element.label}
           help={element.help}
+          tooltip={tooltip}
           error={error}
         />
       );
@@ -104,6 +111,7 @@ function FormField(props: FormFieldProps): JSX.Element | null {
           onChange={onChange}
           label={element.label}
           help={element.help}
+          tooltip={tooltip}
           error={error}
           options={element.options || []}
         />
@@ -116,6 +124,7 @@ function FormField(props: FormFieldProps): JSX.Element | null {
           onChange={onChange}
           label={element.label}
           help={element.help}
+          tooltip={tooltip}
           error={error}
           min={element.min}
           max={element.max}
