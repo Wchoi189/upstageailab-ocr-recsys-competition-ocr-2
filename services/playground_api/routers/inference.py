@@ -131,3 +131,58 @@ def list_checkpoints(limit: int = 50) -> list[CheckpointSummary]:
     return _discover_checkpoints(limit=limit)
 
 
+class InferencePreviewRequest(BaseModel):
+    """Request body for single-image inference preview."""
+
+    checkpoint_path: str
+    image_base64: str | None = None
+    image_path: str | None = None
+    confidence_threshold: float = Field(default=0.5, ge=0.0, le=1.0)
+    nms_threshold: float = Field(default=0.4, ge=0.0, le=1.0)
+
+
+class TextRegion(BaseModel):
+    """Detected text region with polygon coordinates."""
+
+    polygon: list[list[float]]  # [[x1, y1], [x2, y2], ...]
+    text: str | None = None
+    confidence: float
+
+
+class InferencePreviewResponse(BaseModel):
+    """Response from inference preview."""
+
+    status: str
+    regions: list[TextRegion]
+    processing_time_ms: float
+    notes: list[str] = Field(default_factory=list)
+
+
+@router.post("/preview", response_model=InferencePreviewResponse)
+def run_inference_preview(request: InferencePreviewRequest) -> InferencePreviewResponse:
+    """Run single-image inference and return detected text regions.
+
+    NOTE: This is a stub implementation. Actual inference wiring pending.
+    """
+    # Placeholder: Return mock data for UI development
+    mock_regions = [
+        TextRegion(
+            polygon=[[100, 100], [300, 100], [300, 150], [100, 150]],
+            text="Sample Text 1",
+            confidence=0.95,
+        ),
+        TextRegion(
+            polygon=[[100, 200], [400, 200], [400, 250], [100, 250]],
+            text="Sample Text 2",
+            confidence=0.87,
+        ),
+    ]
+
+    return InferencePreviewResponse(
+        status="success",
+        regions=mock_regions,
+        processing_time_ms=125.5,
+        notes=["Stub implementation - actual inference not wired yet"],
+    )
+
+
