@@ -1,4 +1,10 @@
 import type { WorkerTask, WorkerResult } from "../../workers/types";
+import {
+  generateTaskId,
+  generateWorkerId,
+  logWorkerLifecycleEvent,
+  exposeQueueDepth,
+} from "./workerTelemetry";
 
 /**
  * Priority level for task scheduling
@@ -14,6 +20,8 @@ interface QueuedTask {
   resolve: (result: WorkerResult) => void;
   reject: (error: Error) => void;
   cancelled: boolean;
+  taskId: string; // Unique ID for telemetry
+  workerId: string; // Worker ID for telemetry
 }
 
 /**
@@ -143,16 +151,31 @@ export class WorkerPool {
    * Execute task on worker
    */
   private _executeTask(worker: Worker, queuedTask: QueuedTask): void {
-    const { task, resolve, reject } = queuedTask;
+    const { task, resolve, reject, taskId, workerId } = queuedTask;
+
+    // Log task started
+    logWorkerLifecycleEvent("task_started", workerId, taskId, {
+      operation: task.operation,
+      priority: queuedTask.priority,
+    });
 
     const onMessage = (event: MessageEvent<WorkerResult>): void => {
       cleanup();
+      // Log task completed
+      logWorkerLifecycleEvent("task_completed", workerId, taskId, {
+        operation: task.operation,
+      });
       this._releaseWorker(worker);
       resolve(event.data);
     };
 
     const onError = (error: ErrorEvent): void => {
       cleanup();
+      // Log task failed
+      logWorkerLifecycleEvent("task_failed", workerId, taskId, {
+        operation: task.operation,
+        error: error.message,
+      });
       this._releaseWorker(worker);
       reject(new Error(`Worker error: ${error.message}`));
     };
@@ -176,23 +199,41 @@ export class WorkerPool {
     cancellationToken?: CancellationToken,
   ): Promise<WorkerResult> {
     return new Promise<WorkerResult>((resolve, reject) => {
+      // Generate unique IDs for telemetry
+      const taskId = generateTaskId();
+      const workerId = generateWorkerId();
+
       const queuedTask: QueuedTask = {
         task,
         priority,
         resolve,
         reject,
         cancelled: false,
+        taskId,
+        workerId,
       };
+
+      // Log task queued
+      logWorkerLifecycleEvent("task_queued", workerId, taskId, {
+        operation: task.operation,
+        priority,
+      });
 
       // Wire cancellation token
       if (cancellationToken) {
         cancellationToken.onCancel(() => {
           queuedTask.cancelled = true;
+          // Log task cancelled
+          logWorkerLifecycleEvent("task_cancelled", workerId, taskId, {
+            operation: task.operation,
+          });
           reject(new Error("Task cancelled"));
         });
       }
 
       this.taskQueue.push(queuedTask);
+      // Expose queue depth for E2E testing
+      exposeQueueDepth(this.taskQueue.length);
       this._processQueue();
     });
   }

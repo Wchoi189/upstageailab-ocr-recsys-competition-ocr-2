@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from fastapi import FastAPI
 
-from .routers import command_builder, evaluation, inference, pipeline
+from .routers import command_builder, evaluation, inference, metrics, pipeline
 
 
 def create_app() -> FastAPI:
@@ -22,6 +22,7 @@ def create_app() -> FastAPI:
     app.include_router(inference.router, prefix="/api/inference", tags=["inference"])
     app.include_router(pipeline.router, prefix="/api/pipelines", tags=["pipelines"])
     app.include_router(evaluation.router, prefix="/api/evaluation", tags=["evaluation"])
+    app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
 
     return app
 
