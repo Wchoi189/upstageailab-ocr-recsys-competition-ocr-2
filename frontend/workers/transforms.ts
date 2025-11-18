@@ -71,7 +71,7 @@ export const runGaussianBlur: TransformHandler = async (task, ctx) => {
   return ctx.canvas.transferToImageBitmap();
 };
 
-export const runResize: TransformHandler = async (task, ctx) => {
+export const runResize: TransformHandler = async (task, _ctx) => {
   const targetWidth = Number(task.params.width ?? 1024);
   const targetHeight = Number(task.params.height ?? 1024);
   const blob = new Blob([task.imageBuffer]);

@@ -5,11 +5,12 @@ from __future__ import annotations
 from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
+
 import yaml
 from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
-from ...utils.paths import PROJECT_ROOT
+from ..utils.paths import PROJECT_ROOT
 
 router = APIRouter()
 
@@ -53,7 +54,7 @@ def _load_mode_descriptors() -> list[_ModeDescriptor]:
     if not MODES_CONFIG.exists():
         raise FileNotFoundError(f"Inference mode config missing at {MODES_CONFIG}")
 
-    with open(MODES_CONFIG, "r", encoding="utf-8") as fh:
+    with open(MODES_CONFIG, encoding="utf-8") as fh:
         config = yaml.safe_load(fh) or {}
 
     description = config.get("description")
