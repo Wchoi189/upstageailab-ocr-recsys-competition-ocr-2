@@ -34,6 +34,10 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 - **LAST COMPLETED TASK:** Phase 1, Task 1.4 - Built Command Execution Drawer with download, validation status, and execution log placeholder
 - **NEXT TASK:** Phase 2 - Worker Pipeline & Preprocessing Studio (or wrap up Phase 1)
 
+### Blockers & Open Issues
+
+- **FastAPI startup latency** (Phase 1 regression): importing `ui.utils.config_parser` and the command builder services now triggers Streamlit + registry initialization, which adds a ~10–15 second cold-start before `uvicorn` begins listening. Until this is optimized the SPA shows a spinner/timeout unless the API is pre-warmed. A diagnostic helper (`test_api_startup.py`) was added, but we still need to (a) trim the import graph, (b) cache heavy metadata, or (c) replace the Streamlit-era dependencies with lightweight JSON manifests before Phase 2.
+
 ### Implementation Outline (Checklist)
 
 #### **Phase 0: Foundation & Planning (COMPLETED ✅)**
