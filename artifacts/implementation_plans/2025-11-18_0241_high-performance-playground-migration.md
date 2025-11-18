@@ -30,9 +30,9 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
 - **STATUS:** In Progress
-- **CURRENT STEP:** Phase 0 - Foundation Complete, Starting Phase 1
-- **LAST COMPLETED TASK:** Created FastAPI backend stubs, worker TypeScript prototypes, parity matrix, ADR, design system docs, and migration roadmap. Added `run_spa.py` for dev server orchestration.
-- **NEXT TASK:** Phase 1, Task 1.1 - Set up Vite + React SPA scaffold with routing and connect to FastAPI backend
+- **CURRENT STEP:** Phase 1 - SPA Scaffold & Command Builder Parity
+- **LAST COMPLETED TASK:** Phase 1, Task 1.1 - Set up Vite + React SPA with routing, API client, ESLint/Prettier config, and verified FastAPI connectivity. Fixed import paths in router modules.
+- **NEXT TASK:** Phase 1, Task 1.2 - Build Command Console Module with schema-driven form generator
 
 ### Implementation Outline (Checklist)
 
@@ -72,12 +72,16 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
    - [x] Added beta CTA banners to Streamlit apps
 
 #### **Phase 1: SPA Scaffold & Command Builder Parity (IN PROGRESS)**
-1. [ ] **Task 1.1: Vite + React SPA Setup**
-   - [ ] Initialize Vite project in `frontend/` with React + TypeScript
-   - [ ] Configure routing (React Router) for unified shell vs. micro-apps
-   - [ ] Set up API client layer with typed fetch wrappers
-   - [ ] Connect to FastAPI backend at `http://127.0.0.1:8000`
-   - [ ] Verify `/api/commands/schemas` endpoint returns schema metadata
+1. [x] **Task 1.1: Vite + React SPA Setup**
+   - [x] Initialize Vite project in `frontend/` with React + TypeScript
+   - [x] Configure routing (React Router) for unified shell vs. micro-apps
+   - [x] Set up API client layer with typed fetch wrappers
+   - [x] Connect to FastAPI backend at `http://127.0.0.1:8000`
+   - [x] Verify `/api/commands/schemas` endpoint returns schema metadata
+   - [x] Configure ESLint/Prettier with 100-char line length
+   - [x] Configure Ruff linter with 140-char line length
+   - [x] Fixed router import paths (changed `...utils` to `..utils`)
+   - [x] Added uvicorn dependency and tested full stack connectivity
 
 2. [ ] **Task 1.2: Command Console Module**
    - [ ] Build schema-driven form generator (mirrors `ui.utils.ui_generator`)
@@ -170,6 +174,12 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 
 ## 📋 **Technical Requirements Checklist**
 
+### **Code Quality & Standards**
+- [x] Coding standards document created (`docs/CODING_STANDARDS.md`)
+- [ ] All Python code follows 140 char line length, type hints, < 50 line functions
+- [ ] All TypeScript code follows 100 char line length, explicit types, < 40 line functions
+- [x] Linters/formatters configured and passing (Ruff for Python, ESLint/Prettier for TS)
+
 ### **Architecture & Design**
 - [x] Modular SPA architecture (Vite + React) with optional module federation
 - [x] FastAPI backend with stateless service layer
@@ -180,8 +190,8 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 ### **Integration Points**
 - [x] FastAPI endpoints for command builder, inference, evaluation, pipelines
 - [x] Worker RPC interface (Comlink/MessageChannel)
-- [ ] React Router for unified shell vs. micro-apps
-- [ ] API client layer with typed fetch wrappers
+- [x] React Router for unified shell vs. micro-apps
+- [x] API client layer with typed fetch wrappers
 
 ### **Quality Assurance**
 - [ ] Unit test coverage >80% for worker transforms
@@ -242,29 +252,29 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** Phase 1, Task 1.1 - Set up Vite + React SPA scaffold with routing and connect to FastAPI backend
+**TASK:** Phase 1, Task 1.2 - Build Command Console Module with schema-driven form generator
 
-**OBJECTIVE:** Create the foundational SPA structure that will host all playground modules, with proper routing and API integration.
+**OBJECTIVE:** Build the command builder UI that generates CLI commands from user input, matching the functionality of the Streamlit command builder.
 
 **APPROACH:**
-1. Initialize Vite project in `frontend/` directory with React + TypeScript template
-2. Install dependencies: `react-router-dom`, `zustand` (state management), `axios` or `fetch` wrapper
-3. Configure Vite proxy to forward `/api/*` requests to `http://127.0.0.1:8000`
-4. Set up basic routing structure (home, command-builder, preprocessing, inference, comparison)
-5. Create API client module with typed fetch wrappers for all FastAPI endpoints
-6. Add a simple test page that calls `/api/commands/schemas` to verify connectivity
-7. Update `run_spa.py` to optionally start Vite dev server alongside FastAPI
+1. Create schema-driven form generator component that reads from `/api/commands/schemas`
+2. Implement training/test/predict tabs with shared form primitives
+3. Wire `/api/commands/build` endpoint to generate commands from form state
+4. Add command diff viewer to show before/after editing
+5. Integrate validation error display from API responses
+6. Ensure form state management works correctly with React state or Zustand
 
 **SUCCESS CRITERIA:**
-- `npm run dev` starts Vite server on `http://localhost:5173`
-- SPA can successfully fetch from FastAPI at `http://127.0.0.1:8000/api/commands/schemas`
-- Basic routing works (can navigate between placeholder pages)
-- TypeScript compilation passes without errors
+- Form generator dynamically creates inputs based on schema metadata
+- Training/test/predict tabs switch correctly and maintain separate form state
+- Generated commands match Streamlit baseline (99%+ parity)
+- Validation errors display clearly to users
+- Command diff viewer shows changes accurately
 
 **STOP CONDITIONS:**
-- If Vite setup fails due to dependency conflicts, document the issue and escalate
-- If API connectivity fails, verify FastAPI server is running and CORS is configured
-- If routing breaks, check React Router version compatibility
+- If schema parsing fails, verify API endpoint returns correct format
+- If form generation breaks, check schema structure matches expected format
+- If command generation differs from Streamlit, document differences and investigate
 
 ---
 
@@ -272,7 +282,7 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **High-Pe
 
 **For autonomous web worker agents executing this plan:**
 
-You are implementing a high-performance image processing playground inspired by Albumentations and the Upstage Document OCR console. Your current focus is **Phase 1, Task 1.1** (SPA scaffold setup).
+You are implementing a high-performance image processing playground inspired by Albumentations and the Upstage Document OCR console. Your current focus is **Phase 1, Task 1.2** (Command Console Module).
 
 **Context:**
 - FastAPI backend is ready at `services/playground_api/` with endpoints for commands, inference, pipelines, and evaluation
@@ -280,16 +290,21 @@ You are implementing a high-performance image processing playground inspired by 
 - Design system and architecture decisions are documented in `docs/adr/ADR-frontend-stack.md` and `docs/ui/design-system.md`
 - Migration roadmap is in `docs/ui/migration-roadmap.md`
 
+**Coding Standards (MUST FOLLOW):**
+- **TypeScript**: 100 character line length, explicit types required, functions < 40 lines (target), files < 300 lines (target)
+- **Python**: 140 character line length, type hints required, functions < 50 lines (target), files < 500 lines (target)
+- See `docs/CODING_STANDARDS.md` for complete guidelines including naming conventions, documentation, and refactoring strategies
+
 **Your immediate task:**
-1. Navigate to the project root
-2. Run `npm create vite@latest frontend -- --template react-ts` (or equivalent)
-3. Install required dependencies (see ADR for full list)
-4. Configure Vite proxy for API calls
-5. Set up React Router with routes matching the unified app structure
-6. Create a minimal API client that calls `/api/commands/schemas`
-7. Verify the setup by running both `python run_spa.py --api-only` and `npm run dev` in `frontend/`
+1. Build schema-driven form generator component (mirrors `ui.utils.ui_generator`)
+2. Implement training/test/predict tabs with shared form primitives
+3. Wire `/api/commands/build` endpoint for command generation
+4. Add command diff viewer (before/after editing)
+5. Integrate validation error display
+6. **Ensure all code follows the coding standards** - run linters/formatters before committing
 
 **Key files to reference:**
+- `docs/CODING_STANDARDS.md` - **CRITICAL**: Follow coding standards for line length, function/file size, naming conventions, and type safety
 - `docs/adr/ADR-frontend-stack.md` - Stack decisions and routing strategy
 - `docs/ui/design-system.md` - Component specifications
 - `services/playground_api/app.py` - API endpoint structure
@@ -297,8 +312,8 @@ You are implementing a high-performance image processing playground inspired by 
 
 **When you complete this task:**
 - Update the Progress Tracker in this document
-- Mark Task 1.1 as complete
-- Move to Task 1.2 (Command Console Module)
+- Mark Task 1.2 as complete
+- Move to Task 1.3 (Recommendation Panel)
 - Report any blockers or deviations from the plan
 
 **Remember:** Always update the Progress Tracker after each task. The NEXT TASK field tells you exactly what to work on next.
