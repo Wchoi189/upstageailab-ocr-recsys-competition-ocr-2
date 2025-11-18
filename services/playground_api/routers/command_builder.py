@@ -115,6 +115,53 @@ def list_schemas() -> list[SchemaSummary]:
     return summaries
 
 
+@router.get("/schemas/{schema_id}")
+def get_schema(schema_id: SchemaId) -> dict[str, Any]:
+    """Get full schema definition with UI elements."""
+    if schema_id not in SCHEMA_REGISTRY:
+        raise HTTPException(status_code=404, detail=f"Unknown schema_id '{schema_id}'")
+    schema_data = _load_schema_data(schema_id)
+    # Populate options for selectboxes
+    schema_data = _populate_options(schema_data)
+    return schema_data
+
+
+def _populate_options(schema: dict[str, Any]) -> dict[str, Any]:
+    """Populate options for selectbox elements."""
+    config_parser = _get_config_parser()
+
+    for element in schema.get("ui_elements", []):
+        if element.get("type") == "selectbox" and element.get("options_source"):
+            source = element["options_source"]
+            element["options"] = _get_options_from_source(source, config_parser)
+
+    return schema
+
+
+def _get_options_from_source(source: str, config_parser: ConfigParser) -> list[str]:
+    """Get dynamic options list from config parser."""
+    model_source_map = {
+        "models.backbones": "backbones",
+        "models.encoders": "encoders",
+        "models.decoders": "decoders",
+        "models.heads": "heads",
+        "models.optimizers": "optimizers",
+        "models.losses": "losses",
+    }
+
+    if source in model_source_map:
+        models = config_parser.get_available_models()
+        return models.get(model_source_map[source], [])
+    if source == "models.architectures":
+        return config_parser.get_available_architectures()
+    if source == "checkpoints":
+        return config_parser.get_available_checkpoints()
+    if source == "datasets":
+        return config_parser.get_available_datasets()
+
+    return []
+
+
 @router.post("/build", response_model=CommandBuildResponse)
 def build_command(payload: CommandBuildRequest) -> CommandBuildResponse:
     """Build and validate a CLI command from the provided values."""
