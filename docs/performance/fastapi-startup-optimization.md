@@ -114,7 +114,7 @@ time uvicorn services.playground_api.app:app
 ### Automated Test
 ```bash
 # Run startup performance test
-python tests/perf/test_api_startup.py
+python tests/scripts/test_api_startup.py
 
 # Expected output:
 # ✅ PASS: Startup time < 2s (lazy imports working)
@@ -130,7 +130,7 @@ python tests/perf/test_api_startup.py
   - Added lazy imports inside lru_cached functions
   - Moved heavy imports inside `build_command()` endpoint
 
-- `tests/perf/test_api_startup.py` (NEW)
+- `tests/scripts/test_api_startup.py` (moved from root)
   - Automated startup performance validation
   - Checks that startup time < 2 seconds
 

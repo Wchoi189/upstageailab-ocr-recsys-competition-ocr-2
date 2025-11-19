@@ -47,7 +47,7 @@ When text recognition is implemented:
 Reference examples in documentation:
 
 ```markdown
-![Example Detection](assets/images/examples/detections/receipt_001_detection.png)
+!Example Detection
 ```
 
 ---

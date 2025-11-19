@@ -1,8 +1,3 @@
-/**
- * Type definitions for command builder schemas.
- * Mirrors the Python schema structure from YAML files.
- */
-
 export type SchemaId = "train" | "test" | "predict";
 
 export type UIElementType =
@@ -17,8 +12,6 @@ export type UIElementType =
 export interface ValidationRules {
   required?: boolean;
   required_if?: string;
-  min_length?: number;
-  max_length?: number;
   min?: number;
   max?: number;
   pattern?: string;
@@ -48,22 +41,17 @@ export interface UIElement {
 
 export interface CommandSchema {
   title: string;
-  constant_overrides: string[];
   ui_elements: UIElement[];
+  constant_overrides: string[];
 }
 
 export interface SchemaSummary {
   id: SchemaId;
   label: string;
-  script: string;
   description?: string;
 }
 
-export interface BuildCommandRequest {
-  schema_id: SchemaId;
-  values: Record<string, unknown>;
-  append_model_suffix?: boolean;
-}
+export type FormValues = Record<string, unknown>;
 
 export interface BuildCommandResponse {
   command: string;
@@ -72,12 +60,9 @@ export interface BuildCommandResponse {
   validation_error?: string;
 }
 
-export type FormValues = Record<string, unknown>;
-
 export interface Recommendation {
   id: string;
   title: string;
-  description: string;
-  architecture?: string;
-  parameters: Record<string, unknown>;
+  description?: string;
+  command: string;
 }

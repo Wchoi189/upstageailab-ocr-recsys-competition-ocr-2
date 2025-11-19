@@ -71,7 +71,7 @@ gifsicle -O3 --lossy=80 -o optimized.gif input.gif
 Reference demos in the README:
 
 ```markdown
-![Model Testing Demo](docs/assets/images/demos/model-testing-demo.gif)
+!Model Testing Demo
 ```
 
 ---

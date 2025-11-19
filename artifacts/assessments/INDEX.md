@@ -2,10 +2,10 @@
 
 Audits, evaluations, and assessments of system components and processes.
 
-**Last Updated**: 2025-11-19 15:14:32
-**Total Artifacts**: 13
+**Last Updated**: 2025-11-19 22:27:06
+**Total Artifacts**: 14
 
-## Draft (7)
+## Draft (8)
 
 - [AI Collaboration Framework Extraction and Standardization Assessment](2025-11-16_1654_ai-collaboration-framework-extraction-and-standardization-assessment.md) (📅 2025-11-16)
 - [Scripts Directory Audit and Reorganization Assessment](2025-11-12_1419_scripts-directory-audit-and-reorganization-assessment.md) (📅 2025-11-12)
@@ -14,6 +14,7 @@ Audits, evaluations, and assessments of system components and processes.
 - [AI Documentation and Scripts Cleanup](2025-11-11_2343_ai-documentation-and-scripts-cleanup.md) (📅 2025-11-11)
 - [Streamlit Command Builder Performance Assessment - Page Switch Delays](2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md)
 - [Unified OCR App Performance Assessment](2025-11-17_0136_unified-ocr-app-performance-assessment.md) - service = PreprocessingService(mode_config)  # Created every time service = InferenceService(mode_config)  # Created every time
+- [Upstage Document Parsing Playground Tech Stack](2025-11-19_1939_upstage-document-parsing-playground-tech-stack.md)
 
 ## Completed (2)
 
@@ -24,7 +25,7 @@ Audits, evaluations, and assessments of system components and processes.
 
 | Status | Count |
 |--------|-------|
-| Draft | 7 |
+| Draft | 8 |
 | Completed | 2 |
 
 ---

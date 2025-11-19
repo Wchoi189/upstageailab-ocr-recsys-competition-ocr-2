@@ -1103,7 +1103,7 @@ uv run ruff check ui/apps/unified_ocr_app/
 
 1. **BUG-2025-012**: Duplicate Streamlit key (FIXED)
    - **Status**: ✅ Resolved in Phase 7
-   - **Report**: [BUG-2025-012_streamlit_duplicate_element_key.md](../../bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md)
+   - **Report**: BUG-2025-012_streamlit_duplicate_element_key.md
 
 2. **Grid Search**: Not implemented (placeholder only)
    - **Impact**: Low - manual parameter sweep works well
@@ -1146,7 +1146,7 @@ uv run ruff check ui/apps/unified_ocr_app/
   - 21_unified_ocr_app_phase6_backend_integration.md
 
 - **Bug Reports**:
-  - [BUG-2025-012_streamlit_duplicate_element_key.md](../../bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md)
+  - BUG-2025-012_streamlit_duplicate_element_key.md
 
 - **Testing**:
   - test_comparison_integration.py

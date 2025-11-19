@@ -31,7 +31,7 @@ The Streamlit Preprocessing Viewer app **hangs indefinitely** when running the f
 
 ### Primary Issue: Document Flattening Performance
 
-**Location**: [pipeline.py:183-197](ui/preprocessing_viewer/pipeline.py:183-197)
+**Location**: pipeline.py:183-197
 
 ```python
 # Stage 3: Document flattening
@@ -50,7 +50,7 @@ if config.get("enable_document_flattening", True) and isinstance(corners_for_pro
 - Processing time: 0.01s for simple cases, **3-15s for complex cases**
 - The operation is CPU-intensive (thin plate spline warping, RBF interpolation)
 - No progress indication during processing
-- See: [15_phase2_complete.md:101-111](docs/ai_handbook/05_changelog/2025-10/15_phase2_complete.md:101-111)
+- See: 15_phase2_complete.md:101-111
 
 ### Secondary Issues
 
@@ -231,15 +231,15 @@ After implementing fixes:
 ## Code Locations
 
 **Key Files**:
-1. [preprocessing_viewer_app.py:138-143](ui/preprocessing_viewer_app.py:138-143) - Main app pipeline execution
-2. [pipeline.py:183-197](ui/preprocessing_viewer/pipeline.py:183-197) - Document flattening stage
-3. [pipeline.py:84-357](ui/preprocessing_viewer/pipeline.py:84-357) - Full pipeline implementation
-4. [document_flattening.py](ocr/datasets/preprocessing/document_flattening.py:1) - Slow operation implementation
+1. preprocessing_viewer_app.py:138-143 - Main app pipeline execution
+2. pipeline.py:183-197 - Document flattening stage
+3. pipeline.py:84-357 - Full pipeline implementation
+4. document_flattening.py - Slow operation implementation
 
 **Related Documentation**:
-- [Phase 2 Completion](docs/ai_handbook/05_changelog/2025-10/15_phase2_complete.md:101-111) - Performance characteristics
-- [Phase 3 Integration](docs/ai_handbook/05_changelog/2025-10/15_phase3_complete.md:1) - Enhanced pipeline
-- [Enhanced Preprocessing Usage](docs/ai_handbook/03_references/guides/enhanced_preprocessing_usage.md:1) - Best practices
+- Phase 2 Completion - Performance characteristics
+- Phase 3 Integration - Enhanced pipeline
+- Enhanced Preprocessing Usage - Best practices
 
 ## Quick Commands
 

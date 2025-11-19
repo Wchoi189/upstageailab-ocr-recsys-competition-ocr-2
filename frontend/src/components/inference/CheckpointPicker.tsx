@@ -9,6 +9,7 @@ import {
   getUniqueArchitectures,
   getUniqueBackbones,
 } from "../../api/inference";
+import { Spinner } from "../ui/Spinner";
 
 /**
  * Props for CheckpointPicker component
@@ -77,8 +78,19 @@ export function CheckpointPicker({
 
   if (loading) {
     return (
-      <div style={{ padding: "1rem", textAlign: "center", color: "#666" }}>
-        Loading checkpoints...
+      <div
+        style={{
+          padding: "2rem",
+          textAlign: "center",
+          color: "#666",
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          gap: "1rem",
+        }}
+      >
+        <Spinner size="medium" />
+        <span>Loading checkpoints...</span>
       </div>
     );
   }

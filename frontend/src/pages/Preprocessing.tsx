@@ -5,6 +5,8 @@ import {
   ParameterControls,
   type PreprocessingParams,
 } from "../components/preprocessing/ParameterControls";
+import { validateImageFile } from "../utils/imageValidation";
+import { useToast } from "../hooks/useToast";
 
 /**
  * Preprocessing Studio page
@@ -12,7 +14,9 @@ import {
  * Interactive image preprocessing with real-time preview
  */
 export function Preprocessing(): React.JSX.Element {
+  const { showToast, ToastContainer } = useToast();
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [params, setParams] = useState<PreprocessingParams>({
     autocontrast: false,
     blur: false,
@@ -27,8 +31,20 @@ export function Preprocessing(): React.JSX.Element {
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
+    setUploadError(null);
+
+    const validationResult = validateImageFile(file);
+    if (!validationResult.valid) {
+      const errorMessage = validationResult.error?.message || "Invalid file";
+      setUploadError(errorMessage);
+      showToast(errorMessage, "error");
+      setImageFile(null);
+      return;
+    }
+
+    if (file) {
       setImageFile(file);
+      showToast("Image uploaded successfully", "success");
     }
   };
 
@@ -67,6 +83,20 @@ export function Preprocessing(): React.JSX.Element {
             {imageFile.name}
           </span>
         )}
+        {uploadError && (
+          <div
+            style={{
+              marginTop: "0.5rem",
+              padding: "0.75rem",
+              backgroundColor: "#fee",
+              border: "1px solid #fcc",
+              borderRadius: "4px",
+              color: "#c33",
+            }}
+          >
+            {uploadError}
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
@@ -82,8 +112,14 @@ export function Preprocessing(): React.JSX.Element {
         <ParameterControls params={params} onChange={setParams} />
 
         {/* Canvas Viewer */}
-        <PreprocessingCanvas imageFile={imageFile} params={params} />
+        <PreprocessingCanvas
+          imageFile={imageFile}
+          params={params}
+          onError={(message) => showToast(message, "error")}
+          onSuccess={(message) => showToast(message, "success")}
+        />
       </div>
+      <ToastContainer />
     </div>
   );
 }

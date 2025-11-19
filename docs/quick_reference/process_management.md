@@ -7,7 +7,7 @@ This document provides quick access to process management documentation. The aut
 ## Quick Links
 
 - **[Full Documentation →](../maintainers/process_management.md)** - Complete process management guide
-- **[Streamlit Debugging Protocol](../../agents/protocols/components.md#streamlit-debugging-protocol)** - Debugging protocol for agents
+- **Streamlit Debugging Protocol** - Debugging protocol for agents
 
 ## Quick Reference
 

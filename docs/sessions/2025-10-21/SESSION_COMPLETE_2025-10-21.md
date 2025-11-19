@@ -11,7 +11,7 @@
 
 ### Phase 2: Shared Components ✅ (100% Complete)
 
-1. **Image Upload Component** ([image_upload.py](ui/apps/unified_ocr_app/components/shared/image_upload.py))
+1. **Image Upload Component** (image_upload.py)
    - Configuration-driven file upload widget
    - Multi-file support with size validation
    - Automatic BGR conversion for OpenCV compatibility
@@ -19,7 +19,7 @@
    - Clear/reset functionality
    - Smart caching to prevent reprocessing
 
-2. **Image Display Component** ([image_display.py](ui/apps/unified_ocr_app/components/shared/image_display.py))
+2. **Image Display Component** (image_display.py)
    - `display_image_grid()` - Grid layout for multiple images
    - `display_side_by_side()` - Comparison view for before/after
    - `display_single_image()` - Single image with metadata
@@ -30,7 +30,7 @@
 
 ### Phase 3: Preprocessing Mode ✅ (100% Complete)
 
-1. **Parameter Panel Component** ([parameter_panel.py](ui/apps/unified_ocr_app/components/preprocessing/parameter_panel.py))
+1. **Parameter Panel Component** (parameter_panel.py)
    - Dynamic parameter controls from YAML config
    - Support for all widget types: bool, int, float, select, text
    - Conditional rendering based on dependencies
@@ -39,7 +39,7 @@
    - Preset management UI (save/load/reset)
    - Real-time state synchronization
 
-2. **Stage Viewer Component** ([stage_viewer.py](ui/apps/unified_ocr_app/components/preprocessing/stage_viewer.py))
+2. **Stage Viewer Component** (stage_viewer.py)
    - Three-tab interface:
      - **Side-by-Side**: Compare any two stages with split/grid view
      - **Step-by-Step**: Navigate through stages with prev/next buttons
@@ -47,7 +47,7 @@
    - Stage metadata display
    - Config export with download button
 
-3. **Preprocessing Service** ([preprocessing_service.py](ui/apps/unified_ocr_app/services/preprocessing_service.py))
+3. **Preprocessing Service** (preprocessing_service.py)
    - Orchestrates preprocessing pipeline
    - **Integrated stages**:
      - ✅ Background removal (rembg with U²-Net, U²-Net+, Silueta models)
@@ -62,7 +62,7 @@
    - Per-stage timing and metadata
    - Graceful error handling (continues on failure)
 
-4. **Main App Integration** ([app.py](ui/apps/unified_ocr_app/app.py))
+4. **Main App Integration** (app.py)
    - Fully functional preprocessing mode
    - Sidebar with image upload + parameter controls
    - Main area with stage viewer tabs
@@ -265,10 +265,10 @@ state.to_session()                      # Save
 
 ## 📚 Key Documentation
 
-- **Architecture**: [docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- **Session Handover**: [docs/ai_handbook/08_planning/SESSION_HANDOVER_UNIFIED_APP.md](docs/ai_handbook/08_planning/SESSION_HANDOVER_UNIFIED_APP.md)
-- **rembg Integration**: [docs/ai_handbook/08_planning/REMBG_INTEGRATION_BLUEPRINT.md](docs/ai_handbook/08_planning/REMBG_INTEGRATION_BLUEPRINT.md)
-- **Implementation Plan**: [docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md](docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md)
+- **Architecture**: docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
+- **Session Handover**: docs/ai_handbook/08_planning/SESSION_HANDOVER_UNIFIED_APP.md
+- **rembg Integration**: docs/ai_handbook/08_planning/REMBG_INTEGRATION_BLUEPRINT.md
+- **Implementation Plan**: docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md
 
 ---
 

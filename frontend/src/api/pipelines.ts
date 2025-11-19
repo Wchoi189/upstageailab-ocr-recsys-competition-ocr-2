@@ -1,4 +1,4 @@
-import { apiPost } from "./client";
+import { apiGet, apiPost } from "./client";
 
 /**
  * Pipeline preview request
@@ -42,6 +42,21 @@ export interface PipelineFallbackResponse {
 }
 
 /**
+ * Pipeline job status response
+ */
+export interface PipelineJobStatus {
+  job_id: string;
+  pipeline_id: string;
+  status: string; // pending, processing, completed, failed
+  routed_backend: string;
+  created_at: string; // ISO datetime string
+  updated_at: string; // ISO datetime string
+  result_path: string | null;
+  error: string | null;
+  notes: string[];
+}
+
+/**
  * Queue preview task (client-side execution)
  */
 export async function queuePreview(
@@ -63,6 +78,15 @@ export async function queueFallback(
     "/pipelines/fallback",
     request,
   );
+}
+
+/**
+ * Get pipeline job status
+ */
+export async function getPipelineJobStatus(
+  jobId: string,
+): Promise<PipelineJobStatus> {
+  return apiGet<PipelineJobStatus>(`/pipelines/status/${jobId}`);
 }
 
 /**

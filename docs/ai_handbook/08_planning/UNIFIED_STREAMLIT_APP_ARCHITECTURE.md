@@ -14,17 +14,17 @@
 ### Problem
 Currently have **two separate Streamlit apps** with significant overlap:
 
-1. **Preprocessing Viewer** ([ui/preprocessing_viewer_app.py](ui/preprocessing_viewer_app.py))
+1. **Preprocessing Viewer** (ui/preprocessing_viewer_app.py)
    - Interactive preprocessing pipeline testing
    - Step-by-step visualization
    - Parameter tuning with real-time preview
    - Config export (YAML)
 
-2. **Real-time Inference App** ([ui/apps/inference/app.py](ui/apps/inference/app.py))
+2. **Real-time Inference App** (ui/apps/inference/app.py)
    - Model-based OCR inference
    - Batch processing
    - Result visualization
-   - Already has YAML config system ([configs/ui/inference.yaml](configs/ui/inference.yaml))
+   - Already has YAML config system (configs/ui/inference.yaml)
 
 ### Solution
 **Consolidate into ONE unified app** with modular modes:
@@ -47,7 +47,7 @@ Currently have **two separate Streamlit apps** with significant overlap:
 
 | Feature | Preprocessing Viewer | Inference App | Unified App |
 |---------|---------------------|---------------|-------------|
-| **YAML Config** | ❌ Python-based | ✅ [configs/ui/inference.yaml](configs/ui/inference.yaml) | ✅ Extended YAML |
+| **YAML Config** | ❌ Python-based | ✅ configs/ui/inference.yaml | ✅ Extended YAML |
 | **Image Upload** | ✅ Single file | ✅ Multi-file | ✅ Both modes |
 | **Preprocessing** | ✅ Interactive tuning | ✅ Fixed pipeline | ✅ Both modes |
 | **Model Inference** | ❌ No models | ✅ Checkpoint catalog | ✅ Optional |
@@ -1138,18 +1138,18 @@ uv run ruff check ui/apps/unified_ocr_app/
 ### Related Documentation
 
 - **Session Summaries**:
-  - [SESSION_COMPLETE_2025-10-21_PHASE4.md](../../SESSION_COMPLETE_2025-10-21_PHASE4.md)
-  - [SESSION_COMPLETE_2025-10-21_PHASE5.md](../../SESSION_COMPLETE_2025-10-21_PHASE5.md)
-  - [SESSION_COMPLETE_2025-10-21_PHASE6.md](../../SESSION_COMPLETE_2025-10-21_PHASE6.md)
+  - SESSION_COMPLETE_2025-10-21_PHASE4.md
+  - SESSION_COMPLETE_2025-10-21_PHASE5.md
+  - SESSION_COMPLETE_2025-10-21_PHASE6.md
 
 - **Detailed Changelogs**:
-  - [21_unified_ocr_app_phase6_backend_integration.md](../../../ai_handbook/05_changelog/2025-10/21_unified_ocr_app_phase6_backend_integration.md)
+  - 21_unified_ocr_app_phase6_backend_integration.md
 
 - **Bug Reports**:
   - [BUG-2025-012_streamlit_duplicate_element_key.md](../../bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md)
 
 - **Testing**:
-  - [test_comparison_integration.py](../../test_comparison_integration.py)
+  - test_comparison_integration.py
 
 ---
 

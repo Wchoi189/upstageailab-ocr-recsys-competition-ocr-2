@@ -69,7 +69,7 @@ Update all relevant documentation files:
 **Changelog Entry** (`docs/CHANGELOG.md`):
 ```markdown
 #### Bug Fixes
-- **BUG-20251020-002**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images ([BUG-20251020-002_inference_ui_coordinate_transformation.md](bug_reports/BUG-20251020-002_inference_ui_coordinate_transformation.md))
+- **BUG-20251020-002**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images (BUG-20251020-002_inference_ui_coordinate_transformation.md)
 ```
 
 **Quick Fixes Log** (`docs/quick_reference/QUICK_FIXES.md`) - if applicable:
@@ -174,7 +174,7 @@ Guidelines:
 ### **Changelog Integration**
 ```markdown
 #### Bug Fixes
-- **BUG-2025-011**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images ([BUG-2025-011_inference_ui_coordinate_transformation.md](bug_reports/BUG-2025-011_inference_ui_coordinate_transformation.md))
+- **BUG-2025-011**: Fixed inference UI coordinate transformation bug causing annotation misalignment for EXIF-oriented images (BUG-2025-011_inference_ui_coordinate_transformation.md)
 ```
 
 ## **Quality Assurance**

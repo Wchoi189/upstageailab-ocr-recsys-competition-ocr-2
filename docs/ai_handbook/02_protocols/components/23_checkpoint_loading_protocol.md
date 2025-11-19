@@ -70,10 +70,10 @@ Typed Metadata (CheckpointMetadataV1)
 
 | Module | Purpose | When to Use |
 |--------|---------|-------------|
-| [state_dict_models.py](../../../ui/apps/inference/services/checkpoint/state_dict_models.py) | Pydantic validation for state dict structure | **Always** before accessing state_dict keys |
-| [inference_engine.py](../../../ui/apps/inference/services/checkpoint/inference_engine.py) | State dict analysis and signature extraction | Legacy checkpoints without metadata |
-| [metadata_loader.py](../../../ui/apps/inference/services/checkpoint/metadata_loader.py) | YAML metadata loading | Primary path (fastest) |
-| [wandb_client.py](../../../ui/apps/inference/services/checkpoint/wandb_client.py) | Wandb API fallback | When YAML missing but run ID available |
+| state_dict_models.py | Pydantic validation for state dict structure | **Always** before accessing state_dict keys |
+| inference_engine.py | State dict analysis and signature extraction | Legacy checkpoints without metadata |
+| metadata_loader.py | YAML metadata loading | Primary path (fastest) |
+| wandb_client.py | Wandb API fallback | When YAML missing but run ID available |
 
 ---
 
@@ -614,8 +614,8 @@ def load_checkpoint_validated(path):
 
 ## 9. References
 
-- [State Dict Models](../../../ui/apps/inference/services/checkpoint/state_dict_models.py)
-- [Inference Engine](../../../ui/apps/inference/services/checkpoint/inference_engine.py)
+- State Dict Models
+- Inference Engine
 - [Checkpoint Catalog V2 Design](../../03_references/architecture/checkpoint_catalog_v2_design.md)
 - [PyTorch Checkpoint Documentation](https://pytorch.org/docs/stable/notes/serialization.html)
 
@@ -623,10 +623,10 @@ def load_checkpoint_validated(path):
 
 ## Appendix: Full Example Script
 
-See [scripts/examples/safe_checkpoint_loading.py](../../../scripts/examples/safe_checkpoint_loading.py) for a complete working example.
+See scripts/examples/safe_checkpoint_loading.py for a complete working example.
 
 ---
 
 **Last Updated**: 2025-10-18
 **Maintained By**: AI Handbook Team
-**Questions**: See [AI Handbook Index](../../index.md)
+**Questions**: See AI Handbook Index

@@ -194,16 +194,31 @@ class AgentQMSToolbelt:
         # Validate frontmatter BEFORE creation
         self._validate_frontmatter(frontmatter, schema)
 
-        # Load template
+        # Load template (used when no explicit content is provided)
         template_path = self.root_path / artifact_meta['template']
         with open(template_path, 'r') as f:
             template = Template(f.read())
 
-        # Render the full document with all frontmatter values
-        rendered_document = template.render(**frontmatter)
-
-        # Combine with user content
-        final_content = rendered_document + "\n" + content
+        # Determine whether the caller supplied custom content (string or file)
+        user_content = content.strip()
+        if not user_content:
+            # Primary workflow: generate the full template with placeholders
+            final_content = template.render(**frontmatter)
+        else:
+            # Alternative workflow: respect caller-provided content instead of duplicating the template
+            # If the provided content already includes frontmatter, write it as-is; otherwise prepend generated frontmatter.
+            content_with_preserved_newlines = content.lstrip('\n')
+            if content_with_preserved_newlines.startswith('---'):
+                final_content = content_with_preserved_newlines
+            else:
+                frontmatter_yaml = yaml.dump(
+                    frontmatter,
+                    default_flow_style=False,
+                    sort_keys=False,
+                    allow_unicode=True,
+                )
+                frontmatter_block = f"---\n{frontmatter_yaml}---\n\n"
+                final_content = frontmatter_block + content_with_preserved_newlines
 
         # Create file only after all validations pass
         with open(output_path, 'w') as f:

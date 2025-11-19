@@ -3,6 +3,7 @@ import type React from "react";
 import type { WorkerTask } from "../../../workers/types";
 import { useWorkerTask } from "../../hooks/useWorkerTask";
 import type { PreprocessingParams } from "./ParameterControls";
+import { Spinner } from "../ui/Spinner";
 
 /**
  * Props for PreprocessingCanvas component
@@ -10,6 +11,8 @@ import type { PreprocessingParams } from "./ParameterControls";
 interface PreprocessingCanvasProps {
   imageFile: File | null;
   params: PreprocessingParams;
+  onError?: (message: string) => void;
+  onSuccess?: (message: string) => void;
 }
 
 /**
@@ -20,6 +23,8 @@ interface PreprocessingCanvasProps {
 export function PreprocessingCanvas({
   imageFile,
   params,
+  onError,
+  onSuccess,
 }: PreprocessingCanvasProps): React.JSX.Element {
   const [originalBitmap, setOriginalBitmap] = useState<ImageBitmap | null>(
     null,
@@ -27,6 +32,7 @@ export function PreprocessingCanvas({
   const [workerTask, setWorkerTask] = useState<WorkerTask | null>(null);
   const beforeCanvasRef = useRef<HTMLCanvasElement>(null);
   const afterCanvasRef = useRef<HTMLCanvasElement>(null);
+  const lastSuccessTaskIdRef = useRef<string | null>(null);
 
   // Use worker hook with 75ms debouncing for slider spam handling
   const { result, loading, error } = useWorkerTask(workerTask, {
@@ -48,12 +54,15 @@ export function PreprocessingCanvas({
         setOriginalBitmap(bitmap);
       } catch (err) {
         console.error("Failed to load image:", err);
+        const errorMessage = "Failed to load image";
+        onError?.(errorMessage);
         setOriginalBitmap(null);
       }
     };
 
     loadImage();
-  }, [imageFile]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [imageFile]); // onError is a callback, not needed in deps
 
   // Create worker task when params or image changes
   useEffect(() => {
@@ -141,6 +150,12 @@ export function PreprocessingCanvas({
       canvas.width = bitmap.width;
       canvas.height = bitmap.height;
       ctx.drawImage(bitmap, 0, 0);
+
+      // Only show success toast once per task
+      if (result.taskId && lastSuccessTaskIdRef.current !== result.taskId) {
+        lastSuccessTaskIdRef.current = result.taskId;
+        onSuccess?.("Preprocessing completed successfully");
+      }
     } else if (!loading && !workerTask) {
       // No transform, show original
       if (originalBitmap) {
@@ -149,7 +164,16 @@ export function PreprocessingCanvas({
         ctx.drawImage(originalBitmap, 0, 0);
       }
     }
-  }, [result, loading, workerTask, originalBitmap]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, loading, workerTask, originalBitmap]); // onSuccess is a callback, not needed in deps
+
+  // Handle worker errors
+  useEffect(() => {
+    if (error) {
+      onError?.(error);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [error]); // onError is a callback, not needed in deps
 
   if (!imageFile) {
     return (
@@ -193,12 +217,23 @@ export function PreprocessingCanvas({
 
         {/* After Canvas */}
         <div>
-          <h4 style={{ marginTop: 0, marginBottom: "0.5rem" }}>
+          <h4
+            style={{
+              marginTop: 0,
+              marginBottom: "0.5rem",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+            }}
+          >
             After
             {loading && (
-              <span style={{ marginLeft: "0.5rem", color: "#666" }}>
-                (Processing...)
-              </span>
+              <>
+                <Spinner size="small" />
+                <span style={{ color: "#666", fontSize: "0.875rem" }}>
+                  Processing...
+                </span>
+              </>
             )}
           </h4>
           <canvas

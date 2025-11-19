@@ -6,7 +6,7 @@ This document explains how to prevent zombie processes when running Streamlit UI
 
 ## For Agents: Debugging Streamlit Apps
 
-**⚠️ IMPORTANT:** When debugging Streamlit UI issues, follow the [Streamlit Debugging Protocol](../../ai_handbook/02_protocols/components/22_streamlit_debugging_protocol.md) for comprehensive context building. This protocol addresses the common problem of insufficient problem descriptions.
+**⚠️ IMPORTANT:** When debugging Streamlit UI issues, follow the Streamlit Debugging Protocol for comprehensive context building. This protocol addresses the common problem of insufficient problem descriptions.
 
 **Quick Agent Reference:**
 ```bash

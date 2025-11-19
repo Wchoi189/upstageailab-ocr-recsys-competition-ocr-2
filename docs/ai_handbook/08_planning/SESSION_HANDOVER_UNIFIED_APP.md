@@ -330,7 +330,7 @@ __all__ = [
 - [ui/preprocessing_viewer_app.py](../../../ui/preprocessing_viewer_app.py) - Old preprocessing viewer
 - [ui/preprocessing_viewer/pipeline.py](../../../ui/preprocessing_viewer/pipeline.py) - Preprocessing pipeline
 - [ui/apps/inference/app.py](../../../ui/apps/inference/app.py) - Old inference app
-- [ocr/datasets/preprocessing/background_removal.py](../../../ocr/datasets/preprocessing/background_removal.py) - rembg class
+- ocr/datasets/preprocessing/background_removal.py - rembg class
 
 ---
 

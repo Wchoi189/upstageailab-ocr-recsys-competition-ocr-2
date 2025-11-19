@@ -135,9 +135,9 @@ def process_ml_results():
 
 ## Documentation
 
-- **Bug Report:** [`docs/bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md`](docs/bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md)
-- **Detailed Changelog:** [`docs/ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md`](docs/ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md)
-- **Main Changelog:** [`docs/CHANGELOG.md`](docs/CHANGELOG.md)
+- **Bug Report:** `docs/bug_reports/BUG_2025_004_STREAMLIT_PANDAS_IMPORT_DEADLOCK.md`
+- **Detailed Changelog:** `docs/ai_handbook/05_changelog/2025-10/20_streamlit_pandas_import_deadlock_fix.md`
+- **Main Changelog:** `docs/CHANGELOG.md`
 
 ---
 

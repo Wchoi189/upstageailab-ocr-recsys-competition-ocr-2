@@ -22,7 +22,7 @@
 - All imports now happen once at script load
 
 **Files Modified**:
-- [ui/apps/unified_ocr_app/app.py](ui/apps/unified_ocr_app/app.py) - Lines 67-91 (imports), removed from render functions
+- ui/apps/unified_ocr_app/app.py - Lines 67-91 (imports), removed from render functions
 
 **Testing**:
 - ✅ Direct Python import works: `python -c "import ui.apps.unified_ocr_app.app"`
@@ -56,13 +56,13 @@
 
 **Documents Created**:
 
-1. **[SESSION_HANDOVER_APP_REFACTOR.md](SESSION_HANDOVER_APP_REFACTOR.md)** (~450 lines)
+1. **SESSION_HANDOVER_APP_REFACTOR.md** (~450 lines)
    - Full debugging session context
    - What was fixed, what wasn't
    - Detailed next steps
    - Root cause analysis
 
-2. **[docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)** (~650 lines)
+2. **docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md** (~650 lines)
    - Complete refactoring plan for multi-page architecture
    - Phase-by-phase implementation guide
    - Code examples for each page
@@ -70,7 +70,7 @@
    - Testing plan
    - Timeline estimates
 
-3. **[QUICK_START_DEBUGGING.md](QUICK_START_DEBUGGING.md)** (~200 lines)
+3. **QUICK_START_DEBUGGING.md** (~200 lines)
    - Quick reference for next developer
    - Diagnosis steps
    - Fix patterns
@@ -78,7 +78,7 @@
    - Success criteria
 
 **Documentation Updates**:
-- **[docs/CHANGELOG.md](docs/CHANGELOG.md)** - Added fix entry and known issues section
+- **docs/CHANGELOG.md** - Added fix entry and known issues section
 
 ---
 
@@ -149,7 +149,7 @@ class InferenceService:
 - Benefits: Lazy loading, better maintainability, parallel development
 
 **Plan**:
-- See [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+- See docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md
 - Estimated effort: 2-3 sessions
 - Recommended approach: Big Bang (all pages at once)
 
@@ -201,19 +201,19 @@ class InferenceService:
 ## Files Modified This Session
 
 ### Modified
-- [ui/apps/unified_ocr_app/app.py](ui/apps/unified_ocr_app/app.py)
+- ui/apps/unified_ocr_app/app.py
   - Moved imports to module level (lines 67-91)
   - Added debug code (lines 15-177) - **TEMPORARY, remove later**
   - Removed lazy imports from render functions
 
 ### Created
-- [SESSION_HANDOVER_APP_REFACTOR.md](SESSION_HANDOVER_APP_REFACTOR.md)
-- [QUICK_START_DEBUGGING.md](QUICK_START_DEBUGGING.md)
-- [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md)
+- SESSION_HANDOVER_APP_REFACTOR.md
+- QUICK_START_DEBUGGING.md
+- docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md
 - This summary document
 
 ### Updated
-- [docs/CHANGELOG.md](docs/CHANGELOG.md) - Added fix entry and known issues
+- docs/CHANGELOG.md - Added fix entry and known issues
 
 ---
 
@@ -249,9 +249,9 @@ $ uv run streamlit run ui/apps/unified_ocr_app/app.py
 ### Before You Start
 
 1. **Read these documents in order**:
-   - [QUICK_START_DEBUGGING.md](QUICK_START_DEBUGGING.md) (start here!)
-   - [SESSION_HANDOVER_APP_REFACTOR.md](SESSION_HANDOVER_APP_REFACTOR.md) (full context)
-   - [docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md](docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md) (refactoring plan)
+   - QUICK_START_DEBUGGING.md (start here!)
+   - SESSION_HANDOVER_APP_REFACTOR.md (full context)
+   - docs/ai_handbook/08_planning/APP_REFACTOR_PLAN.md (refactoring plan)
 
 2. **Check the debug log**:
    ```bash
@@ -408,6 +408,6 @@ $ uv run streamlit run ui/apps/unified_ocr_app/app.py
 ---
 
 For questions or to continue this work, start with:
-1. [QUICK_START_DEBUGGING.md](QUICK_START_DEBUGGING.md)
+1. QUICK_START_DEBUGGING.md
 2. Check `/tmp/streamlit_debug.log` for clues
 3. Follow the "Quick Fix Pattern" in the handover doc

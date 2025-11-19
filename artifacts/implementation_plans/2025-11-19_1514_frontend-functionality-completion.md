@@ -3,11 +3,11 @@ title: "Frontend Functionality Completion"
 author: "ai-agent"
 timestamp: "2025-11-19 15:14 KST"
 date: "2025-11-19"
-branch: "claude/resume-playground-migration-0118zmzF2e8FUHG2RmmX2jNz"
+branch: "feature/nextjs-console-migration"
 type: "implementation_plan"
 category: "development"
-status: "draft"
-version: "0.1"
+status: "in_progress"
+version: "0.2"
 tags: ["frontend", "react", "api-integration", "ux-improvements", "testing"]
 ---
 
@@ -31,200 +31,120 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Fronten
 ## Progress Tracker
 **⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
 
-- **STATUS:** Not Started / In Progress / Completed
-- **CURRENT STEP:** [Current Phase, Task # - Task Name]
-- **LAST COMPLETED TASK:** [Description of last completed task]
-- **NEXT TASK:** [Description of the immediate next task]
-
-### Implementation Outline (Checklist)
-
-#### **Phase 1: [Phase 1 Title] (Week [Number])**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
-
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
-
-#### **Phase 2: [Phase 2 Title] (Week [Number])**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
-
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-*(Add more Phases and Tasks as needed)*
-
----
-
-## 📋 **Technical Requirements Checklist**
-
-### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
-
-### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
-
-### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
-
----
-
-## 🎯 **Success Criteria Validation**
-
-### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
-
-### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
-
----
-
-## 📊 **Risk Mitigation & Fallbacks**
-
-### **Current Risk Level**: LOW / MEDIUM / HIGH
-### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
-
-### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
-
----
-
-## 🔄 **Blueprint Update Protocol**
-
-**Update Triggers:**
-- Task completion (move to next task)
-- Blocker encountered (document and propose solution)
-- Technical discovery (update approach if needed)
-- Quality gate failure (address issues before proceeding)
-
-**Update Format:**
-1. Update Progress Tracker (STATUS, CURRENT STEP, LAST COMPLETED TASK, NEXT TASK)
-2. Mark completed items with [x]
-3. Add any new discoveries or changes to approach
-4. Update risk assessment if needed
-
----
-
-## 🚀 **Immediate Next Action**
-
-**TASK:** [Description of the immediate next task]
-
-**OBJECTIVE:** [Clear, concise goal of the task]
-
-**APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
-
-**SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
-
----
-
-*This implementation plan follows the Blueprint Protocol Template (PROTO-GOV-003) for systematic, autonomous execution with clear progress tracking.*
-# Living Implementation Blueprint: Frontend Functionality Completion
-
-## Progress Tracker
-**⚠️ CRITICAL: This Progress Tracker MUST be updated after each task completion, blocker encounter, or technical discovery. Required for iterative debugging and incremental progress tracking.**
-
-- **STATUS:** Not Started
-- **CURRENT STEP:** Phase 1, Task 1.1 - Image Validation
-- **LAST COMPLETED TASK:** None
-- **NEXT TASK:** Implement image validation for Preprocessing and Inference pages
+- **STATUS:** In Progress (Phase 1 Complete, Phase 2 & 3 Complete)
+- **CURRENT STEP:** Phase 1 Task 1.2 COMPLETED - ONNX.js rembg integration done
+- **LAST COMPLETED TASK:** Task 1.2 - ONNX.js rembg Integration (client-side background removal)
+- **NEXT TASK:** Phase 4 Testing - Run E2E test suite and add test coverage
+- **COMPLETED:**
+  - ✅ Task 1.1: Real Inference API Implementation
+  - ✅ Task 1.2: ONNX.js rembg Integration (client-side background removal)
+  - ✅ Task 1.3: Pipeline API Implementation (server-side rembg)
+  - ✅ Phase 2 (All Tasks): Image Validation, Loading States, Error Handling & Toasts
+  - ✅ Phase 3 Task 3.1: API Client Enhancements (already complete)
+  - ✅ Phase 3 Task 3.2: Missing API Endpoints (pipeline status & gallery images)
 
 ### Implementation Outline (Checklist)
 
 #### **Phase 1: Core Backend Integration (High Priority)**
-1. [ ] **Task 1.1: Real Inference API Implementation**
-   - [ ] Wire `/api/inference/preview` to actual model inference
-   - [ ] Integrate with existing inference service/checkpoint loading
-   - [ ] Handle image preprocessing (if needed before inference)
-   - [ ] Return real text regions with actual confidence scores
-   - [ ] Add proper error handling for model loading failures
-   - [ ] Support batch inference (if needed)
-   - **File:** `services/playground_api/routers/inference.py` (lines 162-186)
+1. [x] **Task 1.1: Real Inference API Implementation**
+   - [x] Wire `/api/inference/preview` to actual model inference
+   - [x] Integrate with existing inference service/checkpoint loading
+   - [x] Handle image preprocessing (base64 and file path support)
+   - [x] Return real text regions with actual confidence scores
+   - [x] Add proper error handling for model loading failures
+   - [x] Support configurable hyperparameters (confidence, NMS thresholds)
+   - **File:** `services/playground_api/routers/inference.py` (lines 176-355)
 
-2. [ ] **Task 1.2: ONNX.js rembg Integration**
-   - [ ] Integrate actual ONNX.js runtime
-   - [ ] Load rembg ONNX model
-   - [ ] Implement background removal transform
-   - [ ] Handle model loading errors gracefully
-   - [ ] Optimize model bundle size
-   - [ ] Add fallback to server-side rembg if client-side fails
-   - **File:** `frontend/workers/transforms.ts` (lines 89-93)
+2. [x] **Task 1.2: ONNX.js rembg Integration** ✅ COMPLETED
+   - **Status:** Fully implemented with ONNX.js runtime
+   - **Completed:**
+     - [x] Install onnxruntime-web package (v1.23.2)
+     - [x] Copy ONNX model file from `~/.u2net/u2net.onnx` to `frontend/public/models/u2net.onnx`
+     - [x] Implement ONNX.js inference logic in worker (`runRembgLite`)
+     - [x] Add preprocessing pipeline (resize to 320x320, normalize)
+     - [x] Add postprocessing pipeline (resize mask, apply to original image with white background)
+     - [x] Add fallback to autocontrast if ONNX inference fails
+     - [x] Add fallback to server-side rembg (already implemented via `/api/pipelines/fallback`)
+   - **Features:**
+     - Lazy-loaded ONNX session (cached per worker)
+     - Image preprocessing: resize to 320x320, normalize with ImageNet stats
+     - Mask postprocessing: resize back to original dimensions, composite with white background
+     - Error handling with graceful fallback
+     - WASM execution provider with SIMD support
+   - **Files:**
+     - `frontend/public/models/u2net.onnx` - ONNX model file (168MB)
+     - `frontend/workers/transforms.ts` - Full ONNX.js implementation (lines 114-263)
+   - **Note:** Server-side fallback is fully functional via `/api/pipelines/fallback` for large images or when client-side fails
 
-3. [ ] **Task 1.3: Pipeline API Implementation**
-   - [ ] Implement `/api/pipelines/preview` endpoint
-   - [ ] Wire to actual preprocessing pipeline
-   - [ ] Support hybrid routing (client-side vs server-side)
-   - [ ] Implement `/api/pipelines/fallback` endpoint
-   - [ ] Add proper job queuing/status tracking
-   - **File:** `services/playground_api/routers/pipeline.py`
+3. [x] **Task 1.3: Pipeline API Implementation** ✅ COMPLETED
+   - **Status:** Fully implemented with server-side rembg
+   - **Completed:**
+     - [x] Install rembg package (v2.0.67 via uv)
+     - [x] Implement BackgroundRemoval class in `ocr/datasets/preprocessing/background_removal.py`
+     - [x] Wire `/api/pipelines/fallback` endpoint to actual rembg processing
+     - [x] Implement result storage under `outputs/playground/{pipeline_id}/`
+     - [x] Add comprehensive error handling and logging
+   - **Features:**
+     - Lazy loading of rembg model (u2net with alpha matting)
+     - Image loading from file paths
+     - White background compositing for OCR compatibility
+     - Detailed response with status, result path, and notes
+   - **Files:**
+     - `ocr/datasets/preprocessing/background_removal.py` - BackgroundRemoval class
+     - `services/playground_api/routers/pipeline.py` - Full implementation
 
 #### **Phase 2: User Experience Enhancements (High Priority)**
-4. [ ] **Task 2.1: Image Validation & Error Handling**
-   - [ ] Add file size limits validation
-   - [ ] Add format validation (image/* types)
-   - [ ] Better error messages for invalid files
-   - [ ] File upload error display
-   - [ ] Apply to both Preprocessing and Inference pages
+4. [x] **Task 2.1: Image Validation & Error Handling**
+   - [x] Add file size limits validation
+   - [x] Add format validation (image/* types)
+   - [x] Better error messages for invalid files
+   - [x] File upload error display
+   - [x] Apply to both Preprocessing and Inference pages
    - **Files:** `frontend/src/pages/Preprocessing.tsx`, `frontend/src/pages/Inference.tsx`
+   - **New File:** `frontend/src/utils/imageValidation.ts`
 
-5. [ ] **Task 2.2: Loading States**
-   - [ ] Add loading spinners to PreprocessingCanvas
-   - [ ] Add loading states to InferencePreviewCanvas
-   - [ ] Show progress indicators for long-running operations
-   - [ ] Add skeleton loaders for checkpoint list
-   - [ ] Disable buttons during async operations
-   - **Files:** `frontend/src/components/preprocessing/PreprocessingCanvas.tsx`, `frontend/src/components/inference/InferencePreviewCanvas.tsx`
+5. [x] **Task 2.2: Loading States**
+   - [x] Add loading spinners to PreprocessingCanvas
+   - [x] Add loading states to InferencePreviewCanvas
+   - [x] Show progress indicators for long-running operations
+   - [x] Add skeleton loaders for checkpoint list
+   - [x] Disable buttons during async operations
+   - **Files:** `frontend/src/components/preprocessing/PreprocessingCanvas.tsx`, `frontend/src/components/inference/InferencePreviewCanvas.tsx`, `frontend/src/components/inference/CheckpointPicker.tsx`
+   - **New File:** `frontend/src/components/ui/Spinner.tsx`
 
-6. [ ] **Task 2.3: Error Handling & User Feedback**
-   - [ ] Better error messages for API failures
-   - [ ] Toast notifications for success/error states
-   - [ ] Retry mechanisms for failed requests
-   - [ ] Network error detection and handling
-   - [ ] Validation error display in forms
-   - **Files:** All pages and components, `frontend/src/api/client.ts`
+6. [x] **Task 2.3: Error Handling & User Feedback**
+   - [x] Better error messages for API failures (already in API client)
+   - [x] Toast notifications for success/error states (added to Inference and Preprocessing pages)
+   - [x] Retry mechanisms for failed requests (already in API client with exponential backoff)
+   - [x] Network error detection and handling (already in API client)
+   - [x] Validation error display in forms (already implemented with image validation)
+   - **Files:**
+     - `frontend/src/pages/Inference.tsx` - Added toast notifications
+     - `frontend/src/pages/Preprocessing.tsx` - Added toast notifications
+     - `frontend/src/components/inference/InferencePreviewCanvas.tsx` - onError/onSuccess callbacks
+     - `frontend/src/components/preprocessing/PreprocessingCanvas.tsx` - onError/onSuccess callbacks
+     - `frontend/src/api/client.ts` - Retry logic and error handling (already complete)
 
 #### **Phase 3: API Client & Infrastructure (Medium Priority)**
-7. [ ] **Task 3.1: API Client Enhancements**
-   - [ ] Centralized error handling
-   - [ ] Retry logic for transient failures
-   - [ ] Request timeout handling
-   - [ ] Better error type discrimination
-   - [ ] Logging for debugging
-   - **File:** `frontend/src/api/client.ts`
+7. [x] **Task 3.1: API Client Enhancements**
+   - [x] Centralized error handling (ApiError class with status and response)
+   - [x] Retry logic for transient failures (exponential backoff, configurable)
+   - [x] Request timeout handling (10s timeout with AbortController)
+   - [x] Better error type discrimination (ApiError, network errors, timeouts)
+   - [x] Logging for debugging (console errors for network issues)
+   - **File:** `frontend/src/api/client.ts` (Already implemented)
 
-8. [ ] **Task 3.2: Missing API Endpoints**
-   - [ ] Check if image upload endpoint exists (if needed for server-side processing)
-   - [ ] Verify checkpoint metadata endpoint coverage
-   - [ ] Implement pipeline status/job tracking endpoints
-   - [ ] Implement gallery/image management endpoints
+8. [x] **Task 3.2: Missing API Endpoints** ✅ COMPLETED
+   - [x] Check if image upload endpoint exists (not needed - handled client-side with base64)
+   - [x] Verify checkpoint metadata endpoint coverage (sufficient - list endpoint provides all needed fields)
+   - [x] Implement pipeline status/job tracking endpoints (`/api/pipelines/status/{job_id}`)
+   - [x] Implement gallery/image management endpoints (`/api/evaluation/gallery-images`)
+   - [x] Update frontend API clients with new endpoints
+   - **Files:**
+     - `services/playground_api/routers/pipeline.py` - Added job status tracking and endpoint
+     - `services/playground_api/routers/evaluation.py` - Added gallery image listing endpoint
+     - `frontend/src/api/pipelines.ts` - Added `getPipelineJobStatus()` function
+     - `frontend/src/api/evaluation.ts` - Added `listGalleryImages()` function
 
 #### **Phase 4: Testing & Quality Assurance (Medium Priority)**
 9. [ ] **Task 4.1: E2E Test Coverage**
@@ -379,22 +299,24 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Fronten
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** Implement image validation for Preprocessing and Inference pages
+**TASK:** Add better error handling and toast notifications for API failures
 
-**OBJECTIVE:** Add file size limits and format validation to prevent invalid file uploads and provide clear error messages to users.
+**OBJECTIVE:** Improve user experience by providing clear, actionable error messages and success notifications for all API operations.
 
 **APPROACH:**
-1. Create a shared image validation utility function
-2. Add validation to `Preprocessing.tsx` file upload handler
-3. Add validation to `Inference.tsx` file upload handler
-4. Display user-friendly error messages for validation failures
-5. Test with various file types and sizes
+1. Review existing error handling in API client and components
+2. Create a toast notification system (simple, no heavy dependencies)
+3. Add better error message formatting for API failures
+4. Implement retry mechanisms for transient failures
+5. Add success notifications for completed operations
+6. Test error scenarios (network errors, API failures, validation errors)
 
 **SUCCESS CRITERIA:**
-- File size validation rejects files over configured limit (e.g., 10MB)
-- Format validation only accepts image/* MIME types
-- Clear error messages displayed to user for invalid files
-- Valid files are accepted and processed correctly
+- Clear, user-friendly error messages for all API failures
+- Toast notifications appear for success/error states
+- Retry functionality works for transient failures
+- Network errors are detected and handled appropriately
+- Users understand what went wrong and what to do next
 
 ---
 

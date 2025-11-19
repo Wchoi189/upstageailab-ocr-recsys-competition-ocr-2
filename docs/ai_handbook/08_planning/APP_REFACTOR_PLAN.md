@@ -843,8 +843,8 @@ uv run streamlit run ui/apps/unified_ocr_app/app.py --server.port 8502
 
 ### Project Documentation
 - [Architecture](UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- [Session Handover](../../SESSION_HANDOVER_APP_REFACTOR.md)
-- [Phase 7 Complete](../../SESSION_COMPLETE_2025-10-21_PHASE7.md)
+- Session Handover
+- Phase 7 Complete
 
 ### Related Files
 - Current app: [ui/apps/unified_ocr_app/app.py](../../../ui/apps/unified_ocr_app/app.py)

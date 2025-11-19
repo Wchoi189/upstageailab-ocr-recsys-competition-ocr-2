@@ -5,6 +5,8 @@ import { InferencePreviewCanvas } from "../components/inference/InferencePreview
 import { InferenceControls } from "../components/inference/InferenceControls";
 import type { CheckpointWithMetadata } from "../api/inference";
 import type { InferenceParams } from "../components/inference/InferencePreviewCanvas";
+import { validateImageFile } from "../utils/imageValidation";
+import { useToast } from "../hooks/useToast";
 
 /**
  * Inference Studio page
@@ -12,9 +14,11 @@ import type { InferenceParams } from "../components/inference/InferencePreviewCa
  * Run inference with trained checkpoints and visualize results
  */
 export function Inference(): React.JSX.Element {
+  const { showToast, ToastContainer } = useToast();
   const [selectedCheckpoint, setSelectedCheckpoint] =
     useState<CheckpointWithMetadata | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [params, setParams] = useState<InferenceParams>({
     confidenceThreshold: 0.5,
     nmsThreshold: 0.4,
@@ -24,8 +28,20 @@ export function Inference(): React.JSX.Element {
     event: React.ChangeEvent<HTMLInputElement>,
   ): void => {
     const file = event.target.files?.[0];
-    if (file && file.type.startsWith("image/")) {
+    setUploadError(null);
+
+    const validationResult = validateImageFile(file);
+    if (!validationResult.valid) {
+      const errorMessage = validationResult.error?.message || "Invalid file";
+      setUploadError(errorMessage);
+      showToast(errorMessage, "error");
+      setImageFile(null);
+      return;
+    }
+
+    if (file) {
       setImageFile(file);
+      showToast("Image uploaded successfully", "success");
     }
   };
 
@@ -63,6 +79,20 @@ export function Inference(): React.JSX.Element {
             {imageFile.name}
           </span>
         )}
+        {uploadError && (
+          <div
+            style={{
+              marginTop: "0.5rem",
+              padding: "0.75rem",
+              backgroundColor: "#fee",
+              border: "1px solid #fcc",
+              borderRadius: "4px",
+              color: "#c33",
+            }}
+          >
+            {uploadError}
+          </div>
+        )}
       </div>
 
       <div
@@ -93,8 +123,11 @@ export function Inference(): React.JSX.Element {
           imageFile={imageFile}
           checkpoint={selectedCheckpoint}
           params={params}
+          onError={(message) => showToast(message, "error")}
+          onSuccess={(message) => showToast(message, "success")}
         />
       </div>
+      <ToastContainer />
     </div>
   );
 }

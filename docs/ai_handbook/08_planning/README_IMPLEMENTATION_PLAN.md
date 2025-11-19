@@ -240,13 +240,13 @@ Unified OCR App
 ## 🔗 Related Documentation
 
 ### Project Documentation
-- [AI Handbook Index](../index.md)
-- [Coding Standards](../../02_protocols/01_coding_standards_protocol.md)
-- [Streamlit Maintenance Protocol](../../02_protocols/11_streamlit_maintenance_protocol.md)
+- AI Handbook Index
+- Coding Standards
+- Streamlit Maintenance Protocol
 
 ### Background Removal
-- [Background Removal Guide](../../03_references/guides/background_removal_rembg.md)
-- [Background Removal Implementation](../../../../ocr/datasets/preprocessing/background_removal.py)
+- Background Removal Guide
+- Background Removal Implementation
 
 ---
 
@@ -281,15 +281,15 @@ Documentation:   docs/ai_handbook/08_planning/
 ## 🎓 Learning Resources
 
 ### YAML Configuration
-- Main config: [unified_app.yaml](../../../../configs/ui/unified_app.yaml)
-- Mode config: [preprocessing.yaml](../../../../configs/ui/modes/preprocessing.yaml)
-- Schema: [preprocessing_schema.yaml](../../../../configs/schemas/preprocessing_schema.yaml)
+- Main config: unified_app.yaml
+- Mode config: preprocessing.yaml
+- Schema: preprocessing_schema.yaml
 
 ### Code Examples
-- State management: [app_state.py](../../../../ui/apps/unified_ocr_app/models/app_state.py)
-- Pydantic models: [preprocessing_config.py](../../../../ui/apps/unified_ocr_app/models/preprocessing_config.py)
-- Config loader: [config_loader.py](../../../../ui/apps/unified_ocr_app/services/config_loader.py)
-- App scaffold: [app.py](../../../../ui/apps/unified_ocr_app/app.py)
+- State management: app_state.py
+- Pydantic models: preprocessing_config.py
+- Config loader: config_loader.py
+- App scaffold: app.py
 
 ---
 

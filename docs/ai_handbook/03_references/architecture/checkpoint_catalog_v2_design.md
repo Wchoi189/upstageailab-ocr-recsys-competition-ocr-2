@@ -2,7 +2,7 @@
 
 **Date**: 2025-10-18
 **Status**: Design Phase
-**Related**: [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md) | [Analysis](../../05_changelog/2025-10/18_checkpoint_catalog_analysis.md)
+**Related**: Refactor Plan | Analysis
 
 ## Overview
 
@@ -1215,6 +1215,6 @@ __all__ = [
 
 ## References
 
-- [Analysis Document](../../05_changelog/2025-10/18_checkpoint_catalog_analysis.md)
+- Analysis Document
 - [Current Implementation](../../../../ui/apps/inference/services/checkpoint_catalog.py)
-- [Refactor Plan](../../../../checkpoint_catalog_refactor_plan.md)
+- Refactor Plan

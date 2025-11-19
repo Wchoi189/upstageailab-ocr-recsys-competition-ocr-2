@@ -6,6 +6,7 @@ import type {
   InferencePreviewResponse,
 } from "../../api/inference";
 import { runInferencePreview } from "../../api/inference";
+import { Spinner } from "../ui/Spinner";
 
 /**
  * Inference parameters
@@ -22,6 +23,8 @@ interface InferencePreviewCanvasProps {
   imageFile: File | null;
   checkpoint: CheckpointWithMetadata | null;
   params: InferenceParams;
+  onError?: (message: string) => void;
+  onSuccess?: (message: string) => void;
 }
 
 /**
@@ -33,6 +36,8 @@ export function InferencePreviewCanvas({
   imageFile,
   checkpoint,
   params,
+  onError,
+  onSuccess,
 }: InferencePreviewCanvasProps): React.JSX.Element {
   const [result, setResult] = useState<InferencePreviewResponse | null>(null);
   const [loading, setLoading] = useState(false);
@@ -90,16 +95,21 @@ export function InferencePreviewCanvas({
         });
 
         setResult(response);
+        onSuccess?.(
+          `Inference completed: found ${response.regions.length} text regions in ${response.processing_time_ms.toFixed(0)}ms`
+        );
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Inference failed");
+        const errorMessage = err instanceof Error ? err.message : "Inference failed";
+        setError(errorMessage);
         setResult(null);
+        onError?.(errorMessage);
       } finally {
         setLoading(false);
       }
     };
 
     runInference();
-  }, [imageFile, checkpoint, params, imageBitmap]);
+  }, [imageFile, checkpoint, params, imageBitmap, onError, onSuccess]);
 
   // Draw image and polygons
   useEffect(() => {
@@ -226,11 +236,16 @@ export function InferencePreviewCanvas({
               transform: "translate(-50%, -50%)",
               backgroundColor: "rgba(0, 0, 0, 0.7)",
               color: "white",
-              padding: "1rem",
-              borderRadius: "4px",
+              padding: "1.5rem",
+              borderRadius: "8px",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "0.75rem",
             }}
           >
-            Running inference...
+            <Spinner size="large" color="#ffffff" />
+            <span>Running inference...</span>
           </div>
         )}
       </div>

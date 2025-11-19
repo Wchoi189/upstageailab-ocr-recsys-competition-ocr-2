@@ -106,19 +106,19 @@ uv run ruff check ui/apps/unified_ocr_app/
 
 ### Planning & Architecture
 
-- [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md) - Complete architecture + implementation status
-- [MIGRATION_GUIDE.md](docs/ai_handbook/08_planning/MIGRATION_GUIDE.md) - User migration from old apps
-- [README_IMPLEMENTATION_PLAN.md](docs/ai_handbook/08_planning/README_IMPLEMENTATION_PLAN.md) - Original implementation plan
+- UNIFIED_STREAMLIT_APP_ARCHITECTURE.md - Complete architecture + implementation status
+- MIGRATION_GUIDE.md - User migration from old apps
+- README_IMPLEMENTATION_PLAN.md - Original implementation plan
 
 ### Detailed Changelogs
 
-- [docs/CHANGELOG.md](docs/CHANGELOG.md) - Main project changelog
-- [21_unified_ocr_app_phase6_backend_integration.md](docs/ai_handbook/05_changelog/2025-10/21_unified_ocr_app_phase6_backend_integration.md) - Technical details
+- docs/CHANGELOG.md - Main project changelog
+- 21_unified_ocr_app_phase6_backend_integration.md - Technical details
 
 ### Bug Reports
 
-- [BUG-2025-001_inference_padding_scaling_mismatch.md](docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md) - Padding/scaling fix
-- [BUG-2025-012_streamlit_duplicate_element_key.md](docs/bug_reports/BUG-2025-012_streamlit_duplicate_element_key.md) - Duplicate key fix
+- BUG-2025-001_inference_padding_scaling_mismatch.md - Padding/scaling fix
+- BUG-2025-012_streamlit_duplicate_element_key.md - Duplicate key fix
 
 ---
 
@@ -197,7 +197,7 @@ uv run ruff check ui/apps/unified_ocr_app/
 
 ### Migration Guide Available
 
-Complete migration guide created: [MIGRATION_GUIDE.md](docs/ai_handbook/08_planning/MIGRATION_GUIDE.md)
+Complete migration guide created: MIGRATION_GUIDE.md
 
 **Key Points**:
 - ✅ **Zero Breaking Changes**: All existing features retained
@@ -393,9 +393,9 @@ tests/
 ### Getting Help
 
 1. **Documentation**: Review architecture and session summaries
-2. **Migration Guide**: [MIGRATION_GUIDE.md](docs/ai_handbook/08_planning/MIGRATION_GUIDE.md)
+2. **Migration Guide**: MIGRATION_GUIDE.md
 3. **Bug Reports**: Check `docs/bug_reports/` for known issues
-4. **CHANGELOG**: [docs/CHANGELOG.md](docs/CHANGELOG.md) for all changes
+4. **CHANGELOG**: docs/CHANGELOG.md for all changes
 
 ### Contributing
 
@@ -460,7 +460,7 @@ The Unified OCR Streamlit App project has been successfully completed with:
 ---
 
 **For questions or next steps, see**:
-- Architecture: [UNIFIED_STREAMLIT_APP_ARCHITECTURE.md](docs/ai_handbook/08_planning/UNIFIED_STREAMLIT_APP_ARCHITECTURE.md)
-- Migration: [MIGRATION_GUIDE.md](docs/ai_handbook/08_planning/MIGRATION_GUIDE.md)
+- Architecture: UNIFIED_STREAMLIT_APP_ARCHITECTURE.md
+- Migration: MIGRATION_GUIDE.md
 - Latest Session: [SESSION_COMPLETE_2025-10-21_PHASE7.md](SESSION_COMPLETE_2025-10-21_PHASE7.md)
-- Changelog: [docs/CHANGELOG.md](docs/CHANGELOG.md)
+- Changelog: docs/CHANGELOG.md

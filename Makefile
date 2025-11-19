@@ -14,7 +14,7 @@ BACKEND_APP ?= services.playground_api.app:app
 # UI Apps
 UI_APPS := command_builder evaluation_viewer inference preprocessing_viewer resource_monitor unified_app
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe backend-dev backend-stop stack-dev stack-stop fs stop-fs
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop stack-dev stack-stop fs stop-fs
 
 # ============================================================================
 # HELP
@@ -69,6 +69,11 @@ help:
 	@echo "  fe                 - Start Vite dev server (alias for frontend-dev)"
 	@echo "  frontend-dev       - Vite dev server on $(FRONTEND_HOST):$(FRONTEND_PORT)"
 	@echo "  sfe                - Stop Vite dev server listening on $(FRONTEND_PORT)"
+	@echo ""
+	@echo "🧭 NEXT.JS CONSOLE"
+	@echo "  console-dev        - Start Next.js App Router dev server (apps/playground-console)"
+	@echo "  console-build      - Build the Next.js console for production deploys"
+	@echo "  console-lint       - Run console linting (see docs/maintainers/coding_standards.md)"
 	@echo ""
 	@echo "🧩 SPA STACK"
 	@echo "  backend-dev        - Start FastAPI playground backend (reload)"
@@ -210,6 +215,15 @@ fe: frontend-dev
 
 frontend-dev:
 	cd $(FRONTEND_DIR) && npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
+
+console-dev:
+	npm run dev:console
+
+console-build:
+	npm run build:console
+
+console-lint:
+	npm run lint:console
 
 sfe: frontend-stop
 
@@ -402,5 +416,13 @@ quick-fix-log:
 # CI SIMULATION
 # ============================================================================
 
-ci: quality-check test
+ci: quality-check frontend-ci console-ci test
 	@echo "CI checks passed! ✅"
+
+frontend-ci:
+	npm run lint:spa
+	npm run build:spa
+
+console-ci:
+	npm run lint:console
+	npm run build:console

@@ -108,11 +108,11 @@ This directory contains strategic planning documents, debug sessions, and refact
 ### Bug Reports
 - BUG-2025-004: Streamlit Viewer Hanging
 - BUG-2025-005: RBF Interpolation Hang
-- [BUG-2025-006: Infinite Rerun Loop](../../CHANGELOG.md) (see CHANGELOG)
+- BUG-2025-006: Infinite Rerun Loop (see CHANGELOG)
 
 ### Architecture Docs
 - Architecture Overview
-- [Preprocessing Pipeline](../../pipeline/data_contracts.md)
+- Preprocessing Pipeline
 - Hydra Configuration
 
 ### Performance Guides

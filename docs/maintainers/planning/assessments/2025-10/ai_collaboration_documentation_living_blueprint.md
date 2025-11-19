@@ -1,6 +1,6 @@
 ## Foundation and Context
 
-This strategic plan is based on the comprehensive assessment in [`ai-collaboration-documentation-assessment.md`](../assessments/ai-collaboration-documentation-assessment.md), which evaluated the current AI collaboration documentation framework and identified key areas for improvement including:
+This strategic plan is based on the comprehensive assessment in `ai-collaboration-documentation-assessment.md`, which evaluated the current AI collaboration documentation framework and identified key areas for improvement including:
 - Structural integrity gaps (85% completeness score)
 - Content quality inconsistencies (8/10 clarity rating)
 - High maintenance burden requiring manual updates

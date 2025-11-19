@@ -18,7 +18,7 @@ The Streamlit Preprocessing Viewer app hangs indefinitely when document flatteni
 
 ### Root Cause
 
-**Location**: [document_flattening.py:497-536](../ocr/datasets/preprocessing/document_flattening.py#L497-L536) (`_apply_rbf_warping` method)
+**Location**: document_flattening.py:497-536 (`_apply_rbf_warping` method)
 
 **Problem**: The RBF interpolation was computing warping displacements for every single pixel in the original high-resolution image:
 
@@ -69,7 +69,7 @@ dy_map = rbf_y(x_coords, y_coords)  # Computes for EVERY pixel!
 
 **Strategy**: Downsample image to ~800px on longest edge before RBF interpolation, then upsample the warped result back to original resolution.
 
-**Location**: [document_flattening.py:515-563](../ocr/datasets/preprocessing/document_flattening.py#L515-L563)
+**Location**: document_flattening.py:515-563
 
 **Key Changes**:
 ```python
@@ -334,17 +334,17 @@ See [BUG_2025_004_STREAMLIT_VIEWER_HANGING.md](BUG_2025_004_STREAMLIT_VIEWER_HAN
 ## Code Locations
 
 **Primary Fix**:
-- [document_flattening.py:497-563](../ocr/datasets/preprocessing/document_flattening.py#L497-L563) - `_apply_rbf_warping` method
+- document_flattening.py:497-563 - `_apply_rbf_warping` method
 
 **Affected Callers**:
-- [document_flattening.py:291-350](../ocr/datasets/preprocessing/document_flattening.py#L291-L350) - `_thin_plate_spline_warping`
-- [document_flattening.py:352-403](../ocr/datasets/preprocessing/document_flattening.py#L352-L403) - `_cylindrical_warping`
-- [document_flattening.py:405-447](../ocr/datasets/preprocessing/document_flattening.py#L405-L447) - `_spherical_warping`
-- [document_flattening.py:449-495](../ocr/datasets/preprocessing/document_flattening.py#L449-L495) - `_adaptive_warping`
+- document_flattening.py:291-350 - `_thin_plate_spline_warping`
+- document_flattening.py:352-403 - `_cylindrical_warping`
+- document_flattening.py:405-447 - `_spherical_warping`
+- document_flattening.py:449-495 - `_adaptive_warping`
 
 **UI Integration**:
-- [preprocessing_viewer_app.py:138-143](../ui/preprocessing_viewer_app.py#L138-L143) - Full pipeline execution
-- [pipeline.py:184-201](../ui/preprocessing_viewer/pipeline.py#L184-L201) - Document flattening stage
+- preprocessing_viewer_app.py:138-143 - Full pipeline execution
+- pipeline.py:184-201 - Document flattening stage
 
 **Related Documentation**:
 - [preprocessing_viewer_debug_session.md](../ai_handbook/08_planning/preprocessing_viewer_debug_session.md) - Debug session

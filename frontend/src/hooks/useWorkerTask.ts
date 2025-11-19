@@ -72,10 +72,18 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
 
         // Only update state if this is still the current task
         if (currentTaskIdRef.current === taskToExecute.taskId) {
+          const errorMessage = result.status === "error"
+            ? (result.error || "Unknown worker error")
+            : null;
+
+          if (errorMessage) {
+            console.error(`[useWorkerTask] Worker returned error:`, errorMessage);
+          }
+
           setState({
             result: result as WorkerResult<TPayload>,
             loading: false,
-            error: result.status === "error" ? result.error || null : null,
+            error: errorMessage,
           });
         }
       } catch (error) {
@@ -84,12 +92,20 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
           currentTaskIdRef.current === taskToExecute.taskId &&
           !token.cancelled
         ) {
+          const errorMessage = error instanceof Error
+            ? (error.message || error.toString() || "Unknown error")
+            : String(error) || "Unknown error";
+
           setState({
             result: null,
             loading: false,
-            error:
-              error instanceof Error ? error.message : "Unknown error",
+            error: errorMessage,
           });
+
+          console.error(`[useWorkerTask] Task failed:`, errorMessage);
+          if (error instanceof Error && error.stack) {
+            console.error(`[useWorkerTask] Stack:`, error.stack);
+          }
         }
       }
     },

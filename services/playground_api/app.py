@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from .routers import command_builder, evaluation, inference, metrics, pipeline
 
@@ -16,6 +17,15 @@ def create_app() -> FastAPI:
             "Backend services for the Albumentations-style playground. "
             "Provides command builder, inference, and evaluation endpoints."
         ),
+    )
+
+    # Configure CORS
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
     )
 
     app.include_router(command_builder.router, prefix="/api/commands", tags=["command-builder"])

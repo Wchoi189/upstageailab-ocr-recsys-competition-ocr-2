@@ -161,23 +161,68 @@ export class WorkerPool {
 
     const onMessage = (event: MessageEvent<WorkerResult>): void => {
       cleanup();
+      const result = event.data;
+
+      // Check if worker returned an error
+      if (result.status === "error") {
+        const errorMessage = result.error || "Unknown worker error";
+        console.error(`[WorkerPool] Task ${taskId} failed:`, errorMessage);
+        logWorkerLifecycleEvent("task_failed", workerId, taskId, {
+          operation: task.type,
+          error: errorMessage,
+        });
+        this._releaseWorker(worker);
+        reject(new Error(`Worker task failed: ${errorMessage}`));
+        return;
+      }
+
       // Log task completed
       logWorkerLifecycleEvent("task_completed", workerId, taskId, {
         operation: task.type,
       });
       this._releaseWorker(worker);
-      resolve(event.data);
+      resolve(result);
     };
 
     const onError = (error: ErrorEvent): void => {
       cleanup();
+
+      // Extract all available error information
+      const errorDetails: Record<string, unknown> = {
+        message: error.message,
+        filename: error.filename,
+        lineno: error.lineno,
+        colno: error.colno,
+        error: error.error,
+      };
+
+      // Try to extract error from error object itself
+      let errorMessage = "Unknown worker error";
+      if (error.message) {
+        errorMessage = error.message;
+      } else if (error.error instanceof Error) {
+        errorMessage = error.error.message || error.error.toString();
+      } else if (error.error) {
+        errorMessage = String(error.error);
+      }
+
+      // Add location info if available
+      if (error.filename || error.lineno) {
+        errorMessage += ` (${error.filename || "unknown"}:${error.lineno || "unknown"})`;
+      }
+
+      // Log full error details for debugging
+      console.error("[WorkerHost] Worker error details:", errorDetails);
+      console.error("[WorkerHost] Error event:", error);
+
       // Log task failed
       logWorkerLifecycleEvent("task_failed", workerId, taskId, {
         operation: task.type,
-        error: error.message,
+        error: errorMessage,
+        errorDetails,
       });
       this._releaseWorker(worker);
-      reject(new Error(`Worker error: ${error.message}`));
+      reject(new Error(`Worker error: ${errorMessage}`));
     };
 
     const cleanup = (): void => {

@@ -3,7 +3,7 @@
 ## **🚨 CRITICAL: Context Building Protocol**
 **Problem:** "The app crashes" or "Inference fails" provides insufficient context for effective debugging.
 
-**Solution:** Follow the [Streamlit Debugging Protocol](../02_protocols/components/22_streamlit_debugging_protocol.md) for comprehensive context.
+**Solution:** Follow the Streamlit Debugging Protocol for comprehensive context.
 
 ## **Essential Commands for Streamlit Debugging**
 
@@ -188,7 +188,7 @@ cp configs/ui/inference.yaml debug_$(date +%Y%m%d_%H%M%S)/
 6. **Follow the protocol** - Use structured approaches, not ad-hoc debugging
 
 ## **Reference Protocols**
-- **[Streamlit Debugging Protocol](../02_protocols/components/22_streamlit_debugging_protocol.md)** - Complete context building guide
-- **[Context Logging Protocol](../02_protocols/development/06_context_logging.md)** - Structured action logging
-- **[Iterative Debugging Protocol](../02_protocols/development/07_iterative_debugging.md)** - Systematic investigation
-- **[Debugging Workflow Protocol](../02_protocols/development/03_debugging_workflow.md)** - Initial triage and tools
+- **Streamlit Debugging Protocol** - Complete context building guide
+- **Context Logging Protocol** - Structured action logging
+- **Iterative Debugging Protocol** - Systematic investigation
+- **Debugging Workflow Protocol** - Initial triage and tools

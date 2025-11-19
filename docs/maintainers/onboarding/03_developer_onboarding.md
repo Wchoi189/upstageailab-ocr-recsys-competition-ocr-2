@@ -209,7 +209,7 @@ project-root/
 │   │   ├── inference.spec.ts
 │   │   └── comparison.spec.ts
 │   └── perf/                   # Performance tests
-│       └── test_api_startup.py
+│       └── tests/scripts/test_api_startup.py
 ├── docs/                       # Documentation
 │   ├── HIGH_PERFORMANCE_PLAYGROUND.md   # User guide
 │   └── DEVELOPER_ONBOARDING.md          # This file
@@ -449,7 +449,7 @@ test.describe('Preprocessing Studio', () => {
 uv run pytest tests/ -v
 
 # Run specific test file
-uv run pytest tests/perf/test_api_startup.py -v
+uv run python tests/scripts/test_api_startup.py
 
 # Run with coverage
 uv run pytest tests/ --cov=services --cov-report=html
@@ -629,9 +629,9 @@ curl -X POST http://localhost:8000/api/inference/preview \
 
 ### Documentation
 
-- [High-Performance Playground Guide](HIGH_PERFORMANCE_PLAYGROUND.md)
-- [E2E Testing Guide](../tests/e2e/README.md)
-- [FastAPI Startup Optimization](performance/fastapi-startup-optimization.md)
+- High-Performance Playground Guide
+- E2E Testing Guide
+- FastAPI Startup Optimization
 
 ### External Resources
 

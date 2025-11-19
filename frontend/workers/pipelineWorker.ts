@@ -45,18 +45,67 @@ async function handleTask(task: WorkerTask): Promise<WorkerResult> {
     };
   } catch (error) {
     const durationMs = performance.now() - start;
+    const errorMessage = error instanceof Error
+      ? error.message || error.toString() || "Unknown error"
+      : String(error) || "Unknown error";
+
+    // Log error details in worker console
+    console.error(`[Worker] Task ${task.taskId} failed:`, errorMessage);
+    if (error instanceof Error && error.stack) {
+      console.error(`[Worker] Stack trace:`, error.stack);
+    }
+
     return {
       taskId: task.taskId,
       status: "error",
-      error: error instanceof Error ? error.message : String(error),
+      error: errorMessage,
       durationMs,
     };
   }
 }
 
+// Global error handler for uncaught errors in worker
+self.onerror = (error: ErrorEvent): void => {
+  console.error("[Worker] Uncaught error:", {
+    message: error.message,
+    filename: error.filename,
+    lineno: error.lineno,
+    colno: error.colno,
+    error: error.error,
+  });
+
+  // Try to send error back to main thread
+  try {
+    self.postMessage({
+      taskId: "unknown",
+      status: "error",
+      error: `Uncaught worker error: ${error.message || "Unknown error"} (${error.filename}:${error.lineno})`,
+      durationMs: 0,
+    });
+  } catch (e) {
+    // If postMessage fails, we can't do much
+    console.error("[Worker] Failed to send error to main thread:", e);
+  }
+};
+
 self.onmessage = async (event: MessageEvent<WorkerTask>) => {
-  const result = await handleTask(event.data);
-  self.postMessage(result, result.payload?.bitmap ? [result.payload.bitmap] : []);
+  try {
+    const result = await handleTask(event.data);
+    self.postMessage(result, result.payload?.bitmap ? [result.payload.bitmap] : []);
+  } catch (error) {
+    // Fallback error handler (shouldn't be needed due to try-catch in handleTask)
+    console.error("[Worker] Unhandled error in message handler:", error);
+    const errorMessage = error instanceof Error
+      ? error.message || error.toString() || "Unknown error"
+      : String(error) || "Unknown error";
+
+    self.postMessage({
+      taskId: event.data?.taskId || "unknown",
+      status: "error",
+      error: `Unhandled error: ${errorMessage}`,
+      durationMs: 0,
+    });
+  }
 };
 
 

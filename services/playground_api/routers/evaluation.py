@@ -96,3 +96,54 @@ def gallery_root() -> dict[str, str]:
     return {"gallery_root": str(root.relative_to(PROJECT_ROOT))}
 
 
+class GalleryImage(BaseModel):
+    """Gallery image metadata."""
+
+    path: str
+    name: str
+    size_bytes: int
+    size_mb: float
+
+
+@router.get("/gallery-images", response_model=list[GalleryImage])
+def list_gallery_images(limit: int = 100) -> list[GalleryImage]:
+    """List images in the gallery directory.
+
+    Args:
+        limit: Maximum number of images to return (default: 100)
+
+    Returns:
+        List of gallery image metadata
+    """
+    gallery_dir = _load_gallery_root()
+
+    if not gallery_dir.exists():
+        return []
+
+    # Supported image extensions
+    image_extensions = {".jpg", ".jpeg", ".png", ".bmp", ".tiff", ".webp"}
+
+    images: list[GalleryImage] = []
+    for image_path in sorted(gallery_dir.rglob("*")):
+        if image_path.is_file() and image_path.suffix.lower() in image_extensions:
+            try:
+                stat = image_path.stat()
+                rel_path = image_path.relative_to(PROJECT_ROOT)
+                images.append(
+                    GalleryImage(
+                        path=str(rel_path),
+                        name=image_path.name,
+                        size_bytes=stat.st_size,
+                        size_mb=round(stat.st_size / (1024 * 1024), 2),
+                    )
+                )
+            except Exception:
+                # Skip files that can't be accessed
+                continue
+
+        if len(images) >= limit:
+            break
+
+    return images
+
+

@@ -39,6 +39,16 @@ export interface GalleryRootResponse {
 }
 
 /**
+ * Gallery image metadata
+ */
+export interface GalleryImage {
+  path: string;
+  name: string;
+  size_bytes: number;
+  size_mb: number;
+}
+
+/**
  * List available comparison presets
  */
 export async function listComparisonPresets(): Promise<ComparisonPreset[]> {
@@ -62,4 +72,13 @@ export async function queueComparison(
  */
 export async function getGalleryRoot(): Promise<GalleryRootResponse> {
   return apiGet<GalleryRootResponse>("/evaluation/gallery-root");
+}
+
+/**
+ * List images in the gallery directory
+ */
+export async function listGalleryImages(
+  limit = 100,
+): Promise<GalleryImage[]> {
+  return apiGet<GalleryImage[]>(`/evaluation/gallery-images?limit=${limit}`);
 }
