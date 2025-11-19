@@ -6,7 +6,6 @@ import {
   Text,
   VStack,
   Button,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -32,8 +31,6 @@ const sections = [
 
 export function SideNav(): React.JSX.Element {
   const pathname = usePathname();
-  const activeBg = useColorModeValue("brand.50", "gray.700");
-  const hoverBg = useColorModeValue("gray.100", "gray.700");
 
   return (
     <Box
@@ -68,9 +65,9 @@ export function SideNav(): React.JSX.Element {
                   href={item.href}
                   justifyContent="flex-start"
                   variant="ghost"
-                  bg={isActive ? activeBg : undefined}
+                  bg={isActive ? "brand.50" : undefined}
                   fontWeight={isActive ? "semibold" : "medium"}
-                  _hover={{ bg: hoverBg }}
+                  _hover={{ bg: "gray.100" }}
                 >
                   {item.label}
                 </Button>

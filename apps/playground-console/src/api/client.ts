@@ -1,4 +1,5 @@
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL ?? "http://127.0.0.1:8000";
+// Use Next.js API routes (proxy to FastAPI on server-side)
+const API_BASE_URL = "/api";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const url = `${API_BASE_URL}${path}`;

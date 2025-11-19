@@ -2,7 +2,6 @@
 
 import {
   Alert,
-  AlertIcon,
   Box,
   Button,
   Flex,
@@ -143,10 +142,12 @@ export function CommandBuilderClient(): React.JSX.Element {
               </Flex>
             )}
             {hasError && (
-              <Alert status="error" borderRadius="md">
-                <AlertIcon />
-                Unable to load schema. Ensure the FastAPI server is running on the configured `NEXT_PUBLIC_API_BASE_URL`.
-              </Alert>
+              <Alert.Root status="error" borderRadius="md">
+                <Alert.Indicator />
+                <Alert.Description>
+                  Unable to load schema. Ensure the FastAPI server is running on the configured backend URL.
+                </Alert.Description>
+              </Alert.Root>
             )}
             {schema && (
               <Grid templateColumns={{ base: "1fr", xl: "2fr 1fr" }} gap={8} alignItems="start">

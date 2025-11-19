@@ -87,7 +87,7 @@ function FieldRenderer({ element, value, onChange, error }: FieldRendererProps):
     case "text_input":
       return <TextInputField {...commonProps} />;
     case "number_input":
-      return <NumberInputField {...commonProps} />;
+      return <NumberField {...commonProps} />;
     case "checkbox":
       return <CheckboxField {...commonProps} />;
     case "selectbox":
@@ -144,7 +144,7 @@ function TextInputField(props: FieldRendererProps & { tooltip?: string }): React
   );
 }
 
-function NumberInputField(props: FieldRendererProps & { tooltip?: string }): React.JSX.Element {
+function NumberField(props: FieldRendererProps & { tooltip?: string }): React.JSX.Element {
   const { element, value, onChange, error, tooltip } = props;
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>

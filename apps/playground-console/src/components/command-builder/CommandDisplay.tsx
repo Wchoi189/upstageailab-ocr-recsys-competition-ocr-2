@@ -1,6 +1,6 @@
 "use client";
 
-import { Button, Code, Divider, Flex, Stack, Text } from "@chakra-ui/react";
+import { Button, Code, Separator, Flex, Stack, Text } from "@chakra-ui/react";
 import type React from "react";
 
 interface CommandDisplayProps {
@@ -30,7 +30,7 @@ export function CommandDisplay(props: CommandDisplayProps): React.JSX.Element {
           {validationError}
         </Text>
       )}
-      <Divider />
+      <Separator />
       <Stack spacing={2}>
         <Text fontSize="sm" color="text.muted">
           Overrides
