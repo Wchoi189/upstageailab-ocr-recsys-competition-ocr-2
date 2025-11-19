@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type React from "react";
 import { CheckpointPicker } from "../components/inference/CheckpointPicker";
 import { InferencePreviewCanvas } from "../components/inference/InferencePreviewCanvas";
 import { InferenceControls } from "../components/inference/InferenceControls";
@@ -10,7 +11,7 @@ import type { InferenceParams } from "../components/inference/InferencePreviewCa
  *
  * Run inference with trained checkpoints and visualize results
  */
-export function Inference(): JSX.Element {
+export function Inference(): React.JSX.Element {
   const [selectedCheckpoint, setSelectedCheckpoint] =
     useState<CheckpointWithMetadata | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
@@ -30,7 +31,7 @@ export function Inference(): JSX.Element {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Inference Studio</h1>
+      <h1 style={{ color: "#213547" }}>Inference Studio</h1>
       <p style={{ color: "#666", marginBottom: "2rem" }}>
         Run inference with trained checkpoints and visualize OCR results
       </p>

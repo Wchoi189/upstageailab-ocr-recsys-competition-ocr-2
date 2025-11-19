@@ -3,9 +3,9 @@
   line-height: 1.5;
   font-weight: 400;
 
-  color-scheme: light dark;
-  color: rgba(255, 255, 255, 0.87);
-  background-color: #242424;
+  color-scheme: light;
+  color: #213547;
+  background-color: #ffffff;
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -24,8 +24,6 @@ a:hover {
 
 body {
   margin: 0;
-  display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -33,6 +31,24 @@ body {
 h1 {
   font-size: 3.2em;
   line-height: 1.1;
+  color: #213547;
+}
+
+h2, h3, h4, h5, h6 {
+  color: #213547;
+}
+
+p {
+  color: #213547;
+}
+
+span, label {
+  color: #213547;
+}
+
+select, option {
+  color: #213547;
+  background-color: white;
 }
 
 button {

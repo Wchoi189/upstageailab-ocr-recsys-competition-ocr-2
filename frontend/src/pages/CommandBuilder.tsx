@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect } from "react";
+import type React from "react";
 import type {
   SchemaId,
   CommandSchema,
@@ -23,7 +24,7 @@ import {
 } from "@/components/commands/CommandDisplay";
 import { RecommendationsGrid } from "@/components/recommendations/RecommendationCard";
 
-export function CommandBuilder(): JSX.Element {
+export function CommandBuilder(): React.JSX.Element {
   const [activeTab, setActiveTab] = useState<SchemaId>("train");
   const [schema, setSchema] = useState<CommandSchema | null>(null);
   const [values, setValues] = useState<FormValues>({});
@@ -56,10 +57,11 @@ export function CommandBuilder(): JSX.Element {
 
   // Build command when values change
   useEffect(() => {
-    if (Object.keys(values).length > 0) {
+    if (Object.keys(values).length > 0 && schema) {
       buildCommandFromValues();
     }
-  }, [values]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [values, activeTab]);
 
   const loadSchema = async (schemaId: SchemaId): Promise<void> => {
     try {
@@ -116,8 +118,15 @@ export function CommandBuilder(): JSX.Element {
   };
 
   return (
-    <div style={{ padding: "2rem", maxWidth: "1200px", margin: "0 auto" }}>
-      <h1 style={{ marginBottom: "0.5rem" }}>Command Builder</h1>
+    <div
+      style={{
+        padding: "2rem",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        textAlign: "left",
+      }}
+    >
+      <h1 style={{ marginBottom: "0.5rem", color: "#213547" }}>Command Builder</h1>
       <p style={{ color: "#6b7280", marginBottom: "2rem" }}>
         Build metadata-aware training, testing, and prediction commands
       </p>
@@ -243,6 +252,8 @@ export function CommandBuilder(): JSX.Element {
               <CommandDisplay
                 command={commandResult.command}
                 validationError={commandResult.validation_error}
+                overrides={commandResult.overrides}
+                constantOverrides={commandResult.constant_overrides}
               />
 
               {previousCommand && previousCommand !== commandResult.command && (
@@ -265,7 +276,7 @@ interface TabButtonProps {
   onClick: () => void;
 }
 
-function TabButton(props: TabButtonProps): JSX.Element {
+function TabButton(props: TabButtonProps): React.JSX.Element {
   const { label, active, onClick } = props;
 
   return (

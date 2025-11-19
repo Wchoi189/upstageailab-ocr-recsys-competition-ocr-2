@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import type React from "react";
 import type {
   CheckpointWithMetadata,
   TextRegion,
@@ -32,7 +33,7 @@ export function InferencePreviewCanvas({
   imageFile,
   checkpoint,
   params,
-}: InferencePreviewCanvasProps): JSX.Element {
+}: InferencePreviewCanvasProps): React.JSX.Element {
   const [result, setResult] = useState<InferencePreviewResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);

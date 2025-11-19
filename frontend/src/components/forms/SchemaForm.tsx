@@ -4,6 +4,7 @@
  */
 
 import { useState, useEffect, useMemo } from "react";
+import type React from "react";
 import type { UIElement, FormValues, CommandSchema } from "@/types/schema";
 import { evaluateVisibility } from "@/utils/visibility";
 import {
@@ -12,6 +13,7 @@ import {
   SelectBox,
   NumberInput,
   InfoDisplay,
+  Slider,
 } from "./FormPrimitives";
 
 export interface SchemaFormProps {
@@ -21,7 +23,7 @@ export interface SchemaFormProps {
   errors?: Record<string, string>;
 }
 
-export function SchemaForm(props: SchemaFormProps): JSX.Element {
+export function SchemaForm(props: SchemaFormProps): React.JSX.Element {
   const { schema, values, onChange, errors = {} } = props;
 
   // Initialize form values with defaults
@@ -71,7 +73,7 @@ interface FormFieldProps {
   error?: string;
 }
 
-function FormField(props: FormFieldProps): JSX.Element | null {
+function FormField(props: FormFieldProps): React.JSX.Element | null {
   const { element, value, onChange, error } = props;
 
   // Build tooltip from metadata_help_key if available
@@ -79,7 +81,10 @@ function FormField(props: FormFieldProps): JSX.Element | null {
     ? `Metadata: ${element.metadata_help_key}`
     : undefined;
 
-  switch (element.type) {
+  // Normalize type to handle any case issues
+  const fieldType = String(element.type).toLowerCase();
+
+  switch (fieldType) {
     case "text_input":
       return (
         <TextInput
@@ -132,6 +137,22 @@ function FormField(props: FormFieldProps): JSX.Element | null {
         />
       );
 
+    case "slider":
+      console.log("✅ Slider case matched!", element.key, element);
+      return (
+        <Slider
+          value={(value as number) || (element.default as number) || element.min || 0}
+          onChange={onChange}
+          label={element.label}
+          help={element.help}
+          tooltip={tooltip}
+          error={error}
+          min={element.min}
+          max={element.max}
+          step={element.step}
+        />
+      );
+
     case "info":
       return (
         <InfoDisplay
@@ -141,7 +162,7 @@ function FormField(props: FormFieldProps): JSX.Element | null {
       );
 
     default:
-      console.warn(`Unsupported field type: ${element.type}`);
+      console.warn(`❌ Unsupported field type: ${element.type} (normalized: ${fieldType})`, element);
       return null;
   }
 }

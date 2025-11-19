@@ -1,9 +1,10 @@
 import { Link } from "react-router-dom";
+import type React from "react";
 
-export function Home(): JSX.Element {
+export function Home(): React.JSX.Element {
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>OCR Playground</h1>
+      <h1 style={{ color: "#213547" }}>OCR Playground</h1>
       <p>High-performance image processing and model training toolkit</p>
 
       <nav style={{ marginTop: "2rem" }}>

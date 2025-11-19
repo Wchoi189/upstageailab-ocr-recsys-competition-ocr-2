@@ -4,11 +4,17 @@
 # Changes: Reorganized structure, eliminated duplication, improved help system
 
 PORT ?= 8501
+FRONTEND_DIR := frontend
+FRONTEND_HOST ?= 0.0.0.0
+FRONTEND_PORT ?= 5173
+BACKEND_HOST ?= 127.0.0.1
+BACKEND_PORT ?= 8000
+BACKEND_APP ?= services.playground_api.app:app
 
 # UI Apps
 UI_APPS := command_builder evaluation_viewer inference preprocessing_viewer resource_monitor unified_app
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe backend-dev backend-stop stack-dev stack-stop fs stop-fs
 
 # ============================================================================
 # HELP
@@ -58,6 +64,18 @@ help:
 	@echo "  Shortcuts           - cb eval infer prep monitor ua (start Unified App)"
 	@echo "  Stop Shortcuts      - stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua"
 	@echo "  start / stop        - Start/Stop Unified App (aliases for ua)"
+	@echo ""
+	@echo "🌐 FRONTEND"
+	@echo "  fe                 - Start Vite dev server (alias for frontend-dev)"
+	@echo "  frontend-dev       - Vite dev server on $(FRONTEND_HOST):$(FRONTEND_PORT)"
+	@echo "  sfe                - Stop Vite dev server listening on $(FRONTEND_PORT)"
+	@echo ""
+	@echo "🧩 SPA STACK"
+	@echo "  backend-dev        - Start FastAPI playground backend (reload)"
+	@echo "  backend-stop       - Stop FastAPI backend on $(BACKEND_PORT)"
+	@echo "  fs                 - Run backend + frontend together (alias for stack-dev)"
+	@echo "  stack-dev          - Combined dev stack (kills backend when frontend exits)"
+	@echo "  stop-fs            - Stop combined stack (alias for stack-stop)"
 	@echo ""
 	@echo "🔧 DEVELOPMENT WORKFLOW"
 	@echo "  clean               - Clean up cache files and build artifacts"
@@ -187,6 +205,73 @@ stop-ua: stop-unified_app
 
 start: ua
 stop: stop-unified_app
+
+fe: frontend-dev
+
+frontend-dev:
+	cd $(FRONTEND_DIR) && npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
+
+sfe: frontend-stop
+
+frontend-stop:
+	@PORT=$(FRONTEND_PORT); \
+	PIDS=""; \
+	if command -v lsof >/dev/null 2>&1; then \
+		for PID in $$(lsof -t -i:$$PORT 2>/dev/null || true); do \
+			CMD=$$(ps -p $$PID -o args= 2>/dev/null || true); \
+			if echo "$$CMD" | grep -qi "vite"; then \
+				PIDS="$$PIDS $$PID"; \
+			fi; \
+		done; \
+	elif command -v pgrep >/dev/null 2>&1; then \
+		PIDS=$$(pgrep -f "vite.*--port $$PORT" || true); \
+	fi; \
+	if [ -n "$$PIDS" ]; then \
+		echo "Stopping project frontend dev server on port $$PORT (PID(s) $$PIDS)"; \
+		kill $$PIDS; \
+	else \
+		echo "No project frontend dev server detected on port $$PORT"; \
+	fi
+
+backend-dev:
+	uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload
+
+backend-stop:
+	@PORT=$(BACKEND_PORT); \
+	PIDS=""; \
+	if command -v lsof >/dev/null 2>&1; then \
+		for PID in $$(lsof -t -i:$$PORT 2>/dev/null || true); do \
+			CMD=$$(ps -p $$PID -o args= 2>/dev/null || true); \
+			if echo "$$CMD" | grep -Eq "uvicorn|run_spa\.py|run_ui\.py"; then \
+				PIDS="$$PIDS $$PID"; \
+			fi; \
+		done; \
+	elif command -v pgrep >/dev/null 2>&1; then \
+		PIDS=$$(pgrep -f "uvicorn.*$(BACKEND_APP)" || true); \
+	fi; \
+	if [ -n "$$PIDS" ]; then \
+		echo "Stopping project backend server on port $$PORT (PID(s) $$PIDS)"; \
+		kill $$PIDS; \
+	else \
+		echo "No project backend server detected on port $$PORT"; \
+	fi
+
+fs: stack-dev
+
+stack-dev:
+	@bash -c 'set -euo pipefail; \
+		echo "Starting FastAPI backend on $(BACKEND_HOST):$(BACKEND_PORT)"; \
+		uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload & \
+		BACK_PID=$$!; \
+		trap "echo \"Stopping backend (PID $$BACK_PID)\"; kill $$BACK_PID 2>/dev/null || true" EXIT INT TERM; \
+		cd $(FRONTEND_DIR); \
+		npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT); \
+	'
+
+sfs: stack-stop
+
+stack-stop: backend-stop
+	$(MAKE) sfe
 
 # Start UI applications
 serve-command_builder:

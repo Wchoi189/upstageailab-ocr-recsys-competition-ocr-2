@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiGet, apiPost } from "./client";
 
 /**
  * Inference mode summary
@@ -35,7 +35,7 @@ export interface CheckpointWithMetadata extends CheckpointSummary {
  * List available inference modes
  */
 export async function listInferenceModes(): Promise<InferenceModeSummary[]> {
-  return apiClient<InferenceModeSummary[]>("/api/inference/modes");
+  return apiGet<InferenceModeSummary[]>("/inference/modes");
 }
 
 /**
@@ -44,8 +44,8 @@ export async function listInferenceModes(): Promise<InferenceModeSummary[]> {
 export async function listCheckpoints(
   limit = 50,
 ): Promise<CheckpointWithMetadata[]> {
-  const checkpoints = await apiClient<CheckpointSummary[]>(
-    `/api/inference/checkpoints?limit=${limit}`,
+  const checkpoints = await apiGet<CheckpointSummary[]>(
+    `/inference/checkpoints?limit=${limit}`,
   );
 
   // Parse datetime strings
@@ -168,8 +168,8 @@ export interface InferencePreviewResponse {
 export async function runInferencePreview(
   request: InferencePreviewRequest,
 ): Promise<InferencePreviewResponse> {
-  return apiClient<InferencePreviewResponse>("/api/inference/preview", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
+  return apiPost<InferencePreviewRequest, InferencePreviewResponse>(
+    "/inference/preview",
+    request,
+  );
 }

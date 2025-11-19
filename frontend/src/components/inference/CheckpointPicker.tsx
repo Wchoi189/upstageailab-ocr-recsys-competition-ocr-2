@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type React from "react";
 import type { CheckpointWithMetadata } from "../../api/inference";
 import {
   listCheckpoints,
@@ -25,7 +26,7 @@ interface CheckpointPickerProps {
 export function CheckpointPicker({
   selectedCheckpoint,
   onSelect,
-}: CheckpointPickerProps): JSX.Element {
+}: CheckpointPickerProps): React.JSX.Element {
   const [allCheckpoints, setAllCheckpoints] = useState<
     CheckpointWithMetadata[]
   >([]);
@@ -131,16 +132,23 @@ export function CheckpointPicker({
                 setArchitectureFilter(e.target.value || null)
               }
               style={{
+                color: "#213547",
+                backgroundColor: "white",
                 padding: "0.5rem",
                 fontSize: "0.875rem",
                 border: "1px solid #ddd",
                 borderRadius: "4px",
-                backgroundColor: "white",
               }}
             >
-              <option value="">All Architectures</option>
+              <option value="" style={{ color: "#213547", backgroundColor: "white" }}>
+                All Architectures
+              </option>
               {uniqueArchitectures.map((arch) => (
-                <option key={arch} value={arch}>
+                <option
+                  key={arch}
+                  value={arch}
+                  style={{ color: "#213547", backgroundColor: "white" }}
+                >
                   {arch}
                 </option>
               ))}
@@ -153,16 +161,23 @@ export function CheckpointPicker({
               value={backboneFilter || ""}
               onChange={(e) => setBackboneFilter(e.target.value || null)}
               style={{
+                color: "#213547",
+                backgroundColor: "white",
                 padding: "0.5rem",
                 fontSize: "0.875rem",
                 border: "1px solid #ddd",
                 borderRadius: "4px",
-                backgroundColor: "white",
               }}
             >
-              <option value="">All Backbones</option>
+              <option value="" style={{ color: "#213547", backgroundColor: "white" }}>
+                All Backbones
+              </option>
               {uniqueBackbones.map((backbone) => (
-                <option key={backbone} value={backbone}>
+                <option
+                  key={backbone}
+                  value={backbone}
+                  style={{ color: "#213547", backgroundColor: "white" }}
+                >
                   {backbone}
                 </option>
               ))}

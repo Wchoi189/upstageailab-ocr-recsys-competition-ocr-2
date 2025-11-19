@@ -3,21 +3,34 @@
  * Shows generated CLI command in a code block.
  */
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import type React from "react";
 
 export interface CommandDisplayProps {
   command: string;
   validationError?: string;
+  overrides?: string[];
+  constantOverrides?: string[];
 }
 
-export function CommandDisplay(props: CommandDisplayProps): JSX.Element {
-  const { command, validationError } = props;
+export function CommandDisplay(props: CommandDisplayProps): React.JSX.Element {
+  const { command, validationError, overrides, constantOverrides } = props;
   const [copied, setCopied] = useState(false);
   const [downloaded, setDownloaded] = useState(false);
 
+  const formattedCommand = useMemo(() => {
+    return (
+      formatCommandForLinux(command, constantOverrides, overrides) ||
+      command ||
+      ""
+    );
+  }, [command, constantOverrides, overrides]);
+
+  const commandText = formattedCommand || command || "";
+
   const handleCopy = async (): Promise<void> => {
     try {
-      await navigator.clipboard.writeText(command);
+      await navigator.clipboard.writeText(commandText);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     } catch (err) {
@@ -27,7 +40,7 @@ export function CommandDisplay(props: CommandDisplayProps): JSX.Element {
 
   const handleDownload = (): void => {
     try {
-      const blob = new Blob([command], { type: "text/plain" });
+      const blob = new Blob([commandText], { type: "text/plain" });
       const url = URL.createObjectURL(blob);
       const link = document.createElement("a");
       link.href = url;
@@ -118,12 +131,31 @@ export function CommandDisplay(props: CommandDisplayProps): JSX.Element {
           padding: "1rem",
           borderRadius: "0.5rem",
           overflow: "auto",
+          overflowX: "hidden",
+          overflowY: "auto",
           fontSize: "0.875rem",
           lineHeight: "1.5",
           margin: 0,
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          minHeight: "150px",
+          maxHeight: "600px",
+          border: "1px solid #374151",
+          width: "100%",
+          boxSizing: "border-box",
+          textAlign: "left",
         }}
       >
-        <code>{command || "# Configure options above to generate command"}</code>
+        <code style={{
+          fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
+          whiteSpace: "pre-wrap",
+          wordBreak: "break-word",
+          overflowWrap: "break-word",
+          display: "block",
+        }}>
+          {commandText || "# Configure options above to generate command"}
+        </code>
       </pre>
 
       {validationError && (
@@ -145,13 +177,103 @@ export function CommandDisplay(props: CommandDisplayProps): JSX.Element {
   );
 }
 
+function splitCommandTokens(command: string): string[] {
+  const tokenRegex = /(?:[^\s"']+|"[^"]*"|'[^']*')+/g;
+  return command.match(tokenRegex) ?? [];
+}
+
+function formatCommandForLinux(
+  command: string,
+  constantOverrides?: string[],
+  overrides?: string[]
+): string {
+  const rawCommand = command?.trim();
+  if (!rawCommand) {
+    return "";
+  }
+
+  const tokens = splitCommandTokens(rawCommand);
+  if (tokens.length === 0) {
+    return rawCommand;
+  }
+
+  let continuationSegments = [
+    ...(constantOverrides ?? []),
+    ...(overrides ?? []),
+  ]
+    .map((segment) => segment?.trim())
+    .filter((segment): segment is string => Boolean(segment));
+
+  let baseTokens: string[] | null = null;
+
+  if (continuationSegments.length === 0) {
+    const inferred = inferCommandSegments(tokens);
+    if (!inferred) {
+      return rawCommand;
+    }
+    baseTokens = inferred.baseTokens;
+    continuationSegments = inferred.continuationSegments;
+  } else {
+    if (continuationSegments.length >= tokens.length) {
+      return rawCommand;
+    }
+    baseTokens = tokens.slice(0, tokens.length - continuationSegments.length);
+  }
+
+  if (!baseTokens || baseTokens.length === 0 || continuationSegments.length === 0) {
+    return rawCommand;
+  }
+
+  const lines: string[] = [];
+  lines.push(`${baseTokens.join(" ")} \\`);
+
+  continuationSegments.forEach((segment, index) => {
+    const isLast = index === continuationSegments.length - 1;
+    lines.push(`  ${segment}${isLast ? "" : " \\"}`);
+  });
+
+  return lines.join("\n");
+}
+
+function inferCommandSegments(tokens: string[]): {
+  baseTokens: string[];
+  continuationSegments: string[];
+} | null {
+  if (tokens.length < 5) {
+    return null;
+  }
+
+  const splitIndex = tokens.findIndex((token, index) => {
+    if (index < 4) {
+      return false;
+    }
+    return token.includes("=") || token.startsWith("--");
+  });
+
+  if (splitIndex === -1) {
+    return null;
+  }
+
+  const baseTokens = tokens.slice(0, splitIndex);
+  const continuationSegments = tokens.slice(splitIndex);
+
+  if (baseTokens.length === 0 || continuationSegments.length === 0) {
+    return null;
+  }
+
+  return { baseTokens, continuationSegments };
+}
+
 export interface CommandDiffViewerProps {
   before: string;
   after: string;
 }
 
-export function CommandDiffViewer(props: CommandDiffViewerProps): JSX.Element {
+export function CommandDiffViewer(props: CommandDiffViewerProps): React.JSX.Element {
   const { before, after } = props;
+
+  const formattedBefore = formatCommandForLinux(before);
+  const formattedAfter = formatCommandForLinux(after);
 
   return (
     <div style={{ marginTop: "2rem" }}>
@@ -159,7 +281,7 @@ export function CommandDiffViewer(props: CommandDiffViewerProps): JSX.Element {
         Command Diff
       </h3>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "1rem" }}>
+      <div style={{ display: "flex", flexDirection: "column", gap: "1rem" }}>
         <div>
           <h4 style={{ fontSize: "0.875rem", fontWeight: 500, marginBottom: "0.5rem" }}>
             Before
@@ -171,12 +293,30 @@ export function CommandDiffViewer(props: CommandDiffViewerProps): JSX.Element {
               padding: "1rem",
               borderRadius: "0.5rem",
               overflow: "auto",
-              fontSize: "0.75rem",
+              overflowX: "hidden",
+              overflowY: "auto",
+              fontSize: "0.875rem",
               lineHeight: "1.5",
               margin: 0,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              minHeight: "80px",
+              maxHeight: "200px",
+              border: "1px solid #fecaca",
+              width: "100%",
+              boxSizing: "border-box",
             }}
           >
-            <code>{before || "N/A"}</code>
+            <code style={{
+              fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              display: "block",
+            }}>
+              {formattedBefore || before || "N/A"}
+            </code>
           </pre>
         </div>
 
@@ -191,12 +331,30 @@ export function CommandDiffViewer(props: CommandDiffViewerProps): JSX.Element {
               padding: "1rem",
               borderRadius: "0.5rem",
               overflow: "auto",
-              fontSize: "0.75rem",
+              overflowX: "hidden",
+              overflowY: "auto",
+              fontSize: "0.875rem",
               lineHeight: "1.5",
               margin: 0,
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              minHeight: "80px",
+              maxHeight: "200px",
+              border: "1px solid #bbf7d0",
+              width: "100%",
+              boxSizing: "border-box",
             }}
           >
-            <code>{after || "N/A"}</code>
+            <code style={{
+              fontFamily: "ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace",
+              whiteSpace: "pre-wrap",
+              wordBreak: "break-word",
+              overflowWrap: "break-word",
+              display: "block",
+            }}>
+              {formattedAfter || after || "N/A"}
+            </code>
           </pre>
         </div>
       </div>

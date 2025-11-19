@@ -326,6 +326,7 @@
     - [maintainers/planning/session_handover_advanced_preprocessing.md](maintainers/planning/session_handover_advanced_preprocessing.md)
     - [maintainers/planning/session_handover_ocr_refactor_continuation.md](maintainers/planning/session_handover_ocr_refactor_continuation.md)
   - [maintainers/process_management.md](maintainers/process_management.md)
+  - [quick_reference/process_management.md](quick_reference/process_management.md)
     - [maintainers/quick-fixes/QUICK_FIXES.md](maintainers/quick-fixes/QUICK_FIXES.md)
   - [pipeline/data_contracts.md](pipeline/data_contracts.md)
   - [pipeline/preprocessing-data-contracts.md](pipeline/preprocessing-data-contracts.md)

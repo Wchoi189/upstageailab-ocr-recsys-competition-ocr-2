@@ -3,6 +3,7 @@
  * Shows architecture, title, description, and parameter preview.
  */
 
+import type React from "react";
 import type { Recommendation } from "@/types/schema";
 
 export interface RecommendationCardProps {
@@ -11,7 +12,7 @@ export interface RecommendationCardProps {
   selected?: boolean;
 }
 
-export function RecommendationCard(props: RecommendationCardProps): JSX.Element {
+export function RecommendationCard(props: RecommendationCardProps): React.JSX.Element {
   const { recommendation, onSelect, selected = false } = props;
 
   const handleClick = (): void => {
@@ -141,7 +142,7 @@ export interface RecommendationsGridProps {
 
 export function RecommendationsGrid(
   props: RecommendationsGridProps
-): JSX.Element {
+): React.JSX.Element {
   const { recommendations, onSelect, selectedId } = props;
 
   if (recommendations.length === 0) {

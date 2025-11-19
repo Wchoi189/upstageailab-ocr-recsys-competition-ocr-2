@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import type React from "react";
 import type { WorkerTask } from "../../../workers/types";
 import { useWorkerTask } from "../../hooks/useWorkerTask";
 import type { PreprocessingParams } from "./ParameterControls";
@@ -19,7 +20,7 @@ interface PreprocessingCanvasProps {
 export function PreprocessingCanvas({
   imageFile,
   params,
-}: PreprocessingCanvasProps): JSX.Element {
+}: PreprocessingCanvasProps): React.JSX.Element {
   const [originalBitmap, setOriginalBitmap] = useState<ImageBitmap | null>(
     null,
   );

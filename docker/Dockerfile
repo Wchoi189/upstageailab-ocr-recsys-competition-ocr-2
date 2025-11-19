@@ -79,7 +79,8 @@ RUN touch /home/vscode/.ssh/authorized_keys && \
 # Install uv
 USER vscode
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/home/vscode/.cargo/bin:$PATH"
+# UV installs to ~/.local/bin by default, but also check /opt/uv/bin (system install) and ~/.cargo/bin (fallback)
+ENV PATH="/opt/uv/bin:/home/vscode/.local/bin:/home/vscode/.cargo/bin:$PATH"
 
 # Set up project directory
 USER root
@@ -93,10 +94,8 @@ COPY --chown=vscode:vscode pyproject.toml uv.lock ./
 COPY --chown=vscode:vscode README.md ./
 
 # Install Python dependencies if `uv` is available; otherwise skip (will be handled at runtime)
-RUN if [ -x "/home/vscode/.cargo/bin/uv" ]; then \
-      /home/vscode/.cargo/bin/uv sync --frozen; \
-    elif [ -x "/home/vscode/.local/bin/uv" ]; then \
-      /home/vscode/.local/bin/uv sync --frozen; \
+RUN if command -v uv >/dev/null 2>&1; then \
+      uv sync --frozen; \
     else \
       echo "uv not found during build; skipping dependency sync (will attempt at container runtime)"; \
     fi
@@ -107,9 +106,11 @@ COPY --chown=vscode:vscode . .
 # Copy .bashrc for enhanced shell experience
 COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
 
-# Set up development environment
-RUN echo 'export PATH="$HOME/.cargo/bin:$PATH"' >> ~/.bashrc && \
-    echo 'alias python="uv run \python"' >> ~/.bashrc && \
+# Normalize line endings in .bashrc (convert CRLF to LF if present)
+RUN sed -i 's/\r$//' /home/vscode/.bashrc
+
+# Set up development environment (PATH is already set in .bashrc, just add aliases)
+RUN echo 'alias python="uv run \python"' >> ~/.bashrc && \
     echo 'alias python3="uv run \python3"' >> ~/.bashrc && \
     echo 'alias pytest="uv run pytest"' >> ~/.bashrc
 

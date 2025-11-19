@@ -3,6 +3,8 @@
 
 # Force LF for common scripts and configs
 *.sh     eol=lf
+*.bashrc eol=lf
+*.bash   eol=lf
 *.py     eol=lf
 *.yml    eol=lf
 *.yaml   eol=lf

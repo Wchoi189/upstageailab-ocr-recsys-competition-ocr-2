@@ -4,6 +4,7 @@
  */
 
 import { useState, type ReactNode } from "react";
+import type React from "react";
 
 export interface TooltipProps {
   content: string | ReactNode;
@@ -11,7 +12,7 @@ export interface TooltipProps {
   position?: "top" | "bottom" | "left" | "right";
 }
 
-export function Tooltip(props: TooltipProps): JSX.Element {
+export function Tooltip(props: TooltipProps): React.JSX.Element {
   const { content, children, position = "top" } = props;
   const [visible, setVisible] = useState(false);
 
@@ -83,7 +84,7 @@ export interface InfoIconProps {
   position?: "top" | "bottom" | "left" | "right";
 }
 
-export function InfoIcon(props: InfoIconProps): JSX.Element {
+export function InfoIcon(props: InfoIconProps): React.JSX.Element {
   const { tooltip, position = "top" } = props;
 
   return (

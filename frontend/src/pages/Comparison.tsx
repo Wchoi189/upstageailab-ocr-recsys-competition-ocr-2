@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type React from "react";
 import type {
   ComparisonPreset,
   ComparisonRequest,
@@ -14,7 +15,7 @@ import {
  *
  * Configure and run model comparison with parameter sweeps
  */
-export function Comparison(): JSX.Element {
+export function Comparison(): React.JSX.Element {
   const [presets, setPresets] = useState<ComparisonPreset[]>([]);
   const [selectedPreset, setSelectedPreset] = useState<ComparisonPreset | null>(
     null,
@@ -96,7 +97,7 @@ export function Comparison(): JSX.Element {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Comparison Studio</h1>
+      <h1 style={{ color: "#213547" }}>Comparison Studio</h1>
       <p style={{ color: "#666", marginBottom: "2rem" }}>
         Configure parameter sweeps and compare model performance
       </p>
@@ -133,10 +134,15 @@ export function Comparison(): JSX.Element {
                 border: "1px solid #ddd",
                 borderRadius: "4px",
                 backgroundColor: "white",
+                color: "#213547",
               }}
             >
               {presets.map((preset) => (
-                <option key={preset.id} value={preset.id}>
+                <option
+                  key={preset.id}
+                  value={preset.id}
+                  style={{ color: "#213547", backgroundColor: "white" }}
+                >
                   {preset.label}
                 </option>
               ))}

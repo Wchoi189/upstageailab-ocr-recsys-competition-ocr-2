@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type React from "react";
 
 /**
  * Preprocessing parameters
@@ -29,7 +30,7 @@ interface ParameterControlsProps {
 export function ParameterControls({
   params,
   onChange,
-}: ParameterControlsProps): JSX.Element {
+}: ParameterControlsProps): React.JSX.Element {
   const handleToggle = (key: keyof PreprocessingParams): void => {
     onChange({ ...params, [key]: !params[key] });
   };
@@ -50,7 +51,7 @@ export function ParameterControls({
         maxWidth: "400px",
       }}
     >
-      <h3 style={{ marginTop: 0, marginBottom: "1rem" }}>
+      <h3 style={{ marginTop: 0, marginBottom: "1rem", color: "#213547" }}>
         Preprocessing Parameters
       </h3>
 
@@ -62,7 +63,7 @@ export function ParameterControls({
             checked={params.autocontrast}
             onChange={() => handleToggle("autocontrast")}
           />
-          <span>Auto Contrast</span>
+          <span style={{ color: "#213547" }}>Auto Contrast</span>
         </label>
       </div>
 
@@ -74,7 +75,7 @@ export function ParameterControls({
             checked={params.blur}
             onChange={() => handleToggle("blur")}
           />
-          <span>Gaussian Blur</span>
+          <span style={{ color: "#213547" }}>Gaussian Blur</span>
         </label>
         {params.blur && (
           <div style={{ marginTop: "0.5rem", marginLeft: "1.5rem" }}>
@@ -112,7 +113,7 @@ export function ParameterControls({
             checked={params.resize}
             onChange={() => handleToggle("resize")}
           />
-          <span>Resize</span>
+          <span style={{ color: "#213547" }}>Resize</span>
         </label>
         {params.resize && (
           <div
@@ -168,7 +169,7 @@ export function ParameterControls({
             checked={params.rembg}
             onChange={() => handleToggle("rembg")}
           />
-          <span>Background Removal (rembg)</span>
+          <span style={{ color: "#213547" }}>Background Removal (rembg)</span>
         </label>
         {params.rembg && (
           <div

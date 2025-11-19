@@ -1,4 +1,5 @@
 import { useState } from "react";
+import type React from "react";
 import { PreprocessingCanvas } from "../components/preprocessing/PreprocessingCanvas";
 import {
   ParameterControls,
@@ -10,7 +11,7 @@ import {
  *
  * Interactive image preprocessing with real-time preview
  */
-export function Preprocessing(): JSX.Element {
+export function Preprocessing(): React.JSX.Element {
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [params, setParams] = useState<PreprocessingParams>({
     autocontrast: false,
@@ -33,7 +34,7 @@ export function Preprocessing(): JSX.Element {
 
   return (
     <div style={{ padding: "2rem" }}>
-      <h1>Preprocessing Studio</h1>
+      <h1 style={{ color: "#213547" }}>Preprocessing Studio</h1>
       <p style={{ color: "#666", marginBottom: "2rem" }}>
         Interactive image preprocessing with real-time preview powered by
         Web Workers

@@ -137,7 +137,7 @@ We welcome various types of contributions:
 
 ## 📝 Coding Standards
 
-**See [CODING_STANDARDS.md](docs/CODING_STANDARDS.md) for comprehensive coding standards covering Python, TypeScript/React, code length guidelines, and best practices.**
+**See [coding_standards.md](docs/maintainers/coding_standards.md) for comprehensive coding standards covering Python, TypeScript/React, code length guidelines, and best practices.**
 
 ### Quick Reference
 

@@ -17,6 +17,7 @@ services:
       - "8501:8501"   # Streamlit (if used)
       - "6006:6006"   # TensorBoard
       - "2222:22"     # SSH access
+      - "5173:5173"   # Vite dev server
     # Uncomment for GPU support
     deploy:
       resources:

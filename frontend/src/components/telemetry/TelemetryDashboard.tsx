@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import type React from "react";
 import { getMetricsSummary, type MetricsSummary } from "../../api/metrics";
 
 /**
@@ -16,7 +17,7 @@ interface TelemetryDashboardProps {
 export function TelemetryDashboard({
   timeRangeHours = 1,
   refreshIntervalMs = 5000,
-}: TelemetryDashboardProps): JSX.Element {
+}: TelemetryDashboardProps): React.JSX.Element {
   const [summary, setSummary] = useState<MetricsSummary | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -309,7 +310,7 @@ function MetricCard({
   description,
   color = "#1976d2",
   warning,
-}: MetricCardProps): JSX.Element {
+}: MetricCardProps): React.JSX.Element {
   return (
     <div
       style={{

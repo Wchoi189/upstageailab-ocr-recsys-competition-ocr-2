@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import type React from "react";
 
 /**
  * Gallery image item
@@ -31,7 +32,7 @@ export function ImageGallery({
   columns = 3,
   gap = 16,
   onSelect,
-}: ImageGalleryProps): JSX.Element {
+}: ImageGalleryProps): React.JSX.Element {
   const [selectedIds, setSelectedIds] = useState<Set<string>>(new Set());
   const [loadedImages, setLoadedImages] = useState<Set<string>>(new Set());
   const observerRef = useRef<IntersectionObserver | null>(null);

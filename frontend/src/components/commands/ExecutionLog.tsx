@@ -4,6 +4,7 @@
  */
 
 import { useState } from "react";
+import type React from "react";
 
 export interface LogEntry {
   timestamp: Date;
@@ -16,7 +17,7 @@ export interface ExecutionLogProps {
   isRunning?: boolean;
 }
 
-export function ExecutionLog(props: ExecutionLogProps): JSX.Element {
+export function ExecutionLog(props: ExecutionLogProps): React.JSX.Element {
   const { logs, isRunning = false } = props;
   const [expanded, setExpanded] = useState(true);
 

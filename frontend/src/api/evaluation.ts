@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiGet, apiPost } from "./client";
 
 /**
  * Comparison preset descriptor
@@ -42,7 +42,7 @@ export interface GalleryRootResponse {
  * List available comparison presets
  */
 export async function listComparisonPresets(): Promise<ComparisonPreset[]> {
-  return apiClient<ComparisonPreset[]>("/api/evaluation/presets");
+  return apiGet<ComparisonPreset[]>("/evaluation/presets");
 }
 
 /**
@@ -51,15 +51,15 @@ export async function listComparisonPresets(): Promise<ComparisonPreset[]> {
 export async function queueComparison(
   request: ComparisonRequest,
 ): Promise<ComparisonResponse> {
-  return apiClient<ComparisonResponse>("/api/evaluation/compare", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
+  return apiPost<ComparisonRequest, ComparisonResponse>(
+    "/evaluation/compare",
+    request,
+  );
 }
 
 /**
  * Get gallery root directory
  */
 export async function getGalleryRoot(): Promise<GalleryRootResponse> {
-  return apiClient<GalleryRootResponse>("/api/evaluation/gallery-root");
+  return apiGet<GalleryRootResponse>("/evaluation/gallery-root");
 }

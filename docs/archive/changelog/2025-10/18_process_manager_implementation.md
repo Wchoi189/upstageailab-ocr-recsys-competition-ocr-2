@@ -26,7 +26,7 @@ Implemented a comprehensive process management system to prevent zombie processe
 - **Port Management**: Flexible port assignment with conflict detection
 - **Batch Operations**: `stop-all-ui` and `list-ui-processes` for comprehensive management
 
-#### **3. Comprehensive Documentation (`docs/process_management.md`)**
+#### **3. Comprehensive Documentation (`docs/quick_reference/process_management.md`)**
 - **Multiple Solution Approaches**: Process manager, tmux sessions, and nohup alternatives
 - **Best Practices**: Guidelines for preventing zombie processes in development workflows
 - **Troubleshooting Guide**: Common issues and resolution steps
@@ -150,7 +150,7 @@ uv run python scripts/process_manager.py stop inference --port 8504
 
 #### **New Files**
 - `scripts/process_manager.py` - Core process management functionality
-- `docs/process_management.md` - Comprehensive usage documentation
+- `docs/quick_reference/process_management.md` - Comprehensive usage documentation
 - `docs/ai_handbook/05_changelog/2025-10/18_process_manager_implementation.md` - This feature summary
 
 #### **Modified Files**

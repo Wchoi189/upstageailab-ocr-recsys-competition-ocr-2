@@ -1,7 +1,8 @@
 import { useState } from "react";
+import type React from "react";
 import { getCommandSchemas } from "../api/commands";
 
-export function TestApi(): JSX.Element {
+export function TestApi(): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<unknown | null>(null);

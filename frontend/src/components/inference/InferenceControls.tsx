@@ -1,3 +1,4 @@
+import type React from "react";
 import type { InferenceParams } from "./InferencePreviewCanvas";
 
 /**
@@ -16,7 +17,7 @@ interface InferenceControlsProps {
 export function InferenceControls({
   params,
   onChange,
-}: InferenceControlsProps): JSX.Element {
+}: InferenceControlsProps): React.JSX.Element {
   const handleSliderChange = (
     key: keyof InferenceParams,
     value: number,

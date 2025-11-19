@@ -1,4 +1,4 @@
-import { apiClient } from "./client";
+import { apiPost } from "./client";
 
 /**
  * Pipeline preview request
@@ -47,10 +47,10 @@ export interface PipelineFallbackResponse {
 export async function queuePreview(
   request: PipelinePreviewRequest,
 ): Promise<PipelinePreviewResponse> {
-  return apiClient<PipelinePreviewResponse>("/api/pipelines/preview", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
+  return apiPost<PipelinePreviewRequest, PipelinePreviewResponse>(
+    "/pipelines/preview",
+    request,
+  );
 }
 
 /**
@@ -59,10 +59,10 @@ export async function queuePreview(
 export async function queueFallback(
   request: PipelineFallbackRequest,
 ): Promise<PipelineFallbackResponse> {
-  return apiClient<PipelineFallbackResponse>("/api/pipelines/fallback", {
-    method: "POST",
-    body: JSON.stringify(request),
-  });
+  return apiPost<PipelineFallbackRequest, PipelineFallbackResponse>(
+    "/pipelines/fallback",
+    request,
+  );
 }
 
 /**

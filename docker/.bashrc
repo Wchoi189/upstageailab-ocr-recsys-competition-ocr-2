@@ -63,7 +63,9 @@ export PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
 # === UV Environment Management ===
 # UV is the primary package manager for this project
 export UV_LINK_MODE=copy
-export PATH="$HOME/.cargo/bin:$PATH"
+# Add UV to PATH (prioritize system install, then user installs)
+# UV installs to ~/.local/bin by default, but may be at /opt/uv/bin (system) or ~/.cargo/bin (fallback)
+export PATH="/opt/uv/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 # Auto-activate UV environment if .venv exists in current directory
 uv_auto_activate() {

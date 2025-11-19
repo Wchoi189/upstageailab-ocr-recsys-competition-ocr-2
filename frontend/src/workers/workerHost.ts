@@ -155,7 +155,7 @@ export class WorkerPool {
 
     // Log task started
     logWorkerLifecycleEvent("task_started", workerId, taskId, {
-      operation: task.operation,
+      operation: task.type,
       priority: queuedTask.priority,
     });
 
@@ -163,7 +163,7 @@ export class WorkerPool {
       cleanup();
       // Log task completed
       logWorkerLifecycleEvent("task_completed", workerId, taskId, {
-        operation: task.operation,
+        operation: task.type,
       });
       this._releaseWorker(worker);
       resolve(event.data);
@@ -173,7 +173,7 @@ export class WorkerPool {
       cleanup();
       // Log task failed
       logWorkerLifecycleEvent("task_failed", workerId, taskId, {
-        operation: task.operation,
+        operation: task.type,
         error: error.message,
       });
       this._releaseWorker(worker);
@@ -215,7 +215,7 @@ export class WorkerPool {
 
       // Log task queued
       logWorkerLifecycleEvent("task_queued", workerId, taskId, {
-        operation: task.operation,
+        operation: task.type,
         priority,
       });
 
@@ -225,7 +225,7 @@ export class WorkerPool {
           queuedTask.cancelled = true;
           // Log task cancelled
           logWorkerLifecycleEvent("task_cancelled", workerId, taskId, {
-            operation: task.operation,
+            operation: task.type,
           });
           reject(new Error("Task cancelled"));
         });

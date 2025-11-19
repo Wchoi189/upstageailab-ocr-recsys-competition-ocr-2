@@ -71,7 +71,8 @@ RUN touch /home/vscode/.ssh/authorized_keys && \
 # Install uv
 USER vscode
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/home/vscode/.cargo/bin:$PATH"
+# UV installs to ~/.local/bin by default, but also check /opt/uv/bin (system install) and ~/.cargo/bin (fallback)
+ENV PATH="/opt/uv/bin:/home/vscode/.local/bin:/home/vscode/.cargo/bin:$PATH"
 
 # Set up project directory
 USER root
@@ -90,6 +91,9 @@ COPY --chown=vscode:vscode . .
 
 # Copy .bashrc for enhanced shell experience
 COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
+
+# Normalize line endings in .bashrc (convert CRLF to LF if present)
+RUN sed -i 's/\r$//' /home/vscode/.bashrc
 
 # Expose ports
 EXPOSE 8000 8501 22
