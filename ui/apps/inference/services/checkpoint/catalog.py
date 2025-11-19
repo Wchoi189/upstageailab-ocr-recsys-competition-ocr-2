@@ -18,6 +18,8 @@ from pathlib import Path
 from time import time
 from typing import Any
 
+from ocr.utils.experiment_name import resolve_experiment_name
+
 from .cache import CatalogCache, get_global_cache
 from .config_resolver import load_config, resolve_config_path
 from .inference_engine import (
@@ -274,6 +276,10 @@ class CheckpointCatalogBuilder:
         # Load config
         config_path = resolve_config_path(checkpoint_path, self.config_filenames)
         config_data = load_config(config_path)
+        exp_name = resolve_experiment_name(
+            checkpoint_path,
+            config_sources=(config_data,),
+        )
 
         # Extract basic info from config
         architecture = "unknown"
@@ -339,9 +345,6 @@ class CheckpointCatalogBuilder:
         if epochs is None or epochs == 0:
             LOGGER.debug("Skipping invalid checkpoint: %s (epoch=%s)", checkpoint_path, epochs)
             return None
-
-        # Infer experiment name
-        exp_name = checkpoint_path.parent.parent.name
 
         # Try to get creation timestamp from file stats
         created_timestamp = self._get_file_timestamp(checkpoint_path)

@@ -21,6 +21,33 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
+from omegaconf import OmegaConf
+
+from ocr.utils.experiment_index import get_next_experiment_index
+
+
+_HYDRA_RESOLVERS_REGISTERED = False
+
+
+def _register_hydra_resolvers() -> None:
+    """Register global Hydra resolvers used across CLI entrypoints."""
+    global _HYDRA_RESOLVERS_REGISTERED
+
+    if _HYDRA_RESOLVERS_REGISTERED:
+        return
+
+    try:
+        OmegaConf.register_new_resolver("exp_index", lambda: get_next_experiment_index())
+    except ValueError as exc:
+        # Resolver may already be registered if multiple modules import this helper.
+        if "exp_index" not in str(exc):
+            raise
+    finally:
+        _HYDRA_RESOLVERS_REGISTERED = True
+
+
+_register_hydra_resolvers()
+
 
 @dataclass
 class OCRPathConfig:

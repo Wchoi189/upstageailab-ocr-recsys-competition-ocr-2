@@ -47,6 +47,8 @@ from typing import Any
 
 import yaml
 
+from ocr.utils.experiment_name import resolve_experiment_name
+
 from ..models.checkpoint import CheckpointInfo, CheckpointMetadata, DecoderSignature, HeadSignature
 from ..models.config import PathConfig
 from .checkpoint import CheckpointCatalogBuilder, CheckpointCatalogEntry
@@ -220,7 +222,11 @@ def _collect_basic_info(checkpoint_path: Path, options: CatalogOptions) -> Check
     info = CheckpointInfo(checkpoint_path=checkpoint_path)
     info.config_path = config_path
     info.display_name = checkpoint_path.stem
-    info.exp_name = _infer_experiment_name(checkpoint_path)
+    info.exp_name = resolve_experiment_name(
+        checkpoint_path,
+        metadata=raw_metadata,
+        config_sources=(config_data, hydra_config),
+    )
     info.epochs = _extract_epoch(raw_metadata, checkpoint_path.stem)
     info.created_timestamp = _extract_created_timestamp(raw_metadata, checkpoint_path)
     info.hmean = _extract_metric(raw_metadata, "val/hmean")
@@ -300,7 +306,11 @@ def _collect_metadata(checkpoint_path: Path, options: CatalogOptions) -> Checkpo
     metadata = CheckpointMetadata(checkpoint_path=checkpoint_path)
     metadata.config_path = config_path
     metadata.display_name = checkpoint_path.stem
-    metadata.exp_name = _infer_experiment_name(checkpoint_path)
+    metadata.exp_name = resolve_experiment_name(
+        checkpoint_path,
+        metadata=raw_metadata,
+        config_sources=(config_data, hydra_config),
+    )
     metadata.epochs = _extract_epoch(raw_metadata, checkpoint_path.stem)
     metadata.created_timestamp = _extract_created_timestamp(raw_metadata, checkpoint_path)
 
@@ -484,14 +494,6 @@ def _discover_project_root(checkpoint_path: Path) -> Path | None:
     for parent in checkpoint_path.parents:
         if (parent / "pyproject.toml").exists() or (parent / "setup.cfg").exists() or (parent / "setup.py").exists():
             return parent
-    return None
-
-
-def _infer_experiment_name(checkpoint_path: Path) -> str | None:
-    for parent in checkpoint_path.parents:
-        if parent.name == "checkpoints":
-            grandparent = parent.parent
-            return grandparent.name if grandparent.name else None
     return None
 
 
@@ -781,7 +783,11 @@ def _maybe_float(value: Any) -> float | None:
 
 
 def _infer_names_from_path(checkpoint_path: Path) -> tuple[str | None, str | None, str | None, str | None]:
-    exp_dir = checkpoint_path.parent.parent.name.lower() if len(checkpoint_path.parents) > 1 else ""
+    resolved_exp = resolve_experiment_name(checkpoint_path)
+    if isinstance(resolved_exp, str) and resolved_exp:
+        exp_dir = resolved_exp.lower()
+    else:
+        exp_dir = checkpoint_path.parent.parent.name.lower() if len(checkpoint_path.parents) > 1 else ""
     stem = checkpoint_path.stem.lower()
     path_str = f"{checkpoint_path.as_posix().lower()} {exp_dir} {stem}"
 

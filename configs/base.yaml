@@ -1,6 +1,6 @@
 hydra:
   run:
-    dir: 'outputs/${exp_name}'
+    dir: 'outputs/${exp_index:}'
 
 # Task name for hydra logging
 task_name: "train"

@@ -11,6 +11,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel, Field
 
 from ..utils.paths import PROJECT_ROOT
+from ocr.utils.experiment_name import resolve_experiment_name
 
 router = APIRouter()
 
@@ -97,7 +98,7 @@ def _discover_checkpoints(limit: int = 50) -> list[CheckpointSummary]:
         stat = path.stat()
         rel = path.relative_to(PROJECT_ROOT)
         display_name = path.stem
-        exp_name = path.parent.parent.name if path.parent.parent != OUTPUTS_ROOT else None
+        exp_name = resolve_experiment_name(path)
         checkpoints.append(
             CheckpointSummary(
                 display_name=display_name,

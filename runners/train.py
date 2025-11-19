@@ -31,13 +31,6 @@ from ocr.utils.path_utils import get_path_resolver, setup_project_paths
 
 setup_project_paths()
 
-# Register Hydra resolver for experiment index (must be before @hydra.main)
-from omegaconf import OmegaConf
-from ocr.utils.experiment_index import get_next_experiment_index
-
-# Register the experiment index resolver for use in Hydra configs
-OmegaConf.register_new_resolver("exp_index", lambda: get_next_experiment_index())
-
 from ocr.lightning_modules import get_pl_modules_by_cfg  # noqa: E402
 
 _shutdown_in_progress = False

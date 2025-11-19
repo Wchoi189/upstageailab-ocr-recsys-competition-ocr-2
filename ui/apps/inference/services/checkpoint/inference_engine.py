@@ -33,6 +33,8 @@ import logging
 from pathlib import Path
 from typing import Any
 
+from ocr.utils.experiment_name import resolve_experiment_name
+
 from .state_dict_models import (
     safe_get_shape,
 )
@@ -176,10 +178,11 @@ def infer_architecture_from_path(checkpoint_path: Path) -> str | None:
         Inferred architecture name, or None
     """
     path_str = checkpoint_path.as_posix().lower()
-    exp_name = checkpoint_path.parent.parent.name.lower()
+    exp_name = resolve_experiment_name(checkpoint_path)
+    exp_part = f" {exp_name.lower()}" if isinstance(exp_name, str) and exp_name else ""
     stem = checkpoint_path.stem.lower()
 
-    search_text = f"{path_str} {exp_name} {stem}"
+    search_text = f"{path_str}{exp_part} {stem}"
 
     # Architecture patterns in priority order
     for candidate in ("dbnetpp", "dbnet", "craft", "pan", "psenet"):

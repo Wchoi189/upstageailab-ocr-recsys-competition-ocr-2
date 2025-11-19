@@ -8,18 +8,11 @@ import streamlit as st
 
 from ui.utils.command import CommandBuilder, CommandExecutor, CommandValidator
 
+from ..services.submissions import find_latest_submission_json
+
 from ..models.command import CommandPageData
 from ..services.formatting import format_command_output
 from ..state import CommandType
-
-
-def find_latest_submission_json(exp_name: str) -> Path | None:
-    """Find the most recent submission JSON file for a given experiment."""
-    outputs_dir = Path("outputs") / exp_name / "submissions"
-    if not outputs_dir.exists():
-        return None
-    json_files = sorted(outputs_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-    return json_files[0] if json_files else None
 
 
 def render_execution_panel(

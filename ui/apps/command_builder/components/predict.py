@@ -15,6 +15,7 @@ from ..models.command import CommandPageData
 from ..state import CommandBuilderState, CommandType
 from .command_preview import render_command_preview
 from .execution import render_execution_panel
+from ..services.submissions import discover_submission_runs, find_latest_submission_json
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "command_builder_predict.yaml"
 
@@ -101,15 +102,6 @@ def render_predict_page(state: CommandBuilderState, command_builder: CommandBuil
     state.persist()
 
 
-def find_latest_submission_json(exp_name: str) -> Path | None:
-    """Find the most recent submission JSON file for a given experiment."""
-    outputs_dir = Path("outputs") / exp_name / "submissions"
-    if not outputs_dir.exists():
-        return None
-    json_files = sorted(outputs_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
-    return json_files[0] if json_files else None
-
-
 def render_submission_export_panel(page: CommandPageData, values: dict, json_file: Path | None = None) -> None:
     """Render the submission CSV export panel after successful prediction."""
     st.markdown("---")
@@ -117,25 +109,28 @@ def render_submission_export_panel(page: CommandPageData, values: dict, json_fil
 
     # Add experiment selector for outputs directory
     outputs_dir = Path("outputs")
-    if outputs_dir.exists():
-        exp_dirs = [d.name for d in outputs_dir.iterdir() if d.is_dir() and (d / "submissions").exists()]
-        exp_dirs.sort(reverse=True)  # Most recent first
-    else:
-        exp_dirs = []
+    submission_runs = discover_submission_runs(outputs_dir)
 
-    if exp_dirs:
-        selected_exp = st.selectbox(
+    if submission_runs:
+        run_option_map = {"": "Choose experiment..."}
+        run_options = [""]
+        for run in submission_runs:
+            option_key = run.run_dir.as_posix()
+            run_options.append(option_key)
+            label_exp = run.exp_name or "unknown"
+            run_option_map[option_key] = f"{run.run_dir.name} · {label_exp}"
+
+        selected_run = st.selectbox(
             "Select Experiment",
-            options=[""] + exp_dirs,
-            format_func=lambda x: "Choose experiment..." if x == "" else x,
+            options=run_options,
+            format_func=lambda value: run_option_map.get(value, value),
             help="Select an experiment to browse its submission files",
             key="export_experiment_selector",
         )
 
-        if selected_exp:
-            submissions_dir = outputs_dir / selected_exp / "submissions"
-            json_files = list(submissions_dir.glob("*.json"))
-            json_files.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        if selected_run:
+            run_info = next(run for run in submission_runs if run.run_dir.as_posix() == selected_run)
+            json_files = sorted(run_info.submissions_dir.glob("*.json"), key=lambda p: p.stat().st_mtime, reverse=True)
 
             if json_files:
                 json_options = [""] + [str(f) for f in json_files]
@@ -234,7 +229,7 @@ def render_submission_export_panel(page: CommandPageData, values: dict, json_fil
 
     # Show usage instructions
     with st.expander("ℹ️ How to use submission files"):
-        json_path_display = selected_json or "outputs/{exp_name}/submissions/{timestamp}.json"
+        json_path_display = selected_json or "outputs/<run_id>/submissions/{timestamp}.json"
         st.markdown(
             f"""
             **Submission Workflow:**
