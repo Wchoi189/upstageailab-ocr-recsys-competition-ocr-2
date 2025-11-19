@@ -5,7 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-11-17
+## [Unreleased] - 2025-11-19
+
+### Added - 2025-11-19
+
+- **Experiment name resolver** – Introduced `ocr.utils.experiment_name` helpers to derive semantic `exp_name` values from metadata, Hydra configs, and filesystem structure, ensuring consistent naming even with index-only run directories.
+- **Command Builder submissions** – Updated the prediction workflow to list actual run directories (`run-id · exp_name`), auto-select the latest submission JSON through the shared resolver, and browse per-run submission files without relying on `outputs/{exp_name}`.
+
+### Changed - 2025-11-19
+
+- **API checkpoint discovery** – Playground inference endpoints, catalog tooling, and wandb fallback now reuse the shared experiment-name resolver so UI clients always see the canonical experiment label regardless of output directory naming.
 
 ### Changed - 2025-11-17
 
