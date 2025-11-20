@@ -1,0 +1,132 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Session Snapshot Schema",
+  "description": "Schema for session snapshot files",
+  "type": "object",
+  "required": [
+    "session_id",
+    "started_at",
+    "ended_at",
+    "branch",
+    "phase",
+    "artifacts_created",
+    "context",
+    "summary"
+  ],
+  "properties": {
+    "session_id": {
+      "type": "string",
+      "description": "Unique session identifier"
+    },
+    "started_at": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when session started"
+    },
+    "ended_at": {
+      "type": ["string", "null"],
+      "format": "date-time",
+      "description": "ISO 8601 timestamp when session ended"
+    },
+    "branch": {
+      "type": ["string", "null"],
+      "description": "Git branch during session"
+    },
+    "phase": {
+      "type": ["string", "null"],
+      "description": "Project phase during session"
+    },
+    "artifacts_created": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of artifact paths created during session"
+    },
+    "artifacts_modified": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "List of artifact paths modified during session"
+    },
+    "context": {
+      "type": "object",
+      "description": "Session context and environment information",
+      "properties": {
+        "goals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Session goals"
+        },
+        "outcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Session outcomes"
+        },
+        "challenges": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Challenges encountered"
+        },
+        "decisions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "decision": {
+                "type": "string"
+              },
+              "rationale": {
+                "type": "string"
+              }
+            }
+          },
+          "description": "Key decisions made"
+        }
+      }
+    },
+    "summary": {
+      "type": "string",
+      "description": "Brief summary of the session"
+    },
+    "statistics": {
+      "type": "object",
+      "properties": {
+        "duration_minutes": {
+          "type": ["number", "null"],
+          "minimum": 0,
+          "description": "Session duration in minutes"
+        },
+        "artifacts_created_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of artifacts created"
+        },
+        "artifacts_modified_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of artifacts modified"
+        },
+        "files_changed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of files changed"
+        }
+      }
+    },
+    "related_sessions": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "IDs of related sessions"
+    }
+  }
+}
