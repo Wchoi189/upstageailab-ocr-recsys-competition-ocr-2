@@ -31,9 +31,18 @@ export function TestApi(): React.JSX.Element {
         onClick={handleTest}
         disabled={loading}
         style={{
-          padding: "0.5rem 1rem",
+          padding: "0.75rem 1.25rem",
           marginTop: "1rem",
           cursor: loading ? "wait" : "pointer",
+          border: "none",
+          borderRadius: "999px",
+          fontSize: "1rem",
+          fontWeight: 600,
+          color: "#ffffff",
+          backgroundColor: loading ? "#475569" : "#2563eb",
+          boxShadow: loading ? "none" : "0 10px 22px rgba(37, 99, 235, 0.35)",
+          opacity: loading ? 0.8 : 1,
+          transition: "background-color 0.2s ease, transform 0.2s ease",
         }}
       >
         {loading ? "Testing..." : "Test /api/commands/schemas"}

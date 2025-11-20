@@ -17,6 +17,9 @@ from pydantic import BaseModel, Field
 
 from ..utils.paths import PROJECT_ROOT
 from ocr.utils.experiment_name import resolve_experiment_name
+from ocr.utils.path_utils import get_path_resolver
+from ui.apps.inference.models.config import PathConfig
+from ui.apps.inference.services.checkpoint import CatalogOptions, build_lightweight_catalog
 
 # Import inference engine
 try:
@@ -30,8 +33,9 @@ LOGGER = logging.getLogger(__name__)
 router = APIRouter()
 
 MODES_CONFIG = PROJECT_ROOT / "configs" / "ui" / "modes" / "inference.yaml"
-OUTPUTS_ROOT = PROJECT_ROOT / "outputs"
-
+# Use path resolver for outputs directory (supports environment variable override)
+_resolver = get_path_resolver()
+OUTPUTS_ROOT = _resolver.config.output_dir
 
 class InferenceModeSummary(BaseModel):
     """Metadata describing available inference modes."""
@@ -100,29 +104,63 @@ def _load_mode_descriptors() -> list[_ModeDescriptor]:
     ]
 
 
+@lru_cache(maxsize=1)
+def _catalog_options() -> CatalogOptions:
+    """Create catalog options based on resolved project paths."""
+    path_config = PathConfig(outputs_dir=OUTPUTS_ROOT)
+    return CatalogOptions.from_paths(path_config)
+
+
 def _discover_checkpoints(limit: int = 50) -> list[CheckpointSummary]:
-    """Scan outputs directory for checkpoint files."""
+    """Discover checkpoints via Checkpoint Catalog V2."""
     if not OUTPUTS_ROOT.exists():
         return []
 
-    checkpoints: list[CheckpointSummary] = []
-    ckpt_paths = sorted(OUTPUTS_ROOT.rglob("*.ckpt"), reverse=True)
+    options = _catalog_options()
+    try:
+        catalog = build_lightweight_catalog(options)
+    except Exception as exc:  # noqa: BLE001
+        LOGGER.exception("Failed to build checkpoint catalog: %s", exc)
+        raise HTTPException(status_code=500, detail="Failed to build checkpoint catalog") from exc
 
-    for path in ckpt_paths[:limit]:
-        stat = path.stat()
-        rel = path.relative_to(PROJECT_ROOT)
-        display_name = path.stem
-        exp_name = resolve_experiment_name(path)
-        checkpoints.append(
-            CheckpointSummary(
-                display_name=display_name,
-                checkpoint_path=str(rel),
-                modified_at=datetime.fromtimestamp(stat.st_mtime),
-                size_mb=round(stat.st_size / (1024 * 1024), 2),
-                exp_name=exp_name,
+    checkpoint_rows: list[tuple[float, CheckpointSummary]] = []
+    for entry in catalog:
+        try:
+            stat = entry.checkpoint_path.stat()
+            modified_ts = stat.st_mtime
+            modified_at = datetime.fromtimestamp(modified_ts)
+            size_mb = round(stat.st_size / (1024 * 1024), 2)
+        except (OSError, ValueError):
+            modified_ts = 0.0
+            modified_at = datetime.utcnow()
+            size_mb = 0.0
+
+        rel_path = entry.checkpoint_path
+        if entry.checkpoint_path.is_absolute():
+            try:
+                rel_path = entry.checkpoint_path.relative_to(PROJECT_ROOT)
+            except ValueError:
+                pass
+
+        exp_name = entry.exp_name or resolve_experiment_name(entry.checkpoint_path)
+
+        checkpoint_rows.append(
+            (
+                modified_ts,
+                CheckpointSummary(
+                    display_name=entry.display_name or entry.checkpoint_path.stem,
+                    checkpoint_path=str(rel_path),
+                    modified_at=modified_at,
+                    size_mb=size_mb,
+                    exp_name=exp_name,
+                    architecture=getattr(entry, "architecture", None),
+                    backbone=getattr(entry, "backbone", None),
+                ),
             )
         )
-    return checkpoints
+
+    checkpoint_rows.sort(key=lambda item: item[0], reverse=True)
+    return [summary for _, summary in checkpoint_rows[:limit]]
 
 
 @router.get("/modes", response_model=list[InferenceModeSummary])

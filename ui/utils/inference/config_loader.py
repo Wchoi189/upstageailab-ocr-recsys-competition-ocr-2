@@ -8,8 +8,9 @@ from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
+import os
 
-from .dependencies import OCR_MODULES_AVAILABLE, DictConfig, yaml
+from .dependencies import OCR_MODULES_AVAILABLE, PROJECT_ROOT, DictConfig, yaml
 
 LOGGER = logging.getLogger(__name__)
 
@@ -106,16 +107,30 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
         try:
             from hydra import compose, initialize
             from hydra.core.global_hydra import GlobalHydra
+            try:
+                from hydra import initialize_config_dir
+            except ImportError:  # pragma: no cover - hydra<1.2 fallback
+                initialize_config_dir = None  # type: ignore[assignment]
 
             # Use Hydra to resolve the config with defaults
             GlobalHydra.instance().clear()
-            config_dir = path.parent
-            config_name = path.stem
 
-            with initialize(config_path=str(config_dir), version_base=None):
-                resolved_cfg = compose(config_name=config_name)
-                config_dict = resolved_cfg.to_container() if hasattr(resolved_cfg, "to_container") else dict(resolved_cfg)
-                LOGGER.info("Resolved Hydra config with defaults: %s", path)
+            # For Hydra initialization, we need the config directory (usually PROJECT_ROOT/configs)
+            # If the config file is in PROJECT_ROOT/configs, use that. Otherwise, use the file's parent.
+            path_resolved = Path(path).resolve()
+            config_dir, config_name = _determine_hydra_location(path_resolved)
+            job_name = "inference_config_loader"
+
+            if initialize_config_dir is not None:
+                with initialize_config_dir(config_dir=str(config_dir), job_name=job_name, version_base=None):
+                    resolved_cfg = compose(config_name=config_name)
+            else:  # pragma: no cover - legacy Hydra path
+                relative_config_path = _compute_relative_hydra_path(config_dir)
+                with initialize(config_path=relative_config_path, job_name=job_name, version_base=None):
+                    resolved_cfg = compose(config_name=config_name)
+
+            config_dict = resolved_cfg.to_container() if hasattr(resolved_cfg, "to_container") else dict(resolved_cfg)
+            LOGGER.info("Resolved Hydra config with defaults: %s", path)
 
         except Exception as exc:  # noqa: BLE001
             LOGGER.warning("Failed to resolve Hydra config %s, using raw config: %s", path, exc)
@@ -218,3 +233,35 @@ def _as_sequence(value: Any) -> Sequence[Any]:
     if hasattr(value, "__iter__") and not isinstance(value, str | bytes):
         return list(value)
     return [value]
+
+
+def _determine_hydra_location(config_file: Path) -> tuple[Path, str]:
+    """Return the Hydra search directory and config name for the given config file."""
+    config_file = config_file.resolve()
+    project_configs_dir = (PROJECT_ROOT / "configs").resolve()
+
+    if project_configs_dir in config_file.parents:
+        relative_path = config_file.relative_to(project_configs_dir)
+        config_dir = project_configs_dir
+        config_name = relative_path.with_suffix("")
+    else:
+        config_dir = config_file.parent
+        config_name = config_file.with_suffix("").name
+
+    return config_dir, _normalize_hydra_config_name(config_name)
+
+
+def _normalize_hydra_config_name(config_name: str | Path) -> str:
+    """Ensure Hydra config names always use forward slashes."""
+    path_obj = Path(config_name)
+    return path_obj.as_posix()
+
+
+def _compute_relative_hydra_path(target_dir: Path) -> str:
+    """Compute a relative path acceptable for hydra.initialize()."""
+    try:
+        relative = target_dir.relative_to(PROJECT_ROOT)
+    except ValueError:
+        relative = Path(os.path.relpath(target_dir, Path.cwd()))
+    normalized = relative.as_posix()
+    return normalized or "."
