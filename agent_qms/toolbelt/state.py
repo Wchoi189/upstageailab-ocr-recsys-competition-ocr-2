@@ -462,6 +462,177 @@ class StateManager:
         """
         return [artifact.copy() for artifact in self.state['artifacts']['index']]
 
+    # Artifact Relationship Management
+
+    def add_artifact_dependency(self, artifact_path: str, dependency_path: str) -> None:
+        """
+        Add a dependency relationship between artifacts.
+
+        Args:
+            artifact_path: Path to the artifact that depends on another
+            dependency_path: Path to the dependency artifact
+
+        Raises:
+            StateError: If either artifact doesn't exist or circular dependency detected
+        """
+        # Verify both artifacts exist
+        if not self.get_artifact(artifact_path):
+            raise StateError(f"Artifact not found: {artifact_path}")
+        if not self.get_artifact(dependency_path):
+            raise StateError(f"Dependency artifact not found: {dependency_path}")
+
+        # Check for circular dependencies
+        if self._would_create_circular_dependency(artifact_path, dependency_path):
+            raise StateError(
+                f"Adding dependency would create circular dependency: "
+                f"{artifact_path} -> {dependency_path}"
+            )
+
+        # Add dependency
+        if artifact_path not in self.state['relationships']['artifact_dependencies']:
+            self.state['relationships']['artifact_dependencies'][artifact_path] = []
+
+        if dependency_path not in self.state['relationships']['artifact_dependencies'][artifact_path]:
+            self.state['relationships']['artifact_dependencies'][artifact_path].append(dependency_path)
+            self._save_state()
+
+    def remove_artifact_dependency(self, artifact_path: str, dependency_path: str) -> None:
+        """
+        Remove a dependency relationship between artifacts.
+
+        Args:
+            artifact_path: Path to the artifact
+            dependency_path: Path to the dependency to remove
+        """
+        if artifact_path in self.state['relationships']['artifact_dependencies']:
+            dependencies = self.state['relationships']['artifact_dependencies'][artifact_path]
+            if dependency_path in dependencies:
+                dependencies.remove(dependency_path)
+                # Clean up empty dependency list
+                if not dependencies:
+                    del self.state['relationships']['artifact_dependencies'][artifact_path]
+                self._save_state()
+
+    def get_artifact_dependencies(self, artifact_path: str) -> List[str]:
+        """
+        Get all dependencies for an artifact.
+
+        Args:
+            artifact_path: Path to the artifact
+
+        Returns:
+            List of dependency artifact paths
+        """
+        return self.state['relationships']['artifact_dependencies'].get(artifact_path, []).copy()
+
+    def get_artifacts_depending_on(self, dependency_path: str) -> List[str]:
+        """
+        Get all artifacts that depend on a given artifact (reverse lookup).
+
+        Args:
+            dependency_path: Path to the dependency artifact
+
+        Returns:
+            List of artifact paths that depend on this artifact
+        """
+        depending_artifacts = []
+
+        for artifact_path, deps in self.state['relationships']['artifact_dependencies'].items():
+            if dependency_path in deps:
+                depending_artifacts.append(artifact_path)
+
+        return depending_artifacts
+
+    def get_dependency_tree(self, artifact_path: str, max_depth: int = 10) -> Dict[str, Any]:
+        """
+        Get the full dependency tree for an artifact.
+
+        Args:
+            artifact_path: Path to the artifact
+            max_depth: Maximum depth to traverse (prevents infinite loops)
+
+        Returns:
+            Dictionary representing the dependency tree
+        """
+        def build_tree(path: str, depth: int = 0) -> Dict[str, Any]:
+            if depth >= max_depth:
+                return {"path": path, "dependencies": [], "max_depth_reached": True}
+
+            dependencies = self.get_artifact_dependencies(path)
+            return {
+                "path": path,
+                "dependencies": [build_tree(dep, depth + 1) for dep in dependencies],
+                "max_depth_reached": False
+            }
+
+        return build_tree(artifact_path)
+
+    def _would_create_circular_dependency(self, artifact_path: str, new_dependency: str) -> bool:
+        """
+        Check if adding a dependency would create a circular dependency.
+
+        Args:
+            artifact_path: Path to the artifact
+            new_dependency: Path to the potential new dependency
+
+        Returns:
+            True if circular dependency would be created
+        """
+        # If new_dependency depends on artifact_path (directly or indirectly),
+        # adding artifact_path -> new_dependency would create a cycle
+
+        visited = set()
+
+        def has_path_to(from_path: str, to_path: str) -> bool:
+            if from_path == to_path:
+                return True
+            if from_path in visited:
+                return False
+
+            visited.add(from_path)
+
+            dependencies = self.get_artifact_dependencies(from_path)
+            for dep in dependencies:
+                if has_path_to(dep, to_path):
+                    return True
+
+            return False
+
+        return has_path_to(new_dependency, artifact_path)
+
+    def propagate_status_update(self, artifact_path: str, new_status: str) -> List[str]:
+        """
+        Update an artifact's status and optionally propagate to dependent artifacts.
+
+        Args:
+            artifact_path: Path to the artifact
+            new_status: New status to apply
+
+        Returns:
+            List of artifact paths that were updated
+
+        Note:
+            This is a basic implementation. Status propagation rules can be customized
+            based on specific requirements (e.g., deprecating an artifact might deprecate
+            all artifacts that depend on it).
+        """
+        updated = []
+
+        # Update the artifact itself
+        self.update_artifact_status(artifact_path, new_status)
+        updated.append(artifact_path)
+
+        # For now, only propagate "deprecated" status to dependent artifacts
+        if new_status == "deprecated":
+            depending_artifacts = self.get_artifacts_depending_on(artifact_path)
+            for dep_artifact in depending_artifacts:
+                current_artifact = self.get_artifact(dep_artifact)
+                if current_artifact and current_artifact['status'] != "deprecated":
+                    self.update_artifact_status(dep_artifact, "deprecated")
+                    updated.append(dep_artifact)
+
+        return updated
+
     def get_statistics(self) -> Dict[str, Any]:
         """
         Get state statistics.

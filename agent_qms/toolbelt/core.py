@@ -15,10 +15,28 @@ class ValidationError(Exception):
 
 
 class AgentQMSToolbelt:
-    def __init__(self, manifest_path="agent_qms/q-manifest.yaml"):
+    def __init__(self, manifest_path="agent_qms/q-manifest.yaml", enable_state_tracking=True):
         self.root_path = Path(manifest_path).parent
         with open(manifest_path, 'r') as f:
             self.manifest = yaml.safe_load(f)
+
+        # Initialize state tracking if enabled
+        self.state_manager = None
+        self.session_manager = None
+        if enable_state_tracking:
+            try:
+                from .state import StateManager
+                from .session import SessionManager
+
+                config_path = self.root_path.parent / ".agentqms" / "config.yaml"
+                if config_path.exists():
+                    self.state_manager = StateManager(config_path=str(config_path))
+                    self.session_manager = SessionManager(self.state_manager)
+            except Exception as e:
+                # If state tracking setup fails, continue without it
+                print(f"Warning: State tracking disabled: {e}")
+                self.state_manager = None
+                self.session_manager = None
 
     def _get_git_branch(self) -> str:
         """Get the current git branch name."""
@@ -234,6 +252,29 @@ class AgentQMSToolbelt:
                 f"Created artifact failed validation: {e}\n"
                 f"File has been removed."
             )
+
+        # Track artifact in state if state tracking is enabled
+        if self.state_manager:
+            try:
+                relative_path = str(output_path.relative_to(self.root_path.parent))
+                self.state_manager.add_artifact(
+                    artifact_path=relative_path,
+                    artifact_type=artifact_type,
+                    status=frontmatter.get('status', 'draft'),
+                    metadata={
+                        "title": title,
+                        "author": author,
+                        "tags": tags,
+                        "branch": branch_name
+                    }
+                )
+
+                # Track artifact creation in active session
+                if self.session_manager:
+                    self.session_manager.track_artifact_creation(relative_path)
+            except Exception as e:
+                # Don't fail artifact creation if state tracking fails
+                print(f"Warning: Failed to track artifact in state: {e}")
 
         return str(output_path)
 

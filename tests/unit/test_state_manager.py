@@ -378,3 +378,149 @@ class TestStateManagerBackupAndRecovery:
         # Check that backups were created
         backups = list(backup_dir.glob("state_backup_*.json"))
         assert len(backups) > 0
+
+
+class TestArtifactRelationships:
+    """Tests for artifact relationship management."""
+
+    def test_add_artifact_dependency(self, state_manager):
+        """Test adding a dependency between artifacts."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+
+        deps = state_manager.get_artifact_dependencies("artifacts/plan2.md")
+        assert "artifacts/plan1.md" in deps
+
+    def test_add_dependency_nonexistent_artifact(self, state_manager):
+        """Test adding dependency with non-existent artifact fails."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+
+        with pytest.raises(StateError, match="Artifact not found"):
+            state_manager.add_artifact_dependency("nonexistent.md", "artifacts/plan1.md")
+
+    def test_add_dependency_nonexistent_dependency(self, state_manager):
+        """Test adding dependency to non-existent artifact fails."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+
+        with pytest.raises(StateError, match="Dependency artifact not found"):
+            state_manager.add_artifact_dependency("artifacts/plan1.md", "nonexistent.md")
+
+    def test_circular_dependency_detection(self, state_manager):
+        """Test that circular dependencies are detected."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+
+        # Add plan2 -> plan1
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+
+        # Try to add plan1 -> plan2 (would create cycle)
+        with pytest.raises(StateError, match="circular dependency"):
+            state_manager.add_artifact_dependency("artifacts/plan1.md", "artifacts/plan2.md")
+
+    def test_circular_dependency_detection_indirect(self, state_manager):
+        """Test that indirect circular dependencies are detected."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan3.md", "plan", "draft")
+
+        # Add plan3 -> plan2 -> plan1
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+        state_manager.add_artifact_dependency("artifacts/plan3.md", "artifacts/plan2.md")
+
+        # Try to add plan1 -> plan3 (would create cycle)
+        with pytest.raises(StateError, match="circular dependency"):
+            state_manager.add_artifact_dependency("artifacts/plan1.md", "artifacts/plan3.md")
+
+    def test_remove_artifact_dependency(self, state_manager):
+        """Test removing a dependency."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+        state_manager.remove_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+
+        deps = state_manager.get_artifact_dependencies("artifacts/plan2.md")
+        assert "artifacts/plan1.md" not in deps
+
+    def test_get_artifacts_depending_on(self, state_manager):
+        """Test reverse lookup of dependent artifacts."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan3.md", "plan", "draft")
+
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+        state_manager.add_artifact_dependency("artifacts/plan3.md", "artifacts/plan1.md")
+
+        depending = state_manager.get_artifacts_depending_on("artifacts/plan1.md")
+        assert len(depending) == 2
+        assert "artifacts/plan2.md" in depending
+        assert "artifacts/plan3.md" in depending
+
+    def test_get_dependency_tree(self, state_manager):
+        """Test getting full dependency tree."""
+        # Create chain: plan3 -> plan2 -> plan1
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan3.md", "plan", "draft")
+
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+        state_manager.add_artifact_dependency("artifacts/plan3.md", "artifacts/plan2.md")
+
+        tree = state_manager.get_dependency_tree("artifacts/plan3.md")
+
+        assert tree['path'] == "artifacts/plan3.md"
+        assert len(tree['dependencies']) == 1
+        assert tree['dependencies'][0]['path'] == "artifacts/plan2.md"
+        assert tree['dependencies'][0]['dependencies'][0]['path'] == "artifacts/plan1.md"
+
+    def test_propagate_status_update_deprecated(self, state_manager):
+        """Test status propagation for deprecated status."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "validated")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "validated")
+        state_manager.add_artifact("artifacts/plan3.md", "plan", "validated")
+
+        # plan2 and plan3 depend on plan1
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+        state_manager.add_artifact_dependency("artifacts/plan3.md", "artifacts/plan1.md")
+
+        # Deprecate plan1 - should propagate to plan2 and plan3
+        updated = state_manager.propagate_status_update("artifacts/plan1.md", "deprecated")
+
+        assert len(updated) == 3
+        assert "artifacts/plan1.md" in updated
+        assert "artifacts/plan2.md" in updated
+        assert "artifacts/plan3.md" in updated
+
+        # Verify all are deprecated
+        assert state_manager.get_artifact("artifacts/plan1.md")['status'] == "deprecated"
+        assert state_manager.get_artifact("artifacts/plan2.md")['status'] == "deprecated"
+        assert state_manager.get_artifact("artifacts/plan3.md")['status'] == "deprecated"
+
+    def test_propagate_status_update_no_propagation(self, state_manager):
+        """Test that non-deprecated status updates don't propagate."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+
+        # Update to validated - should not propagate
+        updated = state_manager.propagate_status_update("artifacts/plan1.md", "validated")
+
+        assert len(updated) == 1
+        assert updated[0] == "artifacts/plan1.md"
+
+        # plan2 should still be draft
+        assert state_manager.get_artifact("artifacts/plan2.md")['status'] == "draft"
+
+    def test_no_duplicate_dependencies(self, state_manager):
+        """Test that adding same dependency twice doesn't create duplicates."""
+        state_manager.add_artifact("artifacts/plan1.md", "plan", "draft")
+        state_manager.add_artifact("artifacts/plan2.md", "plan", "draft")
+
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+        state_manager.add_artifact_dependency("artifacts/plan2.md", "artifacts/plan1.md")
+
+        deps = state_manager.get_artifact_dependencies("artifacts/plan2.md")
+        assert deps.count("artifacts/plan1.md") == 1
