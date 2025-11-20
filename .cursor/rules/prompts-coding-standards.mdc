@@ -1,0 +1,43 @@
+# AI Agent Instructions - Coding Standards
+
+## 🚨 READ FIRST: Complete Standards
+→ [`docs/maintainers/coding_standards.md`](../../docs/maintainers/coding_standards.md)
+
+## ⚠️ CRITICAL: Type Safety Required
+
+**Python**:
+- ✅ Type hints REQUIRED for all function signatures
+- ✅ Use `from __future__ import annotations`
+- ✅ Use `dict[str, Any]` not `Dict[str, Any]`
+
+**TypeScript**:
+- ✅ Explicit return types REQUIRED
+- ✅ No `any` - use `unknown` for truly unknown types
+
+## ⚠️ CRITICAL: Path Management
+
+**✅ DO**: Use centralized path utilities
+```python
+from ocr.utils.path_utils import PROJECT_ROOT, get_path_resolver
+```
+
+**❌ DON'T**: Calculate paths from `__file__`
+```python
+# ❌ WRONG - brittle, breaks if file moved
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+```
+
+## 📏 Code Length Limits
+
+**Python**: Line 140 | Function 50/100 | File 500/1000
+**TypeScript**: Line 100 | Function 40/80 | File 300/500
+
+## 🎨 Formatting
+
+**Python**: `uv run ruff format .` + `uv run ruff check .`
+**TypeScript**: `npm run format` + `npm run lint`
+
+## 📝 Naming Conventions
+
+**Python**: `snake_case` functions, `PascalCase` classes
+**TypeScript**: `camelCase` functions, `PascalCase` components/types
