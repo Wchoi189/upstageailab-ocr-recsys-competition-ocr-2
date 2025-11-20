@@ -14,6 +14,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
 from ..utils.paths import PROJECT_ROOT
+from ocr.utils.path_utils import get_path_resolver
 
 # Import background removal
 try:
@@ -210,7 +211,9 @@ def queue_fallback(request: PipelineFallbackRequest) -> PipelineFallbackResponse
         raise HTTPException(status_code=500, detail=f"Background removal failed: {str(e)}")
 
     # Create output directory
-    output_dir = PROJECT_ROOT / "outputs" / "playground" / request.pipeline_id
+    # Use path resolver for outputs directory (supports environment variable override)
+    resolver = get_path_resolver()
+    output_dir = resolver.config.output_dir / "playground" / request.pipeline_id
     output_dir.mkdir(parents=True, exist_ok=True)
 
     # Save result

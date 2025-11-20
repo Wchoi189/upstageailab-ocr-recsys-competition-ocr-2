@@ -1,22 +1,17 @@
 "use client";
 
 import {
-  FormControl,
-  FormLabel,
-  FormHelperText,
+  Field,
   Input,
   NumberInput,
-  NumberInputField,
   Select,
   Switch,
   Text,
   VStack,
   Box,
   Slider,
-  SliderTrack,
-  SliderFilledTrack,
-  SliderThumb,
   Tooltip,
+  createListCollection,
 } from "@chakra-ui/react";
 import { useEffect, useMemo } from "react";
 import type React from "react";
@@ -113,9 +108,9 @@ function Wrapper({
   tooltip?: string;
 }): React.JSX.Element {
   return (
-    <FormControl>
+    <Field.Root invalid={!!error}>
       <Box display="flex" alignItems="center" gap={2}>
-        <FormLabel m={0}>{element.label}</FormLabel>
+        <Field.Label>{element.label}</Field.Label>
         {tooltip && (
           <Text fontSize="xs" color="text.muted">
             {tooltip}
@@ -124,14 +119,12 @@ function Wrapper({
       </Box>
       {children}
       {element.help && (
-        <FormHelperText color="text.muted">{element.help}</FormHelperText>
+        <Field.HelperText color="text.muted">{element.help}</Field.HelperText>
       )}
       {error && (
-        <Text color="red.500" fontSize="sm" mt={1}>
-          {error}
-        </Text>
+        <Field.ErrorText>{error}</Field.ErrorText>
       )}
-    </FormControl>
+    </Field.Root>
   );
 }
 
@@ -139,7 +132,7 @@ function TextInputField(props: FieldRendererProps & { tooltip?: string }): React
   const { element, value, onChange, error, tooltip } = props;
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
-      <Input value={(value as string) ?? ""} onChange={(event) => onChange(event.target.value)} />
+      <Input value={(value as string) ?? ""} onChange={(event: React.ChangeEvent<HTMLInputElement>) => onChange(event.target.value)} />
     </Wrapper>
   );
 }
@@ -148,15 +141,15 @@ function NumberField(props: FieldRendererProps & { tooltip?: string }): React.JS
   const { element, value, onChange, error, tooltip } = props;
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
-      <NumberInput
-        value={Number(value ?? element.default ?? 0)}
+      <NumberInput.Root
+        value={String(value ?? element.default ?? 0)}
         min={element.min}
         max={element.max}
         step={element.step}
-        onChange={(val) => onChange(Number(val))}
+        onValueChange={(e: { value: string; valueAsNumber: number }) => onChange(Number(e.valueAsNumber || e.value))}
       >
-        <NumberInputField />
-      </NumberInput>
+        <NumberInput.Input />
+      </NumberInput.Root>
     </Wrapper>
   );
 }
@@ -165,25 +158,36 @@ function CheckboxField(props: FieldRendererProps & { tooltip?: string }): React.
   const { element, value, onChange, error, tooltip } = props;
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
-      <Switch isChecked={Boolean(value ?? element.default)} onChange={(event) => onChange(event.target.checked)} />
+      <Switch.Root checked={Boolean(value ?? element.default)} onCheckedChange={(details: { checked: boolean }) => onChange(details.checked)}>
+        <Switch.Thumb />
+      </Switch.Root>
     </Wrapper>
   );
 }
 
 function SelectField(props: FieldRendererProps & { tooltip?: string }): React.JSX.Element {
   const { element, value, onChange, error, tooltip } = props;
+  const selectedValue = (value as string) ?? (element.default as string) ?? "";
+  const options = element.options ?? [];
+  const collection = useMemo(() => createListCollection({ items: options }), [options]);
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
-      <Select
-        value={(value as string) ?? (element.default as string) ?? ""}
-        onChange={(event) => onChange(event.target.value)}
+      <Select.Root
+        collection={collection}
+        value={[selectedValue]}
+        onValueChange={(details: { value: string[] }) => onChange(details.value[0])}
       >
-        {(element.options ?? []).map((option) => (
-          <option key={option} value={option}>
-            {option}
-          </option>
-        ))}
-      </Select>
+        <Select.Trigger>
+          <Select.ValueText placeholder="Select an option" />
+        </Select.Trigger>
+        <Select.Content>
+          {collection.items.map((item) => (
+            <Select.Item key={item} item={item}>
+              <Select.ItemText>{item}</Select.ItemText>
+            </Select.Item>
+          ))}
+        </Select.Content>
+      </Select.Root>
     </Wrapper>
   );
 }
@@ -196,20 +200,23 @@ function SliderField(props: FieldRendererProps & { tooltip?: string }): React.JS
 
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
-      <Tooltip label={sliderValue} placement="top" hasArrow>
-        <Slider
-          value={sliderValue}
-          min={element.min}
-          max={element.max}
-          step={element.step}
-          onChange={(val) => onChange(val)}
-        >
-          <SliderTrack>
-            <SliderFilledTrack />
-          </SliderTrack>
-          <SliderThumb />
-        </Slider>
-      </Tooltip>
+      <Tooltip.Root content={String(sliderValue)} positioning={{ placement: "top" }}>
+        <Tooltip.Trigger>
+          <Slider.Root
+            value={[sliderValue]}
+            min={element.min}
+            max={element.max}
+            step={element.step}
+            onValueChange={(e: { value: number[] }) => onChange(e.value[0])}
+          >
+            <Slider.Track>
+              <Slider.Range />
+            </Slider.Track>
+            <Slider.Thumb index={0} />
+          </Slider.Root>
+        </Tooltip.Trigger>
+        <Tooltip.Content>{String(sliderValue)}</Tooltip.Content>
+      </Tooltip.Root>
     </Wrapper>
   );
 }

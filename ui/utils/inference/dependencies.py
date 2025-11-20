@@ -6,9 +6,12 @@ import logging
 import sys
 from pathlib import Path
 
+# Import PROJECT_ROOT from central path utility (stable, works from any location)
+from ocr.utils.path_utils import PROJECT_ROOT
+
 LOGGER = logging.getLogger(__name__)
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
+# Ensure project root is in sys.path (for imports)
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(str(PROJECT_ROOT))
 

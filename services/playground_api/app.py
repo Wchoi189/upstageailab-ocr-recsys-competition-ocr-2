@@ -2,10 +2,16 @@
 
 from __future__ import annotations
 
+import logging
+
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from ocr.utils.path_utils import setup_project_paths
+
 from .routers import command_builder, evaluation, inference, metrics, pipeline
+
+LOGGER = logging.getLogger(__name__)
 
 
 def create_app() -> FastAPI:
@@ -33,6 +39,33 @@ def create_app() -> FastAPI:
     app.include_router(pipeline.router, prefix="/api/pipelines", tags=["pipelines"])
     app.include_router(evaluation.router, prefix="/api/evaluation", tags=["evaluation"])
     app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
+
+    @app.on_event("startup")
+    def setup_paths_on_startup() -> None:
+        """Initialize paths from environment variables on FastAPI startup.
+
+        This ensures that path configuration is consistent across all modules
+        and supports environment variable overrides for deployment scenarios.
+        """
+        resolver = setup_project_paths()  # Reads OCR_* env vars if set
+
+        # Log path configuration for debugging
+        LOGGER.info("=== Path Configuration ===")
+        LOGGER.info(f"Project root: {resolver.config.project_root}")
+        LOGGER.info(f"Config directory: {resolver.config.config_dir}")
+        LOGGER.info(f"Output directory: {resolver.config.output_dir}")
+        LOGGER.info(f"Data directory: {resolver.config.data_dir}")
+
+        # Check if environment variables were used
+        import os
+        env_vars_used = [
+            name for name in os.environ.keys()
+            if name.startswith("OCR_") and name != "OCR_PROJECT_ROOT"  # OCR_PROJECT_ROOT is always checked
+        ]
+        if env_vars_used:
+            LOGGER.info(f"Using environment variables: {', '.join(sorted(env_vars_used))}")
+        else:
+            LOGGER.info("Using auto-detected paths (no environment variables set)")
 
     return app
 

@@ -119,9 +119,43 @@ import numpy as np
 from fastapi import APIRouter
 from pydantic import BaseModel
 
-# Local
-from services.playground_api.utils.paths import PROJECT_ROOT
+# Local - Path utilities (import from central utility)
+from ocr.utils.path_utils import PROJECT_ROOT  # ✅ Preferred: stable, works from any location
+# OR
+from services.playground_api.utils.paths import PROJECT_ROOT  # ✅ Also valid (re-exports from ocr.utils.path_utils)
 ```
+
+### Path Management
+
+**CRITICAL**: Use centralized path utilities to avoid brittle path calculations.
+
+**✅ DO**:
+```python
+# Import PROJECT_ROOT from central utility (stable, works from any location)
+from ocr.utils.path_utils import PROJECT_ROOT
+
+# Use path resolver for configurable paths
+from ocr.utils.path_utils import get_path_resolver
+
+resolver = get_path_resolver()
+output_dir = resolver.config.output_dir
+config_dir = resolver.config.config_dir
+```
+
+**❌ DON'T**:
+```python
+# ❌ Brittle - breaks if file moved
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+
+# ❌ Hardcoded - breaks in different environments
+output_dir = Path("outputs")
+config_dir = PROJECT_ROOT / "configs"
+```
+
+**Environment Variables**:
+- Paths support environment variable overrides (`OCR_PROJECT_ROOT`, `OCR_OUTPUT_DIR`, etc.)
+- See `docs/maintainers/environment-variables.md` for complete list
+- FastAPI and Streamlit apps automatically read env vars on startup
 
 ### Error Handling
 

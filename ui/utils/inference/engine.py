@@ -23,7 +23,8 @@ from ocr.utils.orientation import normalize_pil_image, orientation_requires_rota
 from ocr.utils.orientation_constants import ORIENTATION_INVERSE_INT
 
 from .config_loader import ModelConfigBundle, PostprocessSettings, load_model_config, resolve_config_path
-from .dependencies import OCR_MODULES_AVAILABLE, torch
+from .dependencies import OCR_MODULES_AVAILABLE, PROJECT_ROOT, torch
+from ocr.utils.path_utils import get_path_resolver
 from .model_loader import instantiate_model, load_checkpoint, load_state_dict
 from .postprocess import decode_polygons_with_head, fallback_postprocess
 from .preprocess import build_transform, preprocess_image
@@ -99,7 +100,9 @@ class InferenceEngine:
             return False
 
         # Include configs directory in search paths for config files
-        search_dirs = (Path("configs"),)
+        # Use path resolver for config directory (supports environment variable override)
+        resolver = get_path_resolver()
+        search_dirs = (resolver.config.config_dir,)
         resolved_config = resolve_config_path(checkpoint_path, config_path, search_dirs)
         if resolved_config is None:
             LOGGER.error("Could not find a valid config file for checkpoint: %s", checkpoint_path)

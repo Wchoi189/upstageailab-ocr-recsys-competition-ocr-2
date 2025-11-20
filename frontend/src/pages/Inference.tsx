@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import type React from "react";
 import { CheckpointPicker } from "../components/inference/CheckpointPicker";
 import { InferencePreviewCanvas } from "../components/inference/InferencePreviewCanvas";
@@ -44,6 +44,21 @@ export function Inference(): React.JSX.Element {
       showToast("Image uploaded successfully", "success");
     }
   };
+
+  // Memoize callbacks to prevent infinite loops in child component
+  const handleInferenceError = useCallback(
+    (message: string) => {
+      showToast(message, "error");
+    },
+    [showToast]
+  );
+
+  const handleInferenceSuccess = useCallback(
+    (message: string) => {
+      showToast(message, "success");
+    },
+    [showToast]
+  );
 
   return (
     <div style={{ padding: "2rem" }}>
@@ -123,8 +138,8 @@ export function Inference(): React.JSX.Element {
           imageFile={imageFile}
           checkpoint={selectedCheckpoint}
           params={params}
-          onError={(message) => showToast(message, "error")}
-          onSuccess={(message) => showToast(message, "success")}
+          onError={handleInferenceError}
+          onSuccess={handleInferenceSuccess}
         />
       </div>
       <ToastContainer />

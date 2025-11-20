@@ -1,10 +1,14 @@
-"""Path utilities shared by the playground API modules."""
+"""Path utilities shared by the playground API modules.
+
+This module provides a stable PROJECT_ROOT import that works from any location.
+All path resolution should use this centralized definition.
+"""
 
 from __future__ import annotations
 
-from pathlib import Path
+# Import PROJECT_ROOT from central path utility (stable, works from any location)
+from ocr.utils.path_utils import PROJECT_ROOT
 
-PROJECT_ROOT = Path(__file__).resolve().parents[3]
-
+# Re-export for backward compatibility with existing imports
 __all__ = ["PROJECT_ROOT"]
 

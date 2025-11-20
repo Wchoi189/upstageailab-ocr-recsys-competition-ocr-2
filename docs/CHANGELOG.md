@@ -5,6 +5,52 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-11-20
+
+### Changed - 2025-11-20
+
+#### Path Management Standardization
+
+- **Centralized path resolution** – Implemented comprehensive path management system with single source of truth
+  - Enhanced `ocr/utils/path_utils.py` with stable `PROJECT_ROOT` export using multi-strategy detection
+  - Replaced all brittle `Path(__file__).parents[X]` patterns across 7 UI/API files
+  - Unified path resolution: all modules now import from `ocr.utils.path_utils.PROJECT_ROOT`
+  - Files updated: `services/playground_api/utils/paths.py`, `ui/utils/inference/dependencies.py`, `ui/apps/unified_ocr_app/app.py` and all page files
+
+- **Hardcoded path elimination** – Replaced hardcoded path strings with resolver-based paths
+  - Updated `ui/utils/config_parser.py` to use `resolver.config.output_dir`
+  - Updated `services/playground_api/routers/inference.py` to use path resolver
+  - Updated `services/playground_api/routers/pipeline.py` to use path resolver
+  - Updated `ui/utils/inference/engine.py` to use `resolver.config.config_dir`
+  - All paths now support environment variable overrides
+
+- **Environment variable support** – Added full environment variable integration for deployment
+  - FastAPI startup handler initializes paths from `OCR_*` environment variables
+  - Streamlit apps initialize paths from environment variables at module level
+  - Path configuration logged at startup showing which variables are used
+  - Supports Docker, CI/CD, and multi-tenant deployment scenarios
+  - See `docs/maintainers/environment-variables.md` for complete documentation
+
+### Added - 2025-11-20
+
+- **Path management documentation** – Comprehensive guides for path configuration
+  - `docs/maintainers/planning/plans/2025-11/path-management-audit-and-solution.md` – Full audit and solution proposal
+  - `docs/maintainers/planning/plans/2025-11/path-management-implementation-progress.md` – Implementation tracking
+  - `docs/maintainers/environment-variables.md` – Environment variable usage guide
+  - Includes examples for Docker, CI/CD, and development workflows
+
+### Fixed - 2025-11-20
+
+- **Inference model loading errors** – Fixed Hydra config directory resolution
+  - Updated `ui/utils/inference/engine.py` to use correct config directory path
+  - Fixed `ui/utils/inference/config_loader.py` Hydra initialization to use `PROJECT_ROOT/configs`
+  - Model loading now correctly resolves config files from project root
+
+- **Infinite inference loop** – Fixed React component infinite loop bug
+  - Removed `onError` and `onSuccess` from `useEffect` dependencies in `InferencePreviewCanvas`
+  - Added inference key memoization to prevent duplicate API calls
+  - Implemented cancellation tracking to prevent stale state updates
+
 ## [Unreleased] - 2025-11-19
 
 ### Added - 2025-11-19

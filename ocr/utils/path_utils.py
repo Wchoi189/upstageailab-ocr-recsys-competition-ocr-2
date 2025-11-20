@@ -128,6 +128,68 @@ class OCRPathConfig:
             directory.mkdir(parents=True, exist_ok=True)
 
 
+def _detect_project_root() -> Path:
+    """Detect project root using multiple strategies (stable, works from any location).
+
+    Detection order:
+    1. Environment variable OCR_PROJECT_ROOT (explicit override)
+    2. From __file__ location (works in packages, most reliable)
+    3. Walk up from CWD looking for project markers
+    4. Fallback to CWD (with warning)
+
+    Returns:
+        Path to project root directory
+    """
+    # Strategy 1: Environment variable (explicit override, highest priority)
+    if env_root := os.getenv("OCR_PROJECT_ROOT"):
+        root = Path(env_root).resolve()
+        if root.exists():
+            # Validate it's actually the project root
+            markers = ["pyproject.toml", ".git"]
+            if any((root / marker).exists() for marker in markers):
+                return root
+            # Warn if marker not found but path exists
+            warnings.warn(
+                f"OCR_PROJECT_ROOT={env_root} does not appear to be project root "
+                "(missing pyproject.toml or .git). Using anyway.",
+                UserWarning,
+                stacklevel=2,
+            )
+            return root
+
+    # Strategy 2: From __file__ location (works in packages)
+    # This file is at ocr/utils/path_utils.py, so go up 2 levels to get project root
+    try:
+        file_based = Path(__file__).resolve().parent.parent.parent
+        # Validate with project markers
+        markers = ["pyproject.toml", ".git"]
+        if any((file_based / marker).exists() for marker in markers):
+            return file_based
+    except (AttributeError, OSError):
+        # __file__ might not be available in some contexts (e.g., frozen executables)
+        pass
+
+    # Strategy 3: Walk up from CWD looking for project markers
+    current_path = Path.cwd()
+    project_markers = ["pyproject.toml", "requirements.txt", "setup.py", ".git"]
+
+    for parent in [current_path] + list(current_path.parents):
+        if any((parent / marker).exists() for marker in project_markers):
+            return parent
+
+    # Strategy 4: Fallback to CWD (with warning)
+    warnings.warn(
+        f"Could not detect project root. Using current working directory: {current_path}",
+        UserWarning,
+        stacklevel=2,
+    )
+    return current_path
+
+
+# Global PROJECT_ROOT - stable, works from any location
+PROJECT_ROOT = _detect_project_root()
+
+
 class OCRPathResolver:
     """Central path resolution manager for OCR project."""
 
@@ -136,17 +198,8 @@ class OCRPathResolver:
 
     def _create_default_config(self) -> OCRPathConfig:
         """Create default path configuration for OCR project."""
-        # Try to detect project root
-        current_path = Path.cwd()
-
-        # Look for common project markers
-        project_markers = ["pyproject.toml", "requirements.txt", "setup.py", ".git"]
-
-        project_root = current_path
-        for parent in [current_path] + list(current_path.parents):
-            if any((parent / marker).exists() for marker in project_markers):
-                project_root = parent
-                break
+        # Use the global PROJECT_ROOT for consistency
+        project_root = PROJECT_ROOT
 
         return OCRPathConfig(
             project_root=project_root,
@@ -470,11 +523,41 @@ def get_path_resolver() -> OCRPathResolver:
 def setup_project_paths(config: dict[str, Any] | None = None) -> OCRPathResolver:
     """Setup project paths and return resolver.
 
+    This function initializes path configuration from:
+    1. Explicit config dict (if provided)
+    2. Environment variables (OCR_* vars)
+    3. Auto-detection (default)
+
+    It also ensures all required directories exist.
+
     Args:
-        config: Optional configuration dictionary with path settings
+        config: Optional configuration dictionary with path settings.
+               If None, reads from environment variables or uses auto-detection.
 
     Returns:
         Configured OCRPathResolver instance
+
+    Environment Variables:
+        OCR_PROJECT_ROOT: Override project root directory
+        OCR_CONFIG_DIR: Override config directory
+        OCR_OUTPUT_DIR: Override output directory
+        OCR_DATA_DIR: Override data directory
+        OCR_IMAGES_DIR: Override images directory
+        OCR_ANNOTATIONS_DIR: Override annotations directory
+        OCR_LOGS_DIR: Override logs directory
+        OCR_CHECKPOINTS_DIR: Override checkpoints directory
+        OCR_SUBMISSIONS_DIR: Override submissions directory
+
+    Example:
+        ```python
+        # Use environment variables
+        import os
+        os.environ["OCR_OUTPUT_DIR"] = "/custom/outputs"
+        resolver = setup_project_paths()
+
+        # Or use explicit config
+        resolver = setup_project_paths({"output_dir": "/custom/outputs"})
+        ```
     """
     global _ocr_path_resolver
 
@@ -482,21 +565,34 @@ def setup_project_paths(config: dict[str, Any] | None = None) -> OCRPathResolver
         path_config = OCRPathConfig.from_dict(config)
         _ocr_path_resolver = OCRPathResolver(path_config)
     else:
+        # Try environment variables first, fall back to auto-detection
         _ocr_path_resolver = OCRPathResolver.from_environment()
 
-    # Ensure all directories exist
+    # Ensure all directories exist (creates them if they don't)
     _ocr_path_resolver.config.ensure_directories()
 
     return _ocr_path_resolver
 
 
+# Note: __all__ is defined later in the file to include all exports
+
 # Convenience functions for backward compatibility and easy importing
 def get_project_root() -> Path:
-    """DEPRECATED: Use `get_path_resolver().config.project_root` instead."""
-    warnings.warn(
-        "get_project_root() is deprecated. Use `get_path_resolver().config.project_root` instead.", DeprecationWarning, stacklevel=2
-    )
-    return get_path_resolver().config.project_root
+    """Get project root directory.
+
+    Returns the stable PROJECT_ROOT that was detected at module import time.
+    This works from any location and uses multiple detection strategies.
+
+    Returns:
+        Path to project root directory
+
+    Note:
+        For new code, you can directly import PROJECT_ROOT instead:
+        ```python
+        from ocr.utils.path_utils import PROJECT_ROOT
+        ```
+    """
+    return PROJECT_ROOT
 
 
 def get_data_path() -> Path:

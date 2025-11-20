@@ -10,10 +10,6 @@ import {
   Heading,
   Spinner,
   Stack,
-  Tab,
-  TabList,
-  TabPanel,
-  TabPanels,
   Tabs,
   Text,
 } from "@chakra-ui/react";
@@ -102,12 +98,12 @@ export function CommandBuilderClient(): React.JSX.Element {
     }
   };
 
-  const handleTabChange = (index: number): void => {
+  const handleTabChange = (value: string): void => {
     setValues({});
     setCommandResult(null);
     setPreviousCommand("");
     setSelectedRecommendationId(undefined);
-    setActiveTab(tabOptions[index].id);
+    setActiveTab(value as SchemaId);
   };
 
   return (
@@ -124,18 +120,20 @@ export function CommandBuilderClient(): React.JSX.Element {
         </Text>
       </Box>
 
-      <Tabs
+      <Tabs.Root
         colorScheme="brand"
-        index={tabOptions.findIndex((tab) => tab.id === activeTab)}
-        onChange={handleTabChange}
+        value={activeTab}
+        onValueChange={handleTabChange}
       >
-        <TabList>
+        <Tabs.List>
           {tabOptions.map((tab) => (
-            <Tab key={tab.id}>{tab.label}</Tab>
+            <Tabs.Trigger key={tab.id} value={tab.id}>
+              {tab.label}
+            </Tabs.Trigger>
           ))}
-        </TabList>
-        <TabPanels>
-          <TabPanel px={0}>
+        </Tabs.List>
+        {tabOptions.map((tab) => (
+          <Tabs.Content key={tab.id} value={tab.id} px={0}>
             {isLoading && (
               <Flex align="center" justify="center" py={20}>
                 <Spinner size="lg" />
@@ -194,9 +192,9 @@ export function CommandBuilderClient(): React.JSX.Element {
                 </GridItem>
               </Grid>
             )}
-          </TabPanel>
-        </TabPanels>
-      </Tabs>
+          </Tabs.Content>
+        ))}
+      </Tabs.Root>
     </Stack>
   );
 }

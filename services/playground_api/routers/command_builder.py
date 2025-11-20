@@ -9,8 +9,8 @@ import yaml
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-# Lazy imports: Only import heavy UI modules when actually needed
-# This prevents Streamlit initialization during FastAPI startup
+# Lazy imports: Only import heavy modules when actually needed
+# This prevents unnecessary registry/model initialization during FastAPI startup
 
 from ..utils.paths import PROJECT_ROOT
 
@@ -99,7 +99,7 @@ def _get_validator():
 
 @lru_cache(maxsize=1)
 def _get_config_parser():
-    """Lazy load ConfigParser (triggers Streamlit/registry initialization)."""
+    """Lazy load ConfigParser (triggers registry/model initialization)."""
     from ui.utils.config_parser import ConfigParser
 
     return ConfigParser()
@@ -191,8 +191,9 @@ def _get_options_from_source(source: str, config_parser) -> list[str]:
 def build_command(payload: CommandBuildRequest) -> CommandBuildResponse:
     """Build and validate a CLI command from the provided values."""
     # Lazy imports for heavy modules
+    # Use override_compute instead of ui_generator to avoid Streamlit dependency
     from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
-    from ui.utils.ui_generator import compute_overrides
+    from ui.utils.override_compute import compute_overrides
 
     if payload.schema_id not in SCHEMA_REGISTRY:
         raise HTTPException(status_code=404, detail=f"Unknown schema_id '{payload.schema_id}'")

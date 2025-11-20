@@ -1,8 +1,18 @@
 """
-Configuration Parser for Streamlit UI
+Configuration Parser for UI components.
 
 This module provides utilities to parse Hydra configurations and extract
-available options for the Streamlit UI components.
+available options for UI components. Can be used by both FastAPI API
+and Streamlit UI applications.
+
+**Dependencies:**
+- Triggers registry/model initialization when accessing architecture metadata
+- Does NOT import Streamlit - it's a pure configuration parser
+- Can be used independently of UI framework
+
+**Performance Note:**
+- Registry initialization happens on first access to model metadata
+- Use lazy loading when used in FastAPI to avoid startup delays
 """
 
 from pathlib import Path
@@ -385,7 +395,10 @@ class ConfigParser:
             return self._cache["checkpoints"]
 
         checkpoints = []
-        outputs_dir = self.config_dir.parent / "outputs"
+        # Use path resolver for outputs directory (avoids hardcoded path assumptions)
+        resolver = get_path_resolver()
+        outputs_dir = resolver.config.output_dir
+        project_root = resolver.config.project_root
 
         if outputs_dir.exists():
             # Look for checkpoint files in all experiment directories
@@ -393,8 +406,9 @@ class ConfigParser:
                 if exp_dir.is_dir():
                     checkpoint_dir = exp_dir / "checkpoints"
                     if checkpoint_dir.exists():
+                        # Use project root for relative paths (consistent with resolver)
                         checkpoints.extend(
-                            [str(ckpt_file.relative_to(self.config_dir.parent)) for ckpt_file in checkpoint_dir.glob("*.ckpt")]
+                            [str(ckpt_file.relative_to(project_root)) for ckpt_file in checkpoint_dir.glob("*.ckpt")]
                         )
 
         self._cache["checkpoints"] = checkpoints

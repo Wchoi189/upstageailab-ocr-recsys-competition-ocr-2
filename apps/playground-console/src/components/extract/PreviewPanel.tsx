@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Heading, Stack, Tab, TabList, TabPanel, TabPanels, Tabs, Text } from "@chakra-ui/react";
+import { Box, Heading, Stack, Tabs, Text } from "@chakra-ui/react";
 import type React from "react";
 
 interface PreviewPanelProps {
@@ -10,42 +10,40 @@ interface PreviewPanelProps {
 
 export function PreviewPanel({ imageSrc, json }: PreviewPanelProps): React.JSX.Element {
   return (
-    <Tabs variant="enclosed" colorScheme="brand">
-      <TabList>
-        <Tab>Preview</Tab>
-        <Tab>JSON</Tab>
-      </TabList>
-      <TabPanels>
-        <TabPanel px={0} pt={4}>
-          <Box
-            border="1px solid"
-            borderColor="border.subtle"
-            borderRadius="lg"
-            overflow="hidden"
-            bg="black"
-            minH="360px"
-            backgroundImage={`url(${imageSrc})`}
-            backgroundSize="contain"
-            backgroundRepeat="no-repeat"
-            backgroundPosition="center"
-          />
-        </TabPanel>
-        <TabPanel>
-          <Box
-            as="pre"
-            fontSize="sm"
-            bg="gray.900"
-            color="green.200"
-            borderRadius="md"
-            p={4}
-            overflowX="auto"
-            maxH="320px"
-          >
-            {JSON.stringify(json, null, 2)}
-          </Box>
-        </TabPanel>
-      </TabPanels>
-    </Tabs>
+    <Tabs.Root variant="enclosed" colorScheme="brand" defaultValue="preview">
+      <Tabs.List>
+        <Tabs.Trigger value="preview">Preview</Tabs.Trigger>
+        <Tabs.Trigger value="json">JSON</Tabs.Trigger>
+      </Tabs.List>
+      <Tabs.Content value="preview" px={0} pt={4}>
+        <Box
+          border="1px solid"
+          borderColor="border.subtle"
+          borderRadius="lg"
+          overflow="hidden"
+          bg="black"
+          minH="360px"
+          backgroundImage={`url(${imageSrc})`}
+          backgroundSize="contain"
+          backgroundRepeat="no-repeat"
+          backgroundPosition="center"
+        />
+      </Tabs.Content>
+      <Tabs.Content value="json">
+        <Box
+          as="pre"
+          fontSize="sm"
+          bg="gray.900"
+          color="green.200"
+          borderRadius="md"
+          p={4}
+          overflowX="auto"
+          maxH="320px"
+        >
+          {JSON.stringify(json, null, 2)}
+        </Box>
+      </Tabs.Content>
+    </Tabs.Root>
   );
 }
 

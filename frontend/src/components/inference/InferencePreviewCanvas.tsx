@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import type React from "react";
 import type {
   CheckpointWithMetadata,
@@ -65,12 +65,48 @@ export function InferencePreviewCanvas({
     loadImage();
   }, [imageFile]);
 
-  // Run inference when image, checkpoint, or params change
+  // Ref to track if inference should be cancelled
+  const cancelledRef = useRef(false);
+
+  // Ref to track last inference parameters to avoid duplicate calls
+  const lastInferenceRef = useRef<string>("");
+
+  // Memoize inference key to detect actual changes (not just object reference changes)
+  // This prevents infinite loops when checkpoint or params objects are recreated with same values
+  const inferenceKey = useMemo(() => {
+    if (!imageFile || !checkpoint || !imageBitmap) return null;
+    // Create a stable key from actual values, not object references
+    return `${checkpoint.checkpoint_path}|${params.confidenceThreshold}|${params.nmsThreshold}|${imageFile.name}|${imageFile.size}`;
+  }, [
+    checkpoint?.checkpoint_path,
+    params.confidenceThreshold,
+    params.nmsThreshold,
+    imageFile?.name,
+    imageFile?.size,
+    imageBitmap,
+  ]);
+
+  // Run inference when actual values change (not just object references)
+  // Note: onError and onSuccess are intentionally excluded from deps to prevent infinite loops
+  // They are callback props that may be recreated on each render by the parent component
   useEffect(() => {
-    if (!imageFile || !checkpoint || !imageBitmap) {
+    if (!inferenceKey || !imageFile || !checkpoint || !imageBitmap) {
       setResult(null);
+      lastInferenceRef.current = ""; // Reset when inputs are cleared
       return;
     }
+
+    // Skip if this is the same inference request (prevent infinite loops)
+    // This handles cases where objects are recreated but values haven't changed
+    if (lastInferenceRef.current === inferenceKey) {
+      return;
+    }
+
+    // Mark this inference key as processed before starting async operation
+    lastInferenceRef.current = inferenceKey;
+
+    // Reset cancellation flag for this effect run
+    cancelledRef.current = false;
 
     const runInference = async (): Promise<void> => {
       setLoading(true);
@@ -94,22 +130,44 @@ export function InferencePreviewCanvas({
           nms_threshold: params.nmsThreshold,
         });
 
+        // Check if effect was cancelled before updating state
+        if (cancelledRef.current) return;
+
+        // Double-check inference key hasn't changed during async operation
+        if (lastInferenceRef.current !== inferenceKey) return;
+
         setResult(response);
         onSuccess?.(
           `Inference completed: found ${response.regions.length} text regions in ${response.processing_time_ms.toFixed(0)}ms`
         );
       } catch (err) {
+        // Check if effect was cancelled before updating state
+        if (cancelledRef.current) return;
+
+        // Double-check inference key hasn't changed during async operation
+        if (lastInferenceRef.current !== inferenceKey) return;
+
         const errorMessage = err instanceof Error ? err.message : "Inference failed";
         setError(errorMessage);
         setResult(null);
         onError?.(errorMessage);
       } finally {
-        setLoading(false);
+        if (!cancelledRef.current && lastInferenceRef.current === inferenceKey) {
+          setLoading(false);
+        }
       }
     };
 
     runInference();
-  }, [imageFile, checkpoint, params, imageBitmap, onError, onSuccess]);
+
+    // Cleanup function to cancel if dependencies change
+    return () => {
+      cancelledRef.current = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inferenceKey]); // Only depend on inferenceKey - it already captures all necessary changes
+  // imageFile, checkpoint, params are intentionally excluded to prevent infinite loops
+  // The inferenceKey memoization captures their actual values, not object references
 
   // Draw image and polygons
   useEffect(() => {

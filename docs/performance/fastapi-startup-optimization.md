@@ -10,11 +10,11 @@
 from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
 from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
 from ui.utils.command import CommandBuilder, CommandValidator
-from ui.utils.config_parser import ConfigParser  # ← Triggers Streamlit initialization
-from ui.utils.ui_generator import compute_overrides
+from ui.utils.config_parser import ConfigParser  # ← Triggers registry/model initialization
+from ui.utils.ui_generator import compute_overrides  # ← Imported Streamlit
 ```
 
-When `uvicorn` loaded the FastAPI app, it imported all routers, which eagerly loaded these modules and triggered Streamlit + registry initialization, adding 10-15 seconds to startup time.
+When `uvicorn` loaded the FastAPI app, it imported all routers, which eagerly loaded these modules and triggered registry/model initialization (and Streamlit in `ui_generator`), adding 10-15 seconds to startup time.
 
 ---
 
@@ -42,7 +42,7 @@ config_parser = ConfigParser()
 ```python
 @lru_cache(maxsize=1)
 def _get_config_parser():
-    """Lazy load ConfigParser (triggers Streamlit/registry initialization)."""
+    """Lazy load ConfigParser (triggers registry/model initialization)."""
     from ui.utils.config_parser import ConfigParser  # ← Imported only when called
     return ConfigParser()
 
@@ -138,11 +138,12 @@ python tests/scripts/test_api_startup.py
 
 ## Recommendations for Future
 
-1. **Avoid eager imports** of Streamlit/registry code in FastAPI modules
+1. **Avoid eager imports** of heavy modules (registry/model initialization) in FastAPI modules
 2. **Use lazy imports** for heavy dependencies
-3. **Consider extracting** command building logic to standalone service (no Streamlit dependency)
-4. **Cache metadata** in JSON files instead of loading from Streamlit registry
-5. **Implement warmup** endpoint for production deployments
+3. **Note:** ConfigParser doesn't import Streamlit - it only triggers registry initialization
+4. **Extracted** `compute_overrides` to `override_compute.py` (Streamlit-free) for API use
+5. **Cache metadata** in JSON files instead of loading from registry for faster startup
+6. **Implement warmup** endpoint for production deployments
 
 ---
 

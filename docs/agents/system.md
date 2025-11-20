@@ -137,16 +137,32 @@ Core Rules
 
 Path Management
 ---------------
-Use standard Python path management:
-```python
-from pathlib import Path
-import sys
+**CRITICAL**: Always use centralized path utilities to avoid brittle path calculations.
 
-project_root = Path(__file__).resolve().parents[2]  # Adjust based on location
-sys.path.insert(0, str(project_root))
+**✅ DO** - Use centralized PROJECT_ROOT:
+```python
+# Import PROJECT_ROOT from central utility (stable, works from any location)
+from ocr.utils.path_utils import PROJECT_ROOT
+
+# Or use path resolver for configurable paths
+from ocr.utils.path_utils import get_path_resolver
+
+resolver = get_path_resolver()
+output_dir = resolver.config.output_dir
+config_dir = resolver.config.config_dir
 ```
 
-NEVER manually manipulate sys.path unnecessarily. For Hydra config paths, use relative paths from project root.
+**❌ DON'T** - Brittle patterns that break when files move:
+```python
+# ❌ Brittle - breaks if file moved
+project_root = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+```
+
+**Environment Variables**: Paths support `OCR_*` environment variable overrides.
+See `docs/maintainers/environment-variables.md` for details.
+
+For Hydra config paths, paths are automatically resolved from project root.
 
 Operational Commands
 --------------------
