@@ -2,10 +2,10 @@
 
 Audits, evaluations, and assessments of system components and processes.
 
-**Last Updated**: 2025-11-19 22:27:06
-**Total Artifacts**: 14
+**Last Updated**: 2025-11-20 12:54:42
+**Total Artifacts**: 15
 
-## Draft (8)
+## Draft (9)
 
 - [AI Collaboration Framework Extraction and Standardization Assessment](2025-11-16_1654_ai-collaboration-framework-extraction-and-standardization-assessment.md) (📅 2025-11-16)
 - [Scripts Directory Audit and Reorganization Assessment](2025-11-12_1419_scripts-directory-audit-and-reorganization-assessment.md) (📅 2025-11-12)
@@ -15,6 +15,7 @@ Audits, evaluations, and assessments of system components and processes.
 - [Streamlit Command Builder Performance Assessment - Page Switch Delays](2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md)
 - [Unified OCR App Performance Assessment](2025-11-17_0136_unified-ocr-app-performance-assessment.md) - service = PreprocessingService(mode_config)  # Created every time service = InferenceService(mode_config)  # Created every time
 - [Upstage Document Parsing Playground Tech Stack](2025-11-19_1939_upstage-document-parsing-playground-tech-stack.md)
+- [AI Documentation Entry Points Audit and Reorganization Plan](2025-11-20_1227_ai-documentation-entry-points-audit-and-reorganization-plan.md) (📊 assessment) - This audit examines AI agent documentation entry points for inefficiency, obsolete instructions, verbosity, and structural problems causing recurring compliance violations. The analysis identifies roo...
 
 ## Completed (2)
 
@@ -25,7 +26,7 @@ Audits, evaluations, and assessments of system components and processes.
 
 | Status | Count |
 |--------|-------|
-| Draft | 8 |
+| Draft | 9 |
 | Completed | 2 |
 
 ---
