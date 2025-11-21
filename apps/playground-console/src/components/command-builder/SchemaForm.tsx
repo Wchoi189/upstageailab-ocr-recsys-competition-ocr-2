@@ -168,8 +168,10 @@ function CheckboxField(props: FieldRendererProps & { tooltip?: string }): React.
 function SelectField(props: FieldRendererProps & { tooltip?: string }): React.JSX.Element {
   const { element, value, onChange, error, tooltip } = props;
   const selectedValue = (value as string) ?? (element.default as string) ?? "";
-  const options = element.options ?? [];
-  const collection = useMemo(() => createListCollection({ items: options }), [options]);
+  const collection = useMemo(() => {
+    const options = element.options ?? [];
+    return createListCollection({ items: options });
+  }, [element.options]);
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
       <Select.Root

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 const CONSENT_STORAGE_KEY = "cookie-consent";
 
@@ -21,24 +21,28 @@ export interface ConsentHook {
  * @returns ConsentHook with consent state and methods
  */
 export function useConsent(): ConsentHook {
-  const [consent, setConsent] = useState<ConsentState>("pending");
-  const [showBanner, setShowBanner] = useState(false);
-
-  useEffect(() => {
-    // Check for existing consent in localStorage
+  // Use lazy initializer to read from localStorage on mount
+  const [consent, setConsent] = useState<ConsentState>(() => {
     try {
       const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
       if (stored === "accepted" || stored === "declined") {
-        setConsent(stored as ConsentState);
-        setShowBanner(false);
-      } else {
-        setShowBanner(true);
+        return stored as ConsentState;
       }
     } catch (error) {
       console.error("Failed to read consent from localStorage:", error);
-      setShowBanner(true);
     }
-  }, []);
+    return "pending";
+  });
+
+  const [showBanner, setShowBanner] = useState(() => {
+    try {
+      const stored = localStorage.getItem(CONSENT_STORAGE_KEY);
+      return stored !== "accepted" && stored !== "declined";
+    } catch (error) {
+      console.error("Failed to read consent from localStorage:", error);
+      return true;
+    }
+  });
 
   const acceptConsent = () => {
     try {
@@ -67,3 +71,4 @@ export function useConsent(): ConsentHook {
     declineConsent,
   };
 }
+

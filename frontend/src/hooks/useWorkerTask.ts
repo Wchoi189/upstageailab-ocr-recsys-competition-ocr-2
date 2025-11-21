@@ -125,6 +125,9 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
         cancellationTokenRef.current = null;
       }
       currentTaskIdRef.current = null;
+      // Note: We don't need to reset state here because the hook returns
+      // createDefaultState() when !task || !enabled, so the component will
+      // automatically get the default state
       return;
     }
 

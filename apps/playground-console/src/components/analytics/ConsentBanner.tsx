@@ -38,7 +38,7 @@ export function ConsentBanner() {
         <Box flex="1" mb={{ base: 3, md: 0 }}>
           <Text fontSize="sm" color="gray.200">
             We use cookies and analytics to improve your experience.
-            By clicking "Accept", you consent to our use of cookies and analytics tools.
+            By clicking &quot;Accept&quot;, you consent to our use of cookies and analytics tools.
           </Text>
         </Box>
         <HStack gap={2} flexShrink={0}>

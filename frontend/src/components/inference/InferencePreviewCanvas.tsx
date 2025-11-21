@@ -77,11 +77,13 @@ export function InferencePreviewCanvas({
     if (!imageFile || !checkpoint || !imageBitmap) return null;
     // Create a stable key from actual values, not object references
     return `${checkpoint.checkpoint_path}|${params.confidenceThreshold}|${params.nmsThreshold}|${imageFile.name}|${imageFile.size}`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [
-    checkpoint,
+    checkpoint?.checkpoint_path,
     params.confidenceThreshold,
     params.nmsThreshold,
-    imageFile,
+    imageFile?.name,
+    imageFile?.size,
     imageBitmap,
   ]);
 
@@ -185,8 +187,8 @@ export function InferencePreviewCanvas({
 
     // Draw polygons if results available
     if (result?.regions) {
-      result.regions.forEach((region: TextRegion, idx: number) => {
-        drawPolygon(ctx, region, idx);
+      result.regions.forEach((region: TextRegion) => {
+        drawPolygon(ctx, region);
       });
     }
   }, [imageBitmap, result]);
@@ -197,7 +199,6 @@ export function InferencePreviewCanvas({
   const drawPolygon = (
     ctx: CanvasRenderingContext2D,
     region: TextRegion,
-    _index: number,
   ): void => {
     if (region.polygon.length < 3) return;
 
