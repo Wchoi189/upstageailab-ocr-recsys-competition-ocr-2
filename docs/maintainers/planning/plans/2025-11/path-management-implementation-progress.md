@@ -302,4 +302,3 @@ INFO: Using environment variables: OCR_OUTPUT_DIR, OCR_CONFIG_DIR
 - No breaking changes introduced
 - Linter checks pass
 - Ready for production deployment
-

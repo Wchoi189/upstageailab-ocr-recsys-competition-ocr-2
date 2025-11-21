@@ -49,4 +49,3 @@
     },
     "required": ["title", "author", "timestamp", "branch", "type", "category", "status", "bug_id", "severity"]
 }
-

@@ -485,4 +485,3 @@ Your contributions make this project better for everyone. Thank you for taking t
 ---
 
 **Note**: This is a living document. If you have suggestions for improving these guidelines, please open an issue or submit a PR!
-

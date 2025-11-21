@@ -31,5 +31,3 @@ export type TransformHandler = (
   task: WorkerTask,
   ctx: TransformContext,
 ) => Promise<ImageBitmap>;
-
-

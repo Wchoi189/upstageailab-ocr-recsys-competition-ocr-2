@@ -11,13 +11,14 @@ from jinja2 import Template
 
 class ValidationError(Exception):
     """Raised when artifact validation fails."""
+
     pass
 
 
 class AgentQMSToolbelt:
     def __init__(self, manifest_path="agent_qms/q-manifest.yaml"):
         self.root_path = Path(manifest_path).parent
-        with open(manifest_path, 'r') as f:
+        with open(manifest_path) as f:
             self.manifest = yaml.safe_load(f)
 
     def _get_git_branch(self) -> str:
@@ -28,7 +29,7 @@ class AgentQMSToolbelt:
                 capture_output=True,
                 text=True,
                 check=True,
-                cwd=self.root_path.parent  # Run from project root
+                cwd=self.root_path.parent,  # Run from project root
             )
             return result.stdout.strip()
         except (subprocess.CalledProcessError, FileNotFoundError):
@@ -37,7 +38,7 @@ class AgentQMSToolbelt:
 
     def list_artifact_types(self):
         """Returns a list of available artifact types."""
-        return [atype['name'] for atype in self.manifest['artifact_types']]
+        return [atype["name"] for atype in self.manifest["artifact_types"]]
 
     def _validate_filename(self, filename: str) -> None:
         """
@@ -53,7 +54,7 @@ class AgentQMSToolbelt:
             return
 
         # Check for ALL CAPS (excluding extension)
-        name_without_ext = filename.rsplit('.', 1)[0]
+        name_without_ext = filename.rsplit(".", 1)[0]
         if name_without_ext.isupper() and name_without_ext:
             raise ValidationError(
                 f"Filename '{filename}' violates convention: No ALL CAPS filenames "
@@ -61,39 +62,33 @@ class AgentQMSToolbelt:
             )
 
         # Check for spaces
-        if ' ' in filename:
-            raise ValidationError(
-                f"Filename '{filename}' violates convention: No spaces in filenames. "
-                f"Use hyphens or underscores instead."
-            )
+        if " " in filename:
+            raise ValidationError(f"Filename '{filename}' violates convention: No spaces in filenames. Use hyphens or underscores instead.")
 
     def _validate_frontmatter(self, frontmatter: dict, schema: dict) -> None:
         """Validate frontmatter against schema before creation."""
-        from jsonschema import validate, ValidationError as SchemaValidationError
+        from jsonschema import ValidationError as SchemaValidationError
+        from jsonschema import validate
 
         try:
             validate(instance=frontmatter, schema=schema)
         except SchemaValidationError as e:
-            raise ValidationError(
-                f"Frontmatter validation failed: {e.message}\n"
-                f"Path: {'.'.join(str(p) for p in e.path)}"
-            )
+            raise ValidationError(f"Frontmatter validation failed: {e.message}\nPath: {'.'.join(str(p) for p in e.path)}")
 
     def _validate_artifact_type(self, artifact_type: str) -> dict:
         """Validate artifact type exists and return metadata."""
         artifact_meta = None
-        for atype in self.manifest['artifact_types']:
-            if atype['name'] == artifact_type:
+        for atype in self.manifest["artifact_types"]:
+            if atype["name"] == artifact_type:
                 artifact_meta = atype
                 break
 
         if not artifact_meta:
-            raise ValueError(f"Unknown artifact type: {artifact_type}. "
-                           f"Available types: {', '.join(self.list_artifact_types())}")
+            raise ValueError(f"Unknown artifact type: {artifact_type}. Available types: {', '.join(self.list_artifact_types())}")
 
         return artifact_meta
 
-    def create_artifact(self, artifact_type: str, title: str, content: str, author: str = "ai-agent", tags: list = [], **kwargs):
+    def create_artifact(self, artifact_type: str, title: str, content: str, author: str = "ai-agent", tags: list = None, **kwargs):
         """
         Creates a new quality artifact with validation BEFORE creation.
 
@@ -113,6 +108,8 @@ class AgentQMSToolbelt:
             ValueError: If artifact type is invalid.
         """
         # Validate artifact type
+        if tags is None:
+            tags = []
         artifact_meta = self._validate_artifact_type(artifact_type)
 
         # Generate filename with timestamp prefix for assessments, implementation_plans, and guides
@@ -123,25 +120,25 @@ class AgentQMSToolbelt:
         # Check if artifact type requires timestamp prefix
         timestamped_types = ["assessment", "implementation_plan", "guide"]
         if artifact_type in timestamped_types:
-            slug = title.lower().replace(' ', '-').replace('_', '-')
+            slug = title.lower().replace(" ", "-").replace("_", "-")
             filename = f"{timestamp_prefix}_{slug}.md"
         elif artifact_type == "bug_report":
             # Bug reports use bug ID prefix: BUG-YYYYMMDD-###_descriptive-name.md
             bug_id = kwargs.get("bug_id", "")
-            slug = title.lower().replace(' ', '-').replace('_', '-')
+            slug = title.lower().replace(" ", "-").replace("_", "-")
             if bug_id:
                 filename = f"{bug_id}_{slug}.md"
             else:
                 filename = f"{slug}.md"
         else:
-            slug = title.lower().replace(' ', '-').replace('_', '-')
+            slug = title.lower().replace(" ", "-").replace("_", "-")
             filename = f"{slug}.md"
 
         # Validate filename BEFORE creation
         self._validate_filename(filename)
 
         # Define output path
-        output_dir = self.root_path.parent / artifact_meta['location']
+        output_dir = self.root_path.parent / artifact_meta["location"]
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / filename
 
@@ -150,8 +147,8 @@ class AgentQMSToolbelt:
             raise ValueError(f"Artifact already exists: {output_path}")
 
         # Load schema for validation
-        schema_path = self.root_path / artifact_meta['schema']
-        with open(schema_path, 'r') as f:
+        schema_path = self.root_path / artifact_meta["schema"]
+        with open(schema_path) as f:
             schema = json.load(f)
 
         # Create frontmatter with timestamp in KST (includes hour and minute)
@@ -166,7 +163,7 @@ class AgentQMSToolbelt:
             "timestamp": timestamp_kst,  # Single timestamp field in KST format
             "branch": branch_name,  # Git branch name
             "status": "draft",
-            "tags": tags
+            "tags": tags,
         }
 
         # Add artifact type-specific defaults
@@ -195,8 +192,8 @@ class AgentQMSToolbelt:
         self._validate_frontmatter(frontmatter, schema)
 
         # Load template (used when no explicit content is provided)
-        template_path = self.root_path / artifact_meta['template']
-        with open(template_path, 'r') as f:
+        template_path = self.root_path / artifact_meta["template"]
+        with open(template_path) as f:
             template = Template(f.read())
 
         # Determine whether the caller supplied custom content (string or file)
@@ -207,8 +204,8 @@ class AgentQMSToolbelt:
         else:
             # Alternative workflow: respect caller-provided content instead of duplicating the template
             # If the provided content already includes frontmatter, write it as-is; otherwise prepend generated frontmatter.
-            content_with_preserved_newlines = content.lstrip('\n')
-            if content_with_preserved_newlines.startswith('---'):
+            content_with_preserved_newlines = content.lstrip("\n")
+            if content_with_preserved_newlines.startswith("---"):
                 final_content = content_with_preserved_newlines
             else:
                 frontmatter_yaml = yaml.dump(
@@ -221,7 +218,7 @@ class AgentQMSToolbelt:
                 final_content = frontmatter_block + content_with_preserved_newlines
 
         # Create file only after all validations pass
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(final_content)
 
         # Final validation: verify the created file
@@ -230,10 +227,7 @@ class AgentQMSToolbelt:
         except Exception as e:
             # If validation fails, remove the file
             output_path.unlink()
-            raise ValidationError(
-                f"Created artifact failed validation: {e}\n"
-                f"File has been removed."
-            )
+            raise ValidationError(f"Created artifact failed validation: {e}\nFile has been removed.")
 
         return str(output_path)
 
@@ -255,11 +249,11 @@ class AgentQMSToolbelt:
         # Validate filename
         self._validate_filename(file_path_obj.name)
 
-        with open(file_path_obj, 'r') as f:
+        with open(file_path_obj) as f:
             content = f.read()
 
         # Extract frontmatter
-        parts = content.split('---')
+        parts = content.split("---")
         if len(parts) < 3:
             raise ValidationError("Invalid frontmatter format. File must start with '---' and have closing '---'.")
 
@@ -284,8 +278,8 @@ class AgentQMSToolbelt:
         artifact_type_name = file_path_obj.parent.name
 
         artifact_meta = None
-        for atype in self.manifest['artifact_types']:
-            if atype['location'].strip('/').endswith(artifact_type_name):
+        for atype in self.manifest["artifact_types"]:
+            if atype["location"].strip("/").endswith(artifact_type_name):
                 artifact_meta = atype
                 break
 
@@ -296,19 +290,18 @@ class AgentQMSToolbelt:
             )
 
         # Load schema
-        schema_path = self.root_path / artifact_meta['schema']
-        with open(schema_path, 'r') as f:
+        schema_path = self.root_path / artifact_meta["schema"]
+        with open(schema_path) as f:
             schema = json.load(f)
 
         # Validate against schema
-        from jsonschema import validate, ValidationError as SchemaValidationError
+        from jsonschema import ValidationError as SchemaValidationError
+        from jsonschema import validate
+
         try:
             validate(instance=frontmatter, schema=schema)
         except SchemaValidationError as e:
-            raise ValidationError(
-                f"Schema validation failed: {e.message}\n"
-                f"Path: {'.'.join(str(p) for p in e.path)}"
-            )
+            raise ValidationError(f"Schema validation failed: {e.message}\nPath: {'.'.join(str(p) for p in e.path)}")
 
         return True
 
@@ -332,11 +325,11 @@ class AgentQMSToolbelt:
             raise ValidationError(f"Artifact file does not exist: {file_path}")
 
         # Read current content
-        with open(file_path_obj, 'r') as f:
+        with open(file_path_obj) as f:
             content = f.read()
 
         # Extract frontmatter
-        parts = content.split('---')
+        parts = content.split("---")
         if len(parts) < 3:
             raise ValidationError("Invalid frontmatter format. File must start with '---' and have closing '---'.")
 
@@ -350,23 +343,23 @@ class AgentQMSToolbelt:
             raise ValidationError("Frontmatter is empty or invalid.")
 
         # Update status
-        frontmatter['status'] = new_status
+        frontmatter["status"] = new_status
 
         # Ensure timestamp is present (required for all artifacts)
-        if 'timestamp' not in frontmatter:
+        if "timestamp" not in frontmatter:
             now_kst = datetime.datetime.now(ZoneInfo("Asia/Seoul"))
-            frontmatter['timestamp'] = now_kst.strftime("%Y-%m-%d %H:%M KST")
+            frontmatter["timestamp"] = now_kst.strftime("%Y-%m-%d %H:%M KST")
 
         # Ensure branch is present (required for all artifacts)
-        if 'branch' not in frontmatter:
-            frontmatter['branch'] = self._get_git_branch()
+        if "branch" not in frontmatter:
+            frontmatter["branch"] = self._get_git_branch()
 
         # Determine artifact type from path
         artifact_type_name = file_path_obj.parent.name
 
         artifact_meta = None
-        for atype in self.manifest['artifact_types']:
-            if atype['location'].strip('/').endswith(artifact_type_name):
+        for atype in self.manifest["artifact_types"]:
+            if atype["location"].strip("/").endswith(artifact_type_name):
                 artifact_meta = atype
                 break
 
@@ -377,8 +370,8 @@ class AgentQMSToolbelt:
             )
 
         # Load schema for validation
-        schema_path = self.root_path / artifact_meta['schema']
-        with open(schema_path, 'r') as f:
+        schema_path = self.root_path / artifact_meta["schema"]
+        with open(schema_path) as f:
             schema = json.load(f)
 
         # Validate updated frontmatter
@@ -392,17 +385,14 @@ class AgentQMSToolbelt:
         updated_content = f"---{updated_frontmatter_str}---{parts[2]}"
 
         # Write updated content
-        with open(file_path_obj, 'w') as f:
+        with open(file_path_obj, "w") as f:
             f.write(updated_content)
 
         # Final validation
         try:
             self.validate_artifact(str(file_path_obj))
         except Exception as e:
-            raise ValidationError(
-                f"Updated artifact failed validation: {e}\n"
-                f"File has been updated but may be invalid."
-            )
+            raise ValidationError(f"Updated artifact failed validation: {e}\nFile has been updated but may be invalid.")
 
         return str(file_path_obj)
 
@@ -421,16 +411,15 @@ class AgentQMSToolbelt:
         if not file_path_obj.exists():
             return None
 
-        with open(file_path_obj, 'r') as f:
+        with open(file_path_obj) as f:
             content = f.read()
 
         # Look for Progress Tracker section
         # Pattern: **STATUS:** Completed / In Progress / Not Started
-        import re
         status_patterns = [
-            r'\*\*STATUS:\*\*\s*(Completed|Complete|COMPLETED|COMPLETE)',
-            r'- \*\*STATUS:\*\*\s*(Completed|Complete|COMPLETED|COMPLETE)',
-            r'STATUS.*?:\s*(Completed|Complete|COMPLETED|COMPLETE)',
+            r"\*\*STATUS:\*\*\s*(Completed|Complete|COMPLETED|COMPLETE)",
+            r"- \*\*STATUS:\*\*\s*(Completed|Complete|COMPLETED|COMPLETE)",
+            r"STATUS.*?:\s*(Completed|Complete|COMPLETED|COMPLETE)",
         ]
 
         for pattern in status_patterns:
@@ -440,9 +429,9 @@ class AgentQMSToolbelt:
 
         # Check for "In Progress" or "In Progress"
         progress_patterns = [
-            r'\*\*STATUS:\*\*\s*(In Progress|IN PROGRESS|In-Progress)',
-            r'- \*\*STATUS:\*\*\s*(In Progress|IN PROGRESS|In-Progress)',
-            r'STATUS.*?:\s*(In Progress|IN PROGRESS|In-Progress)',
+            r"\*\*STATUS:\*\*\s*(In Progress|IN PROGRESS|In-Progress)",
+            r"- \*\*STATUS:\*\*\s*(In Progress|IN PROGRESS|In-Progress)",
+            r"STATUS.*?:\s*(In Progress|IN PROGRESS|In-Progress)",
         ]
 
         for pattern in progress_patterns:
@@ -452,8 +441,8 @@ class AgentQMSToolbelt:
 
         # Check for "Not Started"
         not_started_patterns = [
-            r'\*\*STATUS:\*\*\s*(Not Started|NOT STARTED|Not-Started)',
-            r'- \*\*STATUS:\*\*\s*(Not Started|NOT STARTED|Not-Started)',
+            r"\*\*STATUS:\*\*\s*(Not Started|NOT STARTED|Not-Started)",
+            r"- \*\*STATUS:\*\*\s*(Not Started|NOT STARTED|Not-Started)",
         ]
 
         for pattern in not_started_patterns:
@@ -479,10 +468,10 @@ class AgentQMSToolbelt:
             return None
 
         # Read frontmatter
-        with open(file_path_obj, 'r') as f:
+        with open(file_path_obj) as f:
             content = f.read()
 
-        parts = content.split('---')
+        parts = content.split("---")
         if len(parts) < 3:
             return None
 
@@ -491,20 +480,20 @@ class AgentQMSToolbelt:
         except yaml.YAMLError:
             return None
 
-        if not frontmatter or 'status' not in frontmatter:
+        if not frontmatter or "status" not in frontmatter:
             return None
 
-        frontmatter_status = frontmatter['status']
+        frontmatter_status = frontmatter["status"]
 
         # Detect status from Progress Tracker
         detected_status = self.detect_completion_from_progress_tracker(str(file_path_obj))
 
         if detected_status and detected_status != frontmatter_status:
             return {
-                'file': str(file_path_obj),
-                'frontmatter_status': frontmatter_status,
-                'detected_status': detected_status,
-                'mismatch': True
+                "file": str(file_path_obj),
+                "frontmatter_status": frontmatter_status,
+                "detected_status": detected_status,
+                "mismatch": True,
             }
 
         return None

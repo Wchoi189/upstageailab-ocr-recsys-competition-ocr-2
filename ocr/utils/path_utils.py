@@ -25,7 +25,6 @@ from omegaconf import OmegaConf
 
 from ocr.utils.experiment_index import get_next_experiment_index
 
-
 _HYDRA_RESOLVERS_REGISTERED = False
 
 
@@ -150,8 +149,7 @@ def _detect_project_root() -> Path:
                 return root
             # Warn if marker not found but path exists
             warnings.warn(
-                f"OCR_PROJECT_ROOT={env_root} does not appear to be project root "
-                "(missing pyproject.toml or .git). Using anyway.",
+                f"OCR_PROJECT_ROOT={env_root} does not appear to be project root " "(missing pyproject.toml or .git). Using anyway.",
                 UserWarning,
                 stacklevel=2,
             )
@@ -575,6 +573,7 @@ def setup_project_paths(config: dict[str, Any] | None = None) -> OCRPathResolver
 
 
 # Note: __all__ is defined later in the file to include all exports
+
 
 # Convenience functions for backward compatibility and easy importing
 def get_project_root() -> Path:

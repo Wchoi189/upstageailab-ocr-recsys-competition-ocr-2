@@ -608,4 +608,3 @@ def process_image_pipeline(image: np.ndarray, ...) -> np.ndarray:
 
 **Last Updated**: 2025-11-18
 **Maintained By**: Development Team
-

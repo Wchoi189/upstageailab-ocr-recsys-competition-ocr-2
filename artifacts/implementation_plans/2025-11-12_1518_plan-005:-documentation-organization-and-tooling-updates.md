@@ -165,4 +165,3 @@ This plan implements medium-priority recommendations from the Documentation and 
 1. Organize root-level documentation files into appropriate directories
 2. Add validation to scripts to warn about legacy `docs/artifacts` paths
 3. Improve discoverability and maintainability of documentation
-

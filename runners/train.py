@@ -106,6 +106,7 @@ def train(config: DictConfig):
 
     # Clean up any lingering W&B session to prevent warnings (lazy import)
     import wandb
+
     wandb.finish()
 
     pl.seed_everything(config.get("seed", 42), workers=True)

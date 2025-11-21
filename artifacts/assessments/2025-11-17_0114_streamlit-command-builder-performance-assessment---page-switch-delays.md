@@ -160,7 +160,7 @@ The critical path for page switching is:
 
 ### Priority 4: Optimize ConfigParser
 
-**Action:** 
+**Action:**
 - Make cache persistent across instances (use module-level cache)
 - Add  to expensive methods
 - Lazy load registry imports
@@ -239,6 +239,6 @@ The critical path for page switching is:
 
 - Streamlit caching: https://docs.streamlit.io/library/advanced-features/caching
 - Performance best practices: https://docs.streamlit.io/knowledge-base/using-streamlit/how-to-improve-streamlit-app-performance
-- Current app structure: 
-- ConfigParser: 
-- UI Generator: 
+- Current app structure:
+- ConfigParser:
+- UI Generator:

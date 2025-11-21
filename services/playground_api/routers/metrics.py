@@ -87,9 +87,7 @@ def _cleanup_old_metrics() -> None:
     cutoff_time = datetime.utcnow() - timedelta(hours=METRICS_RETENTION_HOURS)
 
     for metric_type, events in _metrics_store.items():
-        _metrics_store[metric_type] = [
-            event for event in events if event.get("timestamp", datetime.utcnow()) > cutoff_time
-        ]
+        _metrics_store[metric_type] = [event for event in events if event.get("timestamp", datetime.utcnow()) > cutoff_time]
 
 
 def _trim_metrics() -> None:
@@ -97,7 +95,7 @@ def _trim_metrics() -> None:
     for metric_type, events in _metrics_store.items():
         if len(events) > MAX_METRICS_PER_TYPE:
             # Keep most recent events
-            _metrics_store[metric_type] = events[-MAX_METRICS_PER_TYPE :]
+            _metrics_store[metric_type] = events[-MAX_METRICS_PER_TYPE:]
 
 
 @router.post("/events/worker", status_code=201)
@@ -144,18 +142,10 @@ def get_metrics_summary(hours: int = 1) -> MetricsSummary:
     cutoff_time = datetime.utcnow() - timedelta(hours=hours)
 
     # Filter events by time range
-    recent_worker_events = [
-        e for e in _metrics_store["worker_events"] if e.get("timestamp", datetime.utcnow()) > cutoff_time
-    ]
-    recent_perf_metrics = [
-        m for m in _metrics_store["performance_metrics"] if m.get("timestamp", datetime.utcnow()) > cutoff_time
-    ]
-    recent_cache_metrics = [
-        m for m in _metrics_store["cache_metrics"] if m.get("timestamp", datetime.utcnow()) > cutoff_time
-    ]
-    recent_fallback_metrics = [
-        m for m in _metrics_store["fallback_metrics"] if m.get("timestamp", datetime.utcnow()) > cutoff_time
-    ]
+    recent_worker_events = [e for e in _metrics_store["worker_events"] if e.get("timestamp", datetime.utcnow()) > cutoff_time]
+    recent_perf_metrics = [m for m in _metrics_store["performance_metrics"] if m.get("timestamp", datetime.utcnow()) > cutoff_time]
+    recent_cache_metrics = [m for m in _metrics_store["cache_metrics"] if m.get("timestamp", datetime.utcnow()) > cutoff_time]
+    recent_fallback_metrics = [m for m in _metrics_store["fallback_metrics"] if m.get("timestamp", datetime.utcnow()) > cutoff_time]
 
     # Calculate total tasks
     total_tasks = len([e for e in recent_worker_events if e.get("event_type") == "task_queued"])

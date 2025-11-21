@@ -286,9 +286,7 @@ class FileReorganizer:
             print(f"Warning: Could not create backup for {file_path}: {e}")
             return False
 
-    def execute_move_operation(
-        self, operation: MoveOperation, dry_run: bool = False
-    ) -> bool:
+    def execute_move_operation(self, operation: MoveOperation, dry_run: bool = False) -> bool:
         """Execute a move operation"""
         old_path = Path(operation.old_path)
         new_path = Path(operation.new_path)
@@ -327,9 +325,7 @@ class FileReorganizer:
             print(f"❌ Failed to move {old_path}: {e}")
             return False
 
-    def reorganize_file(
-        self, file_path: Path, dry_run: bool = False
-    ) -> MoveOperation | None:
+    def reorganize_file(self, file_path: Path, dry_run: bool = False) -> MoveOperation | None:
         """Reorganize a single file"""
         operation = self.analyze_file_placement(file_path)
 
@@ -345,9 +341,7 @@ class FileReorganizer:
         else:
             return None
 
-    def reorganize_directory(
-        self, directory: Path, dry_run: bool = False
-    ) -> dict[str, MoveOperation]:
+    def reorganize_directory(self, directory: Path, dry_run: bool = False) -> dict[str, MoveOperation]:
         """Reorganize all files in a directory"""
         results = {}
 
@@ -407,9 +401,7 @@ class FileReorganizer:
                 # Check if file is in correct directory
                 operation = self.analyze_file_placement(file_path)
                 if operation:
-                    file_issues.append(
-                        f"Should be in {Path(operation.new_path).parent.name}/"
-                    )
+                    file_issues.append(f"Should be in {Path(operation.new_path).parent.name}/")
 
                 # Check if directory exists and is valid
                 current_dir = str(file_path.parent.relative_to(self.artifacts_root))
@@ -476,9 +468,7 @@ def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Reorganize misplaced artifact files")
     parser.add_argument("--file", help="Reorganize specific file")
-    parser.add_argument(
-        "--directory", default="artifacts", help="Directory to process"
-    )
+    parser.add_argument("--directory", default="artifacts", help="Directory to process")
     parser.add_argument(
         "--move-to-correct-dirs",
         action="store_true",
@@ -489,12 +479,8 @@ def main():
         action="store_true",
         help="Show what would be moved without making changes",
     )
-    parser.add_argument(
-        "--validate-only", action="store_true", help="Only validate, do not move files"
-    )
-    parser.add_argument(
-        "--create-dirs", action="store_true", help="Create missing directory structure"
-    )
+    parser.add_argument("--validate-only", action="store_true", help="Only validate, do not move files")
+    parser.add_argument("--create-dirs", action="store_true", help="Create missing directory structure")
     parser.add_argument(
         "--structure-report",
         action="store_true",

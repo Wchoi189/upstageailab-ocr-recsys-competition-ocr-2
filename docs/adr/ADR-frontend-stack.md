@@ -49,5 +49,3 @@ date: "2025-11-17"
 - Implement base SPA skeleton with routing, Zustand store, and API client pointing at `/api`.
 - Generate TypeScript types from FastAPI’s OpenAPI schema during CI.
 - Document local dev workflow in `run_spa.py` (Track E).
-
-

@@ -250,4 +250,3 @@ def list_output_runs(outputs_root: Path | str = Path("outputs")) -> list[tuple[P
 
     entries.sort(key=lambda item: item[0], reverse=True)
     return [(path, exp_name) for _, path, exp_name in entries]
-

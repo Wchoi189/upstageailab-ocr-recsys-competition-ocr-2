@@ -482,4 +482,3 @@ High - Significant data loss during training (RESOLVED - reduced from dozens to 
 ---
 
 *This bug report follows the project's standardized format for issue tracking.*
-

@@ -89,9 +89,7 @@ class PolygonBoundsInvestigator:
             self.log(f"Error loading image {filename}: {e}")
             return None
 
-    def analyze_polygon_coordinates(
-        self, polygon: list[list[float]], image_info: dict[str, Any]
-    ) -> dict[str, Any]:
+    def analyze_polygon_coordinates(self, polygon: list[list[float]], image_info: dict[str, Any]) -> dict[str, Any]:
         """
         Analyze polygon coordinates for out-of-bounds issues.
 
@@ -147,9 +145,7 @@ class PolygonBoundsInvestigator:
             "dimensions_swapped": image_info["dimensions_swapped"],
         }
 
-    def test_exif_remapping(
-        self, polygon: list[list[float]], image_info: dict[str, Any]
-    ) -> dict[str, Any]:
+    def test_exif_remapping(self, polygon: list[list[float]], image_info: dict[str, Any]) -> dict[str, Any]:
         """
         Test what happens when polygon is remapped with EXIF orientation.
 
@@ -228,7 +224,7 @@ class PolygonBoundsInvestigator:
                     continue
 
                 # Convert to list of lists if needed
-                if isinstance(points[0], (int, float)):
+                if isinstance(points[0], int | float):
                     if len(points) % 2 != 0:
                         continue
                     polygon = [[points[i], points[i + 1]] for i in range(0, len(points), 2)]
@@ -297,7 +293,7 @@ class PolygonBoundsInvestigator:
         print("=" * 80)
 
         summary = results["summary"]
-        print(f"\n📊 Statistics:")
+        print("\n📊 Statistics:")
         print(f"  Total images: {summary['total_images']}")
         print(f"  Images analyzed: {summary['images_analyzed']}")
         print(f"  Images skipped: {summary['images_skipped']}")
@@ -305,15 +301,15 @@ class PolygonBoundsInvestigator:
         print(f"  Polygons out of bounds: {summary['polygons_out_of_bounds']}")
 
         if summary["polygons_out_of_bounds"] > 0:
-            print(f"\n📈 Patterns:")
+            print("\n📈 Patterns:")
             for pattern, count in summary["patterns"].items():
                 print(f"  {pattern}: {count}")
 
-            print(f"\n🔄 Orientation Distribution:")
+            print("\n🔄 Orientation Distribution:")
             for orientation, count in summary["orientation_distribution"].items():
                 print(f"  {orientation}: {count}")
 
-            print(f"\n🔍 Sample Out-of-Bounds Cases (first 5):")
+            print("\n🔍 Sample Out-of-Bounds Cases (first 5):")
             for case in results["out_of_bounds_cases"][:5]:
                 print(f"\n  {case['filename']} (word {case['word_id']}):")
                 info = case["image_info"]
@@ -329,15 +325,13 @@ class PolygonBoundsInvestigator:
                 if analysis["y_out_of_bounds"]:
                     print(f"    ⚠️  Y out of bounds: under={analysis['y_under']:.1f}, over={analysis['y_over']:.1f}")
                 if case["remap_test"].get("remapping_causes_issue"):
-                    print(f"    ⚠️  EXIF remapping causes out-of-bounds coordinates")
+                    print("    ⚠️  EXIF remapping causes out-of-bounds coordinates")
 
         print("\n" + "=" * 80)
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Investigate root cause of out-of-bounds polygon coordinates (BUG-20251116-001)"
-    )
+    parser = argparse.ArgumentParser(description="Investigate root cause of out-of-bounds polygon coordinates (BUG-20251116-001)")
     parser.add_argument("--annotation-file", type=Path, required=True, help="Path to annotation JSON file")
     parser.add_argument("--image-dir", type=Path, required=True, help="Directory containing images")
     parser.add_argument("--output-report", type=Path, help="Path to save investigation report (JSON)")
@@ -347,9 +341,7 @@ def main():
 
     # Create investigator
     try:
-        investigator = PolygonBoundsInvestigator(
-            args.annotation_file, args.image_dir, verbose=args.verbose
-        )
+        investigator = PolygonBoundsInvestigator(args.annotation_file, args.image_dir, verbose=args.verbose)
     except ValueError as e:
         print(f"❌ Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -387,4 +379,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

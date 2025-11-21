@@ -237,9 +237,7 @@ class WandbImageLoggingCallback(pl.Callback):
 
         # Filter out degenerate polygons (empty or with duplicate consecutive points)
         processed = [
-            np.array(polygon, copy=True)
-            for polygon in polygons
-            if polygon.size > 0 and not has_duplicate_consecutive_points(polygon)
+            np.array(polygon, copy=True) for polygon in polygons if polygon.size > 0 and not has_duplicate_consecutive_points(polygon)
         ]
 
         width, height = image_size

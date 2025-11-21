@@ -14,6 +14,7 @@ sys.path.insert(0, str(project_root))
 
 try:
     from agent_qms.toolbelt import AgentQMSToolbelt
+
     AGENTQMS_AVAILABLE = True
 except ImportError:
     AGENTQMS_AVAILABLE = False
@@ -230,29 +231,13 @@ Examples:
   python artifact_guide.py --location         # Show location guide only
   python artifact_guide.py --usage            # Show usage guide only
   python artifact_guide.py --examples         # Show examples only
-        """
+        """,
     )
 
-    parser.add_argument(
-        "--format",
-        action="store_true",
-        help="Show format guidance"
-    )
-    parser.add_argument(
-        "--location",
-        action="store_true",
-        help="Show location guidance"
-    )
-    parser.add_argument(
-        "--usage",
-        action="store_true",
-        help="Show usage guidance"
-    )
-    parser.add_argument(
-        "--examples",
-        action="store_true",
-        help="Show usage examples"
-    )
+    parser.add_argument("--format", action="store_true", help="Show format guidance")
+    parser.add_argument("--location", action="store_true", help="Show location guidance")
+    parser.add_argument("--usage", action="store_true", help="Show usage guidance")
+    parser.add_argument("--examples", action="store_true", help="Show usage examples")
 
     args = parser.parse_args()
 
@@ -275,4 +260,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-

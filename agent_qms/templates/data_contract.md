@@ -208,4 +208,3 @@ class OutputContract(BaseModel):
 - Implementation code: [links]
 - Test files: [links]
 - Documentation: [links]
-

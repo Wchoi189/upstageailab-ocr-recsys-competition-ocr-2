@@ -30,6 +30,7 @@ from typing import Literal, cast
 # Add to sys.path if needed
 try:
     from ocr.utils.path_utils import PROJECT_ROOT
+
     project_root = PROJECT_ROOT
 except ImportError:
     # Fallback: add project root to path first, then import
@@ -37,6 +38,7 @@ except ImportError:
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
     from ocr.utils.path_utils import PROJECT_ROOT
+
     project_root = PROJECT_ROOT
 
 # Ensure project root is in sys.path for imports
@@ -46,7 +48,6 @@ if str(project_root) not in sys.path:
 import streamlit as st
 
 from ocr.utils.path_utils import setup_project_paths
-
 from ui.apps.unified_ocr_app.shared_utils import get_app_config, get_app_state
 
 # Initialize paths from environment variables (supports deployment configs)
@@ -64,10 +65,7 @@ logger.info(f"Config directory: {resolver.config.config_dir}")
 logger.info(f"Output directory: {resolver.config.output_dir}")
 
 # Check if environment variables were used
-env_vars_used = [
-    name for name in os.environ.keys()
-    if name.startswith("OCR_") and name in os.environ
-]
+env_vars_used = [name for name in os.environ.keys() if name.startswith("OCR_") and name in os.environ]
 if env_vars_used:
     logger.info(f"Using environment variables: {', '.join(sorted(env_vars_used))}")
 else:

@@ -66,7 +66,9 @@ RUN sudo mkdir -p /run/sshd && \
 RUN sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
     sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
     sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
-    sudo sed -i 's/#UsePAM yes/UsePAM yes/' /etc/ssh/sshd_config
+    sudo sed -i 's/#UsePAM yes/UsePAM yes/' /etc/ssh/sshd_config && \
+    sudo sed -i 's/#HostKey /HostKey /' /etc/ssh/sshd_config && \
+    echo "StrictModes no" | sudo tee -a /etc/ssh/sshd_config
 
 # Generate SSH host keys
 RUN sudo ssh-keygen -A
@@ -76,46 +78,44 @@ RUN touch /home/vscode/.ssh/authorized_keys && \
     sudo chmod 600 /home/vscode/.ssh/authorized_keys && \
     sudo chown vscode:vscode /home/vscode/.ssh/authorized_keys
 
-# Install uv
-USER vscode
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-# UV installs to ~/.local/bin by default, but also check /opt/uv/bin (system install) and ~/.cargo/bin (fallback)
-ENV PATH="/opt/uv/bin:/home/vscode/.local/bin:/home/vscode/.cargo/bin:$PATH"
+# Install uv system-wide
+RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
+ENV PATH="/opt/uv/bin:$PATH"
 
 # Set up project directory
-USER root
 RUN mkdir -p /workspaces && chown vscode:vscode /workspaces
+
 USER vscode
 WORKDIR /workspaces
 
 # Copy dependency files first for better caching
-COPY --chown=vscode:vscode pyproject.toml uv.lock ./
-# Ensure README.md is present for build metadata
-COPY --chown=vscode:vscode README.md ./
+COPY --chown=vscode:vscode pyproject.toml uv.lock* ./README.md ./
 
-# Install Python dependencies if `uv` is available; otherwise skip (will be handled at runtime)
-RUN if command -v uv >/dev/null 2>&1; then \
-      uv sync --frozen; \
-    else \
-      echo "uv not found during build; skipping dependency sync (will attempt at container runtime)"; \
-    fi
+# Note: Dependencies will be installed at runtime to avoid build issues
+# RUN uv sync --frozen
 
-# Copy source code
-COPY --chown=vscode:vscode . .
+# Source code will be mounted via volume at runtime
 
 # Copy .bashrc for enhanced shell experience
 COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
 
-# Normalize line endings in .bashrc (convert CRLF to LF if present)
+# Fix Windows line endings in .bashrc
 RUN sed -i 's/\r$//' /home/vscode/.bashrc
 
-# Set up development environment (PATH is already set in .bashrc, just add aliases)
-RUN echo 'alias python="uv run \python"' >> ~/.bashrc && \
-    echo 'alias python3="uv run \python3"' >> ~/.bashrc && \
-    echo 'alias pytest="uv run pytest"' >> ~/.bashrc
+# Set up development environment
+RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
+    echo 'alias python3="uv run python3"' >> ~/.bashrc && \
+    echo 'alias pytest="uv run pytest"' >> ~/.bashrc && \
+    echo 'alias make="uv run make"' >> ~/.bashrc
+
+# Create startup script that starts SSH as root and keeps container running
+RUN sudo sh -c 'echo "#!/bin/bash\n\
+sudo /usr/sbin/sshd -D & \n\
+sleep infinity" > /usr/local/bin/start.sh' && \
+    sudo chmod +x /usr/local/bin/start.sh
 
 # Expose ports for development services
 EXPOSE 8000 8501 6006 22
 
 # Default command - start SSH daemon
-CMD ["/usr/sbin/sshd", "-D"]
+CMD ["/usr/local/bin/start.sh"]

@@ -8,7 +8,7 @@ repos:
       - id: trailing-whitespace
       - id: end-of-file-fixer
       - id: check-yaml
-        exclude: mkdocs\.yml
+        args: [--unsafe]
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: debug-statements
@@ -28,19 +28,38 @@ repos:
       - id: mypy
         # You can customize args and dependencies to match your project's needs
         additional_dependencies: [types-Pillow, types-tqdm, types-PyYAML, types-shapely]
-        files: ^ocr/
+        files: ^(ocr/|services/|agent_qms/)
 
   - repo: local
     hooks:
       - id: validate-handbook-manifest
         name: validate-handbook-manifest
-        entry: uv run python scripts/agent_tools/validate_manifest.py
+        entry: uv run python scripts/agent_tools/documentation/validate_manifest.py
         language: system
         pass_filenames: false
+        args: [docs/agents/index.json]
 
       - id: check-diagram-updates
         name: check-diagram-updates
-        entry: python scripts/generate_diagrams.py --check-changes
+        entry: uv run python scripts/generate_diagrams.py --check-changes
         language: system
         pass_filenames: false
-        files: ^(ocr/|ui/|configs/|scripts/generate_diagrams\.py)$
+        files: ^(ocr/|ui/|configs/|scripts/generate_diagrams\.py)
+
+      - id: frontend-eslint
+        name: frontend-eslint
+        entry: npm run lint --workspace frontend
+        language: system
+        pass_filenames: false
+
+      - id: frontend-type-check
+        name: frontend-type-check
+        entry: npm run type-check --workspace frontend
+        language: system
+        pass_filenames: false
+
+      - id: console-eslint
+        name: console-eslint
+        entry: npm run lint --workspace apps/playground-console
+        language: system
+        pass_filenames: false

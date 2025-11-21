@@ -7,8 +7,8 @@ import argparse
 import json
 import statistics
 import time
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import cv2
 import numpy as np
@@ -115,5 +115,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

@@ -4,11 +4,11 @@ from __future__ import annotations
 
 import json
 import logging
+import os
 from collections.abc import Iterable, Sequence
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-import os
 
 from .dependencies import OCR_MODULES_AVAILABLE, PROJECT_ROOT, DictConfig, yaml
 
@@ -107,6 +107,7 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
         try:
             from hydra import compose, initialize
             from hydra.core.global_hydra import GlobalHydra
+
             try:
                 from hydra import initialize_config_dir
             except ImportError:  # pragma: no cover - hydra<1.2 fallback

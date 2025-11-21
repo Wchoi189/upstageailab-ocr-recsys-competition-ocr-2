@@ -425,4 +425,3 @@ If issues occur:
 
 - Phase 1 Plan: `artifacts/implementation_plans/2025-11-17_XXXX_phase-1:-service-and-checkpoint-caching.md`
 - Assessment: `artifacts/assessments/2025-11-17_0136_unified-ocr-app-performance-assessment.md`
-

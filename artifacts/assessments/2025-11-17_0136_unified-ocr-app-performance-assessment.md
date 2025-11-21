@@ -295,4 +295,3 @@ class UnifiedAppState:
 - Current app: `ui/apps/unified_ocr_app/`
 - Services: `ui/apps/unified_ocr_app/services/`
 - Pages: `ui/apps/unified_ocr_app/pages/`
-

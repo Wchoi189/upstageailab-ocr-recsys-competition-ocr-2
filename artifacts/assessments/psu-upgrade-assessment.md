@@ -42,5 +42,3 @@ Proceed with Option 1. A modern 650–750 W PSU provides enough sustained and 
 - Select reputable PSU (e.g., Seasonic Focus, Corsair RM series) rated ≥650 W with sufficient PCIe connectors.
 - Install and retest the training run to confirm stability.
 - Update `BUG-20251110-002` with results after hardware change.
-
-

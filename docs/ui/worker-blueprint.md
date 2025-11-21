@@ -57,5 +57,3 @@ status: "draft"
 
 - Pause development if browser metrics show consistent >400 ms latency even after throttling – escalate to GPU-backed rendering.
 - Suspend rembg client path if ONNX bundle destabilizes worker memory.
-
-

@@ -144,4 +144,3 @@ grep -r "PadIfNeeded\|position.*top_left" configs/
 - Padding position in transforms is commented out - may be causing misalignment
 - Coordinate frame mismatches are the most likely root cause
 - Both GT and pred need to be in the same coordinate frame for evaluation and visualization
-

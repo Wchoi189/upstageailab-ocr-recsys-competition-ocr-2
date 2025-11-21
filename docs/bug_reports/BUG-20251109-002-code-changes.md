@@ -159,4 +159,3 @@ def forward(self, pred_logits, gt, mask=None):
 - All changes are indexed with bug ID BUG-20251109-002
 - The fix in `bce_loss.py` is a workaround - the root cause is likely earlier in the pipeline
 - Even moving to CPU fails if CUDA memory is corrupted, suggesting corruption happens during tensor creation or earlier operations
-

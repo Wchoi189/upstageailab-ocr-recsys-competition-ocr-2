@@ -107,4 +107,3 @@ The investigation clearly identifies the root cause: **`polygons_in_canonical_fr
 
 *Investigation performed: 2025-11-16*
 *Investigation tool: `scripts/data/investigate_polygon_bounds.py`*
-

@@ -217,4 +217,3 @@ cd frontend && npm run test:e2e
 
 **Created**: 2025-11-20
 **Last Updated**: 2025-11-20
-

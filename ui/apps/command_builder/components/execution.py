@@ -8,10 +8,9 @@ import streamlit as st
 
 from ui.utils.command import CommandBuilder, CommandExecutor, CommandValidator
 
-from ..services.submissions import find_latest_submission_json
-
 from ..models.command import CommandPageData
 from ..services.formatting import format_command_output
+from ..services.submissions import find_latest_submission_json
 from ..state import CommandType
 
 

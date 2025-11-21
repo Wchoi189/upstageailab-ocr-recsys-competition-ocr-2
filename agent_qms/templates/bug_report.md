@@ -85,4 +85,3 @@ severity: "{{ severity }}"
 ---
 
 *This bug report follows the project's standardized format for issue tracking.*
-

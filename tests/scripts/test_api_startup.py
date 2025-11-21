@@ -5,6 +5,7 @@ import sys
 import time
 import traceback
 
+
 def test_imports():
     """Test imports step by step."""
     print("=" * 60)
@@ -43,6 +44,7 @@ def test_imports():
 
     return True
 
+
 def test_app_creation():
     """Test creating the FastAPI app."""
     print("\n" + "=" * 60)
@@ -51,6 +53,7 @@ def test_app_creation():
 
     try:
         from services.playground_api.app import app
+
         print("✅ App created successfully")
         print(f"   Routes: {len(app.routes)}")
         return True
@@ -58,6 +61,7 @@ def test_app_creation():
         print(f"❌ Failed to create app: {e}")
         traceback.print_exc()
         return False
+
 
 if __name__ == "__main__":
     print("API Server Startup Diagnostic")
@@ -74,4 +78,3 @@ if __name__ == "__main__":
     print("\n✅ All tests passed! The app should be able to start.")
     print("\nTo start the server, run:")
     print("  uv run python run_spa.py --api-only --no-reload")
-

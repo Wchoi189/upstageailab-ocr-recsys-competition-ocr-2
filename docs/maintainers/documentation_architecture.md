@@ -240,4 +240,3 @@ python scripts/agent_tools/compliance/validate_artifacts.py
 
 **Last Updated**: 2025-11-12
 **Maintained By**: AI Agent + Human Maintainers
-

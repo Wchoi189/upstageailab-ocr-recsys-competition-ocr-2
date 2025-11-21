@@ -794,4 +794,3 @@ bce_loss = BCELoss(negative_ratio=3.0, validate_inputs=False)
 - `CHANGELOG_DATA_CONTRACT_ENFORCEMENT.md` - Full implementation changelog
 - `artifacts/implementation_plans/2025-11-12_0226_data-contract-enforcement-implementation.md` - Original plan
 - `tests/unit/test_validation_models.py` - Comprehensive test examples
-

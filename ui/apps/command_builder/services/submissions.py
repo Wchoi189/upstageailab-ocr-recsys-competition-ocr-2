@@ -2,7 +2,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Iterable
 
 from ocr.utils.experiment_name import find_run_dirs_for_exp_name, resolve_run_directory_experiment_name
 
@@ -92,4 +91,3 @@ def find_latest_submission_json(exp_name: str | None, *, outputs_root: Path = Pa
     """Return the newest submission JSON path for an experiment, if available."""
     files = gather_submission_files_for_exp(exp_name, outputs_root=outputs_root)
     return files[0] if files else None
-

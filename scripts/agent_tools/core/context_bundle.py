@@ -24,9 +24,7 @@ from typing import Any
 try:
     import yaml
 except ImportError:
-    print(
-        "ERROR: PyYAML not installed. Install with: pip install pyyaml", file=sys.stderr
-    )
+    print("ERROR: PyYAML not installed. Install with: pip install pyyaml", file=sys.stderr)
     sys.exit(1)
 
 
@@ -38,9 +36,7 @@ def _load_bootstrap():
     for directory in (current_dir, *tuple(current_dir.parents)):
         candidate = directory / "_bootstrap.py"
         if candidate.exists():
-            spec = importlib.util.spec_from_file_location(
-                "scripts._bootstrap", candidate
-            )
+            spec = importlib.util.spec_from_file_location("scripts._bootstrap", candidate)
             if spec is None or spec.loader is None:  # pragma: no cover - defensive
                 continue
             module = importlib.util.module_from_spec(spec)
@@ -168,10 +164,7 @@ def load_bundle_definition(bundle_name: str) -> dict[str, Any]:
 
     if not bundle_path.exists():
         available = ", ".join([f.stem for f in BUNDLES_DIR.glob("*.yaml")])
-        raise FileNotFoundError(
-            f"Bundle '{bundle_name}' not found at {bundle_path}. "
-            f"Available bundles: {available}"
-        )
+        raise FileNotFoundError(f"Bundle '{bundle_name}' not found at {bundle_path}. " f"Available bundles: {available}")
 
     with bundle_path.open("r", encoding="utf-8") as f:
         return yaml.safe_load(f)
@@ -287,9 +280,7 @@ def validate_bundle_files(bundle_def: dict[str, Any]) -> list[str]:
     return valid_paths
 
 
-def get_context_bundle(
-    task_description: str, task_type: str | None = None
-) -> list[str]:
+def get_context_bundle(task_description: str, task_type: str | None = None) -> list[str]:
     """
     Get context bundle for a task.
 
@@ -348,9 +339,7 @@ def list_available_bundles() -> list[str]:
 if __name__ == "__main__":
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Generate context bundles for AI agent tasks"
-    )
+    parser = argparse.ArgumentParser(description="Generate context bundles for AI agent tasks")
     parser.add_argument(
         "--task",
         type=str,

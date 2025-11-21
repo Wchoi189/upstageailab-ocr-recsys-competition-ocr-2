@@ -3,7 +3,7 @@
  * Schema-driven form generator for CLI command building.
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import type React from "react";
 import type {
   SchemaId,
@@ -41,29 +41,7 @@ export function CommandBuilder(): React.JSX.Element {
   const [showRecommendations, setShowRecommendations] = useState(true);
 
   // Load schema when tab changes
-  useEffect(() => {
-    loadSchema(activeTab);
-    loadRecommendations();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeTab]);
-
-  // Reload recommendations when architecture changes
-  useEffect(() => {
-    const architecture = values.architecture as string | undefined;
-    if (architecture) {
-      loadRecommendations(architecture);
-    }
-  }, [values.architecture]);
-
-  // Build command when values change
-  useEffect(() => {
-    if (Object.keys(values).length > 0 && schema) {
-      buildCommandFromValues();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [values, activeTab]);
-
-  const loadSchema = async (schemaId: SchemaId): Promise<void> => {
+  const loadSchema = useCallback(async (schemaId: SchemaId): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -82,26 +60,19 @@ export function CommandBuilder(): React.JSX.Element {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const loadRecommendations = async (architecture?: string): Promise<void> => {
+  const loadRecommendations = useCallback(async (architecture?: string): Promise<void> => {
     try {
       const recs = await getCommandRecommendations(architecture);
       setRecommendations(recs);
     } catch (err) {
       console.error("Error loading recommendations:", err);
     }
-  };
+  }, []);
 
-  const handleRecommendationSelect = (rec: Recommendation): void => {
-    setSelectedRecommendationId(rec.id);
-    // Merge recommendation parameters into form values
-    setValues((prev) => ({ ...prev, ...rec.parameters }));
-  };
-
-  const buildCommandFromValues = async (): Promise<void> => {
+  const buildCommandFromValues = useCallback(async (): Promise<void> => {
     try {
-      // Save previous command before building new one
       if (commandResult?.command) {
         setPreviousCommand(commandResult.command);
       }
@@ -115,6 +86,32 @@ export function CommandBuilder(): React.JSX.Element {
     } catch (err) {
       console.error("Error building command:", err);
     }
+  }, [commandResult, activeTab, values]);
+
+  useEffect(() => {
+    loadSchema(activeTab);
+    loadRecommendations();
+  }, [activeTab, loadSchema, loadRecommendations]);
+
+  // Reload recommendations when architecture changes
+  useEffect(() => {
+    const architecture = values.architecture as string | undefined;
+    if (architecture) {
+      loadRecommendations(architecture);
+    }
+  }, [values.architecture, loadRecommendations]);
+
+  // Build command when values change
+  useEffect(() => {
+    if (Object.keys(values).length > 0 && schema) {
+      buildCommandFromValues();
+    }
+  }, [values, schema, buildCommandFromValues]);
+
+  const handleRecommendationSelect = (rec: Recommendation): void => {
+    setSelectedRecommendationId(rec.id);
+    // Merge recommendation parameters into form values
+    setValues((prev) => ({ ...prev, ...rec.parameters }));
   };
 
   return (

@@ -38,7 +38,7 @@ def test_fastapi_startup() -> None:
 
     # Total startup time
     total_duration = import_duration + init_duration
-    print(f"=== Results ===")
+    print("=== Results ===")
     print(f"Total startup time: {total_duration:.3f}s\n")
 
     # Success criteria: Should start in < 2 seconds with lazy imports
@@ -60,8 +60,6 @@ def test_fastapi_startup() -> None:
 def test_lazy_loading_on_first_call() -> None:
     """Test that heavy modules are only loaded when endpoints are called."""
     print("=== Lazy Loading Validation ===\n")
-
-    from services.playground_api.app import app
 
     print("Step 1: Checking if ConfigParser is loaded...")
     import sys
@@ -92,6 +90,6 @@ if __name__ == "__main__":
         test_lazy_loading_on_first_call()
         print("=== All Tests Passed ===\n")
     except Exception as e:
-        print(f"\n=== Test Failed ===")
+        print("\n=== Test Failed ===")
         print(f"Error: {e}\n")
         sys.exit(1)

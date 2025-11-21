@@ -44,9 +44,7 @@ def _load_bootstrap():
     for directory in (current_dir, *tuple(current_dir.parents)):
         candidate = directory / "_bootstrap.py"
         if candidate.exists():
-            spec = importlib.util.spec_from_file_location(
-                "scripts._bootstrap", candidate
-            )
+            spec = importlib.util.spec_from_file_location("scripts._bootstrap", candidate)
             if spec is None or spec.loader is None:  # pragma: no cover - defensive
                 continue
             module = importlib.util.module_from_spec(spec)
@@ -89,9 +87,7 @@ class ArtifactWorkflow:
         self.toolbelt = AgentQMSToolbelt()
         self.validator = ArtifactValidator(str(artifacts_root))
 
-    def create_artifact(
-        self, artifact_type: str, name: str, title: str, **kwargs
-    ) -> str:
+    def create_artifact(self, artifact_type: str, name: str, title: str, **kwargs) -> str:
         """Create a new artifact following project standards with validation BEFORE creation.
 
         Note: Implementation plans use Blueprint Protocol Template (PROTO-GOV-003).
@@ -135,8 +131,8 @@ class ArtifactWorkflow:
         try:
             # Get artifact metadata to show expected location
             artifact_meta = None
-            for atype in self.toolbelt.manifest['artifact_types']:
-                if atype['name'] == artifact_type:
+            for atype in self.toolbelt.manifest["artifact_types"]:
+                if atype["name"] == artifact_type:
                     artifact_meta = atype
                     break
 
@@ -146,14 +142,12 @@ class ArtifactWorkflow:
             # For bug reports, generate bug ID early if not provided (needed for filename)
             if artifact_type == "bug_report" and "bug_id" not in kwargs:
                 import subprocess
-                bug_id = subprocess.check_output(
-                    ["uv", "run", "python", "scripts/bug_tools/next_bug_id.py"],
-                    text=True
-                ).strip()
+
+                bug_id = subprocess.check_output(["uv", "run", "python", "scripts/bug_tools/next_bug_id.py"], text=True).strip()
                 kwargs["bug_id"] = bug_id
 
             # Generate expected filename
-            slug = title.lower().replace(' ', '-').replace('_', '-')
+            slug = title.lower().replace(" ", "-").replace("_", "-")
             if artifact_type == "bug_report":
                 # Bug reports use bug ID prefix
                 bug_id = kwargs.get("bug_id", "")
@@ -163,11 +157,11 @@ class ArtifactWorkflow:
                     expected_filename = f"{slug}.md"
             else:
                 expected_filename = f"{slug}.md"
-            expected_location = artifact_meta['location']
+            expected_location = artifact_meta["location"]
             # Resolve path relative to project root (same as toolbelt does)
             expected_path = self.toolbelt.root_path.parent / expected_location / expected_filename
 
-            print(f"📋 Pre-Generation Validation:")
+            print("📋 Pre-Generation Validation:")
             print(f"   Artifact Type: {artifact_type}")
             print(f"   Expected Filename: {expected_filename}")
             print(f"   Expected Location: {expected_location}")
@@ -187,7 +181,7 @@ class ArtifactWorkflow:
                 print(f"❌ Artifact already exists: {expected_path}")
                 raise ValueError(f"Artifact already exists: {expected_path}")
 
-            print(f"✅ Pre-generation validation passed")
+            print("✅ Pre-generation validation passed")
             print(f"🚀 Creating {artifact_type} artifact: {name}")
             print(f"   Title: {title}")
             print()
@@ -225,10 +219,8 @@ class ArtifactWorkflow:
                 # Generate bug ID if not provided
                 if "bug_id" not in kwargs:
                     import subprocess
-                    bug_id = subprocess.check_output(
-                        ["uv", "run", "python", "scripts/bug_tools/next_bug_id.py"],
-                        text=True
-                    ).strip()
+
+                    bug_id = subprocess.check_output(["uv", "run", "python", "scripts/bug_tools/next_bug_id.py"], text=True).strip()
                     kwargs["bug_id"] = bug_id
 
                 # Set default severity if not provided
@@ -242,7 +234,7 @@ class ArtifactWorkflow:
                 content=content,
                 author=author,
                 tags=tags,
-                **kwargs  # Pass through bug_id, severity, and other kwargs
+                **kwargs,  # Pass through bug_id, severity, and other kwargs
             )
 
             print(f"✅ Created artifact: {file_path}")
@@ -305,11 +297,7 @@ class ArtifactWorkflow:
             result = subprocess.run(
                 [
                     sys.executable,
-                    str(
-                        Path(__file__).parent.parent
-                        / "documentation"
-                        / "update_artifact_indexes.py"
-                    ),
+                    str(Path(__file__).parent.parent / "documentation" / "update_artifact_indexes.py"),
                     "--all",
                 ],
                 capture_output=True,
@@ -397,9 +385,7 @@ class ArtifactWorkflow:
                     bundle_files = validate_bundle_files(bundle_def)
 
                     # Check if artifact matches any bundle file pattern
-                    artifact_relative = artifact_path_obj.relative_to(
-                        self.artifacts_root.parent.parent
-                    )
+                    artifact_relative = artifact_path_obj.relative_to(self.artifacts_root.parent.parent)
                     if str(artifact_relative) in bundle_files:
                         # Artifact is already in a bundle - all good
                         return
@@ -450,7 +436,7 @@ class ArtifactWorkflow:
             # Check for any remaining mismatches
             mismatch = self.toolbelt.check_status_mismatch(updated_path)
             if mismatch:
-                print(f"⚠️  Warning: Status mismatch detected!")
+                print("⚠️  Warning: Status mismatch detected!")
                 print(f"   Frontmatter: {mismatch['frontmatter_status']}")
                 print(f"   Progress Tracker: {mismatch['detected_status']}")
             else:
@@ -506,8 +492,8 @@ class ArtifactWorkflow:
 
         # Get artifact metadata from manifest
         artifact_meta = None
-        for atype in self.toolbelt.manifest['artifact_types']:
-            if atype['name'] == template_type:
+        for atype in self.toolbelt.manifest["artifact_types"]:
+            if atype["name"] == template_type:
                 artifact_meta = atype
                 break
 
@@ -519,10 +505,10 @@ class ArtifactWorkflow:
             print(f"   ✅ Schema: {artifact_meta.get('schema', 'N/A')}")
 
             # Show template file path if it exists
-            template_path = self.toolbelt.root_path / artifact_meta.get('template', '')
+            template_path = self.toolbelt.root_path / artifact_meta.get("template", "")
             if template_path.exists():
                 print(f"   📖 Template file: {template_path}")
-                print(f"      (Review this file to see required structure)")
+                print("      (Review this file to see required structure)")
         else:
             print(f"❌ Could not find metadata for: {template_type}")
 
@@ -600,16 +586,12 @@ def main():
     create_parser.add_argument("--tags", help="Comma-separated tags")
     create_parser.add_argument("--bug-id", help="Bug ID (for bug_report type, auto-generated if not provided)")
     create_parser.add_argument("--severity", help="Severity level (for bug_report type, default: Medium)")
-    create_parser.add_argument(
-        "--interactive", action="store_true", help="Interactive mode"
-    )
+    create_parser.add_argument("--interactive", action="store_true", help="Interactive mode")
 
     # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate artifacts")
     validate_parser.add_argument("--file", help="Validate specific file")
-    validate_parser.add_argument(
-        "--all", action="store_true", help="Validate all artifacts"
-    )
+    validate_parser.add_argument("--all", action="store_true", help="Validate all artifacts")
 
     # Update indexes command
     subparsers.add_parser("update-indexes", help="Update artifact indexes")
@@ -621,28 +603,17 @@ def main():
     subparsers.add_parser("list-templates", help="List available templates")
 
     # Template info command
-    template_info_parser = subparsers.add_parser(
-        "template-info", help="Show template information"
-    )
+    template_info_parser = subparsers.add_parser("template-info", help="Show template information")
     template_info_parser.add_argument("--type", required=True, help="Template type")
 
     # Update status command
-    update_status_parser = subparsers.add_parser(
-        "update-status", help="Update artifact status in frontmatter"
-    )
+    update_status_parser = subparsers.add_parser("update-status", help="Update artifact status in frontmatter")
     update_status_parser.add_argument("--file", required=True, help="Path to artifact file")
-    update_status_parser.add_argument(
-        "--status", help="New status value (draft, in-progress, completed)"
-    )
-    update_status_parser.add_argument(
-        "--auto-detect", action="store_true",
-        help="Auto-detect status from Progress Tracker"
-    )
+    update_status_parser.add_argument("--status", help="New status value (draft, in-progress, completed)")
+    update_status_parser.add_argument("--auto-detect", action="store_true", help="Auto-detect status from Progress Tracker")
 
     # Check status mismatches command
-    subparsers.add_parser(
-        "check-status-mismatches", help="Check for status mismatches between frontmatter and Progress Tracker"
-    )
+    subparsers.add_parser("check-status-mismatches", help="Check for status mismatches between frontmatter and Progress Tracker")
 
     args = parser.parse_args()
 
@@ -672,9 +643,7 @@ def main():
                 if args.severity:
                     kwargs["severity"] = args.severity
 
-                file_path = workflow.create_artifact(
-                    args.type, args.name, args.title, **kwargs
-                )
+                file_path = workflow.create_artifact(args.type, args.name, args.title, **kwargs)
                 return 0 if file_path else 1
 
         elif args.command == "validate":
@@ -711,9 +680,7 @@ def main():
             if not args.status and not args.auto_detect:
                 print("❌ Please specify --status or --auto-detect")
                 return 1
-            updated_path = workflow.update_status(
-                args.file, args.status, args.auto_detect
-            )
+            updated_path = workflow.update_status(args.file, args.status, args.auto_detect)
             return 0 if updated_path else 1
 
         elif args.command == "check-status-mismatches":

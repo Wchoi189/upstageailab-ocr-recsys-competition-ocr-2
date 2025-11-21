@@ -15,15 +15,17 @@ import yaml
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from ..utils.paths import PROJECT_ROOT
 from ocr.utils.experiment_name import resolve_experiment_name
 from ocr.utils.path_utils import get_path_resolver
 from ui.apps.inference.models.config import PathConfig
 from ui.apps.inference.services.checkpoint import CatalogOptions, build_lightweight_catalog
 
+from ..utils.paths import PROJECT_ROOT
+
 # Import inference engine
 try:
     from ui.utils.inference import InferenceEngine
+
     INFERENCE_AVAILABLE = True
 except ImportError:
     INFERENCE_AVAILABLE = False
@@ -36,6 +38,7 @@ MODES_CONFIG = PROJECT_ROOT / "configs" / "ui" / "modes" / "inference.yaml"
 # Use path resolver for outputs directory (supports environment variable override)
 _resolver = get_path_resolver()
 OUTPUTS_ROOT = _resolver.config.output_dir
+
 
 class InferenceModeSummary(BaseModel):
     """Metadata describing available inference modes."""
@@ -254,8 +257,7 @@ def run_inference_preview(request: InferencePreviewRequest) -> InferencePreviewR
         raise HTTPException(status_code=500, detail=error_msg)
 
     # Run inference with provided hyperparameters
-    LOGGER.info("Running inference with thresholds: confidence=%f, nms=%f",
-                request.confidence_threshold, request.nms_threshold)
+    LOGGER.info("Running inference with thresholds: confidence=%f, nms=%f", request.confidence_threshold, request.nms_threshold)
 
     try:
         result = engine.predict_array(
@@ -374,8 +376,7 @@ def _parse_inference_result(result: dict) -> list[TextRegion]:
         # Convert to list of [x, y] pairs
         try:
             coord_floats = [float(c) for c in coords]
-            polygon = [[coord_floats[i], coord_floats[i+1]]
-                      for i in range(0, len(coord_floats), 2)]
+            polygon = [[coord_floats[i], coord_floats[i + 1]] for i in range(0, len(coord_floats), 2)]
         except (ValueError, IndexError):
             LOGGER.warning(f"Failed to parse polygon coordinates: {polygon_str}")
             continue
@@ -384,12 +385,12 @@ def _parse_inference_result(result: dict) -> list[TextRegion]:
         text = texts[idx] if idx < len(texts) else None
         confidence = confidences[idx] if idx < len(confidences) else 0.0
 
-        regions.append(TextRegion(
-            polygon=polygon,
-            text=text,
-            confidence=confidence,
-        ))
+        regions.append(
+            TextRegion(
+                polygon=polygon,
+                text=text,
+                confidence=confidence,
+            )
+        )
 
     return regions
-
-

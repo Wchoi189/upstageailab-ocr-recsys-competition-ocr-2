@@ -188,10 +188,13 @@ class WandbClient:
             encoder_name = encoder_cfg.get("model_name", "unknown")
 
             # Get experiment name from checkpoint path or config
-            exp_name = resolve_experiment_name(
-                checkpoint_path,
-                config_sources=(config,),
-            ) or checkpoint_path.parent.parent.name
+            exp_name = (
+                resolve_experiment_name(
+                    checkpoint_path,
+                    config_sources=(config,),
+                )
+                or checkpoint_path.parent.parent.name
+            )
 
             # Import model info types
             from .types import (

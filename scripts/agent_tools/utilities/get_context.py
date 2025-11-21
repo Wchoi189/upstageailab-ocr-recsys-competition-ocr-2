@@ -29,9 +29,7 @@ def _load_bootstrap():
     for directory in (current_dir, *tuple(current_dir.parents)):
         candidate = directory / "_bootstrap.py"
         if candidate.exists():
-            spec = importlib.util.spec_from_file_location(
-                "scripts._bootstrap", candidate
-            )
+            spec = importlib.util.spec_from_file_location("scripts._bootstrap", candidate)
             if spec is None or spec.loader is None:  # pragma: no cover - defensive
                 continue
             module = importlib.util.module_from_spec(spec)
@@ -137,9 +135,7 @@ def lookup_entry(index: dict[str, Any], entry_id: str) -> None:
 
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
-    parser = argparse.ArgumentParser(
-        description="Print documentation bundles or entries for agents."
-    )
+    parser = argparse.ArgumentParser(description="Print documentation bundles or entries for agents.")
 
     # Legacy arguments (handbook index bundles)
     legacy_group = parser.add_argument_group("Legacy (Handbook Index)")
@@ -177,9 +173,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     context_args = [args.task, args.type, args.list_context_bundles]
 
     if not any(legacy_args) and not any(context_args):
-        parser.error(
-            "At least one argument required. Use --help to see available options."
-        )
+        parser.error("At least one argument required. Use --help to see available options.")
 
     return args
 
@@ -191,8 +185,7 @@ def main(argv: list[str] | None = None) -> None:
     if args.list_context_bundles:
         if list_available_bundles is None:
             print(
-                "ERROR: Context bundle module not available. "
-                "Ensure scripts.agent_tools.core.context_bundle can be imported.",
+                "ERROR: Context bundle module not available. " "Ensure scripts.agent_tools.core.context_bundle can be imported.",
                 file=sys.stderr,
             )
             sys.exit(1)
@@ -205,8 +198,7 @@ def main(argv: list[str] | None = None) -> None:
     if args.task or args.type:
         if print_context_bundle is None:
             print(
-                "ERROR: Context bundle module not available. "
-                "Ensure scripts.agent_tools.core.context_bundle can be imported.",
+                "ERROR: Context bundle module not available. " "Ensure scripts.agent_tools.core.context_bundle can be imported.",
                 file=sys.stderr,
             )
             sys.exit(1)

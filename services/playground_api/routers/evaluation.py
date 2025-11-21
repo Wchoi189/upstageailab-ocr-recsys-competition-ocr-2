@@ -145,5 +145,3 @@ def list_gallery_images(limit: int = 100) -> list[GalleryImage]:
             break
 
     return images
-
-

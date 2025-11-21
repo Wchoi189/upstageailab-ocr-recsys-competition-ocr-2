@@ -206,7 +206,7 @@ class ValidatedPolygonData(PolygonData):
     image_height: int = Field(gt=0, description="Image height for bounds checking")
 
     @model_validator(mode="after")
-    def validate_bounds(self) -> "ValidatedPolygonData":
+    def validate_bounds(self) -> ValidatedPolygonData:
         """Validate that all polygon coordinates are within image bounds.
 
         This validator:

@@ -6,8 +6,6 @@ Launches the FastAPI backend and optionally proxies to a frontend dev server.
 """
 
 import subprocess
-import sys
-from pathlib import Path
 
 from ocr.utils.path_utils import get_path_resolver, setup_project_paths
 
@@ -76,4 +74,3 @@ if __name__ == "__main__":
 
         # For now, just run API. Frontend can be started separately.
         run_api_server(host=args.host, port=args.port, reload=not args.no_reload)
-

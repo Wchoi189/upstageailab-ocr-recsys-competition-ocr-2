@@ -104,6 +104,7 @@ def test_cuda_setup():
 
     return True
 
+
 def test_basic_operations():
     """Test basic CUDA tensor operations."""
     print("\n" + "=" * 80)
@@ -122,7 +123,7 @@ def test_basic_operations():
         # Test backward pass
         loss = y.sum()
         loss.backward()
-        print(f"✓ Backward pass successful")
+        print("✓ Backward pass successful")
 
         # Check for NaN/Inf
         if torch.isnan(x.grad).any():
@@ -154,8 +155,9 @@ def test_data_loading(args: argparse.Namespace):
 
     try:
         from hydra.utils import instantiate
-        from ocr.datasets import get_datasets_by_cfg
         from torch.utils.data import DataLoader
+
+        from ocr.datasets import get_datasets_by_cfg
 
         cfg = _compose_config(args)
 
@@ -227,7 +229,7 @@ def test_data_loading(args: argparse.Namespace):
 
         # Try to move batch to CUDA
         print("\nMoving batch to CUDA...")
-        batch_cuda = {k: v.cuda() if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
+        {k: v.cuda() if isinstance(v, torch.Tensor) else v for k, v in batch.items()}
         torch.cuda.synchronize()
         print("✓ Batch moved to CUDA successfully")
 
@@ -236,6 +238,7 @@ def test_data_loading(args: argparse.Namespace):
     except Exception as e:
         print(f"✗ Data loading failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -247,8 +250,6 @@ def test_model_forward(args: argparse.Namespace):
     print("=" * 80)
 
     try:
-        from hydra.utils import instantiate
-
         cfg = _compose_config(
             args,
             extra_overrides=[
@@ -370,6 +371,7 @@ def test_model_forward(args: argparse.Namespace):
     except Exception as e:
         print(f"✗ Model forward pass failed: {e}")
         import traceback
+
         traceback.print_exc()
         return False
 
@@ -433,6 +435,7 @@ def main():
     print("=" * 80)
 
     return 0 if all_passed else 1
+
 
 if __name__ == "__main__":
     sys.exit(main())

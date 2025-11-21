@@ -81,5 +81,3 @@ The SPA communicates with FastAPI endpoints in `services/playground_api` to coor
 
 - `cache_key` ensures `(image, params)` combos can be reused across both client and backend paths.
 - Workers must emit telemetry (queue depth, durations) and optionally POST them to `/api/metrics` (future endpoint) for observability.
-
-

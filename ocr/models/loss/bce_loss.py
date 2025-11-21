@@ -38,7 +38,7 @@ class BCELoss(nn.Module):
                     expected_shape=tuple(pred_logits.shape),
                     expected_device=pred_logits.device,
                     allow_nan=False,
-                    allow_inf=False
+                    allow_inf=False,
                 )
                 # Validate ground truth tensor: shape, device, value range [0, 1]
                 ValidatedTensorData(
@@ -47,15 +47,11 @@ class BCELoss(nn.Module):
                     expected_device=gt.device,
                     value_range=(0.0, 1.0),
                     allow_nan=False,
-                    allow_inf=False
+                    allow_inf=False,
                 )
                 # Validate mask tensor: shape, device, no NaN/Inf
                 ValidatedTensorData(
-                    tensor=mask,
-                    expected_shape=tuple(mask.shape),
-                    expected_device=mask.device,
-                    allow_nan=False,
-                    allow_inf=False
+                    tensor=mask, expected_shape=tuple(mask.shape), expected_device=mask.device, allow_nan=False, allow_inf=False
                 )
             except ValidationError as exc:
                 raise ValueError(f"BCE loss input validation failed: {exc}") from exc

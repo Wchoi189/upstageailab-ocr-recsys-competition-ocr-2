@@ -8,8 +8,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-ROOT = Path(__file__).resolve().parents[2]
-DEFAULT_MANIFEST = ROOT / "docs/ai_handbook/index.json"
+ROOT = Path(__file__).resolve().parents[3]
+DEFAULT_MANIFEST = ROOT / "docs/agents/index.json"
 
 
 class ManifestValidationError(Exception):
@@ -30,9 +30,7 @@ def load_manifest(path: Path) -> dict[str, Any]:
         raise ManifestValidationError(f"Failed to parse manifest: {exc}") from exc
 
 
-def validate_manifest(
-    data: dict[str, Any], manifest_path: Path
-) -> tuple[list[str], list[str]]:
+def validate_manifest(data: dict[str, Any], manifest_path: Path) -> tuple[list[str], list[str]]:
     errors: list[str] = []
     warnings: list[str] = []
 
@@ -62,11 +60,7 @@ def validate_manifest(
             entry_ids.add(entry_id)
 
         for field in ("title", "path", "section"):
-            if (
-                field not in entry
-                or not isinstance(entry[field], str)
-                or not entry[field].strip()
-            ):
+            if field not in entry or not isinstance(entry[field], str) or not entry[field].strip():
                 errors.append(f"{context} ({entry_id}) missing field '{field}'")
 
         path_value = entry.get("path")
@@ -75,9 +69,7 @@ def validate_manifest(
             try:
                 target_path.relative_to(manifest_dir)
             except ValueError:
-                errors.append(
-                    f"Entry '{entry_id}' path escapes docs root: {path_value}"
-                )
+                errors.append(f"Entry '{entry_id}' path escapes docs root: {path_value}")
             else:
                 if not target_path.exists():
                     errors.append(f"Entry '{entry_id}' path not found: {path_value}")
@@ -94,9 +86,7 @@ def validate_manifest(
         bundle_names: list[str] = []
         for bundle_name in bundles_field:
             if not isinstance(bundle_name, str) or not bundle_name.strip():
-                errors.append(
-                    f"Entry '{entry_id}' has invalid bundle reference: {bundle_name!r}"
-                )
+                errors.append(f"Entry '{entry_id}' has invalid bundle reference: {bundle_name!r}")
                 continue
             bundle_names.append(bundle_name)
         entry_to_bundles[entry_id] = bundle_names
@@ -110,9 +100,7 @@ def validate_manifest(
     for entry_id, bundles in entry_to_bundles.items():
         for bundle_name in bundles:
             if bundle_name not in bundle_names_set:
-                errors.append(
-                    f"Entry '{entry_id}' references unknown bundle '{bundle_name}'"
-                )
+                errors.append(f"Entry '{entry_id}' references unknown bundle '{bundle_name}'")
 
     bundle_entry_refs: dict[str, set[str]] = {name: set() for name in bundle_names_set}
 
@@ -129,19 +117,13 @@ def validate_manifest(
         seen_entries: set[str] = set()
         for ref in entries_value:
             if not isinstance(ref, str):
-                errors.append(
-                    f"Bundle '{bundle_name}' contains invalid entry reference: {ref!r}"
-                )
+                errors.append(f"Bundle '{bundle_name}' contains invalid entry reference: {ref!r}")
                 continue
             if ref in seen_entries:
-                warnings.append(
-                    f"Bundle '{bundle_name}' references entry '{ref}' more than once"
-                )
+                warnings.append(f"Bundle '{bundle_name}' references entry '{ref}' more than once")
             seen_entries.add(ref)
             if ref not in entry_ids:
-                errors.append(
-                    f"Bundle '{bundle_name}' references missing entry '{ref}'"
-                )
+                errors.append(f"Bundle '{bundle_name}' references missing entry '{ref}'")
             else:
                 bundle_entry_refs[bundle_name].add(ref)
 

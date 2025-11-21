@@ -91,4 +91,3 @@ encoder = instantiate(config)
 - Output channels of encoder must match input channels of decoder
 - Some models require specific data formats (e.g., CRAFT needs character-level annotations)
 - Check shape compatibility when adding new components
-

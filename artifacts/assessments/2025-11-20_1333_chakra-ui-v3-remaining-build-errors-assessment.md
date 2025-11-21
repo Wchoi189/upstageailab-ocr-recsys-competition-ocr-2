@@ -40,7 +40,7 @@ After successfully migrating SchemaForm.tsx components from Chakra UI v2 to v3 F
 
 **Deprecated Components:**
 - `Tab` → Should use `Tabs.Trigger` (or similar v3 API)
-- `TabList` → Should use `TabsList` or `Tabs.List`  
+- `TabList` → Should use `TabsList` or `Tabs.List`
 - `TabPanel` → Should use `Tabs.Content` or `Tabs.Panel`
 - `TabPanels` → Should use `Tabs.ContentGroup` or removed (structure changed)
 

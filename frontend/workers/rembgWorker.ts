@@ -35,5 +35,3 @@ self.onmessage = async (event: MessageEvent<WorkerTask>) => {
     self.postMessage(response);
   }
 };
-
-

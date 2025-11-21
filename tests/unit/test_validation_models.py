@@ -28,11 +28,7 @@ class TestValidatedPolygonData:
     def test_valid_polygon_within_bounds(self):
         """Test that valid polygons within image bounds pass validation."""
         points = np.array([[10.0, 20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
-        polygon = ValidatedPolygonData(
-            points=points,
-            image_width=100,
-            image_height=100
-        )
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
         assert polygon.points.shape == (3, 2)
         assert polygon.image_width == 100
         assert polygon.image_height == 100
@@ -40,22 +36,14 @@ class TestValidatedPolygonData:
     def test_valid_polygon_at_boundaries(self):
         """Test that polygons with coordinates at exact boundaries are valid."""
         points = np.array([[0.0, 0.0], [99.0, 99.0], [50.0, 50.0]], dtype=np.float32)
-        polygon = ValidatedPolygonData(
-            points=points,
-            image_width=100,
-            image_height=100
-        )
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
         assert polygon.points.shape == (3, 2)
 
     def test_invalid_x_coordinate_exceeds_width(self):
         """Test that polygons with x-coordinates exceeding image width raise ValidationError."""
         points = np.array([[10.0, 20.0], [150.0, 40.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds x-coordinates" in error_msg
         assert "150" in error_msg or "150.0" in error_msg
@@ -65,11 +53,7 @@ class TestValidatedPolygonData:
         """Test that polygons with y-coordinates exceeding image height raise ValidationError."""
         points = np.array([[10.0, 20.0], [30.0, 150.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds y-coordinates" in error_msg
         assert "150" in error_msg or "150.0" in error_msg
@@ -79,11 +63,7 @@ class TestValidatedPolygonData:
         """Test that polygons with negative x-coordinates raise ValidationError."""
         points = np.array([[-10.0, 20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds x-coordinates" in error_msg
 
@@ -91,11 +71,7 @@ class TestValidatedPolygonData:
         """Test that polygons with negative y-coordinates raise ValidationError."""
         points = np.array([[10.0, -20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds y-coordinates" in error_msg
 
@@ -103,22 +79,12 @@ class TestValidatedPolygonData:
         """Test that polygons with multiple out-of-bounds coordinates raise ValidationError."""
         points = np.array([[-10.0, 20.0], [150.0, 40.0], [50.0, 200.0]], dtype=np.float32)
         with pytest.raises(ValidationError):
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
 
     def test_valid_polygon_with_confidence_and_label(self):
         """Test that ValidatedPolygonData with confidence and label works correctly."""
         points = np.array([[10.0, 20.0], [30.0, 40.0], [50.0, 60.0]], dtype=np.float32)
-        polygon = ValidatedPolygonData(
-            points=points,
-            image_width=100,
-            image_height=100,
-            confidence=0.95,
-            label="text"
-        )
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100, confidence=0.95, label="text")
         assert polygon.confidence == 0.95
         assert polygon.label == "text"
 
@@ -126,11 +92,7 @@ class TestValidatedPolygonData:
         """Test that coordinates at exactly image_width are invalid (exclusive upper bound)."""
         points = np.array([[10.0, 20.0], [100.0, 40.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds x-coordinates" in error_msg
 
@@ -138,11 +100,7 @@ class TestValidatedPolygonData:
         """Test that coordinates at exactly image_height are invalid (exclusive upper bound)."""
         points = np.array([[10.0, 20.0], [30.0, 100.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds y-coordinates" in error_msg
 
@@ -150,11 +108,7 @@ class TestValidatedPolygonData:
         """Test that error messages clearly indicate which coordinates are out of bounds."""
         points = np.array([[10.0, 20.0], [150.0, 40.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(
-                points=points,
-                image_width=100,
-                image_height=100
-            )
+            ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         # Should indicate index 1 is invalid
         assert "indices" in error_msg.lower() or "index" in error_msg.lower()
@@ -176,20 +130,14 @@ class TestValidatedTensorData:
     def test_valid_tensor_with_shape_validation(self):
         """Test tensor with expected shape validation."""
         tensor = torch.rand(2, 3, 224, 224)
-        validated = ValidatedTensorData(
-            tensor=tensor,
-            expected_shape=(2, 3, 224, 224)
-        )
+        validated = ValidatedTensorData(tensor=tensor, expected_shape=(2, 3, 224, 224))
         assert validated.tensor.shape == (2, 3, 224, 224)
 
     def test_invalid_tensor_shape_mismatch(self):
         """Test that tensor with wrong shape raises ValidationError."""
         tensor = torch.rand(2, 3, 224, 224)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                expected_shape=(2, 3, 256, 256)
-            )
+            ValidatedTensorData(tensor=tensor, expected_shape=(2, 3, 256, 256))
         error_msg = str(exc_info.value)
         assert "shape mismatch" in error_msg.lower()
         assert "(2, 3, 224, 224)" in error_msg
@@ -198,50 +146,35 @@ class TestValidatedTensorData:
     def test_valid_tensor_with_device_validation(self):
         """Test tensor with expected device validation."""
         tensor = torch.rand(2, 3, 224, 224)
-        validated = ValidatedTensorData(
-            tensor=tensor,
-            expected_device="cpu"
-        )
+        validated = ValidatedTensorData(tensor=tensor, expected_device="cpu")
         assert validated.tensor.device.type == "cpu"
 
     def test_invalid_tensor_device_mismatch(self):
         """Test that tensor with wrong device raises ValidationError."""
         tensor = torch.rand(2, 3, 224, 224)  # CPU tensor
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                expected_device="cuda"
-            )
+            ValidatedTensorData(tensor=tensor, expected_device="cuda")
         error_msg = str(exc_info.value)
         assert "device mismatch" in error_msg.lower()
 
     def test_valid_tensor_with_dtype_validation(self):
         """Test tensor with expected dtype validation."""
         tensor = torch.rand(2, 3, 224, 224, dtype=torch.float32)
-        validated = ValidatedTensorData(
-            tensor=tensor,
-            expected_dtype=torch.float32
-        )
+        validated = ValidatedTensorData(tensor=tensor, expected_dtype=torch.float32)
         assert validated.tensor.dtype == torch.float32
 
     def test_invalid_tensor_dtype_mismatch(self):
         """Test that tensor with wrong dtype raises ValidationError."""
         tensor = torch.rand(2, 3, 224, 224, dtype=torch.float32)
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                expected_dtype=torch.float64
-            )
+            ValidatedTensorData(tensor=tensor, expected_dtype=torch.float64)
         error_msg = str(exc_info.value)
         assert "dtype mismatch" in error_msg.lower()
 
     def test_valid_tensor_with_value_range(self):
         """Test tensor with valid value range."""
         tensor = torch.rand(2, 3, 224, 224)  # Values in [0, 1]
-        validated = ValidatedTensorData(
-            tensor=tensor,
-            value_range=(0.0, 1.0)
-        )
+        validated = ValidatedTensorData(tensor=tensor, value_range=(0.0, 1.0))
         assert validated.tensor.min() >= 0.0
         assert validated.tensor.max() <= 1.0
 
@@ -249,10 +182,7 @@ class TestValidatedTensorData:
         """Test that tensor with values below range raises ValidationError."""
         tensor = torch.tensor([-0.5, 0.5, 1.0])
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                value_range=(0.0, 1.0)
-            )
+            ValidatedTensorData(tensor=tensor, value_range=(0.0, 1.0))
         error_msg = str(exc_info.value)
         assert "out of range" in error_msg.lower()
         assert "[0.0, 1.0]" in error_msg or "[0, 1]" in error_msg
@@ -261,51 +191,36 @@ class TestValidatedTensorData:
         """Test that tensor with values above range raises ValidationError."""
         tensor = torch.tensor([0.0, 0.5, 1.5])
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                value_range=(0.0, 1.0)
-            )
+            ValidatedTensorData(tensor=tensor, value_range=(0.0, 1.0))
         error_msg = str(exc_info.value)
         assert "out of range" in error_msg.lower()
 
     def test_invalid_tensor_contains_nan(self):
         """Test that tensor with NaN values raises ValidationError."""
-        tensor = torch.tensor([0.0, float('nan'), 1.0])
+        tensor = torch.tensor([0.0, float("nan"), 1.0])
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                allow_nan=False
-            )
+            ValidatedTensorData(tensor=tensor, allow_nan=False)
         error_msg = str(exc_info.value)
         assert "nan" in error_msg.lower()
 
     def test_valid_tensor_with_nan_allowed(self):
         """Test that tensor with NaN values passes when allowed."""
-        tensor = torch.tensor([0.0, float('nan'), 1.0])
-        validated = ValidatedTensorData(
-            tensor=tensor,
-            allow_nan=True
-        )
+        tensor = torch.tensor([0.0, float("nan"), 1.0])
+        validated = ValidatedTensorData(tensor=tensor, allow_nan=True)
         assert torch.isnan(validated.tensor).any()
 
     def test_invalid_tensor_contains_inf(self):
         """Test that tensor with infinite values raises ValidationError."""
-        tensor = torch.tensor([0.0, float('inf'), 1.0])
+        tensor = torch.tensor([0.0, float("inf"), 1.0])
         with pytest.raises(ValidationError) as exc_info:
-            ValidatedTensorData(
-                tensor=tensor,
-                allow_inf=False
-            )
+            ValidatedTensorData(tensor=tensor, allow_inf=False)
         error_msg = str(exc_info.value)
         assert "inf" in error_msg.lower()
 
     def test_valid_tensor_with_inf_allowed(self):
         """Test that tensor with infinite values passes when allowed."""
-        tensor = torch.tensor([0.0, float('inf'), 1.0])
-        validated = ValidatedTensorData(
-            tensor=tensor,
-            allow_inf=True
-        )
+        tensor = torch.tensor([0.0, float("inf"), 1.0])
+        validated = ValidatedTensorData(tensor=tensor, allow_inf=True)
         assert torch.isinf(validated.tensor).any()
 
     def test_invalid_value_range_min_greater_than_max(self):
@@ -314,7 +229,7 @@ class TestValidatedTensorData:
         with pytest.raises(ValidationError) as exc_info:
             ValidatedTensorData(
                 tensor=tensor,
-                value_range=(1.0, 0.0)  # min > max
+                value_range=(1.0, 0.0),  # min > max
             )
         error_msg = str(exc_info.value)
         assert "min" in error_msg.lower() and "max" in error_msg.lower()
@@ -329,7 +244,7 @@ class TestValidatedTensorData:
             expected_dtype=torch.float32,
             value_range=(0.0, 1.0),
             allow_inf=False,
-            allow_nan=False
+            allow_nan=False,
         )
         assert validated.tensor.shape == (2, 3, 224, 224)
         assert validated.tensor.device.type == "cpu"

@@ -148,4 +148,3 @@ Start by reading the plan and checking the Progress Tracker.
 ---
 
 *Ready to use with Claude Code web. Just copy and paste!*
-

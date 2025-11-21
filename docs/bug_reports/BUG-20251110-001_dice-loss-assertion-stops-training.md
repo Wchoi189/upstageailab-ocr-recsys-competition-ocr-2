@@ -66,5 +66,3 @@ AssertionError
 ## Prevention
 - Avoid strict assertions on floating-point inequalities in critical training paths; prefer tolerant checks or clamping.
 - Add unit tests for Dice loss with weighted masks and random tensors to guard against numerical overshoot.
-
-

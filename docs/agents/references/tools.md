@@ -29,6 +29,11 @@ python scripts/agent_tools/core/discover.py
 **Utilities:**
 - `get_context.py` - Get context bundles
 - `export_framework.py` - Export framework
+- State tracking tools (see [state-tracking.md](state-tracking.md))
+  - `initialize_state.py` - Initialize/update project state
+  - `show_state.py` - Display current project state
+  - `sync_readme_state.py` - Sync README with state
+  - `state_workflow.py` - Complete state workflow
 
 **Maintenance:**
 - `reorganize_files.py` - Reorganize files
@@ -71,4 +76,3 @@ artifact_path = toolbelt.create_artifact(
 **Artifact Types:**
 - `assessment` → `artifacts/assessments/`
 - `implementation_plan` → `artifacts/implementation_plans/`
-

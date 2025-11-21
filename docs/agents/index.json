@@ -1,12 +1,13 @@
 {
   "source": "docs/agents/",
   "version": "1.0",
-  "generated_at": "2025-11-08T18:12:11.874223+00:00",
+  "generated_at": "2025-11-21T15:13:24.141536+00:00",
   "entries": [
     {
       "id": "index",
       "title": "AI Agent Documentation Map",
-      "path": "docs/agents/index.md",
+      "path": "index.md",
+      "section": "core",
       "category": "core",
       "tags": [
         "core"
@@ -14,12 +15,13 @@
       "priority": "high",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "system",
       "title": "AI Agent System – Single Source of Truth",
-      "path": "docs/agents/system.md",
+      "path": "system.md",
+      "section": "core",
       "category": "core",
       "tags": [
         "ai_agent",
@@ -28,13 +30,14 @@
       ],
       "priority": "critical",
       "status": "active",
-      "version": "1.0",
-      "date": "2025-10-29"
+      "version": "1.1",
+      "date": "2025-11-20"
     },
     {
       "id": "changelog_process",
       "title": "Changelog Automation Process",
-      "path": "docs/agents/automation/changelog_process.md",
+      "path": "automation/changelog_process.md",
+      "section": "automation",
       "category": "automation",
       "tags": [
         "changelog",
@@ -49,7 +52,8 @@
     {
       "id": "tooling_overview",
       "title": "Agent Tooling Overview",
-      "path": "docs/agents/automation/tooling_overview.md",
+      "path": "automation/tooling_overview.md",
+      "section": "automation",
       "category": "automation",
       "tags": [
         "agent-tools",
@@ -64,7 +68,8 @@
     {
       "id": "tool_catalog",
       "title": "Agent Tool Catalog (generated)",
-      "path": "docs/agents/automation/tool_catalog.md",
+      "path": "automation/tool_catalog.md",
+      "section": "automation",
       "category": "automation",
       "tags": [
         "agent-tools",
@@ -73,12 +78,13 @@
       "priority": "medium",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "streamlit",
       "title": "Streamlit Coding Protocol",
-      "path": "docs/agents/coding_protocols/streamlit.md",
+      "path": "coding_protocols/streamlit.md",
+      "section": "protocols",
       "category": "protocols",
       "tags": [
         "ai_agent",
@@ -92,9 +98,10 @@
       "date": "2025-11-01"
     },
     {
-      "id": "components",
-      "title": "Component Protocols",
-      "path": "docs/agents/protocols/components.md",
+      "id": "bug_report_protocol_improvements",
+      "title": "Bug Report Protocol Improvements",
+      "path": "protocols/bug-report-protocol-improvements.md",
+      "section": "protocols",
       "category": "protocols",
       "tags": [
         "protocols"
@@ -102,12 +109,27 @@
       "priority": "high",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
+    },
+    {
+      "id": "components",
+      "title": "Component Protocols",
+      "path": "protocols/components.md",
+      "section": "protocols",
+      "category": "protocols",
+      "tags": [
+        "protocols"
+      ],
+      "priority": "high",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-21"
     },
     {
       "id": "configuration",
       "title": "Configuration Protocols",
-      "path": "docs/agents/protocols/configuration.md",
+      "path": "protocols/configuration.md",
+      "section": "protocols",
       "category": "protocols",
       "tags": [
         "configuration"
@@ -115,12 +137,13 @@
       "priority": "high",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "development",
       "title": "Development Protocols",
-      "path": "docs/agents/protocols/development.md",
+      "path": "protocols/development.md",
+      "section": "protocols",
       "category": "protocols",
       "tags": [
         "protocols"
@@ -128,12 +151,13 @@
       "priority": "high",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "governance",
       "title": "Governance Protocols",
-      "path": "docs/agents/protocols/governance.md",
+      "path": "protocols/governance.md",
+      "section": "protocols",
       "category": "protocols",
       "tags": [
         "protocols"
@@ -141,12 +165,13 @@
       "priority": "high",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "architecture",
       "title": "Architecture Reference",
-      "path": "docs/agents/references/architecture.md",
+      "path": "references/architecture.md",
+      "section": "references",
       "category": "references",
       "tags": [
         "references"
@@ -154,12 +179,13 @@
       "priority": "medium",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "commands",
       "title": "Command Reference",
-      "path": "docs/agents/references/commands.md",
+      "path": "references/commands.md",
+      "section": "references",
       "category": "references",
       "tags": [
         "references"
@@ -167,12 +193,43 @@
       "priority": "medium",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
+    },
+    {
+      "id": "framework_export",
+      "title": "Framework Export Reference",
+      "path": "references/framework-export.md",
+      "section": "references",
+      "category": "references",
+      "tags": [
+        "reference",
+        "framework",
+        "export"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-21"
+    },
+    {
+      "id": "state_tracking",
+      "title": "State Tracking Tools",
+      "path": "references/state-tracking.md",
+      "section": "references",
+      "category": "references",
+      "tags": [
+        "references"
+      ],
+      "priority": "medium",
+      "status": "active",
+      "version": "1.0",
+      "date": "2025-11-21"
     },
     {
       "id": "tools",
       "title": "Tools Reference",
-      "path": "docs/agents/references/tools.md",
+      "path": "references/tools.md",
+      "section": "references",
       "category": "references",
       "tags": [
         "references"
@@ -180,12 +237,13 @@
       "priority": "medium",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     },
     {
       "id": "cli_reference",
       "title": "Tracking CLI Quick Reference",
-      "path": "docs/agents/tracking/cli_reference.md",
+      "path": "tracking/cli_reference.md",
+      "section": "tracking",
       "category": "tracking",
       "tags": [
         "reference",
@@ -201,7 +259,8 @@
     {
       "id": "db_api",
       "title": "Tracking Database API Reference",
-      "path": "docs/agents/tracking/db_api.md",
+      "path": "tracking/db_api.md",
+      "section": "tracking",
       "category": "tracking",
       "tags": [
         "tracking"
@@ -209,7 +268,7 @@
       "priority": "medium",
       "status": "active",
       "version": "1.0",
-      "date": "2025-11-08"
+      "date": "2025-11-21"
     }
   ],
   "bundles": {
@@ -286,11 +345,13 @@
     "reference": {
       "entries": [
         "streamlit",
+        "framework_export",
         "cli_reference"
       ]
     },
     "protocols": {
       "entries": [
+        "bug_report_protocol_improvements",
         "components",
         "development",
         "governance"
@@ -305,7 +366,18 @@
       "entries": [
         "architecture",
         "commands",
+        "state_tracking",
         "tools"
+      ]
+    },
+    "framework": {
+      "entries": [
+        "framework_export"
+      ]
+    },
+    "export": {
+      "entries": [
+        "framework_export"
       ]
     },
     "docs": {

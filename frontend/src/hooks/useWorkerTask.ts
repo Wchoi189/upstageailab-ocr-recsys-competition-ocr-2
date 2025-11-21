@@ -33,6 +33,12 @@ export interface UseWorkerTaskOptions {
  * @param options - Execution options (priority, debouncing, enabled flag)
  * @returns Worker task state with result, loading, and error
  */
+const createDefaultState = <TPayload,>(): WorkerTaskState<TPayload> => ({
+  result: null,
+  loading: false,
+  error: null,
+});
+
 export function useWorkerTask<TPayload = Record<string, unknown>>(
   task: WorkerTask | null,
   options: UseWorkerTaskOptions = {},
@@ -43,11 +49,7 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
     enabled = true,
   } = options;
 
-  const [state, setState] = useState<WorkerTaskState<TPayload>>({
-    result: null,
-    loading: false,
-    error: null,
-  });
+  const [state, setState] = useState<WorkerTaskState<TPayload>>(createDefaultState());
 
   const debounceTimerRef = useRef<number | null>(null);
   const cancellationTokenRef = useRef<CancellationToken | null>(null);
@@ -114,7 +116,15 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
 
   useEffect(() => {
     if (!task || !enabled) {
-      setState({ result: null, loading: false, error: null });
+      if (debounceTimerRef.current !== null) {
+        window.clearTimeout(debounceTimerRef.current);
+        debounceTimerRef.current = null;
+      }
+      if (cancellationTokenRef.current) {
+        cancellationTokenRef.current.cancel();
+        cancellationTokenRef.current = null;
+      }
+      currentTaskIdRef.current = null;
       return;
     }
 
@@ -124,13 +134,10 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
     }
 
     // Debounce task execution (useful for slider spam)
-    if (debounceMs > 0) {
-      debounceTimerRef.current = window.setTimeout(() => {
-        executeTask(task);
-      }, debounceMs);
-    } else {
+    const delay = Math.max(0, debounceMs);
+    debounceTimerRef.current = window.setTimeout(() => {
       executeTask(task);
-    }
+    }, delay);
 
     // Cleanup on unmount or task change
     return () => {
@@ -143,5 +150,5 @@ export function useWorkerTask<TPayload = Record<string, unknown>>(
     };
   }, [task, enabled, debounceMs, executeTask]);
 
-  return state;
+  return !task || !enabled ? createDefaultState<TPayload>() : state;
 }

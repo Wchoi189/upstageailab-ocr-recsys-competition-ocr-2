@@ -376,4 +376,3 @@ If issues occur:
 - Streamlit Caching: https://docs.streamlit.io/library/advanced-features/caching
 - Current app: `ui/apps/command_builder/app.py`
 - ConfigParser: `ui/utils/config_parser.py`
-

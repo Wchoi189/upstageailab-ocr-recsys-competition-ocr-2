@@ -336,7 +336,9 @@ class TestResultValidation:
             overall_quality=0.9,
         )
 
-        result = NoiseEliminationResult(cleaned_image=cleaned, noise_mask=noise_mask, effectiveness_score=0.9, quality_metrics=quality_metrics)
+        result = NoiseEliminationResult(
+            cleaned_image=cleaned, noise_mask=noise_mask, effectiveness_score=0.9, quality_metrics=quality_metrics
+        )
 
         assert not validate_noise_elimination_result(result)
 

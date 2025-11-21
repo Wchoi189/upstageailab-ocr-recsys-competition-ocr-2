@@ -2,8 +2,9 @@
 """Quick check of training data validity."""
 
 import json
-import numpy as np
 from pathlib import Path
+
+import numpy as np
 from PIL import Image
 
 # Paths
@@ -17,7 +18,7 @@ print("=" * 80)
 
 # Load annotations
 print(f"\nLoading annotations from: {train_json}")
-with open(train_json, 'r') as f:
+with open(train_json) as f:
     data = json.load(f)
 
 print(f"Total annotations: {len(data)}")
@@ -41,7 +42,7 @@ for i, (key, value) in enumerate(list(data.items())[:10]):
         continue
 
     # Check annotation
-    words = value.get('words', [])
+    words = value.get("words", [])
     if not words:
         print(f"  {i+1}. {key}: ✗ NO WORDS (empty annotation)")
         continue
@@ -51,12 +52,16 @@ for i, (key, value) in enumerate(list(data.items())[:10]):
     total_polygons = len(words)
 
     for word in words:
-        points = word.get('points', [])
+        points = word.get("points", [])
         if len(points) >= 3:  # At least 3 points for a valid polygon
             # Check if points are within image bounds
             points_array = np.array(points)
-            if (points_array[:, 0] >= 0).all() and (points_array[:, 0] <= img_array.shape[1]).all() and \
-               (points_array[:, 1] >= 0).all() and (points_array[:, 1] <= img_array.shape[0]).all():
+            if (
+                (points_array[:, 0] >= 0).all()
+                and (points_array[:, 0] <= img_array.shape[1]).all()
+                and (points_array[:, 1] >= 0).all()
+                and (points_array[:, 1] <= img_array.shape[0]).all()
+            ):
                 valid_polygons += 1
 
     if valid_polygons == 0:
@@ -78,7 +83,7 @@ total_words = 0
 total_valid_polygons = 0
 
 for key, value in data.items():
-    words = value.get('words', [])
+    words = value.get("words", [])
     if not words:
         samples_with_no_words += 1
         continue
@@ -97,11 +102,15 @@ for key, value in data.items():
 
     valid_polygons_in_sample = 0
     for word in words:
-        points = word.get('points', [])
+        points = word.get("points", [])
         if len(points) >= 3:
             points_array = np.array(points)
-            if (points_array[:, 0] >= 0).all() and (points_array[:, 0] <= img_array.shape[1]).all() and \
-               (points_array[:, 1] >= 0).all() and (points_array[:, 1] <= img_array.shape[0]).all():
+            if (
+                (points_array[:, 0] >= 0).all()
+                and (points_array[:, 0] <= img_array.shape[1]).all()
+                and (points_array[:, 1] >= 0).all()
+                and (points_array[:, 1] <= img_array.shape[0]).all()
+            ):
                 valid_polygons_in_sample += 1
 
     total_valid_polygons += valid_polygons_in_sample

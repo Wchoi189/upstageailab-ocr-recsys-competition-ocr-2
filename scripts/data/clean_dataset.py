@@ -135,9 +135,16 @@ class DatasetCleaner:
         except Exception as e:
             issues.append({"type": "load_error", "message": f"Cannot load image: {e}"})
 
-        return {"valid": len(issues) == 0, "issues": issues, "width": width if "width" in locals() else None, "height": height if "height" in locals() else None}
+        return {
+            "valid": len(issues) == 0,
+            "issues": issues,
+            "width": width if "width" in locals() else None,
+            "height": height if "height" in locals() else None,
+        }
 
-    def validate_polygon(self, polygon: list[list[float]], image_width: int | None = None, image_height: int | None = None) -> dict[str, Any]:
+    def validate_polygon(
+        self, polygon: list[list[float]], image_width: int | None = None, image_height: int | None = None
+    ) -> dict[str, Any]:
         """Validate a single polygon."""
         issues = []
 
@@ -312,9 +319,7 @@ class DatasetCleaner:
 
             # Validate annotations if available
             if self.annotation_file:
-                annotation_result = self.validate_annotations(
-                    filename, image_result.get("width"), image_result.get("height")
-                )
+                annotation_result = self.validate_annotations(filename, image_result.get("width"), image_result.get("height"))
                 if not annotation_result["valid"]:
                     self.issues["annotation_errors"].append(
                         {
@@ -388,7 +393,7 @@ class DatasetCleaner:
         if self.annotation_file:
             print(f"📄 Annotations: {self.annotation_file}")
 
-        print(f"\n📈 Summary:")
+        print("\n📈 Summary:")
         print(f"  Total images: {summary['total_images']}")
         print(f"  Valid images: {summary['valid_images']}")
         print(f"  Images with errors: {summary['images_with_errors']}")
@@ -400,13 +405,13 @@ class DatasetCleaner:
             print(f"  Orphaned images (no annotation): {stats.get('orphaned_images', 0)}")
             print(f"  Missing images (annotation but no file): {stats.get('missing_images', 0)}")
 
-        print(f"\n⚠️  Issues by Category:")
+        print("\n⚠️  Issues by Category:")
         for category, count in summary["issues_by_category"].items():
             print(f"  {category}: {count}")
 
         # Print sample issues
         if report["issues"]:
-            print(f"\n🔍 Sample Issues (showing first 5 per category):")
+            print("\n🔍 Sample Issues (showing first 5 per category):")
             for category, issue_list in report["issues"].items():
                 print(f"\n  {category.upper()}:")
                 for issue in issue_list[:5]:
@@ -581,4 +586,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

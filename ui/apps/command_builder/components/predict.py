@@ -12,10 +12,10 @@ from ui.utils.ui_generator import generate_ui_from_schema
 from ui.utils.ui_validator import validate_inputs
 
 from ..models.command import CommandPageData
+from ..services.submissions import discover_submission_runs, find_latest_submission_json
 from ..state import CommandBuilderState, CommandType
 from .command_preview import render_command_preview
 from .execution import render_execution_panel
-from ..services.submissions import discover_submission_runs, find_latest_submission_json
 
 SCHEMA_PATH = Path(__file__).resolve().parent.parent / "schemas" / "command_builder_predict.yaml"
 

@@ -18,6 +18,7 @@ from pathlib import Path
 # Import PROJECT_ROOT from central path utility (stable, works from any location)
 try:
     from ocr.utils.path_utils import PROJECT_ROOT
+
     project_root = PROJECT_ROOT
 except ImportError:
     # Fallback: add project root to path first, then import
@@ -25,6 +26,7 @@ except ImportError:
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
     from ocr.utils.path_utils import PROJECT_ROOT
+
     project_root = PROJECT_ROOT
 
 # Ensure project root is in sys.path for imports
@@ -36,10 +38,10 @@ import streamlit as st
 from ui.apps.unified_ocr_app.components.inference import render_checkpoint_selector, render_results_viewer
 from ui.apps.unified_ocr_app.components.inference.checkpoint_selector import render_hyperparameters, render_mode_selector
 from ui.apps.unified_ocr_app.components.shared import render_image_upload
+from ui.apps.unified_ocr_app.services import get_inference_service
 
 # Import only what THIS PAGE needs (lazy loading!)
 from ui.apps.unified_ocr_app.services.config_loader import load_mode_config
-from ui.apps.unified_ocr_app.services import get_inference_service
 from ui.apps.unified_ocr_app.services.inference_service import load_checkpoints
 
 # Import shared utilities

@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 """Quick test script for new features: pipeline status and gallery images endpoints."""
 
-import json
 from pathlib import Path
 
 import requests
@@ -15,7 +14,6 @@ def test_pipeline_preview():
     print("Testing /api/pipelines/preview...")
 
     # Try to find a real image file first
-    from pathlib import Path
     gallery_root = Path("data/datasets/images/val")
     test_image = None
     if gallery_root.exists():
@@ -127,6 +125,7 @@ def main():
     except Exception as e:
         print(f"❌ Unexpected error: {e}")
         import traceback
+
         traceback.print_exc()
         return 1
 
@@ -135,4 +134,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

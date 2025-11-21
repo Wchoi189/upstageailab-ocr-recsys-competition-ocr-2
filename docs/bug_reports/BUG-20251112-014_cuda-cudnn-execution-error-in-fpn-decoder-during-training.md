@@ -18,11 +18,11 @@ Training fails with CUDA/cuDNN execution error during forward pass in FPN decode
 ## Environment
 
 - **Pipeline Version:** Current main branch (post data-contract integration)
-- **Components:** 
+- **Components:**
   - `ocr.models.decoder.fpn_decoder.FPNDecoder` (line 68: `self.fusion(fused)`)
   - `torch.nn.modules.conv.Conv2d` forward pass
   - Lightning training loop
-- **Configuration:** 
+- **Configuration:**
   - Model: ResNet18 encoder
   - Batch size: 2 (test dataloader)
   - Devices: 1 GPU
@@ -146,15 +146,15 @@ training_step()
    # In fpn_decoder.py, before fusion:
    def forward(self, features):
        fused = self._fuse_features(features)
-       
+
        # Add validation
        if torch.isnan(fused).any() or torch.isinf(fused).any():
            raise ValueError(f"Invalid values in fused features: nan={torch.isnan(fused).any()}, inf={torch.isinf(fused).any()}")
-       
+
        # Validate device
        if not fused.is_cuda:
            raise ValueError(f"Fused features not on CUDA: device={fused.device}")
-       
+
        return self.fusion(fused)
    ```
 
@@ -212,7 +212,7 @@ training_step()
 **Import Time Profiling:**
 The logs show very long import times:
 - `numba`: 1.49 seconds
-- `tensorboard`: 1.0+ seconds  
+- `tensorboard`: 1.0+ seconds
 - `ocr.lightning_modules`: 41+ seconds total
 
 While not directly related to this bug, these long import times suggest optimization opportunities (PLAN-003: Import-Time Optimization).

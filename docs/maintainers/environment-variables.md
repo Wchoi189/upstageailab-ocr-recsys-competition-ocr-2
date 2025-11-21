@@ -174,4 +174,3 @@ The path resolver automatically:
 - [Path Management Audit](../../planning/plans/2025-11/path-management-audit-and-solution.md)
 - [Path Management Implementation Progress](../../planning/plans/2025-11/path-management-implementation-progress.md)
 - `ocr/utils/path_utils.py` - Implementation
-

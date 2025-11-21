@@ -15,8 +15,6 @@ from typing import Any
 import streamlit as st
 import yaml
 
-from ui.utils.config_parser import ConfigParser
-
 
 def _resolve_metadata_value(metadata: dict[str, Any], path: str | None) -> Any:
     if not path:
@@ -50,9 +48,9 @@ def _load_schema(schema_path: str) -> dict[str, Any]:
 def _get_options_from_source(source: str) -> list[str]:
     """Resolve dynamic options list by a simple registry backed by ConfigParser."""
     from ui.apps.command_builder.utils import (
-        get_config_parser,
-        get_available_models,
         get_available_architectures,
+        get_available_models,
+        get_config_parser,
     )
 
     cp = get_config_parser()
@@ -119,8 +117,8 @@ def generate_ui_from_schema(schema_path: str) -> UIGenerateResult:
         UIGenerateResult with values, overrides, and constant_overrides.
     """
     from ui.apps.command_builder.utils import (
-        get_config_parser,
         get_architecture_metadata,
+        get_config_parser,
         get_optimizer_metadata,
     )
 
@@ -128,7 +126,7 @@ def generate_ui_from_schema(schema_path: str) -> UIGenerateResult:
     elements: list[dict[str, Any]] = schema.get("ui_elements", [])
     constant_overrides: list[str] = schema.get("constant_overrides", [])
 
-    config_parser = get_config_parser()
+    get_config_parser()
     architecture_metadata = get_architecture_metadata()
     optimizer_metadata = get_optimizer_metadata()
 

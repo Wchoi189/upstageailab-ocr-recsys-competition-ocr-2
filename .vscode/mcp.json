@@ -1,4 +1,11 @@
 {
 	"servers": {
+		"copilot-memory-sqlite": {
+			"command": "node",
+			"args": [
+				"/home/vscode/.vscode-server/server/index-sqlite.js"
+			],
+			"env": {}
+		}
 	}
 }

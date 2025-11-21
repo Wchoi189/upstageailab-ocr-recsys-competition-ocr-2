@@ -11,7 +11,6 @@ from pydantic import BaseModel, Field
 
 # Lazy imports: Only import heavy modules when actually needed
 # This prevents unnecessary registry/model initialization during FastAPI startup
-
 from ..utils.paths import PROJECT_ROOT
 
 router = APIRouter()
@@ -242,5 +241,3 @@ def get_recommendations(architecture: str | None = None) -> list[RecommendationR
         )
         for rec in recommendations
     ]
-
-

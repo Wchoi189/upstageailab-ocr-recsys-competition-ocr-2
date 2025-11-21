@@ -65,5 +65,3 @@ torch.AcceleratorError: CUDA error: an illegal instruction was encountered
 ## Prevention
 - Add GPU runtime health checks in training loop (Fail fast with informative message if tensors contain NaNs).
 - Include automated test harness that runs a short training smoke test on GPU hardware to catch cuDNN regressions early.
-
-

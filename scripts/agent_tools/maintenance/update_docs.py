@@ -14,9 +14,7 @@ def _load_bootstrap():
     for directory in (current_dir, *tuple(current_dir.parents)):
         candidate = directory / "_bootstrap.py"
         if candidate.exists():
-            spec = importlib.util.spec_from_file_location(
-                "scripts._bootstrap", candidate
-            )
+            spec = importlib.util.spec_from_file_location("scripts._bootstrap", candidate)
             if spec is None or spec.loader is None:  # pragma: no cover - defensive
                 continue
             module = importlib.util.module_from_spec(spec)

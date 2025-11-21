@@ -4,6 +4,7 @@
 import sys
 import time
 
+
 def test_import(module_name, import_statement):
     """Test a single import and report timing."""
     print(f"\n[TEST] Testing import: {module_name}")
@@ -22,6 +23,7 @@ def test_import(module_name, import_statement):
         print(f"[ERROR] Import failed after {elapsed:.2f}s: {e}")
         sys.stdout.flush()
         return False
+
 
 # Test imports in order
 imports_to_test = [
@@ -55,4 +57,3 @@ for module_name, import_stmt in imports_to_test:
 
 print("\n[SUCCESS] All imports completed successfully!")
 sys.stdout.flush()
-

@@ -30,6 +30,9 @@ from __future__ import annotations
 # Primary API
 from .catalog import CheckpointCatalogBuilder, build_catalog
 
+# Compatibility helper for legacy CheckpointInfo
+from .compat import CatalogOptions, build_lightweight_catalog
+
 # Utilities
 from .config_resolver import load_config, resolve_config_path
 from .metadata_loader import load_metadata, load_metadata_batch
@@ -50,9 +53,6 @@ from .types import (
 )
 from .validator import MetadataValidator
 from .wandb_client import WandbClient, extract_run_id_from_checkpoint, get_wandb_client
-
-# Compatibility helper for legacy CheckpointInfo
-from .compat import CatalogOptions, build_lightweight_catalog
 
 __all__ = [
     # Primary API

@@ -179,7 +179,7 @@ class AdvancedNoiseEliminator:
         noise_reduction = effectiveness_score
 
         # Overall quality is weighted average
-        overall_quality = (noise_reduction * 0.4 + edge_preservation * 0.3 + text_preservation * 0.3)
+        overall_quality = noise_reduction * 0.4 + edge_preservation * 0.3 + text_preservation * 0.3
 
         quality_metrics = NoiseEliminationQualityMetrics(
             noise_reduction_score=noise_reduction,

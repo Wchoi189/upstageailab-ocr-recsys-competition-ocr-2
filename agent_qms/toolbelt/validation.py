@@ -6,15 +6,15 @@ BEFORE creating any artifact files manually.
 """
 
 from pathlib import Path
-from typing import Optional
 
 
 class ManualCreationError(Exception):
     """Raised when manual artifact creation is detected."""
+
     pass
 
 
-def validate_artifact_path(file_path: str | Path, raise_error: bool = True) -> tuple[bool, Optional[str]]:
+def validate_artifact_path(file_path: str | Path, raise_error: bool = True) -> tuple[bool, str | None]:
     """
     Validate that a file path is NOT being created manually in artifact directories.
 
@@ -53,7 +53,7 @@ def validate_artifact_path(file_path: str | Path, raise_error: bool = True) -> t
                 f"      toolbelt = AgentQMSToolbelt()\n"
                 f"      toolbelt.create_artifact(...)\n"
                 f"   2. Artifact workflow script:\n"
-                f"      python scripts/agent_tools/core/artifact_workflow.py create --type [TYPE] --name [NAME] --title \"[TITLE]\"\n"
+                f'      python scripts/agent_tools/core/artifact_workflow.py create --type [TYPE] --name [NAME] --title "[TITLE]"\n'
                 f"   Manual creation bypasses validation and violates project rules."
             )
 
@@ -79,4 +79,3 @@ def check_before_write(file_path: str | Path) -> None:
         ManualCreationError: If manual creation is detected
     """
     validate_artifact_path(file_path, raise_error=True)
-

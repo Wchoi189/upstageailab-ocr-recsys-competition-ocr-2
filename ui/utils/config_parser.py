@@ -79,6 +79,7 @@ class ConfigParser:
         # Add registry-discovered components (if not already present) - lazy import
         try:
             from ocr.models.core import registry
+
             for enc in registry.list_encoders():
                 if enc not in models["encoders"]:
                     models["encoders"].append(enc)
@@ -119,9 +120,9 @@ class ConfigParser:
     def get_available_architectures(self) -> list[str]:
         """Get available architecture presets from the registry for UI selection."""
         # Lazy import to avoid blocking during module import
-        from ocr.models.core import registry
         # Ensure architectures are registered by importing the module
         from ocr.models import architectures  # noqa: F401
+        from ocr.models.core import registry
 
         return registry.list_architectures()
 
@@ -407,9 +408,7 @@ class ConfigParser:
                     checkpoint_dir = exp_dir / "checkpoints"
                     if checkpoint_dir.exists():
                         # Use project root for relative paths (consistent with resolver)
-                        checkpoints.extend(
-                            [str(ckpt_file.relative_to(project_root)) for ckpt_file in checkpoint_dir.glob("*.ckpt")]
-                        )
+                        checkpoints.extend([str(ckpt_file.relative_to(project_root)) for ckpt_file in checkpoint_dir.glob("*.ckpt")])
 
         self._cache["checkpoints"] = checkpoints
         return checkpoints

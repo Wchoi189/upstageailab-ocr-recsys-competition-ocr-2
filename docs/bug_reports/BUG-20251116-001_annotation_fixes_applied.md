@@ -134,4 +134,3 @@ cp data/datasets/jsons/val.json.backup data/datasets/jsons/val.json
 *Fixes applied: 2025-11-16*
 *Script version: `scripts/data/fix_polygon_coordinates.py`*
 *Related bug: BUG-20251116-001*
-

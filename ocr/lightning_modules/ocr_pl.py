@@ -117,12 +117,7 @@ class OCRPLModule(pl.LightningModule):
         # Validate model outputs using ValidatedTensorData (BUG-20251112-001/013 prevention)
         try:
             # Validate loss tensor
-            ValidatedTensorData(
-                tensor=pred["loss"],
-                expected_device=batch["images"].device,
-                allow_nan=False,
-                allow_inf=False
-            )
+            ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
 
             # Validate probability maps if present
             if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
@@ -131,17 +126,12 @@ class OCRPLModule(pl.LightningModule):
                     expected_device=batch["images"].device,
                     value_range=(0.0, 1.0),
                     allow_nan=False,
-                    allow_inf=False
+                    allow_inf=False,
                 )
 
             # Validate threshold maps if present
             if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
-                ValidatedTensorData(
-                    tensor=pred["thresh_maps"],
-                    expected_device=batch["images"].device,
-                    allow_nan=False,
-                    allow_inf=False
-                )
+                ValidatedTensorData(tensor=pred["thresh_maps"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
         except ValidationError as exc:
             raise ValueError(f"Training step model output validation failed at step {batch_idx}: {exc}") from exc
 
@@ -177,12 +167,7 @@ class OCRPLModule(pl.LightningModule):
         # Validate model outputs using ValidatedTensorData (BUG-20251112-001/013 prevention)
         try:
             # Validate loss tensor
-            ValidatedTensorData(
-                tensor=pred["loss"],
-                expected_device=batch["images"].device,
-                allow_nan=False,
-                allow_inf=False
-            )
+            ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
 
             # Validate probability maps if present
             if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
@@ -191,17 +176,12 @@ class OCRPLModule(pl.LightningModule):
                     expected_device=batch["images"].device,
                     value_range=(0.0, 1.0),
                     allow_nan=False,
-                    allow_inf=False
+                    allow_inf=False,
                 )
 
             # Validate threshold maps if present
             if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
-                ValidatedTensorData(
-                    tensor=pred["thresh_maps"],
-                    expected_device=batch["images"].device,
-                    allow_nan=False,
-                    allow_inf=False
-                )
+                ValidatedTensorData(tensor=pred["thresh_maps"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
         except ValidationError as exc:
             raise ValueError(f"Validation step model output validation failed at step {batch_idx}: {exc}") from exc
 

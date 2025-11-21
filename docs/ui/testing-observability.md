@@ -51,5 +51,3 @@ Automation hook: `pnpm playwright test --config tests/ui/playwright.config.ts` (
   - `/api/pipelines/preview`
   - `/api/inference/checkpoints`
 - If any check fails, CTA banner hides automatically (planned).
-
-

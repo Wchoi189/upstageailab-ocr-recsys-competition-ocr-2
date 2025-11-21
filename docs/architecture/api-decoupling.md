@@ -110,4 +110,3 @@ from ui.utils.override_compute import compute_overrides
 1. **Extract More Pure Functions** - Move other UI-agnostic logic to separate modules
 2. **Metadata Caching** - Cache registry metadata in JSON to avoid initialization
 3. **API-First Design** - Design new features as API-first, then add UI clients
-

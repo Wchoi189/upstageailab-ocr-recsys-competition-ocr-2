@@ -296,4 +296,3 @@ After completion:
 ---
 
 *This prompt template is designed for Claude Code web workers executing implementation plans in a limited-context environment.*
-

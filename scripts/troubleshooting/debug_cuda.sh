@@ -72,4 +72,3 @@ echo ""
 # Run training with all arguments passed to this script
 # The training script will automatically detect DEBUG_CUDA=1
 exec python runners/train.py "$@"
-

@@ -119,4 +119,3 @@ uv run mypy <files>
 # View logs
 python scripts/process_monitor.py
 ```
-

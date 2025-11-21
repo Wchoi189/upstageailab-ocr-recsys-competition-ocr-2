@@ -336,4 +336,3 @@ For each optimization:
 - Some optimizations may have trade-offs (complexity vs. performance)
 - Measure before and after to verify impact
 - Don't over-optimize prematurely
-

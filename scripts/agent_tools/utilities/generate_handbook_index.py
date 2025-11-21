@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 from collections.abc import Iterable
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 
 LINK_PATTERN = re.compile(r"\[(?P<title>[^\]]+)\]\((?P<path>[^)]+)\)")
@@ -62,7 +62,7 @@ def build_index(source: Path) -> dict:
     return {
         "source": str(source),
         "version": version,
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "entries": entries,
     }
 

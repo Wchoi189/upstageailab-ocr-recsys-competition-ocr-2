@@ -7,7 +7,7 @@ import json
 import os
 import re
 from collections.abc import Mapping
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -36,7 +36,7 @@ def create_log_file(label: str | None = None) -> Path:
     root = _ensure_log_dir()
     if label is None:
         label = os.environ.get("AGENT_CONTEXT_LOG_LABEL")
-    timestamp = datetime.now(timezone.utc).strftime(TIMESTAMP_FMT)
+    timestamp = datetime.now(UTC).strftime(TIMESTAMP_FMT)
     suffix = _sanitize_label(label)
     path = root / f"{timestamp}{suffix}.jsonl"
     path.touch(exist_ok=True)
@@ -56,7 +56,7 @@ def log_agent_action(
     if not log_path.exists():
         raise FileNotFoundError(f"Log file not found: {log_path}")
 
-    event_time = timestamp or datetime.now(timezone.utc)
+    event_time = timestamp or datetime.now(UTC)
     entry = {
         "timestamp": event_time.isoformat().replace("+00:00", "Z"),
         "action": action,

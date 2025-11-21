@@ -53,4 +53,3 @@ Reference examples in documentation:
 ---
 
 *Example images will be added as the project develops.*
-

@@ -61,4 +61,3 @@ This document captures the current state of the Streamlit-based OCR tooling (Com
 
 1. Finalize service contracts (Track A item 2) so frontends can operate without Streamlit session state.
 2. Feed this matrix into the ADR and design system work (Track B), ensuring every missing capability has a UI placeholder or redesign note.
-

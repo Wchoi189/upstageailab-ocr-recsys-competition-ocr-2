@@ -190,7 +190,7 @@ indent-style = "space"
 skip-magic-trailing-comma = false
 line-ending = "auto"
 
-[dependency-groups]
+[project.optional-dependencies]
 dev = [
     "uvicorn[standard]>=0.38.0",
 ]

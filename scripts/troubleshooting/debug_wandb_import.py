@@ -1,13 +1,15 @@
 #!/usr/bin/env python3
 """Test wandb import specifically to identify the hang."""
 
+import signal
 import sys
 import time
-import signal
+
 
 def timeout_handler(signum, frame):
     print("\n[TIMEOUT] Import timed out!")
     sys.exit(1)
+
 
 # Set a timeout
 signal.signal(signal.SIGALRM, timeout_handler)
@@ -20,6 +22,7 @@ sys.stdout.flush()
 start_time = time.time()
 try:
     import wandb
+
     elapsed = time.time() - start_time
     signal.alarm(0)  # Cancel timeout
     print(f"[OK] wandb import successful in {elapsed:.2f}s")
@@ -30,6 +33,7 @@ except Exception as e:
     signal.alarm(0)  # Cancel timeout
     print(f"[ERROR] wandb import failed after {elapsed:.2f}s: {e}")
     import traceback
+
     traceback.print_exc()
     sys.stdout.flush()
     sys.exit(1)
@@ -47,10 +51,10 @@ except Exception as e:
     elapsed = time.time() - start_time
     print(f"[ERROR] wandb.finish() failed after {elapsed:.2f}s: {e}")
     import traceback
+
     traceback.print_exc()
     sys.stdout.flush()
     sys.exit(1)
 
 print("\n[SUCCESS] All wandb tests passed!")
 sys.stdout.flush()
-

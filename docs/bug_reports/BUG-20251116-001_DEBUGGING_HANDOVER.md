@@ -543,4 +543,3 @@ git show 7015ae2ac9f7efe75dabd8cddc7075caa08ab507:ocr/lightning_modules/callback
 - Padding position in transforms is commented out - investigate if this is the issue
 - Coordinate frame mismatches are the most likely root cause
 - Both GT and pred need to be in the same coordinate frame for evaluation and visualization
-

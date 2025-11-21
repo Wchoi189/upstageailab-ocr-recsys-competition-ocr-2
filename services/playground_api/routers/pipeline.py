@@ -9,16 +9,17 @@ from pathlib import Path
 from typing import Any
 
 import cv2
-import numpy as np
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel, Field
 
-from ..utils.paths import PROJECT_ROOT
 from ocr.utils.path_utils import get_path_resolver
+
+from ..utils.paths import PROJECT_ROOT
 
 # Import background removal
 try:
     from ocr.datasets.preprocessing.background_removal import BackgroundRemoval
+
     REMBG_AVAILABLE = True
 except ImportError:
     REMBG_AVAILABLE = False
@@ -43,10 +44,7 @@ def _get_background_removal() -> BackgroundRemoval:
     global _bg_removal
     if _bg_removal is None:
         if not REMBG_AVAILABLE:
-            raise HTTPException(
-                status_code=503,
-                detail="Background removal not available. rembg package not installed."
-            )
+            raise HTTPException(status_code=503, detail="Background removal not available. rembg package not installed.")
         LOGGER.info("Initializing BackgroundRemoval (loading rembg model...)")
         _bg_removal = BackgroundRemoval(
             model="u2net",
@@ -230,11 +228,13 @@ def queue_fallback(request: PipelineFallbackRequest) -> PipelineFallbackResponse
 
     # Update job status (if job was tracked)
     if job_id in _job_statuses:
-        _job_statuses[job_id].update({
-            "status": "completed",
-            "updated_at": now,
-            "result_path": result_path_rel,
-        })
+        _job_statuses[job_id].update(
+            {
+                "status": "completed",
+                "updated_at": now,
+                "result_path": result_path_rel,
+            }
+        )
     else:
         # Create new job status entry
         _job_statuses[job_id] = {

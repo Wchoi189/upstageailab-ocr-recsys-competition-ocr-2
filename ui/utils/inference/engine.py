@@ -8,7 +8,6 @@ import threading
 import time
 import warnings
 from collections.abc import Callable
-from pathlib import Path
 from typing import Any
 
 import cv2
@@ -21,10 +20,10 @@ warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has 
 
 from ocr.utils.orientation import normalize_pil_image, orientation_requires_rotation, remap_polygons
 from ocr.utils.orientation_constants import ORIENTATION_INVERSE_INT
+from ocr.utils.path_utils import get_path_resolver
 
 from .config_loader import ModelConfigBundle, PostprocessSettings, load_model_config, resolve_config_path
-from .dependencies import OCR_MODULES_AVAILABLE, PROJECT_ROOT, torch
-from ocr.utils.path_utils import get_path_resolver
+from .dependencies import OCR_MODULES_AVAILABLE, torch
 from .model_loader import instantiate_model, load_checkpoint, load_state_dict
 from .postprocess import decode_polygons_with_head, fallback_postprocess
 from .preprocess import build_transform, preprocess_image

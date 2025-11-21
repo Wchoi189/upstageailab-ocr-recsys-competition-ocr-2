@@ -12,9 +12,7 @@ if TYPE_CHECKING:
 
 # Calculate paths: __file__ is in utilities/, so parents[1] = scripts/agent_tools
 ROOT = Path(__file__).resolve().parents[1]  # scripts/agent_tools
-PROJECT_ROOT = (
-    ROOT.parent.parent
-)  # project root (scripts/agent_tools -> scripts -> root)
+PROJECT_ROOT = ROOT.parent.parent  # project root (scripts/agent_tools -> scripts -> root)
 
 
 @dataclass
@@ -211,9 +209,7 @@ def write_docs_catalog(tools: list[ToolMeta]) -> None:
         rel = t.path.relative_to(ROOT)
         tags = ", ".join(t.tags) if t.tags else "-"
         usage = f" — usage: {t.usage_hint}" if t.usage_hint else ""
-        lines.append(
-            f"- **{t.name}**: {t.description} (`{rel}`) — CLI: {'yes' if t.is_cli else 'no'}{usage} — tags: {tags}"
-        )
+        lines.append(f"- **{t.name}**: {t.description} (`{rel}`) — CLI: {'yes' if t.is_cli else 'no'}{usage} — tags: {tags}")
     out.write_text("\n".join(lines), encoding="utf-8")
 
 
@@ -229,22 +225,14 @@ def check_readme_sprawl() -> list[str]:
                 readme_files.append(Path(dirpath) / fn)
 
     # Check root level: only one README.md allowed
-    root_readmes = [
-        f for f in readme_files if f.parent == ROOT and f.name == "README.md"
-    ]
+    root_readmes = [f for f in readme_files if f.parent == ROOT and f.name == "README.md"]
     if len(root_readmes) > 1:
-        violations.append(
-            f"Multiple README.md files at root: {[str(f) for f in root_readmes]}"
-        )
+        violations.append(f"Multiple README.md files at root: {[str(f) for f in root_readmes]}")
 
     # Check for README_*.md at root (should be pointers or removed)
-    root_readme_variants = [
-        f for f in readme_files if f.parent == ROOT and f.name != "README.md"
-    ]
+    root_readme_variants = [f for f in readme_files if f.parent == ROOT and f.name != "README.md"]
     if root_readme_variants:
-        violations.append(
-            f"README variants at root (should be pointers or removed): {[str(f) for f in root_readme_variants]}"
-        )
+        violations.append(f"README variants at root (should be pointers or removed): {[str(f) for f in root_readme_variants]}")
 
     # Check subdirectories: suggest POINTER.md instead of README.md
     subdir_readmes = [f for f in readme_files if f.parent != ROOT]
@@ -252,13 +240,8 @@ def check_readme_sprawl() -> list[str]:
         suggestions = []
         for f in subdir_readmes:
             pointer_path = f.parent / "POINTER.md"
-            suggestions.append(
-                f"  {f.relative_to(ROOT)} → consider {pointer_path.relative_to(ROOT)} (max 10 lines)"
-            )
-        violations.append(
-            "Subdirectory READMEs found (suggest POINTER.md instead):\n"
-            + "\n".join(suggestions)
-        )
+            suggestions.append(f"  {f.relative_to(ROOT)} → consider {pointer_path.relative_to(ROOT)} (max 10 lines)")
+        violations.append("Subdirectory READMEs found (suggest POINTER.md instead):\n" + "\n".join(suggestions))
 
     return violations
 
@@ -267,9 +250,7 @@ def main() -> int:
     tools = gather_tools()
     write_scripts_index(tools)
     write_docs_catalog(tools)
-    print(
-        f"Wrote: {ROOT / 'index.md'} and {PROJECT_ROOT / 'docs/ai_agent/automation/tool_catalog.md'}"
-    )
+    print(f"Wrote: {ROOT / 'index.md'} and {PROJECT_ROOT / 'docs/ai_agent/automation/tool_catalog.md'}")
 
     # Check for README sprawl
     violations = check_readme_sprawl()
@@ -277,9 +258,7 @@ def main() -> int:
         print("\n⚠️  README sprawl violations detected:")
         for v in violations:
             print(f"  {v}")
-        print(
-            "\nPolicy: Only one README.md at root; subdirs should use POINTER.md (max 10 lines)"
-        )
+        print("\nPolicy: Only one README.md at root; subdirs should use POINTER.md (max 10 lines)")
         return 1
 
     return 0

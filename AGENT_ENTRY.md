@@ -34,4 +34,3 @@ All rules, instructions, and guidelines are in `system.md`. This file is just a 
 ---
 
 **Remember**: All rules and instructions are in [`docs/agents/system.md`](docs/agents/system.md). This file is just a navigation guide.
-

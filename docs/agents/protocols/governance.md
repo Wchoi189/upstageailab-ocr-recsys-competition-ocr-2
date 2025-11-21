@@ -163,4 +163,3 @@ uv run mypy <files>
 # Template validation
 python scripts/agent_tools/documentation/validate_manifest.py
 ```
-

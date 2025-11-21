@@ -30,4 +30,3 @@
     },
     "required": ["title", "author", "timestamp", "branch", "status"]
 }
-

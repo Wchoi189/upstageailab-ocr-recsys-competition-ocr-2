@@ -397,4 +397,3 @@ If issues occur:
 - Assessment: `artifacts/assessments/2025-11-17_0136_unified-ocr-app-performance-assessment.md`
 - Current services: `ui/apps/unified_ocr_app/services/`
 - Current pages: `ui/apps/unified_ocr_app/pages/`
-

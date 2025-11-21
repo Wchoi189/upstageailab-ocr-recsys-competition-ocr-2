@@ -10,7 +10,7 @@ from dataclasses import dataclass
 from pathlib import Path
 
 from ...models.checkpoint import CheckpointInfo
-from .catalog import CheckpointCatalogBuilder, build_catalog
+from .catalog import CheckpointCatalogBuilder
 from .types import CheckpointCatalogEntry
 
 
@@ -95,4 +95,3 @@ def _convert_v2_entry_to_checkpoint_info(entry: CheckpointCatalogEntry) -> Check
         monitor=entry.monitor,
         monitor_mode=entry.monitor_mode,
     )
-

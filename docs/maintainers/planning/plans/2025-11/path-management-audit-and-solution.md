@@ -376,4 +376,3 @@ if os.getenv("OCR_PROJECT_ROOT"):
 - [Path Management Standardization (2025-10-04)](../../archive/changelog/2025-10/04_path-management-standardization.md)
 - [Path Standardization Plan](../../2025-10/refactor/04_standardize_paths_plan.md)
 - `ocr/utils/path_utils.py` - Current implementation
-

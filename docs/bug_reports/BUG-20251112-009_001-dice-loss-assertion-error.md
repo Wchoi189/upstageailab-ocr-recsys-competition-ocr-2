@@ -165,4 +165,3 @@ def _compute(self, pred, gt, mask, weights):
 ---
 
 *This bug report follows the project's standardized format for issue tracking.*
-

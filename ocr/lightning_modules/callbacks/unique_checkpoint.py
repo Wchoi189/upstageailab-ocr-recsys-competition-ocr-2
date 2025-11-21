@@ -14,6 +14,7 @@ def _get_wandb():
     See: artifacts/implementation_plans/2025-11-11_plan-003-import-time-optimization.md
     """
     import wandb
+
     return wandb
 
 

@@ -176,12 +176,12 @@ ANNOTATION_ERRORS:
   3. Coordinate system mismatch (e.g., 1-indexed vs 0-indexed)
   4. Annotation errors during data collection
 
-- **Location:** 
+- **Location:**
   - Dataset: `data/datasets/jsons/train.json` and `data/datasets/jsons/val.json`
   - Validation: `scripts/data/clean_dataset.py` (validate_polygon method)
   - Training: `ocr/datasets/base.py` (polygon processing)
 
-- **Trigger:** 
+- **Trigger:**
   - Training pipeline loads polygons and validates against image dimensions
   - Out-of-bounds coordinates detected during polygon validation
   - Training fails when polygons exceed image bounds
@@ -199,7 +199,7 @@ ANNOTATION_ERRORS:
    - Option B: Clamp coordinates to image bounds (may lose annotation accuracy)
    - Option C: Investigate and fix root cause (coordinate system mismatch)
 
-2. **Long-term Fix:** 
+2. **Long-term Fix:**
    - Add validation during annotation creation
    - Implement coordinate bounds checking in dataset loader
    - Add pre-processing step to validate and fix coordinates

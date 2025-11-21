@@ -140,7 +140,7 @@ export const runResize: TransformHandler = async (task, _ctx) => {
  * - Convert RGB to tensor format (1, 3, 320, 320)
  */
 function preprocessImage(imageData: ImageData): Float32Array {
-  const { width, height, data } = imageData;
+  const { width, height } = imageData;
   const targetSize = 320;
 
   // Create temporary canvas for resizing
@@ -334,5 +334,3 @@ export const runRembgLite: TransformHandler = async (task, ctx) => {
     return runAutoContrast(task, ctx);
   }
 };
-
-

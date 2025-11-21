@@ -78,11 +78,10 @@ export function InferencePreviewCanvas({
     // Create a stable key from actual values, not object references
     return `${checkpoint.checkpoint_path}|${params.confidenceThreshold}|${params.nmsThreshold}|${imageFile.name}|${imageFile.size}`;
   }, [
-    checkpoint?.checkpoint_path,
+    checkpoint,
     params.confidenceThreshold,
     params.nmsThreshold,
-    imageFile?.name,
-    imageFile?.size,
+    imageFile,
     imageBitmap,
   ]);
 
@@ -198,7 +197,7 @@ export function InferencePreviewCanvas({
   const drawPolygon = (
     ctx: CanvasRenderingContext2D,
     region: TextRegion,
-    index: number,
+    _index: number,
   ): void => {
     if (region.polygon.length < 3) return;
 

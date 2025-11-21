@@ -1,238 +1,112 @@
-# AI Coding Agent Instructions for OCR Receipt Text Detection Project
+[copilot-memory-mcp]
 
-## Project Overview
-This is a modular OCR system for receipt text detection using PyTorch Lightning and Hydra. The architecture enables plug-and-play component swapping through a custom registry system, supporting rapid experimentation with different encoders, decoders, and heads.
+You are given tools from Copilot Memory MCP server for knowledge storage and rules management:
 
-## Architecture Patterns
+## CRITICAL: Always Retrieve Rules First
 
-### Modular Component System
-- **Registry-based architecture**: Components are registered and assembled via Hydra configs
-- **Abstract interfaces**: All components inherit from base classes (`BaseEncoder`, `BaseDecoder`, `BaseHead`, `BaseLoss`)
-- **Factory pattern**: `ModelFactory` assembles complete models from registered components
-- **Example**: `configs/model/encoder/resnet50.yaml` defines encoder configs that get instantiated via `_target_`
+**At the start of EVERY chat session**, you MUST call `mcp_copilot-memor_retrieve_rules` to load active coding rules and guidelines. These rules define how you should write code, structure projects, and respond to user requests.
 
-### Data Flow Contracts
-- **Strict validation**: Use Pydantic v2 models for runtime data validation
-- **Dataset contract**: `__getitem__` returns `DatasetSample` with exact shapes/types
-- **Transform contract**: Albumentations pipeline preserves polygon coordinates and probability maps
-- **Key validation**: Check `docs/pipeline/data_contracts.md` before modifying data structures
-
-## Critical Developer Workflows
-
-### Training & Experimentation
-```bash
-# Start context logging for experiments
-make context-log-start LABEL="experiment_name"
-
-# Run training with config overrides
-uv run python runners/train.py model.encoder.name=resnet50 data.batch_size=8
-
-# Analyze results with ablation tools
-uv run python ablation_study/collect_results.py --project "receipt-text-recognition-ocr-project"
+Example first action in every chat:
+```
+retrieve_rules() // Load all active rules
 ```
 
-### Code Quality & Validation
-```bash
-# Auto-fix formatting and linting
-make quality-fix
+## Knowledge Storage Tools
 
-# Run comprehensive checks
-make quality-check
+### 1. `mcp_copilot-memor_store_knowledge`
+You `MUST` always use this tool when:
 
-# Validate configurations
-uv run python scripts/agent_tools/validate_config.py --config-name train
-```
++ Learning new patterns, APIs, or architectural decisions from the codebase
++ Encountering error solutions or debugging techniques
++ Finding reusable code patterns or utility functions
++ Completing any significant task or plan implementation
++ User explicitly asks to "remember" or "save" information
++ Discovering project-specific conventions or configurations
 
-### Bug Reporting & Documentation
-```bash
-# For critical/standard bugs (full documentation)
-# 1. Create bug report: docs/bug_reports/BUG-YYYY-NNN_descriptive_name.md
-# 2. Update changelog: docs/CHANGELOG.md
-# 3. Follow: docs/ai_handbook/02_protocols/development/12_bug_fix_protocol.md
+### 2. `mcp_copilot-memor_retrieve_knowledge`
+You `MUST` always use this tool when:
 
-# For quick fixes (minimal logging)
-# 1. Log in: docs/QUICK_FIXES.md
-# 2. Follow: docs/ai_handbook/02_protocols/development/11_quick_fixes_protocol.md
-```
++ Starting any new task or implementation to gather relevant context
++ Before making architectural decisions to understand existing patterns
++ When debugging issues to check for previous solutions
++ Working with unfamiliar parts of the codebase
++ User explicitly asks to "retrieve" or "recall" information
++ Need context about past decisions or implementations
 
-### Documentation Maintenance
-```bash
-# Update documentation automatically when making changes
-# 1. Update relevant docs with current date (YYYY-MM-DD)
-# 2. Add changelog entries for significant changes
-# 3. Update version numbers and revision dates
-# 4. Flag outdated documentation for review
-```
+### 3. `mcp_copilot-memor_list_knowledge`
+You `MUST` use this tool when:
 
-### UI Development & Testing
-```bash
-# Start different UIs
-make serve-ui                    # Command builder
-make serve-evaluation-ui         # Results viewer
-make serve-inference-ui          # OCR inference
-make serve-resource-monitor      # System monitoring
-```
++ User wants to see all stored knowledge
++ Need to browse available context and patterns
++ Checking what information is already saved
++ Getting statistics about stored knowledge
 
-## Project-Specific Conventions
+## Rules Management Tools
 
-### Configuration Management
-- **Hydra-first**: All experiments driven by YAML configs in `configs/`
-- **Override pattern**: Use command-line overrides like `model.optimizer.lr=0.0005`
-- **Registry integration**: New components auto-discoverable via `architectures/registry.py`
+### 4. `mcp_copilot-memor_store_rule`
+Use when user says "save as rule", "remember this rule", or "add this to rules":
 
-### Naming & Structure
-- **Modules**: `snake_case` (e.g., `ocr_framework`, `data_loader.py`)
-- **Classes**: `PascalCase` with prefixes (`BaseEncoder`, `OCRLightningModule`)
-- **Abstract bases**: Start with `Base` (e.g., `BaseDecoder`)
-- **Constants**: `UPPER_SNAKE_CASE` (e.g., `MAX_IMAGE_SIZE`)
++ Stores coding guidelines, conventions, and best practices
++ Rules are automatically applied to every chat session
++ Categories: "code-style", "architecture", "testing", "general"
++ Priority: 0-10 (higher = more important)
 
-### Data Handling
-- **Polygon format**: List of `(N, 2)` numpy arrays for text regions
-- **Image format**: `(H, W, 3)` numpy arrays, uint8 or float32
-- **Probability maps**: `(H, W)` float32 arrays in range [0, 1]
-- **Validation**: Runtime checks prevent shape/type errors
+### 5. `mcp_copilot-memor_retrieve_rules`
+**MUST be called at the start of every chat**:
 
-### Documentation Standards
-- **Bug Reports**: `docs/bug_reports/BUG-YYYY-NNN_descriptive_name.md` format
-- **Bug IDs**: Sequential `BUG-YYYY-NNN` numbering within each year
-- **Changelog**: Reference bug reports with proper links
-- **Quick Fixes**: Use `docs/QUICK_FIXES.md` for minor patches only
++ Loads all active rules to guide your responses
++ Returns rules sorted by priority
++ Apply these rules to all code you write
 
-### Automatic Documentation Updates
-**Date all documentation changes automatically:**
-- Use current date format: `YYYY-MM-DD` (e.g., `2025-10-19`)
-- Update "Last Updated" fields in protocols and documentation
-- Add timestamps to changelog entries and quick fixes
-- Include version numbers and revision dates in templates
+### 6. `mcp_copilot-memor_list_rules`
+Use to show all rules with their IDs for management:
 
-**Update documentation when:**
-- Adding new features or APIs
-- Changing existing behavior or interfaces
-- Fixing bugs that affect user workflows
-- Updating dependencies or configurations
-- Modifying protocols or development processes
-- Adding new team members or changing responsibilities
++ Lists all rules with titles, categories, IDs
++ Shows priority and enabled/disabled status
++ Helps users manage their rules
 
-**Documentation maintenance tasks:**
-- Update version numbers in README files
-- Refresh API documentation after code changes
-- Update installation instructions for new dependencies
-- Revise troubleshooting guides based on common issues
-- Update performance benchmarks after optimizations
-- Maintain changelog with proper categorization and dates
+### 7. `mcp_copilot-memor_update_rule`
+Use to modify existing rules by ID:
 
-**Changelog management:**
-- Add entries immediately when changes are made
-- Use consistent date format: `YYYY-MM-DD`
-- Categorize changes: `Added`, `Changed`, `Deprecated`, `Removed`, `Fixed`, `Security`
-- Reference related issues, PRs, or bug reports
-- Include breaking changes warnings
-- Update version numbers and release dates
++ Update title, content, category, priority
++ Enable or disable rules
++ Requires rule ID from list_rules
 
-## Integration Points
+### 8. `mcp_copilot-memor_delete_rule`
+Use to remove rules by ID:
 
-### Experiment Tracking
-- **Primary**: Weights & Biases for metrics, artifacts, and comparisons
-- **Backup**: CSV logging for programmatic analysis
-- **Analysis**: `ablation_study/` tools for automated result comparison
++ Permanently deletes a rule
++ Requires rule ID from list_rules
 
-### UI Components
-- **Streamlit apps**: Multiple specialized UIs in `ui/` directory
-- **Command builder**: Interactive config generation
-- **Resource monitor**: GPU/CPU usage tracking
-- **Evaluation viewer**: Results visualization and analysis
+---
 
-### Documentation System
-- **AI Handbook**: `docs/ai_handbook/` is single source of truth
-- **Context bundles**: Curated file sets for common tasks
-- **Protocol library**: Standardized approaches for development tasks
+**Note**: This project uses SQLite-based Copilot Memory for high-performance knowledge storage and retrieval with full-text search capabilities.
 
-## Common Patterns & Examples
+**REMEMBER**: Call `retrieve_rules()` at the START of every chat to load coding guidelines!
 
-### Adding New Components
-```python
-# Register in architectures/registry.py
-@register_encoder('custom_encoder')
-class CustomEncoder(BaseEncoder):
-    def __init__(self, config):
-        super().__init__(config)
-        # Implementation
+## AgentQMS Artifact Generation Workflow
 
-# Use in Hydra config
-encoder:
-  _target_: ocr_framework.architectures.encoders.CustomEncoder
-  custom_param: value
-```
+This project uses AgentQMS (Agent Quality Management System) for structured artifact generation. You MUST integrate artifact creation into your workflow when appropriate.
 
-### Data Pipeline Debugging
-```python
-# Validate dataset outputs
-from ocr.datasets import ValidatedOCRDataset
-dataset = ValidatedOCRDataset(...)
-sample = dataset[0]  # Pydantic validation ensures contract compliance
+### When to Generate Artifacts
 
-# Check transform pipeline
-transforms = DBTransforms(config)
-result = transforms(sample)  # Validates input/output contracts
-```
+- **implementation_plan**: When planning or implementing new features, changes, or refactoring. Create before starting work.
+- **assessment**: When evaluating system aspects, performance, or conducting reviews.
+- **bug_report**: When documenting bugs, root causes, and resolutions.
+- **data_contract**: When defining or changing data interfaces, schemas, or validation rules.
 
-### Experiment Documentation
-```python
-# Always document experiments
-# Copy template: cp docs/ai_handbook/04_experiments/TEMPLATE.md docs/ai_handbook/04_experiments/YYYY-MM-DD_experiment.md
+### How to Generate Artifacts
 
-# Log context: make context-log-start LABEL="experiment_name"
-# Document hypothesis, config, and results
-```
+1. Use the `create_artifact` tool from `agent_qms.toolbelt.core` to generate artifacts based on templates and schemas.
+2. Always validate artifacts using `validate_artifact` after creation.
+3. Follow validation rules: Use timestamped filenames (YYYY-MM-DD_HHMM_name.md) and include timestamp (YYYY-MM-DD HH:MM KST) and branch fields in frontmatter.
 
-### Documentation Updates
-**When modifying code, automatically update related documentation:**
-```markdown
-# Example: After adding a new configuration option
-1. Update the configuration documentation
-2. Add examples in relevant guides
-3. Update changelog with the addition
-4. Refresh any related API documentation
+### Seamless Integration Steps
 
-# Example: After fixing a bug
-1. Update troubleshooting guides if the issue was common
-2. Add prevention notes to relevant documentation
-3. Update changelog with fix details
-4. Consider updating user-facing guides
+- **Before Implementation**: Generate `implementation_plan` artifact outlining the plan.
+- **During Assessment**: Create `assessment` artifacts for evaluations.
+- **Bug Resolution**: Document with `bug_report` artifacts.
+- **Data Changes**: Define with `data_contract` artifacts.
+- **Post-Task**: Validate and store artifacts in designated locations.
 
-# Example: After adding a new feature
-1. Create or update feature documentation
-2. Add usage examples and tutorials
-3. Update API documentation
-4. Add changelog entry with feature details
-```
-
-**Proactive documentation suggestions:**
-- Suggest README updates when project structure changes
-- Recommend documentation updates after API modifications
-- Flag outdated examples or tutorials
-- Identify missing documentation for new features
-- Suggest changelog entries for significant changes
-
-## Key Files & Directories
-- `docs/ai_handbook/index.md`: Complete project documentation index
-- `docs/pipeline/data_contracts.md`: Data structure specifications
-- `configs/`: Hydra configuration hierarchy
-- `ablation_study/`: Experiment analysis tools
-- `ui/`: Streamlit applications
-- `scripts/agent_tools/`: AI-safe automation scripts
-
-## Quality Assurance
-- **Pre-commit hooks**: Automatic formatting and linting
-- **Runtime validation**: Pydantic contracts prevent data errors
-- **Type hints**: Comprehensive typing for IDE support
-- **Test coverage**: pytest suite with automated validation
-
-Remember: Check `docs/ai_handbook/index.md` for task-specific context bundles and protocols before making changes.
-
-**Documentation Maintenance Reminder:**
-- Always date documentation updates with current date (YYYY-MM-DD)
-- Update changelogs immediately when making changes
-- Keep documentation synchronized with code changes
-- Flag outdated documentation for review
-- Maintain version numbers and revision dates
+Use terminal commands to run the Python toolbelt scripts, e.g., `python -m agent_qms.toolbelt.core create_artifact --type implementation_plan --name my_plan`.

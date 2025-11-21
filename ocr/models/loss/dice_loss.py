@@ -41,27 +41,13 @@ class DiceLoss(nn.Module):
             try:
                 # Validate prediction tensor: shape, device, no NaN/Inf
                 ValidatedTensorData(
-                    tensor=pred,
-                    expected_shape=tuple(pred.shape),
-                    expected_device=pred.device,
-                    allow_nan=False,
-                    allow_inf=False
+                    tensor=pred, expected_shape=tuple(pred.shape), expected_device=pred.device, allow_nan=False, allow_inf=False
                 )
                 # Validate ground truth tensor
-                ValidatedTensorData(
-                    tensor=gt,
-                    expected_shape=tuple(gt.shape),
-                    expected_device=gt.device,
-                    allow_nan=False,
-                    allow_inf=False
-                )
+                ValidatedTensorData(tensor=gt, expected_shape=tuple(gt.shape), expected_device=gt.device, allow_nan=False, allow_inf=False)
                 # Validate mask tensor
                 ValidatedTensorData(
-                    tensor=mask,
-                    expected_shape=tuple(mask.shape),
-                    expected_device=mask.device,
-                    allow_nan=False,
-                    allow_inf=False
+                    tensor=mask, expected_shape=tuple(mask.shape), expected_device=mask.device, allow_nan=False, allow_inf=False
                 )
             except ValidationError as exc:
                 raise ValueError(f"Dice loss input validation failed: {exc}") from exc

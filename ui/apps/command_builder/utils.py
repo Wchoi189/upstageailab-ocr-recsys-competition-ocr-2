@@ -8,9 +8,9 @@ from __future__ import annotations
 
 import streamlit as st
 
+from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
 from ui.utils.command import CommandBuilder
 from ui.utils.config_parser import ConfigParser
-from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
 
 
 def rerun_app() -> None:

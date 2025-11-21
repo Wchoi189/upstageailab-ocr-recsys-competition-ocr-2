@@ -19,9 +19,7 @@ def _load_bootstrap():
     for directory in (current_dir, *tuple(current_dir.parents)):
         candidate = directory / "_bootstrap.py"
         if candidate.exists():
-            spec = importlib.util.spec_from_file_location(
-                "scripts._bootstrap", candidate
-            )
+            spec = importlib.util.spec_from_file_location("scripts._bootstrap", candidate)
             if spec is None or spec.loader is None:  # pragma: no cover - defensive
                 continue
             module = importlib.util.module_from_spec(spec)
@@ -248,9 +246,7 @@ def generate_draft() -> str:
     feat_commits = [c for c in commits if c.get("type") == "feat"]
     fix_commits = [c for c in commits if c.get("type") == "fix"]
     refactor_commits = [c for c in commits if c.get("type") == "refactor"]
-    other_commits = [
-        c for c in commits if c.get("type") not in ("feat", "fix", "refactor")
-    ]
+    other_commits = [c for c in commits if c.get("type") not in ("feat", "fix", "refactor")]
 
     # Features (from plans and feat commits)
     if plans or feat_commits:
@@ -315,23 +311,15 @@ def generate_draft() -> str:
         lines.append(f"\n**Total**: {total_items} items")
 
     lines.append("\n---")
-    lines.append(
-        "\n*This draft was automatically generated. Review and edit before merging into CHANGELOG.md*"
-    )
+    lines.append("\n*This draft was automatically generated. Review and edit before merging into CHANGELOG.md*")
 
     return "\n".join(lines)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Generate changelog draft from tracking DB and git log"
-    )
-    parser.add_argument(
-        "--output", default=str(CHANGELOG_DRAFT), help="Output file path"
-    )
-    parser.add_argument(
-        "--preview", action="store_true", help="Print to stdout instead of file"
-    )
+    parser = argparse.ArgumentParser(description="Generate changelog draft from tracking DB and git log")
+    parser.add_argument("--output", default=str(CHANGELOG_DRAFT), help="Output file path")
+    parser.add_argument("--preview", action="store_true", help="Print to stdout instead of file")
     args = parser.parse_args()
 
     try:

@@ -7,7 +7,7 @@ import argparse
 import json
 import re
 from collections import defaultdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
@@ -92,7 +92,7 @@ def extract_metadata_from_file(file_path: Path) -> dict[str, Any]:
                 tags_match = re.search(r"tags:\s*\[(.*?)\]", frontmatter, re.DOTALL)
                 if tags_match:
                     tags_str = tags_match.group(1)
-                    tags = [t.strip().strip('"\'') for t in tags_str.split(",") if t.strip()]
+                    tags = [t.strip().strip("\"'") for t in tags_str.split(",") if t.strip()]
                     metadata["tags"] = tags
     except Exception:
         pass
@@ -109,7 +109,7 @@ def scan_agents_directory(agents_dir: Path) -> dict[str, Any]:
         return {
             "source": "docs/agents/",
             "version": "1.0",
-            "generated_at": datetime.now(timezone.utc).isoformat(),
+            "generated_at": datetime.now(UTC).isoformat(),
             "entries": [],
             "bundles": {},
         }
@@ -121,7 +121,7 @@ def scan_agents_directory(agents_dir: Path) -> dict[str, Any]:
 
         # Calculate relative path
         rel_path = md_file.relative_to(agents_dir)
-        path_str = f"docs/agents/{rel_path}"
+        path_str = rel_path.as_posix()
 
         # Extract metadata
         file_metadata = extract_metadata_from_file(md_file)
@@ -177,12 +177,13 @@ def scan_agents_directory(agents_dir: Path) -> dict[str, Any]:
             "id": entry_id,
             "title": title,
             "path": path_str,
+            "section": category,
             "category": category,
             "tags": tags,
             "priority": priority,
             "status": file_metadata.get("status") or "active",
             "version": file_metadata.get("version") or "1.0",
-            "date": file_metadata.get("date") or datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+            "date": file_metadata.get("date") or datetime.now(UTC).strftime("%Y-%m-%d"),
         }
 
         entries.append(entry)
@@ -201,16 +202,14 @@ def scan_agents_directory(agents_dir: Path) -> dict[str, Any]:
     return {
         "source": "docs/agents/",
         "version": "1.0",
-        "generated_at": datetime.now(timezone.utc).isoformat(),
+        "generated_at": datetime.now(UTC).isoformat(),
         "entries": entries,
         "bundles": formatted_bundles,
     }
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Auto-generate agents documentation index.json from directory structure"
-    )
+    parser = argparse.ArgumentParser(description="Auto-generate agents documentation index.json from directory structure")
     parser.add_argument(
         "--agents-dir",
         type=Path,
@@ -223,9 +222,7 @@ def main() -> None:
         default=Path("docs/agents/index.json"),
         help="Output path for the generated index.json",
     )
-    parser.add_argument(
-        "--validate", action="store_true", help="Run validation after generation"
-    )
+    parser.add_argument("--validate", action="store_true", help="Run validation after generation")
 
     args = parser.parse_args()
 

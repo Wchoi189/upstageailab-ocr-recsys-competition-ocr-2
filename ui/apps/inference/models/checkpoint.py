@@ -360,8 +360,7 @@ class CheckpointInfo:
         import warnings
 
         warnings.warn(
-            "load_full_metadata uses legacy checkpoint_catalog. "
-            "This will be migrated to V2 catalog system.",
+            "load_full_metadata uses legacy checkpoint_catalog. " "This will be migrated to V2 catalog system.",
             DeprecationWarning,
             stacklevel=2,
         )

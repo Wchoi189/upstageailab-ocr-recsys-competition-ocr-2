@@ -71,5 +71,3 @@ This system defines the initial component/visual language for the Albumentations
 - Implement tokens via CSS custom properties exported from `packages/design-tokens`.
 - Wrap high-frequency controls (sliders, switches) with memoized React components to avoid re-renders when worker events stream back.
 - Provide skeleton states for every panel to avoid flash during worker warm-up.
-
-

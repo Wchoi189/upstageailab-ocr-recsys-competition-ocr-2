@@ -22,7 +22,7 @@ print(f"  Device name: {torch.cuda.get_device_name(0)}")
 # Test 2: Simple tensor operations
 print("\n[Test 2] Simple Tensor Operations")
 try:
-    x = torch.randn(10, 10, device='cuda')
+    x = torch.randn(10, 10, device="cuda")
     y = x + x
     z = y.sum()
     print(f"  ✓ Addition works: {z.item():.2f}")
@@ -33,7 +33,7 @@ except Exception as e:
 # Test 3: Convolution (forward)
 print("\n[Test 3] Convolution Forward Pass")
 try:
-    x = torch.randn(4, 3, 224, 224, device='cuda')
+    x = torch.randn(4, 3, 224, 224, device="cuda")
     conv = nn.Conv2d(3, 64, 3, padding=1).cuda()
     y = conv(x)
     print(f"  ✓ Convolution works: {y.shape}")
@@ -44,16 +44,16 @@ except Exception as e:
 # Test 4: Backward pass (THIS IS WHERE IT CRASHES)
 print("\n[Test 4] Backward Pass")
 try:
-    x = torch.randn(4, 3, 224, 224, device='cuda', requires_grad=True)
+    x = torch.randn(4, 3, 224, 224, device="cuda", requires_grad=True)
     conv = nn.Conv2d(3, 64, 3, padding=1).cuda()
     y = conv(x)
     loss = y.sum()
     loss.backward()
-    print(f"  ✓ Backward pass works")
+    print("  ✓ Backward pass works")
     print(f"  ✓ Gradient shape: {x.grad.shape}")
 except Exception as e:
     print(f"  ✗ Backward pass failed: {e}")
-    print(f"\n  This is the root cause!")
+    print("\n  This is the root cause!")
     exit(1)
 
 # Test 5: Multiple backward passes (stress test)
@@ -63,7 +63,7 @@ try:
     optimizer = torch.optim.Adam(conv.parameters())
 
     for i in range(10):
-        x = torch.randn(4, 3, 224, 224, device='cuda')
+        x = torch.randn(4, 3, 224, 224, device="cuda")
         y = conv(x)
         loss = y.sum()
         optimizer.zero_grad()
@@ -71,7 +71,7 @@ try:
         optimizer.step()
         print(f"  Iteration {i+1}/10 ✓")
 
-    print(f"  ✓ All iterations passed")
+    print("  ✓ All iterations passed")
 except Exception as e:
     print(f"  ✗ Failed at iteration {i+1}: {e}")
     exit(1)

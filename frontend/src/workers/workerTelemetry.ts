@@ -12,6 +12,12 @@ import {
   type TaskType,
 } from "../api/metrics";
 
+declare global {
+  interface Window {
+    __workerPoolQueueDepth__?: number;
+  }
+}
+
 /**
  * Generate unique task ID
  */
@@ -119,6 +125,6 @@ export class PerformanceTracker {
  */
 export function exposeQueueDepth(depth: number): void {
   if (typeof window !== "undefined") {
-    (window as any).__workerPoolQueueDepth__ = depth;
+    window.__workerPoolQueueDepth__ = depth;
   }
 }

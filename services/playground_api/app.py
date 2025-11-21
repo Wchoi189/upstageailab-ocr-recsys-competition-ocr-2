@@ -20,8 +20,7 @@ def create_app() -> FastAPI:
         title="OCR Playground API",
         version="0.1.0",
         description=(
-            "Backend services for the Albumentations-style playground. "
-            "Provides command builder, inference, and evaluation endpoints."
+            "Backend services for the Albumentations-style playground. " "Provides command builder, inference, and evaluation endpoints."
         ),
     )
 
@@ -58,8 +57,10 @@ def create_app() -> FastAPI:
 
         # Check if environment variables were used
         import os
+
         env_vars_used = [
-            name for name in os.environ.keys()
+            name
+            for name in os.environ.keys()
             if name.startswith("OCR_") and name != "OCR_PROJECT_ROOT"  # OCR_PROJECT_ROOT is always checked
         ]
         if env_vars_used:
@@ -71,5 +72,3 @@ def create_app() -> FastAPI:
 
 
 app = create_app()
-
-

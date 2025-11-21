@@ -11,7 +11,6 @@ Usage:
 """
 
 import argparse
-import ast
 import importlib.util
 import re
 import sys
@@ -26,9 +25,7 @@ def _load_bootstrap():
     for directory in (current_dir, *tuple(current_dir.parents)):
         candidate = directory / "_bootstrap.py"
         if candidate.exists():
-            spec = importlib.util.spec_from_file_location(
-                "scripts._bootstrap", candidate
-            )
+            spec = importlib.util.spec_from_file_location("scripts._bootstrap", candidate)
             if spec is None or spec.loader is None:
                 continue
             module = importlib.util.module_from_spec(spec)
@@ -177,13 +174,9 @@ def check_duplicate_scripts(script_path: Path) -> dict:
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Check for duplicate scripts before creation"
-    )
+    parser = argparse.ArgumentParser(description="Check for duplicate scripts before creation")
     parser.add_argument("--file", help="Check specific script file")
-    parser.add_argument(
-        "files", nargs="*", help="Files to check (for pre-commit hooks)"
-    )
+    parser.add_argument("files", nargs="*", help="Files to check (for pre-commit hooks)")
 
     args = parser.parse_args()
 
@@ -227,4 +220,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

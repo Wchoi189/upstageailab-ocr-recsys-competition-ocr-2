@@ -43,7 +43,7 @@ def get_next_experiment_index(index_file: Path | None = None) -> int:
         current_index = 0
         if index_file.exists():
             try:
-                with open(index_file, "r") as f:
+                with open(index_file) as f:
                     data = json.load(f)
                     current_index = data.get("last_index", 0)
             except (json.JSONDecodeError, KeyError, OSError) as e:
@@ -78,7 +78,7 @@ def get_current_experiment_index(index_file: Path | None = None) -> int:
         return 0
 
     try:
-        with open(index_file, "r") as f:
+        with open(index_file) as f:
             data = json.load(f)
             return data.get("last_index", 0)
     except (json.JSONDecodeError, KeyError, OSError):
@@ -103,4 +103,3 @@ def reset_experiment_index(index_file: Path | None = None) -> None:
                 json.dump({"last_index": 0}, f, indent=2)
         except OSError as e:
             LOGGER.warning("Failed to reset index file %s: %s", index_file, e)
-

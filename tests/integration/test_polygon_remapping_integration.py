@@ -32,17 +32,10 @@ class TestPolygonRemappingIntegration:
 
         # Polygon from investigation: y=1281.9 (1.9 pixels over canonical height)
         # This polygon is already in canonical frame (4-point rectangle)
-        polygon_original = np.array([
-            [276.1, 1258.7],
-            [322.5, 1258.7],
-            [322.5, 1281.9],
-            [276.1, 1281.9]
-        ], dtype=np.float32)
+        polygon_original = np.array([[276.1, 1258.7], [322.5, 1258.7], [322.5, 1281.9], [276.1, 1281.9]], dtype=np.float32)
 
         # Step 1: Check if it's detected as canonical with new tolerance (3.0)
-        is_canonical = polygons_in_canonical_frame(
-            [polygon_original], raw_width, raw_height, orientation, tolerance=3.0
-        )
+        is_canonical = polygons_in_canonical_frame([polygon_original], raw_width, raw_height, orientation, tolerance=3.0)
         assert is_canonical is True, "Should detect as canonical with 3.0 tolerance"
 
         # Step 2: If not canonical, remap it (but it should be skipped)
@@ -54,11 +47,7 @@ class TestPolygonRemappingIntegration:
         # Step 3: Validate the polygon
         # The validation should pass because coordinates are within tolerance
         try:
-            validated = ValidatedPolygonData(
-                points=polygon_remapped,
-                image_width=canonical_width,
-                image_height=canonical_height
-            )
+            validated = ValidatedPolygonData(points=polygon_remapped, image_width=canonical_width, image_height=canonical_height)
             # Should not raise an error
             assert validated.points.shape == polygon_remapped.shape
         except Exception as e:
@@ -76,17 +65,10 @@ class TestPolygonRemappingIntegration:
         canonical_width, canonical_height = 960, 1280
 
         # Polygon in raw frame (fits raw dimensions) - 4-point rectangle
-        polygon_raw = np.array([
-            [100, 200],
-            [300, 200],
-            [300, 400],
-            [100, 400]
-        ], dtype=np.float32)
+        polygon_raw = np.array([[100, 200], [300, 200], [300, 400], [100, 400]], dtype=np.float32)
 
         # Step 1: Check if it's detected as canonical
-        is_canonical = polygons_in_canonical_frame(
-            [polygon_raw], raw_width, raw_height, orientation, tolerance=3.0
-        )
+        is_canonical = polygons_in_canonical_frame([polygon_raw], raw_width, raw_height, orientation, tolerance=3.0)
         assert is_canonical is False, "Should NOT detect as canonical (fits raw dimensions)"
 
         # Step 2: Remap it
@@ -94,11 +76,7 @@ class TestPolygonRemappingIntegration:
 
         # Step 3: Validate the remapped polygon
         try:
-            validated = ValidatedPolygonData(
-                points=polygon_remapped,
-                image_width=canonical_width,
-                image_height=canonical_height
-            )
+            validated = ValidatedPolygonData(points=polygon_remapped, image_width=canonical_width, image_height=canonical_height)
             # Should not raise an error
             assert validated.points.shape == polygon_remapped.shape
         except Exception as e:
@@ -115,19 +93,12 @@ class TestPolygonRemappingIntegration:
         canonical_width, canonical_height = 605, 1280
 
         # Polygon from logs: x=-6.0 (3 pixels beyond -3.0 tolerance) - 4-point rectangle
-        polygon = np.array([
-            [-6.0, 20.0],
-            [308.2, 20.0],
-            [308.2, 39.7],
-            [-6.0, 39.7]
-        ], dtype=np.float32)
+        polygon = np.array([[-6.0, 20.0], [308.2, 20.0], [308.2, 39.7], [-6.0, 39.7]], dtype=np.float32)
 
         # Step 1: Check if it's detected as canonical
         # For orientation 1, orientation_requires_rotation returns False,
         # so polygons_in_canonical_frame returns False immediately
-        is_canonical = polygons_in_canonical_frame(
-            [polygon], raw_width, raw_height, orientation, tolerance=3.0
-        )
+        is_canonical = polygons_in_canonical_frame([polygon], raw_width, raw_height, orientation, tolerance=3.0)
         assert is_canonical is False, "Orientation 1 doesn't require rotation check"
 
         # Step 2: No remapping needed (orientation 1)
@@ -135,11 +106,7 @@ class TestPolygonRemappingIntegration:
 
         # Step 3: Validate - should fail because x=-6.0 is beyond tolerance
         with pytest.raises(ValidationError):
-            ValidatedPolygonData(
-                points=polygon_processed,
-                image_width=canonical_width,
-                image_height=canonical_height
-            )
+            ValidatedPolygonData(points=polygon_processed, image_width=canonical_width, image_height=canonical_height)
 
     def test_orientation_6_double_remapping_prevention(self):
         """
@@ -149,33 +116,22 @@ class TestPolygonRemappingIntegration:
         """
         orientation = 6
         raw_width, raw_height = 1280, 960
-        canonical_width, canonical_height = 960, 1280
+        _canonical_width, _canonical_height = 960, 1280
 
         # Polygon already in canonical frame (slightly over boundary) - 4-point rectangle
-        polygon_canonical = np.array([
-            [276.1, 1258.7],
-            [322.5, 1258.7],
-            [322.5, 1281.9],
-            [276.1, 1281.9]
-        ], dtype=np.float32)
+        polygon_canonical = np.array([[276.1, 1258.7], [322.5, 1258.7], [322.5, 1281.9], [276.1, 1281.9]], dtype=np.float32)
 
         # With old tolerance (1.5): Would NOT be detected as canonical
-        is_canonical_old = polygons_in_canonical_frame(
-            [polygon_canonical], raw_width, raw_height, orientation, tolerance=1.5
-        )
+        is_canonical_old = polygons_in_canonical_frame([polygon_canonical], raw_width, raw_height, orientation, tolerance=1.5)
         assert is_canonical_old is False, "Old tolerance (1.5) should NOT detect"
 
         # With new tolerance (3.0): SHOULD be detected as canonical
-        is_canonical_new = polygons_in_canonical_frame(
-            [polygon_canonical], raw_width, raw_height, orientation, tolerance=3.0
-        )
+        is_canonical_new = polygons_in_canonical_frame([polygon_canonical], raw_width, raw_height, orientation, tolerance=3.0)
         assert is_canonical_new is True, "New tolerance (3.0) should detect"
 
         # If not detected as canonical, it would get remapped (double rotation)
         if not is_canonical_new:
-            polygon_double_remapped = remap_polygons(
-                [polygon_canonical], raw_width, raw_height, orientation
-            )[0]
+            remap_polygons([polygon_canonical], raw_width, raw_height, orientation)[0]
             # This would produce wrong coordinates (like negative x values)
             # But with new tolerance, this should not happen
             assert False, "Should not reach here - polygon should be detected as canonical"
@@ -191,17 +147,10 @@ class TestPolygonRemappingIntegration:
         canonical_width, canonical_height = 960, 1280
 
         # Polygon already in canonical frame - 4-point rectangle
-        polygon_canonical = np.array([
-            [276.1, 1258.7],
-            [322.5, 1258.7],
-            [322.5, 1281.9],
-            [276.1, 1281.9]
-        ], dtype=np.float32)
+        polygon_canonical = np.array([[276.1, 1258.7], [322.5, 1258.7], [322.5, 1281.9], [276.1, 1281.9]], dtype=np.float32)
 
         # If we incorrectly remap it (double rotation), we get wrong coordinates
-        polygon_wrongly_remapped = remap_polygons(
-            [polygon_canonical], raw_width, raw_height, orientation
-        )[0]
+        polygon_wrongly_remapped = remap_polygons([polygon_canonical], raw_width, raw_height, orientation)[0]
 
         # The remapped coordinates should be wrong (negative x values)
         # This is what was happening before the fix
@@ -209,11 +158,7 @@ class TestPolygonRemappingIntegration:
 
         # And validation should fail
         with pytest.raises(ValidationError):
-            ValidatedPolygonData(
-                points=polygon_wrongly_remapped,
-                image_width=canonical_width,
-                image_height=canonical_height
-            )
+            ValidatedPolygonData(points=polygon_wrongly_remapped, image_width=canonical_width, image_height=canonical_height)
 
     def test_why_errors_persist_analysis(self):
         """
@@ -224,50 +169,22 @@ class TestPolygonRemappingIntegration:
         """
         # Case 1: Polygon beyond tolerance (legitimately invalid)
         # x=-6.0 when tolerance is 3.0 → 3 pixels beyond → correctly rejected
-        polygon1 = np.array([
-            [-6.0, 20.0],
-            [300.0, 20.0],
-            [300.0, 40.0],
-            [-6.0, 40.0]
-        ], dtype=np.float32)
+        polygon1 = np.array([[-6.0, 20.0], [300.0, 20.0], [300.0, 40.0], [-6.0, 40.0]], dtype=np.float32)
         with pytest.raises(ValidationError):
-            ValidatedPolygonData(
-                points=polygon1,
-                image_width=605,
-                image_height=1280
-            )
+            ValidatedPolygonData(points=polygon1, image_width=605, image_height=1280)
 
         # Case 2: Polygon way beyond bounds (legitimately invalid)
         # x=1290.0 when width=1280 → 7 pixels beyond → correctly rejected
-        polygon2 = np.array([
-            [1260.0, 100.0],
-            [1290.0, 100.0],
-            [1290.0, 200.0],
-            [1260.0, 200.0]
-        ], dtype=np.float32)
+        polygon2 = np.array([[1260.0, 100.0], [1290.0, 100.0], [1290.0, 200.0], [1260.0, 200.0]], dtype=np.float32)
         with pytest.raises(ValidationError):
-            ValidatedPolygonData(
-                points=polygon2,
-                image_width=1280,
-                image_height=959
-            )
+            ValidatedPolygonData(points=polygon2, image_width=1280, image_height=959)
 
         # Case 3: Polygon within tolerance (should be accepted)
         # x=-2.0 when tolerance is 3.0 → within tolerance → should be clamped and accepted
-        polygon3 = np.array([
-            [-2.0, 20.0],
-            [300.0, 20.0],
-            [300.0, 40.0],
-            [-2.0, 40.0]
-        ], dtype=np.float32)
+        polygon3 = np.array([[-2.0, 20.0], [300.0, 20.0], [300.0, 40.0], [-2.0, 40.0]], dtype=np.float32)
         try:
-            validated3 = ValidatedPolygonData(
-                points=polygon3,
-                image_width=605,
-                image_height=1280
-            )
+            validated3 = ValidatedPolygonData(points=polygon3, image_width=605, image_height=1280)
             # Should be clamped to x=0.0
             assert validated3.points[0, 0] == 0.0, "Should clamp -2.0 to 0.0"
         except Exception as e:
             pytest.fail(f"Polygon within tolerance should be accepted: {e}")
-

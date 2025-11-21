@@ -164,4 +164,3 @@ make context-log-summarize LOG=logs/agent_runs/<file>.jsonl
 3. Add tests
 4. Update documentation
 5. Validate with smoke tests
-

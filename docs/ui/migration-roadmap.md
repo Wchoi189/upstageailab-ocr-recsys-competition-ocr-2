@@ -64,5 +64,3 @@ status: "draft"
 - Playwright suite (see `docs/ui/testing-observability.md`) runs on every CI build.
 - Worker telemetry shipped to future `/api/metrics`.
 - Benchmarks use `tests/perf/pipeline_bench.py` with manifest from `scripts/datasets/sample_images.py`.
-
-

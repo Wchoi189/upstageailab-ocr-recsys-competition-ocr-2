@@ -107,5 +107,3 @@ self.onmessage = async (event: MessageEvent<WorkerTask>) => {
     });
   }
 };
-
-

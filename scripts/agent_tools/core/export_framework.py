@@ -34,9 +34,8 @@ Usage:
 """
 
 import argparse
-import shutil
-from pathlib import Path
 import re
+from pathlib import Path
 
 
 class FrameworkExporter:
@@ -65,11 +64,11 @@ class FrameworkExporter:
         self._create_license()
 
         print(f"\n✓ Export complete! Framework available at: {self.export_root}")
-        print(f"\nNext steps:")
-        print(f"1. Review the exported framework")
-        print(f"2. Customize for your project if needed")
-        print(f"3. Copy to your new project root")
-        print(f"4. Update .cursor/rules if using Cursor IDE")
+        print("\nNext steps:")
+        print("1. Review the exported framework")
+        print("2. Customize for your project if needed")
+        print("3. Copy to your new project root")
+        print("4. Update .cursor/rules if using Cursor IDE")
 
     def _create_directory_structure(self):
         """Create the export directory structure."""
@@ -122,9 +121,9 @@ class FrameworkExporter:
 
                     # Try to read as text, skip binary files
                     try:
-                        content = item.read_text(encoding='utf-8')
+                        content = item.read_text(encoding="utf-8")
                         content = self._sanitize_content(content)
-                        dest_file.write_text(content, encoding='utf-8')
+                        dest_file.write_text(content, encoding="utf-8")
                     except (UnicodeDecodeError, UnicodeError):
                         # Skip binary files (e.g., .pyc, images, etc.)
                         continue
@@ -186,9 +185,9 @@ class FrameworkExporter:
 
                 # Try to read as text, skip binary files
                 try:
-                    content = item.read_text(encoding='utf-8')
+                    content = item.read_text(encoding="utf-8")
                     content = self._sanitize_content(content)
-                    dest_file.write_text(content, encoding='utf-8')
+                    dest_file.write_text(content, encoding="utf-8")
                 except (UnicodeDecodeError, UnicodeError):
                     # Skip binary files
                     continue
@@ -493,8 +492,8 @@ Copyright (c) 2025
     def _sanitize_content(self, content: str) -> str:
         """Sanitize content by removing project-specific references."""
         # Remove OCR-specific references
-        content = re.sub(r'OCR[-\s]?specific', 'project-specific', content, flags=re.IGNORECASE)
-        content = re.sub(r'OCR Receipt Text Detection', 'Your Project', content, flags=re.IGNORECASE)
+        content = re.sub(r"OCR[-\s]?specific", "project-specific", content, flags=re.IGNORECASE)
+        content = re.sub(r"OCR Receipt Text Detection", "Your Project", content, flags=re.IGNORECASE)
 
         # Remove specific file paths that are project-specific
         # Keep generic patterns
@@ -508,7 +507,7 @@ def main():
         "--output-dir",
         type=Path,
         default=Path.cwd() / "framework_export",
-        help="Output directory for the exported framework (default: ./framework_export)"
+        help="Output directory for the exported framework (default: ./framework_export)",
     )
 
     args = parser.parse_args()
@@ -523,4 +522,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

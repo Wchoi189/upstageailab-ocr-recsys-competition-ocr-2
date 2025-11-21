@@ -121,4 +121,3 @@ Based on investigation results:
 ---
 
 *This explains why the fix increases tolerance from 1.5 to 3.0 pixels (BUG-20251116-001)*
-

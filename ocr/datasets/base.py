@@ -63,7 +63,7 @@ from torch.utils.data import Dataset
 # This prevents repetitive logging when multiple datasets are created with the same config
 _logged_warnings: set[str] = set()
 
-from ocr.datasets.schemas import DatasetConfig, ImageData, ImageMetadata, PolygonData, TransformInput, ValidatedPolygonData
+from ocr.datasets.schemas import DatasetConfig, ImageData, ImageMetadata, TransformInput, ValidatedPolygonData
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
     normalize_pil_image,
@@ -528,21 +528,13 @@ class ValidatedOCRDataset(Dataset):
                     # This prevents BUG-20251110-001: 26.5% data corruption from invalid coordinates
                     # BUG-20251116-001: Validation now allows boundary coordinates and clamps small errors
                     # instead of rejecting polygons, reducing excessive data loss during training
-                    validated_polygon = ValidatedPolygonData(
-                        points=poly,
-                        image_width=width,
-                        image_height=height
-                    )
+                    validated_polygon = ValidatedPolygonData(points=poly, image_width=width, image_height=height)
                     polygon_models.append(validated_polygon)
                 except ValidationError as exc:
                     invalid_polygon_count += 1
                     # Log detailed validation error for debugging
                     self.logger.warning(
-                        "Dropping invalid polygon %d/%d for %s: %s",
-                        poly_idx + 1,
-                        len(processed_polygons),
-                        image_filename,
-                        exc
+                        "Dropping invalid polygon %d/%d for %s: %s", poly_idx + 1, len(processed_polygons), image_filename, exc
                     )
 
             # Log summary if multiple polygons were invalid
@@ -551,7 +543,7 @@ class ValidatedOCRDataset(Dataset):
                     "Image %s: Dropped %d/%d invalid polygons (validation failures)",
                     image_filename,
                     invalid_polygon_count,
-                    len(processed_polygons)
+                    len(processed_polygons),
                 )
 
         transform_input = TransformInput(image=image_array, polygons=polygon_models, metadata=metadata)

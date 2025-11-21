@@ -134,10 +134,10 @@ class ValidatedDBTransforms:
         for transform in transforms:
             if isinstance(transform, A.PadIfNeeded):
                 pos = transform.position
-                if hasattr(pos, 'name'):
+                if hasattr(pos, "name"):
                     self.padding_position = pos.name.lower()
                 else:
-                    pos_str = str(pos).split('.')[-1].lower() if '.' in str(pos) else str(pos).lower()
+                    pos_str = str(pos).split(".")[-1].lower() if "." in str(pos) else str(pos).lower()
                     self.padding_position = pos_str
                 break
 
@@ -227,7 +227,9 @@ class ValidatedDBTransforms:
         # BUG-20251116-001: Use correct padding position for inverse matrix computation
         _, new_height, new_width = transformed_image.shape
         crop_box = calculate_cropbox((width, height), max(new_height, new_width), position=self.padding_position)
-        inverse_matrix = calculate_inverse_transform((width, height), (new_width, new_height), crop_box=crop_box, padding_position=self.padding_position)
+        inverse_matrix = calculate_inverse_transform(
+            (width, height), (new_width, new_height), crop_box=crop_box, padding_position=self.padding_position
+        )
 
         # AI_DOCS: Step 7 - Keypoint to Polygon Reconstruction
         # Convert transformed keypoints back to polygon format

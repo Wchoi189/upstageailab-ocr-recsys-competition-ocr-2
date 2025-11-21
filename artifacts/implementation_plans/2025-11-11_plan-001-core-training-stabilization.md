@@ -237,4 +237,3 @@ grep -n "torch.reciprocal.*torch.exp" <file>
 ---
 
 *This implementation plan follows the Blueprint Protocol Template (PROTO-GOV-003) for systematic, autonomous execution with clear progress tracking.*
-

@@ -11,4 +11,3 @@ from ocr.utils.path_utils import PROJECT_ROOT
 
 # Re-export for backward compatibility with existing imports
 __all__ = ["PROJECT_ROOT"]
-

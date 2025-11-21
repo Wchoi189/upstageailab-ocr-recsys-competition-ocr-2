@@ -46,7 +46,7 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from ocr.utils.orientation import get_exif_orientation, normalize_pil_image, remap_polygons
+from ocr.utils.orientation import get_exif_orientation, normalize_pil_image
 
 
 class PolygonCoordinateFixer:
@@ -120,7 +120,7 @@ class PolygonCoordinateFixer:
             Tuple of (fixed_polygon, fix_info)
         """
         poly_array = np.array(polygon, dtype=np.float32)
-        original = poly_array.copy()
+        poly_array.copy()
 
         # Clamp coordinates to valid range
         x_coords = poly_array[:, 0]
@@ -193,7 +193,7 @@ class PolygonCoordinateFixer:
                     continue
 
                 # Convert to list of lists if needed
-                if isinstance(points[0], (int, float)):
+                if isinstance(points[0], int | float):
                     # Flattened format - reshape to (N, 2)
                     if len(points) % 2 != 0:
                         self.stats["polygons_skipped_invalid"] += 1
@@ -220,9 +220,7 @@ class PolygonCoordinateFixer:
 
                 if needs_fixing:
                     # Clamp coordinates
-                    fixed_polygon, fix_info = self.clamp_polygon_coordinates(
-                        polygon, canonical_width, canonical_height, self.tolerance
-                    )
+                    fixed_polygon, fix_info = self.clamp_polygon_coordinates(polygon, canonical_width, canonical_height, self.tolerance)
 
                     if not dry_run:
                         # Update annotation
@@ -262,7 +260,7 @@ class PolygonCoordinateFixer:
         print(f"🔧 Tolerance: {self.tolerance} pixels")
         print(f"🔍 Mode: {'DRY RUN' if dry_run else 'FIXING'}")
 
-        print(f"\n📈 Statistics:")
+        print("\n📈 Statistics:")
         print(f"  Images processed: {self.stats['images_processed']}")
         print(f"  Images skipped (missing): {self.stats['images_skipped_missing']}")
         print(f"  Images with fixes: {self.stats['images_with_fixes']}")
@@ -272,7 +270,7 @@ class PolygonCoordinateFixer:
         print(f"  Polygons skipped (too few points): {self.stats['polygons_skipped_too_few_points']}")
 
         if self.fixes_applied:
-            print(f"\n🔧 Sample Fixes (first 5):")
+            print("\n🔧 Sample Fixes (first 5):")
             for fix_record in self.fixes_applied[:5]:
                 print(f"\n  {fix_record['filename']} ({fix_record['num_fixes']} polygons fixed):")
                 for fix in fix_record["fixes"][:2]:
@@ -290,9 +288,7 @@ class PolygonCoordinateFixer:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Fix out-of-bounds polygon coordinates in annotation files (BUG-20251116-001)"
-    )
+    parser = argparse.ArgumentParser(description="Fix out-of-bounds polygon coordinates in annotation files (BUG-20251116-001)")
     parser.add_argument("--annotation-file", type=Path, required=True, help="Path to annotation JSON file")
     parser.add_argument("--image-dir", type=Path, required=True, help="Directory containing images")
     parser.add_argument(
@@ -329,9 +325,7 @@ def main():
 
     # Create fixer
     try:
-        fixer = PolygonCoordinateFixer(
-            args.annotation_file, args.image_dir, tolerance=args.tolerance, verbose=args.verbose
-        )
+        fixer = PolygonCoordinateFixer(args.annotation_file, args.image_dir, tolerance=args.tolerance, verbose=args.verbose)
     except ValueError as e:
         print(f"❌ Error: {e}", file=sys.stderr)
         sys.exit(1)
@@ -391,4 +385,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

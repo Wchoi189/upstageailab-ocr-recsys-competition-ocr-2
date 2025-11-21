@@ -7,10 +7,9 @@ including session tracking, artifact indexing, and context preservation across c
 
 import datetime
 import json
-import os
 import shutil
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 from zoneinfo import ZoneInfo
 
 import yaml
@@ -18,6 +17,7 @@ import yaml
 
 class StateError(Exception):
     """Raised when state operations fail."""
+
     pass
 
 
@@ -50,21 +50,21 @@ class StateManager:
             raise StateError(f"Configuration file not found: {config_path}")
 
         # Load configuration
-        with open(self.config_path, 'r') as f:
+        with open(self.config_path) as f:
             self.config = yaml.safe_load(f)
 
         # Set up paths
-        self.state_file = self.project_root / self.config['paths']['state_file']
-        self.sessions_dir = self.project_root / self.config['paths']['sessions_dir']
-        self.artifacts_dir = self.project_root / self.config['paths']['artifacts_dir']
+        self.state_file = self.project_root / self.config["paths"]["state_file"]
+        self.sessions_dir = self.project_root / self.config["paths"]["sessions_dir"]
+        self.artifacts_dir = self.project_root / self.config["paths"]["artifacts_dir"]
 
         # Create backup directory if needed
-        if self.config['settings'].get('auto_backup', False):
-            self.backup_dir = self.project_root / self.config['settings']['backup_dir']
+        if self.config["settings"].get("auto_backup", False):
+            self.backup_dir = self.project_root / self.config["settings"]["backup_dir"]
             self.backup_dir.mkdir(parents=True, exist_ok=True)
 
         # Initialize state
-        self.state: Optional[Dict[str, Any]] = None
+        self.state: dict[str, Any] | None = None
         self._load_state()
 
     def _load_state(self) -> None:
@@ -81,16 +81,18 @@ class StateManager:
             return
 
         try:
-            with open(self.state_file, 'r') as f:
+            with open(self.state_file) as f:
                 self.state = json.load(f)
 
             # Validate state schema version
-            if self.state.get('schema_version') != self.config['framework']['state_schema_version']:
-                print(f"Warning: State schema version mismatch. "
-                      f"Expected {self.config['framework']['state_schema_version']}, "
-                      f"found {self.state.get('schema_version')}")
+            if self.state.get("schema_version") != self.config["framework"]["state_schema_version"]:
+                print(
+                    f"Warning: State schema version mismatch. "
+                    f"Expected {self.config['framework']['state_schema_version']}, "
+                    f"found {self.state.get('schema_version')}"
+                )
 
-        except json.JSONDecodeError as e:
+        except json.JSONDecodeError:
             # State file is corrupted - backup and reinitialize
             backup_path = self._backup_corrupted_state()
             print(f"Warning: Corrupted state file backed up to {backup_path}")
@@ -102,41 +104,26 @@ class StateManager:
     def _initialize_default_state(self) -> None:
         """Initialize state with default schema."""
         self.state = {
-            "schema_version": self.config['framework']['state_schema_version'],
+            "schema_version": self.config["framework"]["state_schema_version"],
             "last_updated": self._get_timestamp(),
-            "framework": {
-                "name": self.config['framework']['name'],
-                "version": self.config['framework']['version']
-            },
+            "framework": {"name": self.config["framework"]["name"], "version": self.config["framework"]["version"]},
             "current_context": {
                 "active_session_id": None,
                 "current_branch": None,
                 "current_phase": None,
                 "active_artifacts": [],
-                "pending_tasks": []
+                "pending_tasks": [],
             },
-            "sessions": {
-                "total_count": 0,
-                "active_session": None,
-                "session_history": []
-            },
-            "artifacts": {
-                "total_count": 0,
-                "by_type": {},
-                "by_status": {},
-                "index": []
-            },
-            "relationships": {
-                "artifact_dependencies": {},
-                "session_artifacts": {}
-            },
+            "sessions": {"total_count": 0, "active_session": None, "session_history": []},
+            "artifacts": {"total_count": 0, "by_type": {}, "by_status": {}, "index": []},
+            "relationships": {"artifact_dependencies": {}, "session_artifacts": {}},
             "statistics": {
                 "total_sessions": 0,
                 "total_artifacts_created": 0,
                 "total_artifacts_validated": 0,
                 "total_artifacts_deployed": 0,
-                "last_session_timestamp": None
-            }
+                "last_session_timestamp": None,
+            },
         }
         self._save_state()
 
@@ -152,15 +139,15 @@ class StateManager:
 
         try:
             # Update last_updated timestamp
-            self.state['last_updated'] = self._get_timestamp()
+            self.state["last_updated"] = self._get_timestamp()
 
             # Create backup if enabled
-            if self.config['settings'].get('auto_backup', False) and self.state_file.exists():
+            if self.config["settings"].get("auto_backup", False) and self.state_file.exists():
                 self._create_backup()
 
             # Write state file atomically
-            temp_file = self.state_file.with_suffix('.tmp')
-            with open(temp_file, 'w') as f:
+            temp_file = self.state_file.with_suffix(".tmp")
+            with open(temp_file, "w") as f:
                 json.dump(self.state, f, indent=2)
 
             # Atomic rename
@@ -184,7 +171,7 @@ class StateManager:
 
     def _cleanup_old_backups(self) -> None:
         """Remove old backups beyond max_backups limit."""
-        max_backups = self.config['settings'].get('max_backups', 10)
+        max_backups = self.config["settings"].get("max_backups", 10)
 
         backups = sorted(self.backup_dir.glob("state_backup_*.json"), reverse=True)
 
@@ -211,14 +198,14 @@ class StateManager:
 
     # Context Management Methods
 
-    def get_current_context(self) -> Dict[str, Any]:
+    def get_current_context(self) -> dict[str, Any]:
         """
         Get the current context.
 
         Returns:
             Dictionary containing current context information
         """
-        return self.state['current_context'].copy()
+        return self.state["current_context"].copy()
 
     def update_current_context(self, **kwargs) -> None:
         """
@@ -228,8 +215,8 @@ class StateManager:
             **kwargs: Fields to update in current_context
         """
         for key, value in kwargs.items():
-            if key in self.state['current_context']:
-                self.state['current_context'][key] = value
+            if key in self.state["current_context"]:
+                self.state["current_context"][key] = value
 
         self._save_state()
 
@@ -240,14 +227,14 @@ class StateManager:
         Args:
             session_id: The session ID to set as active
         """
-        self.state['current_context']['active_session_id'] = session_id
-        self.state['sessions']['active_session'] = session_id
+        self.state["current_context"]["active_session_id"] = session_id
+        self.state["sessions"]["active_session"] = session_id
         self._save_state()
 
     def clear_active_session(self) -> None:
         """Clear the active session."""
-        self.state['current_context']['active_session_id'] = None
-        self.state['sessions']['active_session'] = None
+        self.state["current_context"]["active_session_id"] = None
+        self.state["sessions"]["active_session"] = None
         self._save_state()
 
     def set_current_branch(self, branch: str) -> None:
@@ -257,7 +244,7 @@ class StateManager:
         Args:
             branch: Branch name
         """
-        self.state['current_context']['current_branch'] = branch
+        self.state["current_context"]["current_branch"] = branch
         self._save_state()
 
     def set_current_phase(self, phase: str) -> None:
@@ -267,7 +254,7 @@ class StateManager:
         Args:
             phase: Phase name/identifier
         """
-        self.state['current_context']['current_phase'] = phase
+        self.state["current_context"]["current_phase"] = phase
         self._save_state()
 
     def add_active_artifact(self, artifact_path: str) -> None:
@@ -277,8 +264,8 @@ class StateManager:
         Args:
             artifact_path: Path to the artifact
         """
-        if artifact_path not in self.state['current_context']['active_artifacts']:
-            self.state['current_context']['active_artifacts'].append(artifact_path)
+        if artifact_path not in self.state["current_context"]["active_artifacts"]:
+            self.state["current_context"]["active_artifacts"].append(artifact_path)
             self._save_state()
 
     def remove_active_artifact(self, artifact_path: str) -> None:
@@ -288,28 +275,22 @@ class StateManager:
         Args:
             artifact_path: Path to the artifact
         """
-        if artifact_path in self.state['current_context']['active_artifacts']:
-            self.state['current_context']['active_artifacts'].remove(artifact_path)
+        if artifact_path in self.state["current_context"]["active_artifacts"]:
+            self.state["current_context"]["active_artifacts"].remove(artifact_path)
             self._save_state()
 
-    def get_active_artifacts(self) -> List[str]:
+    def get_active_artifacts(self) -> list[str]:
         """
         Get list of active artifacts.
 
         Returns:
             List of active artifact paths
         """
-        return self.state['current_context']['active_artifacts'].copy()
+        return self.state["current_context"]["active_artifacts"].copy()
 
     # Artifact Tracking Methods
 
-    def add_artifact(
-        self,
-        artifact_path: str,
-        artifact_type: str,
-        status: str = "draft",
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> None:
+    def add_artifact(self, artifact_path: str, artifact_type: str, status: str = "draft", metadata: dict[str, Any] | None = None) -> None:
         """
         Add an artifact to the index.
 
@@ -323,24 +304,24 @@ class StateManager:
         existing = self.get_artifact(artifact_path)
         if existing:
             # Update existing artifact in the index
-            for artifact in self.state['artifacts']['index']:
-                if artifact['path'] == artifact_path:
-                    old_status = artifact['status']
-                    artifact['status'] = status
-                    artifact['last_updated'] = self._get_timestamp()
+            for artifact in self.state["artifacts"]["index"]:
+                if artifact["path"] == artifact_path:
+                    old_status = artifact["status"]
+                    artifact["status"] = status
+                    artifact["last_updated"] = self._get_timestamp()
                     if metadata:
-                        artifact['metadata'].update(metadata)
+                        artifact["metadata"].update(metadata)
 
                     # Update status counts if status changed
                     if old_status != status:
-                        if old_status in self.state['artifacts']['by_status']:
-                            self.state['artifacts']['by_status'][old_status] -= 1
-                            if self.state['artifacts']['by_status'][old_status] <= 0:
-                                del self.state['artifacts']['by_status'][old_status]
+                        if old_status in self.state["artifacts"]["by_status"]:
+                            self.state["artifacts"]["by_status"][old_status] -= 1
+                            if self.state["artifacts"]["by_status"][old_status] <= 0:
+                                del self.state["artifacts"]["by_status"][old_status]
 
-                        if status not in self.state['artifacts']['by_status']:
-                            self.state['artifacts']['by_status'][status] = 0
-                        self.state['artifacts']['by_status'][status] += 1
+                        if status not in self.state["artifacts"]["by_status"]:
+                            self.state["artifacts"]["by_status"][status] = 0
+                        self.state["artifacts"]["by_status"][status] += 1
                     break
         else:
             # Add new artifact
@@ -350,28 +331,28 @@ class StateManager:
                 "status": status,
                 "created_at": self._get_timestamp(),
                 "last_updated": self._get_timestamp(),
-                "metadata": metadata or {}
+                "metadata": metadata or {},
             }
 
-            self.state['artifacts']['index'].append(artifact_entry)
+            self.state["artifacts"]["index"].append(artifact_entry)
 
             # Update counts
-            self.state['artifacts']['total_count'] += 1
-            self.state['statistics']['total_artifacts_created'] += 1
+            self.state["artifacts"]["total_count"] += 1
+            self.state["statistics"]["total_artifacts_created"] += 1
 
             # Update type counts
-            if artifact_type not in self.state['artifacts']['by_type']:
-                self.state['artifacts']['by_type'][artifact_type] = 0
-            self.state['artifacts']['by_type'][artifact_type] += 1
+            if artifact_type not in self.state["artifacts"]["by_type"]:
+                self.state["artifacts"]["by_type"][artifact_type] = 0
+            self.state["artifacts"]["by_type"][artifact_type] += 1
 
             # Update status counts
-            if status not in self.state['artifacts']['by_status']:
-                self.state['artifacts']['by_status'][status] = 0
-            self.state['artifacts']['by_status'][status] += 1
+            if status not in self.state["artifacts"]["by_status"]:
+                self.state["artifacts"]["by_status"][status] = 0
+            self.state["artifacts"]["by_status"][status] += 1
 
         self._save_state()
 
-    def get_artifact(self, artifact_path: str) -> Optional[Dict[str, Any]]:
+    def get_artifact(self, artifact_path: str) -> dict[str, Any] | None:
         """
         Get artifact information by path.
 
@@ -381,8 +362,8 @@ class StateManager:
         Returns:
             Artifact dictionary or None if not found
         """
-        for artifact in self.state['artifacts']['index']:
-            if artifact['path'] == artifact_path:
+        for artifact in self.state["artifacts"]["index"]:
+            if artifact["path"] == artifact_path:
                 return artifact.copy()
         return None
 
@@ -394,34 +375,34 @@ class StateManager:
             artifact_path: Path to the artifact
             new_status: New status value
         """
-        for artifact in self.state['artifacts']['index']:
-            if artifact['path'] == artifact_path:
-                old_status = artifact['status']
-                artifact['status'] = new_status
-                artifact['last_updated'] = self._get_timestamp()
+        for artifact in self.state["artifacts"]["index"]:
+            if artifact["path"] == artifact_path:
+                old_status = artifact["status"]
+                artifact["status"] = new_status
+                artifact["last_updated"] = self._get_timestamp()
 
                 # Update status counts
-                if old_status in self.state['artifacts']['by_status']:
-                    self.state['artifacts']['by_status'][old_status] -= 1
-                    if self.state['artifacts']['by_status'][old_status] <= 0:
-                        del self.state['artifacts']['by_status'][old_status]
+                if old_status in self.state["artifacts"]["by_status"]:
+                    self.state["artifacts"]["by_status"][old_status] -= 1
+                    if self.state["artifacts"]["by_status"][old_status] <= 0:
+                        del self.state["artifacts"]["by_status"][old_status]
 
-                if new_status not in self.state['artifacts']['by_status']:
-                    self.state['artifacts']['by_status'][new_status] = 0
-                self.state['artifacts']['by_status'][new_status] += 1
+                if new_status not in self.state["artifacts"]["by_status"]:
+                    self.state["artifacts"]["by_status"][new_status] = 0
+                self.state["artifacts"]["by_status"][new_status] += 1
 
                 # Update statistics
-                if new_status == 'validated':
-                    self.state['statistics']['total_artifacts_validated'] += 1
-                elif new_status == 'deployed':
-                    self.state['statistics']['total_artifacts_deployed'] += 1
+                if new_status == "validated":
+                    self.state["statistics"]["total_artifacts_validated"] += 1
+                elif new_status == "deployed":
+                    self.state["statistics"]["total_artifacts_deployed"] += 1
 
                 self._save_state()
                 return
 
         raise StateError(f"Artifact not found: {artifact_path}")
 
-    def get_artifacts_by_type(self, artifact_type: str) -> List[Dict[str, Any]]:
+    def get_artifacts_by_type(self, artifact_type: str) -> list[dict[str, Any]]:
         """
         Get all artifacts of a specific type.
 
@@ -431,13 +412,9 @@ class StateManager:
         Returns:
             List of artifact dictionaries
         """
-        return [
-            artifact.copy()
-            for artifact in self.state['artifacts']['index']
-            if artifact['type'] == artifact_type
-        ]
+        return [artifact.copy() for artifact in self.state["artifacts"]["index"] if artifact["type"] == artifact_type]
 
-    def get_artifacts_by_status(self, status: str) -> List[Dict[str, Any]]:
+    def get_artifacts_by_status(self, status: str) -> list[dict[str, Any]]:
         """
         Get all artifacts with a specific status.
 
@@ -447,29 +424,25 @@ class StateManager:
         Returns:
             List of artifact dictionaries
         """
-        return [
-            artifact.copy()
-            for artifact in self.state['artifacts']['index']
-            if artifact['status'] == status
-        ]
+        return [artifact.copy() for artifact in self.state["artifacts"]["index"] if artifact["status"] == status]
 
-    def get_all_artifacts(self) -> List[Dict[str, Any]]:
+    def get_all_artifacts(self) -> list[dict[str, Any]]:
         """
         Get all artifacts in the index.
 
         Returns:
             List of all artifact dictionaries
         """
-        return [artifact.copy() for artifact in self.state['artifacts']['index']]
+        return [artifact.copy() for artifact in self.state["artifacts"]["index"]]
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get state statistics.
 
         Returns:
             Dictionary containing statistics
         """
-        return self.state['statistics'].copy()
+        return self.state["statistics"].copy()
 
     # State Health and Validation
 
@@ -481,9 +454,14 @@ class StateManager:
             True if state is valid, False otherwise
         """
         required_keys = [
-            'schema_version', 'last_updated', 'framework',
-            'current_context', 'sessions', 'artifacts',
-            'relationships', 'statistics'
+            "schema_version",
+            "last_updated",
+            "framework",
+            "current_context",
+            "sessions",
+            "artifacts",
+            "relationships",
+            "statistics",
         ]
 
         for key in required_keys:
@@ -492,7 +470,7 @@ class StateManager:
 
         return True
 
-    def get_state_health(self) -> Dict[str, Any]:
+    def get_state_health(self) -> dict[str, Any]:
         """
         Get state health information.
 
@@ -501,11 +479,11 @@ class StateManager:
         """
         return {
             "is_valid": self.validate_state(),
-            "schema_version": self.state.get('schema_version'),
-            "last_updated": self.state.get('last_updated'),
-            "total_artifacts": self.state['artifacts']['total_count'],
-            "total_sessions": self.state['sessions']['total_count'],
-            "active_session": self.state['current_context']['active_session_id'],
+            "schema_version": self.state.get("schema_version"),
+            "last_updated": self.state.get("last_updated"),
+            "total_artifacts": self.state["artifacts"]["total_count"],
+            "total_sessions": self.state["sessions"]["total_count"],
+            "active_session": self.state["current_context"]["active_session_id"],
             "state_file_exists": self.state_file.exists(),
-            "state_file_size_bytes": self.state_file.stat().st_size if self.state_file.exists() else 0
+            "state_file_size_bytes": self.state_file.stat().st_size if self.state_file.exists() else 0,
         }

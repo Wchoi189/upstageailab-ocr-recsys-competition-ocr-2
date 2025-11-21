@@ -77,4 +77,3 @@ Reference demos in the README:
 ---
 
 *Demo GIFs will be created as features are finalized. Contributions welcome!*
-

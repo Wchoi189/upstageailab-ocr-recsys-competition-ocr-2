@@ -240,4 +240,3 @@ The protocol will be "reliable" when:
 3. Create unified helper function
 4. Update protocol documentation
 5. Migrate existing reports
-

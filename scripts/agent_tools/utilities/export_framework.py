@@ -20,9 +20,7 @@ from typing import Any
 try:
     import yaml  # noqa: F401
 except ImportError:
-    print(
-        "ERROR: PyYAML not installed. Install with: pip install pyyaml", file=sys.stderr
-    )
+    print("ERROR: PyYAML not installed. Install with: pip install pyyaml", file=sys.stderr)
     sys.exit(1)
 
 
@@ -262,13 +260,7 @@ class FrameworkExporter:
 
     def export_adaptation_tool(self, dry_run: bool = False) -> None:
         """Export adaptation tool to scripts/ directory."""
-        src = (
-            self.project_root
-            / "scripts"
-            / "agent_tools"
-            / "utilities"
-            / "adapt_project.py"
-        )
+        src = self.project_root / "scripts" / "agent_tools" / "utilities" / "adapt_project.py"
         dst = self.output_dir / "scripts" / "adapt_project.py"
 
         print("\n📦 Exporting adaptation tool...")
@@ -381,9 +373,7 @@ The following project-specific components are excluded from this export:
             dir_path = self.output_dir / dir_name
             if not dir_path.exists():
                 validation_results["passed"] = False
-                validation_results["issues"].append(
-                    f"Missing required directory: {dir_name}"
-                )
+                validation_results["issues"].append(f"Missing required directory: {dir_name}")
 
         # Check required files
         required_files = [
@@ -399,9 +389,7 @@ The following project-specific components are excluded from this export:
             file_path = self.output_dir / file_rel
             if not file_path.exists():
                 validation_results["passed"] = False
-                validation_results["issues"].append(
-                    f"Missing required file: {file_rel}"
-                )
+                validation_results["issues"].append(f"Missing required file: {file_rel}")
 
         # Check for excluded files (should not be present)
         excluded_files = [
@@ -412,9 +400,7 @@ The following project-specific components are excluded from this export:
         for file_rel in excluded_files:
             file_path = self.output_dir / file_rel
             if file_path.exists():
-                validation_results["warnings"].append(
-                    f"Excluded file found in export: {file_rel}"
-                )
+                validation_results["warnings"].append(f"Excluded file found in export: {file_rel}")
 
         return validation_results
 
