@@ -27,7 +27,7 @@ def run_api_server(host: str = "127.0.0.1", port: int = 8000, reload: bool = Tru
         )
     else:
         # When reload is disabled, we can pass the app object directly
-        from services.playground_api.app import app
+        from apps.backend.services.playground_api.app import app
 
         uvicorn.run(
             app,

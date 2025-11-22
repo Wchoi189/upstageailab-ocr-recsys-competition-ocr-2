@@ -485,3 +485,32 @@ Your contributions make this project better for everyone. Thank you for taking t
 ---
 
 **Note**: This is a living document. If you have suggestions for improving these guidelines, please open an issue or submit a PR!
+
+### Frontend Development
+
+The frontend applications are located in `apps/`.
+
+1.  **Main Frontend:** `apps/frontend`
+2.  **Console:** `apps/playground-console`
+
+To start the frontend development server:
+
+```bash
+npm install
+npm run dev:spa      # For the main frontend
+# OR
+npm run dev:console  # For the console
+```
+
+### Backend Development
+
+Backend services are located in `apps/backend/`.
+The core OCR logic is in `ocr/`.
+
+### Agent Tools
+
+Agent tools are located in `agent_qms/`.
+Run them using:
+```bash
+python -m agent_qms --help
+```

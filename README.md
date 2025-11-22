@@ -43,6 +43,15 @@ This project is a comprehensive OCR (Optical Character Recognition) system desig
 - **Interactive UI**: Streamlit-based tools for model testing, preprocessing demos, and evaluation
 - **Comprehensive Tooling**: Command builder, evaluation viewer, and real-time inference interface
 
+### Project Structure
+
+- `apps/frontend`: Main React/Vite SPA frontend
+- `apps/playground-console`: Developer console application
+- `apps/backend`: Backend services
+- `agent_qms`: Quality Management System and Agent Tools
+- `ocr`: Core OCR Python package
+- `packages`: Shared Node.js packages
+
 ---
 
 ## 🚀 Quick Links

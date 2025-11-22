@@ -7,7 +7,7 @@ type: "bug_report"
 category: "troubleshooting"
 status: "{{ status }}"
 version: "1.0"
-tags: {{ tags }}
+tags: {{ tags | tojson }}
 bug_id: "{{ bug_id }}"
 severity: "{{ severity }}"
 ---

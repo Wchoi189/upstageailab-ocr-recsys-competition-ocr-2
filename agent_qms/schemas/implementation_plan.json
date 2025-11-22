@@ -26,6 +26,12 @@
             "items": {
                 "type": "string"
             }
+        },
+        "type": {
+            "type": "string"
+        },
+        "category": {
+            "type": "string"
         }
     },
     "required": ["title", "author", "timestamp", "branch", "status"]

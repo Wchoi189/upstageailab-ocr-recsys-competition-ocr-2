@@ -52,7 +52,7 @@ def test_app_creation():
     print("=" * 60)
 
     try:
-        from services.playground_api.app import app
+        from apps.backend.services.playground_api.app import app
 
         print("✅ App created successfully")
         print(f"   Routes: {len(app.routes)}")

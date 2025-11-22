@@ -1,3 +1,10 @@
+# ⚠️ DEPRECATED
+
+This directory (`ui/`) is deprecated and will be removed in a future update.
+The functionality is being migrated to `apps/frontend` and `apps/playground-console`.
+
+Please do not add new features here.
+
 # OCR Project Streamlit UI
 
 This directory contains Streamlit applications for managing OCR training workflows and real-time inference.

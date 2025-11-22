@@ -20,7 +20,7 @@ def test_fastapi_startup() -> None:
     start_import = time.perf_counter()
 
     # Import the app (this should be fast with lazy imports)
-    from services.playground_api.app import app  # noqa: F401
+    from apps.backend.services.playground_api.app import app  # noqa: F401
 
     import_duration = time.perf_counter() - start_import
     print(f"✓ Import completed in {import_duration:.3f}s\n")

@@ -4,7 +4,9 @@ author: "{{ author }}"
 timestamp: "{{ timestamp }}"
 branch: "{{ branch }}"
 status: "draft"
-tags: []
+tags: {{ tags | tojson }}
+type: "{{ type }}"
+category: "{{ category }}"
 ---
 
 > **⚠️ IMPORTANT:** This artifact must be generated using the AgentQMS toolbelt script (`python -m agent_qms.toolbelt.core create_artifact --type assessment`). Manual creation may violate naming and validation rules.

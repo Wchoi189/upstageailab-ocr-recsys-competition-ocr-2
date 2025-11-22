@@ -6,7 +6,7 @@ branch: "{{ branch }}"
 type: "{{ type }}"
 category: "{{ category }}"
 status: "draft"
-tags: []
+tags: {{ tags | tojson }}
 ---
 
 > **⚠️ IMPORTANT:** This artifact must be generated using the AgentQMS toolbelt script (`python -m agent_qms.toolbelt.core create_artifact --type implementation_plan`). Manual creation may violate naming and validation rules.

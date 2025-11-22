@@ -5,6 +5,84 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-11-22
+
+### Added - Perspective Correction Evaluation
+- Comprehensive perspective correction evaluation framework (`scripts/test_perspective_comprehensive.py`)
+- Automatic fallback mechanism to rembg version when perspective correction fails
+- Pre and post-correction validation with multiple metrics
+- DocTR vs regular method comparison testing
+- ScanTailor Advanced integration script (experimental, GUI-only)
+- Detailed failure analysis and root cause identification
+- Extended testing on larger datasets with JSON result export
+
+### Changed - Perspective Correction
+- Identified 40% failure rate in both DocTR and regular methods
+- Root cause: Corner detection finds small regions instead of document boundaries
+- Both methods fail identically on same images (shared detector issue)
+
+### Fixed - Perspective Correction
+- Implemented validation to prevent bad outputs (area retention, dimension ratios, content preservation)
+- Automatic fallback prevents catastrophic failures
+
+### Documentation
+- Created comprehensive evaluation summary (`docs/assessments/perspective_correction_evaluation_summary.md`)
+- Created failure analysis document (`docs/assessments/perspective_correction_failures_analysis.md`)
+- Created ScanTailor installation guide (`scripts/SCANTAILOR_INSTALL.md`)
+- Created session handover document (`docs/sessions/2025-11-22/SESSION_HANDOVER_PERSPECTIVE_CORRECTION.md`)
+
+### Experimental
+- ScanTailor Advanced installed (GUI version at `/usr/local/bin/scantailor`)
+- Integration pending (requires X11 forwarding or virtual display for headless use)
+
+## [Unreleased] - 2025-11-22
+
+### Added - Perspective Correction Evaluation - 2025-11-22
+
+- **Comprehensive perspective correction evaluation framework** – Created `scripts/test_perspective_comprehensive.py` for extended testing
+  - Tests both DocTR and regular perspective correction methods on rembg-processed images
+  - Automatic fallback mechanism to rembg version when both methods fail validation
+  - Pre and post-correction validation with multiple metrics (area retention, dimension ratios, content preservation)
+  - Generates detailed JSON results and side-by-side comparison images
+  - Test results: 60% success rate, 40% failure rate (both methods fail identically)
+
+- **Robust validation framework** – Created `scripts/test_perspective_robust.py` with pre-correction validation
+  - Corner area ratio check (>30% of image)
+  - Aspect ratio validation
+  - Skew angle detection (skip correction if <2°)
+  - Ready for integration into main pipeline
+
+- **DocTR performance comparison** – Created `scripts/test_perspective_doctr_rembg.py`
+  - DocTR is 1.66x faster than regular method (0.004s vs 0.007s)
+  - Both methods have identical failure patterns (shared corner detection issue)
+
+- **ScanTailor Advanced integration** – Installed ScanTailor Advanced (Option 4) from source
+  - Executable available at `/usr/local/bin/scantailor`
+  - GUI version (requires X11 forwarding or virtual display for headless use)
+  - Integration script created (`scripts/test_scantailor_integration.py`) but needs GUI adaptation
+
+- **Comprehensive documentation** – Created evaluation and analysis documents
+  - `docs/assessments/perspective_correction_evaluation_summary.md` – Full evaluation with implementation plan
+  - `docs/assessments/perspective_correction_failures_analysis.md` – Root cause analysis and solutions
+  - `docs/sessions/2025-11-22/SESSION_HANDOVER_PERSPECTIVE_CORRECTION.md` – Session handover document
+  - `scripts/SCANTAILOR_INSTALL.md` – Installation guide
+
+### Changed - Perspective Correction - 2025-11-22
+
+- **Failure analysis** – Identified root cause of perspective correction failures
+  - 40% failure rate in both DocTR and regular methods
+  - Root cause: Corner detection finds small regions (text blocks, artifacts) instead of document boundaries
+  - Both methods fail identically on same images (shared detector issue)
+  - Common failure: "Area loss too large" (17-45% area loss)
+
+### Fixed - Perspective Correction - 2025-11-22
+
+- **Automatic fallback mechanism** – Prevents catastrophic failures
+  - Validates correction results before accepting
+  - Falls back to rembg-processed image when both methods fail
+  - Prevents bad outputs (excessive cropping, data loss)
+  - Working correctly on 40% of test cases that would otherwise fail
+
 ## [Unreleased] - 2025-11-20
 
 ### Changed - 2025-11-20

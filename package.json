@@ -2,16 +2,16 @@
   "name": "upstage-console-workspace",
   "private": true,
   "workspaces": [
-    "frontend",
+    "apps/frontend",
     "apps/playground-console",
     "packages/console-shared"
   ],
   "scripts": {
-    "dev:spa": "npm run dev --workspace frontend",
+    "dev:spa": "npm run dev --workspace frontend-app",
     "dev:console": "npm run dev --workspace apps/playground-console",
-    "build:spa": "npm run build --workspace frontend",
+    "build:spa": "npm run build --workspace frontend-app",
     "build:console": "npm run build --workspace apps/playground-console",
-    "lint:spa": "npm run lint --workspace frontend",
+    "lint:spa": "npm run lint --workspace frontend-app",
     "lint:console": "npm run lint --workspace apps/playground-console"
   }
 }
