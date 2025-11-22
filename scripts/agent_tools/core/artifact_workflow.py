@@ -186,6 +186,9 @@ class ArtifactWorkflow:
             print(f"   Title: {title}")
             print()
 
+            # Run pre-create hook
+            self.pre_create_hook(artifact_type, title, **kwargs)
+
         except (ValueError, Exception) as e:
             print(f"❌ Pre-generation validation failed: {e}")
             print("   Artifact will NOT be created. Fix issues above and try again.")
@@ -400,6 +403,43 @@ class ArtifactWorkflow:
         except Exception:
             # Silently fail - bundle updates are not critical
             pass
+
+    def pre_create_hook(self, artifact_type: str, title: str, **kwargs) -> None:
+        """
+        Pre-artifact generation hook.
+
+        This hook is called BEFORE artifact creation to enforce rules,
+        validate parameters, and perform any pre-creation checks.
+
+        Args:
+            artifact_type: Type of artifact being created
+            title: Artifact title
+            **kwargs: Additional creation parameters
+
+        Raises:
+            ValidationError: If pre-creation checks fail
+        """
+        print("🔍 Running pre-artifact generation hook...")
+
+        # Enforce that certain artifacts must have timestamp prefixes
+        timestamped_types = ["assessment", "implementation_plan"]
+        if artifact_type in timestamped_types:
+            # Check if title suggests this is being created properly
+            # (This is a basic check - the actual filename generation happens later)
+            if not title.strip():
+                raise ValidationError("Artifact title cannot be empty")
+
+            print(f"✅ {artifact_type} will use timestamped filename (enforced)")
+
+        # Add a marker to indicate creation via approved script
+        kwargs.setdefault("tags", [])
+        if "created-by-script" not in kwargs["tags"]:
+            kwargs["tags"].append("created-by-script")
+
+        # Additional pre-creation validations can be added here
+        # For example: check for required parameters, validate content, etc.
+
+        print("✅ Pre-artifact generation hook passed")
 
     def update_status(self, file_path: str, new_status: str = None, auto_detect: bool = False) -> str:
         """Update artifact status in frontmatter.

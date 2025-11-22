@@ -1,0 +1,166 @@
+{
+  "id": "20251122_172313_perspective_correction",
+  "timestamp": "2025-11-22T17:23:13.299839",
+  "type": "perspective_correction",
+  "intention": "Import and organize existing perspective correction and rembg optimization experiments",
+  "status": "ACTIVE",
+  "artifacts": [
+    {
+      "path": "scripts/test_perspective_robust.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.060326",
+      "metadata": {
+        "original_path": "../scripts/test_perspective_robust.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "scripts/test_perspective_on_rembg.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.100395",
+      "metadata": {
+        "original_path": "../scripts/test_perspective_on_rembg.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "scripts/test_perspective_doctr_rembg.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.133368",
+      "metadata": {
+        "original_path": "../scripts/test_perspective_doctr_rembg.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "scripts/optimized_rembg.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.173679",
+      "metadata": {
+        "original_path": "../scripts/optimized_rembg.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "assessments/QUICK_START_OPTIMIZED.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.211174",
+      "metadata": {
+        "original_path": "../scripts/QUICK_START_OPTIMIZED.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "scripts/test_pipeline_rembg_perspective.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.247691",
+      "metadata": {
+        "original_path": "../scripts/test_pipeline_rembg_perspective.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "scripts/test_scantailor_integration.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.287847",
+      "metadata": {
+        "original_path": "../scripts/test_scantailor_integration.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "scripts/verify_gpu_usage.py",
+      "type": "script",
+      "timestamp": "2025-11-22T17:23:39.327474",
+      "metadata": {
+        "original_path": "../scripts/verify_gpu_usage.py",
+        "type": "script"
+      }
+    },
+    {
+      "path": "assessments/perspective_correction_failures_analysis.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.363300",
+      "metadata": {
+        "original_path": "../docs/assessments/perspective_correction_failures_analysis.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_gpu_setup_status.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.403944",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_gpu_setup_status.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_gpu_verification.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.445697",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_gpu_verification.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_optimization_implementation_summary.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.493316",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_optimization_implementation_summary.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_optimization_test_plan.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.540418",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_optimization_test_plan.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_performance_optimization.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.580625",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_performance_optimization.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_pipeline_summary.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.621793",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_pipeline_summary.md",
+        "type": "assessment"
+      }
+    },
+    {
+      "path": "assessments/rembg_test_results_summary.md",
+      "type": "assessment",
+      "timestamp": "2025-11-22T17:23:39.663923",
+      "metadata": {
+        "original_path": "../docs/assessments/rembg_test_results_summary.md",
+        "type": "assessment"
+      }
+    }
+  ],
+  "assessments": [
+    "assessments/rembg_performance_optimization.md",
+    "assessments/rembg_gpu_setup_status.md",
+    "assessments/rembg_test_results_summary.md",
+    "assessments/perspective_correction_failures_analysis.md",
+    "assessments/rembg_optimization_test_plan.md",
+    "assessments/rembg_pipeline_summary.md",
+    "assessments/rembg_optimization_implementation_summary.md",
+    "assessments/rembg_gpu_verification.md",
+    "assessments/QUICK_START_OPTIMIZED.md"
+  ],
+  "open_questions": [],
+  "roadmap": []
+}

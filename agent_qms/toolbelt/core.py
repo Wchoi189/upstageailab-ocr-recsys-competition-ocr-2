@@ -118,7 +118,7 @@ class AgentQMSToolbelt:
         timestamp_prefix = now_kst.strftime("%Y-%m-%d_%H%M")
 
         # Check if artifact type requires timestamp prefix
-        timestamped_types = ["assessment", "implementation_plan", "guide"]
+        timestamped_types = ["assessment", "implementation_plan"]
         if artifact_type in timestamped_types:
             slug = title.lower().replace(" ", "-").replace("_", "-")
             filename = f"{timestamp_prefix}_{slug}.md"
@@ -289,6 +289,25 @@ class AgentQMSToolbelt:
                 f"Expected directory to match one of: {', '.join(atype['location'] for atype in self.manifest['artifact_types'])}"
             )
 
+        # Enforce timestamped filenames for certain artifact types
+        artifact_type = artifact_meta["name"]
+        timestamped_types = ["assessment", "implementation_plan"]
+        if artifact_type in timestamped_types:
+            import re
+
+            if not re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}_", file_path_obj.name):
+                raise ValidationError(
+                    f"Artifact type '{artifact_type}' must use a timestamped filename in format YYYY-MM-DD_HHMM_name.md. "
+                    f"Current filename: {file_path_obj.name}"
+                )
+
+            # Enforce that timestamped artifacts must be created by approved script
+            if "created-by-script" not in frontmatter.get("tags", []):
+                raise ValidationError(
+                    f"Artifact type '{artifact_type}' must be created using the artifact workflow script. "
+                    f"Manual creation is not allowed. Use: python scripts/agent_tools/core/artifact_workflow.py create --type {artifact_type} ..."
+                )
+
         # Load schema
         schema_path = self.root_path / artifact_meta["schema"]
         with open(schema_path) as f:
@@ -302,6 +321,26 @@ class AgentQMSToolbelt:
             validate(instance=frontmatter, schema=schema)
         except SchemaValidationError as e:
             raise ValidationError(f"Schema validation failed: {e.message}\nPath: {'.'.join(str(p) for p in e.path)}")
+
+        return True
+
+    def validate_all_artifacts(self):
+        """
+        Validates all artifacts in the workspace against their schemas and conventions.
+        Raises ValidationError if any artifact fails validation.
+        """
+        errors = []
+        for artifact_type in self.manifest["artifact_types"]:
+            location = self.root_path.parent / artifact_type["location"]
+            if location.exists():
+                for file_path in location.glob("*.md"):
+                    try:
+                        self.validate_artifact(str(file_path))
+                    except ValidationError as e:
+                        errors.append(f"{file_path}: {e}")
+
+        if errors:
+            raise ValidationError("Artifact validation failed:\n" + "\n".join(errors))
 
         return True
 

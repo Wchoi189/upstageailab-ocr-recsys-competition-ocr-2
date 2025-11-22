@@ -1,0 +1,11 @@
+base_path: "experiments"
+knowledge_base_path: "knowledge-base"
+templates_path: ".templates"
+schemas_path: ".schemas"
+date_format: "%Y%m%d_%H%M%S"
+default_author: "AI Agent"
+experiment_types:
+  - perspective_correction
+  - data_augmentation
+  - training_run
+  - custom

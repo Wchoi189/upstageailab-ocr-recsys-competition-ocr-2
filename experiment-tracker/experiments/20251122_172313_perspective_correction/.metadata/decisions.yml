@@ -1,0 +1,6 @@
+decisions:
+- alternatives_considered: []
+  decision: Use YAML
+  id: dec_001
+  rationale: Better
+  timestamp: '2025-11-22T19:17:24.438383'

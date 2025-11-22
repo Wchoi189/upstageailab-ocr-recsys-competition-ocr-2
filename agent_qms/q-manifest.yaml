@@ -34,4 +34,4 @@ tool_registry:
 validation_rules:
   - rule: "enforce_timestamped_filenames"
     enabled: true
-    description: "Assessments, implementation plans, and guides must use timestamped filenames (YYYY-MM-DD_HHMM_name.md). All frontmatters must include timestamp (YYYY-MM-DD HH:MM KST) and branch (git branch name) fields."
+    description: "Assessments and implementation plans must use timestamped filenames (YYYY-MM-DD_HHMM_name.md) and be created using the artifact workflow script (adds 'created-by-script' tag). Manual creation is not allowed."

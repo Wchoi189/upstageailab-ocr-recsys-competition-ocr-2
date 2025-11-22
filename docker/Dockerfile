@@ -1,5 +1,5 @@
 # Multi-stage Dockerfile for development and production
-FROM nvidia/cuda:12.8.1-devel-ubuntu22.04 AS base
+FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 AS base
 
 # Set environment variables
 ENV DEBIAN_FRONTEND=noninteractive
@@ -7,7 +7,8 @@ ENV TZ=Asia/Seoul
 ENV PYTHONUNBUFFERED=1
 ENV UV_LINK_MODE=copy
 
-# Install system dependencies
+# Install system dependencies and cuDNN for GPU acceleration
+# Note: NVIDIA CUDA base image already includes the CUDA repository
 RUN apt-get update && apt-get install -y \
     sudo \
     curl \
@@ -43,6 +44,7 @@ RUN apt-get update && apt-get install -y \
     tmux \
     jq \
     bash-completion \
+    libcudnn9-cuda-12 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set locale to UTF-8 with Korean support

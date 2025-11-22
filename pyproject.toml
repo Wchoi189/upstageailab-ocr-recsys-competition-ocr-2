@@ -72,7 +72,7 @@ dependencies = [
     "mkdocs-git-revision-date-localized-plugin>=1.2.0",
     "mkdocs-git-committers-plugin-2>=2.2.0",
     "rembg>=2.0.67",
-    "onnxruntime>=1.23.1",
+    "onnxruntime-gpu>=1.23.1",  # GPU-accelerated ONNX Runtime (includes TensorRT support)
     "Jinja2>=3.1.0",
 ]
 

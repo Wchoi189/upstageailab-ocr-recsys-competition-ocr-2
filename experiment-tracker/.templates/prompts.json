@@ -1,0 +1,29 @@
+{
+  "prompts": [
+    {
+      "id": "perspective-failure-analysis-v1",
+      "title": "Perspective Correction Failure Analysis",
+      "category": "analysis",
+      "tags": ["ocr", "vision", "perspective", "failure-analysis"],
+      "version": "1.0.0",
+      "description": "Analyzes why a specific perspective correction technique failed on an image.",
+      "variables": [
+        { "name": "technique_name", "description": "The name of the algorithm used (e.g., homography_basic)" },
+        { "name": "failure_description", "description": "Brief description of the observed failure" }
+      ],
+      "content": "You are an expert in Computer Vision and OCR. I have applied the '{{technique_name}}' perspective correction to an image, but it produced poor results: {{failure_description}}.\n\nPlease analyze the attached image and artifacts. Identify potential root causes such as:\n1. Extreme vanishing points\n2. Lack of clear line segments\n3. Noise or blur interfering with edge detection\n\nSuggest 2-3 alternative approaches or parameter adjustments."
+    },
+    {
+      "id": "experiment-planning-v1",
+      "title": "New Experiment Planning",
+      "category": "planning",
+      "tags": ["general", "planning", "methodology"],
+      "version": "1.0.0",
+      "description": "Helps structure a new experiment with clear hypotheses and metrics.",
+      "variables": [
+        { "name": "goal", "description": "The main objective of the experiment" }
+      ],
+      "content": "I am planning a new experiment with the goal: {{goal}}.\n\nHelp me structure this experiment by defining:\n1. A clear, falsifiable hypothesis.\n2. The specific variables (independent and dependent).\n3. Success metrics (quantitative and qualitative).\n4. A step-by-step execution plan.\n5. Potential risks and mitigation strategies."
+    }
+  ]
+}

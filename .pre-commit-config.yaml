@@ -63,3 +63,10 @@ repos:
         entry: npm run lint --workspace apps/playground-console
         language: system
         pass_filenames: false
+
+      - id: validate-agentqms-artifacts
+        name: validate-agentqms-artifacts
+        entry: uv run python -c "from agent_qms.toolbelt.core import AgentQMSToolbelt; toolbelt = AgentQMSToolbelt(); toolbelt.validate_all_artifacts()"
+        language: system
+        pass_filenames: false
+        files: ^artifacts/

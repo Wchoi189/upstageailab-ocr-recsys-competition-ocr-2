@@ -7,6 +7,8 @@ status: "draft"
 tags: []
 ---
 
+> **⚠️ IMPORTANT:** This artifact must be generated using the AgentQMS toolbelt script (`python -m agent_qms.toolbelt.core create_artifact --type assessment`). Manual creation may violate naming and validation rules.
+
 ## Progress Tracker
 *(Required for iterative assessments, debugging sessions, or incremental work)*
 
