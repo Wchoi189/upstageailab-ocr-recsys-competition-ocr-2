@@ -86,7 +86,7 @@ ehthumbs.db
 Thumbs.db
 
 # Logs
-*.log
+# *.log
 # logs/
 
 # Model checkpoints and outputs
@@ -143,14 +143,14 @@ image_rotation_mismatch.svg
 profiler_traces/
 results_threshold_0_4/
 results/
-receipt-text-recognition-ocr-project/
+# receipt-text-recognition-ocr-project/
 preprocessing_test_results/
 resource_logs/
 DEBUG_OUTPUT_WORKSPACE/
 docs/setup/mcp_setup/
 
 # W&B offline data (should be in outputs/)
-receipt-text-recognition-ocr-project/
+# receipt-text-recognition-ocr-project/
 wandb/
 offline-*/
 *.bak
@@ -198,7 +198,7 @@ test_corrected_gray/
 test_gray/
 test_gray_new/
 test_shadow_removal/
-logs/
+# /logs/
 submissions/
 demo_background_removal.py
 mermaid_diagram_brainstorm.md

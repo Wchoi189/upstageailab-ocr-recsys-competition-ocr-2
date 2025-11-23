@@ -14,9 +14,9 @@ test_corrected*/
 test_gray*/
 
 # Output and results directories
-outputs/
-results/
-logs/
+# outputs/
+# results/
+# logs/
 multirun/
 submissions/
 submissions_*/

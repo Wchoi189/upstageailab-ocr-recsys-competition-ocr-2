@@ -3,7 +3,11 @@
   "type": "object",
   "properties": {
     "id": { "type": "string" },
-    "timestamp": { "type": "string", "format": "date-time" },
+    "timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 timestamp for state.json. Metadata YAML files use readable format: YYYY-MM-DD HH:MM (KST)"
+    },
     "type": { "type": "string" },
     "intention": { "type": "string" },
     "status": { "type": "string", "enum": ["ACTIVE", "INCOMPLETE", "COMPLETED", "ARCHIVED"] },
@@ -11,11 +15,15 @@
       "type": "array",
       "items": {
         "type": "object",
-        "properties": {
-          "path": { "type": "string" },
-          "type": { "type": "string" },
-          "timestamp": { "type": "string", "format": "date-time" },
-          "metadata": { "type": "object" }
+          "properties": {
+            "path": { "type": "string" },
+            "type": { "type": "string" },
+            "timestamp": {
+              "type": "string",
+              "format": "date-time",
+              "description": "ISO 8601 timestamp for state.json. Metadata YAML files use readable format: YYYY-MM-DD HH:MM (KST)"
+            },
+            "metadata": { "type": "object" }
         },
         "required": ["path", "type", "timestamp"]
       }

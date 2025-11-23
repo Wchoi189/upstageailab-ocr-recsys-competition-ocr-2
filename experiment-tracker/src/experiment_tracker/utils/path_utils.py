@@ -60,3 +60,35 @@ class ExperimentPaths:
 
 def get_tracker_root() -> Path:
     return Path(__file__).parent.parent.parent.parent.resolve()
+
+
+def setup_script_paths(script_path: Path | None = None) -> tuple[Path, str | None, ExperimentPaths | None]:
+    """
+    Helper function to set up path resolution for experiment scripts.
+
+    This function:
+    1. Gets the tracker root
+    2. Auto-detects the experiment ID from the script location
+    3. Creates an ExperimentPaths instance if experiment ID is found
+
+    Args:
+        script_path: Path to the script file (defaults to __file__ if called from script)
+
+    Returns:
+        Tuple of (tracker_root, experiment_id, experiment_paths)
+        experiment_id and experiment_paths will be None if detection fails
+    """
+    tracker_root = get_tracker_root()
+
+    if script_path is None:
+        # Try to detect from current working directory
+        experiment_id = ExperimentPaths.detect_experiment_id()
+    else:
+        experiment_id = ExperimentPaths.detect_experiment_id(script_path)
+
+    if experiment_id:
+        experiment_paths = ExperimentPaths(experiment_id, tracker_root)
+    else:
+        experiment_paths = None
+
+    return tracker_root, experiment_id, experiment_paths

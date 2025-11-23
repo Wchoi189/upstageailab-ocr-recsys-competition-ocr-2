@@ -9,6 +9,12 @@ from experiment_tracker.utils.path_utils import ExperimentPaths
 
 
 class ExperimentTracker:
+    def _format_timestamp(self, dt: datetime.datetime = None) -> str:
+        """Format timestamp in human-readable format: 2025-11-23 00:52 (KST)"""
+        if dt is None:
+            dt = datetime.datetime.now()
+        format_str = self.config.get("timestamp_format", "%Y-%m-%d %H:%M (KST)")
+        return dt.strftime(format_str)
     def __init__(self, root_dir: str = None):
         if root_dir is None:
             # Default to the parent of the src directory if not provided
@@ -218,14 +224,27 @@ class ExperimentTracker:
 
     def _init_metadata(self, paths: ExperimentPaths, state: dict):
         # state.yml
+        # Convert ISO timestamp to readable format for metadata files
+        try:
+            # Handle both ISO format and already-formatted timestamps
+            if 'T' in state["timestamp"]:
+                created_dt = datetime.datetime.fromisoformat(state["timestamp"].replace('Z', '+00:00'))
+                readable_timestamp = self._format_timestamp(created_dt)
+            else:
+                # Already in readable format
+                readable_timestamp = state["timestamp"]
+        except (ValueError, AttributeError):
+            # Fallback to current time if parsing fails
+            readable_timestamp = self._format_timestamp()
+
         with open(paths.get_context_file("state"), "w") as f:
             yaml.dump(
                 {
                     "current_state": state["status"],
                     "initial_assessment": state["intention"],
                     "experiment_goal": state["intention"],
-                    "created_at": state["timestamp"],
-                    "last_updated": state["timestamp"],
+                    "created_at": readable_timestamp,
+                    "last_updated": readable_timestamp,
                 },
                 f,
             )
@@ -259,7 +278,7 @@ class ExperimentTracker:
             data = {"tasks": []}
 
         task_id = f"task_{len(data.get('tasks', [])) + 1:03d}"
-        new_task = {"id": task_id, "description": description, "status": "in_progress", "created_at": datetime.datetime.now().isoformat()}
+        new_task = {"id": task_id, "description": description, "status": "in_progress", "created_at": self._format_timestamp()}
         if "tasks" not in data:
             data["tasks"] = []
         data["tasks"].append(new_task)
@@ -291,7 +310,7 @@ class ExperimentTracker:
         for task in data.get("tasks", []):
             if task["id"] == task_id:
                 task["status"] = "completed"
-                task["completed_at"] = datetime.datetime.now().isoformat()
+                task["completed_at"] = self._format_timestamp()
                 if notes:
                     task["notes"] = notes
                 found = True
@@ -325,7 +344,7 @@ class ExperimentTracker:
         decision_id = f"dec_{len(data.get('decisions', [])) + 1:03d}"
         new_decision = {
             "id": decision_id,
-            "timestamp": datetime.datetime.now().isoformat(),
+            "timestamp": self._format_timestamp(),
             "decision": decision,
             "rationale": rationale,
             "alternatives_considered": alternatives or [],

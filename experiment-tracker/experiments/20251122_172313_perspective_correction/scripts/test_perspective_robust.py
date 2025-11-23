@@ -16,10 +16,18 @@ from pathlib import Path
 from typing import Any
 
 # Add src to path to import experiment_tracker
-# Assuming this script is in experiments/<id>/scripts/
-# We need to go up 3 levels to get to root, then into src
+# Use path_utils for proper path resolution
 ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
 sys.path.append(str(ROOT_DIR / "src"))
+
+try:
+    from experiment_tracker.utils.path_utils import setup_script_paths
+    TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(Path(__file__))
+except ImportError:
+    # Fallback if path_utils not available
+    TRACKER_ROOT = ROOT_DIR
+    EXPERIMENT_ID = None
+    EXPERIMENT_PATHS = None
 
 try:
     from experiment_tracker import track_experiment
