@@ -10,12 +10,12 @@ This approach:
 """
 
 import logging
+import math
 from pathlib import Path
 from typing import Any
 
 import cv2
 import numpy as np
-from scipy import stats
 
 # Setup logging
 logging.basicConfig(
@@ -44,6 +44,31 @@ def calculate_background_ratio(mask: np.ndarray) -> float:
     total_pixels = mask.size
     background_pixels = np.sum(mask == 0)
     return background_pixels / total_pixels if total_pixels > 0 else 0.0
+
+
+def mask_bounding_box_corners(mask: np.ndarray) -> np.ndarray:
+    """
+    Return corners of the tight bounding box around the foreground mask.
+    """
+    coords = np.column_stack(np.where(mask > 0))
+    if coords.size == 0:
+        h, w = mask.shape[:2]
+        return np.array([[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]], dtype=np.float32)
+
+    ys = coords[:, 0]
+    xs = coords[:, 1]
+    x_min, x_max = xs.min(), xs.max()
+    y_min, y_max = ys.min(), ys.max()
+
+    return np.array(
+        [
+            [x_min, y_min],
+            [x_max, y_min],
+            [x_max, y_max],
+            [x_min, y_max],
+        ],
+        dtype=np.float32,
+    )
 
 
 def check_corner_proximity(corners: np.ndarray, image_shape: tuple[int, int], threshold: int = 20) -> bool:
@@ -188,6 +213,154 @@ def reinforce_mask(mask: np.ndarray, collar: int = 3) -> np.ndarray:
     return reinforced
 
 
+def _select_outer_band(points: np.ndarray, axis: int, keep_high: bool, band_size: float, min_points: int) -> np.ndarray:
+    """
+    Keep the outermost band of points along the requested axis.
+
+    Args:
+        points: Input points (N, 2)
+        axis: 0 for x, 1 for y
+        keep_high: True keeps the highest values, False keeps lowest
+        band_size: Absolute band size in pixels
+        min_points: Minimum number of points required to accept the filtered band
+    """
+    if len(points) == 0:
+        return points
+
+    values = points[:, axis]
+    if keep_high:
+        boundary = np.max(values)
+        mask = values >= (boundary - band_size)
+    else:
+        boundary = np.min(values)
+        mask = values <= (boundary + band_size)
+
+    filtered = points[mask]
+    if len(filtered) >= max(min_points, int(len(points) * 0.2)):
+        return filtered
+    return points
+
+
+def enforce_single_edge_per_side(edge_groups: dict[str, np.ndarray], image_shape: tuple[int, int]) -> dict[str, np.ndarray]:
+    """
+    Ensure each side retains a single dominant band of points (one edge per side).
+    """
+    h, w = image_shape[:2]
+    band_y = max(10, h * 0.12)
+    band_x = max(10, w * 0.12)
+    refined = {}
+
+    for edge_name, points in edge_groups.items():
+        pts = points
+        if edge_name == 'top':
+            pts = _select_outer_band(points, axis=1, keep_high=False, band_size=band_y, min_points=25)
+        elif edge_name == 'bottom':
+            pts = _select_outer_band(points, axis=1, keep_high=True, band_size=band_y, min_points=25)
+        elif edge_name == 'left':
+            pts = _select_outer_band(points, axis=0, keep_high=False, band_size=band_x, min_points=25)
+        elif edge_name == 'right':
+            pts = _select_outer_band(points, axis=0, keep_high=True, band_size=band_x, min_points=25)
+
+        refined[edge_name] = pts
+
+    return refined
+
+
+def general_line_from_points(p1: np.ndarray, p2: np.ndarray) -> tuple[float, float, float] | None:
+    """
+    Return normalized line coefficients (a, b, c) for the line passing through p1 and p2.
+    Equation: a*x + b*y + c = 0 with sqrt(a^2 + b^2) = 1.
+    """
+    if p1 is None or p2 is None:
+        return None
+
+    if np.linalg.norm(p2 - p1) < 1e-6:
+        return None
+
+    a = p1[1] - p2[1]
+    b = p2[0] - p1[0]
+    c = p1[0] * p2[1] - p2[0] * p1[1]
+
+    norm = math.hypot(a, b)
+    if norm < 1e-6:
+        return None
+
+    return (a / norm, b / norm, c / norm)
+
+
+def intersection_with_bounds(line: tuple[float, float, float], image_shape: tuple[int, int]) -> list[tuple[int, int]]:
+    """
+    Compute intersections between a line (ax + by + c = 0) and image bounds.
+    Returns list of points within the image.
+    """
+    if line is None:
+        return []
+
+    a, b, c = line
+    h, w = image_shape[:2]
+    points: list[tuple[int, int]] = []
+
+    # x = 0
+    if abs(b) > 1e-6:
+        y = (-c - a * 0) / b
+        if 0 <= y < h:
+            points.append((0, int(round(y))))
+
+    # x = w-1
+    if abs(b) > 1e-6:
+        x = w - 1
+        y = (-c - a * x) / b
+        if 0 <= y < h:
+            points.append((x, int(round(y))))
+
+    # y = 0
+    if abs(a) > 1e-6:
+        x = (-c - b * 0) / a
+        if 0 <= x < w:
+            points.append((int(round(x)), 0))
+
+    # y = h-1
+    if abs(a) > 1e-6:
+        y = h - 1
+        x = (-c - b * y) / a
+        if 0 <= x < w:
+            points.append((int(round(x)), y))
+
+    # Deduplicate while preserving order
+    dedup = []
+    for pt in points:
+        if pt not in dedup:
+            dedup.append(pt)
+
+    return dedup[:2]
+
+
+def fit_line_least_squares(points: np.ndarray) -> tuple[float, float, float] | None:
+    """
+    Fit a line in general form using PCA on the point cloud.
+    """
+    points = ensure_point_array(points)
+    if points is None or len(points) < 2:
+        return None
+
+    centroid = np.mean(points, axis=0)
+    centered = points - centroid
+    if centered.shape[0] < 2:
+        return None
+
+    cov = np.cov(centered.T)
+    eigvals, eigvecs = np.linalg.eig(cov)
+    direction = eigvecs[:, np.argmax(eigvals)]
+    normal = np.array([-direction[1], direction[0]])
+
+    a, b = normal
+    norm = math.hypot(a, b)
+    if norm < 1e-6:
+        return None
+    c = -(a * centroid[0] + b * centroid[1])
+    return (a / norm, b / norm, c / norm)
+
+
 def extract_edge_points_from_mask(mask: np.ndarray) -> np.ndarray:
     """
     Extract edge points from binary mask.
@@ -328,41 +501,17 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
         else:
             result[edge_name] = np.array([], dtype=np.float32).reshape(0, 2)
 
-    return result
+    return enforce_single_edge_per_side(result, image_shape)
 
 
-def fit_line_to_points(points: np.ndarray) -> tuple[float, float] | None:
+def fit_line_to_points(points: np.ndarray) -> tuple[float, float, float] | None:
     """
-    Fit a line to a set of points using least squares.
-
-    Returns line in form: y = mx + b
-    Returns (m, b) or None if insufficient points
-
-    Args:
-        points: Array of points (N, 2) with columns [x, y]
-
-    Returns:
-        Tuple (slope, intercept) or None
+    Fit a line to a set of points using least squares (general form ax + by + c = 0).
     """
-    points = ensure_point_array(points)
-    if points is None or len(points) < 2:
-        return None
-
-    x = points[:, 0]
-    y = points[:, 1]
-
-    # Use scipy stats for robust line fitting
-    try:
-        slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
-        return (slope, intercept)
-    except:
-        # Fallback: simple least squares
-        A = np.vstack([x, np.ones(len(x))]).T
-        m, b = np.linalg.lstsq(A, y, rcond=None)[0]
-        return (m, b)
+    return fit_line_least_squares(points)
 
 
-def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: float = 5.0) -> tuple[float, float] | None:
+def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: float = 5.0) -> tuple[float, float, float] | None:
     """
     Fit a line using RANSAC for robustness against outliers.
 
@@ -374,7 +523,7 @@ def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: fl
         threshold: Distance threshold for inliers
 
     Returns:
-        Tuple (slope, intercept) or None
+        Tuple (a, b, c) representing ax + by + c = 0, or None
     """
     # BUG-20251124-002: Validate input array shape
     points = ensure_point_array(points)
@@ -382,88 +531,48 @@ def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: fl
         return None
 
     if len(points) == 2:
-        # Two points define a line
-        p1, p2 = points[0], points[1]
-        if abs(p2[0] - p1[0]) < 1e-6:  # Vertical line
-            return None  # Handle separately
-        m = (p2[1] - p1[1]) / (p2[0] - p1[0])
-        b = p1[1] - m * p1[0]
-        return (m, b)
+        return general_line_from_points(points[0], points[1])
 
     best_inliers = 0
     best_line = None
 
     for _ in range(max_iterations):
-        # Randomly sample 2 points
         idx = np.random.choice(len(points), 2, replace=False)
-        p1, p2 = points[idx[0]], points[idx[1]]
-
-        # Skip if points are too close
-        if np.linalg.norm(p2 - p1) < 1e-6:
+        candidate = general_line_from_points(points[idx[0]], points[idx[1]])
+        if candidate is None:
             continue
 
-        # Calculate line equation
-        if abs(p2[0] - p1[0]) < 1e-6:  # Vertical line
-            # Vertical line: x = constant
-            x_const = p1[0]
-            # BUG-20251124-002: Fix broadcasting - ensure points is 2D before indexing
-            distances = np.abs(points[:, 0] - x_const)
-            inliers = np.sum(distances < threshold)
-            if inliers > best_inliers:
-                best_inliers = inliers
-                best_line = ('vertical', x_const)
-        else:
-            m = (p2[1] - p1[1]) / (p2[0] - p1[0])
-            b = p1[1] - m * p1[0]
+        a, b, c = candidate
+        distances = np.abs(a * points[:, 0] + b * points[:, 1] + c)
+        inliers = np.sum(distances < threshold)
 
-            # BUG-20251124-002: Fix broadcasting - ensure proper array operations
-            # Calculate distances from all points to line
-            # Distance from point (x0, y0) to line y = mx + b is |y0 - (mx0 + b)| / sqrt(m^2 + 1)
-            distances = np.abs(points[:, 1] - (m * points[:, 0] + b)) / np.sqrt(m**2 + 1)
-            inliers = np.sum(distances < threshold)
-
-            if inliers > best_inliers:
-                best_inliers = inliers
-                best_line = (m, b)
+        if inliers > best_inliers:
+            best_inliers = inliers
+            best_line = candidate
 
     # If no good line found, use simple least squares
     if best_line is None or best_inliers < len(points) * 0.3:
         return fit_line_to_points(points)
 
-    if isinstance(best_line, tuple) and best_line[0] == 'vertical':
-        return None  # Vertical line, handle separately
-
     return best_line
 
 
-def intersect_lines(line1: tuple[float, float] | None, line2: tuple[float, float] | None) -> np.ndarray | None:
+def intersect_lines(line1: tuple[float, float, float] | None, line2: tuple[float, float, float] | None) -> np.ndarray | None:
     """
-    Find intersection point of two lines.
-
-    Lines are in form: y = mx + b
-    Returns (x, y) or None if lines are parallel
-
-    Args:
-        line1: (slope1, intercept1) or None for vertical
-        line2: (slope2, intercept2) or None for vertical
-
-    Returns:
-        Array [x, y] or None
+    Find intersection of two lines represented as ax + by + c = 0.
     """
     if line1 is None or line2 is None:
         return None
 
-    m1, b1 = line1
-    m2, b2 = line2
+    a1, b1, c1 = line1
+    a2, b2, c2 = line2
 
-    # Check if parallel
-    if abs(m1 - m2) < 1e-6:
+    det = a1 * b2 - a2 * b1
+    if abs(det) < 1e-6:
         return None
 
-    # Intersection: x = (b2 - b1) / (m1 - m2)
-    x = (b2 - b1) / (m1 - m2)
-    y = m1 * x + b1
-
+    x = (b1 * (-c2) - b2 * (-c1)) / det
+    y = (a2 * (-c1) - a1 * (-c2)) / det
     return np.array([x, y], dtype=np.float32)
 
 
@@ -601,8 +710,8 @@ def fit_quadrilateral_from_edges(
     # BUG-20251124-002: Validate corners before returning
     # Check collinearity (would cause singular homography matrix)
     if check_collinearity(corners):
-        logger.warning("BUG-20251124-002: Rejecting corners - collinear points detected (would cause homography collapse)")
-        return None
+        logger.warning("BUG-20251124-002: Collinear corners detected - falling back to mask bounding box")
+        corners = mask_bounding_box_corners(mask).astype(np.float32)
 
     # Check corner proximity for passthrough condition
     if check_corner_proximity(corners, image_shape, corner_proximity_threshold):
@@ -654,12 +763,10 @@ def visualize_edges_and_lines(
     h, w = image_shape[:2]
     for edge_name, line in lines.items():
         if line is not None:
-            m, b = line
             color = colors.get(edge_name, (255, 255, 255))
-            # Draw line from x=0 to x=w
-            x1, y1 = 0, int(b)
-            x2, y2 = w-1, int(m * (w-1) + b)
-            cv2.line(vis, (x1, y1), (x2, y2), color, 2)
+            pts = intersection_with_bounds(line, image_shape)
+            if len(pts) == 2:
+                cv2.line(vis, pts[0], pts[1], color, 2)
 
     # Draw corners
     for i, corner in enumerate(corners):

@@ -12,7 +12,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, Optional
 
 import cv2
 import numpy as np
@@ -65,10 +65,152 @@ except ImportError:
     logger.warning("Perspective correction not available.")
 
 
+# ============================================================================
+# Document-aware metric helpers
+# ============================================================================
+
+def _order_corners_clockwise(corners: np.ndarray) -> Optional[np.ndarray]:
+    """Return corners ordered as TL, TR, BR, BL for downstream measurements."""
+    if corners is None:
+        return None
+
+    pts = np.asarray(corners, dtype=np.float32)
+    if pts.ndim != 2 or pts.shape[0] < 4:
+        return None
+
+    if pts.shape[0] > 4:
+        # Keep only first 4 to avoid downstream shape surprises
+        pts = pts[:4]
+
+    s = pts.sum(axis=1)
+    diff = np.diff(pts, axis=1).reshape(-1)
+
+    ordered = np.zeros((4, 2), dtype=np.float32)
+    ordered[0] = pts[np.argmin(s)]  # top-left
+    ordered[2] = pts[np.argmax(s)]  # bottom-right
+    ordered[1] = pts[np.argmin(diff)]  # top-right
+    ordered[3] = pts[np.argmax(diff)]  # bottom-left
+    return ordered
+
+
+def compute_skew_deviation_degrees(corners: np.ndarray) -> Optional[float]:
+    """
+    Calculate mean absolute deviation from 90° between adjacent edges.
+    Lower values mean the quadrilateral is closer to a rectangle.
+    """
+    ordered = _order_corners_clockwise(corners)
+    if ordered is None:
+        return None
+
+    def _angle(v1: np.ndarray, v2: np.ndarray) -> Optional[float]:
+        denom = np.linalg.norm(v1) * np.linalg.norm(v2)
+        if denom < 1e-6:
+            return None
+        cos_val = np.clip(np.dot(v1, v2) / denom, -1.0, 1.0)
+        return float(np.degrees(np.arccos(cos_val)))
+
+    vectors = [
+        ordered[1] - ordered[0],  # top
+        ordered[2] - ordered[1],  # right
+        ordered[3] - ordered[2],  # bottom
+        ordered[0] - ordered[3],  # left
+    ]
+
+    angles = []
+    for idx in range(4):
+        v1 = vectors[idx]
+        v2 = vectors[(idx + 1) % 4]
+        angle = _angle(v1, v2)
+        if angle is not None:
+            angles.append(angle)
+
+    if not angles:
+        return None
+
+    deviations = [abs(90.0 - ang) for ang in angles]
+    return float(np.mean(deviations))
+
+
+def warp_mask(mask: np.ndarray, matrix: np.ndarray, corrected_shape: tuple[int, ...]) -> Optional[np.ndarray]:
+    """Warp mask with the same homography used for the image."""
+    if matrix is None or mask is None:
+        return None
+
+    corrected_h, corrected_w = corrected_shape[:2]
+    if corrected_h <= 0 or corrected_w <= 0:
+        return None
+
+    warped = cv2.warpPerspective(
+        mask,
+        matrix,
+        (corrected_w, corrected_h),
+        flags=cv2.INTER_NEAREST,
+        borderMode=cv2.BORDER_CONSTANT,
+        borderValue=0,
+    )
+    return warped
+
+
+def _foreground_stats(mask: np.ndarray) -> tuple[int, int]:
+    """Return (foreground_pixel_count, bbox_area) for a mask."""
+    if mask is None:
+        return (0, 0)
+
+    mask_bin = (mask > 0).astype(np.uint8)
+    foreground_pixels = int(np.count_nonzero(mask_bin))
+    coords = cv2.findNonZero(mask_bin)
+    if coords is None:
+        return (foreground_pixels, 0)
+
+    x, y, w, h = cv2.boundingRect(coords)
+    bbox_area = int(w * h)
+    return (foreground_pixels, bbox_area)
+
+
+def compute_document_metrics(
+    mask: np.ndarray,
+    matrix: np.ndarray,
+    corrected_shape: tuple[int, ...],
+    corners: np.ndarray,
+    output_dir: Path,
+    prefix: str,
+) -> dict[str, Any]:
+    """
+    Compute document-aware metrics by warping the mask and measuring retention.
+    """
+    metrics: dict[str, Any] = {}
+
+    warped_mask = warp_mask(mask, matrix, corrected_shape)
+    if warped_mask is None:
+        return metrics
+
+    orig_area, orig_bbox = _foreground_stats(mask)
+    warped_area, warped_bbox = _foreground_stats(warped_mask)
+
+    if orig_area > 0:
+        metrics["document_area_retention"] = warped_area / orig_area
+    if orig_bbox > 0:
+        metrics["bbox_retention"] = warped_bbox / orig_bbox
+
+    skew = compute_skew_deviation_degrees(corners)
+    if skew is not None:
+        metrics["skew_deviation_deg"] = skew
+
+    warped_mask_path = output_dir / f"{prefix}_warped_mask.jpg"
+    try:
+        cv2.imwrite(str(warped_mask_path), warped_mask)
+        metrics["warped_mask_path"] = str(warped_mask_path)
+    except Exception as exc:
+        logger.warning("Could not save warped mask for %s: %s", prefix, exc)
+
+    return metrics
+
+
 def test_both_approaches(
     image_path: Path,
     output_dir: Path,
     remover: OptimizedBackgroundRemover,
+    skip_threshold: float | None = 0.85,
 ) -> dict[str, Any]:
     """
     Test both current and improved approaches on the same image.
@@ -115,12 +257,21 @@ def test_both_approaches(
                     doctr_assume_horizontal=False,
                 )
 
-                corrected_current, _matrix, _method = corrector.correct(image_no_bg, corners_current)
+                corrected_current, matrix_current, _method = corrector.correct(image_no_bg, corners_current)
 
                 # Calculate metrics
                 orig_h, orig_w = image_no_bg.shape[:2]
                 corr_h, corr_w = corrected_current.shape[:2]
                 area_ratio_current = (corr_h * corr_w) / (orig_h * orig_w)
+
+                document_metrics_current = compute_document_metrics(
+                    mask,
+                    matrix_current,
+                    corrected_current.shape,
+                    corners_current,
+                    output_dir,
+                    f"{image_path.stem}_current",
+                )
 
                 results["current_approach"] = {
                     "success": area_ratio_current >= 0.5,
@@ -128,13 +279,22 @@ def test_both_approaches(
                     "corners": corners_current.tolist(),
                     "original_size": (orig_w, orig_h),
                     "corrected_size": (corr_w, corr_h),
+                    "document_metrics": document_metrics_current,
                 }
 
                 # Save result
                 current_output = output_dir / f"{image_path.stem}_current_corrected.jpg"
                 cv2.imwrite(str(current_output), corrected_current)
 
-                logger.info(f"    Current: area ratio = {area_ratio_current:.2%}")
+                metrics_msg = []
+                if document_metrics_current.get("document_area_retention") is not None:
+                    metrics_msg.append(f"mask={document_metrics_current['document_area_retention']:.2%}")
+                if document_metrics_current.get("bbox_retention") is not None:
+                    metrics_msg.append(f"bbox={document_metrics_current['bbox_retention']:.2%}")
+                if document_metrics_current.get("skew_deviation_deg") is not None:
+                    metrics_msg.append(f"skew={document_metrics_current['skew_deviation_deg']:.2f}°")
+                metrics_summary = ", ".join(metrics_msg) if metrics_msg else "metrics unavailable"
+                logger.info(f"    Current: area ratio = {area_ratio_current:.2%} ({metrics_summary})")
             else:
                 results["current_approach"] = {"error": "Perspective correction not available"}
         except Exception as e:
@@ -145,9 +305,13 @@ def test_both_approaches(
         current_ratio = results["current_approach"].get("area_ratio")
         skip_improved = False
         skip_reason = None
-        if current_ratio is not None and current_ratio >= 0.85:
+        if (
+            skip_threshold is not None
+            and current_ratio is not None
+            and current_ratio >= skip_threshold
+        ):
             skip_improved = True
-            skip_reason = f"Current area ratio {current_ratio:.2%} >= 85%"
+            skip_reason = f"Current area ratio {current_ratio:.2%} >= {skip_threshold:.0%}"
 
         # ===== IMPROVED APPROACH =====
         if skip_improved:
@@ -188,61 +352,84 @@ def test_both_approaches(
                     vis_output = output_dir / f"{image_path.stem}_improved_edges.jpg"
                     cv2.imwrite(str(vis_output), vis)
 
-                # Apply perspective correction
-                if PERSPECTIVE_AVAILABLE:
-                    def ensure_doctr(feature: str) -> bool:
-                        return False
+                    # Apply perspective correction only when we have valid corners
+                    if PERSPECTIVE_AVAILABLE:
+                        def ensure_doctr(feature: str) -> bool:
+                            return False
 
-                    corrector = PerspectiveCorrector(
-                        logger=logger,
-                        ensure_doctr=ensure_doctr,
-                        use_doctr_geometry=False,
-                        doctr_assume_horizontal=False,
-                    )
+                        corrector = PerspectiveCorrector(
+                            logger=logger,
+                            ensure_doctr=ensure_doctr,
+                            use_doctr_geometry=False,
+                            doctr_assume_horizontal=False,
+                        )
 
-                    corrected_improved, matrix, _method = corrector.correct(image_no_bg, corners_improved)
+                        corrected_improved, matrix, _method = corrector.correct(image_no_bg, corners_improved)
 
-                    # BUG-20251124-002: Validate homography matrix
-                    from improved_edge_based_correction import validate_homography_matrix
-                    is_valid_matrix, condition_number = validate_homography_matrix(matrix)
+                        # BUG-20251124-002: Validate homography matrix
+                        from improved_edge_based_correction import validate_homography_matrix
+                        is_valid_matrix, condition_number = validate_homography_matrix(matrix)
 
-                    if not is_valid_matrix:
-                        logger.warning(f"BUG-20251124-002: Ill-conditioned homography matrix (condition={condition_number:.2e})")
-                        results["improved_approach"] = {
-                            "error": f"Ill-conditioned homography matrix (condition={condition_number:.2e})",
-                            "condition_number": float(condition_number),
-                        }
-                    else:
-                        # Calculate metrics
-                        orig_h, orig_w = image_no_bg.shape[:2]
-                        corr_h, corr_w = corrected_improved.shape[:2]
-                        area_ratio_improved = (corr_h * corr_w) / (orig_h * orig_w)
-
-                        # BUG-20251124-002: Validate area ratio (reject >150%)
-                        if area_ratio_improved > 1.5:
-                            logger.warning(f"BUG-20251124-002: Rejecting result - area ratio {area_ratio_improved:.2%} > 150% (physically impossible)")
+                        if not is_valid_matrix:
+                            logger.warning(f"BUG-20251124-002: Ill-conditioned homography matrix (condition={condition_number:.2e})")
                             results["improved_approach"] = {
-                                "error": f"Area ratio too large: {area_ratio_improved:.2%} > 150%",
-                                "area_ratio": area_ratio_improved,
-                                "rejected": True,
-                            }
-                        else:
-                            results["improved_approach"] = {
-                                "success": area_ratio_improved >= 0.5,
-                                "area_ratio": area_ratio_improved,
-                                "corners": corners_improved.tolist(),
-                                "original_size": (orig_w, orig_h),
-                                "corrected_size": (corr_w, corr_h),
+                                "error": f"Ill-conditioned homography matrix (condition={condition_number:.2e})",
                                 "condition_number": float(condition_number),
                             }
+                        else:
+                            # Calculate metrics
+                            orig_h, orig_w = image_no_bg.shape[:2]
+                            corr_h, corr_w = corrected_improved.shape[:2]
+                            area_ratio_improved = (corr_h * corr_w) / (orig_h * orig_w)
 
-                            # Save result
-                            improved_output = output_dir / f"{image_path.stem}_improved_corrected.jpg"
-                            cv2.imwrite(str(improved_output), corrected_improved)
+                            # BUG-20251124-002: Validate area ratio (reject >150%)
+                            if area_ratio_improved > 1.5:
+                                logger.warning(f"BUG-20251124-002: Rejecting result - area ratio {area_ratio_improved:.2%} > 150% (physically impossible)")
+                                results["improved_approach"] = {
+                                    "error": f"Area ratio too large: {area_ratio_improved:.2%} > 150%",
+                                    "area_ratio": area_ratio_improved,
+                                    "rejected": True,
+                                }
+                            else:
+                                document_metrics_improved = compute_document_metrics(
+                                    mask,
+                                    matrix,
+                                    corrected_improved.shape,
+                                    corners_improved,
+                                    output_dir,
+                                    f"{image_path.stem}_improved",
+                                )
 
-                            logger.info(f"    Improved: area ratio = {area_ratio_improved:.2%}, condition = {condition_number:.2e}")
-                else:
-                    results["improved_approach"] = {"error": "Perspective correction not available"}
+                                results["improved_approach"] = {
+                                    "success": area_ratio_improved >= 0.5,
+                                    "area_ratio": area_ratio_improved,
+                                    "corners": corners_improved.tolist(),
+                                    "original_size": (orig_w, orig_h),
+                                    "corrected_size": (corr_w, corr_h),
+                                    "condition_number": float(condition_number),
+                                    "document_metrics": document_metrics_improved,
+                                }
+
+                                # Save result
+                                improved_output = output_dir / f"{image_path.stem}_improved_corrected.jpg"
+                                cv2.imwrite(str(improved_output), corrected_improved)
+
+                                metrics_msg = []
+                                if document_metrics_improved.get("document_area_retention") is not None:
+                                    metrics_msg.append(f"mask={document_metrics_improved['document_area_retention']:.2%}")
+                                if document_metrics_improved.get("bbox_retention") is not None:
+                                    metrics_msg.append(f"bbox={document_metrics_improved['bbox_retention']:.2%}")
+                                if document_metrics_improved.get("skew_deviation_deg") is not None:
+                                    metrics_msg.append(f"skew={document_metrics_improved['skew_deviation_deg']:.2f}°")
+                                metrics_summary = ", ".join(metrics_msg) if metrics_msg else "metrics unavailable"
+                                logger.info(
+                                    "    Improved: area ratio = %s, condition = %.2e (%s)",
+                                    f"{area_ratio_improved:.2%}",
+                                    condition_number,
+                                    metrics_summary,
+                                )
+                    else:
+                        results["improved_approach"] = {"error": "Perspective correction not available"}
             except Exception as e:
                 results["improved_approach"] = {"error": str(e)}
                 logger.error(f"    Improved approach failed: {e}")
@@ -342,6 +529,17 @@ def main():
         action="store_true",
         help="Test on worst performers from previous test",
     )
+    parser.add_argument(
+        "--skip-threshold",
+        type=float,
+        default=0.85,
+        help="Skip improved correction when current area ratio is above this value. Set <=0 to disable.",
+    )
+    parser.add_argument(
+        "--force-improved",
+        action="store_true",
+        help="Always run improved correction, ignoring the baseline skip threshold.",
+    )
 
     args = parser.parse_args()
 
@@ -404,6 +602,9 @@ def main():
 
     logger.info(f"Testing {len(image_files)} images...")
 
+    # Determine skip policy
+    skip_threshold = None if args.force_improved or args.skip_threshold <= 0 else args.skip_threshold
+
     # Test each image
     all_results = []
     current_success = 0
@@ -419,7 +620,7 @@ def main():
             continue
 
         logger.info(f"\n[{i}/{len(image_files)}]")
-        result = test_both_approaches(image_path, args.output_dir, remover)
+        result = test_both_approaches(image_path, args.output_dir, remover, skip_threshold=skip_threshold)
         all_results.append(result)
 
         if "area_ratio" in result.get("current_approach", {}):
