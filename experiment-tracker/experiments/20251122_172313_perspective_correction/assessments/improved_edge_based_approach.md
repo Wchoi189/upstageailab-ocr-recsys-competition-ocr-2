@@ -134,6 +134,20 @@ python scripts/test_improved_edge_approach.py \
 3. **Edge Shape Awareness**: Considers actual edge shape, not just extremes
 4. **Higher Success Rate**: Should improve area retention on difficult cases
 
+## Recent Enhancements (BUG-20251124-002)
+
+- **Mask reinforcement & collaring**: Prior to Canny/edge grouping the mask is dilated and padded so every side has a thin background “halo”, preventing edge loss when the document touches the canvas.
+- **Passthrough & hybrid logic**: The improved pipeline now skips correction when background ratio <5%, corners hug the borders, corners are collinear, or the baseline already retains ≥85% area.
+- **Homography validation**: Condition numbers are computed for every warp; ill-conditioned matrices (cond > 1e10) are rejected before metrics/logging.
+- **Result classification**: Test harness reports attempts vs skipped vs rejected cases so comparisons with the baseline remain meaningful.
+
+## Observed Limitations (2025-11-24 Regression Run)
+
+- **Broadcasting failures persist** on tall, narrow documents (e.g., `selectstar_000040`, `000023`, `000112`, `000141`), preventing improved outputs from being saved even though masks are clean. Additional guards are required around edge-group arrays used during visualisation.
+- **Rectified inputs still processed** (e.g., `selectstar_000042`), indicating the hybrid skip threshold needs to consider asymmetric background (large top/bottom fill but minimal lateral margins).
+- **Asymmetric background gaps**: When rembg removes background on only some sides, edge detection still struggles. A forthcoming heuristic will synthesise a thin background layer wherever the mask lacks the “white” fill so every side can anchor a line exactly as suggested by user observations.
+- **Mask continuity is critical**: Any discontinuity around the object causes the fitter to latch onto interior content. Ensuring a continuous collar (or generating one from the diff between original/rembg outputs) is now a tracked follow-up task.
+
 ## Next Steps
 
 1. **Test on Worst Performers**: Run comparison test on 50 worst performers

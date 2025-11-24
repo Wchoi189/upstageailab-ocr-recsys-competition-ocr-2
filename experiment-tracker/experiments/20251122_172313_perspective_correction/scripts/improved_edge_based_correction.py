@@ -25,6 +25,169 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# ============================================================================
+# BUG-20251124-002: Validation / Utility Functions
+# ============================================================================
+
+def calculate_background_ratio(mask: np.ndarray) -> float:
+    """
+    Calculate background to total area ratio.
+
+    BUG-20251124-002: Background threshold check for passthrough condition.
+
+    Args:
+        mask: Binary mask (0=background, 255=foreground)
+
+    Returns:
+        Background ratio (0.0 to 1.0)
+    """
+    total_pixels = mask.size
+    background_pixels = np.sum(mask == 0)
+    return background_pixels / total_pixels if total_pixels > 0 else 0.0
+
+
+def check_corner_proximity(corners: np.ndarray, image_shape: tuple[int, int], threshold: int = 20) -> bool:
+    """
+    Check if corners are within threshold pixels of image boundaries.
+
+    BUG-20251124-002: Passthrough condition - skip correction if already aligned.
+
+    Args:
+        corners: Array of 4 corner points (4, 2)
+        image_shape: (height, width)
+        threshold: Pixel distance threshold (default: 20)
+
+    Returns:
+        True if all corners are near boundaries (image already corrected)
+    """
+    h, w = image_shape[:2]
+
+    for corner in corners:
+        x, y = corner[0], corner[1]
+        # Check if corner is near any boundary
+        near_left = x <= threshold
+        near_right = x >= (w - threshold)
+        near_top = y <= threshold
+        near_bottom = y >= (h - threshold)
+
+        # If corner is not near any boundary, return False
+        if not (near_left or near_right or near_top or near_bottom):
+            return False
+
+    return True
+
+
+def check_collinearity(corners: np.ndarray, threshold: float = 0.1) -> bool:
+    """
+    Check if corners are collinear (would cause singular homography matrix).
+
+    BUG-20251124-002: Prevent homography collapse from collinear corners.
+
+    Args:
+        corners: Array of 4 corner points (4, 2)
+        threshold: Angle threshold in radians (default: 0.1 ≈ 5.7 degrees)
+
+    Returns:
+        True if corners are collinear (should reject)
+    """
+    if len(corners) < 3:
+        return False
+
+    # Check if any three corners are collinear
+    for i in range(len(corners)):
+        for j in range(i + 1, len(corners)):
+            for k in range(j + 1, len(corners)):
+                p1, p2, p3 = corners[i], corners[j], corners[k]
+
+                # Calculate vectors
+                v1 = p2 - p1
+                v2 = p3 - p1
+
+                # Check if vectors are parallel (cross product near zero)
+                cross_product = np.abs(v1[0] * v2[1] - v1[1] * v2[0])
+                norm1 = np.linalg.norm(v1)
+                norm2 = np.linalg.norm(v2)
+
+                if norm1 > 1e-6 and norm2 > 1e-6:
+                    # Normalized cross product (sine of angle)
+                    sin_angle = cross_product / (norm1 * norm2)
+                    if sin_angle < threshold:
+                        return True  # Collinear
+
+    return False
+
+
+def validate_homography_matrix(matrix: np.ndarray, condition_threshold: float = 1e10) -> tuple[bool, float]:
+    """
+    Validate homography matrix condition number.
+
+    BUG-20251124-002: Prevent homography collapse from ill-conditioned matrices.
+
+    Args:
+        matrix: 3x3 homography matrix
+        condition_threshold: Maximum condition number (default: 1e10)
+
+    Returns:
+        Tuple (is_valid, condition_number)
+    """
+    try:
+        condition_number = np.linalg.cond(matrix)
+        is_valid = condition_number < condition_threshold
+        return (is_valid, condition_number)
+    except:
+        return (False, np.inf)
+
+
+def ensure_point_array(points: np.ndarray) -> np.ndarray | None:
+    """
+    Ensure point array has shape (N, 2).
+
+    BUG-20251124-002: Prevent broadcasting errors by rejecting invalid shapes.
+    """
+    if points is None:
+        return None
+
+    pts = np.asarray(points, dtype=np.float32)
+
+    if pts.ndim == 1:
+        if pts.size % 2 != 0:
+            logger.warning(
+                "BUG-20251124-002: Invalid point array length (%s) for reshaping to (N, 2)",
+                pts.size,
+            )
+            return None
+        pts = pts.reshape(-1, 2)
+
+    if pts.ndim != 2 or pts.shape[1] != 2:
+        logger.warning(
+            "BUG-20251124-002: Invalid point array shape %s, expected (N, 2)",
+            pts.shape,
+        )
+        return None
+
+    return pts
+
+
+def reinforce_mask(mask: np.ndarray, collar: int = 3) -> np.ndarray:
+    """
+    Enforce a thin background collar around the document object.
+
+    BUG-20251124-002: Ensures continuous background to aid edge detection even
+    when rembg output lacks visible margins on certain sides.
+    """
+    collar = max(1, collar)
+    kernel = np.ones((collar, collar), np.uint8)
+
+    # Treat background as white for morphology operations
+    background = ((mask == 0).astype(np.uint8) * 255)
+    background = cv2.morphologyEx(background, cv2.MORPH_CLOSE, kernel)
+    expanded_bg = cv2.dilate(background, kernel, iterations=1)
+
+    # Convert back to standard mask format (document=255, background=0)
+    reinforced = np.where(expanded_bg == 255, 0, 255).astype(np.uint8)
+    return reinforced
+
+
 def extract_edge_points_from_mask(mask: np.ndarray) -> np.ndarray:
     """
     Extract edge points from binary mask.
@@ -37,15 +200,36 @@ def extract_edge_points_from_mask(mask: np.ndarray) -> np.ndarray:
     Returns:
         Array of edge points (N, 2)
     """
-    # Use Canny to detect edges in the mask
-    edges = cv2.Canny(mask, 50, 150)
+    h, w = mask.shape[:2]
+
+    # BUG-20251124-002: Reinforce mask to guarantee thin background collar
+    mask = reinforce_mask(mask)
+
+    # Pad with background to ensure edges exist even when document touches borders
+    pad = 4
+    padded = cv2.copyMakeBorder(mask, pad, pad, pad, pad, cv2.BORDER_CONSTANT, value=0)
+    padded = cv2.morphologyEx(padded, cv2.MORPH_CLOSE, np.ones((3, 3), np.uint8))
+
+    # Use Canny to detect edges in the padded mask
+    edges = cv2.Canny(padded, 50, 150)
 
     # Find all edge pixels
     edge_pixels = np.column_stack(np.where(edges > 0))
 
     # Convert from (row, col) to (x, y)
     if len(edge_pixels) > 0:
-        edge_points = edge_pixels[:, [1, 0]].astype(np.float32)  # (x, y)
+        # Subtract padding to map back to original coordinates
+        cols = edge_pixels[:, 1] - pad
+        rows = edge_pixels[:, 0] - pad
+
+        valid = (cols >= 0) & (cols < w) & (rows >= 0) & (rows < h)
+        cols = cols[valid]
+        rows = rows[valid]
+
+        if len(cols) == 0:
+            return np.array([])
+
+        edge_points = np.column_stack([cols, rows]).astype(np.float32)
     else:
         # Fallback: use contour
         contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -72,7 +256,8 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
         Dictionary with keys: 'top', 'right', 'bottom', 'left'
         Each value is array of points for that edge
     """
-    if len(points) == 0:
+    points = ensure_point_array(points)
+    if points is None or len(points) == 0:
         return {'top': np.array([]), 'right': np.array([]), 'bottom': np.array([]), 'left': np.array([])}
 
     h, w = image_shape[:2]
@@ -125,12 +310,25 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
         bottom_mask = bottom_mask | (middle_mask & bottom_angle_mask)
         left_mask = left_mask | (middle_mask & left_angle_mask)
 
-    return {
-        'top': points[top_mask].astype(np.float32),
-        'right': points[right_mask].astype(np.float32),
-        'bottom': points[bottom_mask].astype(np.float32),
-        'left': points[left_mask].astype(np.float32),
-    }
+    # BUG-20251124-002: Fix broadcasting errors - ensure all arrays are properly shaped
+    # Convert boolean masks to indices and ensure arrays are 2D
+    result = {}
+    for edge_name, mask_array in [
+        ('top', top_mask),
+        ('right', right_mask),
+        ('bottom', bottom_mask),
+        ('left', left_mask),
+    ]:
+        if np.any(mask_array):
+            edge_points = ensure_point_array(points[mask_array])
+            if edge_points is None:
+                result[edge_name] = np.array([], dtype=np.float32).reshape(0, 2)
+            else:
+                result[edge_name] = edge_points
+        else:
+            result[edge_name] = np.array([], dtype=np.float32).reshape(0, 2)
+
+    return result
 
 
 def fit_line_to_points(points: np.ndarray) -> tuple[float, float] | None:
@@ -146,7 +344,8 @@ def fit_line_to_points(points: np.ndarray) -> tuple[float, float] | None:
     Returns:
         Tuple (slope, intercept) or None
     """
-    if len(points) < 2:
+    points = ensure_point_array(points)
+    if points is None or len(points) < 2:
         return None
 
     x = points[:, 0]
@@ -167,6 +366,8 @@ def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: fl
     """
     Fit a line using RANSAC for robustness against outliers.
 
+    BUG-20251124-002: Fixed broadcasting errors with proper array shape validation.
+
     Args:
         points: Array of points (N, 2)
         max_iterations: Maximum RANSAC iterations
@@ -175,7 +376,9 @@ def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: fl
     Returns:
         Tuple (slope, intercept) or None
     """
-    if len(points) < 2:
+    # BUG-20251124-002: Validate input array shape
+    points = ensure_point_array(points)
+    if points is None or len(points) < 2:
         return None
 
     if len(points) == 2:
@@ -203,7 +406,7 @@ def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: fl
         if abs(p2[0] - p1[0]) < 1e-6:  # Vertical line
             # Vertical line: x = constant
             x_const = p1[0]
-            # Count inliers (points close to x = x_const)
+            # BUG-20251124-002: Fix broadcasting - ensure points is 2D before indexing
             distances = np.abs(points[:, 0] - x_const)
             inliers = np.sum(distances < threshold)
             if inliers > best_inliers:
@@ -213,6 +416,7 @@ def fit_line_ransac(points: np.ndarray, max_iterations: int = 100, threshold: fl
             m = (p2[1] - p1[1]) / (p2[0] - p1[0])
             b = p1[1] - m * p1[0]
 
+            # BUG-20251124-002: Fix broadcasting - ensure proper array operations
             # Calculate distances from all points to line
             # Distance from point (x0, y0) to line y = mx + b is |y0 - (mx0 + b)| / sqrt(m^2 + 1)
             distances = np.abs(points[:, 1] - (m * points[:, 0] + b)) / np.sqrt(m**2 + 1)
@@ -267,36 +471,57 @@ def fit_quadrilateral_from_edges(
     mask: np.ndarray,
     image_shape: tuple[int, int],
     use_ransac: bool = True,
-) -> np.ndarray:
+    background_threshold: float = 0.05,
+    corner_proximity_threshold: int = 20,
+) -> np.ndarray | None:
     """
     Fit quadrilateral by detecting edges and fitting lines.
 
+    BUG-20251124-002: Added passthrough conditions and validation checks.
+
     Process:
-    1. Extract edge points from mask
-    2. Group points by edge (top, right, bottom, left)
-    3. Fit line to each edge using multiple points
-    4. Find corner intersections from line intersections
+    1. Check background threshold (passthrough condition)
+    2. Extract edge points from mask
+    3. Group points by edge (top, right, bottom, left)
+    4. Fit line to each edge using multiple points
+    5. Find corner intersections from line intersections
+    6. Validate corners (collinearity, proximity)
 
     Args:
         mask: Binary mask (0=background, 255=foreground)
         image_shape: (height, width) of image
         use_ransac: Whether to use RANSAC for line fitting (more robust)
+        background_threshold: Skip correction if background < threshold (default: 0.05 = 5%)
+        corner_proximity_threshold: Skip if corners within N pixels of boundaries (default: 20)
 
     Returns:
-        Array of 4 corner points [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
+        Array of 4 corner points [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] or None if passthrough
     """
+    # BUG-20251124-002: Passthrough condition - check background threshold
+    background_ratio = calculate_background_ratio(mask)
+    if background_ratio < background_threshold:
+        logger.info(f"BUG-20251124-002: Skipping correction - background ratio {background_ratio:.2%} < {background_threshold:.0%}")
+        return None  # Signal to skip correction
+
     # Step 1: Extract edge points
     edge_points = extract_edge_points_from_mask(mask)
+    edge_points = ensure_point_array(edge_points)
 
-    if len(edge_points) < 4:
+    if edge_points is None or len(edge_points) < 4:
         # Fallback: use bounding box
         h, w = image_shape[:2]
-        return np.array([
+        corners = np.array([
             [0, 0],
             [w-1, 0],
             [w-1, h-1],
             [0, h-1],
         ], dtype=np.float32)
+
+        # BUG-20251124-002: Check corner proximity for passthrough
+        if check_corner_proximity(corners, image_shape, corner_proximity_threshold):
+            logger.info("BUG-20251124-002: Skipping correction - corners near boundaries (already corrected)")
+            return None
+        return corners
 
     # Step 2: Group points by edge
     edge_groups = group_edge_points(edge_points, image_shape)
@@ -374,6 +599,17 @@ def fit_quadrilateral_from_edges(
     h, w = image_shape[:2]
     corners[:, 0] = np.clip(corners[:, 0], 0, w - 1)
     corners[:, 1] = np.clip(corners[:, 1], 0, h - 1)
+
+    # BUG-20251124-002: Validate corners before returning
+    # Check collinearity (would cause singular homography matrix)
+    if check_collinearity(corners):
+        logger.warning("BUG-20251124-002: Rejecting corners - collinear points detected (would cause homography collapse)")
+        return None
+
+    # Check corner proximity for passthrough condition
+    if check_corner_proximity(corners, image_shape, corner_proximity_threshold):
+        logger.info("BUG-20251124-002: Skipping correction - corners near boundaries (already corrected)")
+        return None
 
     return corners
 

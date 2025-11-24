@@ -141,67 +141,114 @@ def test_both_approaches(
             results["current_approach"] = {"error": str(e)}
             logger.error(f"    Current approach failed: {e}")
 
+        # Decide if improved approach should run
+        current_ratio = results["current_approach"].get("area_ratio")
+        skip_improved = False
+        skip_reason = None
+        if current_ratio is not None and current_ratio >= 0.85:
+            skip_improved = True
+            skip_reason = f"Current area ratio {current_ratio:.2%} >= 85%"
+
         # ===== IMPROVED APPROACH =====
-        logger.info("  Testing improved approach (edge-based line fitting)...")
-        try:
-            corners_improved = fit_quadrilateral_from_edges(mask, image_no_bg.shape[:2], use_ransac=True)
+        if skip_improved:
+            results["improved_approach"] = {
+                "skipped": True,
+                "reason": skip_reason,
+                "strategy": "high_confidence_baseline",
+            }
+            logger.info(f"    Improved: Skipped ({skip_reason})")
+        else:
+            logger.info("  Testing improved approach (edge-based line fitting)...")
+            try:
+                # BUG-20251124-002: Handle None return (passthrough condition)
+                corners_improved = fit_quadrilateral_from_edges(mask, image_no_bg.shape[:2], use_ransac=True)
 
-            # Visualize edges and lines
-            edge_points = extract_edge_points_from_mask(mask)
-            edge_groups = group_edge_points(edge_points, image_no_bg.shape[:2])
-
-            # Fit lines for visualization
-            from improved_edge_based_correction import fit_line_ransac
-            lines = {}
-            for edge_name, points in edge_groups.items():
-                if len(points) >= 2:
-                    lines[edge_name] = fit_line_ransac(points)
+                if corners_improved is None:
+                    # Passthrough condition - skip correction
+                    results["improved_approach"] = {
+                        "skipped": True,
+                        "reason": "Passthrough condition (background threshold or corner proximity)",
+                    }
+                    logger.info("    Improved: Skipped (passthrough condition)")
                 else:
-                    lines[edge_name] = None
+                    # Visualize edges and lines
+                    edge_points = extract_edge_points_from_mask(mask)
+                    edge_groups = group_edge_points(edge_points, image_no_bg.shape[:2])
 
-            vis = visualize_edges_and_lines(mask, edge_groups, lines, corners_improved, image_no_bg.shape[:2])
-            vis_output = output_dir / f"{image_path.stem}_improved_edges.jpg"
-            cv2.imwrite(str(vis_output), vis)
+                    # Fit lines for visualization
+                    from improved_edge_based_correction import fit_line_ransac
+                    lines = {}
+                    for edge_name, points in edge_groups.items():
+                        if len(points) >= 2:
+                            lines[edge_name] = fit_line_ransac(points)
+                        else:
+                            lines[edge_name] = None
 
-            # Apply perspective correction
-            if PERSPECTIVE_AVAILABLE:
-                def ensure_doctr(feature: str) -> bool:
-                    return False
+                    vis = visualize_edges_and_lines(mask, edge_groups, lines, corners_improved, image_no_bg.shape[:2])
+                    vis_output = output_dir / f"{image_path.stem}_improved_edges.jpg"
+                    cv2.imwrite(str(vis_output), vis)
 
-                corrector = PerspectiveCorrector(
-                    logger=logger,
-                    ensure_doctr=ensure_doctr,
-                    use_doctr_geometry=False,
-                    doctr_assume_horizontal=False,
-                )
+                # Apply perspective correction
+                if PERSPECTIVE_AVAILABLE:
+                    def ensure_doctr(feature: str) -> bool:
+                        return False
 
-                corrected_improved, _matrix, _method = corrector.correct(image_no_bg, corners_improved)
+                    corrector = PerspectiveCorrector(
+                        logger=logger,
+                        ensure_doctr=ensure_doctr,
+                        use_doctr_geometry=False,
+                        doctr_assume_horizontal=False,
+                    )
 
-                # Calculate metrics
-                orig_h, orig_w = image_no_bg.shape[:2]
-                corr_h, corr_w = corrected_improved.shape[:2]
-                area_ratio_improved = (corr_h * corr_w) / (orig_h * orig_w)
+                    corrected_improved, matrix, _method = corrector.correct(image_no_bg, corners_improved)
 
-                results["improved_approach"] = {
-                    "success": area_ratio_improved >= 0.5,
-                    "area_ratio": area_ratio_improved,
-                    "corners": corners_improved.tolist(),
-                    "original_size": (orig_w, orig_h),
-                    "corrected_size": (corr_w, corr_h),
-                }
+                    # BUG-20251124-002: Validate homography matrix
+                    from improved_edge_based_correction import validate_homography_matrix
+                    is_valid_matrix, condition_number = validate_homography_matrix(matrix)
 
-                # Save result
-                improved_output = output_dir / f"{image_path.stem}_improved_corrected.jpg"
-                cv2.imwrite(str(improved_output), corrected_improved)
+                    if not is_valid_matrix:
+                        logger.warning(f"BUG-20251124-002: Ill-conditioned homography matrix (condition={condition_number:.2e})")
+                        results["improved_approach"] = {
+                            "error": f"Ill-conditioned homography matrix (condition={condition_number:.2e})",
+                            "condition_number": float(condition_number),
+                        }
+                    else:
+                        # Calculate metrics
+                        orig_h, orig_w = image_no_bg.shape[:2]
+                        corr_h, corr_w = corrected_improved.shape[:2]
+                        area_ratio_improved = (corr_h * corr_w) / (orig_h * orig_w)
 
-                logger.info(f"    Improved: area ratio = {area_ratio_improved:.2%}")
-            else:
-                results["improved_approach"] = {"error": "Perspective correction not available"}
-        except Exception as e:
-            results["improved_approach"] = {"error": str(e)}
-            logger.error(f"    Improved approach failed: {e}")
+                        # BUG-20251124-002: Validate area ratio (reject >150%)
+                        if area_ratio_improved > 1.5:
+                            logger.warning(f"BUG-20251124-002: Rejecting result - area ratio {area_ratio_improved:.2%} > 150% (physically impossible)")
+                            results["improved_approach"] = {
+                                "error": f"Area ratio too large: {area_ratio_improved:.2%} > 150%",
+                                "area_ratio": area_ratio_improved,
+                                "rejected": True,
+                            }
+                        else:
+                            results["improved_approach"] = {
+                                "success": area_ratio_improved >= 0.5,
+                                "area_ratio": area_ratio_improved,
+                                "corners": corners_improved.tolist(),
+                                "original_size": (orig_w, orig_h),
+                                "corrected_size": (corr_w, corr_h),
+                                "condition_number": float(condition_number),
+                            }
+
+                            # Save result
+                            improved_output = output_dir / f"{image_path.stem}_improved_corrected.jpg"
+                            cv2.imwrite(str(improved_output), corrected_improved)
+
+                            logger.info(f"    Improved: area ratio = {area_ratio_improved:.2%}, condition = {condition_number:.2e}")
+                else:
+                    results["improved_approach"] = {"error": "Perspective correction not available"}
+            except Exception as e:
+                results["improved_approach"] = {"error": str(e)}
+                logger.error(f"    Improved approach failed: {e}")
 
         # ===== COMPARISON =====
+        # BUG-20251124-002: Handle skipped/rejected cases in comparison
         if "area_ratio" in results["current_approach"] and "area_ratio" in results["improved_approach"]:
             current_ratio = results["current_approach"]["area_ratio"]
             improved_ratio = results["improved_approach"]["area_ratio"]
@@ -210,8 +257,8 @@ def test_both_approaches(
             results["comparison"] = {
                 "improvement": improvement,
                 "improvement_percent": improvement * 100,
-                "current_success": results["current_approach"]["success"],
-                "improved_success": results["improved_approach"]["success"],
+                "current_success": results["current_approach"].get("success", False),
+                "improved_success": results["improved_approach"].get("success", False),
             }
 
             if improvement > 0:
@@ -220,6 +267,10 @@ def test_both_approaches(
                 logger.warning(f"    ✗ Worsened by {abs(improvement):.2%}")
             else:
                 logger.info(f"    = No change")
+        elif "skipped" in results.get("improved_approach", {}) or "rejected" in results.get("improved_approach", {}):
+            # Passthrough or rejected case
+            reason = results["improved_approach"].get("reason") or results["improved_approach"].get("error", "Unknown")
+            logger.info(f"    → {reason}")
 
         # Create comparison image
         if "corrected_size" in results["current_approach"] and "corrected_size" in results["improved_approach"]:
@@ -357,6 +408,9 @@ def main():
     all_results = []
     current_success = 0
     improved_success = 0
+    improved_attempts = 0
+    improved_skipped = 0
+    improved_rejected = 0
     improvements = []
 
     for i, image_path in enumerate(image_files, 1):
@@ -372,9 +426,15 @@ def main():
             if result["current_approach"]["success"]:
                 current_success += 1
 
-        if "area_ratio" in result.get("improved_approach", {}):
-            if result["improved_approach"]["success"]:
+        improved_info = result.get("improved_approach", {})
+        if "area_ratio" in improved_info:
+            improved_attempts += 1
+            if improved_info.get("success"):
                 improved_success += 1
+        elif improved_info.get("skipped"):
+            improved_skipped += 1
+        elif improved_info.get("rejected"):
+            improved_rejected += 1
 
         if "comparison" in result:
             improvements.append(result["comparison"]["improvement"])
@@ -385,7 +445,13 @@ def main():
     logger.info("="*80)
     logger.info(f"Total tested: {len(all_results)}")
     logger.info(f"Current approach success: {current_success}/{len(all_results)} ({100*current_success/len(all_results):.1f}%)")
-    logger.info(f"Improved approach success: {improved_success}/{len(all_results)} ({100*improved_success/len(all_results):.1f}%)")
+    if improved_attempts > 0:
+        logger.info(f"Improved approach attempts: {improved_attempts}/{len(all_results)}")
+        logger.info(f"Improved approach success: {improved_success}/{improved_attempts} ({100*improved_success/max(1, improved_attempts):.1f}%)")
+    else:
+        logger.info("Improved approach attempts: 0/0")
+    if improved_skipped or improved_rejected:
+        logger.info(f"Improved skipped: {improved_skipped}, rejected: {improved_rejected}")
 
     if improvements:
         avg_improvement = np.mean(improvements)
