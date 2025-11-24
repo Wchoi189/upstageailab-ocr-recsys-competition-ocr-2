@@ -308,5 +308,10 @@
   ],
   "open_questions": [],
   "roadmap": [],
-  "last_updated": "2025-11-23T12:53:14.854328"
+  "last_updated": "2025-11-23T12:53:14.854328",
+  "incident_reports": [
+    "incident_reports/20251124_1338-catastrophic-perspective-correction-failure-on-optimal-orientation-images.md",
+    "incident_reports/20251124_1347-improved-edge-based-approach-performance-regression-and-technical-bugs.md",
+    "incident_reports/20251124_1925-edge-line-selection-and-area-metric-defects.md"
+  ]
 }

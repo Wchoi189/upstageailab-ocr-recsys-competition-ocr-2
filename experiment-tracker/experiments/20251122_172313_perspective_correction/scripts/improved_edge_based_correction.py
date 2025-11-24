@@ -517,10 +517,8 @@ def fit_quadrilateral_from_edges(
             [0, h-1],
         ], dtype=np.float32)
 
-        # BUG-20251124-002: Check corner proximity for passthrough
-        if check_corner_proximity(corners, image_shape, corner_proximity_threshold):
-            logger.info("BUG-20251124-002: Skipping correction - corners near boundaries (already corrected)")
-            return None
+        # BUG-20251124-002: Bounding box fallback must bypass proximity check so
+        # we still return a quadrilateral when edges are missing.
         return corners
 
     # Step 2: Group points by edge

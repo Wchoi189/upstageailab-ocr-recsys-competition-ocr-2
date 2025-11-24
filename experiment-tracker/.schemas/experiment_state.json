@@ -32,6 +32,10 @@
       "type": "array",
       "items": { "type": "string" }
     },
+    "incident_reports": {
+      "type": "array",
+      "items": { "type": "string" }
+    },
     "open_questions": {
       "type": "array",
       "items": { "type": "string" }

@@ -83,6 +83,7 @@ class ExperimentTracker:
             "status": "ACTIVE",
             "artifacts": [],
             "assessments": [],
+            "incident_reports": [],
             "open_questions": [],
             "roadmap": [],
         }
@@ -381,3 +382,29 @@ class ExperimentTracker:
 
         print("Logged insight.")
         return True
+
+    def record_incident_report(self, report_path: str, experiment_id: str = None) -> bool:
+        """Record an incident report in the experiment state"""
+        if experiment_id is None:
+            experiment_id = self._get_current_experiment_id()
+        if not experiment_id:
+            print("No active experiment found.")
+            return False
+
+        try:
+            state = self._load_state(experiment_id)
+            # Ensure incident_reports array exists
+            if "incident_reports" not in state:
+                state["incident_reports"] = []
+
+            # Add report path if not already present
+            if report_path not in state["incident_reports"]:
+                state["incident_reports"].append(report_path)
+                self._save_state(experiment_id, state)
+                print(f"Recorded incident report: {report_path}")
+            else:
+                print(f"Incident report already tracked: {report_path}")
+            return True
+        except Exception as e:
+            print(f"Error recording incident report: {e}")
+            return False

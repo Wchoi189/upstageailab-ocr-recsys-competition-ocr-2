@@ -21,6 +21,9 @@ class ExperimentPaths:
     def get_metadata_path(self) -> Path:
         return self.base_path / ".metadata"
 
+    def get_incident_reports_path(self) -> Path:
+        return self.base_path / "incident_reports"
+
     def ensure_structure(self) -> None:
         """Create all required experiment subdirectories"""
         for path in [
@@ -29,6 +32,7 @@ class ExperimentPaths:
             self.get_metadata_path(),
             self.base_path / "scripts",
             self.base_path / "assessments",
+            self.get_incident_reports_path(),
         ]:
             path.mkdir(parents=True, exist_ok=True)
 

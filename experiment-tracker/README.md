@@ -41,7 +41,12 @@ A robust, AI-Agent-integrated experiment tracking system that transforms chaotic
     ./scripts/generate-assessment.py --template perspective_analysis --verbose minimal
     ```
 
-5.  **Export experiment**:
+5.  **Generate an incident report**:
+    ```bash
+    ./scripts/generate-incident-report.py --title "Perspective Overshoot" --severity high --tags "perspective,corner-detection"
+    ```
+
+6.  **Export experiment**:
     ```bash
     ./scripts/export-experiment.py --format archive --destination ./exports
     ```
@@ -58,6 +63,7 @@ experiment-tracker/
 │   │   ├── .metadata/         # Hidden metadata folder
 │   │   ├── artifacts/         # Generated outputs
 │   │   ├── assessments/       # Multiple markdown assessments
+│   │   ├── incident_reports/  # Defect analysis and incident reports
 │   │   └── state.json         # Internal experiment state
 ├── knowledge-base/            # Reusable insights and patterns
 └── scripts/                   # CLI automation tools
