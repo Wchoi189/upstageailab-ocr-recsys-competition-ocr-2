@@ -1,29 +1,26 @@
 created_at: '2025-11-22 17:23 (KST)'
-last_updated: '2025-11-23 14:40 (KST)'
+last_updated: '2025-11-25 23:15 (KST)'
 current_state: ACTIVE
 experiment_goal: Evaluate and improve perspective correction algorithms on rembg-processed images
 initial_assessment: Import and organize existing perspective correction and rembg optimization experiments
-current_phase: Rembg Mask-Based Approach Development & Testing
-success_rate: 73% (146/200 images) baseline, 44% on worst performers with rembg mask approach
-improvement_status: Rembg mask-based approach implemented, edge-based line fitting in development
+current_phase: Mask-only edge detection + line-quality heuristics development
+success_rate: Baseline 73% (146/200); mask-only prototype 20% improvement on worst-performer subset (2/10)
+improvement_status: Mask-only rectangle fitter in place with validation heuristics; preparing enhanced line-quality metrics
 key_achievements:
-  - Comprehensive 200-image test completed (73% success rate baseline)
-  - Pre-correction validation implemented (catches 52% of failures early)
-  - Corner detection improved (min_area_ratio increased to 0.3)
-  - Rembg mask-based approach implemented (50% success on random failures, 44% on worst 50)
-  - Multi-point edge detection and line fitting approach developed
-  - Process documentation with mermaid diagrams created
-  - Worst performers analysis completed (50 cases identified and tested)
-  - All experiment artifacts organized in experiment-tracker
+  - Comprehensive 200-image baseline test established (73% success)
+  - Pre-correction validation catches ~52% of doomed cases
+  - Mask-only rectangle fitter implemented (no pixel dependencies)
+  - Document-aware metrics (mask, bbox retention, skew) integrated into harness
+  - Mask-only approach runs on worst performers without crashes (ghost-line & degeneracy detection)
+  - Assessment docs created for mask-only rewrite and heuristics plan
 next_steps:
-  - Refine edge-based line fitting algorithm (currently underperforming)
-  - Test improved edge approach on larger dataset
-  - Optimize RANSAC parameters and edge grouping logic
-  - Integrate best approach into main production pipeline
-  - Monitor production performance and track success rates
+  - Implement edge support, linearity residuals, solidity, corner sharpness, and parallelism metrics
+  - Blend fitted rectangle with mask contour when heuristics partially pass
+  - Re-run full worst-performer suite (25+) with new heuristics and compare document metrics
+  - Feed validated approach into production pipeline once success rate exceeds baseline
+  - Continue monitoring area retention vs. usability trade-offs
 known_issues:
-  - 27% failure rate (54/200) with cv2-based approach
-  - Rembg mask approach: 44% success on worst performers (needs improvement)
-  - Edge-based line fitting: Currently performing worse than 4-point approach (needs tuning)
-  - Post-correction area loss: 24 cases lose 40-50% area despite passing pre-validation
-  - Complex layouts and heavily distorted images remain challenging
+  - Mask-only fitter currently shrinks canvas (area ratio negative) despite high mask retention
+  - Validation heuristics still coarse; some valid cases fall back to bbox
+  - Limited success (20%) on worst-performer subset; needs better line discrimination
+  - Complex layouts and highly distorted documents remain difficult

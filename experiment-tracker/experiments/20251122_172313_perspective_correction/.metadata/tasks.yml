@@ -92,3 +92,15 @@ tasks:
   status: pending
   created_at: '2025-11-23 14:40 (KST)'
   notes: Once edge-based approach is refined, test on full 200-image dataset to compare all approaches.
+- id: task_015
+  description: Implement mask-only rectangle fitter and integrate into test harness
+  status: completed
+  created_at: '2025-11-25 20:30 (KST)'
+  completed_at: '2025-11-25 22:30 (KST)'
+  notes: Replaced edge-detection pipeline with mask-only fitter, added document-aware metrics, ensured UV tests run without crashes.
+
+- id: task_016
+  description: Add line-quality heuristics (edge support, linearity, solidity, corner sharpness, parallelism)
+  status: in_progress
+  created_at: '2025-11-25 22:45 (KST)'
+  notes: Implementing heuristic checks to ensure fitted lines match mask evidence before correction.

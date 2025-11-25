@@ -49,12 +49,11 @@ from analyze_failures_rembg_approach import (
     OptimizedBackgroundRemover,
     GPU_AVAILABLE,
 )
-from improved_edge_based_correction import (
-    fit_quadrilateral_from_edges,
-    visualize_edges_and_lines,
-    group_edge_points,
-    extract_edge_points_from_mask,
+from mask_only_edge_detector import (
+    fit_mask_rectangle,
+    visualize_mask_fit,
 )
+from improved_edge_based_correction import validate_homography_matrix
 
 # Import perspective correction
 try:
@@ -322,37 +321,35 @@ def test_both_approaches(
             }
             logger.info(f"    Improved: Skipped ({skip_reason})")
         else:
-            logger.info("  Testing improved approach (edge-based line fitting)...")
+            logger.info("  Testing improved approach (mask-only rectangle fit)...")
             try:
-                # BUG-20251124-002: Handle None return (passthrough condition)
-                corners_improved = fit_quadrilateral_from_edges(mask, image_no_bg.shape[:2], use_ransac=True)
+                mask_geometry = fit_mask_rectangle(mask)
 
-                if corners_improved is None:
-                    # Passthrough condition - skip correction
+                if mask_geometry.corners is None:
                     results["improved_approach"] = {
                         "skipped": True,
-                        "reason": "Passthrough condition (background threshold or corner proximity)",
+                        "reason": mask_geometry.reason or "mask_rectangle_failed",
                     }
-                    logger.info("    Improved: Skipped (passthrough condition)")
+                    logger.info(f"    Improved: Skipped ({mask_geometry.reason})")
                 else:
-                    # Visualize edges and lines
-                    edge_points = extract_edge_points_from_mask(mask)
-                    edge_groups = group_edge_points(edge_points, image_no_bg.shape[:2])
-
-                    # Fit lines for visualization
-                    from improved_edge_based_correction import fit_line_ransac
-                    lines = {}
-                    for edge_name, points in edge_groups.items():
-                        if len(points) >= 2:
-                            lines[edge_name] = fit_line_ransac(points)
-                        else:
-                            lines[edge_name] = None
-
-                    vis = visualize_edges_and_lines(mask, edge_groups, lines, corners_improved, image_no_bg.shape[:2])
-                    vis_output = output_dir / f"{image_path.stem}_improved_edges.jpg"
+                    # Log validation status if validation failed but bbox fallback was used
+                    if mask_geometry.reason and "validation_failed" in mask_geometry.reason:
+                        logger.warning(f"    Validation failed, using mask bbox fallback: {mask_geometry.reason}")
+                    line_quality_info = None
+                    if mask_geometry.line_quality is not None:
+                        line_quality_info = {
+                            "decision": mask_geometry.line_quality.decision,
+                            "metrics": mask_geometry.line_quality.metrics,
+                            "passes": mask_geometry.line_quality.passes,
+                            "fail_reasons": mask_geometry.line_quality.fail_reasons,
+                        }
+                        fail_summary = ", ".join(line_quality_info["fail_reasons"]) if line_quality_info["fail_reasons"] else "none"
+                        logger.info("    Line quality: %s (fails: %s)", line_quality_info["decision"], fail_summary)
+                    corners_improved = mask_geometry.corners
+                    vis = visualize_mask_fit(mask, corners_improved, mask_geometry.contour, mask_geometry.hull)
+                    vis_output = output_dir / f"{image_path.stem}_improved_mask_fit.jpg"
                     cv2.imwrite(str(vis_output), vis)
 
-                    # Apply perspective correction only when we have valid corners
                     if PERSPECTIVE_AVAILABLE:
                         def ensure_doctr(feature: str) -> bool:
                             return False
@@ -366,30 +363,37 @@ def test_both_approaches(
 
                         corrected_improved, matrix, _method = corrector.correct(image_no_bg, corners_improved)
 
-                        # BUG-20251124-002: Validate homography matrix
                         from improved_edge_based_correction import validate_homography_matrix
                         is_valid_matrix, condition_number = validate_homography_matrix(matrix)
 
                         if not is_valid_matrix:
-                            logger.warning(f"BUG-20251124-002: Ill-conditioned homography matrix (condition={condition_number:.2e})")
+                            logger.warning(
+                                "BUG-20251124-002: Ill-conditioned homography matrix (condition=%.2e)",
+                                condition_number,
+                            )
                             results["improved_approach"] = {
                                 "error": f"Ill-conditioned homography matrix (condition={condition_number:.2e})",
                                 "condition_number": float(condition_number),
                             }
+                            if line_quality_info:
+                                results["improved_approach"]["line_quality"] = line_quality_info
                         else:
-                            # Calculate metrics
                             orig_h, orig_w = image_no_bg.shape[:2]
                             corr_h, corr_w = corrected_improved.shape[:2]
                             area_ratio_improved = (corr_h * corr_w) / (orig_h * orig_w)
 
-                            # BUG-20251124-002: Validate area ratio (reject >150%)
                             if area_ratio_improved > 1.5:
-                                logger.warning(f"BUG-20251124-002: Rejecting result - area ratio {area_ratio_improved:.2%} > 150% (physically impossible)")
+                                logger.warning(
+                                    "BUG-20251124-002: Rejecting result - area ratio %s > 150%%",
+                                    f"{area_ratio_improved:.2%}",
+                                )
                                 results["improved_approach"] = {
                                     "error": f"Area ratio too large: {area_ratio_improved:.2%} > 150%",
                                     "area_ratio": area_ratio_improved,
                                     "rejected": True,
                                 }
+                                if line_quality_info:
+                                    results["improved_approach"]["line_quality"] = line_quality_info
                             else:
                                 document_metrics_improved = compute_document_metrics(
                                     mask,
@@ -409,8 +413,9 @@ def test_both_approaches(
                                     "condition_number": float(condition_number),
                                     "document_metrics": document_metrics_improved,
                                 }
+                                if line_quality_info:
+                                    results["improved_approach"]["line_quality"] = line_quality_info
 
-                                # Save result
                                 improved_output = output_dir / f"{image_path.stem}_improved_corrected.jpg"
                                 cv2.imwrite(str(improved_output), corrected_improved)
 
@@ -430,8 +435,14 @@ def test_both_approaches(
                                 )
                     else:
                         results["improved_approach"] = {"error": "Perspective correction not available"}
+                        if line_quality_info:
+                            results["improved_approach"]["line_quality"] = line_quality_info
             except Exception as e:
                 results["improved_approach"] = {"error": str(e)}
+                if "line_quality_info" in locals():
+                    info = locals()["line_quality_info"]
+                    if info:
+                        results["improved_approach"]["line_quality"] = info
                 logger.error(f"    Improved approach failed: {e}")
 
         # ===== COMPARISON =====
@@ -620,7 +631,12 @@ def main():
             continue
 
         logger.info(f"\n[{i}/{len(image_files)}]")
-        result = test_both_approaches(image_path, args.output_dir, remover, skip_threshold=skip_threshold)
+        result = test_both_approaches(
+            image_path,
+            args.output_dir,
+            remover,
+            skip_threshold=skip_threshold,
+        )
         all_results.append(result)
 
         if "area_ratio" in result.get("current_approach", {}):

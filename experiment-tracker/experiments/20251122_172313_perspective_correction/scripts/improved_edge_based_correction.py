@@ -71,6 +71,20 @@ def mask_bounding_box_corners(mask: np.ndarray) -> np.ndarray:
     )
 
 
+def polygon_area(corners: np.ndarray) -> float:
+    """
+    Compute polygon area using shoelace formula.
+    """
+    if corners is None or len(corners) < 4:
+        return 0.0
+
+    pts = np.asarray(corners, dtype=np.float64)
+    x = pts[:, 0]
+    y = pts[:, 1]
+    area = 0.5 * np.abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+    return float(area)
+
+
 def check_corner_proximity(corners: np.ndarray, image_shape: tuple[int, int], threshold: int = 20) -> bool:
     """
     Check if corners are within threshold pixels of image boundaries.
@@ -463,6 +477,7 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
     middle_mask = ~(top_mask | bottom_mask | left_mask | right_mask)
     if np.any(middle_mask):
         middle_points = points[middle_mask]
+        middle_indices = np.where(middle_mask)[0]
         angles = []
         for point in middle_points:
             dx = point[0] - center_x
@@ -477,11 +492,14 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
         bottom_angle_mask = (angles >= 45) & (angles < 135)
         left_angle_mask = (angles >= 135) & (angles < 225)
 
-        # Add middle points to respective groups
-        top_mask = top_mask | (middle_mask & top_angle_mask)
-        right_mask = right_mask | (middle_mask & right_angle_mask)
-        bottom_mask = bottom_mask | (middle_mask & bottom_angle_mask)
-        left_mask = left_mask | (middle_mask & left_angle_mask)
+        if np.any(top_angle_mask):
+            top_mask[middle_indices[top_angle_mask]] = True
+        if np.any(right_angle_mask):
+            right_mask[middle_indices[right_angle_mask]] = True
+        if np.any(bottom_angle_mask):
+            bottom_mask[middle_indices[bottom_angle_mask]] = True
+        if np.any(left_angle_mask):
+            left_mask[middle_indices[left_angle_mask]] = True
 
     # BUG-20251124-002: Fix broadcasting errors - ensure all arrays are properly shaped
     # Convert boolean masks to indices and ensure arrays are 2D
@@ -582,6 +600,7 @@ def fit_quadrilateral_from_edges(
     use_ransac: bool = True,
     background_threshold: float = 0.05,
     corner_proximity_threshold: int = 20,
+    allow_boundary_corners: bool = False,
 ) -> np.ndarray | None:
     """
     Fit quadrilateral by detecting edges and fitting lines.
@@ -602,6 +621,7 @@ def fit_quadrilateral_from_edges(
         use_ransac: Whether to use RANSAC for line fitting (more robust)
         background_threshold: Skip correction if background < threshold (default: 0.05 = 5%)
         corner_proximity_threshold: Skip if corners within N pixels of boundaries (default: 20)
+        allow_boundary_corners: If True, do not skip when corners lie near the frame (used for forced evaluations)
 
     Returns:
         Array of 4 corner points [[x1, y1], [x2, y2], [x3, y3], [x4, y4]] or None if passthrough
@@ -629,6 +649,8 @@ def fit_quadrilateral_from_edges(
         # BUG-20251124-002: Bounding box fallback must bypass proximity check so
         # we still return a quadrilateral when edges are missing.
         return corners
+
+    used_mask_bbox = False
 
     # Step 2: Group points by edge
     edge_groups = group_edge_points(edge_points, image_shape)
@@ -707,14 +729,21 @@ def fit_quadrilateral_from_edges(
     corners[:, 0] = np.clip(corners[:, 0], 0, w - 1)
     corners[:, 1] = np.clip(corners[:, 1], 0, h - 1)
 
+    # Ensure quadrilateral has non-trivial area
+    if polygon_area(corners) < 1.0:
+        logger.warning("BUG-20251124-002: Degenerate quadrilateral area - falling back to mask bounding box")
+        corners = mask_bounding_box_corners(mask).astype(np.float32)
+        used_mask_bbox = True
+
     # BUG-20251124-002: Validate corners before returning
     # Check collinearity (would cause singular homography matrix)
     if check_collinearity(corners):
         logger.warning("BUG-20251124-002: Collinear corners detected - falling back to mask bounding box")
         corners = mask_bounding_box_corners(mask).astype(np.float32)
+        used_mask_bbox = True
 
     # Check corner proximity for passthrough condition
-    if check_corner_proximity(corners, image_shape, corner_proximity_threshold):
+    if (not allow_boundary_corners) and (not used_mask_bbox) and check_corner_proximity(corners, image_shape, corner_proximity_threshold):
         logger.info("BUG-20251124-002: Skipping correction - corners near boundaries (already corrected)")
         return None
 

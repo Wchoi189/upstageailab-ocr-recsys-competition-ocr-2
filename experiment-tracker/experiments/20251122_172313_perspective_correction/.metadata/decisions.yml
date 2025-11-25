@@ -82,3 +82,12 @@ decisions:
     brittle edge detection. Achieved 44% success rate on worst 50 performers, recovering
     22 previously failed cases.
   timestamp: 2025-11-23 14:57 (KST)
+- alternatives_considered:
+  - Continue tuning multi-point edge detection
+  - Blend DocTR geometry with cv2 edges
+  - Switch entirely to mask-driven fitting with heuristics
+  decision: Adopt mask-only rectangle fitter with line-quality heuristics as the primary improved approach
+  id: dec_009
+  impact: Eliminates dependency on brittle image edges, enabling deterministic mask-driven corrections with explicit validation metrics
+  rationale: Rembg masks already provide binary silhouettes; operating solely on mask data plus heuristics (edge support, solidity, parallelism) is simpler and more reliable than complex edge fusion
+  timestamp: 2025-11-25 23:17 (KST)
