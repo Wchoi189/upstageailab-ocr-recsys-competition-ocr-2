@@ -91,3 +91,12 @@ decisions:
   impact: Eliminates dependency on brittle image edges, enabling deterministic mask-driven corrections with explicit validation metrics
   rationale: Rembg masks already provide binary silhouettes; operating solely on mask data plus heuristics (edge support, solidity, parallelism) is simpler and more reliable than complex edge fusion
   timestamp: 2025-11-25 23:17 (KST)
+- alternatives_considered:
+  - Keep minAreaRect as the primary geometry source
+  - Tune heuristics without changing the fitter
+  - Blend mask bbox with hull without component filtering
+  decision: Pivoted to largest-connected-component filtering plus approxPolyDP quadrilateral fitting
+  id: dec_010
+  impact: Prevents disjoint blobs from expanding the fit, enables trapezoidal corners that align with perspective skew, and enforces per-edge support floors to reject ghost lines
+  rationale: minAreaRect forces an affine rectangle that under-fits trapezoids and is easily skewed by stray blobs; LCC + adaptive approxPolyDP yields tighter trapezoid fits while honoring mask evidence
+  timestamp: 2025-11-26 12:15 (KST)

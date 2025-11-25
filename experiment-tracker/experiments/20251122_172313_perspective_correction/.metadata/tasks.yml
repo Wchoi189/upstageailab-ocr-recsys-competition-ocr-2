@@ -101,6 +101,14 @@ tasks:
 
 - id: task_016
   description: Add line-quality heuristics (edge support, linearity, solidity, corner sharpness, parallelism)
-  status: in_progress
+  status: completed
   created_at: '2025-11-25 22:45 (KST)'
-  notes: Implementing heuristic checks to ensure fitted lines match mask evidence before correction.
+  completed_at: '2025-11-26 11:55 (KST)'
+  notes: Implemented full heuristic stack with edge support coverage/ratio, linearity RMSE, solidity, corner sharpness, and parallelism gates plus blend/fallback handling.
+
+- id: task_017
+  description: Pivot mask-only fitter to LCC + approxPolyDP quadrilateral fitting
+  status: completed
+  created_at: '2025-11-26 11:20 (KST)'
+  completed_at: '2025-11-26 12:10 (KST)'
+  notes: Added largest connected component filtering, replaced minAreaRect with adaptive approxPolyDP trapezoid fitting, enforced 0.80 per-edge support floor, and re-ran 25-image worst performer suite.
