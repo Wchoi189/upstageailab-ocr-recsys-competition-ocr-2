@@ -130,7 +130,7 @@ sample_bounding_boxes.png
 _llm_code_gen_workflow_exp/
 !docs/assets/images/demo/*.png
 notepad.md
-
+*.jpg
 /LOW_PERFORMANCE_IMGS/*.jpg
 # .repomixignore
 # repomix.config.json

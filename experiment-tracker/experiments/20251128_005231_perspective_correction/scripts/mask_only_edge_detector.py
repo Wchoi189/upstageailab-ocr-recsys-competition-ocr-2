@@ -26,6 +26,7 @@ class MaskRectangleResult:
     hull: Optional[np.ndarray]
     reason: Optional[str] = None
     line_quality: Optional["LineQualityReport"] = None
+    used_epsilon: Optional[float] = None
 
 
 @dataclass
@@ -247,6 +248,8 @@ def _fit_quadrilateral_from_hull(
     eps_start_ratio: float = 0.008,
     eps_growth: float = 1.5,
     eps_max_ratio: float = 0.08,
+    max_epsilon_px: Optional[float] = None,
+    strict_mode: bool = False,
 ) -> tuple[Optional[np.ndarray], float]:
     """
     Fit a quadrilateral to the convex hull using adaptive approxPolyDP.
@@ -262,7 +265,14 @@ def _fit_quadrilateral_from_hull(
         return None, 0.0
 
     eps = max(peri * eps_start_ratio, 1.0)
-    eps_max = max(peri * eps_max_ratio, eps)
+    eps_limit = peri * eps_max_ratio
+
+    if max_epsilon_px is not None:
+        eps_limit = min(eps_limit, max_epsilon_px)
+        # Ensure start epsilon does not exceed the hard cap
+        eps = min(eps, eps_limit)
+
+    eps_max = max(eps_limit, eps)
 
     best_candidate: Optional[np.ndarray] = None
     best_eps: float = 0.0
@@ -278,6 +288,10 @@ def _fit_quadrilateral_from_hull(
                 best_eps = eps
         eps *= eps_growth
 
+    # Strict mode: if we didn't find exactly 4 points, fail.
+    if strict_mode:
+        return None, 0.0
+
     # Could not reach exactly 4 points; attempt to downsample best candidate
     if best_candidate is not None and len(best_candidate) >= 4:
         points = best_candidate.reshape(-1, 2).astype(np.float32)
@@ -286,6 +300,134 @@ def _fit_quadrilateral_from_hull(
         return sampled, best_eps
 
     return None, 0.0
+
+
+def _intersect_lines(
+    line1: tuple[float, float, float, float],
+    line2: tuple[float, float, float, float]
+) -> Optional[np.ndarray]:
+    """
+    Find intersection of two lines given in (vx, vy, x0, y0) format.
+    Returns (x, y) or None if parallel.
+    """
+    vx1, vy1, x1, y1 = line1
+    vx2, vy2, x2, y2 = line2
+
+    # Cross product of direction vectors to check parallelism
+    det = vx1 * vy2 - vx2 * vy1
+    if abs(det) < 1e-6:
+        return None
+
+    # Solve for t1:
+    # x1 + t1*vx1 = x2 + t2*vx2  => t1*vx1 - t2*vx2 = x2 - x1
+    # y1 + t1*vy1 = y2 + t2*vy2  => t1*vy1 - t2*vy2 = y2 - y1
+
+    dx = x2 - x1
+    dy = y2 - y1
+
+    t1 = (dx * vy2 - dy * vx2) / det
+
+    ix = x1 + t1 * vx1
+    iy = y1 + t1 * vy1
+
+    return np.array([ix, iy], dtype=np.float32)
+
+
+def _fit_quadrilateral_regression(
+    hull: np.ndarray,
+    epsilon_px: float = 10.0,
+) -> tuple[Optional[np.ndarray], float]:
+    """
+    Fit quadrilateral by approximating hull with low epsilon, classifying sides,
+    regressing lines, and solving intersections.
+
+    Returns (ordered points, used_epsilon)
+    """
+    if hull is None or len(hull) < 3:
+        return None, 0.0
+
+    # 1. Tight Approximation
+    # Use fixed epsilon for regression preparation
+    eps = epsilon_px
+    approx = cv2.approxPolyDP(hull, eps, True)
+
+    # If approxPolyDP reduces too much (e.g. < 4 points), fallback to hull directly
+    if len(approx) < 4:
+        approx = hull
+
+    pts = approx.reshape(-1, 2).astype(np.float32)
+    centroid = np.mean(pts, axis=0)
+    cx, cy = centroid
+
+    # 2. Side Classification
+    top_points = []
+    bottom_points = []
+    left_points = []
+    right_points = []
+
+    num_pts = len(pts)
+    # Using segments rather than just points helps capture the geometry better
+    # But for regression, we regress on POINTS.
+    # We will classify segments, and add both endpoints to the respective list.
+
+    for i in range(num_pts):
+        p1 = pts[i]
+        p2 = pts[(i + 1) % num_pts]
+        mid = (p1 + p2) / 2
+
+        # Determine orientation
+        dx = p2[0] - p1[0]
+        dy = p2[1] - p1[1]
+        angle = math.degrees(math.atan2(dy, dx)) % 360
+
+        # Horizontal: [315, 360], [0, 45], [135, 225]
+        # Vertical: [45, 135], [225, 315]
+
+        is_horz = (angle >= 315 or angle <= 45) or (angle >= 135 and angle <= 225)
+
+        if is_horz:
+            if mid[1] < cy:
+                top_points.append(p1)
+                top_points.append(p2)
+            else:
+                bottom_points.append(p1)
+                bottom_points.append(p2)
+        else: # vertical
+            if mid[0] < cx:
+                left_points.append(p1)
+                left_points.append(p2)
+            else:
+                right_points.append(p1)
+                right_points.append(p2)
+
+    # 3. Line Regression
+    # Need at least 2 points (1 segment) to fit a line
+    if len(top_points) < 2 or len(bottom_points) < 2 or len(left_points) < 2 or len(right_points) < 2:
+        return None, eps
+
+    def fit_line(points):
+        pts_array = np.array(points, dtype=np.float32)
+        # fitLine returns (vx, vy, x0, y0)
+        # DIST_L12 is robust
+        [vx, vy, x, y] = cv2.fitLine(pts_array, cv2.DIST_L12, 0, 0.01, 0.01)
+        return float(vx), float(vy), float(x), float(y)
+
+    l_top = fit_line(top_points)
+    l_bottom = fit_line(bottom_points)
+    l_left = fit_line(left_points)
+    l_right = fit_line(right_points)
+
+    # 4. Intersection Solver
+    tl = _intersect_lines(l_top, l_left)
+    tr = _intersect_lines(l_top, l_right)
+    br = _intersect_lines(l_bottom, l_right)
+    bl = _intersect_lines(l_bottom, l_left)
+
+    if tl is None or tr is None or br is None or bl is None:
+        return None, eps
+
+    quad = np.array([tl, tr, br, bl], dtype=np.float32)
+    return quad, eps
 
 
 def _collect_edge_support_data(
@@ -548,6 +690,10 @@ def fit_mask_rectangle(
     parallelism_threshold: float = 5.0,
     partial_pass_threshold: int = 3,
     blend_weight: float = 0.65,
+    max_epsilon_px: Optional[float] = None,
+    strict_mode: bool = False,
+    use_regression: bool = False,
+    regression_epsilon_px: float = 10.0,
 ) -> MaskRectangleResult:
     """
     Fit rectangle corners directly from the binary mask.
@@ -566,6 +712,10 @@ def fit_mask_rectangle(
         parallelism_threshold: maximum deviation (degrees) for opposite edges.
         partial_pass_threshold: minimum heuristics passing to allow blending.
         blend_weight: weighting applied to fitted corners when blending.
+        max_epsilon_px: maximum epsilon (pixels) for approxPolyDP.
+        strict_mode: if True, fail gracefully if approxPolyDP > max_epsilon or < 4 points.
+        use_regression: if True, use side-based line regression instead of pure approxPolyDP reduction.
+        regression_epsilon_px: epsilon to use for initial hull approximation in regression mode.
     """
     binary = _prepare_mask(mask)
     h, w = binary.shape[:2]
@@ -648,7 +798,18 @@ def fit_mask_rectangle(
     hull = cv2.convexHull(largest)
     hull_area = float(cv2.contourArea(hull))
 
-    fitted_quad, used_eps = _fit_quadrilateral_from_hull(hull)
+    if use_regression:
+        fitted_quad, used_eps = _fit_quadrilateral_regression(
+            hull,
+            epsilon_px=regression_epsilon_px
+        )
+    else:
+        fitted_quad, used_eps = _fit_quadrilateral_from_hull(
+            hull,
+            max_epsilon_px=max_epsilon_px,
+            strict_mode=strict_mode
+        )
+
     if fitted_quad is None:
         ordered = None
     else:
@@ -663,7 +824,8 @@ def fit_mask_rectangle(
             mask_area=mask_area,
             contour=largest,
             hull=hull,
-            reason="quad_fit_failed_using_bbox",
+            reason="quad_fit_failed_using_bbox" if not use_regression else "regression_failed_using_bbox",
+            used_epsilon=used_eps,
         )
 
     # Validate fitted rectangle quality using heuristics
@@ -691,6 +853,7 @@ def fit_mask_rectangle(
             contour=largest,
             hull=hull,
             reason=f"validation_failed_{validation_reason}_using_bbox",
+            used_epsilon=used_eps,
         )
 
     # Advanced line-quality heuristics
@@ -793,6 +956,7 @@ def fit_mask_rectangle(
         hull=hull,
         reason=final_reason,
         line_quality=line_quality_report,
+        used_epsilon=used_eps,
     )
 
 
@@ -820,4 +984,3 @@ def visualize_mask_fit(
             cv2.putText(vis, str(idx), (int(corner[0]) + 8, int(corner[1]) - 8),
                         cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
     return vis
-

@@ -1,7 +1,4 @@
 {
-  "tools": {
-    "approvalMode": "yolo"
-  },
   "context": {
     "fileFiltering": {
       "respectGitIgnore": true,
@@ -38,5 +35,5 @@
     "discoveryMaxDirs": 15,
     "importFormat": "tree"
   },
-  "$version": 2
+  "approvalMode": "yolo"
 }
