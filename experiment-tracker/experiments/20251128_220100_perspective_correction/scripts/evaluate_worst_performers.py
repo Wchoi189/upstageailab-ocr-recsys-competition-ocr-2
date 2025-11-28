@@ -6,6 +6,7 @@ import logging
 from pathlib import Path
 import datetime
 import glob
+from typing import Optional
 
 # Setup paths
 tracker_root = Path(__file__).resolve().parent.parent.parent.parent.parent / "src"
@@ -25,7 +26,8 @@ def evaluate_worst_performers(
     use_regression: bool = False,
     regression_epsilon_px: float = 10.0,
     use_dominant_extension: bool = True,
-):
+    id_list_file: Optional[str] = None,
+) -> Path:
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = Path(output_base_dir) / f"{timestamp}_dominant_extension"
     output_dir.mkdir(parents=True, exist_ok=True)
@@ -37,12 +39,27 @@ def evaluate_worst_performers(
     all_mask_files = list(worst_case_path.glob("*_mask.jpg"))
     mask_files = [f for f in all_mask_files if "_warped_mask.jpg" not in f.name]
 
-    # Sort to ensure consistent order/selection if we limit to 25
     mask_files.sort()
 
-    # Limit to 25 samples if there are more
     selected_files = mask_files[:25]
-    logger.info(f"Found {len(all_mask_files)} total mask files, filtered to {len(mask_files)} original masks. Selecting {len(selected_files)} for evaluation")
+    if id_list_file:
+        requested_ids = [
+            line.strip()
+            for line in Path(id_list_file).read_text().splitlines()
+            if line.strip()
+        ]
+        normalized_ids = {rid.replace(".jpg", "") for rid in requested_ids}
+        selected = []
+        for mask_file in mask_files:
+            img_id = mask_file.name.replace("_mask.jpg", "")
+            if img_id in normalized_ids:
+                selected.append(mask_file)
+        missing = normalized_ids - {f.name.replace("_mask.jpg", "") for f in selected}
+        if missing:
+            logger.warning(f"{len(missing)} IDs from {id_list_file} not found in {worst_case_dir}: {sorted(missing)}")
+        selected_files = selected
+
+    logger.info(f"Found {len(all_mask_files)} masks, evaluating {len(selected_files)} selections")
 
     results = []
 
@@ -92,8 +109,9 @@ def evaluate_worst_performers(
         })
 
     # Summary
+    total = max(len(results), 1)
     success_count = sum(1 for r in results if r["reason"] is None)
-    logger.info(f"Success rate: {success_count}/{len(results)} ({success_count/len(results)*100:.1f}%)")
+    logger.info(f"Success rate: {success_count}/{len(results)} ({success_count/total*100:.1f}%)")
 
     # Write summary to file
     with open(output_dir / "summary.txt", "w") as f:
@@ -103,9 +121,17 @@ def evaluate_worst_performers(
         for r in results:
             f.write(f"{r['id']}: {r['reason']} ({r['decision']})\n")
 
+    return output_dir
+
 if __name__ == "__main__":
     worst_case_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/improved_edge_approach/worst_force_improved"
-    output_base_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251128_005231_perspective_correction/artifacts"
+    output_base_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251128_220100_perspective_correction/artifacts"
     dataset_root = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/datasets/images/train"
+    id_list_file = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251128_220100_perspective_correction/worst_performers_top25.txt"
 
-    evaluate_worst_performers(worst_case_dir, output_base_dir, dataset_root)
+    evaluate_worst_performers(
+        worst_case_dir,
+        output_base_dir,
+        dataset_root,
+        id_list_file=id_list_file,
+    )

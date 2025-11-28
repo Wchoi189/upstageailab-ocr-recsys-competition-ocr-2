@@ -1,0 +1,18 @@
+{
+  "id": "20251128_220100_perspective_correction",
+  "timestamp": "2025-11-28T22:01:00.630861",
+  "type": "perspective_correction",
+  "intention": "Implement angle-based bucketing for dominant edge fitting",
+  "status": "COMPLETED",
+  "artifacts": [],
+  "assessments": [
+    "assessments/run_01_angle_bucketing_initial.md",
+    "assessments/run_02_coordinate_inversion_fix.md",
+    "assessments/run_03_geometric_synthesis_success.md"
+  ],
+  "incident_reports": [
+    "incident_reports/20251129_0218-variable-shadowing-bug-geometric-synthesis.md"
+  ],
+  "open_questions": [],
+  "roadmap": []
+}

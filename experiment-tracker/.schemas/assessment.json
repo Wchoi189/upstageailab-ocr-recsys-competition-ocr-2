@@ -24,6 +24,14 @@
     "author": {
       "type": "string",
       "description": "Author of the assessment"
+    },
+    "kind": {
+      "type": "string",
+      "description": "High-level assessment kind (e.g., run_log, incident_summary, ab_regression, visual_analysis)"
+    },
+    "template_id": {
+      "type": "string",
+      "description": "Template identifier from .templates/assessment_templates.json used to generate this assessment"
     }
   },
   "required": ["title", "date"],

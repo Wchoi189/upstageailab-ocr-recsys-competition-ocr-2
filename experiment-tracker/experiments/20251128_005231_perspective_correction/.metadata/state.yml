@@ -1,22 +1,24 @@
 created_at: 2025-11-28 00:52 (KST)
-current_state: ACTIVE
+current_state: PAUSED
 experiment_goal: Improve mask-only edge approximations beyond affine baseline
 initial_assessment: Improve mask-only edge approximations beyond affine baseline
-last_updated: 2025-11-28 03:25 (KST)
-current_phase: Side-Based Regression
-success_rate: 0% (0/25) with Strict Mode 10px epsilon.
-improvement_status: Pivot to Line Regression. 10px epsilon strict fit failed (Over-Simplification vs Complexity). Moving to statistical reconstruction of edges.
+last_updated: 2025-11-28 04:35 (KST)
+current_phase: Session Handover
+success_rate: 0% (0/25) with Dominant Edge Extension (Relaxed Validation).
+improvement_status: Dominant Edge Extension failed due to Geometric Instability (Topology Trap & Lever Arm Effect). Pivot required to Angle-Based Bucketing.
 key_achievements:
   - Forked experiment to preserve the stable LCC+approxPolyDP baseline separate from future tuning
-  - Documented baseline heuristics (edge support coverage/ratio 0.90/0.80, RMSE <=2px, solidity, corner sharpness, parallelism) and logged per-edge metrics for every run
-  - Quantified failure reasons across the 25 worst performers (edge_support/ratio/linearity each 21 occurrences) with percentile distributions for coverage/ratio
-  - Confirmed robustness wins on selectstar_000155 and selectstar_000247, validating LCC filtering on outlier geometries
-  - **RCA Completed**: Confirmed `approxPolyDP` simplification error (~27px) exceeded strict validation threshold (5px).
-  - **Fail Fast**: "Epsilon Sensitivity Tuning" (Strict Mode 10px) failed to find *any* quad for 22/25 worst cases, confirming mask complexity requires regression, not reduction.
-  - **Pivot**: Implemented "Side-Based Regression" (Smart Clustering) to bypass the noisy vertex count issue.
+  - Documented baseline heuristics and logged per-edge metrics
+  - **RCA Completed**: Confirmed `approxPolyDP` simplification error (~27px) exceeded strict validation threshold.
+  - **Fail Fast**: "Epsilon Sensitivity Tuning" (Strict Mode 10px) failed to find *any* quad for 22/25 worst cases.
+  - **Fail Fast**: "Side-Based Regression" failed because it included outlier segments (folds/tears).
+  - **Fail Fast**: "Dominant Edge Extension" failed (0/25) due to brittle segment counting and unstable extrapolation of short segments.
+  - **Incident Report**: Generated `BUG-20251128-001` detailing the geometric instability.
 next_steps:
-  - Implement `_fit_quadrilateral_regression` using `cv2.fitLine` on classified hull segments.
-  - Run evaluation on 25 worst performers using regression.
+  - Implement **Angle-Based Bucketing** in `mask_only_edge_detector.py`.
+  - Classify *all* hull segments into 4 bins (Top/Bottom/Left/Right) based on 45-degree quadrants.
+  - Regress a consensus line for each bin.
+  - Intersect consensus lines to guarantee a quadrilateral.
 known_issues:
-  - Previous method (Polygon Reduction) is fundamentally limited by mask irregularity.
-  - Expect regression to handle concavities better, but need to check for ghost lines if noise is asymmetric.
+  - Extrapolation of short/noisy segments is mathematically unstable.
+  - `approxPolyDP` segment count is uncontrollable on organic shapes.

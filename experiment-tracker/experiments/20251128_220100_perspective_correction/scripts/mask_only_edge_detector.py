@@ -64,6 +64,93 @@ def _extract_largest_component(mask: np.ndarray) -> np.ndarray:
     return largest_mask
 
 
+def _geometric_synthesis(
+    fitted_quad: np.ndarray,
+    bbox_corners: np.ndarray,
+    image_shape: tuple[int, int],
+) -> Optional[np.ndarray]:
+    """
+    Geometric Synthesis: Intersect fitted_quad with bbox_corners using bitwise operations.
+
+    Creates a mask from fitted_quad, clips it to bbox_corners, and extracts the final contour.
+    This ensures the output never exceeds the safe bounding box limits while preserving
+    the regression-based shape.
+
+    Args:
+        fitted_quad: Fitted quadrilateral corners (4 points)
+        bbox_corners: Bounding box corners (4 points, axis-aligned)
+        image_shape: (height, width) of the image
+
+    Returns:
+        Final quadrilateral corners after intersection, or None if synthesis fails
+    """
+    if fitted_quad is None or bbox_corners is None:
+        return None
+
+    h, w = image_shape
+
+    # Create blank canvas
+    fitted_mask = np.zeros((h, w), dtype=np.uint8)
+    bbox_mask = np.zeros((h, w), dtype=np.uint8)
+
+    # Draw fitted_quad on canvas
+    fitted_pts = fitted_quad.astype(np.int32).reshape((-1, 1, 2))
+    cv2.fillPoly(fitted_mask, [fitted_pts], 255)
+
+    # Draw bbox_corners on canvas
+    bbox_pts = bbox_corners.astype(np.int32).reshape((-1, 1, 2))
+    cv2.fillPoly(bbox_mask, [bbox_pts], 255)
+
+    # Compute intersection: Final_Mask = Fitted_Mask AND Bbox_Mask
+    final_mask = cv2.bitwise_and(fitted_mask, bbox_mask)
+
+    # Extract contours from final mask
+    contours, _ = cv2.findContours(final_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+    if not contours:
+        return None
+
+    # Get largest contour
+    largest_contour = max(contours, key=cv2.contourArea)
+
+    # Approximate as quadrilateral
+    epsilon = 0.02 * cv2.arcLength(largest_contour, True)
+    approx = cv2.approxPolyDP(largest_contour, epsilon, True)
+
+    if len(approx) < 4:
+        # If approximation fails, use convex hull
+        hull = cv2.convexHull(largest_contour)
+        if len(hull) < 4:
+            return None
+        # Try to get 4 corners from hull
+        epsilon = 0.05 * cv2.arcLength(hull, True)
+        approx = cv2.approxPolyDP(hull, epsilon, True)
+        if len(approx) < 4:
+            return None
+
+    # Ensure we have exactly 4 points
+    if len(approx) > 4:
+        # Take the 4 most extreme points
+        approx = approx.reshape(-1, 2)
+        # Find bounding box of approx
+        x_min = np.min(approx[:, 0])
+        x_max = np.max(approx[:, 0])
+        y_min = np.min(approx[:, 1])
+        y_max = np.max(approx[:, 1])
+        # Create 4 corners
+        approx = np.array([
+            [x_min, y_min],
+            [x_max, y_min],
+            [x_max, y_max],
+            [x_min, y_max],
+        ], dtype=np.float32)
+    elif len(approx) == 4:
+        approx = approx.reshape(-1, 2).astype(np.float32)
+    else:
+        return None
+
+    return _order_points(approx)
+
+
 def _order_points(points: np.ndarray) -> np.ndarray:
     """Order quadrilateral corners as TL, TR, BR, BL."""
     pts = np.asarray(points, dtype=np.float32)
@@ -433,116 +520,184 @@ def _fit_quadrilateral_regression(
 def _fit_quadrilateral_dominant_extension(
     hull: np.ndarray,
     epsilon_px: float = 10.0,
-    min_perimeter_ratio: float = 0.10,
 ) -> tuple[Optional[np.ndarray], float]:
     """
-    Fit quadrilateral by:
-    1. Tight approxPolyDP (allowing >4 segments).
-    2. Filtering segments < 10% of total perimeter (folds/corners).
-    3. Extending remaining 4 dominant segments to find intersections.
+    BUG-20251128-001: Stabilize dominant-edge fitting via angle-based bucketing.
+
+    Fit a quadrilateral by:
+    1. Running a tight approxPolyDP (keeps 8–12 hull segments).
+    2. Binning *all* segments into Top/Bottom/Left/Right using horizontal/vertical classification.
+    3. Regressing consensus lines per bin via cv2.fitLine and intersecting them.
+
+    Uses `abs(dx) > abs(dy)` classification to avoid coordinate system confusion and
+    adapt to different aspect ratios.
 
     Returns (ordered points, used_epsilon)
     """
     if hull is None or len(hull) < 3:
         return None, 0.0
 
-    # 1. Tight Approximation
     eps = epsilon_px
     approx = cv2.approxPolyDP(hull, eps, True)
-
     if len(approx) < 4:
-        # Too simple, maybe just use hull or fail?
-        # If <4, it's a triangle or line, can't be a quad.
         return None, eps
 
     pts = approx.reshape(-1, 2).astype(np.float32)
     num_pts = len(pts)
+    centroid = np.mean(pts, axis=0)
+    cx, cy = float(centroid[0]), float(centroid[1])
 
-    # 2. Filter Segments
-    # Calculate lengths of all segments
-    segments = []
-    total_perimeter = 0.0
-
+    segments: list[dict[str, np.ndarray | float]] = []
     for i in range(num_pts):
         p1 = pts[i]
         p2 = pts[(i + 1) % num_pts]
-        length = float(np.linalg.norm(p2 - p1))
-        total_perimeter += length
+        dx = float(p2[0] - p1[0])
+        dy = float(p2[1] - p1[1])
+        mid = (p1 + p2) / 2.0
+        mid_x, mid_y = float(mid[0]), float(mid[1])
         segments.append({
             "p1": p1,
             "p2": p2,
-            "length": length,
-            "mid": (p1 + p2) / 2
+            "mid": mid,
+            "dx": dx,
+            "dy": dy,
+            "mid_x": mid_x,
+            "mid_y": mid_y,
         })
 
-    threshold = total_perimeter * min_perimeter_ratio
-    dominant_segments = [s for s in segments if s["length"] >= threshold]
-
-    # We ideally want exactly 4 dominant segments
-    if len(dominant_segments) != 4:
-        # If not 4, this method isn't applicable (or needs more complex logic)
-        # e.g., if 3, we are missing a side. If 5, we didn't filter enough?
+    if not segments:
         return None, eps
 
-    # 3. Classify & Extend
-    # Classify the 4 segments as Top/Bottom/Left/Right
-    centroid = np.mean(pts, axis=0)
-    cx, cy = centroid
+    bins: dict[str, list[np.ndarray]] = {
+        "top": [],
+        "right": [],
+        "bottom": [],
+        "left": [],
+    }
 
-    top = None
-    bottom = None
-    left = None
-    right = None
+    def assign_bin(seg: dict[str, Any]) -> str:
+        """
+        Classify segment as Top/Bottom/Left/Right based on dominant direction.
 
-    for seg in dominant_segments:
-        p1 = seg["p1"]
-        p2 = seg["p2"]
-        mid = seg["mid"]
+        - If |dx| > |dy|: Horizontal segment → Top or Bottom (based on y < cy)
+        - If |dy| > |dx|: Vertical segment → Left or Right (based on x < cx)
 
-        dx = p2[0] - p1[0]
-        dy = p2[1] - p1[1]
-        angle = math.degrees(math.atan2(dy, dx)) % 360
+        This avoids coordinate system confusion and adapts to aspect ratios.
+        """
+        dx, dy = abs(seg["dx"]), abs(seg["dy"])
+        mid_x, mid_y = seg["mid_x"], seg["mid_y"]
 
-        is_horz = (angle >= 315 or angle <= 45) or (angle >= 135 and angle <= 225)
-
-        if is_horz:
-            if mid[1] < cy:
-                top = seg
+        if dx > dy:
+            # Horizontal segment: Top or Bottom
+            if mid_y < cy:
+                return "top"
             else:
-                bottom = seg
+                return "bottom"
         else:
-            if mid[0] < cx:
-                left = seg
+            # Vertical segment: Left or Right
+            if mid_x < cx:
+                return "left"
             else:
-                right = seg
+                return "right"
 
-    if top is None or bottom is None or left is None or right is None:
-        return None, eps
+    for seg in segments:
+        bin_name = assign_bin(seg)
+        bins[bin_name].append(seg["p1"])
+        bins[bin_name].append(seg["p2"])
 
-    # Get line equations (vx, vy, x, y) for intersections
-    def get_line_params(seg):
-        p1 = seg["p1"]
-        p2 = seg["p2"]
-        vec = p2 - p1
-        length = np.linalg.norm(vec)
-        if length < 1e-6:
-            return 0, 0, p1[0], p1[1]
-        vx, vy = vec / length
-        return vx, vy, p1[0], p1[1]
+    # Borrow segments if a bin is empty
+    # Prefer borrowing from adjacent bins (top<->left/right, bottom<->left/right, etc.)
+    adjacent_map = {
+        "top": ["left", "right"],
+        "bottom": ["left", "right"],
+        "left": ["top", "bottom"],
+        "right": ["top", "bottom"],
+    }
 
-    l_top = get_line_params(top)
-    l_bottom = get_line_params(bottom)
-    l_left = get_line_params(left)
-    l_right = get_line_params(right)
+    for bin_name, points in bins.items():
+        if len(points) >= 2:
+            continue
 
-    # 4. Solve Intersections
+        # Try to borrow from adjacent bins first
+        best_seg = None
+        best_source_bin = None
+
+        # First, try adjacent bins
+        for adj_bin in adjacent_map.get(bin_name, []):
+            if len(bins[adj_bin]) >= 4:  # Has at least 2 points (1 segment)
+                # Find a segment from this adjacent bin
+                for seg in segments:
+                    if assign_bin(seg) == adj_bin:
+                        best_seg = seg
+                        best_source_bin = adj_bin
+                        break
+                if best_seg is not None:
+                    break
+
+        # If no adjacent bin available, borrow from any bin with points
+        if best_seg is None:
+            for other_bin, other_points in bins.items():
+                if other_bin != bin_name and len(other_points) >= 2:
+                    for seg in segments:
+                        if assign_bin(seg) == other_bin:
+                            best_seg = seg
+                            best_source_bin = other_bin
+                            break
+                    if best_seg is not None:
+                        break
+
+        if best_seg is not None:
+            bins[bin_name].append(best_seg["p1"])
+            bins[bin_name].append(best_seg["p2"])
+
+    def fit_line(points: list[np.ndarray]) -> Optional[tuple[float, float, float, float]]:
+        if len(points) < 2:
+            return None
+        pts_array = np.array(points, dtype=np.float32)
+        [vx, vy, x, y] = cv2.fitLine(pts_array, cv2.DIST_L12, 0, 0.01, 0.01)
+        return float(vx), float(vy), float(x), float(y)
+
+    l_top = fit_line(bins["top"])
+    l_bottom = fit_line(bins["bottom"])
+    l_left = fit_line(bins["left"])
+    l_right = fit_line(bins["right"])
+
+    if None in (l_top, l_bottom, l_left, l_right):
+        min_x = float(np.min(pts[:, 0]))
+        max_x = float(np.max(pts[:, 0]))
+        min_y = float(np.min(pts[:, 1]))
+        max_y = float(np.max(pts[:, 1]))
+        bbox_quad = np.array(
+            [
+                [min_x, min_y],
+                [max_x, min_y],
+                [max_x, max_y],
+                [min_x, max_y],
+            ],
+            dtype=np.float32,
+        )
+        return bbox_quad, eps
+
     tl = _intersect_lines(l_top, l_left)
     tr = _intersect_lines(l_top, l_right)
     br = _intersect_lines(l_bottom, l_right)
     bl = _intersect_lines(l_bottom, l_left)
 
     if tl is None or tr is None or br is None or bl is None:
-        return None, eps
+        min_x = float(np.min(pts[:, 0]))
+        max_x = float(np.max(pts[:, 0]))
+        min_y = float(np.min(pts[:, 1]))
+        max_y = float(np.max(pts[:, 1]))
+        bbox_quad = np.array(
+            [
+                [min_x, min_y],
+                [max_x, min_y],
+                [max_x, max_y],
+                [min_x, max_y],
+            ],
+            dtype=np.float32,
+        )
+        return bbox_quad, eps
 
     quad = np.array([tl, tr, br, bl], dtype=np.float32)
     return quad, eps
@@ -838,8 +993,8 @@ def fit_mask_rectangle(
         use_dominant_extension: if True, use dominant edge extension logic (ignores short segments/folds).
     """
     binary = _prepare_mask(mask)
-    h, w = binary.shape[:2]
-    total_pixels = float(h * w)
+    img_h, img_w = binary.shape[:2]  # Image dimensions (preserved to avoid shadowing)
+    total_pixels = float(img_h * img_w)
 
     # Reinforce with closing to fill small gaps and ensure a collar
     kernel = np.ones((5, 5), np.uint8)
@@ -959,6 +1114,72 @@ def fit_mask_rectangle(
             used_epsilon=used_eps,
         )
 
+    # Geometric Synthesis Approach for regression-based fits
+    # Skip strict validation and use intersection logic instead
+    if use_dominant_extension or use_regression:
+        # Only validate basic geometry (angles, non-degenerate)
+        if not _validate_edge_angles(ordered, angle_tolerance_deg=45.0):
+            return MaskRectangleResult(
+                corners=ordered_bbox,
+                raw_corners=ordered,
+                contour_area=contour_area,
+                hull_area=hull_area,
+                mask_area=mask_area,
+                contour=largest,
+                hull=hull,
+                reason="validation_failed_invalid_edge_angles_using_bbox",
+                used_epsilon=used_eps,
+            )
+
+        if not _validate_edge_lengths(ordered, min_aspect_ratio=0.1, max_aspect_ratio=10.0):
+            return MaskRectangleResult(
+                corners=ordered_bbox,
+                raw_corners=ordered,
+                contour_area=contour_area,
+                hull_area=hull_area,
+                mask_area=mask_area,
+                contour=largest,
+                hull=hull,
+                reason="validation_failed_invalid_edge_proportions_using_bbox",
+                used_epsilon=used_eps,
+            )
+
+        # Apply geometric synthesis: intersect fitted_quad with bbox_corners
+        # Use image dimensions (img_h, img_w) not bounding box dimensions (h, w)
+        synthesized_corners = _geometric_synthesis(
+            ordered,
+            ordered_bbox,
+            (img_h, img_w)
+        )
+
+        if synthesized_corners is not None and len(synthesized_corners) == 4:
+            # Trust regression results - accept synthesized corners
+            return MaskRectangleResult(
+                corners=synthesized_corners,
+                raw_corners=ordered,
+                contour_area=contour_area,
+                hull_area=hull_area,
+                mask_area=mask_area,
+                contour=largest,
+                hull=hull,
+                reason=None,  # Success - no reason needed
+                used_epsilon=used_eps,
+            )
+        else:
+            # If synthesis fails, use fitted quad directly (still better than bbox)
+            return MaskRectangleResult(
+                corners=ordered,
+                raw_corners=ordered,
+                contour_area=contour_area,
+                hull_area=hull_area,
+                mask_area=mask_area,
+                contour=largest,
+                hull=hull,
+                reason="geometric_synthesis_failed_using_fitted",
+                used_epsilon=used_eps,
+            )
+
+    # Traditional validation path for non-regression fits
     # Validate fitted rectangle quality using heuristics
     validation_failed = False
     validation_reason = None

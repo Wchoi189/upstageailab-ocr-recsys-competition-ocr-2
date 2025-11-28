@@ -38,8 +38,17 @@ A robust, AI-Agent-integrated experiment tracking system that transforms chaotic
 
 4.  **Generate an assessment**:
     ```bash
-    ./scripts/generate-assessment.py --template perspective_analysis --verbose minimal
+    # Use registered template ids for structured drafts
+    ./scripts/generate-assessment.py --template visual-evidence-cluster --verbose minimal
+
+    # Generate an interim run log for a negative-result batch
+    ./scripts/generate-assessment.py --template run-log-negative-result --verbose minimal
     ```
+    Available assessment templates:
+    - `visual-evidence-cluster` – Failure Mode clustering board
+    - `triad-deep-dive` – Input/Output discrepancy analysis
+    - `ab-regression` – Baseline vs experiment comparison
+    - `run-log-negative-result` – Interim run log for low-success or negative-result runs (tracks failure-mode migration)
 
 5.  **Generate an incident report**:
     ```bash
