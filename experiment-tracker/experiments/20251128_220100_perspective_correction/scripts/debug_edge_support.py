@@ -5,10 +5,23 @@ import numpy as np
 import logging
 from pathlib import Path
 
-# Setup paths
-tracker_root = Path(__file__).resolve().parent.parent.parent.parent.parent / "src"
+# Setup experiment paths - auto-detect tracker root and experiment context
+script_path = Path(__file__).resolve()
+tracker_root = script_path.parent.parent.parent.parent.parent / "src"
 sys.path.insert(0, str(tracker_root))
-sys.path.insert(0, "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251122_172313_perspective_correction/scripts")
+from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+
+# Setup OCR project paths
+workspace_root = tracker_root.parent.parent
+sys.path.insert(0, str(workspace_root))
+from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+
+# Auto-detect experiment context
+TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
+OCR_RESOLVER = get_path_resolver()
+
+# Import from local script
+sys.path.insert(0, str(script_path.parent))
 
 from mask_only_edge_detector import fit_mask_rectangle, _prepare_mask, _collect_edge_support_data, visualize_mask_fit
 
@@ -32,7 +45,7 @@ def visualize_edge_support_sampling(
     vis = img.copy()
 
     input_p = Path(image_path)
-    possible_mask_loc = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/improved_edge_approach/worst_force_improved") / f"{input_p.stem}_mask.jpg"
+    possible_mask_loc = OCR_RESOLVER.config.output_dir / "improved_edge_approach" / "worst_force_improved" / f"{input_p.stem}_mask.jpg"
 
     if possible_mask_loc.exists():
         mask = cv2.imread(str(possible_mask_loc), cv2.IMREAD_GRAYSCALE)
@@ -100,14 +113,14 @@ def visualize_edge_support_sampling(
 
 if __name__ == "__main__":
     img_name = "drp.en_ko.in_house.selectstar_000119.jpg"
-    dataset_root = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/datasets/images/train")
+    dataset_root = OCR_RESOLVER.config.images_dir / "train"
     img_path = dataset_root / img_name
 
     if not img_path.exists():
         logger.error(f"Image {img_path} not found")
         sys.exit(1)
 
-    out_dir = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251128_005231_perspective_correction/artifacts")
+    out_dir = EXPERIMENT_PATHS.get_artifacts_path() if EXPERIMENT_PATHS else Path.cwd() / "artifacts"
     out_dir.mkdir(exist_ok=True, parents=True)
     out_path = out_dir / "debug_edge_support_000119.jpg"
 

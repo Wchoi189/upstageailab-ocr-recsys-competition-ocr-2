@@ -16,10 +16,23 @@ import logging
 from pathlib import Path
 from typing import Optional, Dict, List, Tuple, Any
 
-# Setup paths
-tracker_root = Path(__file__).resolve().parent.parent.parent.parent.parent / "src"
+# Setup experiment paths - auto-detect tracker root and experiment context
+script_path = Path(__file__).resolve()
+tracker_root = script_path.parent.parent.parent.parent.parent / "src"
 sys.path.insert(0, str(tracker_root))
-sys.path.insert(0, str(Path(__file__).parent))
+from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+
+# Setup OCR project paths
+workspace_root = tracker_root.parent.parent
+sys.path.insert(0, str(workspace_root))
+from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+
+# Auto-detect experiment context
+TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
+OCR_RESOLVER = get_path_resolver()
+
+# Import from local script
+sys.path.insert(0, str(script_path.parent))
 
 from mask_only_edge_detector import _prepare_mask, _fit_quadrilateral_dominant_extension, _intersect_lines
 
@@ -437,8 +450,8 @@ def debug_angle_bucketing(
 
 
 if __name__ == "__main__":
-    worst_case_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/improved_edge_approach/worst_force_improved"
-    output_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251128_220100_perspective_correction/artifacts"
+    worst_case_dir = str(OCR_RESOLVER.config.output_dir / "improved_edge_approach" / "worst_force_improved")
+    output_dir = str(EXPERIMENT_PATHS.get_artifacts_path() if EXPERIMENT_PATHS else Path.cwd() / "artifacts")
 
     debug_angle_bucketing(worst_case_dir, output_dir)
 

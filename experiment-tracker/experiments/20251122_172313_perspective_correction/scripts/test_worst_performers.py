@@ -108,19 +108,40 @@ def main():
     from analyze_failures_rembg_approach import test_rembg_based_correction, OptimizedBackgroundRemover, GPU_AVAILABLE
 
     # Setup path utils for proper path resolution
+    script_path = Path(__file__).resolve()
     try:
         # Add tracker src to path
-        tracker_root = Path(__file__).resolve().parent.parent.parent.parent
+        tracker_root = script_path.parent.parent.parent.parent
         sys.path.insert(0, str(tracker_root / "src"))
         from experiment_tracker.utils.path_utils import setup_script_paths
-        TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(Path(__file__))
-        workspace_root = TRACKER_ROOT.parent
+        TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
     except ImportError:
         # Fallback if path_utils not available
-        TRACKER_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+        TRACKER_ROOT = script_path.parent.parent.parent.parent
         EXPERIMENT_ID = None
         EXPERIMENT_PATHS = None
-        workspace_root = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
+
+    # Setup OCR project paths
+    workspace_root = tracker_root.parent
+    sys.path.insert(0, str(workspace_root))
+    try:
+        from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+        OCR_RESOLVER = get_path_resolver()
+        workspace_root = OCR_RESOLVER.config.project_root
+    except ImportError:
+        OCR_RESOLVER = None
+        PROJECT_ROOT = None
+        workspace_root = TRACKER_ROOT.parent if EXPERIMENT_PATHS else Path.cwd()
+
+    # Get default paths using OCR resolver if available
+    if OCR_RESOLVER:
+        default_results_json = OCR_RESOLVER.config.output_dir / "perspective_comprehensive_retest" / "results.json"
+        default_input_dir = OCR_RESOLVER.config.images_dir / "train"
+        default_output_dir = OCR_RESOLVER.config.output_dir / "worst_performers_test"
+    else:
+        default_results_json = workspace_root / "outputs" / "perspective_comprehensive_retest" / "results.json"
+        default_input_dir = workspace_root / "data" / "datasets" / "images" / "train"
+        default_output_dir = workspace_root / "outputs" / "worst_performers_test"
 
     parser = argparse.ArgumentParser(
         description="Extract worst performers and test rembg mask-based approach"
@@ -128,19 +149,19 @@ def main():
     parser.add_argument(
         "--results-json",
         type=Path,
-        default=workspace_root / "outputs" / "perspective_comprehensive_retest" / "results.json",
+        default=default_results_json,
         help="Path to results JSON file",
     )
     parser.add_argument(
         "--input-dir",
         type=Path,
-        default=workspace_root / "data" / "datasets" / "images" / "train",
+        default=default_input_dir,
         help="Input directory with original images",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=workspace_root / "outputs" / "worst_performers_test",
+        default=default_output_dir,
         help="Output directory",
     )
     parser.add_argument(

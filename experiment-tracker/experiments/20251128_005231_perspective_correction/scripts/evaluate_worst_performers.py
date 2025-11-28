@@ -7,11 +7,23 @@ from pathlib import Path
 import datetime
 import glob
 
-# Setup paths
-tracker_root = Path(__file__).resolve().parent.parent.parent.parent.parent / "src"
+# Setup experiment paths - auto-detect tracker root and experiment context
+script_path = Path(__file__).resolve()
+tracker_root = script_path.parent.parent.parent.parent.parent / "src"
 sys.path.insert(0, str(tracker_root))
+from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+
+# Setup OCR project paths
+workspace_root = tracker_root.parent.parent
+sys.path.insert(0, str(workspace_root))
+from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+
+# Auto-detect experiment context
+TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
+OCR_RESOLVER = get_path_resolver()
+
 # Import from local script
-sys.path.insert(0, str(Path(__file__).parent))
+sys.path.insert(0, str(script_path.parent))
 
 from mask_only_edge_detector import fit_mask_rectangle, visualize_mask_fit
 
@@ -104,8 +116,8 @@ def evaluate_worst_performers(
             f.write(f"{r['id']}: {r['reason']} ({r['decision']})\n")
 
 if __name__ == "__main__":
-    worst_case_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/improved_edge_approach/worst_force_improved"
-    output_base_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251128_005231_perspective_correction/artifacts"
-    dataset_root = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/datasets/images/train"
+    worst_case_dir = str(OCR_RESOLVER.config.output_dir / "improved_edge_approach" / "worst_force_improved")
+    output_base_dir = str(EXPERIMENT_PATHS.get_artifacts_path() if EXPERIMENT_PATHS else Path.cwd() / "artifacts")
+    dataset_root = str(OCR_RESOLVER.config.images_dir / "train")
 
     evaluate_worst_performers(worst_case_dir, output_base_dir, dataset_root)

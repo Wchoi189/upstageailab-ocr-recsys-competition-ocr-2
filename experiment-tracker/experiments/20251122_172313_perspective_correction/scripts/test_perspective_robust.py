@@ -17,17 +17,28 @@ from typing import Any
 
 # Add src to path to import experiment_tracker
 # Use path_utils for proper path resolution
-ROOT_DIR = Path(__file__).resolve().parent.parent.parent.parent
+script_path = Path(__file__).resolve()
+ROOT_DIR = script_path.parent.parent.parent.parent
 sys.path.append(str(ROOT_DIR / "src"))
 
 try:
     from experiment_tracker.utils.path_utils import setup_script_paths
-    TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(Path(__file__))
+    TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
 except ImportError:
     # Fallback if path_utils not available
     TRACKER_ROOT = ROOT_DIR
     EXPERIMENT_ID = None
     EXPERIMENT_PATHS = None
+
+# Setup OCR project paths
+workspace_root = ROOT_DIR.parent
+sys.path.insert(0, str(workspace_root))
+try:
+    from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+    OCR_RESOLVER = get_path_resolver()
+except ImportError:
+    OCR_RESOLVER = None
+    PROJECT_ROOT = None
 
 try:
     from experiment_tracker import track_experiment

@@ -30,17 +30,28 @@ if str(script_dir) not in sys.path:
     sys.path.insert(0, str(script_dir))
 
 # Setup path utils for proper path resolution
+script_path = Path(__file__).resolve()
 try:
     # Add tracker src to path
-    tracker_root = Path(__file__).resolve().parent.parent.parent.parent
+    tracker_root = script_path.parent.parent.parent.parent
     sys.path.insert(0, str(tracker_root / "src"))
     from experiment_tracker.utils.path_utils import setup_script_paths
-    TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(Path(__file__))
+    TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
 except ImportError:
     # Fallback if path_utils not available
-    TRACKER_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+    TRACKER_ROOT = script_path.parent.parent.parent.parent
     EXPERIMENT_ID = None
     EXPERIMENT_PATHS = None
+
+# Setup OCR project paths
+workspace_root = tracker_root.parent
+sys.path.insert(0, str(workspace_root))
+try:
+    from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+    OCR_RESOLVER = get_path_resolver()
+except ImportError:
+    OCR_RESOLVER = None
+    PROJECT_ROOT = None
 
 from analyze_failures_rembg_approach import (
     extract_rembg_mask,
@@ -509,19 +520,25 @@ def main():
     parser = argparse.ArgumentParser(
         description="Test improved edge-based perspective correction"
     )
-    # Get workspace root (parent of tracker root)
-    workspace_root = TRACKER_ROOT.parent if EXPERIMENT_PATHS else Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
+    # Get workspace root using path resolvers
+    if OCR_RESOLVER:
+        default_input_dir = OCR_RESOLVER.config.images_dir / "train"
+        default_output_dir = OCR_RESOLVER.config.output_dir / "improved_edge_approach"
+    else:
+        workspace_root = TRACKER_ROOT.parent if EXPERIMENT_PATHS else PROJECT_ROOT if PROJECT_ROOT else Path.cwd()
+        default_input_dir = workspace_root / "data" / "datasets" / "images" / "train"
+        default_output_dir = workspace_root / "outputs" / "improved_edge_approach"
 
     parser.add_argument(
         "--input-dir",
         type=Path,
-        default=workspace_root / "data" / "datasets" / "images" / "train",
+        default=default_input_dir,
         help="Input directory with images (used as fallback for worst performers)",
     )
     parser.add_argument(
         "--output-dir",
         type=Path,
-        default=workspace_root / "outputs" / "improved_edge_approach",
+        default=default_output_dir,
         help="Output directory",
     )
     parser.add_argument(
@@ -570,8 +587,11 @@ def main():
     # Get image list
     if args.worst_performers:
         # Load worst performers list
-        workspace_root = TRACKER_ROOT.parent if EXPERIMENT_PATHS else Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
-        worst_list_path = workspace_root / "outputs" / "worst_performers_test" / "worst_performers_list.json"
+        if OCR_RESOLVER:
+            worst_list_path = OCR_RESOLVER.config.output_dir / "worst_performers_test" / "worst_performers_list.json"
+        else:
+            workspace_root = TRACKER_ROOT.parent if EXPERIMENT_PATHS else PROJECT_ROOT if PROJECT_ROOT else Path.cwd()
+            worst_list_path = workspace_root / "outputs" / "worst_performers_test" / "worst_performers_list.json"
         if worst_list_path.exists():
             with open(worst_list_path) as f:
                 worst_list = json.load(f)
@@ -585,7 +605,8 @@ def main():
                 if input_path.exists():
                     image_files.append(input_path)
                 # Try relative to workspace root
-                elif (workspace_root / input_path).exists():
+                workspace_root = OCR_RESOLVER.config.project_root if OCR_RESOLVER else (TRACKER_ROOT.parent if EXPERIMENT_PATHS else PROJECT_ROOT if PROJECT_ROOT else Path.cwd())
+                if (workspace_root / input_path).exists():
                     image_files.append(workspace_root / input_path)
                 # Try in input_dir by filename
                 elif args.input_dir.exists():
