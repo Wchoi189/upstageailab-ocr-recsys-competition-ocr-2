@@ -1,0 +1,46 @@
+stateDiagram-v2
+    [*] --> Start: start-experiment
+    Start --> Active: Experiment created
+    Active --> Incomplete: Interrupted/stashed
+    Active --> Completed: Experiment finished
+    Active --> Active: add-task, record-decision, record-artifact
+    Active --> Assessment: generate-assessment (milestone/findings)
+    Active --> IncidentDraft: Failure detected
+    Assessment --> Active: Continue work
+    IncidentDraft --> IncidentAssess: Draft complete
+    IncidentAssess --> IncidentDraft: Fail rubric (revise)
+    IncidentAssess --> IncidentCommit: Pass rubric
+    IncidentCommit --> Active: Bug fixed, tasks created
+    Incomplete --> Active: resume-experiment
+    Completed --> [*]
+
+    note right of Active
+        Main working state
+        - Add tasks
+        - Record decisions
+        - Record artifacts
+        - Generate assessments
+    end note
+
+    note right of IncidentDraft
+        Drafting Phase
+        - Capture raw observations
+        - Logs, screenshots, context
+    end note
+
+    note right of IncidentAssess
+        Assessment Phase
+        - Quality Rubric Check
+        - Root Cause Depth
+        - Evidence Quality
+        - Remediation Logic
+        - Metric Impact
+    end note
+
+    note right of IncidentCommit
+        Committal Phase
+        - Save to incident_reports/
+        - Create task tickets
+        - Link to experiment
+        - Track metrics impact
+    end note
