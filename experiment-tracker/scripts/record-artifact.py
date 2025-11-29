@@ -12,9 +12,11 @@ from experiment_tracker.core import ExperimentTracker
 
 def main():
     parser = argparse.ArgumentParser(description="Record an artifact for the current experiment")
-    parser.add_argument("--path", required=True, help="Path to the artifact file")
+    parser.add_argument("--path", required=True, help="Path to the artifact file (supports {timestamp} placeholder)")
     parser.add_argument("--type", default="unknown", help="Type of artifact")
     parser.add_argument("--metadata", help="JSON string of metadata")
+    parser.add_argument("--no-confirm", action="store_true", help="Skip confirmation prompt")
+    parser.add_argument("--no-context", action="store_true", help="Skip context display")
 
     args = parser.parse_args()
 
@@ -29,7 +31,12 @@ def main():
     metadata["type"] = args.type
 
     tracker = ExperimentTracker()
-    tracker.record_artifact(args.path, metadata)
+    tracker.record_artifact(
+        args.path,
+        metadata,
+        show_context=not args.no_context,
+        confirm=not args.no_confirm
+    )
 
 
 if __name__ == "__main__":

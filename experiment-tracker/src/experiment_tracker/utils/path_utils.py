@@ -1,4 +1,7 @@
 from pathlib import Path
+from typing import Optional, List
+import re
+import glob
 
 
 class ExperimentPaths:
@@ -39,6 +42,99 @@ class ExperimentPaths:
     def get_context_file(self, context_type: str) -> Path:
         """Get path to specific context file (state, tasks, decisions, components)"""
         return self.get_metadata_path() / f"{context_type}.yml"
+
+    def resolve_artifact_path(self, path: str, allow_placeholder: bool = True) -> Optional[Path]:
+        """
+        Resolve artifact path with {timestamp} placeholder support.
+
+        Args:
+            path: Path string, may contain {timestamp} placeholder
+            allow_placeholder: If True, resolve {timestamp} to latest matching artifact
+
+        Returns:
+            Resolved Path or None if not found
+        """
+        # If path contains {timestamp}, try to resolve it
+        if allow_placeholder and "{timestamp}" in path:
+            # Extract pattern (everything before and after {timestamp})
+            pattern_parts = path.split("{timestamp}")
+            if len(pattern_parts) == 2:
+                prefix = pattern_parts[0]
+                suffix = pattern_parts[1]
+                # Find latest artifact matching this pattern
+                return self.find_latest_artifact(f"{prefix}*{suffix}")
+
+        # Try as relative path first (relative to experiment directory)
+        resolved = self.base_path / path
+        if resolved.exists():
+            return resolved
+
+        # Try as absolute path
+        resolved = Path(path)
+        if resolved.exists():
+            return resolved
+
+        # Try relative to artifacts directory
+        resolved = self.get_artifacts_path() / path
+        if resolved.exists():
+            return resolved
+
+        return None
+
+    def find_latest_artifact(self, pattern: str) -> Optional[Path]:
+        """
+        Find latest artifact matching pattern.
+        Uses modification time to determine "latest".
+
+        Args:
+            pattern: Glob pattern (e.g., "*_worst_performers_test/results.json")
+
+        Returns:
+            Path to latest matching artifact or None
+        """
+        artifacts_dir = self.get_artifacts_path()
+        if not artifacts_dir.exists():
+            return None
+
+        # Search recursively
+        matches = list(artifacts_dir.rglob(pattern))
+        if not matches:
+            return None
+
+        # Sort by modification time, newest first
+        matches.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+        return matches[0]
+
+    def interactive_select_artifact(self, candidates: List[Path]) -> Optional[Path]:
+        """
+        Interactive selection if multiple artifact candidates found.
+
+        Args:
+            candidates: List of candidate paths
+
+        Returns:
+            Selected path or None if cancelled
+        """
+        if not candidates:
+            return None
+
+        if len(candidates) == 1:
+            return candidates[0]
+
+        print("\nMultiple artifacts found:")
+        for i, path in enumerate(candidates, 1):
+            rel_path = path.relative_to(self.base_path)
+            print(f"  {i}. {rel_path}")
+
+        try:
+            choice = input("\nSelect artifact (1-{}): ".format(len(candidates)))
+            idx = int(choice) - 1
+            if 0 <= idx < len(candidates):
+                return candidates[idx]
+        except (ValueError, KeyboardInterrupt):
+            pass
+
+        return None
 
     @staticmethod
     def detect_experiment_id(current_path: Path | None = None) -> str | None:

@@ -2,10 +2,12 @@ import datetime
 import json
 import shutil
 from pathlib import Path
+from typing import Tuple, Optional
 
 import yaml
 
 from experiment_tracker.utils.path_utils import ExperimentPaths
+from experiment_tracker.utils.sync import MetadataSync
 
 
 class ExperimentTracker:
@@ -120,22 +122,53 @@ class ExperimentTracker:
             print(f"Error stashing experiment {experiment_id}: {e}")
             return False
 
-    def record_artifact(self, artifact_path: str, metadata: dict = None, experiment_id: str = None) -> bool:
+    def record_artifact(self, artifact_path: str, metadata: dict = None, experiment_id: str = None, show_context: bool = True, confirm: bool = True) -> bool:
         if experiment_id is None:
             experiment_id = self._get_current_experiment_id()
             if not experiment_id:
                 print("No active experiment found.")
                 return False
 
+        # Validate context
+        is_valid, warning = self._validate_experiment_context(experiment_id, "record artifact")
+        if not is_valid:
+            print(f"Error: {warning}")
+            return False
+
         try:
             state = self._load_state(experiment_id)
             paths = self._get_paths(experiment_id)
 
+            # Try to resolve path with placeholder support
+            resolved_path = paths.resolve_artifact_path(artifact_path, allow_placeholder=True)
+            if resolved_path is None:
+                # Fallback to original path
+                resolved_path = Path(artifact_path)
+
             # Copy artifact to experiment folder
-            src_path = Path(artifact_path)
+            src_path = resolved_path
             if not src_path.exists():
                 print(f"Artifact not found: {src_path}")
+                print(f"  Tried to resolve: {artifact_path}")
+                if "{timestamp}" in artifact_path:
+                    print(f"  Hint: Use 'workflow.py record-test-results' for auto-detection")
                 return False
+
+            # Show context and confirm if requested
+            if show_context:
+                artifacts_dir = paths.get_artifacts_path()
+                self._show_operation_context(experiment_id, "Record Artifact", [
+                    str(self.experiments_dir / experiment_id / "state.json"),
+                    str(artifacts_dir / src_path.name)
+                ])
+
+                if warning:
+                    print(f"⚠️  {warning}")
+
+                if confirm:
+                    if not self._confirm_operation(f"Record artifact {src_path.name} to {experiment_id}?"):
+                        print("Operation cancelled.")
+                        return False
 
             dest_dir = paths.get_artifacts_path()
             dest_path = dest_dir / src_path.name
@@ -150,6 +183,10 @@ class ExperimentTracker:
 
             state["artifacts"].append(artifact_record)
             self._save_state(experiment_id, state)
+
+            # Auto-sync metadata
+            self._auto_sync_metadata(experiment_id)
+
             print(f"Recorded artifact: {src_path.name} to {experiment_id}")
             return True
         except Exception as e:
@@ -223,6 +260,100 @@ class ExperimentTracker:
     def _get_paths(self, experiment_id: str) -> ExperimentPaths:
         return ExperimentPaths(experiment_id, self.root_dir)
 
+    def _validate_experiment_context(self, experiment_id: str, operation: str) -> Tuple[bool, Optional[str]]:
+        """
+        Validate experiment context and return (is_valid, warning_message).
+
+        Args:
+            experiment_id: Experiment ID to validate
+            operation: Operation being performed (for context in warnings)
+
+        Returns:
+            Tuple of (is_valid, warning_message)
+        """
+        try:
+            state = self._load_state(experiment_id)
+            status = state.get("status", "UNKNOWN")
+            warning = None
+
+            # Check if experiment is in a state that might be unexpected
+            if status == "COMPLETED":
+                warning = f"Warning: Experiment {experiment_id} is COMPLETED. Are you sure you want to {operation}?"
+            elif status == "INCOMPLETE":
+                warning = f"Warning: Experiment {experiment_id} is INCOMPLETE. Consider resuming it first."
+
+            return True, warning
+        except FileNotFoundError:
+            return False, f"Experiment {experiment_id} not found."
+        except Exception as e:
+            return False, f"Error validating experiment: {e}"
+
+    def _show_operation_context(self, experiment_id: str, operation: str, files_to_update: list = None):
+        """
+        Display context before operation including files that will be updated.
+
+        Args:
+            experiment_id: Experiment ID
+            operation: Operation being performed
+            files_to_update: List of files that will be modified
+        """
+        try:
+            state = self._load_state(experiment_id)
+            paths = self._get_paths(experiment_id)
+
+            print(f"\n{'='*60}")
+            print(f"Operation: {operation}")
+            print(f"Experiment: {experiment_id}")
+            print(f"  Type: {state.get('type', 'unknown')}")
+            print(f"  Status: {state.get('status', 'unknown')}")
+            print(f"  Intention: {state.get('intention', 'N/A')}")
+
+            if files_to_update:
+                print(f"\nFiles to be updated:")
+                for file_path in files_to_update:
+                    print(f"  - {file_path}")
+
+            # Show recent activity
+            artifacts = state.get("artifacts", [])
+            if artifacts:
+                recent = artifacts[-3:]  # Last 3 artifacts
+                print(f"\nRecent artifacts: {len(recent)} shown")
+
+            print(f"{'='*60}\n")
+        except Exception as e:
+            print(f"Could not load context: {e}")
+
+    def _confirm_operation(self, message: str, default: bool = False) -> bool:
+        """
+        Interactive confirmation prompt.
+
+        Args:
+            message: Message to display
+            default: Default answer if user just presses Enter
+
+        Returns:
+            True if confirmed, False otherwise
+        """
+        default_str = "Y/n" if default else "y/N"
+        response = input(f"{message} [{default_str}]: ").strip().lower()
+
+        if not response:
+            return default
+
+        return response in ["y", "yes"]
+
+    def _auto_sync_metadata(self, experiment_id: str):
+        """
+        Auto-sync metadata after write operations.
+        Keeps state.json and .metadata/ files in sync.
+        """
+        try:
+            sync = MetadataSync(experiment_id, self.root_dir)
+            sync.sync_state_to_metadata()
+        except Exception as e:
+            # Don't fail the operation if sync fails, just log
+            print(f"Warning: Metadata sync failed: {e}")
+
     def _init_metadata(self, paths: ExperimentPaths, state: dict):
         # state.yml
         # Convert ISO timestamp to readable format for metadata files
@@ -262,12 +393,32 @@ class ExperimentTracker:
         with open(paths.get_context_file("components"), "w") as f:
             yaml.dump({"components": {}}, f)
 
-    def add_task(self, description: str, experiment_id: str = None) -> str | None:
+    def add_task(self, description: str, experiment_id: str = None, show_context: bool = True, confirm: bool = True) -> str | None:
         if experiment_id is None:
             experiment_id = self._get_current_experiment_id()
         if not experiment_id:
             print("No active experiment found.")
             return None
+
+        # Validate context
+        is_valid, warning = self._validate_experiment_context(experiment_id, "add task")
+        if not is_valid:
+            print(f"Error: {warning}")
+            return None
+
+        # Show context and confirm if requested
+        if show_context:
+            paths = self._get_paths(experiment_id)
+            task_file = paths.get_context_file("tasks")
+            self._show_operation_context(experiment_id, "Add Task", [str(task_file)])
+
+            if warning:
+                print(f"⚠️  {warning}")
+
+            if confirm:
+                if not self._confirm_operation(f"Add task to {experiment_id}?"):
+                    print("Operation cancelled.")
+                    return None
 
         paths = self._get_paths(experiment_id)
         task_file = paths.get_context_file("tasks")
@@ -286,6 +437,9 @@ class ExperimentTracker:
 
         with open(task_file, "w") as f:
             yaml.dump(data, f)
+
+        # Auto-sync metadata
+        self._auto_sync_metadata(experiment_id)
 
         print(f"Added task: {task_id} to {task_file}")
         return task_id
