@@ -1,0 +1,66 @@
+{% if few_shot_examples %}
+## Few-Shot Examples
+
+Here are some example analyses for reference:
+
+{% for example in few_shot_examples %}
+### Example {{ loop.index }}
+**Image:** {{ example.image_id }}
+**Description:** {{ example.description }}
+**Analysis:** {{ example.analysis }}
+
+{% endfor %}
+---
+{% endif %}
+
+Perform a complete analysis combining defect detection, input characteristics, and comparison (if applicable).
+
+## Task
+
+Provide a comprehensive analysis covering all aspects of the image(s) including defects, input characteristics, and any comparisons.
+
+{% if via_annotations %}
+## Annotations
+
+The user has provided manual annotations:
+{% for annotation in via_annotations %}
+- {{ annotation.label }}: {{ annotation.description }}
+{% endfor %}
+
+Please consider these annotations in your analysis.
+{% endif %}
+
+## Analysis Sections
+
+1. **Visual Artifacts** (What does the output look like?)
+   - Distortion types
+   - Key features
+   - Comparison with baseline
+
+2. **Input Characteristics** (What is unique about the source?)
+   - ROI coverage
+   - Contrast/lighting
+   - Geometry
+
+3. **Geometric/Data Analysis** (The Math)
+   - Mask topology
+   - Corner detection quality
+   - Transform matrix assessment
+
+4. **Hypothesis & Action Items**
+   - Theory on why issues occurred
+   - Proposed fixes
+   - Recommendations
+
+{% if initial_description %}
+## Initial Description
+
+The user provided this initial description:
+"{{ initial_description }}"
+
+Use this as context for your analysis.
+{% endif %}
+
+## Output Format
+
+Provide a comprehensive structured analysis covering all sections above.

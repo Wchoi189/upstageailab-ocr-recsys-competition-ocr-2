@@ -1,0 +1,22 @@
+name: vlm-tools
+
+services:
+  vlm-tools:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.vlm
+    image: vlm-tools
+    container_name: vlm-tools
+    volumes:
+      - ../agent_qms:/workspaces/agent_qms:cached
+      - ../experiment-tracker:/workspaces/experiment-tracker:cached
+      - ../artifacts:/workspaces/artifacts:cached
+    working_dir: /workspaces
+    environment:
+      - OPENROUTER_API_KEY=${OPENROUTER_API_KEY:-}
+      - SOLAR_PRO2_API_KEY=${SOLAR_PRO2_API_KEY:-}
+      - VLM_BACKEND=${VLM_BACKEND:-openrouter}
+      - MAX_IMAGE_RESOLUTION=${MAX_IMAGE_RESOLUTION:-2048}
+    command: sleep infinity
+    profiles:
+      - vlm
