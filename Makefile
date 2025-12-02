@@ -4,17 +4,17 @@
 # Changes: Reorganized structure, eliminated duplication, improved help system
 
 PORT ?= 8501
-FRONTEND_DIR := frontend
+FRONTEND_DIR := apps/frontend
 FRONTEND_HOST ?= 0.0.0.0
 FRONTEND_PORT ?= 5173
 BACKEND_HOST ?= 127.0.0.1
 BACKEND_PORT ?= 8000
-BACKEND_APP ?= services.playground_api.app:app
+BACKEND_APP ?= apps.backend.services.playground_api.app:app
 
 # UI Apps
 UI_APPS := command_builder evaluation_viewer inference preprocessing_viewer resource_monitor unified_app
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop stack-dev stack-stop fs stop-fs
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop stack-dev stack-stop fs stop-fs qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
 
 # ============================================================================
 # HELP
@@ -88,6 +88,18 @@ help:
 	@echo "  context-log-start   - Create context log (use LABEL=...)"
 	@echo "  context-log-summarize - Summarize context log (use LOG=...)"
 	@echo "  quick-fix-log       - Log quick fix (use TYPE= TITLE= ISSUE= FIX= FILES=)"
+	@echo ""
+	@echo "🧩 AgentQMS (Quality Management)"
+	@echo "  qms-plan            - Create implementation plan artifact"
+	@echo "  qms-bug             - Create bug report artifact"
+	@echo "  qms-validate        - Validate all QMS artifacts"
+	@echo "  qms-compliance      - Run full QMS compliance checks"
+	@echo "  qms-boundary        - Validate AgentQMS/project boundaries"
+	@echo "  qms-context         - Generate task-specific context bundle (use TASK=...)"
+	@echo "  qms-context-dev     - Load development context bundle"
+	@echo "  qms-context-docs    - Load documentation context bundle"
+	@echo "  qms-context-debug   - Load debugging context bundle"
+	@echo "  qms-context-plan    - Load planning context bundle"
 
 # ============================================================================
 # INSTALLATION
@@ -426,3 +438,37 @@ frontend-ci:
 console-ci:
 	npm run lint:console
 	npm run build:console
+
+# ============================================================================
+# AgentQMS – Quality Management Shortcuts
+# ============================================================================
+
+qms-plan:
+	@cd AgentQMS/interface && make create-plan NAME=$(if $(NAME),$(NAME),my-plan) TITLE="$(if $(TITLE),$(TITLE),Implementation Plan)"
+
+qms-bug:
+	@cd AgentQMS/interface && make create-bug-report NAME=$(if $(NAME),$(NAME),my-bug) TITLE="$(if $(TITLE),$(TITLE),Bug Report)"
+
+qms-validate:
+	@cd AgentQMS/interface && make validate
+
+qms-compliance:
+	@cd AgentQMS/interface && make compliance
+
+qms-boundary:
+	@cd AgentQMS/interface && make boundary
+
+qms-context:
+	@cd AgentQMS/interface && make context $(if $(TASK),TASK="$(TASK)",)
+
+qms-context-dev:
+	@cd AgentQMS/interface && make context-development
+
+qms-context-docs:
+	@cd AgentQMS/interface && make context-docs
+
+qms-context-debug:
+	@cd AgentQMS/interface && make context-debug
+
+qms-context-plan:
+	@cd AgentQMS/interface && make context-plan

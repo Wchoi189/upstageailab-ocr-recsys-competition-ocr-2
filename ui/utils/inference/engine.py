@@ -26,7 +26,7 @@ from .config_loader import ModelConfigBundle, PostprocessSettings, load_model_co
 from .dependencies import OCR_MODULES_AVAILABLE, torch
 from .model_loader import instantiate_model, load_checkpoint, load_state_dict
 from .postprocess import decode_polygons_with_head, fallback_postprocess
-from .preprocess import build_transform, preprocess_image
+from .preprocess import apply_optional_perspective_correction, build_transform, preprocess_image
 from .utils import generate_mock_predictions
 from .utils import get_available_checkpoints as scan_checkpoints
 
@@ -317,6 +317,18 @@ class InferenceEngine:
 
         if self._transform is None:
             self._transform = build_transform(bundle.preprocess)
+
+        # Optional perspective correction stage (guarded by config flag if present)
+        raw_config = bundle.raw_config
+        enable_persp = False
+        try:
+            # Prefer an explicit flag if available on the config
+            enable_persp = bool(getattr(raw_config, "enable_perspective_correction", False))
+        except Exception:
+            enable_persp = False
+
+        if enable_persp:
+            image = apply_optional_perspective_correction(image, enable_perspective_correction=True)
 
         try:
             batch = preprocess_image(image, self._transform)

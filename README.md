@@ -394,7 +394,7 @@ python run_ui.py inference
 │   ├── datasets/
 │   └── jsons/
 ├── docs/                # Documentation
-│   ├── agents/          # AI agent instructions
+│   ├── artifacts/       # AgentQMS implementation plans, audits, bug reports, assessments
 │   ├── maintainers/     # Maintainer documentation
 │   └── ...
 ├── ocr/                 # Core OCR modules
@@ -413,6 +413,42 @@ python run_ui.py inference
 │   └── evaluation_viewer.py
 └── tests/               # Unit and integration tests
 ```
+
+---
+
+## ✅ Quality Management with AgentQMS
+
+This project uses **AgentQMS** for structured quality management (implementation plans, audits, assessments, bug reports).
+
+- **Artifacts** live in `docs/artifacts/` and follow the naming convention
+  `YYYY-MM-DD_HHMM_[type]_name.md`.
+- **AI agents and contributors** should use the AgentQMS workflows instead of creating ad‑hoc docs.
+
+Common commands (run from the project root):
+
+```bash
+# Create an implementation plan
+make qms-plan NAME=my-plan TITLE="My Plan"
+
+# Create a bug report
+make qms-bug NAME=my-bug TITLE="Bug in inference overlay"
+
+# Run validation and compliance checks
+make qms-validate
+make qms-compliance
+
+# Load focused context bundles
+make qms-context TASK="investigate preprocessing bug"
+make qms-context-dev
+make qms-context-docs
+make qms-context-debug
+make qms-context-plan
+```
+
+For full details, see:
+
+- `AgentQMS/knowledge/agent/system.md`
+- `.agentqms/state/architecture.yaml`
 
 ---
 

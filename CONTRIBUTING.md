@@ -296,6 +296,33 @@ uv run pytest tests/ -m "not slow"
 - Add examples to `docs/examples/` if applicable
 - Update API reference if adding new modules
 
+### Quality Management Artifacts (AgentQMS)
+
+This repository uses **AgentQMS** to standardize implementation plans, audits, assessments, and bug reports.
+
+- Artifacts are stored under `docs/artifacts/` using the naming pattern
+  `YYYY-MM-DD_HHMM_[type]_name.md` (for example, `2025-11-19_1514_implementation_plan_frontend-functionality-completion.md`).
+- Do **not** create these documents manually; always use the AgentQMS workflows.
+
+From the project root you can use:
+
+```bash
+# Before significant multi-step work
+make qms-plan NAME=my-feature TITLE="Implement new preprocessing step"
+
+# When documenting a bug
+make qms-bug NAME=my-bug TITLE="Inference overlay misalignment"
+
+# Before opening or merging a PR that touches artifacts
+make qms-validate
+make qms-compliance
+```
+
+For more advanced workflows and context loading, see:
+
+- `AgentQMS/knowledge/agent/system.md`
+- `.agentqms/state/architecture.yaml`
+
 ### Writing Documentation
 
 - Use clear, concise language
