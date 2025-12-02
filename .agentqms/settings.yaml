@@ -101,4 +101,3 @@ tool_mappings:
     feedback: ../interface/cli_tools/feedback.py
     quality: ../interface/cli_tools/quality.py
 
-

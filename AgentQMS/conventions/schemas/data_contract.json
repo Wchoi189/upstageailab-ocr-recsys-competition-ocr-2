@@ -1,0 +1,32 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Data Contract",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "author": {
+            "type": "string"
+        },
+        "timestamp": {
+            "type": "string",
+            "description": "Timestamp with hour and minute in KST format (YYYY-MM-DD HH:MM KST)"
+        },
+        "branch": {
+            "type": "string",
+            "description": "Git branch name where artifact was created"
+        },
+        "status": {
+            "type": "string",
+            "enum": ["draft", "in-progress", "completed"]
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": ["title", "author", "timestamp", "branch", "status"]
+}

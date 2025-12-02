@@ -53,4 +53,3 @@ tiers:
       - path: .agentqms/state/architecture.yaml
         priority: medium
         description: System architecture for threat surface analysis
-

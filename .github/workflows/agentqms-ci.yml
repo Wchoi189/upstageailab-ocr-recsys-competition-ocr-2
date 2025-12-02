@@ -48,31 +48,31 @@ jobs:
         run: |
           cd AgentQMS/interface
           python ../agent_tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
-          
+
           # Check if JSON file is valid before parsing
           if [ ! -s /tmp/validation.json ] || ! jq empty /tmp/validation.json 2>/dev/null; then
             echo "⚠️ Warning: Invalid or empty JSON output. Errors:" >&2
             cat /tmp/validation.err >&2 || true
             echo '[]' > /tmp/validation.json
           fi
-          
+
           # Parse results
           TOTAL=$(jq 'length' /tmp/validation.json)
           VALID=$(jq '[.[] | select(.valid == true)] | length' /tmp/validation.json)
           INVALID=$((TOTAL - VALID))
-          
+
           # Calculate rate using awk (more portable than bc)
           if [ "$TOTAL" -gt 0 ]; then
             RATE=$(awk "BEGIN {printf \"%.1f\", $VALID * 100 / $TOTAL}")
           else
             RATE=100
           fi
-          
+
           echo "compliance_rate=$RATE" >> $GITHUB_OUTPUT
           echo "violations=$INVALID" >> $GITHUB_OUTPUT
-          
+
           echo "📊 Compliance: $RATE% ($VALID/$TOTAL valid)"
-          
+
           # Run human-readable validation
           make validate
         continue-on-error: false

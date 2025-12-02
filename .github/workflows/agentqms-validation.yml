@@ -44,4 +44,3 @@ jobs:
         run: |
           PYTHONPATH=. python AgentQMS/agent_tools/documentation/validate_links.py AgentQMS/knowledge
 
-

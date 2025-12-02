@@ -106,8 +106,8 @@ template: |
 
   ### Decision
   - **Status**: Pending
-  - **Date**: 
-  - **Approved By**: 
+  - **Date**:
+  - **Approved By**:
 
   ---
 
@@ -118,4 +118,3 @@ template_variables:
   requester: "AI Agent"
   approver: "[Pending Assignment]"
   priority: "Medium"
-

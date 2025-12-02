@@ -6,7 +6,7 @@
 name: audit
 version: "1.0"
 description: |
-  Framework audits, compliance checks, and quality evaluations with 
+  Framework audits, compliance checks, and quality evaluations with
   automated implementation plan generation via GitHub Actions.
 scope: project
 
@@ -54,8 +54,8 @@ validation:
 template: |
   # Audit: {title}
 
-  **Audit Date**: {date}  
-  **Category**: {category}  
+  **Audit Date**: {date}
+  **Category**: {category}
   **Status**: {status}
 
   ---
@@ -64,9 +64,9 @@ template: |
 
   [Provide high-level overview of the audit scope, findings, and recommendations.]
 
-  **Audit Scope**: [Describe what was audited]  
-  **Compliance Status**: [Overall status]  
-  **Critical Issues**: [Number]  
+  **Audit Scope**: [Describe what was audited]
+  **Compliance Status**: [Overall status]
+  **Critical Issues**: [Number]
   **High Priority Issues**: [Number]
 
   ---
@@ -75,7 +75,7 @@ template: |
 
   ### 🔴 CRITICAL: [Finding Title]
 
-  **Severity**: Critical  
+  **Severity**: Critical
   **Location**: [Component/File]
 
   **Issue**:
@@ -91,7 +91,7 @@ template: |
 
   ### 🟡 HIGH: [Finding Title]
 
-  **Severity**: High  
+  **Severity**: High
   **Location**: [Component/File]
 
   **Issue**:
@@ -107,7 +107,7 @@ template: |
 
   ### 🟢 MEDIUM: [Finding Title]
 
-  **Severity**: Medium  
+  **Severity**: Medium
   **Location**: [Component/File]
 
   **Issue**:
@@ -163,7 +163,7 @@ template: |
 
   ---
 
-  **Last Updated**: {date}  
+  **Last Updated**: {date}
   **Auditor**: {auditor}
 
 template_variables:

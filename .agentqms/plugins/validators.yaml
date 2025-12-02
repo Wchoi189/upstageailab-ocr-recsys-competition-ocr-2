@@ -55,4 +55,3 @@ rules:
 # Built-in validators to disable (if needed)
 # disabled_validators:
 #   - timestamp_format
-
