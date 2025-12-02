@@ -11,21 +11,11 @@
     "enabled": false
   },
   "tools": {
-    "approval": {
-      "mode": "auto-edit"
-    },
-    "allowed": [
-      "run_terminal_cmd",
-      "grep_search",
-      "list_dir",
-      "read_file",
-      "search_replace",
-      "create_file"
-    ]
+    "approvalMode": "yolo"
   },
   "workspace": {
     "includeDirectories": [
-      "/workspaces/agent_qms"
+      "/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
     ],
     "excludePatterns": [
       "**/node_modules/**",
@@ -36,7 +26,21 @@
       "**/.cursor/**",
       "**/.github/**",
       "**/*.pyc",
-      "**/__pycache__/**"
+      "**/__pycache__/**",
+      "**/logs/**",
+      "**/outputs/**",
+      "**/data/**",
+      "**/multirun/**",
+      "**/results/**",
+      "**/wandb/**",
+      "**/docs/_deprecated/**",
+      "**/DEPRECATED/**",
+      "**/_archive/**",
+      "**/_*/**",
+      "**/raw_metrics*.json",
+      "**/*.jsonl",
+      "**/multirun.yaml",
+      "**/test_runs/**"
     ]
   },
   "agentqms": {
@@ -58,9 +62,27 @@
       ]
     }
   },
+  "context": {
+    "fileFiltering": {
+      "respectGitIgnore": true,
+      "respectGeminiIgnore": true,
+      "includePatterns": [
+        "**/*.py",
+        "**/*.md",
+        "**/requirements.txt",
+        "**/pyproject.toml"
+      ],
+      "excludePatterns": [
+
+      ]
+    },
+    "includeDirectories": [],
+    "loadMemoryFromIncludeDirectories": false,
+    "discoveryMaxDirs": 15,
+    "importFormat": "tree"
+  },
   "model": {
     "name": "qwen/qwen3-coder"
-    // "name": "qwen2.5-coder-32b-instruct",
   },
   "$version": 2
 }
