@@ -297,9 +297,10 @@ class ArtifactValidator:
                 results.extend(self.validate_directory(subdirectory))
 
         # Add bundle validation results if available
-        if CONTEXT_BUNDLES_AVAILABLE:
-            bundle_results = self.validate_bundles()
-            results.extend(bundle_results)
+        # REVIEW: Bundles are not artifacts, so they always appear as "invalid files" in compliance reports.
+        # if CONTEXT_BUNDLES_AVAILABLE:
+        #     bundle_results = self.validate_bundles()
+        #     results.extend(bundle_results)
 
         return results
 
