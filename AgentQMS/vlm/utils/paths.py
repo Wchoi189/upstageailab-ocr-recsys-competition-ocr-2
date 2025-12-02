@@ -98,7 +98,7 @@ class VLMPathConfig:
     def from_dict(cls, config: dict[str, Any]) -> "VLMPathConfig":
         """Create VLMPathConfig from dictionary configuration."""
         project_root = Path(config.get("project_root", PROJECT_ROOT))
-        vlm_module_dir = project_root / "agent_qms" / "vlm"
+        vlm_module_dir = project_root / "AgentQMS" / "vlm"
 
         return cls(
             project_root=project_root,
@@ -162,7 +162,7 @@ class VLMPathResolver:
     def _create_default_config(self) -> VLMPathConfig:
         """Create default path configuration for VLM module."""
         project_root = PROJECT_ROOT
-        vlm_module_dir = project_root / "agent_qms" / "vlm"
+        vlm_module_dir = project_root / "AgentQMS" / "vlm"
 
         return VLMPathConfig(
             project_root=project_root,

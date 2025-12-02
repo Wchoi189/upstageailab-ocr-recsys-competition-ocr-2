@@ -11,9 +11,9 @@ import yaml
 from dotenv import dotenv_values
 from pydantic import BaseModel, Field
 
-from agent_qms.vlm.utils.paths import PROJECT_ROOT
+from AgentQMS.vlm.utils.paths import PROJECT_ROOT
 
-VLM_DIR = PROJECT_ROOT / "agent_qms" / "vlm"
+VLM_DIR = PROJECT_ROOT / "AgentQMS" / "vlm"
 CONFIG_PATH = VLM_DIR / "config.yaml"
 
 
@@ -56,7 +56,7 @@ class BackendDefaults(BaseModel):
 
 
 class EnvSettings(BaseModel):
-    search_paths: List[str] = Field(default_factory=lambda: ["agent_qms/vlm", "."])
+    search_paths: List[str] = Field(default_factory=lambda: ["AgentQMS/vlm", "."])
     files: List[str] = Field(default_factory=lambda: [".env", ".env.local"])
     priority: str = "local"
 

@@ -6,10 +6,10 @@ import tempfile
 from pathlib import Path
 from typing import Any
 
-from agent_qms.vlm.backends.base import BaseVLMBackend
-from agent_qms.vlm.core.config import get_config, resolve_env_value
-from agent_qms.vlm.core.contracts import AnalysisMode, BackendConfig, ProcessedImage
-from agent_qms.vlm.core.interfaces import BackendError
+from AgentQMS.vlm.backends.base import BaseVLMBackend
+from AgentQMS.vlm.core.config import get_config, resolve_env_value
+from AgentQMS.vlm.core.contracts import AnalysisMode, BackendConfig, ProcessedImage
+from AgentQMS.vlm.core.interfaces import BackendError
 
 
 class CLIQwenBackend(BaseVLMBackend):
@@ -23,8 +23,14 @@ class CLIQwenBackend(BaseVLMBackend):
         """
         super().__init__(config)
         settings = get_config().backends.cli
+
+        # Resolve CLI command, allowing env override
         command_override = resolve_env_value(settings.command_env)
         self.qwen_command = command_override or settings.default_command
+
+        # Resolve model id for the CLI; allow per-machine override via QWEN_MODEL
+        self.model = resolve_env_value("QWEN_MODEL", getattr(settings, "model", None))
+
         self._check_qwen_available()
 
     @property
@@ -95,6 +101,10 @@ class CLIQwenBackend(BaseVLMBackend):
                 "--prompt-file", str(prompt_file_path),
                 "--mode", mode.value,
             ]
+
+            # Optionally pass explicit model id to the CLI
+            if self.model:
+                cmd.extend(["--model", self.model])
 
             # Execute command
             result = subprocess.run(

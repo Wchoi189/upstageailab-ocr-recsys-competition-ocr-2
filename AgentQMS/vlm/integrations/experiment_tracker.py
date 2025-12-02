@@ -6,10 +6,10 @@ Bridges VLM tools with the experiment-tracker module.
 from pathlib import Path
 from typing import List, Optional
 
-from agent_qms.vlm.core.contracts import AnalysisRequest, AnalysisResult
-from agent_qms.vlm.core.client import VLMClient
-from agent_qms.vlm.integrations.reports import ReportIntegrator
-from agent_qms.vlm.utils.paths import get_path_resolver
+from AgentQMS.vlm.core.contracts import AnalysisRequest, AnalysisResult
+from AgentQMS.vlm.core.client import VLMClient
+from AgentQMS.vlm.integrations.reports import ReportIntegrator
+from AgentQMS.vlm.utils.paths import get_path_resolver
 
 
 class ExperimentTrackerIntegration:
@@ -39,7 +39,7 @@ class ExperimentTrackerIntegration:
         Returns:
             List of analysis results
         """
-        from agent_qms.vlm.core.contracts import AnalysisMode
+        from AgentQMS.vlm.core.contracts import AnalysisMode
 
         # Create analysis requests
         requests = []

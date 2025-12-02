@@ -14,8 +14,8 @@ except ImportError:
     Environment = None
     FileSystemLoader = None
 
-from agent_qms.vlm.core.contracts import AnalysisMode
-from agent_qms.vlm.utils.paths import get_path_resolver
+from AgentQMS.vlm.core.contracts import AnalysisMode
+from AgentQMS.vlm.utils.paths import get_path_resolver
 
 
 class PromptManager:

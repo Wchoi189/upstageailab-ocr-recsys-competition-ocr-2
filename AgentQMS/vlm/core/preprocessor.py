@@ -10,9 +10,9 @@ from typing import List, Optional
 
 from PIL import Image
 
-from agent_qms.vlm.core.config import get_config
-from agent_qms.vlm.core.contracts import ImageFormat, ProcessedImage
-from agent_qms.vlm.core.interfaces import ImagePreprocessor, PreprocessingError
+from AgentQMS.vlm.core.config import get_config
+from AgentQMS.vlm.core.contracts import ImageFormat, ProcessedImage
+from AgentQMS.vlm.core.interfaces import ImagePreprocessor, PreprocessingError
 
 
 class VLMImagePreprocessor(ImagePreprocessor):

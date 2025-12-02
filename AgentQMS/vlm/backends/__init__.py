@@ -1,9 +1,9 @@
 """VLM backend implementations."""
 
-from agent_qms.vlm.backends.base import BaseVLMBackend
-from agent_qms.vlm.backends.cli_qwen import CLIQwenBackend
-from agent_qms.vlm.backends.openrouter import OpenRouterBackend
-from agent_qms.vlm.backends.solar_pro2 import SolarPro2Backend
+from AgentQMS.vlm.backends.base import BaseVLMBackend
+from AgentQMS.vlm.backends.cli_qwen import CLIQwenBackend
+from AgentQMS.vlm.backends.openrouter import OpenRouterBackend
+from AgentQMS.vlm.backends.solar_pro2 import SolarPro2Backend
 
 __all__ = [
     "BaseVLMBackend",
@@ -28,7 +28,7 @@ def create_backend(backend_type: str, config: dict | None = None) -> BaseVLMBack
         ValueError: If backend type is invalid
         BackendError: If backend cannot be created
     """
-    from agent_qms.vlm.core.contracts import BackendConfig
+    from AgentQMS.vlm.core.contracts import BackendConfig
 
     if config is None:
         config = {}

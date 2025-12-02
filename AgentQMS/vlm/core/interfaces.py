@@ -7,7 +7,7 @@ from abc import ABC, abstractmethod
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from agent_qms.vlm.core.contracts import AnalysisMode, AnalysisResult, BackendConfig, ProcessedImage
+from AgentQMS.vlm.core.contracts import AnalysisMode, AnalysisResult, BackendConfig, ProcessedImage
 
 
 class VLMBackend(ABC):

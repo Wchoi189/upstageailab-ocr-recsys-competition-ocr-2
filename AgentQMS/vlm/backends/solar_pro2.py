@@ -8,10 +8,10 @@ try:
 except ImportError:
     httpx = None
 
-from agent_qms.vlm.backends.base import BaseVLMBackend
-from agent_qms.vlm.core.config import get_config, resolve_env_value
-from agent_qms.vlm.core.contracts import AnalysisMode, BackendConfig, ProcessedImage
-from agent_qms.vlm.core.interfaces import BackendError
+from AgentQMS.vlm.backends.base import BaseVLMBackend
+from AgentQMS.vlm.core.config import get_config, resolve_env_value
+from AgentQMS.vlm.core.contracts import AnalysisMode, BackendConfig, ProcessedImage
+from AgentQMS.vlm.core.interfaces import BackendError
 
 
 class SolarPro2Backend(BaseVLMBackend):

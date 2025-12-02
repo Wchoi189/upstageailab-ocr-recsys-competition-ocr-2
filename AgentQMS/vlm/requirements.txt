@@ -5,7 +5,7 @@
 #   uv sync
 #
 # To run VLM commands, use:
-#   uv run python -m agent_qms.vlm.cli.analyze_image_defects ...
+#   uv run python -m AgentQMS.vlm.cli.analyze_image_defects ...
 #
 # See README.md for updated installation and usage instructions.
 

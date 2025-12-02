@@ -3,8 +3,8 @@
 Provides common functionality for all VLM backends.
 """
 
-from agent_qms.vlm.core.contracts import BackendConfig
-from agent_qms.vlm.core.interfaces import BackendError, VLMBackend
+from AgentQMS.vlm.core.contracts import BackendConfig
+from AgentQMS.vlm.core.interfaces import BackendError, VLMBackend
 
 
 class BaseVLMBackend(VLMBackend):

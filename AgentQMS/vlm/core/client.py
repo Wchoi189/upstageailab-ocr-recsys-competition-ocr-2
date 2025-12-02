@@ -10,19 +10,19 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from agent_qms.vlm.backends import create_backend
-from agent_qms.vlm.core.config import get_config, resolve_env_value
-from agent_qms.vlm.core.contracts import (
+from AgentQMS.vlm.backends import create_backend
+from AgentQMS.vlm.core.config import get_config, resolve_env_value
+from AgentQMS.vlm.core.contracts import (
     AnalysisMode,
     AnalysisRequest,
     AnalysisResult,
     ProcessedImage,
 )
-from agent_qms.vlm.core.interfaces import BackendError, VLMBackend
-from agent_qms.vlm.core.preprocessor import VLMImagePreprocessor
-from agent_qms.vlm.integrations.via import VIAIntegration
-from agent_qms.vlm.prompts.manager import PromptManager
-from agent_qms.vlm.utils.paths import get_path_resolver
+from AgentQMS.vlm.core.interfaces import BackendError, VLMBackend
+from AgentQMS.vlm.core.preprocessor import VLMImagePreprocessor
+from AgentQMS.vlm.integrations.via import VIAIntegration
+from AgentQMS.vlm.prompts.manager import PromptManager
+from AgentQMS.vlm.utils.paths import get_path_resolver
 
 
 class VLMClient:

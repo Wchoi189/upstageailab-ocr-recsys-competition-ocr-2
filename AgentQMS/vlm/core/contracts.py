@@ -9,7 +9,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field, field_validator
 
-from agent_qms.vlm.core.config import get_config
+from AgentQMS.vlm.core.config import get_config
 
 _CONFIG_CACHE = get_config()
 _IMAGE_MAX_DIMENSION = _CONFIG_CACHE.image.max_dimension

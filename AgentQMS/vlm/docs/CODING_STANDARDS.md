@@ -88,7 +88,7 @@ from pathlib import Path
 
 from pydantic import BaseModel
 
-from agent_qms.vlm.core.contracts import ImageData
+from AgentQMS.vlm.core.contracts import ImageData
 ```
 
 ## Naming Conventions

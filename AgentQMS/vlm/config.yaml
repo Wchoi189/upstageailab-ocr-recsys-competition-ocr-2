@@ -1,11 +1,11 @@
 # Centralized configuration for VLM tools
 
 backends:
-  default: "solar_pro2"
+  default: "cli"
   priority:
+    - "cli"
     - "openrouter"
     - "solar_pro2"
-    - "cli"
 
   openrouter:
     base_url: "https://openrouter.ai/api/v1"
@@ -18,8 +18,9 @@ backends:
     api_key_env: "SOLAR_PRO2_API_KEY"
 
   cli:
-    default_command: "qwen-vl"
+    default_command: "qwen"
     command_env: "QWEN_VLM_COMMAND"
+    model: "qwen3-vl-plus-2025-09-23"
 
 image:
   max_resolution: 2048
@@ -37,7 +38,7 @@ backend_defaults:
 
 env:
   search_paths:
-    - "agent_qms/vlm"
+    - "AgentQMS/vlm"
     - "."
   files:
     - ".env"

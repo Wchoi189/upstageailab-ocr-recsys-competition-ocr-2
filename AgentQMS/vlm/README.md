@@ -29,18 +29,18 @@ export SOLAR_PRO2_API_KEY="your-key-here"
 
 ```bash
 # Analyze a single image for defects
-uv run python -m agent_qms.vlm.cli.analyze_image_defects \
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
   --image path/to/image.jpg \
   --mode defect
 
 # Analyze with VIA annotations
-uv run python -m agent_qms.vlm.cli.analyze_image_defects \
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
   --image path/to/image.jpg \
   --mode defect \
   --via-annotations path/to/annotations.json
 
 # Auto-populate incident report
-uv run python -m agent_qms.vlm.cli.analyze_image_defects \
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
   --image path/to/image.jpg \
   --mode defect \
   --auto-populate \
@@ -49,7 +49,7 @@ uv run python -m agent_qms.vlm.cli.analyze_image_defects \
 
 ## Configuration
 
-Centralized configuration lives in `agent_qms/vlm/config.yaml`. It defines:
+Centralized configuration lives in `AgentQMS/vlm/config.yaml`. It defines:
 
 - Backend priority and defaults (`backends.*`)
 - API endpoints and model names per backend
@@ -75,14 +75,14 @@ image:
 
 API keys and machine-specific overrides are supplied via `.env` files. Because dotfiles are filtered in this repository, two templates are provided:
 
-- `agent_qms/vlm/env.example` – copy to `.env` for shared settings
-- `agent_qms/vlm/env.local.example` – copy to `.env.local` for machine-specific overrides
+- `AgentQMS/vlm/env.example` – copy to `.env` for shared settings
+- `AgentQMS/vlm/env.local.example` – copy to `.env.local` for machine-specific overrides
 
 Loading order (later entries override earlier ones):
 
-1. `agent_qms/vlm/.env`
+1. `AgentQMS/vlm/.env`
 2. Project root `.env`
-3. `agent_qms/vlm/.env.local`
+3. `AgentQMS/vlm/.env.local`
 4. Project root `.env.local`
 5. OS environment variables
 
@@ -119,7 +119,7 @@ The module supports multiple VLM backends with automatic fallback:
 The VLM tools integrate seamlessly with the experiment-tracker module:
 
 ```python
-from agent_qms.vlm.integrations.experiment_tracker import ExperimentTrackerIntegration
+from AgentQMS.vlm.integrations.experiment_tracker import ExperimentTrackerIntegration
 
 integration = ExperimentTrackerIntegration()
 results = integration.analyze_experiment_artifacts(

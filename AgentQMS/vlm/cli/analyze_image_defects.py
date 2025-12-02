@@ -10,11 +10,11 @@ import sys
 from pathlib import Path
 from typing import Any, Dict
 
-from agent_qms.vlm.core.client import VLMClient
-from agent_qms.vlm.core.config import get_config
-from agent_qms.vlm.core.contracts import AnalysisMode, AnalysisRequest
-from agent_qms.vlm.core.template import ImageAnalysisTemplate
-from agent_qms.vlm.integrations.reports import ReportIntegrator
+from AgentQMS.vlm.core.client import VLMClient
+from AgentQMS.vlm.core.config import get_config
+from AgentQMS.vlm.core.contracts import AnalysisMode, AnalysisRequest
+from AgentQMS.vlm.core.template import ImageAnalysisTemplate
+from AgentQMS.vlm.integrations.reports import ReportIntegrator
 
 
 def main():

@@ -8,8 +8,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from agent_qms.vlm.core.contracts import AnalysisResult, VIAAnnotation
-from agent_qms.vlm.utils.paths import get_path_resolver
+from AgentQMS.vlm.core.contracts import AnalysisResult, VIAAnnotation
+from AgentQMS.vlm.utils.paths import get_path_resolver
 
 
 class ImageAnalysisTemplate:

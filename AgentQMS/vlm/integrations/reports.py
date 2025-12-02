@@ -7,8 +7,8 @@ import re
 from pathlib import Path
 from typing import List, Optional
 
-from agent_qms.vlm.core.contracts import AnalysisResult
-from agent_qms.vlm.core.interfaces import IntegrationError, ReportIntegrator
+from AgentQMS.vlm.core.contracts import AnalysisResult
+from AgentQMS.vlm.core.interfaces import IntegrationError, ReportIntegrator
 
 
 class ReportIntegrator:

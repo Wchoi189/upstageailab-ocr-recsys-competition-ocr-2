@@ -9,9 +9,9 @@ from typing import Any, Dict, List, Optional
 
 from PIL import Image, ImageDraw, ImageFont
 
-from agent_qms.vlm.core.contracts import VIAAnnotation, VIARegion
-from agent_qms.vlm.core.interfaces import IntegrationError
-from agent_qms.vlm.utils.paths import get_path_resolver
+from AgentQMS.vlm.core.contracts import VIAAnnotation, VIARegion
+from AgentQMS.vlm.core.interfaces import IntegrationError
+from AgentQMS.vlm.utils.paths import get_path_resolver
 
 
 class VIAIntegration:
