@@ -52,7 +52,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 - **Issues Identified**:
   - **VERBOSE**: Contains operational commands (lines 154-231) that belong in references
   - **MISSING**: No explicit section on data contracts (`docs/pipeline/data_contracts.md`)
-  - **MISSING**: No explicit section on API references (`docs/api/pipeline-contract.md`)
+  - **MISSING**: No explicit section on API references (`docs/backend/api/pipeline-contract.md`)
   - **MISSING**: Coding standards buried in protocols (should be prominent)
   - **MISSING**: No periodic feedback/status update mechanism
   - **ORGANIZATION**: Critical rules mixed with operational details
@@ -95,7 +95,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 
 **Evidence**:
 - `docs/pipeline/data_contracts.md` (698+ lines) - Critical for preventing shape errors
-- `docs/api/pipeline-contract.md` - API contract documentation
+- `docs/backend/api/pipeline-contract.md` - API contract documentation
 - Neither mentioned in `.cursor/rules/` or `AGENT_ENTRY.md`
 - Only found via `docs/agents/index.md` → `references/` → indirect
 
@@ -193,7 +193,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 
 **Action**: Add prominent sections to entry points:
 - **Data Contracts**: `docs/pipeline/data_contracts.md` - REQUIRED before modifying pipeline
-- **API References**: `docs/api/pipeline-contract.md` - REQUIRED before API changes
+- **API References**: `docs/backend/api/pipeline-contract.md` - REQUIRED before API changes
 - **Coding Standards**: Quick reference in entry points, full details in protocols
 
 **Implementation**:
@@ -202,7 +202,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 
 **MUST READ**:
 - Data Contracts: `docs/pipeline/data_contracts.md` (prevents shape errors)
-- API Contracts: `docs/api/pipeline-contract.md` (prevents API violations)
+- API Contracts: `docs/backend/api/pipeline-contract.md` (prevents API violations)
 - Coding Standards: `docs/agents/protocols/development.md#coding-standards`
 ```
 

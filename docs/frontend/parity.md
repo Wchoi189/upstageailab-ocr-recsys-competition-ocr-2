@@ -19,22 +19,22 @@ This document captures the current state of the Streamlit-based OCR tooling (Com
 
 | Legacy Feature | Streamlit Location | Unified/SPA Target | Status | Notes & Dependencies |
 | --- | --- | --- | --- | --- |
-| Metadata-aware training command builder (schema-driven forms) | `ui/apps/command_builder/components/training.py` + `schemas/command_builder_train.yaml` | SPA “Command Console” module (Track B) | ❌ | Requires schema loader service + command rendering API; depends on `ui.utils.command.CommandBuilder` and `ui.utils.ui_generator`. |
+| Metadata-aware training command builder (schema-driven forms) | `ui/apps/command_builder/components/training.py` + `schemas/command_builder_train.yaml` | SPA "Command Console" module (Track B) | ❌ | Requires schema loader service + command rendering API; depends on `ui.utils.command.CommandBuilder` and `ui.utils.ui_generator`. |
 | Validation + suggestions (Use case recommendations, overrides, validation errors) | `components/training.py`, `components/suggestions.py` | SPA sidebar recommendation panel | ❌ | Must surface `UseCaseRecommendationService` via backend endpoint so frontend stays stateless. |
 | Execution panel (run command, copy, download) | `components/execution.py` | SPA command drawer + log console | ❌ | Needs API wrapper over CLI runner; align with Albumentations-style console. |
 | Test command builder | `components/test.py` | SPA command console (test tab) | ❌ | Shares schema infra; blocked until service layer exposes schema metadata. |
 | Predict command builder | `components/predict.py` | SPA inference command builder | ❌ | Same dependencies as above; future UI should reuse inference preview modules. |
 
-## Evaluation Viewer vs. Unified App “Comparison”
+## Evaluation Viewer vs. Unified App "Comparison"
 
 | Legacy Feature | Streamlit Location | Unified/SPA Target | Status | Notes & Dependencies |
 | --- | --- | --- | --- | --- |
 | Single run analysis (load submission, metrics, visualization) | `ui/evaluation/single_run.py` | Unified App `3_📊_Comparison.py` → `render_metrics_display` | ⚠️ | Base scaffolding exists but lacks file-system-backed loaders + charts parity. Needs dataset services + chart components. |
-| Model comparison (dual CSV upload, stats, diff, visual gallery) | `ui/evaluation/comparison.py` | Future SPA “Comparison Studio” route | ❌ | Need multi-file upload component + before/after canvas similar to Upstage Document OCR preview. |
+| Model comparison (dual CSV upload, stats, diff, visual gallery) | `ui/evaluation/comparison.py` | Future SPA "Comparison Studio" route | ❌ | Need multi-file upload component + before/after canvas similar to Upstage Document OCR preview. |
 | Image gallery for qualitative review | `ui/evaluation/gallery.py` | SPA Gallery subview | ❌ | Requires responsive masonry grid + worker-powered lazy loading. |
 | Ground-truth overlays | `display_visual_comparison` in `ui/visualization` | SPA overlay layer | ❌ | Dependent on layout recognition TODO plus worker-friendly polygon renderer. |
 
-## Inference App vs. Unified App “Inference”
+## Inference App vs. Unified App "Inference"
 
 | Legacy Feature | Streamlit Location | Unified/SPA Target | Status | Notes & Dependencies |
 | --- | --- | --- | --- | --- |
@@ -59,5 +59,5 @@ This document captures the current state of the Streamlit-based OCR tooling (Com
 
 ## Next Steps
 
-1. Finalize service contracts (Track A item 2) so frontends can operate without Streamlit session state.
-2. Feed this matrix into the ADR and design system work (Track B), ensuring every missing capability has a UI placeholder or redesign note.
+1. Finalize service contracts (Track A item 2) so frontends can operate without Streamlit session state.
+2. Feed this matrix into the ADR and design system work (Track B), ensuring every missing capability has a UI placeholder or redesign note.

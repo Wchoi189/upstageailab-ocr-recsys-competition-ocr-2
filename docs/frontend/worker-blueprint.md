@@ -8,8 +8,8 @@ status: "draft"
 ## Goals
 
 - Exploit the two-day unlimited web-worker allowance for spike builds.
-- Guarantee <100 ms slider feedback for lightweight transforms and <400 ms for client-side rembg.
-- Provide automatic routing to backend services when devices are saturated (>8 MP images, throttled CPUs).
+- Guarantee <100 ms slider feedback for lightweight transforms and <400 ms for client-side rembg.
+- Provide automatic routing to backend services when devices are saturated (>8 MP images, throttled CPUs).
 
 ## Architecture
 
@@ -19,14 +19,14 @@ status: "draft"
    - `job::batch` – long-running preprocessing/inference jobs forwarded to FastAPI + background queue.
 2. **Pool Manager**
    - Default pool size = `min(available_cores - 1, 6)`.
-   - Dynamic scaling: workers spin up lazily; after 60 s idle they terminate.
+   - Dynamic scaling: workers spin up lazily; after 60 s idle they terminate.
    - Queues implemented via `PriorityQueue` (user interactions priority=1, background tasks priority=5).
 3. **RPC Interface**
    - Comlink wrappers with message envelope `{taskId, type, payload, traceId}`.
    - Cancellation tokens: if a slider emits a newer task with same `controlId`, previous task is cancelled.
 4. **rembg Routing**
    - First attempt: ONNX.js model (~3 MB) running in dedicated worker with WASM SIMD.
-   - If image > 2048px on longer side or worker latency > 400 ms, fall back to `/api/inference/preview` with `routed_backend="server-rembg"`.
+   - If image > 2048px on longer side or worker latency > 400 ms, fall back to `/api/inference/preview` with `routed_backend="server-rembg"`.
 
 ## Telemetry
 
@@ -42,7 +42,7 @@ status: "draft"
 
 - **Worker crash**: auto respawn + toast message referencing affected control.
 - **SharedArrayBuffer restrictions**: fallback to single-threaded path (flag surfaces in telemetry).
-- **rembg memory pressure**: release ONNX session when queue idle for >30 s.
+- **rembg memory pressure**: release ONNX session when queue idle for >30 s.
 
 ## Implementation Steps
 
@@ -55,5 +55,5 @@ status: "draft"
 
 ## Stop Conditions
 
-- Pause development if browser metrics show consistent >400 ms latency even after throttling – escalate to GPU-backed rendering.
+- Pause development if browser metrics show consistent >400 ms latency even after throttling – escalate to GPU-backed rendering.
 - Suspend rembg client path if ONNX bundle destabilizes worker memory.

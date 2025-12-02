@@ -10,7 +10,7 @@ status: "draft"
 | Scenario | Description | Notes |
 | --- | --- | --- |
 | `command-builder.spec.ts` | Fill training form, assert `/api/commands/build` response, diff CLI output. | Runs against SPA dev server with mock FastAPI responses. |
-| `preprocessing.spec.ts` | Upload sample image, spam sliders, ensure worker HUD stays <5 queued tasks and preview canvas updates within 100 ms budget. | Uses manifest from `scripts/datasets/sample_images.py`. |
+| `preprocessing.spec.ts` | Upload sample image, spam sliders, ensure worker HUD stays <5 queued tasks and preview canvas updates within 100 ms budget. | Uses manifest from `scripts/datasets/sample_images.py`. |
 | `inference.spec.ts` | Select checkpoint, toggle rembg, validate fallback call to `/api/pipelines/fallback`. | Mocks pipeline endpoint latency to verify routing. |
 | `comparison.spec.ts` | Upload dual CSVs, check metrics table + gallery renders. | Blocks until evaluation endpoint returns `status=accepted`. |
 

@@ -47,13 +47,13 @@ This system defines the initial component/visual language for the Albumentations
 | Component | Description | Notes |
 | --- | --- | --- |
 | `ImageUploader` | Drag-drop + paste support, previews, metadata pill (resolution, size). | Accepts rembg toggle, dataset quick-pick actions. |
-| `SliderField` | Debounced slider with `<100 ms` response requirement. | Emits `onCommit` + `onLiveChange` events for workers. |
+| `SliderField` | Debounced slider with `<100 ms` response requirement. | Emits `onCommit` + `onLiveChange` events for workers. |
 | `SegmentedControl` | Mode selectors (single/batch). | Keyboard navigable. |
 | `MetricCard` | Displays value, delta, sparkline. | Used for KPIs (hmean, latency). |
 | `CanvasDiff` | WebGL canvas showing before/after, polygon overlays, heatmaps. | Must support streaming frames + zoom/pan gestures. |
 | `CommandPreview` | Syntax-highlighted CLI string with copy/download buttons. | Pulls metadata from `/api/commands/build`. |
 | `WorkerStatusList` | Table of active worker tasks, backend routes, durations. | Feeds from worker blueprint instrumentation. |
-| `ComparisonTimeline` | Horizontal timeline of configurations, similar to Upstage “Document OCR” timeline. | Shows parameter sets + results badges. |
+| `ComparisonTimeline` | Horizontal timeline of configurations, similar to Upstage "Document OCR" timeline. | Shows parameter sets + results badges. |
 
 ## Accessibility & Responsiveness
 

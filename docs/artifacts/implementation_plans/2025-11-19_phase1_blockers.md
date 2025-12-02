@@ -77,7 +77,7 @@ The `runRembgLite` function in `frontend/workers/transforms.ts` (lines 89-93) is
 3. **WASM Setup Required**
    - **Required:** WASM SIMD support for performance
    - **Current Status:** Not configured
-   - **Documentation:** See `docs/ui/worker-blueprint.md` lines 28-29
+   - **Documentation:** See `docs/frontend/worker-blueprint.md` lines 28-29
 
 ### Implementation Requirements
 
@@ -117,7 +117,7 @@ export const runRembgLite: TransformHandler = async (task, ctx) => {
 
 ### Fallback Strategy
 
-According to `docs/ui/worker-blueprint.md`:
+According to `docs/frontend/worker-blueprint.md`:
 - If image > 2048px or worker latency > 400ms
 - Fall back to `/api/pipelines/fallback` with `routed_backend="server-rembg"`
 - This fallback is also blocked (see Task 1.3 below)
@@ -347,7 +347,7 @@ If blockers are resolved:
 ## References
 
 - Implementation Plan: `artifacts/implementation_plans/2025-11-19_1514_frontend-functionality-completion.md`
-- Worker Blueprint: `docs/ui/worker-blueprint.md`
+- Worker Blueprint: `docs/frontend/worker-blueprint.md`
 - Rembg Integration: `docs/ai_handbook/08_planning/REMBG_INTEGRATION_BLUEPRINT.md`
 - Pipeline Router: `services/playground_api/routers/pipeline.py`
 - Transforms Worker: `frontend/workers/transforms.ts`

@@ -190,21 +190,21 @@ Phase 4 implementation is complete! The following components were successfully i
 
 #### **Phase 0: Foundation & Planning (COMPLETED ✅)**
 1. [x] **Task 0.1: Parity Inventory & Service Extraction**
-   - [x] Documented feature parity matrix (`docs/ui/parity.md`)
+   - [x] Documented feature parity matrix (`docs/frontend/parity.md`)
    - [x] Identified shared business logic extraction targets
    - [x] Created FastAPI service stubs (`services/playground_api/`)
 
 2. [x] **Task 0.2: Architecture & Design Documentation**
    - [x] Created ADR for frontend stack (`docs/adr/ADR-frontend-stack.md`)
-   - [x] Defined design system spec (`docs/ui/design-system.md`)
-   - [x] Documented worker utilization blueprint (`docs/ui/worker-blueprint.md`)
+   - [x] Defined design system spec (`docs/frontend/design-system.md`)
+   - [x] Documented worker utilization blueprint (`docs/frontend/worker-blueprint.md`)
 
 3. [x] **Task 0.3: Backend API Contracts**
    - [x] Implemented `/api/commands/*` router (command builder endpoints)
    - [x] Implemented `/api/inference/*` router (checkpoint discovery, preview stubs)
    - [x] Implemented `/api/pipelines/*` router (preview/fallback contracts)
    - [x] Implemented `/api/evaluation/*` router (comparison presets)
-   - [x] Documented pipeline contract (`docs/api/pipeline-contract.md`)
+   - [x] Documented pipeline contract (`docs/backend/api/pipeline-contract.md`)
 
 4. [x] **Task 0.4: Worker Pipeline Prototypes**
    - [x] Created TypeScript worker types (`frontend/workers/types.ts`)
@@ -219,8 +219,8 @@ Phase 4 implementation is complete! The following components were successfully i
    - [x] Added FastAPI/Pydantic dependencies to `pyproject.toml`
 
 6. [x] **Task 0.6: Migration Planning**
-   - [x] Created migration roadmap (`docs/ui/migration-roadmap.md`)
-   - [x] Documented testing/observability strategy (`docs/ui/testing-observability.md`)
+   - [x] Created migration roadmap (`docs/frontend/migration-roadmap.md`)
+   - [x] Documented testing/observability strategy (`docs/frontend/testing-observability.md`)
    - [x] Added beta CTA banners to Streamlit apps
 
 #### **Phase 1: SPA Scaffold & Command Builder Parity (IN PROGRESS)**
@@ -458,8 +458,8 @@ You are implementing a high-performance image processing playground inspired by 
 **Context:**
 - FastAPI backend is ready at `services/playground_api/` with endpoints for commands, inference, pipelines, and evaluation
 - Worker prototypes exist in `frontend/workers/` but need integration into the SPA
-- Design system and architecture decisions are documented in `docs/adr/ADR-frontend-stack.md` and `docs/ui/design-system.md`
-- Migration roadmap is in `docs/ui/migration-roadmap.md`
+- Design system and architecture decisions are documented in `docs/adr/ADR-frontend-stack.md` and `docs/frontend/design-system.md`
+- Migration roadmap is in `docs/frontend/migration-roadmap.md`
 
 **Coding Standards (MUST FOLLOW):**
 - **TypeScript**: 100 character line length, explicit types required, functions < 40 lines (target), files < 300 lines (target)
@@ -477,7 +477,7 @@ You are implementing a high-performance image processing playground inspired by 
 **Key files to reference:**
 - `docs/CODING_STANDARDS.md` - **CRITICAL**: Follow coding standards for line length, function/file size, naming conventions, and type safety
 - `docs/adr/ADR-frontend-stack.md` - Stack decisions and routing strategy
-- `docs/ui/design-system.md` - Component specifications
+- `docs/frontend/design-system.md` - Component specifications
 - `services/playground_api/app.py` - API endpoint structure
 - `frontend/workers/types.ts` - Worker contract definitions
 
