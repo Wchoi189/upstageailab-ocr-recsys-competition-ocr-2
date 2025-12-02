@@ -45,3 +45,5 @@ The mask-only rectangle fitter now demonstrates strong resilience against catast
 
 With these mitigations recorded, future experiments can iterate on snapping and threshold tuning while referencing this incident report whenever regressions threaten the newly-stable baseline.
 
+
+

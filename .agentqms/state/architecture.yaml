@@ -1,0 +1,221 @@
+version: 3
+status: active
+last_updated: "2025-11-25"
+
+framework:
+  name: AgentQMS
+  version: 0.3.1
+
+paths:
+  docs_root: AgentQMS/knowledge
+  agent_instructions: AgentQMS/knowledge/agent/system.md
+  protocols_root: AgentQMS/knowledge/protocols
+  references_root: AgentQMS/knowledge/references
+  templates_root: AgentQMS/conventions/templates
+  conventions_root: AgentQMS/conventions
+  artifacts_root: artifacts
+  config_root: config
+  runtime_state: .agentqms
+  context_bundles: AgentQMS/knowledge/context_bundles
+
+knowledge_domains:
+  agent:
+    path: AgentQMS/knowledge/agent
+    contents:
+      - system.md          # SST (Single Source of Truth for agents)
+      - tool_catalog.md    # Available tools and usage
+      - tracking_cli.md    # Tracking CLI reference
+  protocols:
+    path: AgentQMS/knowledge/protocols
+    subdirectories:
+      governance:
+        - artifact_rules.md
+        - artifact_management_protocol.md
+        - implementation_plan_protocol.md
+        - bug_fix_protocol.md
+      development:
+        - coding_standards.md
+        - import_handling_protocol.md
+      testing:
+        - test_organization_protocol.md
+  references:
+    path: AgentQMS/knowledge/references
+    subdirectories:
+      development:
+        - loader_path_resolution.md
+      context_optimization:
+        - smart-context-loading.md
+  meta:
+    path: AgentQMS/knowledge/meta
+    contents:
+      - MAINTAINERS.md
+      - framework_maintenance_design.md
+
+components:
+  # Core implementation layer (canonical)
+  - id: agent_tools_core
+    path: AgentQMS/agent_tools/core
+    canonical: true
+    responsibilities:
+      - artifact_creation
+      - artifact_templates
+      - context_bundle_generation
+      - tool_discovery
+    tools:
+      - artifact_workflow.py
+      - artifact_templates.py
+      - context_bundle.py
+      - discover.py
+
+  - id: agent_tools_compliance
+    path: AgentQMS/agent_tools/compliance
+    canonical: true
+    responsibilities:
+      - artifact_validation
+      - boundary_validation
+      - compliance_monitoring
+    tools:
+      - validate_artifacts.py
+      - validate_boundaries.py
+      - monitor_artifacts.py
+
+  - id: agent_tools_documentation
+    path: AgentQMS/agent_tools/documentation
+    canonical: true
+    responsibilities:
+      - index_generation
+      - manifest_validation
+      - link_validation
+    tools:
+      - auto_generate_index.py
+      - validate_manifest.py
+      - validate_links.py
+
+  - id: agent_tools_utilities
+    path: AgentQMS/agent_tools/utilities
+    canonical: true
+    responsibilities:
+      - context_lookup
+      - tracking_cli
+      - project_adaptation
+    tools:
+      - get_context.py
+      - tracking/cli.py
+      - adapt_project.py
+
+  - id: agent_tools_audit
+    path: AgentQMS/agent_tools/audit
+    canonical: true
+    responsibilities:
+      - audit_document_generation
+      - audit_validation
+      - checklist_management
+    tools:
+      - audit_generator.py
+      - audit_validator.py
+      - checklist_tool.py
+
+  # Interface layer
+  - id: interface
+    path: AgentQMS/interface
+    responsibilities:
+      - agent_makefile
+      - workflow_scripts
+      - cli_wrappers
+    tools:
+      - Makefile
+      - workflows/create-artifact.sh
+      - workflows/validate.sh
+      - workflows/compliance.sh
+
+  # Conventions layer
+  - id: conventions
+    path: AgentQMS/conventions
+    responsibilities:
+      - artifact_types
+      - schemas
+      - templates
+      - qmf_manifest
+      - audit_framework
+
+  # Legacy compatibility layer
+  - id: toolkit_legacy
+    path: AgentQMS/toolkit
+    canonical: false
+    status: deprecated
+    notes: "Shim layer that delegates to agent_tools. Do not add new code here."
+
+capabilities:
+  - name: plan_generation
+    description: "Create implementation plans using Blueprint Protocol Template"
+    tools:
+      - artifact_workflow
+    artifacts:
+      - implementation_plan
+    make_targets:
+      - create-plan
+
+  - name: quality_assessment
+    description: "Validate artifacts and boundaries"
+    tools:
+      - validate_artifacts
+      - validate_boundaries
+      - monitor_artifacts
+    artifacts:
+      - assessment
+    make_targets:
+      - validate
+      - boundary
+      - compliance
+
+  - name: documentation_validation
+    description: "Validate documentation links and manifests"
+    tools:
+      - validate_links
+      - validate_manifest
+      - auto_generate_index
+    artifacts: []
+    make_targets:
+      - docs-validate-links
+      - docs-validate-manifest
+      - docs-generate
+
+  - name: context_loading
+    description: "Generate task-specific context bundles"
+    tools:
+      - context_bundle
+      - get_context
+    artifacts: []
+    make_targets:
+      - context
+      - context-development
+      - context-docs
+      - context-debug
+      - context-plan
+
+  - name: audit_execution
+    description: "Run framework audits using the audit framework"
+    tools:
+      - audit_generator
+      - audit_validator
+      - checklist_tool
+    artifacts:
+      - audit_report
+    make_targets:
+      - audit-init
+      - audit-validate
+      - audit-checklist-generate
+
+context_features:
+  smart_context_loading:
+    status: basic_implementation
+    protocol: null
+    reference: AgentQMS/knowledge/references/context_optimization/smart-context-loading.md
+    bundles_path: AgentQMS/knowledge/context_bundles
+    supported_types:
+      - development
+      - documentation
+      - debugging
+      - planning
+      - general
+    notes: "Basic implementation complete. Bundles defined in YAML files."

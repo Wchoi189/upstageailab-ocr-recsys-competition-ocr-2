@@ -1,0 +1,75 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Bug Report",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string",
+            "description": "Short, descriptive bug title."
+        },
+        "author": {
+            "type": "string",
+            "description": "Name or identifier of the reporter."
+        },
+        "date": {
+            "type": "string",
+            "format": "date",
+            "description": "Date the bug report was created."
+        },
+        "status": {
+            "type": "string",
+            "enum": ["draft", "in-progress", "resolved", "wont-fix"],
+            "description": "Lifecycle status of the bug."
+        },
+        "severity": {
+            "type": "string",
+            "enum": ["low", "medium", "high", "critical"],
+            "description": "Impact level of the bug."
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            },
+            "description": "Free-form tags for filtering and search."
+        },
+        "summary": {
+            "type": "string",
+            "description": "Short problem summary and visible symptoms."
+        },
+        "steps_to_reproduce": {
+            "type": "string",
+            "description": "Concise, ordered steps to reliably reproduce the bug."
+        },
+        "expected_behavior": {
+            "type": "string",
+            "description": "What should have happened."
+        },
+        "actual_behavior": {
+            "type": "string",
+            "description": "What actually happened."
+        },
+        "root_cause": {
+            "type": "string",
+            "description": "Identified or suspected root cause once known."
+        },
+        "fix_summary": {
+            "type": "string",
+            "description": "Short description of the applied fix, if any."
+        },
+        "testing_notes": {
+            "type": "string",
+            "description": "Evidence of testing performed to validate the fix."
+        }
+    },
+    "required": [
+        "title",
+        "author",
+        "date",
+        "status",
+        "severity",
+        "summary"
+    ]
+}
+
+

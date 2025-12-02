@@ -16,7 +16,7 @@ Use this guide as the single entry point for all project documentation. It group
 
 ## How to Keep This Page Current
 
-1. **Add new docs here immediately.** Include a one-line “When to open” blurb and the preferred quick command.
+1. **Add new docs here immediately.** Include a one-line "When to open" blurb and the preferred quick command.
 2. **Retire stale docs.** Remove them completely - no deprecated directories.
 3. **Link from tickets or PRs.** Whenever a discussion references documentation, paste the relevant table row or file path for instant context.
 

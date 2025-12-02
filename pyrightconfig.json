@@ -1,0 +1,33 @@
+{
+  "exclude": [
+    "**/__pycache__",
+    "**/.git",
+    "**/.venv",
+    "**/venv",
+    "**/global",
+    "**/env",
+    "**/__OLD__",
+    "**/.mypy_cache",
+    "**/.pytest_cache",
+    "**/data/",
+    "**/logs/",
+    "**/checkpoints/",
+    "**/models",
+    "**/node_modules/",
+    "**/outputs/",
+    "**/results/",
+    "**/wandb",
+    "**/multirun",
+    "**/docs/",
+    "**/docs/_deprecated",
+    "**/DEPRECATED",
+    "**/_archive",
+    "**/_*",
+    "**/raw_metrics*.json",
+    "**/*.jsonl",
+    "**/multirun.yaml",
+    "**/test_runs/**"
+  ],
+  "venvPath": ".",
+  "venv": ".venv"
+}

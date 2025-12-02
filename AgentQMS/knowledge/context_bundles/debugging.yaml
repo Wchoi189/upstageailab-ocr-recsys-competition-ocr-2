@@ -1,0 +1,49 @@
+# Debugging Context Bundle
+# Use: make context-debug or get_context.py --type debugging
+
+name: debugging
+title: Debugging Context Bundle
+description: |
+  Context files for troubleshooting issues, investigating bugs,
+  and fixing problems in the codebase.
+
+tiers:
+  tier1:
+    name: Essential
+    description: Core debugging references
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/agent/system.md
+        priority: critical
+        description: Agent SST - validation commands
+      - path: README.md
+        priority: high
+        description: Project setup and commands
+
+  tier2:
+    name: Troubleshooting
+    description: Error investigation resources
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/protocols/governance/bug_fix_protocol.md
+        priority: high
+        description: Bug fix workflow
+      - path: .agentqms/state/architecture.yaml
+        priority: medium
+        description: Component locations for tracing
+
+  tier3:
+    name: Configuration
+    description: Configuration files for debugging
+    max_files: 5
+    files:
+      - path: pyproject.toml
+        priority: medium
+        description: Project dependencies
+      - path: .agentqms/settings.yaml
+        priority: medium
+        description: Framework configuration
+      - path: AgentQMS/knowledge/protocols/development/import_handling_protocol.md
+        priority: low
+        description: Import path troubleshooting
+

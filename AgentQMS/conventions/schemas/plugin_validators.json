@@ -1,0 +1,147 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://agentqms.dev/schemas/plugin_validators.json",
+    "title": "AgentQMS Validator Extensions Plugin",
+    "description": "Schema for extending artifact validation rules in AgentQMS",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+            "description": "Semantic version of this plugin definition",
+            "default": "1.0"
+        },
+        "description": {
+            "type": "string",
+            "description": "Human-readable description of these validator extensions"
+        },
+        "prefixes": {
+            "type": "object",
+            "description": "Map of filename prefixes to output directories",
+            "additionalProperties": {
+                "type": "string",
+                "pattern": "^[a-z0-9_/-]+/$",
+                "description": "Directory path ending with /"
+            },
+            "examples": [{
+                "change_request_": "change_requests/",
+                "spec_": "specifications/",
+                "decision_": "decisions/"
+            }]
+        },
+        "types": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "description": "Additional valid artifact types",
+            "examples": [["change_request", "specification", "decision_record"]]
+        },
+        "categories": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "description": "Additional valid artifact categories",
+            "examples": [["governance", "security", "compliance"]]
+        },
+        "statuses": {
+            "type": "array",
+            "items": {
+                "type": "string",
+                "pattern": "^[a-z][a-z0-9_]*$"
+            },
+            "description": "Additional valid artifact statuses",
+            "examples": [["pending_approval", "approved", "rejected"]]
+        },
+        "rules": {
+            "type": "object",
+            "description": "Enable/disable specific validation rules",
+            "additionalProperties": false,
+            "properties": {
+                "enforce_timestamp": {
+                    "type": "boolean",
+                    "description": "Require YYYY-MM-DD_HHMM timestamp prefix",
+                    "default": true
+                },
+                "enforce_kebab_case": {
+                    "type": "boolean",
+                    "description": "Require kebab-case for descriptive names",
+                    "default": true
+                },
+                "enforce_lowercase": {
+                    "type": "boolean",
+                    "description": "Require lowercase filenames",
+                    "default": true
+                },
+                "enforce_frontmatter": {
+                    "type": "boolean",
+                    "description": "Require YAML frontmatter",
+                    "default": true
+                },
+                "enforce_directory_placement": {
+                    "type": "boolean",
+                    "description": "Validate files are in correct directories",
+                    "default": true
+                }
+            }
+        },
+        "custom_validators": {
+            "type": "array",
+            "description": "Custom Python validators to run (Phase 2)",
+            "items": {
+                "type": "object",
+                "required": ["name", "module", "function"],
+                "additionalProperties": false,
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Human-readable validator name"
+                    },
+                    "description": {
+                        "type": "string",
+                        "description": "What this validator checks"
+                    },
+                    "module": {
+                        "type": "string",
+                        "description": "Python module path (e.g., myproject.validators.security)"
+                    },
+                    "function": {
+                        "type": "string",
+                        "description": "Function name within the module"
+                    },
+                    "applies_to": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Artifact types this validator applies to (empty = all)"
+                    },
+                    "severity": {
+                        "type": "string",
+                        "enum": ["error", "warning", "info"],
+                        "description": "Severity level of validation failures",
+                        "default": "error"
+                    },
+                    "enabled": {
+                        "type": "boolean",
+                        "description": "Whether this validator is active",
+                        "default": true
+                    },
+                    "config": {
+                        "type": "object",
+                        "description": "Configuration passed to the validator function"
+                    }
+                }
+            }
+        },
+        "disabled_validators": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Names of built-in validators to disable",
+            "examples": [["timestamp_format", "kebab_case"]]
+        }
+    }
+}
+

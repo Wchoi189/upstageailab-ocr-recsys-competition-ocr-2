@@ -1,0 +1,37 @@
+# General Context Bundle
+# Use: get_context.py --type general (fallback for unclassified tasks)
+
+name: general
+title: General Context Bundle
+description: |
+  Default context bundle for tasks that don't fit other categories.
+  Provides a balanced set of essential files.
+
+tiers:
+  tier1:
+    name: Essential
+    description: Core files for any task
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/agent/system.md
+        priority: critical
+        description: Agent SST - core rules
+      - path: README.md
+        priority: high
+        description: Project overview
+      - path: .agentqms/state/architecture.yaml
+        priority: high
+        description: Framework structure
+
+  tier2:
+    name: Reference
+    description: Common reference files
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+        priority: medium
+        description: Artifact rules
+      - path: AgentQMS/knowledge/meta/MAINTAINERS.md
+        priority: low
+        description: Framework guide
+

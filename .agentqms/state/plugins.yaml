@@ -1,0 +1,281 @@
+metadata:
+  generated_at: '2025-12-02T06:46:18.438978+00:00'
+  generator: AgentQMS PluginLoader
+  schema_version: '1.0'
+discovery_paths:
+  framework: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
+  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
+plugins_loaded:
+  artifact_types:
+  - change_request
+  validators: true
+  context_bundles:
+  - security-review
+plugin_metadata:
+- name: change_request
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+- name: validators
+  type: validator
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
+- name: security-review
+  type: context_bundle
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
+validation_errors:
+- path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
+  type: artifact_type
+  error: 'Additional properties are not allowed (''allowed_categories'' was unexpected)
+    (path: [''validation''])'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
+resolved:
+  artifact_types:
+    change_request:
+      name: change_request
+      version: '1.0'
+      description: 'A structured change request document for tracking proposed changes
+
+        that require approval before implementation.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: CR_{date}_{name}.md
+        directory: change_requests/
+        frontmatter:
+          type: change_request
+          category: governance
+          status: pending
+          version: '1.0'
+          tags:
+          - change-request
+          - governance
+          - approval
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - requester
+        - approver
+        required_sections:
+        - '## Change Summary'
+        - '## Justification'
+        - '## Impact Assessment'
+        - '## Approval'
+        filename_prefix: CR_
+        allowed_statuses:
+        - draft
+        - pending
+        - approved
+        - rejected
+        - implemented
+      template: '# Change Request: {title}
+
+
+        ## Metadata
+
+        - **CR ID**: {cr_id}
+
+        - **Requester**: {requester}
+
+        - **Approver**: {approver}
+
+        - **Priority**: {priority}
+
+
+        ---
+
+
+        ## Change Summary
+
+
+        Brief description of the proposed change.
+
+
+        ## Justification
+
+
+        ### Business Need
+
+        Why is this change necessary?
+
+
+        ### Expected Benefits
+
+        - Benefit 1
+
+        - Benefit 2
+
+
+        ## Impact Assessment
+
+
+        ### Affected Systems
+
+        - System 1
+
+        - System 2
+
+
+        ### Risk Level
+
+        - **Risk**: Low / Medium / High
+
+        - **Mitigation**: Describe risk mitigation strategy
+
+
+        ### Resource Requirements
+
+        - Estimated effort: X hours/days
+
+        - Required skills: List skills
+
+
+        ## Implementation Plan
+
+
+        ### Approach
+
+        1. Step 1
+
+        2. Step 2
+
+        3. Step 3
+
+
+        ### Timeline
+
+        - Start date: YYYY-MM-DD
+
+        - Target completion: YYYY-MM-DD
+
+
+        ### Rollback Plan
+
+        How to revert if issues occur.
+
+
+        ## Approval
+
+
+        ### Approval Status
+
+        - [ ] Technical Review
+
+        - [ ] Security Review (if applicable)
+
+        - [ ] Manager Approval
+
+        - [ ] Final Approval
+
+
+        ### Approver Comments
+
+        _Comments from approver will be added here._
+
+
+        ### Decision
+
+        - **Status**: Pending
+
+        - **Date**:
+
+        - **Approved By**:
+
+
+        ---
+
+
+        *This change request follows the AgentQMS governance protocol.*
+
+        '
+      template_variables:
+        cr_id: CR-001
+        requester: AI Agent
+        approver: '[Pending Assignment]'
+        priority: Medium
+  validators:
+    prefixes:
+      CR_: change_requests/
+      DR_: decision_records/
+      SPEC_: specifications/
+    types:
+    - change_request
+    - decision_record
+    - meeting_notes
+    - specification
+    categories:
+    - compliance
+    - governance
+    - meeting
+    - security
+    statuses:
+    - approved
+    - deferred
+    - pending
+    - rejected
+    rules:
+      enforce_timestamp: true
+      enforce_kebab_case: true
+      enforce_lowercase: true
+      enforce_frontmatter: true
+      enforce_directory_placement: true
+    custom_validators: []
+    disabled_validators: []
+  context_bundles:
+    security-review:
+      name: security-review
+      title: Security Review Context Bundle
+      version: '1.0'
+      scope: project
+      description: 'Context files for conducting security-focused code reviews.
+
+        Includes security policies, threat models, and review checklists.
+
+        '
+      tags:
+      - security
+      - review
+      - compliance
+      tiers:
+        tier1:
+          name: Security Essentials
+          description: Core security documentation and policies
+          max_files: 5
+          files:
+          - path: AgentQMS/knowledge/agent/system.md
+            priority: critical
+            description: Agent guidelines for security awareness
+          - path: .agentqms/plugins/validators.yaml
+            priority: high
+            description: Validation rules including security checks
+            optional: true
+        tier2:
+          name: Review Guidelines
+          description: Security review process documentation
+          max_files: 5
+          files:
+          - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+            priority: high
+            description: Artifact governance rules
+          - path: AgentQMS/conventions/audit_framework/README.md
+            priority: medium
+            description: Audit framework for systematic review
+        tier3:
+          name: Project Context
+          description: Project-specific security context
+          max_files: 5
+          files:
+          - path: README.md
+            priority: medium
+            description: Project overview
+          - path: .agentqms/state/architecture.yaml
+            priority: medium
+            description: System architecture for threat surface analysis

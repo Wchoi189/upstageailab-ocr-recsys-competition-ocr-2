@@ -1,0 +1,184 @@
+# AgentQMS Artifact Rules Schema
+# Machine-readable definition of artifact types, naming conventions, and directories.
+# Used by validators and autofix tools for consistent enforcement.
+
+version: "1.0"
+description: "Unified artifact naming and placement rules for AgentQMS"
+
+# Global patterns
+patterns:
+  timestamp: "^\\d{4}-\\d{2}-\\d{2}_\\d{4}_"
+  timestamp_format: "YYYY-MM-DD_HHMM"
+  timestamp_example: "2025-11-29_1800"
+  file_extension: ".md"
+  
+# Artifact type definitions
+# Each type specifies: prefix, separator style, case, and expected directory
+artifact_types:
+  implementation_plan:
+    prefix: "implementation_plan_"
+    separator: "_"  # underscore
+    case: "lowercase"
+    directory: "implementation_plans/"
+    frontmatter_type: "implementation_plan"
+    description: "Implementation plans and development roadmaps"
+    example: "2025-11-29_1800_implementation_plan_my-feature.md"
+
+  assessment:
+    prefix: "assessment-"
+    separator: "-"  # hyphen
+    case: "lowercase"
+    directory: "assessments/"
+    frontmatter_type: "assessment"
+    description: "Technical assessments and evaluations"
+    example: "2025-11-29_1800_assessment-security-audit.md"
+
+  audit:
+    prefix: "audit-"
+    separator: "-"  # hyphen
+    case: "lowercase"
+    directory: "audits/"
+    frontmatter_type: "audit"
+    description: "Formal audits and compliance reviews"
+    example: "2025-11-29_1800_audit-code-review.md"
+
+  design:
+    prefix: "design-"
+    separator: "-"  # hyphen
+    case: "lowercase"
+    directory: "design_documents/"
+    frontmatter_type: "design"
+    description: "Design documents and architectural decisions"
+    example: "2025-11-29_1800_design-api-structure.md"
+
+  research:
+    prefix: "research-"
+    separator: "-"  # hyphen
+    case: "lowercase"
+    directory: "research/"
+    frontmatter_type: "research"
+    description: "Research notes and findings"
+    example: "2025-11-29_1800_research-performance-analysis.md"
+
+  template:
+    prefix: "template-"
+    separator: "-"  # hyphen
+    case: "lowercase"
+    directory: "templates/"
+    frontmatter_type: "template"
+    description: "Reusable templates"
+    example: "2025-11-29_1800_template-meeting-notes.md"
+
+  bug_report:
+    prefix: "BUG_"
+    separator: "_"  # underscore
+    case: "uppercase_prefix"  # prefix is uppercase, rest is lowercase
+    directory: "bug_reports/"
+    frontmatter_type: "bug_report"
+    description: "Bug reports and issue tracking"
+    example: "2025-11-29_1800_BUG_login-failure.md"
+
+  session_note:
+    prefix: "SESSION_"
+    separator: "_"  # underscore
+    case: "uppercase_prefix"  # prefix is uppercase, rest is lowercase
+    directory: "completed_plans/completion_summaries/session_notes/"
+    frontmatter_type: "session_note"
+    description: "Session notes and handoff summaries"
+    example: "2025-11-29_1800_SESSION_sprint-review.md"
+
+  completion_summary:
+    prefix: "completion_summary_"
+    separator: "_"
+    case: "lowercase"
+    directory: "completed_plans/completion_summaries/"
+    frontmatter_type: "completion_summary"
+    description: "Completion summaries for finished plans"
+    example: "2025-11-29_1800_completion_summary_project-done.md"
+
+# Frontmatter requirements
+frontmatter:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  
+  date_format: "YYYY-MM-DD HH:MM (KST)"
+  date_example: "2025-11-29 18:00 (KST)"
+  
+  valid_statuses:
+    - active
+    - draft
+    - completed
+    - archived
+    - deprecated
+  
+  valid_categories:
+    - development
+    - architecture
+    - evaluation
+    - compliance
+    - code_quality
+    - reference
+    - planning
+    - research
+    - troubleshooting
+
+# Error message templates for clear diagnostics
+error_templates:
+  missing_timestamp:
+    code: "E001"
+    message: "Missing or invalid timestamp format"
+    expected: "Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_)"
+    hint: "Filename must start with date and time in format: YYYY-MM-DD_HHMM_"
+  
+  missing_type:
+    code: "E002"
+    message: "Missing artifact type prefix after timestamp"
+    expected: "Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_"
+    hint: "Add the appropriate artifact type prefix after the timestamp"
+  
+  invalid_format:
+    code: "E003"
+    message: "Invalid format for artifact type '{type}'"
+    expected: "Expected format: {expected_pattern}"
+    hint: "Use {separator} separator and {case} case for {type} artifacts"
+  
+  wrong_directory:
+    code: "E004"
+    message: "File in wrong directory"
+    expected: "Expected directory: {expected_dir}"
+    hint: "Move file to {expected_dir}"
+  
+  frontmatter_type_mismatch:
+    code: "E005"
+    message: "Frontmatter type does not match filename"
+    expected: "Frontmatter type '{fm_type}' should match filename prefix '{filename_type}'"
+    hint: "Update frontmatter type to '{expected_type}' or rename file"
+  
+  frontmatter_missing_field:
+    code: "E006"
+    message: "Missing required frontmatter field"
+    expected: "Required fields: title, date, type, category, status, version"
+    hint: "Add missing field '{field}' to frontmatter"
+  
+  invalid_date_format:
+    code: "E007"
+    message: "Invalid frontmatter date format"
+    expected: "Expected: YYYY-MM-DD HH:MM (KST)"
+    hint: "Use 24-hour clock format with timezone: 2025-11-29 18:00 (KST)"
+  
+  invalid_status:
+    code: "E008"
+    message: "Invalid status value"
+    expected: "Valid statuses: active, draft, completed, archived, deprecated"
+    hint: "Use one of the valid status values"
+  
+  invalid_category:
+    code: "E009"
+    message: "Invalid category value"
+    expected: "Valid categories: development, architecture, evaluation, compliance, code_quality, reference, planning, research, troubleshooting"
+    hint: "Use one of the valid category values"

@@ -1,71 +1,48 @@
-# Qwen Code Assistant Entry Point
+# AgentQMS Context
 
-Welcome! This document serves as your entry point for working with the Qwen Code Assistant on this OCR project.
+Last Updated: 2025-11-30 01:17 (KST)
 
-## Project Overview
+Python-based QMS (Quality Management System) agent.
+Directory: `/workspaces/upstageailab-ocr-recsys-competition-ocr-2`
+Source: `AgentQMS/`
+Config: `pyproject.toml`, `requirements.txt`, `pytest.ini`
+Python project with tests and pre-commit hooks.
 
-This is an OCR (Optical Character Recognition) project focused on receipt text detection using DBNet architecture. The system is built with PyTorch Lightning and Hydra for modular experimentation. The project emphasizes:
+## Agent Tools Reference
 
-- Modular architecture with plug-and-play components (encoders, decoders, heads, losses)
-- Configuration-driven approach using Hydra
-- Type hints for all public APIs
-- UV for package management
+### Agent-Only Interface
+- Directory: `AgentQMS/interface/` (AI agents only - humans should NOT use)
+- Implementation: `AgentQMS/agent_tools/` (canonical Python packages)
 
-## Key Directories and Files
+### Key Agent Commands
+- `cd AgentQMS/interface/` - Navigate to agent interface
+- `make help` - Show available agent commands
+- `make discover` - List all available tools
+- `make status` - Check system status
+- `make validate` - Validate all artifacts
+- `make compliance` - Check compliance status
 
-### Documentation
-- `docs/ai_handbook/index.md` - Your primary source of truth with comprehensive project documentation
-- `docs/ai_handbook/01_onboarding/01_setup_and_tooling.md` - Start here if new to the project
-- `docs/ai_handbook/02_protocols/command_builder_testing_guide.md` - Testing guide for Command Builder module
-
-### Setup Scripts
-- `scripts/setup/` - Contains numbered setup scripts for environment setup, linting, and aliases
-- `pyproject.toml` - Project dependencies and build configuration
-- `uv.lock` - Lock file for UV package manager
-
-### Utilities
-- `run_ui.py` - Streamlit applications for evaluation viewer, inference, command builder, and resource monitor
-- `.env.template` - Environment variable template
-
-### Command Builder Module (New Modular Structure)
-- `ui/utils/command/` - Modular command building utilities
-  - `models.py` - Data models for command parameters
-  - `quoting.py` - Hydra/shell quoting utilities
-  - `builder.py` - Command construction logic
-  - `executor.py` - Command execution and process management
-  - `validator.py` - Command validation
-- **Important**: Use `from ui.utils.command import CommandBuilder` for new development (not the old location)
-
-## Working Guidelines
-
-### AI Cue Markers
-Look for HTML comments like `<!-- ai_cue:priority=high -->` in documentation files. These markers indicate priority levels and scenarios that should trigger loading those documents first.
-
-### Safe Operations
-- Always use `uv run` prefix for Python commands
-- Follow the documented protocols in the AI handbook
-- Use pre-commit hooks for quality checks
-- Reference the command registry for authorized scripts
+### Artifact Creation
+- `make create-plan NAME=title TITLE="Plan Title"`
+- `make create-assessment NAME=title TITLE="Assessment Title"`
+- `make create-audit NAME=title TITLE="Audit Title"`
+- `make create-design NAME=title TITLE="Design Title"`
+- `make create-research NAME=title TITLE="Research Title"`
 
 ### Context Bundles
-For specific tasks, refer to the following context bundles in the AI handbook:
-- New features: Coding Standards → Architecture → Hydra & Registry
-- Debugging: Debugging Workflow → Command Registry → Experiment Logs
-- Utilities: Utility Adoption Guide → Existing Utility Functions
-- Streamlit apps: Command Registry → run_ui.py → Streamlit maintenance bundle
+- `make context TASK="task description"`
+- `make context-development` - Get development context
+- `make context-docs` - Get documentation context
+- `make context-debug` - Get debugging context
+- `make context-plan` - Get planning context
 
-## Getting Started
+### Quality & Validation
+- `make ast-analyze` - Analyze codebase structure
+- `make ast-check-quality` - Check code quality
+- `make ast-generate-tests TARGET=file.py` - Generate test scaffolds
+- `make ast-extract-docs TARGET=file.py` - Extract documentation
 
-1. Read the AI handbook at `docs/ai_handbook/index.md` for comprehensive project information
-2. Follow the setup instructions in `docs/ai_handbook/01_onboarding/01_setup_and_tooling.md`
-3. Use the setup scripts in `scripts/setup/` in numerical order (00, 01, 02)
-4. Run `uv run python run_ui.py --help` to see available UI options
-
-## Quality Standards
-
-- Ruff for formatting and linting
-- Pytest for testing with coverage
-- Comprehensive docstrings and type hints
-- Pre-commit hooks for automated quality checks
-
-For detailed information on any aspect of the project, navigate to the complete AI handbook at `docs/ai_handbook/index.md` which serves as the single source of truth for all project knowledge.
+### Feedback & Issues
+- `make feedback-issue ISSUE="description" FILE="path"`
+- `make feedback-suggest AREA="area" CURRENT="current" CHANGE="suggested" RATIONALE="reason"`
+- `make quality-check` - Check documentation quality

@@ -1,0 +1,158 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://agentqms.dev/schemas/plugin_artifact_type.json",
+    "title": "AgentQMS Artifact Type Plugin",
+    "description": "Schema for defining custom artifact types in AgentQMS",
+    "type": "object",
+    "required": ["name", "version", "metadata", "template"],
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Unique identifier for the artifact type (lowercase, underscores allowed)",
+            "examples": ["change_request", "decision_record", "specification"]
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+            "description": "Semantic version of this plugin definition",
+            "examples": ["1.0", "1.0.0", "2.1.0"]
+        },
+        "description": {
+            "type": "string",
+            "description": "Human-readable description of this artifact type"
+        },
+        "extends": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_]*$",
+            "description": "Name of a base artifact type to inherit from (optional)"
+        },
+        "scope": {
+            "type": "string",
+            "pattern": "^(builtin|org_[a-z0-9_]+|project)$",
+            "description": "Namespace scope for conflict prevention",
+            "default": "project",
+            "examples": ["builtin", "org_acme", "project"]
+        },
+        "metadata": {
+            "type": "object",
+            "required": ["filename_pattern", "directory"],
+            "additionalProperties": false,
+            "properties": {
+                "filename_pattern": {
+                    "type": "string",
+                    "description": "Pattern for generating filenames. Supports: {date}, {time}, {name}, {id}",
+                    "examples": [
+                        "YYYY-MM-DD_HHMM_{type}_{name}.md",
+                        "CR_{date}_{name}.md",
+                        "{type}-{name}.md"
+                    ]
+                },
+                "directory": {
+                    "type": "string",
+                    "description": "Output directory relative to artifacts root",
+                    "examples": ["implementation_plans/", "change_requests/", "decisions/"]
+                },
+                "frontmatter": {
+                    "type": "object",
+                    "description": "Default frontmatter fields for this artifact type",
+                    "properties": {
+                        "type": {
+                            "type": "string",
+                            "description": "Artifact type identifier (usually matches plugin name)"
+                        },
+                        "category": {
+                            "type": "string",
+                            "description": "Classification category for the artifact"
+                        },
+                        "status": {
+                            "type": "string",
+                            "description": "Default status for new artifacts"
+                        },
+                        "version": {
+                            "type": "string",
+                            "description": "Default version string"
+                        },
+                        "tags": {
+                            "type": "array",
+                            "items": {"type": "string"},
+                            "description": "Default tags for this artifact type"
+                        }
+                    },
+                    "additionalProperties": {
+                        "type": ["string", "number", "boolean", "array"]
+                    }
+                }
+            }
+        },
+        "validation": {
+            "type": "object",
+            "description": "Validation rules specific to this artifact type",
+            "additionalProperties": false,
+            "properties": {
+                "required_fields": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Frontmatter fields that must be present",
+                    "default": ["title", "date", "type", "status"]
+                },
+                "required_sections": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Markdown sections (headers) that must be present",
+                    "examples": [["## Purpose", "## Scope", "## Recommendations"]]
+                },
+                "filename_prefix": {
+                    "type": "string",
+                    "description": "Required prefix for filenames (used by ArtifactValidator)"
+                },
+                "allowed_statuses": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Valid status values for this artifact type",
+                    "default": ["draft", "active", "completed", "archived"]
+                },
+                "custom_validators": {
+                    "type": "array",
+                    "description": "Python callables for custom validation (Phase 2)",
+                    "items": {
+                        "type": "object",
+                        "required": ["name", "module", "function"],
+                        "properties": {
+                            "name": {
+                                "type": "string",
+                                "description": "Human-readable validator name"
+                            },
+                            "module": {
+                                "type": "string",
+                                "description": "Python module path"
+                            },
+                            "function": {
+                                "type": "string",
+                                "description": "Function name within the module"
+                            },
+                            "config": {
+                                "type": "object",
+                                "description": "Configuration passed to the validator"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "template": {
+            "type": "string",
+            "description": "Markdown template content with {placeholder} variables",
+            "minLength": 10
+        },
+        "template_variables": {
+            "type": "object",
+            "description": "Default values for template variables",
+            "additionalProperties": {
+                "type": ["string", "number", "boolean"]
+            }
+        }
+    }
+}
+

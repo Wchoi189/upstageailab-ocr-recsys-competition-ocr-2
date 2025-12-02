@@ -227,3 +227,9 @@ framework_export/
 !.agentqms/config.yaml
 !.agentqms/schemas/
 !.agentqms/*.md
+# Project specific
+*.db
+*.sqlite
+.agentqms/state/agent_state.json
+.agentqms/state/*.sqlite
+__OLD__/

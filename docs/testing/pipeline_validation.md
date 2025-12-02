@@ -258,5 +258,4 @@ python -m pytest tests/ -k "contract" --cov=ocr/ --cov-report=term-missing
 ---
 
 **Last Updated**: October 11, 2025
-**Version**: 1.0</content>
-<parameter name="filePath">/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/docs/testing/pipeline_validation.md
+**Version**: 1.0

@@ -1,0 +1,28 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "Implementation Plan",
+    "type": "object",
+    "properties": {
+        "title": {
+            "type": "string"
+        },
+        "author": {
+            "type": "string"
+        },
+        "date": {
+            "type": "string",
+            "format": "date"
+        },
+        "status": {
+            "type": "string",
+            "enum": ["draft", "in-progress", "completed"]
+        },
+        "tags": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    },
+    "required": ["title", "author", "date", "status"]
+}

@@ -1,6 +1,62 @@
 {
+  "general": {
+    "checkpointing": {
+      "enabled": false
+    }
+  },
+  "ui": {
+    "showMemoryUsage": true
+  },
+  "telemetry": {
+    "enabled": false
+  },
   "tools": {
     "approvalMode": "yolo"
+  },
+  "workspace": {
+    "includeDirectories": [
+      "/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
+    ],
+    "excludePatterns": [
+      "**/node_modules/**",
+      "**/.git/**",
+      "**/.copilot/**",
+      "**/.cursor/**",
+      "**/.github/**",
+      "**/*.pyc",
+      "**/__pycache__/**",
+      "**/logs/**",
+      "**/outputs/**",
+      "**/data/**",
+      "**/multirun/**",
+      "**/results/**",
+      "**/wandb/**",
+      "**/docs/_deprecated/**",
+      "**/DEPRECATED/**",
+      "**/_archive/**",
+      "**/_*/**",
+      "**/raw_metrics*.json",
+      "**/*.jsonl",
+      "**/multirun.yaml",
+      "**/test_runs/**"
+    ]
+  },
+  "agentqms": {
+    "enabled": true,
+    "instructions": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/knowledge/agent/system.md",
+    "architecture": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/state/architecture.yaml",
+    "artifactsPath": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts",
+    "validation": {
+      "enabled": false,
+      "ignorePaths": [
+        "docs/*.md",
+        "docs/assets/**",
+        "docs/archive/**",
+        ".copilot/**",
+        ".cursor/**",
+        ".github/**"
+      ]
+    }
   },
   "context": {
     "fileFiltering": {
@@ -13,30 +69,16 @@
         "**/pyproject.toml"
       ],
       "excludePatterns": [
-        "**/node_modules/**",
-        "**/.git/**",
-        "**/__pycache__/**",
-        "**/*.pyc",
-        "**/logs/**",
-        "**/outputs/**",
-        "**/data/**",
-        "**/multirun/**",
-        "**/results/**",
-        "**/wandb/**",
-        "**/docs/_deprecated/**",
-        "**/DEPRECATED/**",
-        "**/_archive/**",
-        "**/_*/**",
-        "**/raw_metrics*.json",
-        "**/*.jsonl",
-        "**/multirun.yaml",
-        "**/test_runs/**"
+
       ]
     },
     "includeDirectories": [],
     "loadMemoryFromIncludeDirectories": false,
     "discoveryMaxDirs": 15,
     "importFormat": "tree"
+  },
+  "model": {
+    "name": "qwen/qwen3-coder"
   },
   "$version": 2
 }

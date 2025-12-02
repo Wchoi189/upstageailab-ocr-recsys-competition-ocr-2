@@ -73,5 +73,4 @@ All files must follow the format: `YYYY-MM-DD_descriptive_name.md`
 
 - Regularly review and move misplaced files to appropriate subdirectories.
 - Archive outdated files to prevent clutter.
-- Update this README if the structure evolves.</content>
-<filePath>/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/docs/ai_handbook/04_experiments/README.md
+- Update this README if the structure evolves.

@@ -1,0 +1,52 @@
+# Planning Context Bundle
+# Use: make context-plan or get_context.py --type planning
+
+name: planning
+title: Planning Context Bundle
+description: |
+  Context files for planning features, designing solutions,
+  creating implementation plans, and architectural decisions.
+
+tiers:
+  tier1:
+    name: Essential
+    description: Core planning references
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/agent/system.md
+        priority: critical
+        description: Agent SST - artifact creation
+      - path: AgentQMS/knowledge/protocols/governance/implementation_plan_protocol.md
+        priority: critical
+        description: Implementation plan protocol
+      - path: AgentQMS/conventions/templates/implementation_plan.md
+        priority: high
+        description: Blueprint Protocol Template
+
+  tier2:
+    name: Architecture
+    description: Understanding current state
+    max_files: 5
+    files:
+      - path: .agentqms/state/architecture.yaml
+        priority: high
+        description: Component and capability map
+      - path: AgentQMS/knowledge/meta/framework_maintenance_design.md
+        priority: medium
+        description: Framework roadmap and design
+      - path: README.md
+        priority: medium
+        description: Project overview
+
+  tier3:
+    name: Standards
+    description: Quality and governance standards
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+        priority: medium
+        description: Artifact rules
+      - path: AgentQMS/knowledge/protocols/governance/artifact_management_protocol.md
+        priority: low
+        description: Artifact management
+

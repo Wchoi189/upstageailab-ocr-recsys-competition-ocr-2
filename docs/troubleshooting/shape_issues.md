@@ -356,5 +356,4 @@ def new_pipeline_component(data: Dict[str, Any]) -> Dict[str, Any]:
 
 **Last Updated**: October 11, 2025
 **Version**: 1.0
-**Quick Reference**: See `docs/pipeline/data_contracts.md` for complete specifications</content>
-<parameter name="filePath">/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/docs/troubleshooting/shape_issues.md
+**Quick Reference**: See `docs/pipeline/data_contracts.md` for complete specifications

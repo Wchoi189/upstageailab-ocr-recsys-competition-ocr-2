@@ -1,0 +1,52 @@
+# Development Context Bundle
+# Use: make context-development or get_context.py --type development
+
+name: development
+title: Development Context Bundle
+description: |
+  Context files for implementing features, writing code, and development tasks.
+  Provides architecture, coding standards, and essential reference files.
+
+tiers:
+  tier1:
+    name: Essential
+    description: Must-read files for any development task
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/agent/system.md
+        priority: critical
+        description: Agent SST - core rules and commands
+      - path: README.md
+        priority: high
+        description: Project overview
+      - path: pyproject.toml
+        priority: high
+        description: Project configuration and dependencies
+
+  tier2:
+    name: Architecture
+    description: Understanding project structure
+    max_files: 5
+    files:
+      - path: .agentqms/state/architecture.yaml
+        priority: high
+        description: Component and capability map
+      - path: AgentQMS/knowledge/meta/framework_maintenance_design.md
+        priority: medium
+        description: Framework architecture design
+
+  tier3:
+    name: Standards
+    description: Coding and development protocols
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/protocols/development/coding_standards.md
+        priority: high
+        description: Code style and patterns
+      - path: AgentQMS/knowledge/protocols/development/import_handling_protocol.md
+        priority: medium
+        description: Import and module patterns
+      - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+        priority: medium
+        description: Artifact creation rules
+

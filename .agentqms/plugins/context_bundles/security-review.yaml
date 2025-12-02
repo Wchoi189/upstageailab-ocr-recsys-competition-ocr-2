@@ -1,0 +1,55 @@
+# Security Review Context Bundle Plugin
+# Example plugin demonstrating context bundle extensibility
+#
+# Schema: AgentQMS/conventions/schemas/plugin_context_bundle.json
+
+name: security-review
+title: Security Review Context Bundle
+version: "1.0"
+scope: project
+description: |
+  Context files for conducting security-focused code reviews.
+  Includes security policies, threat models, and review checklists.
+
+tags:
+  - security
+  - review
+  - compliance
+
+tiers:
+  tier1:
+    name: Security Essentials
+    description: Core security documentation and policies
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/agent/system.md
+        priority: critical
+        description: Agent guidelines for security awareness
+      - path: .agentqms/plugins/validators.yaml
+        priority: high
+        description: Validation rules including security checks
+        optional: true
+
+  tier2:
+    name: Review Guidelines
+    description: Security review process documentation
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+        priority: high
+        description: Artifact governance rules
+      - path: AgentQMS/conventions/audit_framework/README.md
+        priority: medium
+        description: Audit framework for systematic review
+
+  tier3:
+    name: Project Context
+    description: Project-specific security context
+    max_files: 5
+    files:
+      - path: README.md
+        priority: medium
+        description: Project overview
+      - path: .agentqms/state/architecture.yaml
+        priority: medium
+        description: System architecture for threat surface analysis
