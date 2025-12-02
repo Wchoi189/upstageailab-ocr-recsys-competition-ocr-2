@@ -33,6 +33,15 @@ uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
   --image path/to/image.jpg \
   --mode defect
 
+# Analyze a single image and write markdown (with YAML frontmatter)
+# to a specific file
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image path/to/image.jpg \
+  --mode defect \
+  --backend openrouter \
+  --output-format markdown \
+  --output /tmp/vlm_defect_analysis.md
+
 # Analyze with VIA annotations
 uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
   --image path/to/image.jpg \

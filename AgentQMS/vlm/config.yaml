@@ -1,15 +1,17 @@
 # Centralized configuration for VLM tools
 
 backends:
-  default: "cli"
+  # Default to API backend; CLI backend is opt-in and requires a compatible
+  # qwen-vl style binary configured via QWEN_VLM_COMMAND.
+  default: "openrouter"
   priority:
-    - "cli"
     - "openrouter"
     - "solar_pro2"
+    - "cli"
 
   openrouter:
     base_url: "https://openrouter.ai/api/v1"
-    default_model: "qwen/qwen-2-vl-72b-instruct"
+    default_model: "x-ai/grok-4.1-fast:free"
     api_key_env: "OPENROUTER_API_KEY"
 
   solar_pro2:
@@ -18,9 +20,17 @@ backends:
     api_key_env: "SOLAR_PRO2_API_KEY"
 
   cli:
+    # NOTE: The generic `qwen` Code CLI does NOT support the VLM interface
+    # expected by CLIQwenBackend (analyze --image --prompt-file --mode).
+    # To enable the cli backend, set QWEN_VLM_COMMAND to a compatible binary
+    # (for example, a qwen-vl wrapper) inside the container.
     default_command: "qwen"
     command_env: "QWEN_VLM_COMMAND"
     model: "qwen3-vl-plus-2025-09-23"
+    # Optional extra CLI flags, e.g. forcing JSON output:
+    # extra_args:
+    #   - "--output-format"
+    #   - "json"
 
 image:
   max_resolution: 2048

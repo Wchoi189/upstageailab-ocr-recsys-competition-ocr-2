@@ -22,7 +22,7 @@ The `@qwen` syntax allows AI agents to execute Qwen Coder commands directly in c
 AI Agent: "@qwen fix validation errors in docs/artifacts/assessments/"
 
 # System executes:
-qwen --approval-mode yolo --include-directories /workspaces/agent_qms \
+qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 \
      --prompt "Follow AgentQMS/knowledge/agent/system.md... TASK: fix validation errors..."
 ```
 
@@ -164,4 +164,4 @@ System: 🤖 Executing @qwen command: create bug report for authentication failu
 - Generate compliance reports
 
 This @qwen syntax enables natural, conversational AI agent collaboration while maintaining structured, automated execution of complex tasks.</content>
-<parameter name="filePath">/workspaces/agent_qms/.qwen/README-chat-integration.md
+<parameter name="filePath">/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.qwen/README-chat-integration.md

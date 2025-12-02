@@ -4,7 +4,7 @@ import json
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any
+from typing import Any, List, Optional
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value
@@ -23,14 +23,8 @@ class CLIQwenBackend(BaseVLMBackend):
         """
         super().__init__(config)
         settings = get_config().backends.cli
-
-        # Resolve CLI command, allowing env override
         command_override = resolve_env_value(settings.command_env)
         self.qwen_command = command_override or settings.default_command
-
-        # Resolve model id for the CLI; allow per-machine override via QWEN_MODEL
-        self.model = resolve_env_value("QWEN_MODEL", getattr(settings, "model", None))
-
         self._check_qwen_available()
 
     @property
@@ -102,10 +96,6 @@ class CLIQwenBackend(BaseVLMBackend):
                 "--mode", mode.value,
             ]
 
-            # Optionally pass explicit model id to the CLI
-            if self.model:
-                cmd.extend(["--model", self.model])
-
             # Execute command
             result = subprocess.run(
                 cmd,
@@ -150,7 +140,21 @@ class CLIQwenBackend(BaseVLMBackend):
         return True
 
     def is_available(self) -> bool:
-        """Check if CLI Qwen backend is available."""
+        """Check if CLI Qwen backend is available.
+
+        NOTE: The generic `qwen` Code CLI does not implement the image-aware
+        interface expected by this backend (analyze --image --prompt-file --mode).
+        To avoid confusing failures, we treat the backend as unavailable when
+        using the default command and only enable it when an explicit
+        QWEN_VLM_COMMAND override is provided.
+        """
+        # If the command was not overridden (i.e., still the default generic
+        # `qwen`), consider the backend unavailable.
+        settings = get_config().backends.cli
+        command_override = resolve_env_value(settings.command_env)
+        if not command_override and self.qwen_command == settings.default_command:
+            return False
+
         try:
             self._check_qwen_available()
             return True

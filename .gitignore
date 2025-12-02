@@ -232,3 +232,4 @@ framework_export/
 *.sqlite
 .agentqms/state/agent_state.json
 .agentqms/state/*.sqlite
+__OLD__/

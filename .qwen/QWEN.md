@@ -3,7 +3,7 @@
 Last Updated: 2025-11-30 01:17 (KST)
 
 Python-based QMS (Quality Management System) agent.
-Directory: `/workspaces/agent_qms`
+Directory: `/workspaces/upstageailab-ocr-recsys-competition-ocr-2`
 Source: `AgentQMS/`
 Config: `pyproject.toml`, `requirements.txt`, `pytest.ini`
 Python project with tests and pre-commit hooks.

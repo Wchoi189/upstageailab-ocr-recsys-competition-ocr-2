@@ -1,7 +1,7 @@
 #!/bin/bash
 # @qwen Command Interpreter for AI Agent Chat Integration
 
-PROJECT_ROOT="/workspaces/agent_qms"
+PROJECT_ROOT="/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
 
 # Function to show usage
 show_usage() {
@@ -50,7 +50,7 @@ Execute the requested task following AgentQMS guidelines."
         # Execute Qwen
         echo "Running Qwen Coder..."
         qwen --approval-mode yolo \
-             --include-directories /workspaces/agent_qms \
+             --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 \
              --prompt "$prompt"
 
         echo ""

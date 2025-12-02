@@ -109,5 +109,5 @@ Remember to follow the AgentQMS protocols for artifact creation and validation.
 After generating the prompt above, run:
 
 ```bash
-qwen --approval-mode yolo --include-directories /workspaces/agent_qms --prompt "[paste your prompt here]"
+qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 --prompt "[paste your prompt here]"
 ```

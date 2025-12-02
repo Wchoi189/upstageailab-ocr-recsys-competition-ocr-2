@@ -4,7 +4,7 @@
 
 set -e
 
-PROJECT_ROOT="/workspaces/agent_qms"
+PROJECT_ROOT="/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
 ARTIFACTS_DIR="$PROJECT_ROOT/docs/artifacts"
 
 echo "🔍 Manual AgentQMS Document Validation"

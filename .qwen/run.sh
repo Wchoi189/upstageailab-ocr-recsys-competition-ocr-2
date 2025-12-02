@@ -3,7 +3,7 @@
 
 set -e
 
-PROJECT_ROOT="/workspaces/agent_qms"
+PROJECT_ROOT="/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
 QWEN_CONFIG="$PROJECT_ROOT/.qwen/settings.json"
 AGENTQMS_INSTRUCTIONS="$PROJECT_ROOT/AgentQMS/knowledge/agent/system.md"
 
@@ -29,7 +29,7 @@ run_qwen_agentqms() {
     echo ""
     echo "💡 To run manually:"
     echo "   1. Copy the prompt above"
-    echo "   2. Run: qwen --approval-mode yolo --include-directories /workspaces/agent_qms --prompt \"<paste prompt here>\""
+    echo "   2. Run: qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 --prompt \"<paste prompt here>\""
     echo "   3. Or use any other AI tool with the prompt"
 }
 

@@ -31,7 +31,7 @@ This directory contains configuration and scripts for running Qwen Coder with Ag
 
 ### Direct Qwen Commands
 ```bash
-qwen --approval-mode yolo --include-directories /workspaces/agent_qms --prompt "Follow AgentQMS/knowledge/agent/system.md and [your task]"
+qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 --prompt "Follow AgentQMS/knowledge/agent/system.md and [your task]"
 ```
 
 ### Manual Validation (Backup)
