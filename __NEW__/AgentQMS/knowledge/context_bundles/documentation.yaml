@@ -1,0 +1,55 @@
+# Documentation Context Bundle
+# Use: make context-docs or get_context.py --type documentation
+
+name: documentation
+title: Documentation Context Bundle
+description: |
+  Context files for writing documentation, updating knowledge base,
+  and maintaining the documentation structure.
+
+tiers:
+  tier1:
+    name: Essential
+    description: Core documentation references
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/agent/system.md
+        priority: critical
+        description: Agent SST - documentation style guidelines
+      - path: AgentQMS/knowledge/references/context_optimization/smart-context-loading.md
+        priority: high
+        description: Context loading reference
+      - path: README.md
+        priority: high
+        description: Project documentation example
+
+  tier2:
+    name: Structure
+    description: Documentation organization
+    max_files: 5
+    files:
+      - path: AgentQMS/knowledge/meta/framework_maintenance_design.md
+        priority: high
+        description: Framework documentation design
+      - path: AgentQMS/knowledge/meta/MAINTAINERS.md
+        priority: medium
+        description: Maintainer guide
+      - path: .agentqms/state/architecture.yaml
+        priority: medium
+        description: Knowledge domain inventory
+
+  tier3:
+    name: Templates
+    description: Documentation templates and conventions
+    max_files: 5
+    files:
+      - path: AgentQMS/conventions/templates/implementation_plan.md
+        priority: medium
+        description: Implementation plan template
+      - path: AgentQMS/conventions/templates/assessment.md
+        priority: medium
+        description: Assessment template
+      - path: AgentQMS/conventions/templates/bug_report.md
+        priority: medium
+        description: Bug report template
+

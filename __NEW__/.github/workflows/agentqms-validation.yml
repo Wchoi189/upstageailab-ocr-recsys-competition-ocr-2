@@ -1,0 +1,47 @@
+name: AgentQMS Validation
+
+on:
+  push:
+    paths:
+      - "AgentQMS/**"
+      - ".agentqms/**"
+      - ".github/workflows/agentqms-validation.yml"
+  pull_request:
+    paths:
+      - "AgentQMS/**"
+      - ".agentqms/**"
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r AgentQMS/interface/requirements.txt
+
+      - name: Validate artifacts
+        run: |
+          PYTHONPATH=. python AgentQMS/agent_tools/compliance/validate_artifacts.py --all
+
+      - name: Validate boundaries
+        run: |
+          PYTHONPATH=. python AgentQMS/agent_tools/compliance/validate_boundaries.py --json
+
+      # Note: Documentation index/manifest validation removed as docs/ is deprecated
+      # Validation now focuses only on the canonical AgentQMS/knowledge surface
+
+      - name: Validate documentation links (canonical knowledge only)
+        run: |
+          PYTHONPATH=. python AgentQMS/agent_tools/documentation/validate_links.py AgentQMS/knowledge
+
+

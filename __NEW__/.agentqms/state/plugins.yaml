@@ -1,0 +1,255 @@
+metadata:
+  generated_at: '2025-12-02T02:35:37.213046+00:00'
+  generator: AgentQMS PluginLoader
+  schema_version: '1.0'
+discovery_paths:
+  framework: /workspaces/agent_qms/AgentQMS/conventions/plugins
+  project: /workspaces/agent_qms/.agentqms/plugins
+plugins_loaded:
+  artifact_types:
+  - audit
+  - change_request
+  validators: true
+  context_bundles:
+  - security-review
+plugin_metadata:
+- name: audit
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/agent_qms/.agentqms/plugins/artifact_types/audit.yaml
+- name: change_request
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/agent_qms/.agentqms/plugins/artifact_types/change_request.yaml
+- name: validators
+  type: validator
+  version: '1.0'
+  source: project
+  path: /workspaces/agent_qms/.agentqms/plugins/validators.yaml
+- name: security-review
+  type: context_bundle
+  version: '1.0'
+  source: project
+  path: /workspaces/agent_qms/.agentqms/plugins/context_bundles/security-review.yaml
+validation_errors: []
+resolved:
+  artifact_types:
+    audit:
+      name: audit
+      version: '1.0'
+      description: "Framework audits, compliance checks, and quality evaluations with\
+        \ \nautomated implementation plan generation via GitHub Actions.\n"
+      scope: project
+      metadata:
+        filename_pattern: '{date}_audit-{name}.md'
+        directory: audits/
+        frontmatter:
+          type: audit
+          category: compliance
+          status: draft
+          version: '1.0'
+          related_artifacts: []
+          generated_artifacts: []
+          tags:
+          - audit
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - category
+        - related_artifacts
+        - generated_artifacts
+        required_sections:
+        - '## Executive Summary'
+        - '## Findings'
+        - '## Recommendations'
+        - '## Compliance Status'
+        - '## Related Artifacts'
+        filename_prefix: audit-
+        allowed_categories:
+        - accessibility
+        - security
+        - compliance
+        - performance
+        - code_quality
+        - framework
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: "# Audit: {title}\n\n**Audit Date**: {date}  \n**Category**: {category}\
+        \  \n**Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
+        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
+        \ Scope**: [Describe what was audited]  \n**Compliance Status**: [Overall\
+        \ status]  \n**Critical Issues**: [Number]  \n**High Priority Issues**: [Number]\n\
+        \n---\n\n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
+        \ Critical  \n**Location**: [Component/File]\n\n**Issue**:\n[Describe the\
+        \ issue]\n\n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe\
+        \ the recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n\
+        **Severity**: High  \n**Location**: [Component/File]\n\n**Issue**:\n[Describe\
+        \ the issue]\n\n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n\
+        [Describe the recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\
+        \n**Severity**: Medium  \n**Location**: [Component/File]\n\n**Issue**:\n[Describe\
+        \ the issue]\n\n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\
+        \n## Recommendations\n\n### Immediate Actions (Week 1)\n1. [Action item with\
+        \ priority and owner]\n2. [Action item with priority and owner]\n\n### Short-term\
+        \ (Weeks 2-4)\n3. [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action\
+        \ item]\n\n---\n\n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
+        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
+        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
+        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
+        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
+        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
+        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
+        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
+        \n---\n\n**Last Updated**: {date}  \n**Auditor**: {auditor}\n"
+      template_variables:
+        date: '2025-11-29'
+        category: compliance
+        status: draft
+        auditor: AI Agent
+    change_request:
+      name: change_request
+      version: '1.0'
+      description: 'A structured change request document for tracking proposed changes
+
+        that require approval before implementation.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: CR_{date}_{name}.md
+        directory: change_requests/
+        frontmatter:
+          type: change_request
+          category: governance
+          status: pending
+          version: '1.0'
+          tags:
+          - change-request
+          - governance
+          - approval
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - requester
+        - approver
+        required_sections:
+        - '## Change Summary'
+        - '## Justification'
+        - '## Impact Assessment'
+        - '## Approval'
+        filename_prefix: CR_
+        allowed_statuses:
+        - draft
+        - pending
+        - approved
+        - rejected
+        - implemented
+      template: "# Change Request: {title}\n\n## Metadata\n- **CR ID**: {cr_id}\n\
+        - **Requester**: {requester}\n- **Approver**: {approver}\n- **Priority**:\
+        \ {priority}\n\n---\n\n## Change Summary\n\nBrief description of the proposed\
+        \ change.\n\n## Justification\n\n### Business Need\nWhy is this change necessary?\n\
+        \n### Expected Benefits\n- Benefit 1\n- Benefit 2\n\n## Impact Assessment\n\
+        \n### Affected Systems\n- System 1\n- System 2\n\n### Risk Level\n- **Risk**:\
+        \ Low / Medium / High\n- **Mitigation**: Describe risk mitigation strategy\n\
+        \n### Resource Requirements\n- Estimated effort: X hours/days\n- Required\
+        \ skills: List skills\n\n## Implementation Plan\n\n### Approach\n1. Step 1\n\
+        2. Step 2\n3. Step 3\n\n### Timeline\n- Start date: YYYY-MM-DD\n- Target completion:\
+        \ YYYY-MM-DD\n\n### Rollback Plan\nHow to revert if issues occur.\n\n## Approval\n\
+        \n### Approval Status\n- [ ] Technical Review\n- [ ] Security Review (if applicable)\n\
+        - [ ] Manager Approval\n- [ ] Final Approval\n\n### Approver Comments\n_Comments\
+        \ from approver will be added here._\n\n### Decision\n- **Status**: Pending\n\
+        - **Date**: \n- **Approved By**: \n\n---\n\n*This change request follows the\
+        \ AgentQMS governance protocol.*\n"
+      template_variables:
+        cr_id: CR-001
+        requester: AI Agent
+        approver: '[Pending Assignment]'
+        priority: Medium
+  validators:
+    prefixes:
+      CR_: change_requests/
+      DR_: decision_records/
+      SPEC_: specifications/
+    types:
+    - change_request
+    - decision_record
+    - meeting_notes
+    - specification
+    categories:
+    - compliance
+    - governance
+    - meeting
+    - security
+    statuses:
+    - approved
+    - deferred
+    - pending
+    - rejected
+    rules:
+      enforce_timestamp: true
+      enforce_kebab_case: true
+      enforce_lowercase: true
+      enforce_frontmatter: true
+      enforce_directory_placement: true
+    custom_validators: []
+    disabled_validators: []
+  context_bundles:
+    security-review:
+      name: security-review
+      title: Security Review Context Bundle
+      version: '1.0'
+      scope: project
+      description: 'Context files for conducting security-focused code reviews.
+
+        Includes security policies, threat models, and review checklists.
+
+        '
+      tags:
+      - security
+      - review
+      - compliance
+      tiers:
+        tier1:
+          name: Security Essentials
+          description: Core security documentation and policies
+          max_files: 5
+          files:
+          - path: AgentQMS/knowledge/agent/system.md
+            priority: critical
+            description: Agent guidelines for security awareness
+          - path: .agentqms/plugins/validators.yaml
+            priority: high
+            description: Validation rules including security checks
+            optional: true
+        tier2:
+          name: Review Guidelines
+          description: Security review process documentation
+          max_files: 5
+          files:
+          - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+            priority: high
+            description: Artifact governance rules
+          - path: AgentQMS/conventions/audit_framework/README.md
+            priority: medium
+            description: Audit framework for systematic review
+        tier3:
+          name: Project Context
+          description: Project-specific security context
+          max_files: 5
+          files:
+          - path: README.md
+            priority: medium
+            description: Project overview
+          - path: .agentqms/state/architecture.yaml
+            priority: medium
+            description: System architecture for threat surface analysis

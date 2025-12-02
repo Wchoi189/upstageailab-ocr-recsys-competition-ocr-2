@@ -1,0 +1,430 @@
+{
+  "schema_version": "1.0.0",
+  "last_updated": "2025-11-20T21:53:29.954748+09:00",
+  "framework": {
+    "name": "upstageailab-ocr-recsys-competition-ocr-2",
+    "version": "1.0.0"
+  },
+  "current_context": {
+    "active_session_id": null,
+    "current_branch": "main",
+    "current_phase": "phase-4-5",
+    "active_artifacts": [],
+    "pending_tasks": []
+  },
+  "sessions": {
+    "total_count": 0,
+    "active_session": null,
+    "session_history": []
+  },
+  "artifacts": {
+    "total_count": 35,
+    "by_type": {
+      "assessment": 16,
+      "implementation_plan": 19
+    },
+    "by_status": {
+      "draft": 32,
+      "completed": 2,
+      "in_progress": 1
+    },
+    "index": [
+      {
+        "path": "artifacts/assessments/2025-11-11_2343_ai-documentation-and-scripts-cleanup.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.272868+09:00",
+        "last_updated": "2025-11-20T21:53:29.272881+09:00",
+        "metadata": {
+          "file_size": 6020,
+          "file_mtime": 1763292787.4758003
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_1401_merge-complete-summary---main-and-streamlit-branches.md",
+        "type": "assessment",
+        "status": "completed",
+        "created_at": "2025-11-20T21:53:29.292063+09:00",
+        "last_updated": "2025-11-20T21:53:29.292078+09:00",
+        "metadata": {
+          "file_size": 6662,
+          "file_mtime": 1763292787.4830754
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_1419_scripts-directory-audit-and-reorganization-assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.311693+09:00",
+        "last_updated": "2025-11-20T21:53:29.311708+09:00",
+        "metadata": {
+          "file_size": 11447,
+          "file_mtime": 1763292787.499387
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_1451_documentation-and-artifact-architecture-assessment.md",
+        "type": "assessment",
+        "status": "completed",
+        "created_at": "2025-11-20T21:53:29.334558+09:00",
+        "last_updated": "2025-11-20T21:53:29.334574+09:00",
+        "metadata": {
+          "file_size": 9676,
+          "file_mtime": 1763292787.5085607
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_1520_ui-directory-legacy-files-audit.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.354153+09:00",
+        "last_updated": "2025-11-20T21:53:29.354168+09:00",
+        "metadata": {
+          "file_size": 10271,
+          "file_mtime": 1763292787.519467
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_1547_data-contracts-update-feasibility-assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.371771+09:00",
+        "last_updated": "2025-11-20T21:53:29.371786+09:00",
+        "metadata": {
+          "file_size": 9715,
+          "file_mtime": 1763292787.5305333
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_data_contract_assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.398602+09:00",
+        "last_updated": "2025-11-20T21:53:29.398617+09:00",
+        "metadata": {
+          "file_size": 13603,
+          "file_mtime": 1763292787.5433676
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-12_refactoring_assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.415258+09:00",
+        "last_updated": "2025-11-20T21:53:29.415272+09:00",
+        "metadata": {
+          "file_size": 13838,
+          "file_mtime": 1763292787.5545673
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-16_1654_ai-collaboration-framework-extraction-and-standardization-assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.437352+09:00",
+        "last_updated": "2025-11-20T21:53:29.437366+09:00",
+        "metadata": {
+          "file_size": 11656,
+          "file_mtime": 1763292787.5651555
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-17_0114_streamlit-command-builder-performance-assessment---page-switch-delays.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.458560+09:00",
+        "last_updated": "2025-11-20T21:53:29.458575+09:00",
+        "metadata": {
+          "file_size": 6958,
+          "file_mtime": 1763309669.6918073
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-17_0136_unified-ocr-app-performance-assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.479536+09:00",
+        "last_updated": "2025-11-20T21:53:29.479554+09:00",
+        "metadata": {
+          "file_size": 8518,
+          "file_mtime": 1763310961.4847353
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-18_0109_albumentaions_playground_architecture.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.503654+09:00",
+        "last_updated": "2025-11-20T21:53:29.503669+09:00",
+        "metadata": {
+          "file_size": 4784,
+          "file_mtime": 1763395790.530632
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-19_1939_upstage-document-parsing-playground-tech-stack.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.524901+09:00",
+        "last_updated": "2025-11-20T21:53:29.524915+09:00",
+        "metadata": {
+          "file_size": 6778,
+          "file_mtime": 1763548799.060502
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-20_1227_ai-documentation-entry-points-audit-and-reorganization-plan.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.544205+09:00",
+        "last_updated": "2025-11-20T21:53:29.544219+09:00",
+        "metadata": {
+          "file_size": 22280,
+          "file_mtime": 1763630705.0356972
+        }
+      },
+      {
+        "path": "artifacts/assessments/2025-11-20_1333_chakra-ui-v3-remaining-build-errors-assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.563928+09:00",
+        "last_updated": "2025-11-20T21:53:29.563946+09:00",
+        "metadata": {
+          "file_size": 4005,
+          "file_mtime": 1763630705.0598986
+        }
+      },
+      {
+        "path": "artifacts/assessments/psu-upgrade-assessment.md",
+        "type": "assessment",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.581567+09:00",
+        "last_updated": "2025-11-20T21:53:29.581584+09:00",
+        "metadata": {
+          "file_size": 2323,
+          "file_mtime": 1763292787.5831172
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-11_0158_implementation-plan-breakdown-architecture-refactoring.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.602504+09:00",
+        "last_updated": "2025-11-20T21:53:29.602519+09:00",
+        "metadata": {
+          "file_size": 14222,
+          "file_mtime": 1763292787.6001792
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-11_plan-001-core-training-stabilization.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.621376+09:00",
+        "last_updated": "2025-11-20T21:53:29.621390+09:00",
+        "metadata": {
+          "file_size": 9908,
+          "file_mtime": 1763292787.6130512
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-11_plan-002-polygon-validation-consolidation.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.637731+09:00",
+        "last_updated": "2025-11-20T21:53:29.637747+09:00",
+        "metadata": {
+          "file_size": 11144,
+          "file_mtime": 1763292787.6224103
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-11_plan-003-import-time-optimization.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.655010+09:00",
+        "last_updated": "2025-11-20T21:53:29.655025+09:00",
+        "metadata": {
+          "file_size": 11868,
+          "file_mtime": 1763292787.6269088
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-11_plan-004-inference-service-consolidation.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.672764+09:00",
+        "last_updated": "2025-11-20T21:53:29.672777+09:00",
+        "metadata": {
+          "file_size": 13513,
+          "file_mtime": 1763292787.650398
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-11_plan-005-legacy-cleanup-config-consolidation.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.692071+09:00",
+        "last_updated": "2025-11-20T21:53:29.692085+09:00",
+        "metadata": {
+          "file_size": 14614,
+          "file_mtime": 1763292787.65759
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-12_0226_data-contract-enforcement-implementation.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.711662+09:00",
+        "last_updated": "2025-11-20T21:53:29.711676+09:00",
+        "metadata": {
+          "file_size": 24664,
+          "file_mtime": 1763292787.6738172
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-12_1518_plan-005:-documentation-organization-and-tooling-updates.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.731930+09:00",
+        "last_updated": "2025-11-20T21:53:29.731945+09:00",
+        "metadata": {
+          "file_size": 6803,
+          "file_mtime": 1763292787.6796005
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-12_1518_plan-006:-documentation-architecture-enhancement.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.752366+09:00",
+        "last_updated": "2025-11-20T21:53:29.752380+09:00",
+        "metadata": {
+          "file_size": 7778,
+          "file_mtime": 1763292787.6947331
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-12_1556_ui-directory-legacy-files-cleanup-implementation-plan.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.772144+09:00",
+        "last_updated": "2025-11-20T21:53:29.772158+09:00",
+        "metadata": {
+          "file_size": 26503,
+          "file_mtime": 1763292787.712193
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-12_plan-004-revised-inference-consolidation.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.796491+09:00",
+        "last_updated": "2025-11-20T21:53:29.796520+09:00",
+        "metadata": {
+          "file_size": 16699,
+          "file_mtime": 1763292787.7335608
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0126_phase-1:-implement-streamlit-caching-for-command-builder.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.815291+09:00",
+        "last_updated": "2025-11-20T21:53:29.815305+09:00",
+        "metadata": {
+          "file_size": 13864,
+          "file_mtime": 1763312083.503491
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.834181+09:00",
+        "last_updated": "2025-11-20T21:53:29.834196+09:00",
+        "metadata": {
+          "file_size": 14573,
+          "file_mtime": 1763312256.0745418
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0130_phase-3:-advanced-optimizations.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.854367+09:00",
+        "last_updated": "2025-11-20T21:53:29.854381+09:00",
+        "metadata": {
+          "file_size": 15825,
+          "file_mtime": 1763312256.0745418
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0130_web-worker-prompt:-streamlit-performance-optimization.md",
+        "type": "implementation_plan",
+        "status": "in_progress",
+        "created_at": "2025-11-20T21:53:29.871969+09:00",
+        "last_updated": "2025-11-20T21:53:29.871984+09:00",
+        "metadata": {
+          "file_size": 10810,
+          "file_mtime": 1763364735.251206
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0131_additional-performance-optimization-suggestions.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.891027+09:00",
+        "last_updated": "2025-11-20T21:53:29.891040+09:00",
+        "metadata": {
+          "file_size": 9395,
+          "file_mtime": 1763630705.1169634
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.912623+09:00",
+        "last_updated": "2025-11-20T21:53:29.912640+09:00",
+        "metadata": {
+          "file_size": 13318,
+          "file_mtime": 1763312256.0850854
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.933927+09:00",
+        "last_updated": "2025-11-20T21:53:29.933945+09:00",
+        "metadata": {
+          "file_size": 13639,
+          "file_mtime": 1763312335.0220447
+        }
+      },
+      {
+        "path": "artifacts/implementation_plans/2025-11-18_0241_high-performance-playground-migration.md",
+        "type": "implementation_plan",
+        "status": "draft",
+        "created_at": "2025-11-20T21:53:29.954727+09:00",
+        "last_updated": "2025-11-20T21:53:29.954742+09:00",
+        "metadata": {
+          "file_size": 24590,
+          "file_mtime": 1763547698.0846083
+        }
+      }
+    ]
+  },
+  "relationships": {
+    "artifact_dependencies": {},
+    "session_artifacts": {}
+  },
+  "statistics": {
+    "total_sessions": 0,
+    "total_artifacts_created": 35,
+    "total_artifacts_validated": 0,
+    "total_artifacts_deployed": 0,
+    "last_session_timestamp": null
+  }
+}

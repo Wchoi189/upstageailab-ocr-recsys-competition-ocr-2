@@ -1,0 +1,151 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "https://agentqms.dev/schemas/plugin_context_bundle.json",
+    "title": "AgentQMS Context Bundle Plugin",
+    "description": "Schema for defining custom context bundles in AgentQMS",
+    "type": "object",
+    "required": ["name", "title", "tiers"],
+    "additionalProperties": false,
+    "properties": {
+        "name": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "Unique identifier for the context bundle (lowercase, hyphens/underscores)",
+            "examples": ["security-review", "onboarding", "debugging"]
+        },
+        "title": {
+            "type": "string",
+            "description": "Human-readable title for the bundle"
+        },
+        "description": {
+            "type": "string",
+            "description": "Detailed description of when and how to use this bundle"
+        },
+        "version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+            "description": "Semantic version of this bundle definition",
+            "default": "1.0"
+        },
+        "scope": {
+            "type": "string",
+            "pattern": "^(builtin|org_[a-z0-9_]+|project)$",
+            "description": "Namespace scope for conflict prevention",
+            "default": "project"
+        },
+        "extends": {
+            "type": "string",
+            "pattern": "^[a-z][a-z0-9_-]*$",
+            "description": "Name of a base bundle to inherit from (optional)"
+        },
+        "tags": {
+            "type": "array",
+            "items": {"type": "string"},
+            "description": "Tags for categorization and discovery"
+        },
+        "tiers": {
+            "type": "object",
+            "description": "Tiered file organization (tier1 = most critical)",
+            "minProperties": 1,
+            "additionalProperties": false,
+            "patternProperties": {
+                "^tier[1-5]$": {
+                    "type": "object",
+                    "required": ["name", "files"],
+                    "additionalProperties": false,
+                    "properties": {
+                        "name": {
+                            "type": "string",
+                            "description": "Human-readable tier name",
+                            "examples": ["Essential", "Structure", "Examples"]
+                        },
+                        "description": {
+                            "type": "string",
+                            "description": "What this tier contains"
+                        },
+                        "max_files": {
+                            "type": "integer",
+                            "minimum": 1,
+                            "maximum": 20,
+                            "description": "Maximum files in this tier (for context budget)",
+                            "default": 5
+                        },
+                        "files": {
+                            "type": "array",
+                            "description": "Files included in this tier",
+                            "items": {
+                                "oneOf": [
+                                    {
+                                        "type": "string",
+                                        "description": "Simple file path (relative to project root)"
+                                    },
+                                    {
+                                        "type": "object",
+                                        "required": ["path"],
+                                        "additionalProperties": false,
+                                        "properties": {
+                                            "path": {
+                                                "type": "string",
+                                                "description": "File path relative to project root (supports globs)"
+                                            },
+                                            "priority": {
+                                                "type": "string",
+                                                "enum": ["critical", "high", "medium", "low"],
+                                                "description": "Loading priority within the tier",
+                                                "default": "medium"
+                                            },
+                                            "description": {
+                                                "type": "string",
+                                                "description": "Why this file is included"
+                                            },
+                                            "optional": {
+                                                "type": "boolean",
+                                                "description": "Allow missing file without error",
+                                                "default": false
+                                            },
+                                            "condition": {
+                                                "type": "string",
+                                                "description": "Condition for including (e.g., 'file_exists:pyproject.toml')"
+                                            }
+                                        }
+                                    }
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "variables": {
+            "type": "object",
+            "description": "Variables that can be interpolated in file paths",
+            "additionalProperties": {
+                "type": "string"
+            },
+            "examples": [{
+                "project_name": "myproject",
+                "config_dir": "config/"
+            }]
+        },
+        "hooks": {
+            "type": "object",
+            "description": "Lifecycle hooks for bundle processing (Phase 2)",
+            "additionalProperties": false,
+            "properties": {
+                "pre_load": {
+                    "type": "string",
+                    "description": "Python callable to run before loading (module.function)"
+                },
+                "post_load": {
+                    "type": "string",
+                    "description": "Python callable to run after loading (module.function)"
+                },
+                "transform": {
+                    "type": "string",
+                    "description": "Python callable to transform content (module.function)"
+                }
+            }
+        }
+    }
+}
+

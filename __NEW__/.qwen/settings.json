@@ -1,0 +1,66 @@
+{
+  "general": {
+    "checkpointing": {
+      "enabled": false
+    }
+  },
+  "ui": {
+    "showMemoryUsage": true
+  },
+  "telemetry": {
+    "enabled": false
+  },
+  "tools": {
+    "approval": {
+      "mode": "auto-edit"
+    },
+    "allowed": [
+      "run_terminal_cmd",
+      "grep_search",
+      "list_dir",
+      "read_file",
+      "search_replace",
+      "create_file"
+    ]
+  },
+  "workspace": {
+    "includeDirectories": [
+      "/workspaces/agent_qms"
+    ],
+    "excludePatterns": [
+      "**/node_modules/**",
+      "**/.git/**",
+      "**/AgentQMS/**",
+      "**/.agentqms/**",
+      "**/.copilot/**",
+      "**/.cursor/**",
+      "**/.github/**",
+      "**/*.pyc",
+      "**/__pycache__/**"
+    ]
+  },
+  "agentqms": {
+    "enabled": true,
+    "instructions": "/workspaces/agent_qms/AgentQMS/knowledge/agent/system.md",
+    "architecture": "/workspaces/agent_qms/.agentqms/state/architecture.yaml",
+    "artifactsPath": "/workspaces/agent_qms/docs/artifacts",
+    "validation": {
+      "enabled": false,
+      "ignorePaths": [
+        "docs/*.md",
+        "docs/assets/**",
+        "docs/archive/**",
+        "AgentQMS/**",
+        ".agentqms/**",
+        ".copilot/**",
+        ".cursor/**",
+        ".github/**"
+      ]
+    }
+  },
+  "model": {
+    "name": "qwen/qwen3-coder"
+    // "name": "qwen2.5-coder-32b-instruct",
+  },
+  "$version": 2
+}

@@ -1,0 +1,766 @@
+{
+  "version": "1.0",
+  "framework": "AgentQMS",
+  "tools": [
+    {
+      "name": "audit_generator",
+      "category": "audit",
+      "description": "Shim for the audit document generator.",
+      "path": "AgentQMS/agent_tools/audit/audit_generator.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "audit_validator",
+      "category": "audit",
+      "description": "Shim for the audit document validator.",
+      "path": "AgentQMS/agent_tools/audit/audit_validator.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "checklist_tool",
+      "category": "audit",
+      "description": "Shim for the audit checklist tool.",
+      "path": "AgentQMS/agent_tools/audit/checklist_tool.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "monitor_artifacts",
+      "category": "compliance",
+      "description": "Artifact Monitoring and Compliance System",
+      "path": "AgentQMS/agent_tools/compliance/monitor_artifacts.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "validate_artifacts",
+      "category": "compliance",
+      "description": "Artifact Validation Script for AI Agents",
+      "path": "AgentQMS/agent_tools/compliance/validate_artifacts.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [
+        "yaml"
+      ],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "validate_boundaries",
+      "category": "compliance",
+      "description": "Validate AgentQMS framework boundaries.",
+      "path": "AgentQMS/agent_tools/compliance/validate_boundaries.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [
+        "yaml"
+      ],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "artifact_templates",
+      "category": "core",
+      "description": "Shim for artifact templates.",
+      "path": "AgentQMS/agent_tools/core/artifact_templates.py",
+      "is_cli": false,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "artifact_workflow",
+      "category": "core",
+      "description": "AI Agent Artifact Workflow Integration",
+      "path": "AgentQMS/agent_tools/core/artifact_workflow.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "context_bundle",
+      "category": "core",
+      "description": "Context Bundle Generator Core",
+      "path": "AgentQMS/agent_tools/core/context_bundle.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [
+        "yaml"
+      ],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "discover",
+      "category": "core",
+      "description": "Agent Tools Discovery Helper",
+      "path": "AgentQMS/agent_tools/core/discover.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "plugin_loader",
+      "category": "core",
+      "description": "Plugin Loader Shim",
+      "path": "AgentQMS/agent_tools/core/plugin_loader.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "workflow_detector",
+      "category": "core",
+      "description": "Workflow Detection and Auto-Suggestion",
+      "path": "AgentQMS/agent_tools/core/workflow_detector.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [
+        "yaml"
+      ],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "auto_generate_index",
+      "category": "documentation",
+      "description": "Shim for handbook index generation/validation.",
+      "path": "AgentQMS/agent_tools/documentation/auto_generate_index.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "validate_links",
+      "category": "documentation",
+      "description": "Shim for documentation link validation.",
+      "path": "AgentQMS/agent_tools/documentation/validate_links.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "validate_manifest",
+      "category": "documentation",
+      "description": "Shim for AI handbook manifest validation.",
+      "path": "AgentQMS/agent_tools/documentation/validate_manifest.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "adapt_project",
+      "category": "utilities",
+      "description": "Canonical wrapper for the project adaptation script.",
+      "path": "AgentQMS/agent_tools/utilities/adapt_project.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "cli",
+      "category": "utilities",
+      "description": "Canonical CLI entrypoint for development/debug tracking and experiments.",
+      "path": "AgentQMS/agent_tools/utilities/tracking/cli.py",
+      "is_cli": true,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "config",
+      "category": "utilities",
+      "description": "Framework configuration loader for AgentQMS.",
+      "path": "AgentQMS/agent_tools/utils/config.py",
+      "is_cli": false,
+      "usage_hint": "",
+      "tags": [
+        "yaml"
+      ],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "get_context",
+      "category": "utilities",
+      "description": "get_context tool",
+      "path": "AgentQMS/agent_tools/utilities/get_context.py",
+      "is_cli": true,
+      "usage_hint": "argparse CLI",
+      "tags": [
+        "yaml"
+      ],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "paths",
+      "category": "utilities",
+      "description": "Path resolution helpers for AgentQMS (agent_tools canonical).",
+      "path": "AgentQMS/agent_tools/utils/paths.py",
+      "is_cli": false,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    },
+    {
+      "name": "runtime",
+      "category": "utilities",
+      "description": "Runtime helpers for initializing AgentQMS tooling (agent_tools canonical).",
+      "path": "AgentQMS/agent_tools/utils/runtime.py",
+      "is_cli": false,
+      "usage_hint": "",
+      "tags": [],
+      "make_target": null,
+      "parameters": null
+    }
+  ],
+  "workflows": [
+    {
+      "name": "help",
+      "description": "Show agent help message",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "discover",
+      "description": "Discover all available agent tools",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "status",
+      "description": "Check overall system status",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "create-plan",
+      "description": "Create implementation plan (usage: make create-plan NAME=my-plan TITLE=\"My Plan\")",
+      "usage": "make create-plan NAME=my-plan TITLE=\"My Plan\")",
+      "category": "artifact_creation"
+    },
+    {
+      "name": "create-assessment",
+      "description": "Create assessment (usage: make create-assessment NAME=my-assessment TITLE=\"My Assessment\")",
+      "usage": "make create-assessment NAME=my-assessment TITLE=\"My Assessment\")",
+      "category": "artifact_creation"
+    },
+    {
+      "name": "create-design",
+      "description": "Create design document (usage: make create-design NAME=my-design TITLE=\"My Design\")",
+      "usage": "make create-design NAME=my-design TITLE=\"My Design\")",
+      "category": "artifact_creation"
+    },
+    {
+      "name": "create-research",
+      "description": "Create research document (usage: make create-research NAME=my-research TITLE=\"My Research\")",
+      "usage": "make create-research NAME=my-research TITLE=\"My Research\")",
+      "category": "artifact_creation"
+    },
+    {
+      "name": "create-template",
+      "description": "Create template (usage: make create-template NAME=my-template TITLE=\"My Template\")",
+      "usage": "make create-template NAME=my-template TITLE=\"My Template\")",
+      "category": "artifact_creation"
+    },
+    {
+      "name": "create-bug-report",
+      "description": "Create bug report (usage: make create-bug-report NAME=my-bug TITLE=\"My Bug Report\")",
+      "usage": "make create-bug-report NAME=my-bug TITLE=\"My Bug Report\")",
+      "category": "artifact_creation"
+    },
+    {
+      "name": "validate",
+      "description": "Validate all artifacts",
+      "usage": null,
+      "category": "validation"
+    },
+    {
+      "name": "validate-file",
+      "description": "Validate specific file (usage: make validate-file FILE=path/to/file.md)",
+      "usage": "make validate-file FILE=path/to/file.md)",
+      "category": "validation"
+    },
+    {
+      "name": "validate-naming",
+      "description": "Check naming conventions only",
+      "usage": null,
+      "category": "validation"
+    },
+    {
+      "name": "boundary",
+      "description": "Validate framework/project boundaries",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "compliance",
+      "description": "Check compliance status",
+      "usage": null,
+      "category": "validation"
+    },
+    {
+      "name": "compliance-fix",
+      "description": "Fix compliance issues automatically (DEPRECATED)",
+      "usage": null,
+      "category": "validation"
+    },
+    {
+      "name": "compliance-dashboard",
+      "description": "Open enhanced compliance dashboard (DEPRECATED)",
+      "usage": null,
+      "category": "validation"
+    },
+    {
+      "name": "docs-generate",
+      "description": "Generate documentation index",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-regenerate",
+      "description": "Regenerate all documentation",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-update-indexes",
+      "description": "Update artifact indexes",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-validate-links",
+      "description": "Validate documentation links",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-validate-manifest",
+      "description": "Validate documentation manifest",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-validate-metadata",
+      "description": "Validate documentation metadata",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "context",
+      "description": "Generate context bundle for task (usage: make context TASK=\"task description\")",
+      "usage": "make context TASK=\"task description\")",
+      "category": "context_loading"
+    },
+    {
+      "name": "context-development",
+      "description": "Get development context bundle",
+      "usage": null,
+      "category": "context_loading"
+    },
+    {
+      "name": "context-docs",
+      "description": "Get documentation context bundle",
+      "usage": null,
+      "category": "context_loading"
+    },
+    {
+      "name": "context-debug",
+      "description": "Get debugging context bundle",
+      "usage": null,
+      "category": "context_loading"
+    },
+    {
+      "name": "context-plan",
+      "description": "Get planning context bundle",
+      "usage": null,
+      "category": "context_loading"
+    },
+    {
+      "name": "context-list",
+      "description": "List all available context bundles",
+      "usage": null,
+      "category": "context_loading"
+    },
+    {
+      "name": "audit-init",
+      "description": "Initialize audit (usage: make audit-init FRAMEWORK=\"Framework Name\" DATE=\"2025-11-09\" SCOPE=\"Scope description\")",
+      "usage": "make audit-init FRAMEWORK=\"Framework Name\" DATE=\"2025-11-09\" SCOPE=\"Scope description\")",
+      "category": "audit"
+    },
+    {
+      "name": "audit-validate",
+      "description": "Validate audit documents",
+      "usage": null,
+      "category": "audit"
+    },
+    {
+      "name": "audit-checklist-generate",
+      "description": "Generate checklist for phase (usage: make audit-checklist-generate PHASE=\"discovery\")",
+      "usage": "make audit-checklist-generate PHASE=\"discovery\")",
+      "category": "audit"
+    },
+    {
+      "name": "audit-checklist-report",
+      "description": "Generate audit progress report",
+      "usage": null,
+      "category": "audit"
+    },
+    {
+      "name": "docs-validate-templates",
+      "description": "Validate documentation templates",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-validate-ui-schema",
+      "description": "Validate UI schema documentation",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "docs-validate-ai",
+      "description": "Validate AI documentation (DEPRECATED)",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "feedback-report",
+      "description": "Generate feedback report",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "feedback-issue",
+      "description": "Report documentation issue (usage: make feedback-issue ISSUE=\"description\" FILE=\"path\")",
+      "usage": "make feedback-issue ISSUE=\"description\" FILE=\"path\")",
+      "category": "workflow"
+    },
+    {
+      "name": "feedback-suggest",
+      "description": "Suggest improvement (usage: make feedback-suggest AREA=\"area\" CURRENT=\"current\" CHANGE=\"suggested\" RATIONALE=\"reason\")",
+      "usage": "make feedback-suggest AREA=\"area\" CURRENT=\"current\" CHANGE=\"suggested\" RATIONALE=\"reason\")",
+      "category": "workflow"
+    },
+    {
+      "name": "quality-check",
+      "description": "Check documentation quality",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "quality-check-output",
+      "description": "Check documentation quality and save to file",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "ast-analyze",
+      "description": "Run AST analysis on codebase (usage: make ast-analyze [TARGET=path/to/code])",
+      "usage": "make ast-analyze [TARGET=path/to/code])",
+      "category": "workflow"
+    },
+    {
+      "name": "ast-generate-tests",
+      "description": "Generate test scaffolds using AST analysis (usage: make ast-generate-tests TARGET=path/to/module.py)",
+      "usage": "make ast-generate-tests TARGET=path/to/module.py)",
+      "category": "workflow"
+    },
+    {
+      "name": "ast-extract-docs",
+      "description": "Extract documentation from code using AST (usage: make ast-extract-docs TARGET=path/to/module.py)",
+      "usage": "make ast-extract-docs TARGET=path/to/module.py)",
+      "category": "workflow"
+    },
+    {
+      "name": "ast-check-quality",
+      "description": "Check code quality using AST analysis (usage: make ast-check-quality [TARGET=path/to/code])",
+      "usage": "make ast-check-quality [TARGET=path/to/code])",
+      "category": "workflow"
+    },
+    {
+      "name": "context-bundle",
+      "description": "Get specific context bundle (usage: make context-bundle BUNDLE=bundle-name)",
+      "usage": "make context-bundle BUNDLE=bundle-name)",
+      "category": "context_loading"
+    },
+    {
+      "name": "workflow-create",
+      "description": "Complete workflow: create artifact, validate, update indexes",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "workflow-validate",
+      "description": "Complete validation workflow: validate, fix, monitor",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "workflow-docs",
+      "description": "Complete documentation workflow: generate, validate, update",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "track-init",
+      "description": "Initialize tracking SQLite DB",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "plan-new",
+      "description": "Create plan (usage: make plan-new TITLE=\"...\" OWNER=\"me\" [KEY=slug])",
+      "usage": "make plan-new TITLE=\"...\" OWNER=\"me\" [KEY=slug])",
+      "category": "workflow"
+    },
+    {
+      "name": "exp-new",
+      "description": "Create experiment (usage: make exp-new TITLE=\"...\" OBJECTIVE=\"...\" OWNER=\"me\" [KEY=slug])",
+      "usage": "make exp-new TITLE=\"...\" OBJECTIVE=\"...\" OWNER=\"me\" [KEY=slug])",
+      "category": "workflow"
+    },
+    {
+      "name": "exp-export",
+      "description": "Export experiment runs to CSV (usage: make exp-export OUT=data/ops/experiment_runs.csv)",
+      "usage": "make exp-export OUT=data/ops/experiment_runs.csv)",
+      "category": "workflow"
+    },
+    {
+      "name": "clean",
+      "description": "Clean up temporary files and caches",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "clean-feedback",
+      "description": "Clean up old feedback files",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "dev-setup",
+      "description": "Setup development environment",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "dev-test",
+      "description": "Test all agent tools",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "info-tools",
+      "description": "Show detailed tool information",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "info-stats",
+      "description": "Show project statistics",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "tool-catalog",
+      "description": "Generate tool catalog and scripts index",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "export",
+      "description": "Export framework to project-agnostic package (usage: make export OUTPUT=export_package/)",
+      "usage": "make export OUTPUT=export_package/)",
+      "category": "workflow"
+    },
+    {
+      "name": "export-dry-run",
+      "description": "Dry run export (see what would be exported) (usage: make export-dry-run OUTPUT=export_package/)",
+      "usage": "make export-dry-run OUTPUT=export_package/)",
+      "category": "workflow"
+    },
+    {
+      "name": "export-validate",
+      "description": "Export framework with validation (usage: make export-validate OUTPUT=export_package/)",
+      "usage": "make export-validate OUTPUT=export_package/)",
+      "category": "workflow"
+    },
+    {
+      "name": "version-bump",
+      "description": "Bump project version (usage: make version-bump VERSION=0.8.0 NOTES=\"...\" DATE=YYYY-MM-DDTHH:MM:SSZ)",
+      "usage": "make version-bump VERSION=0.8.0 NOTES=\"...\" DATE=YYYY-MM-DDTHH:MM:SSZ)",
+      "category": "workflow"
+    },
+    {
+      "name": "docs-deprecate",
+      "description": "Deprecate docs based on project_version.yaml (add --dry-run with DRY_RUN=1)",
+      "usage": null,
+      "category": "documentation"
+    },
+    {
+      "name": "changelog-draft",
+      "description": "Generate changelog draft from tracking DB and git log",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "changelog-preview",
+      "description": "Preview changelog draft without writing file",
+      "usage": null,
+      "category": "workflow"
+    },
+    {
+      "name": "version",
+      "description": "Show system version information",
+      "usage": null,
+      "category": "workflow"
+    }
+  ],
+  "capabilities": [
+    {
+      "name": "plan_generation",
+      "description": "Create implementation plans using Blueprint Protocol Template",
+      "tools": [
+        "artifact_workflow"
+      ],
+      "artifacts": [
+        "implementation_plan"
+      ],
+      "make_targets": [
+        "create-plan"
+      ]
+    },
+    {
+      "name": "quality_assessment",
+      "description": "Validate artifacts and boundaries",
+      "tools": [
+        "validate_artifacts",
+        "validate_boundaries",
+        "monitor_artifacts"
+      ],
+      "artifacts": [
+        "assessment"
+      ],
+      "make_targets": [
+        "validate",
+        "boundary",
+        "compliance"
+      ]
+    },
+    {
+      "name": "documentation_validation",
+      "description": "Validate documentation links and manifests",
+      "tools": [
+        "validate_links",
+        "validate_manifest",
+        "auto_generate_index"
+      ],
+      "artifacts": [],
+      "make_targets": [
+        "docs-validate-links",
+        "docs-validate-manifest",
+        "docs-generate"
+      ]
+    },
+    {
+      "name": "context_loading",
+      "description": "Generate task-specific context bundles",
+      "tools": [
+        "context_bundle",
+        "get_context"
+      ],
+      "artifacts": [],
+      "make_targets": [
+        "context",
+        "context-development",
+        "context-docs",
+        "context-debug",
+        "context-plan"
+      ]
+    },
+    {
+      "name": "audit_execution",
+      "description": "Run framework audits using the audit framework",
+      "tools": [
+        "audit_generator",
+        "audit_validator",
+        "checklist_tool"
+      ],
+      "artifacts": [
+        "audit_report"
+      ],
+      "make_targets": [
+        "audit-init",
+        "audit-validate",
+        "audit-checklist-generate"
+      ]
+    }
+  ],
+  "categories": {
+    "utilities": [
+      "adapt_project",
+      "cli",
+      "config",
+      "get_context",
+      "paths",
+      "runtime"
+    ],
+    "compliance": [
+      "monitor_artifacts",
+      "validate_artifacts",
+      "validate_boundaries"
+    ],
+    "audit": [
+      "audit_generator",
+      "audit_validator",
+      "checklist_tool"
+    ],
+    "core": [
+      "artifact_templates",
+      "artifact_workflow",
+      "context_bundle",
+      "discover",
+      "plugin_loader",
+      "workflow_detector"
+    ],
+    "documentation": [
+      "auto_generate_index",
+      "validate_links",
+      "validate_manifest"
+    ]
+  }
+}

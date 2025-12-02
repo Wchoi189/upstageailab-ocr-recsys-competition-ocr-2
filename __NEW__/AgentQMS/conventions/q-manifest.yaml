@@ -1,0 +1,32 @@
+version: 1.0
+framework_name: "QualityManagementFramework"
+
+artifact_types:
+  - name: "implementation_plan"
+    description: "A detailed plan for implementing a new feature or change."
+    template: "templates/implementation_plan.md"
+    schema: "schemas/implementation_plan.json"
+    location: "artifacts/implementation_plans/"
+  - name: "assessment"
+    description: "An evaluation of a specific aspect of the system."
+    template: "templates/assessment.md"
+    schema: "schemas/assessment.json"
+    location: "artifacts/assessments/"
+  - name: "bug_report"
+    description: "A structured report describing a defect, its impact, and the applied fix."
+    template: "templates/bug_report.md"
+    schema: "schemas/bug_report.json"
+    location: "artifacts/bug_reports/"
+
+tool_registry:
+  - name: "create_artifact"
+    entrypoint: "AgentQMS.agent_tools.core.artifact_workflow.ArtifactWorkflow.create_artifact"
+    description: "Create a new quality artifact."
+  - name: "validate_artifact"
+    entrypoint: "AgentQMS.agent_tools.compliance.validate_artifacts.ArtifactValidator.validate_single_file"
+    description: "Validate an artifact against its schema."
+
+validation_rules:
+  - rule: "enforce_semantic_filenames"
+    enabled: true
+    description: "Artifact filenames should be semantic and not rely on timestamps."

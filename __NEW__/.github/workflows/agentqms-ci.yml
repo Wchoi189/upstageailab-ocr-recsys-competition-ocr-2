@@ -1,0 +1,163 @@
+name: AgentQMS CI
+
+on:
+  pull_request:
+    paths:
+      - 'docs/**'
+      - 'AgentQMS/**'
+      - '.github/workflows/agentqms-ci.yml'
+  push:
+    branches:
+      - main
+    paths:
+      - 'docs/**'
+      - 'AgentQMS/**'
+
+# Restrict permissions to minimum required
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    name: Validate Artifacts
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      compliance_rate: ${{ steps.validate.outputs.compliance_rate }}
+      violations: ${{ steps.validate.outputs.violations }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install interface deps
+        run: |
+          cd AgentQMS/interface
+          uv pip install -r requirements.txt --system
+
+      - name: Validate artifacts
+        id: validate
+        run: |
+          cd AgentQMS/interface
+          python ../agent_tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
+          
+          # Check if JSON file is valid before parsing
+          if [ ! -s /tmp/validation.json ] || ! jq empty /tmp/validation.json 2>/dev/null; then
+            echo "⚠️ Warning: Invalid or empty JSON output. Errors:" >&2
+            cat /tmp/validation.err >&2 || true
+            echo '[]' > /tmp/validation.json
+          fi
+          
+          # Parse results
+          TOTAL=$(jq 'length' /tmp/validation.json)
+          VALID=$(jq '[.[] | select(.valid == true)] | length' /tmp/validation.json)
+          INVALID=$((TOTAL - VALID))
+          
+          # Calculate rate using awk (more portable than bc)
+          if [ "$TOTAL" -gt 0 ]; then
+            RATE=$(awk "BEGIN {printf \"%.1f\", $VALID * 100 / $TOTAL}")
+          else
+            RATE=100
+          fi
+          
+          echo "compliance_rate=$RATE" >> $GITHUB_OUTPUT
+          echo "violations=$INVALID" >> $GITHUB_OUTPUT
+          
+          echo "📊 Compliance: $RATE% ($VALID/$TOTAL valid)"
+          
+          # Run human-readable validation
+          make validate
+        continue-on-error: false
+
+  reindex:
+    name: Regenerate Indexes
+    runs-on: ubuntu-latest
+    needs: validate
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install interface deps
+        run: |
+          cd AgentQMS/interface
+          uv pip install -r requirements.txt --system
+
+      - name: Reindex artifacts
+        run: |
+          cd AgentQMS/interface
+          make reindex
+
+  check-links:
+    name: Check Links
+    runs-on: ubuntu-latest
+    needs: validate
+    permissions:
+      contents: read
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v1
+
+      - name: Install interface deps
+        run: |
+          cd AgentQMS/interface
+          uv pip install -r requirements.txt --system
+
+      - name: Check links
+        run: |
+          cd AgentQMS/interface
+          make check-links
+        continue-on-error: true  # Allow warnings for now, will be enforced later
+
+  summary:
+    name: CI Summary
+    runs-on: ubuntu-latest
+    needs: [validate, reindex, check-links]
+    if: always()
+    permissions: {}
+    steps:
+      - name: Generate Summary
+        run: |
+          echo "## AgentQMS CI Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Validation | ${{ needs.validate.result == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Reindex | ${{ needs.reindex.result == 'success' && '✅ Pass' || '❌ Fail' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Link Check | ${{ needs.check-links.result == 'success' && '✅ Pass' || '⚠️ Warning' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**Compliance Rate:** ${{ needs.validate.outputs.compliance_rate }}%" >> $GITHUB_STEP_SUMMARY
+          echo "**Violations:** ${{ needs.validate.outputs.violations }}" >> $GITHUB_STEP_SUMMARY
+
+      - name: Archive validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: validation-report
+          path: VALIDATION_TEST_RESULTS.md
+          if-no-files-found: ignore
