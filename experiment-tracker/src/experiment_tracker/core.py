@@ -2,7 +2,6 @@ import datetime
 import json
 import shutil
 from pathlib import Path
-from typing import Tuple, Optional
 
 import yaml
 
@@ -151,7 +150,7 @@ class ExperimentTracker:
                 print(f"Artifact not found: {src_path}")
                 print(f"  Tried to resolve: {artifact_path}")
                 if "{timestamp}" in artifact_path:
-                    print(f"  Hint: Use 'workflow.py record-test-results' for auto-detection")
+                    print("  Hint: Use 'workflow.py record-test-results' for auto-detection")
                 return False
 
             # Show context and confirm if requested
@@ -260,7 +259,7 @@ class ExperimentTracker:
     def _get_paths(self, experiment_id: str) -> ExperimentPaths:
         return ExperimentPaths(experiment_id, self.root_dir)
 
-    def _validate_experiment_context(self, experiment_id: str, operation: str) -> Tuple[bool, Optional[str]]:
+    def _validate_experiment_context(self, experiment_id: str, operation: str) -> tuple[bool, str | None]:
         """
         Validate experiment context and return (is_valid, warning_message).
 
@@ -309,7 +308,7 @@ class ExperimentTracker:
             print(f"  Intention: {state.get('intention', 'N/A')}")
 
             if files_to_update:
-                print(f"\nFiles to be updated:")
+                print("\nFiles to be updated:")
                 for file_path in files_to_update:
                     print(f"  - {file_path}")
 

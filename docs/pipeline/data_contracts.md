@@ -369,43 +369,33 @@ image_array: np.ndarray  # Shape: (H, W, 3), dtype: uint8, BGR format (OpenCV st
 ```
 
 **Metadata Schema - InferenceMetadata**:
-```python
-{
-    "original_size": Tuple[int, int],    # (width, height) of source image
-    "processed_size": Tuple[int, int],   # (width, height) of preview image (typically 640x640)
-    "padding": {
-        "top": int,
-        "bottom": int,
-        "left": int,
-        "right": int
-    },
-    "scale": float,                      # Scaling factor: target_size / max(original_h, original_w)
-    "coordinate_system": str,            # "pixel" | "normalized"
-}
-```
+See [Inference Data Contracts](inference-data-contracts.md#inferencemetadata) for complete schema.
 
-**Coordinate System**:
-- **Pixel Coordinates**: Polygon coordinates are in absolute pixels relative to the `processed_size` preview image.
-- **Padding Position**: Padding is applied at **top-left** position (content starts at (0,0), padding at bottom/right).
-- **Coordinate Mapping**: Coordinates are already transformed from original image space to the preview image space (640x640 with padding).
+**Required Fields**:
+- `padding_position`: `"top_left" | "center"` - Padding alignment (REQUIRED)
+- `content_area`: `(x, y, width, height)` - Content bounds in processed_size (REQUIRED)
+- `original_size`, `processed_size`, `padding`, `scale`, `coordinate_system`
+
+**Coordinate Transformation**:
+- See [Inference Data Contracts](inference-data-contracts.md#coordinate-transformation)
+- Top-left: No translation offset
+- Centered: Translation offset required
 
 **Validation Rules**:
-- `original_size` must match the input image dimensions
-- `processed_size` is typically `(640, 640)` (target_size x target_size)
-- `padding` values are non-negative integers
-- `scale` must be positive
-- `coordinate_system` must be either `"pixel"` or `"normalized"`
+- `padding_position` must be present (no default assumption)
+- `content_area` must be present and valid
+- `padding` values must match `padding_position` (top-left: top=0, left=0)
+- Coordinates must be within content_area bounds
 
 **Frontend Usage**:
-- Frontend should use `meta.processed_size` to verify `displayBitmap` dimensions match.
-- Frontend should use `meta.coordinate_system` to determine coordinate handling logic.
-- For `coordinate_system="pixel"`: Map coordinates directly to `displayBitmap` dimensions.
-- For `coordinate_system="normalized"`: Scale coordinates by `processed_size` dimensions.
+- Use `meta.padding_position` to determine coordinate handling
+- Use `meta.content_area` to verify coordinate bounds
+- See [Inference Data Contracts](inference-data-contracts.md#frontend-contract)
 
 **Common Violations**:
-- Missing `meta` field causes frontend to fall back to heuristics (may cause misalignment)
+- Missing `padding_position` causes coordinate misalignment
+- Missing `content_area` prevents coordinate validation
 - Mismatch between `meta.processed_size` and actual `preview_image_base64` dimensions
-- Incorrect `coordinate_system` value causes wrong coordinate transformation
 
 ---
 

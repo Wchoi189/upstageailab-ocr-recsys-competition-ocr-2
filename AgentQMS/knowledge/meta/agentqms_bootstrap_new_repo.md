@@ -23,7 +23,7 @@ From the source project (this repository or a template), copy the following into
   - `tool-catalog.md`
   - `workflow-triggers.yaml`
   - `context-bundles-index.md`
-- `.cursor/plans/instructions.md` – Ultra-short instructions for Cursor / IDE agents.
+- `.cursor/instructions.md` – Ultra-short instructions for Cursor / IDE agents.
 
 Also ensure the project has:
 
@@ -113,7 +113,7 @@ Use this checklist when enabling AgentQMS in a new repository:
 - [ ] `.agentqms/` directory present with `settings.yaml` and `state/architecture.yaml`.
 - [ ] `docs/artifacts/` directory exists.
 - [ ] `.copilot/context/` contains AgentQMS context files.
-- [ ] `.cursor/plans/instructions.md` exists and references AgentQMS SST + architecture.
+- [ ] `.cursor/instructions.md` exists and references AgentQMS SST + architecture.
 - [ ] Root task runner (e.g., `Makefile`) exposes `qms-*` shortcuts or equivalents.
 - [ ] GitHub Action workflows `agentqms-ci.yml` and `agentqms-validation.yml` enabled.
 - [ ] `README.md` documents how to use AgentQMS locally.

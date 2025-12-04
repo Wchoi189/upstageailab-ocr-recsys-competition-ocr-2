@@ -35,7 +35,7 @@ status: ## Check overall system status
 	@echo "🔍 Checking Agent Tools Status..."
 	@echo ""
 	@echo "📁 Tool Organization:"
-	@ls -la ../agent_tools/ | grep "^d" | awk '{print \"  \" $$9}'
+	@ls -la ../agent_tools/ | grep "^d" | grep -v "__pycache__" | awk '{print "  " $$9}'
 	@echo ""
 	@echo "🛠️ Agent Wrapper Scripts:"
 	@ls -la ../*.sh 2>/dev/null | awk '{print "  " $$9}' || echo "  No wrapper scripts found"

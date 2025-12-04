@@ -32,7 +32,7 @@ The framework provides auto-discovery files that Copilot automatically reads:
 
 Cursor doesn't automatically read `.copilot/context/`, so a dedicated ultra-short instruction file is provided for Cursor agents:
 
-- File: `.cursor/plans/instructions.md`
+- File: `.cursor/instructions.md`
 - Usage: pin or paste into Cursor's Custom Instructions so every session knows to follow the AgentQMS SST, use automation, run validation, and load context via `make context`.
 
 This keeps Cursor aligned with the same rules Copilot uses while staying within Cursor's tighter instruction window.
@@ -154,7 +154,7 @@ make generate-registry  # Regenerate tool registries and context files
   - `tool-catalog.md` – Human-readable tool catalog
   - `workflow-triggers.yaml` – Task → workflow mapping
   - `context-bundles-index.md` – Context bundles reference
-- `.cursor/` – Cursor-specific instructions and plans (`.cursor/plans/instructions.md`) for pinning concise SST reminders inside Cursor IDE.
+- `.cursor/` – Cursor-specific instructions and plans (`.cursor/instructions.md`) for pinning concise SST reminders inside Cursor IDE.
 
 ---
 
