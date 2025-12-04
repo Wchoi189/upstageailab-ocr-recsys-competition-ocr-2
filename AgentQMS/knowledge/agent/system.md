@@ -11,7 +11,7 @@ tags: ["ai_agent", "rules", "operations"]
 AI Agent System – Single Source of Truth
 =======================================
 
-Status: ACTIVE
+Status: active
 
 Read this file only. Agents do not need tutorials.
 

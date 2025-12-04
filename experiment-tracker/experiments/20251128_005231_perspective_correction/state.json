@@ -3,7 +3,7 @@
   "timestamp": "2025-11-28T00:52:31.098414",
   "type": "perspective_correction",
   "intention": "Improve mask-only edge approximations beyond affine baseline",
-  "status": "INCOMPLETE",
+  "status": "incomplete",
   "artifacts": [],
   "assessments": [],
   "incident_reports": [],

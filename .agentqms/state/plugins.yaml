@@ -8,6 +8,7 @@ discovery_paths:
 plugins_loaded:
   artifact_types:
   - change_request
+  - ocr_experiment
   validators: true
   context_bundles:
   - security-review
@@ -17,6 +18,11 @@ plugin_metadata:
   version: '1.0'
   source: project
   path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+- name: ocr_experiment
+  type: artifact_type
+  version: '1.1'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
 - name: validators
   type: validator
   version: '1.0'

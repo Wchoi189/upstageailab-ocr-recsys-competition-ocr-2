@@ -22,9 +22,10 @@ knowledge_domains:
   agent:
     path: AgentQMS/knowledge/agent
     contents:
-      - system.md          # SST (Single Source of Truth for agents)
-      - tool_catalog.md    # Available tools and usage
-      - tracking_cli.md    # Tracking CLI reference
+      - system.md                    # SST (Single Source of Truth for agents)
+      - ocr_experiment_agent.md      # OCR experiment specialization
+      - tool_catalog.md              # Available tools and usage
+      - tracking_cli.md              # Tracking CLI reference
   protocols:
     path: AgentQMS/knowledge/protocols
     subdirectories:
@@ -205,6 +206,20 @@ capabilities:
       - audit-init
       - audit-validate
       - audit-checklist-generate
+
+  - name: ocr_experiment_workflow
+    description: "Manage OCR experiments with standardized metadata and VLM analysis"
+    tools:
+      - experiment_tracker
+      - vlm_analysis
+    artifacts:
+      - experiment_report
+      - incident_report
+      - assessment
+    instructions:
+      - AgentQMS/knowledge/agent/ocr_experiment_agent.md
+    make_targets: []
+    notes: "CLI-based workflow using experiment-tracker scripts and VLM tools"
 
 context_features:
   smart_context_loading:

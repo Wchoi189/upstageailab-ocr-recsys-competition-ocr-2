@@ -62,7 +62,7 @@ experiment_id/
 
 ### state.json
 - **Write on:**
-  - Status changes (ACTIVE → INCOMPLETE/COMPLETED)
+  - Status changes (active → incomplete/completed)
   - Artifact additions (via `record-artifact`)
   - Assessment additions (via `generate-assessment`)
   - Incident report additions (via `generate-incident-report`)

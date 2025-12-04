@@ -3,7 +3,7 @@
   "timestamp": "2025-11-28T22:01:00.630861",
   "type": "perspective_correction",
   "intention": "Implement angle-based bucketing for dominant edge fitting",
-  "status": "COMPLETED",
+  "status": "completed",
   "artifacts": [],
   "assessments": [
     "assessments/run_01_angle_bucketing_initial.md",

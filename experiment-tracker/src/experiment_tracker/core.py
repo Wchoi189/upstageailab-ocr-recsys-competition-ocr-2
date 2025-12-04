@@ -82,7 +82,7 @@ class ExperimentTracker:
             "timestamp": datetime.datetime.now().isoformat(),
             "type": experiment_type,
             "intention": intention,
-            "status": "ACTIVE",
+            "status": "active",
             "artifacts": [],
             "assessments": [],
             "incident_reports": [],
@@ -100,8 +100,8 @@ class ExperimentTracker:
     def stash_incomplete(self, experiment_id: str) -> bool:
         try:
             state = self._load_state(experiment_id)
-            if state["status"] == "ACTIVE":
-                state["status"] = "INCOMPLETE"
+            if state["status"] == "active":
+                state["status"] = "incomplete"
                 self._save_state(experiment_id, state)
 
                 # Update state.yml
@@ -110,7 +110,7 @@ class ExperimentTracker:
                 if state_file.exists():
                     with open(state_file) as f:
                         meta_state = yaml.safe_load(f) or {}
-                    meta_state["current_state"] = "INCOMPLETE"
+                    meta_state["current_state"] = "incomplete"
                     meta_state["last_updated"] = datetime.datetime.now().isoformat()
                     with open(state_file, "w") as f:
                         yaml.dump(meta_state, f)
@@ -277,10 +277,10 @@ class ExperimentTracker:
             warning = None
 
             # Check if experiment is in a state that might be unexpected
-            if status == "COMPLETED":
-                warning = f"Warning: Experiment {experiment_id} is COMPLETED. Are you sure you want to {operation}?"
-            elif status == "INCOMPLETE":
-                warning = f"Warning: Experiment {experiment_id} is INCOMPLETE. Consider resuming it first."
+            if status == "completed":
+                warning = f"Warning: Experiment {experiment_id} is completed. Are you sure you want to {operation}?"
+            elif status == "incomplete":
+                warning = f"Warning: Experiment {experiment_id} is incomplete. Consider resuming it first."
 
             return True, warning
         except FileNotFoundError:

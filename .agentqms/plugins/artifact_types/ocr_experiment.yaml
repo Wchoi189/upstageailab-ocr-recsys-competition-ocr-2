@@ -1,0 +1,145 @@
+name: ocr_experiment_report
+description: "OCR experiment workflow and analysis report"
+version: "1.1"
+audience: "ai_agent"
+artifact_type: experiment_tracking
+
+path_template: "experiment-tracker/experiments/{id}"
+naming_convention: "YYYYMMDD_HHMMSS_{type}"
+
+metadata_schema:
+  id:
+    type: string
+    description: "Experiment ID in YYYYMMDD_HHMMSS_type format"
+    required: true
+  timestamp:
+    type: string
+    format: "iso8601"
+    description: "ISO 8601 timestamp"
+    required: true
+  type:
+    type: string
+    enum: ["perspective_correction", "ocr_training", "synthetic_data", "preprocessing", "evaluation"]
+    required: true
+  intention:
+    type: string
+    description: "Clear objective statement"
+    required: true
+  status:
+    type: string
+    enum: ["active", "incomplete", "completed", "archived"]
+    required: true
+  artifacts:
+    type: array
+    description: "Recorded artifacts with metadata"
+    items:
+      type: object
+      properties:
+        path:
+          type: string
+        type:
+          type: string
+          enum: ["poor_performance", "baseline", "improved", "edge_case", "regression"]
+        timestamp:
+          type: string
+          format: "iso8601"
+        metadata:
+          type: object
+  assessments:
+    type: array
+    description: "Assessment file paths"
+    items:
+      type: string
+  incident_reports:
+    type: array
+    description: "Incident report file paths"
+    items:
+      type: string
+
+directory_structure:
+  ".metadata":
+    description: "Hidden metadata folder"
+    contents:
+      - experiment.yaml
+      - state.json
+      - tasks.yaml
+      - decisions.yaml
+  artifacts:
+    description: "Generated outputs and images"
+  assessments:
+    description: "Multiple markdown assessments"
+  incident_reports:
+    description: "Defect analysis and incident reports"
+  scripts:
+    description: "Experiment-specific scripts"
+  feedback_log.md:
+    description: "Agent feedback after completion"
+
+frontmatter_template:
+  title: "{id}"
+  date: "YYYY-MM-DD HH:MM (KST)"
+  experiment_id: "{id}"
+  type: "{type}"
+  status: "{status}"
+  version: "1.0"
+  tags: ["ocr", "experiment", "tracking"]
+
+artifact_lifecycle:
+  creation:
+    method: "./scripts/start-experiment.py --type TYPE --intention \"INTENTION\""
+    auto_fields: ["id", "timestamp"]
+  active_phase:
+    record_artifacts: "./scripts/record-artifact.py --path PATH --type TYPE"
+    vlm_analysis: "uv run python -m AgentQMS.vlm.cli.analyze_image_defects --image PATH --mode MODE"
+    context_tracking: |
+      ./scripts/add-task.py --description "TASK"
+      ./scripts/record-decision.py --decision "DEC" --rationale "RATIONALE"
+      ./scripts/log-insight.py --insight "INSIGHT"
+    assessments: "./scripts/generate-assessment.py --template TEMPLATE"
+    incident_reports: "./scripts/generate-incident-report.py --title \"TITLE\" --severity SEVERITY"
+  completion:
+    feedback: "./scripts/generate-feedback.py"
+    export: "./scripts/export-experiment.py --format archive --destination ./exports"
+    archive: "git commit -m \"feat(exp): [YYYYMMDD_HHMMSS]\""
+
+validation:
+  required_files:
+    - "state.json"
+    - ".metadata/experiment.yaml"
+  required_fields:
+    - id
+    - timestamp
+    - type
+    - intention
+    - status
+  schema_path: "experiment-tracker/.schemas/experiment_state.json"
+
+tools:
+  cli_scripts:
+    - "experiment-tracker/scripts/start-experiment.py"
+    - "experiment-tracker/scripts/record-artifact.py"
+    - "experiment-tracker/scripts/generate-assessment.py"
+    - "experiment-tracker/scripts/generate-incident-report.py"
+    - "experiment-tracker/scripts/add-task.py"
+    - "experiment-tracker/scripts/record-decision.py"
+    - "experiment-tracker/scripts/log-insight.py"
+    - "experiment-tracker/scripts/generate-feedback.py"
+    - "experiment-tracker/scripts/export-experiment.py"
+  vlm_tools:
+    - "AgentQMS/vlm/cli/analyze_image_defects.py"
+
+templates:
+  feedback: "experiment-tracker/.templates/feedback_template.md"
+  incident_report: "experiment-tracker/.templates/incident_report.md"
+
+instructions:
+  primary: "AgentQMS/knowledge/agent/ocr_experiment_agent.md"
+  quickstart: "experiment-tracker/docs/quickstart.md"
+  experiment_workflow: "experiment-tracker/docs/experiment_workflow.md"
+
+status: active
+notes: |
+  - Supports manual-first workflow with future automation potential
+  - Includes traceability via standardized metadata and versioning
+  - Feedback collection mechanism for continuous improvement
+  - VLM tool integration for automated image analysis

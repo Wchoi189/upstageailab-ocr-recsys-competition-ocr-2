@@ -3,7 +3,7 @@
   "timestamp": "2025-11-22T17:23:13.299839",
   "type": "perspective_correction",
   "intention": "Import and organize existing perspective correction and rembg optimization experiments",
-  "status": "INCOMPLETE",
+  "status": "incomplete",
   "artifacts": [
     {
       "path": "scripts/test_perspective_robust.py",

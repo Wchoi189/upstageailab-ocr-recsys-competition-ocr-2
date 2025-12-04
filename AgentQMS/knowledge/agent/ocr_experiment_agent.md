@@ -151,7 +151,7 @@ Required fields (see `.schemas/experiment_state.json`):
 - `timestamp`: ISO 8601 format
 - `type`: Experiment type
 - `intention`: Clear objective statement
-- `status`: `ACTIVE`, `INCOMPLETE`, `COMPLETED`, `ARCHIVED`
+- `status`: `active`, `incomplete`, `completed`, `archived`
 - `artifacts`: Array of recorded artifacts with metadata
 - `assessments`: Array of assessment file paths
 - `incident_reports`: Array of incident report paths

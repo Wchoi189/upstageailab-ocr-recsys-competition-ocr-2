@@ -5,25 +5,25 @@ Entry point to agent instructions.
 ## Primary Instructions
 
 ### 1. System (Core Rules)
-**File**: `system.md`  
-**Read**: ALWAYS read first  
+**File**: `system.md`
+**Read**: ALWAYS read first
 **Contains**: Core rules, artifact creation, tool discovery
 
 ### 2. OCR Experiment Agent
-**File**: `ocr_experiment_agent.md`  
-**Read**: When working with OCR experiments  
+**File**: `ocr_experiment_agent.md`
+**Read**: When working with OCR experiments
 **Quick Start**: `../../experiment-tracker/docs/quickstart.md`
 
 ### 3. Tracking CLI
-**File**: `tracking_cli.md`  
+**File**: `tracking_cli.md`
 **Purpose**: Tracking database CLI commands
 
 ### 4. Tool Catalog
-**File**: `tool_catalog.md`  
+**File**: `tool_catalog.md`
 **Purpose**: Automation tools and Make targets
 
 ### 5. Artifact Rules
-**File**: `artifact_rules.yaml`  
+**File**: `artifact_rules.yaml`
 **Purpose**: Naming, validation, schemas
 
 ## Usage Patterns

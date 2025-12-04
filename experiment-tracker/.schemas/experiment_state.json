@@ -10,7 +10,7 @@
     },
     "type": { "type": "string" },
     "intention": { "type": "string" },
-    "status": { "type": "string", "enum": ["ACTIVE", "INCOMPLETE", "COMPLETED", "ARCHIVED"] },
+    "status": { "type": "string", "enum": ["active", "incomplete", "completed", "archived"] },
     "artifacts": {
       "type": "array",
       "items": {
