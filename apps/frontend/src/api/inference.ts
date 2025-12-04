@@ -40,12 +40,18 @@ export async function listInferenceModes(): Promise<InferenceModeSummary[]> {
 
 /**
  * List available checkpoints with optional limit
+ *
+ * Note: First load may be slow if checkpoint metadata files are missing.
+ * Consider running 'make checkpoint-metadata' to pre-generate metadata.
  */
 export async function listCheckpoints(
   limit = 50,
 ): Promise<CheckpointWithMetadata[]> {
+  // Use longer timeout for checkpoint loading (30 seconds)
+  // as it can be slow on first load if metadata files are missing
   const checkpoints = await apiGet<CheckpointSummary[]>(
     `/inference/checkpoints?limit=${limit}`,
+    { maxRetries: 3, retryDelay: 2000 } // More retries with longer delay
   );
 
   // Parse datetime strings
@@ -142,6 +148,27 @@ export interface TextRegion {
 }
 
 /**
+ * Padding information for preprocessed images
+ */
+export interface Padding {
+  top: number;
+  bottom: number;
+  left: number;
+  right: number;
+}
+
+/**
+ * Metadata about image preprocessing and coordinate system
+ */
+export interface InferenceMetadata {
+  original_size: [number, number];  // [width, height]
+  processed_size: [number, number];  // [width, height]
+  padding: Padding;
+  scale: number;
+  coordinate_system: "pixel" | "normalized";
+}
+
+/**
  * Inference preview request
  */
 export interface InferencePreviewRequest {
@@ -160,6 +187,11 @@ export interface InferencePreviewResponse {
   regions: TextRegion[];
   processing_time_ms: number;
   notes: string[];
+  // BUG-001: optional base64-encoded PNG of the preprocessed image used for
+  // polygon decoding so that the frontend can render coordinate-aligned overlays.
+  preview_image_base64?: string | null;
+  // Data contract: metadata about preprocessing and coordinate system
+  meta?: InferenceMetadata | null;
 }
 
 /**
@@ -168,8 +200,19 @@ export interface InferencePreviewResponse {
 export async function runInferencePreview(
   request: InferencePreviewRequest,
 ): Promise<InferencePreviewResponse> {
-  return apiPost<InferencePreviewRequest, InferencePreviewResponse>(
+  const response = await apiPost<InferencePreviewRequest, InferencePreviewResponse>(
     "/inference/preview",
     request,
   );
+
+  // BUG-001: Debug logging to verify API response
+  console.log("BUG-001 API Response:", {
+    hasPreviewImage: !!response.preview_image_base64,
+    previewImageLength: response.preview_image_base64?.length || 0,
+    regionCount: response.regions?.length || 0,
+    firstRegionPolygon: response.regions?.[0]?.polygon || null,
+    meta: response.meta,
+  });
+
+  return response;
 }

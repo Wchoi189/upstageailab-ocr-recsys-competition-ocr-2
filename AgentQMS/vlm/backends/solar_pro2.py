@@ -1,12 +1,15 @@
 """Solar Pro 2 API Backend Implementation."""
 
 import time
-from typing import Any
+from typing import Any, TYPE_CHECKING
 
 try:
     import httpx
 except ImportError:
     httpx = None
+
+if TYPE_CHECKING:
+    import httpx as _httpx
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value

@@ -48,12 +48,26 @@ export function CheckpointPicker({
     const loadCheckpoints = async (): Promise<void> => {
       try {
         setLoading(true);
+        setError(null);
+        // Use longer timeout for checkpoint loading (can be slow on first load)
         const checkpoints = await listCheckpoints(100);
         setAllCheckpoints(checkpoints);
         setFilteredCheckpoints(checkpoints);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Failed to load");
+        let errorMessage = "Failed to load checkpoints";
+        if (err instanceof Error) {
+          if (err.message.includes("timeout") || err.message.includes("timed out")) {
+            errorMessage = "Checkpoint loading timed out. The server may be slow on first load. Please try again in a moment.";
+          } else if (err.message.includes("ECONNREFUSED") || err.message.includes("Failed to connect")) {
+            errorMessage = "Cannot connect to backend server. Make sure the backend is running on port 8000.";
+          } else if (err.message.includes("Failed to build checkpoint catalog")) {
+            errorMessage = "Checkpoint catalog build failed. This may be slow if metadata files are missing. The server may need a moment to process.";
+          } else {
+            errorMessage = err.message;
+          }
+        }
+        setError(errorMessage);
         setAllCheckpoints([]);
         setFilteredCheckpoints([]);
       } finally {
@@ -97,7 +111,45 @@ export function CheckpointPicker({
 
   if (error) {
     return (
-      <div style={{ padding: "1rem", color: "red" }}>Error: {error}</div>
+      <div style={{
+        padding: "1rem",
+        color: "#d32f2f",
+        backgroundColor: "#ffebee",
+        borderRadius: "4px",
+        border: "1px solid #ffcdd2"
+      }}>
+        <div style={{ fontWeight: "bold", marginBottom: "0.5rem" }}>Error Loading Checkpoints</div>
+        <div style={{ fontSize: "0.875rem", marginBottom: "0.5rem" }}>{error}</div>
+        <button
+          onClick={() => {
+            setLoading(true);
+            setError(null);
+            listCheckpoints(100)
+              .then((checkpoints) => {
+                setAllCheckpoints(checkpoints);
+                setFilteredCheckpoints(checkpoints);
+                setError(null);
+              })
+              .catch((err) => {
+                setError(err instanceof Error ? err.message : "Failed to load");
+              })
+              .finally(() => {
+                setLoading(false);
+              });
+          }}
+          style={{
+            padding: "0.5rem 1rem",
+            fontSize: "0.875rem",
+            backgroundColor: "#1976d2",
+            color: "white",
+            border: "none",
+            borderRadius: "4px",
+            cursor: "pointer",
+          }}
+        >
+          Retry
+        </button>
+      </div>
     );
   }
 

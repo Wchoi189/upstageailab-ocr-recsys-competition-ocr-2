@@ -5,14 +5,16 @@ Handles loading and rendering of markdown and Jinja2 prompt templates.
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 try:
-    from jinja2 import Environment, FileSystemLoader, Template
+    from jinja2 import Environment, FileSystemLoader
 except ImportError:
-    Template = None
     Environment = None
     FileSystemLoader = None
+
+if TYPE_CHECKING:
+    from jinja2 import Template
 
 from AgentQMS.vlm.core.contracts import AnalysisMode
 from AgentQMS.vlm.utils.paths import get_path_resolver
@@ -71,21 +73,23 @@ class PromptManager:
         self._template_cache[cache_key] = content
         return content
 
-    def load_jinja2_template(self, mode: AnalysisMode) -> Optional[Template]:
+    def load_jinja2_template(self, mode: AnalysisMode) -> "Template":
         """Load a Jinja2 template for the given analysis mode.
 
         Args:
             mode: Analysis mode
 
         Returns:
-            Jinja2 Template object, or None if Jinja2 not available
+            Jinja2 Template object
 
         Raises:
             FileNotFoundError: If template file not found
             ImportError: If Jinja2 not installed
         """
         if self.jinja2_env is None:
-            raise ImportError("Jinja2 is required for template rendering. Install with: pip install Jinja2")
+            raise ImportError(
+                "Jinja2 is required for template rendering. Install with: pip install Jinja2"
+            )
 
         template_file = f"{mode.value}_analysis.j2"
         try:

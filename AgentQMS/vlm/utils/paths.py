@@ -12,7 +12,7 @@ from typing import Any
 
 # Try to use existing project path utilities if available
 try:
-    from ocr.utils.path_utils import PROJECT_ROOT, get_path_resolver
+    from ocr.utils.path_utils import PROJECT_ROOT
     _PROJECT_ROOT = PROJECT_ROOT
 except ImportError:
     # Fallback if ocr module not available

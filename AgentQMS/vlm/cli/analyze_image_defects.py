@@ -39,7 +39,7 @@ def main():
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["defect", "input", "compare", "full"],
+        choices=["defect", "input", "compare", "full", "bug_001"],
         default="defect",
         help="Analysis mode (default: defect)",
     )

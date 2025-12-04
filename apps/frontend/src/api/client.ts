@@ -113,8 +113,11 @@ export async function apiGet<T>(
   return withRetry(async () => {
     try {
       // Add timeout to prevent hanging
+      // Use longer timeout for checkpoint endpoints (30s) vs default (10s)
+      const isCheckpointEndpoint = endpoint.includes("/checkpoints");
+      const timeoutMs = isCheckpointEndpoint ? 30000 : 10000;
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
       const response = await fetch(`/api${endpoint}`, {
         method: "GET",

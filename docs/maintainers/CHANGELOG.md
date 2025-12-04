@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased] - 2025-12-03
+
+### Added - 2025-12-03
+
+#### BUG-001: Inference Studio Overlay Data Contracts (Unresolved)
+
+- Introduced an explicit **Inference Engine Data Contract** for preview-time OCR results:
+  - Backend now returns `meta` describing `original_size`, `processed_size`, `padding`, `scale`, and `coordinate_system` alongside `preview_image_base64`.
+  - FastAPI `InferencePreviewResponse` exposes this metadata via new `InferenceMetadata` and `Padding` Pydantic models.
+  - Next.js API types and `InferencePreviewCanvas` were updated to consume `meta` and log contract mismatches instead of relying on heuristics.
+- Despite these improvements, **BUG-001 (overlay misalignment for portrait receipts) remains unresolved**:
+  - Model predictions and polygons are still geometrically correct in the model’s 640×640 preview space, but visual overlays for some tall receipts are horizontally offset by roughly one padding width.
+  - Current hypothesis: we still have an incomplete understanding of how content padding vs. coordinate mapping is applied between `preprocess_image()`, `decode_polygons_with_head()`, and `_map_polygons_to_preview_space()`.
+  - Next steps are to use the new metadata plus targeted logging/visualization to precisely characterize content-box dimensions and padding for specific problem images (for example `logs/ui/image_post_datacontracts_deviation.png`), and to decide whether final offset responsibility belongs in the inference pipeline or the visualizer.
+
 ## [Unreleased] - 2025-11-22
 
 ### Added - Perspective Correction Evaluation

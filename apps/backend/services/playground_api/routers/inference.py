@@ -4,10 +4,11 @@ from __future__ import annotations
 
 import base64
 import logging
-import time
 from dataclasses import dataclass
 from datetime import datetime
 from functools import lru_cache
+from time import time
+from typing import TYPE_CHECKING, Any
 
 import cv2
 import numpy as np
@@ -23,12 +24,34 @@ from ui.apps.inference.services.checkpoint import CatalogOptions, build_lightwei
 from ..utils.paths import PROJECT_ROOT
 
 # Import inference engine
+if TYPE_CHECKING:
+    from ui.utils.inference import InferenceEngine
+
+INFERENCE_AVAILABLE: bool
 try:
     from ui.utils.inference import InferenceEngine
 
     INFERENCE_AVAILABLE = True
 except ImportError:
     INFERENCE_AVAILABLE = False
+
+    # Define dummy class to prevent "None is not callable" errors during static analysis
+    if not TYPE_CHECKING:
+        class InferenceEngine:  # type: ignore
+            def load_model(self, checkpoint_path: str, config_path: str | None = None) -> bool:
+                """Dummy method for type checking."""
+                return False
+
+            def predict_array(
+                self,
+                image_array: np.ndarray,
+                binarization_thresh: float | None = None,
+                box_thresh: float | None = None,
+                max_candidates: int | None = None,
+                min_detection_size: int | None = None,
+            ) -> dict[str, Any] | None:
+                """Dummy method for type checking."""
+                return None
 
 LOGGER = logging.getLogger(__name__)
 
@@ -121,10 +144,18 @@ def _discover_checkpoints(limit: int = 50) -> list[CheckpointSummary]:
 
     options = _catalog_options()
     try:
+        LOGGER.info("Building checkpoint catalog (this may take a moment if metadata files are missing)...")
+        start_time = time()
         catalog = build_lightweight_catalog(options)
+        build_time = time() - start_time
+        LOGGER.info("Checkpoint catalog built in %.2fs", build_time)
     except Exception as exc:  # noqa: BLE001
         LOGGER.exception("Failed to build checkpoint catalog: %s", exc)
-        raise HTTPException(status_code=500, detail="Failed to build checkpoint catalog") from exc
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to build checkpoint catalog: {str(exc)}. "
+                   "Tip: Run 'make checkpoint-metadata' to pre-generate metadata files for faster loading."
+        ) from exc
 
     checkpoint_rows: list[tuple[float, CheckpointSummary]] = []
     for entry in catalog:
@@ -183,7 +214,11 @@ def list_modes() -> list[InferenceModeSummary]:
 
 @router.get("/checkpoints", response_model=list[CheckpointSummary])
 def list_checkpoints(limit: int = 50) -> list[CheckpointSummary]:
-    """Discover available checkpoints for use in the UI."""
+    """Discover available checkpoints for use in the UI.
+
+    For faster loading, consider running 'make checkpoint-metadata' to
+    pre-generate metadata files for all checkpoints.
+    """
     return _discover_checkpoints(limit=limit)
 
 
@@ -205,6 +240,25 @@ class TextRegion(BaseModel):
     confidence: float
 
 
+class Padding(BaseModel):
+    """Padding information for preprocessed images."""
+
+    top: int
+    bottom: int
+    left: int
+    right: int
+
+
+class InferenceMetadata(BaseModel):
+    """Metadata about image preprocessing and coordinate system."""
+
+    original_size: tuple[int, int]  # (width, height)
+    processed_size: tuple[int, int]  # (width, height)
+    padding: Padding
+    scale: float
+    coordinate_system: str  # "pixel" | "normalized"
+
+
 class InferencePreviewResponse(BaseModel):
     """Response from inference preview."""
 
@@ -212,6 +266,11 @@ class InferencePreviewResponse(BaseModel):
     regions: list[TextRegion]
     processing_time_ms: float
     notes: list[str] = Field(default_factory=list)
+    # BUG-001: optional base64-encoded PNG of the preprocessed image used for
+    # polygon decoding so that frontends can render coordinate-aligned overlays.
+    preview_image_base64: str | None = None
+    # Data contract: metadata about preprocessing and coordinate system
+    meta: InferenceMetadata | None = None
 
 
 @router.post("/preview", response_model=InferencePreviewResponse)
@@ -221,7 +280,7 @@ def run_inference_preview(request: InferencePreviewRequest) -> InferencePreviewR
     Supports both base64-encoded images and file paths. Performs real OCR inference
     using the loaded checkpoint model.
     """
-    start_time = time.time()
+    start_time = time()
     notes = []
 
     # Check if inference engine is available
@@ -280,7 +339,28 @@ def run_inference_preview(request: InferencePreviewRequest) -> InferencePreviewR
     # Parse inference results and convert to API response format
     regions = _parse_inference_result(result)
 
-    processing_time_ms = (time.time() - start_time) * 1000
+    # BUG-001: extract optional preprocessed preview image (base64 PNG) from the
+    # inference engine result so that the frontend can render overlays in the
+    # correct coordinate system.
+    preview_image_base64 = None
+    meta = None
+    if isinstance(result, dict):
+        preview_image_base64 = result.get("preview_image_base64")
+        # Extract metadata for data contract
+        meta_dict = result.get("meta")
+        if meta_dict:
+            try:
+                meta = InferenceMetadata(
+                    original_size=tuple(meta_dict["original_size"]),
+                    processed_size=tuple(meta_dict["processed_size"]),
+                    padding=Padding(**meta_dict["padding"]),
+                    scale=float(meta_dict["scale"]),
+                    coordinate_system=str(meta_dict["coordinate_system"]),
+                )
+            except (KeyError, TypeError, ValueError) as e:
+                LOGGER.warning(f"Failed to parse inference metadata: {e}")
+
+    processing_time_ms = (time() - start_time) * 1000
     LOGGER.info(f"Inference completed in {processing_time_ms:.2f}ms, found {len(regions)} regions")
 
     return InferencePreviewResponse(
@@ -288,6 +368,8 @@ def run_inference_preview(request: InferencePreviewRequest) -> InferencePreviewR
         regions=regions,
         processing_time_ms=processing_time_ms,
         notes=notes,
+        preview_image_base64=preview_image_base64,
+        meta=meta,
     )
 
 

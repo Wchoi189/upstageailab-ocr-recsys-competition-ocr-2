@@ -55,7 +55,14 @@ A robust, AI-Agent-integrated experiment tracking system that transforms chaotic
     ./scripts/generate-incident-report.py --title "Perspective Overshoot" --severity high --tags "perspective,corner-detection"
     ```
 
-6.  **Export experiment**:
+6.  **Generate feedback log**:
+    ```bash
+    ./scripts/generate-feedback.py
+    # Or for specific experiment
+    ./scripts/generate-feedback.py --experiment-id 20251122_172313_perspective_correction
+    ```
+
+7.  **Export experiment**:
     ```bash
     ./scripts/export-experiment.py --format archive --destination ./exports
     ```

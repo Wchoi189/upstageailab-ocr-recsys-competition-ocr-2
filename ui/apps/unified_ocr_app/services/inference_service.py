@@ -5,10 +5,12 @@ Wraps the existing inference functionality for use in unified app.
 
 from __future__ import annotations
 
+import base64
 import logging
 import time
 from typing import Any
 
+import cv2
 import numpy as np
 import streamlit as st
 
@@ -98,12 +100,39 @@ class InferenceService:
             processing_time = time.time() - start_time
             _self.logger.info(f"Inference completed in {processing_time:.2f}s")
 
+            # BUG-001: Use preview image if available (matches polygon coordinate space)
+            # The backend returns preview_image_base64 which is the preprocessed 640x640 image
+            # that the polygons are mapped to. Using this ensures perfect alignment.
+            display_image = image
+            image_shape = image.shape
+
+            preview_image_base64 = result.get("preview_image_base64")
+            if preview_image_base64:
+                try:
+                    # Decode base64 string to bytes
+                    image_bytes = base64.b64decode(preview_image_base64)
+                    # Decode PNG bytes to numpy array (BGR format, as expected by OpenCV)
+                    nparr = np.frombuffer(image_bytes, np.uint8)
+                    decoded_image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+
+                    if decoded_image is not None:
+                        display_image = decoded_image
+                        image_shape = decoded_image.shape
+                        _self.logger.debug(
+                            f"BUG-001: Using preview image for alignment. "
+                            f"Shape: {image_shape}, Original shape: {image.shape}"
+                        )
+                    else:
+                        _self.logger.warning("BUG-001: Failed to decode preview_image_base64, using original image")
+                except Exception as e:
+                    _self.logger.warning(f"BUG-001: Error decoding preview_image_base64: {e}, using original image")
+
             return InferenceResult(
-                image=image,
+                image=display_image,
                 polygons=result.get("polygons", []),
                 scores=result.get("scores", []),
                 processing_time=processing_time,
-                image_shape=image.shape,
+                image_shape=image_shape,
             )
 
         except Exception as e:
@@ -163,15 +192,20 @@ class InferenceService:
                 polygons = result["polygons"]
                 scores = result.get("scores", [1.0] * len(polygons))
 
+            # BUG-001: Extract preview_image_base64 if available
+            # This is the preprocessed image (640x640) that matches the polygon coordinate space
+            preview_image_base64 = result.get("preview_image_base64") if result else None
+
             return {
                 "polygons": polygons,
                 "scores": scores,
+                "preview_image_base64": preview_image_base64,
             }
 
         except Exception as e:
             self.logger.error(f"Internal inference execution failed: {e}", exc_info=True)
             # Return empty result on failure
-            return {"polygons": [], "scores": []}
+            return {"polygons": [], "scores": [], "preview_image_base64": None}
 
     def run_batch_inference(
         self,

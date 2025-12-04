@@ -2,6 +2,7 @@ from __future__ import annotations
 
 """High-level inference engine orchestration."""
 
+import base64
 import logging
 import re
 import threading
@@ -18,6 +19,7 @@ from PIL import Image
 warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:", category=UserWarning)
 warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has been renamed to 'validate_by_name'", category=UserWarning)
 
+from ocr.utils.geometry_utils import calculate_cropbox
 from ocr.utils.orientation import normalize_pil_image, orientation_requires_rotation, remap_polygons
 from ocr.utils.orientation_constants import ORIENTATION_INVERSE_INT
 from ocr.utils.path_utils import get_path_resolver
@@ -328,15 +330,94 @@ class InferenceEngine:
             enable_persp = False
 
         if enable_persp:
+            # BUG-001: perspective-corrected image becomes the coordinate space
+            # for decoded polygons; keep this version for downstream preview.
             image = apply_optional_perspective_correction(image, enable_perspective_correction=True)
 
+        # BUG-001: Capture original shape BEFORE preprocessing for coordinate mapping.
+        # We'll capture the resized/padded preview AFTER preprocessing for consistent output resolution.
+        original_shape = image.shape  # Capture shape before preprocessing
+        original_h, original_w = original_shape[:2]
+
+        # Initialize metadata (will be populated after preprocessing)
+        meta: dict[str, Any] | None = None
+
         try:
-            batch = preprocess_image(image, self._transform)
+            # BUG-001: Extract target_size from preprocess settings for LongestMaxSize + PadIfNeeded
+            target_size = 640  # Default matching postprocessing assumptions
+            if bundle.preprocess.image_size:
+                if isinstance(bundle.preprocess.image_size, tuple):
+                    target_size = max(bundle.preprocess.image_size)
+                else:
+                    target_size = bundle.preprocess.image_size
+
+            # BUG-001: Get both the batch tensor and the exact processed image used for inference
+            # This ensures the preview image matches exactly what the model sees, eliminating
+            # any coordinate misalignment from reconstruction differences.
+            batch, preview_image_bgr = preprocess_image(
+                image,
+                self._transform,
+                target_size=target_size,
+                return_processed_image=True
+            )
+
+            # BUG-001: Verify preview image dimensions match expected target_size
+            preview_h, preview_w = preview_image_bgr.shape[:2]
+            if preview_h != target_size or preview_w != target_size:
+                LOGGER.warning(
+                    "BUG-001: Preview image size mismatch: expected %dx%d, got %dx%d. Original: %dx%d",
+                    target_size, target_size, preview_w, preview_h, original_w, original_h
+                )
+            else:
+                # Calculate expected content area for debugging
+                max_side = max(original_h, original_w)
+                scale = target_size / max_side if max_side > 0 else 1.0
+                resized_h = int(round(original_h * scale))
+                resized_w = int(round(original_w * scale))
+                LOGGER.debug(
+                    "BUG-001: Preview image verified: %dx%d (original: %dx%d, content area: %dx%d, scale: %.4f)",
+                    preview_w, preview_h, original_w, original_h, resized_w, resized_h, scale
+                )
+
+            # Calculate metadata for data contract (always calculate, even if preview size mismatch)
+            max_side = max(original_h, original_w)
+            scale = target_size / max_side if max_side > 0 else 1.0
+            resized_h = int(round(original_h * scale))
+            resized_w = int(round(original_w * scale))
+
+            # Calculate padding (top-left padding: padding at bottom/right)
+            pad_h = target_size - resized_h
+            pad_w = target_size - resized_w
+
+            # BUG-001: Metadata contract - polygons are mapped to full processed_size frame (640x640).
+            # With top_left padding, content is at [0, resized_w] x [0, resized_h] within [0, target_size] x [0, target_size].
+            # coordinate_system="pixel" means absolute pixel coordinates relative to processed_size frame.
+            # Viewer should only apply display centering (dx/dy), no padding offsets needed.
+            meta = {
+                "original_size": (original_w, original_h),
+                "processed_size": (target_size, target_size),
+                "padding": {
+                    "top": 0,
+                    "bottom": pad_h,
+                    "left": 0,
+                    "right": pad_w,
+                },
+                "scale": float(scale),
+                "coordinate_system": "pixel",  # BUG-001: Absolute pixels in processed_size frame [0-target_size, 0-target_size]
+            }
+            LOGGER.debug(
+                "BUG-001: Metadata created: original_size=%s, processed_size=%s, padding=%s, scale=%.4f",
+                meta["original_size"], meta["processed_size"], meta["padding"], meta["scale"]
+            )
         except Exception:  # noqa: BLE001
             LOGGER.exception("Failed to preprocess image")
+            meta = None  # Ensure meta is None on error
             return None
 
-        LOGGER.info(f"Image preprocessing completed. Batch shape: {batch.shape if hasattr(batch, 'shape') else 'unknown'}")
+        LOGGER.info(
+            "Image preprocessing completed. Batch shape: %s",
+            getattr(batch, "shape", "unknown"),
+        )
 
         if torch is None:
             LOGGER.error("Torch is not available to run inference.")
@@ -359,20 +440,153 @@ class InferenceEngine:
             LOGGER.exception(f"Model inference failed: {e}")
             return None
 
-        decoded = decode_polygons_with_head(self.model, batch, predictions, image.shape)
+        # BUG-001: Postprocessing maps polygons from resized/padded space back to original_shape.
+        # We then map them forward to the resized/padded preview space for consistent output resolution.
+        decoded = decode_polygons_with_head(self.model, batch, predictions, original_shape)
+
+        # BUG-001: Helper to map polygons from original_shape to resized/padded preview space.
+        # Note: x_offset is captured from outer scope (calculated when centering preview image)
+        def _map_polygons_to_preview_space(payload: dict[str, Any]) -> dict[str, Any]:
+            """Map polygon coordinates from original image space to resized/padded preview space."""
+            if not isinstance(payload, dict) or not payload.get("polygons"):
+                return payload
+
+            polygons_str = payload["polygons"]
+            if not polygons_str:
+                return payload
+
+            # BUG-001: Compute forward transform matching postprocessing logic exactly.
+            # Postprocessing uses: scale = 640.0 / max(original_h, original_w)
+            # Then maps from 640x640 padded space to original by: x_orig = x_padded * (original_w / resized_w)
+            # So we need to map from original to padded by: x_padded = x_orig * (resized_w / original_w)
+            # For LongestMaxSize, resized_w = round(original_w * scale), so the forward scale is:
+            # forward_scale = resized_w / original_w = round(original_w * scale) / original_w
+            # This matches the inverse of what postprocessing does.
+            max_side = float(max(original_h, original_w))
+            if max_side <= 0:
+                return payload
+
+            scale = target_size / max_side
+            resized_h = int(round(original_h * scale))
+            resized_w = int(round(original_w * scale))
+
+            # BUG-001: Use the same calculation method as postprocessing for consistency
+            # Calculate forward scales matching the inverse of postprocessing scales
+            # This ensures perfect coordinate alignment: forward_scale is the inverse of postprocessing scale
+            forward_scale_x = resized_w / float(original_w) if original_w > 0 else scale
+            forward_scale_y = resized_h / float(original_h) if original_h > 0 else scale
+
+            # BUG-001: Log coordinate mapping details for debugging misalignment issues
+            LOGGER.debug(
+                "BUG-001: Coordinate mapping - original: %dx%d, resized content: %dx%d, "
+                "forward_scales: x=%.6f, y=%.6f, processed_size=%dx%d, padding: top=%d bottom=%d left=%d right=%d",
+                original_w, original_h, resized_w, resized_h, forward_scale_x, forward_scale_y,
+                target_size, target_size, 0, pad_h, 0, pad_w
+            )
+
+            # Parse and transform polygons
+            polygon_groups = polygons_str.split("|")
+            transformed_polygons = []
+
+            for polygon_str in polygon_groups:
+                coords = polygon_str.strip().split()
+                if len(coords) < 6:
+                    continue
+                try:
+                    coord_floats = [float(c) for c in coords]
+                    polygon = np.array([[coord_floats[i], coord_floats[i + 1]] for i in range(0, len(coord_floats), 2)], dtype=np.float32)
+                    # BUG-001: Apply forward transform to map coordinates from original space to the full
+                    # processed_size frame (640x640). With top_left padding, content starts at (0,0), so
+                    # scaling to content-space [0-resized_w, 0-resized_h] is equivalent to full-frame coordinates.
+                    # This ensures polygons are in absolute pixel coordinates relative to the processed_size frame,
+                    # allowing the viewer to only apply display centering (dx/dy) without any padding offsets.
+                    coords_2d = polygon.reshape(-1, 2)
+                    transformed_coords = coords_2d * np.array([forward_scale_x, forward_scale_y])
+
+                    # BUG-001: Verify coordinates are within the full processed_size frame [0-target_size, 0-target_size]
+                    # With top_left padding, content is at [0-resized_w, 0-resized_h] within [0-target_size, 0-target_size],
+                    # so coordinates should be within [0-target_size] range. Allow slight overflow due to rounding.
+                    if len(transformed_coords) > 0:
+                        min_x = min(c[0] for c in transformed_coords)
+                        min_y = min(c[1] for c in transformed_coords)
+                        max_x = max(c[0] for c in transformed_coords)
+                        max_y = max(c[1] for c in transformed_coords)
+                        # Coordinates are in full processed_size frame [0-target_size, 0-target_size]
+                        # Allow small overflow (1-2 pixels) due to rounding errors
+                        tolerance = 2.0
+                        if max_x > target_size + tolerance or max_y > target_size + tolerance or min_x < -tolerance or min_y < -tolerance:
+                            LOGGER.warning(
+                                "BUG-001: Transformed polygon coordinates out of processed_size bounds: "
+                                "min=(%.1f, %.1f), max=(%.1f, %.1f), processed_size=%dx%d, "
+                                "content_area=[0-%d, 0-%d] (original: %dx%d)",
+                                min_x, min_y, max_x, max_y, target_size, target_size, resized_w, resized_h,
+                                original_w, original_h
+                            )
+
+                    # Convert back to space-separated string (round to nearest integer)
+                    transformed_polygons.append(" ".join(str(int(round(c))) for row in transformed_coords for c in row))
+                except (ValueError, IndexError):
+                    continue
+
+            payload = dict(payload)
+            payload["polygons"] = "|".join(transformed_polygons) if transformed_polygons else ""
+            return payload
+
+        # BUG-001: attach preview image (base64 JPEG) for coordinate-aligned overlays.
+        # Using JPEG instead of PNG reduces file size by ~10x while maintaining acceptable quality for visualization.
+        def _attach_preview(payload: dict[str, Any]) -> dict[str, Any]:
+            if not isinstance(payload, dict):
+                return payload
+            try:
+                # BUG-001: Map polygons to preview space (resized/padded) for consistent output resolution
+                payload = _map_polygons_to_preview_space(payload)
+
+                # BUG-001: Use JPEG encoding with quality=85 to reduce file size (~10x smaller than PNG)
+                # while maintaining acceptable visual quality for overlay alignment verification.
+                encode_params = [cv2.IMWRITE_JPEG_QUALITY, 85]
+                success, buffer = cv2.imencode(".jpg", preview_image_bgr, encode_params)
+                if not success:
+                    LOGGER.warning("BUG-001: cv2.imencode failed for preview image")
+                    return payload
+                payload = dict(payload)
+                payload["preview_image_base64"] = base64.b64encode(buffer).decode("ascii")
+
+                # BUG-001: Attach metadata for data contract - always attach if available
+                # This is critical for frontend coordinate handling
+                if meta is not None:
+                    payload["meta"] = meta
+                    LOGGER.debug(
+                        "BUG-001: Attached meta to preview response: original_size=%s, processed_size=%s, "
+                        "coordinate_system=%s",
+                        meta.get("original_size"), meta.get("processed_size"), meta.get("coordinate_system")
+                    )
+                else:
+                    LOGGER.warning(
+                        "BUG-001: meta is None when attaching preview - coordinate system contract may be incomplete. "
+                        "This may cause frontend to fall back to heuristic normalization."
+                    )
+            except Exception:  # noqa: BLE001
+                LOGGER.exception("BUG-001: Failed to encode preview image for overlay alignment")
+                # BUG-001: Even if encoding fails, try to attach meta if available
+                if meta is not None:
+                    payload = dict(payload)
+                    payload["meta"] = meta
+            return payload
+
         if decoded is not None:
             LOGGER.info("Primary decoding successful")
-            return decoded
+            return _attach_preview(decoded)
 
         LOGGER.info("Primary decoding failed, trying fallback postprocessing...")
         try:
-            result = fallback_postprocess(predictions, image.shape, bundle.postprocess)
+            # BUG-001: Use original_shape (captured before preprocessing) for fallback postprocessing
+            result = fallback_postprocess(predictions, original_shape, bundle.postprocess)
         except Exception:  # noqa: BLE001
-            LOGGER.exception("Error in post-processing for image with shape %s", image.shape)
+            LOGGER.exception("Error in post-processing for image with shape %s", original_shape)
             return generate_mock_predictions()
 
         LOGGER.info("Fallback postprocessing completed")
-        return result
+        return _attach_preview(result)
 
     # Internal helpers ---------------------------------------------------
     def _apply_config_bundle(self, bundle: ModelConfigBundle) -> None:

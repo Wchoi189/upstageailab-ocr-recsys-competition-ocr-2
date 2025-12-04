@@ -4,11 +4,20 @@ This project uses the **AgentQMS** framework for quality management. Copilot sho
 
 ### 1. First files to read
 
-1. `AgentQMS/knowledge/agent/system.md` – **Single Source of Truth** (rules, do/don’t, workflows).
-2. `.agentqms/state/architecture.yaml` – Component map, capabilities, and tool locations.
-3. `.copilot/context/tool-catalog.md` – Available automation tools and Make targets.
-4. `.copilot/context/workflow-triggers.yaml` – Task → workflow mapping.
-5. `.copilot/context/context-bundles-index.md` – Context bundles for focused work.
+1. `AgentQMS/knowledge/agent/system.md` – **Single Source of Truth** (rules, do/don't, workflows).
+2. `AgentQMS/knowledge/agent/README.md` – Agent knowledge index (quick reference).
+3. `.agentqms/state/architecture.yaml` – Component map, capabilities, and tool locations.
+4. `.copilot/context/tool-catalog.md` – Available automation tools and Make targets.
+5. `.copilot/context/workflow-triggers.yaml` – Task → workflow mapping.
+6. `.copilot/context/context-bundles-index.md` – Context bundles for focused work.
+
+### 1.1 Specialized agents
+
+**OCR Experiment Agent**: For OCR experiment workflows, VLM image analysis, and experiment tracking:
+- Read: `AgentQMS/knowledge/agent/ocr_experiment_agent.md`
+- Quick start: `experiment-tracker/docs/quickstart.md`
+- VLM tools: `AgentQMS/vlm/README.md`
+- Experiment tracker: `experiment-tracker/README.md`
 
 ### 2. How to discover tools and workflows
 

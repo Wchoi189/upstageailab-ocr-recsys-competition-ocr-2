@@ -73,6 +73,7 @@ Documentation Organization
 - Tracking domain: `AgentQMS/knowledge/agent/tracking_cli.md` and related references.
 - Automation domain: `AgentQMS/knowledge/agent/tool_catalog.md` and automation references.
 - Coding and development protocols: `AgentQMS/knowledge/protocols/development/`.
+- **OCR Experiment domain**: `AgentQMS/knowledge/agent/ocr_experiment_agent.md` – specialized instructions for OCR experiment workflows, VLM tools, and experiment-tracker integration.
 - Escalation: if any knowledge domain exceeds a manageable size, adopt capability-based indexing using `.agentqms/state/architecture.yaml` and metadata (`capabilities`, `audience`, `visibility`).
 - This file is the sole authoritative agent instruction.
 

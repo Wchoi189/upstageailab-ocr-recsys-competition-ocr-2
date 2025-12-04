@@ -46,6 +46,7 @@ class AnalysisMode(str, Enum):
     INPUT = "input"
     COMPARE = "compare"
     FULL = "full"
+    BUG_001 = "bug_001"
 
 
 class ImageData(BaseModel):

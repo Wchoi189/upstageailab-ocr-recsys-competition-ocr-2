@@ -105,16 +105,17 @@ The issue manifests purely as a visual misalignment between the rendered image a
 
 ### Implementation Plan
 1. **Backend analysis**:
-   - Inspect `InferenceEngine.predict_array` and related preprocessing utilities (e.g., `ui/utils/inference/preprocess.py`) to document the exact image transforms applied before inference, including perspective correction and resizing.
+   - Inspected `InferenceEngine.predict_array` and related preprocessing utilities (e.g., `ui/utils/inference/preprocess.py`) to document the exact image transforms applied before inference, including perspective correction and resizing.
 2. **Coordinate mapping design**:
-   - Define a data structure to capture the forward transform (original → preprocessed) and its inverse (preprocessed → original), or compute an equivalent affine/perspective mapping for polygon vertices.
+   - Decided to treat the engine’s **preprocessed BGR image (after optional perspective correction and resize)** as the canonical coordinate space for polygons and previews.
 3. **API update**:
-   - Update the inference pipeline so `_parse_inference_result` (or an earlier step) applies the inverse transform to all polygon coordinates before constructing `TextRegion` objects.
-   - Optionally add a debug flag or notes field indicating which transforms were applied.
+   - Updated the inference pipeline so `_predict_from_array` in `ui/utils/inference/engine.py` attaches a `preview_image_base64` PNG representing the exact image used for polygon decoding (BUG-001).
+   - Extended `/inference/preview` to expose this `preview_image_base64` field via `InferencePreviewResponse`, ensuring frontends can render overlays on the correct image without additional transforms.
 4. **Frontend verification**:
-   - Confirm that `InferencePreviewCanvas` continues to draw the raw uploaded image, and that no additional shifts or scaling are applied to polygons beyond the updated backend mapping.
+   - Updated `InferencePreviewCanvas.tsx` to prefer the backend-provided preview image when available, sizing the canvas to that image and drawing polygons in the same coordinate system.
+   - Performed manual checks using known problematic and non-problematic images (including `logs/ui/image.png`) to confirm that horizontal misalignment is eliminated when the preview image is used.
 5. **Documentation**:
-   - Document the new coordinate-system guarantees for `/inference/preview` in the API docs and link this bug ID in the change log.
+   - Documented the canonical preview/coordinate contract for `/inference/preview` in this bug report and the resize-focused companion BUG report, referencing the BUG-001 changes in engine, API, and frontend.
 
 ### Testing Plan
 1. **Unit tests (backend)**:
@@ -131,8 +132,8 @@ The issue manifests purely as a visual misalignment between the rendered image a
 ## Status
 - [x] Confirmed
 - [x] Investigating
-- [ ] Fix in progress
-- [ ] Fixed
+- [x] Fix in progress
+- [x] Fixed
 - [ ] Verified
 
 ## Assignee

@@ -346,6 +346,69 @@ DetectionResultContract(
 
 ---
 
+## Inference Engine Contract
+
+### InferenceEngine.predict_array() → InferenceResultContract
+
+**Purpose**: Defines the contract for inference engine outputs, including coordinate system metadata to ensure frontend visualization alignment.
+
+**Input Contract**:
+```python
+image_array: np.ndarray  # Shape: (H, W, 3), dtype: uint8, BGR format (OpenCV standard)
+```
+
+**Output Contract - InferenceResultContract**:
+```python
+{
+    "polygons": str,                    # Space-separated coordinates, regions separated by "|"
+    "texts": list[str] | None,          # Detected text strings
+    "confidences": list[float],         # Confidence scores
+    "preview_image_base64": str | None, # Base64-encoded PNG of preprocessed image
+    "meta": InferenceMetadata | None,   # Coordinate system and preprocessing metadata
+}
+```
+
+**Metadata Schema - InferenceMetadata**:
+```python
+{
+    "original_size": Tuple[int, int],    # (width, height) of source image
+    "processed_size": Tuple[int, int],   # (width, height) of preview image (typically 640x640)
+    "padding": {
+        "top": int,
+        "bottom": int,
+        "left": int,
+        "right": int
+    },
+    "scale": float,                      # Scaling factor: target_size / max(original_h, original_w)
+    "coordinate_system": str,            # "pixel" | "normalized"
+}
+```
+
+**Coordinate System**:
+- **Pixel Coordinates**: Polygon coordinates are in absolute pixels relative to the `processed_size` preview image.
+- **Padding Position**: Padding is applied at **top-left** position (content starts at (0,0), padding at bottom/right).
+- **Coordinate Mapping**: Coordinates are already transformed from original image space to the preview image space (640x640 with padding).
+
+**Validation Rules**:
+- `original_size` must match the input image dimensions
+- `processed_size` is typically `(640, 640)` (target_size x target_size)
+- `padding` values are non-negative integers
+- `scale` must be positive
+- `coordinate_system` must be either `"pixel"` or `"normalized"`
+
+**Frontend Usage**:
+- Frontend should use `meta.processed_size` to verify `displayBitmap` dimensions match.
+- Frontend should use `meta.coordinate_system` to determine coordinate handling logic.
+- For `coordinate_system="pixel"`: Map coordinates directly to `displayBitmap` dimensions.
+- For `coordinate_system="normalized"`: Scale coordinates by `processed_size` dimensions.
+
+**Common Violations**:
+- Missing `meta` field causes frontend to fall back to heuristics (may cause misalignment)
+- Mismatch between `meta.processed_size` and actual `preview_image_base64` dimensions
+- Incorrect `coordinate_system` value causes wrong coordinate transformation
+
+---
+
 ## Common Data Types
 
 ### Polygon Representations
