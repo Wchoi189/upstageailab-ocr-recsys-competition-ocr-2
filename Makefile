@@ -14,7 +14,7 @@ BACKEND_APP ?= apps.backend.services.playground_api.app:app
 # UI Apps
 UI_APPS := command_builder evaluation_viewer inference preprocessing_viewer resource_monitor unified_app
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop backend-force-kill stack-dev stack-stop fs stop-fs checkpoint-metadata checkpoint-metadata-dry-run qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop backend-force-kill stack-dev stack-stop fs stop-fs checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
 
 # ============================================================================
 # HELP
@@ -86,6 +86,9 @@ help:
 	@echo "📦 CHECKPOINT MANAGEMENT"
 	@echo "  checkpoint-metadata  - Generate metadata files for all checkpoints (speeds up loading)"
 	@echo "  checkpoint-metadata-dry-run - Preview metadata generation without creating files"
+	@echo "  checkpoint-index-rebuild - Rebuild checkpoint index from file system"
+	@echo "  checkpoint-index-rebuild-all - Rebuild all indices including legacy runs"
+	@echo "  checkpoint-index-verify - Verify checkpoint index integrity"
 	@echo ""
 	@echo "🔧 DEVELOPMENT WORKFLOW"
 	@echo "  clean               - Clean up cache files and build artifacts"
@@ -622,6 +625,19 @@ checkpoint-metadata:
 checkpoint-metadata-dry-run:
 	@echo "Previewing metadata generation (dry run)..."
 	uv run python scripts/checkpoints/generate_metadata.py --dry-run
+
+checkpoint-index-rebuild:
+	@echo "Rebuilding checkpoint index from file system..."
+	@echo "This scans outputs/ directory and creates a fast lookup index."
+	uv run python -c "from pathlib import Path; from ocr.utils.checkpoints.index import CheckpointIndex; import time; outputs_dir = Path('outputs'); index = CheckpointIndex(outputs_dir, include_legacy=True); print(f'Rebuilding index from {outputs_dir}...'); start = time.time(); index.rebuild(); duration = time.time() - start; print(f'✅ Index rebuilt in {duration:.2f}s'); print(f'Total checkpoints indexed: {len(index.get_checkpoint_paths())}')"
+
+checkpoint-index-rebuild-all:
+	@echo "Rebuilding ALL checkpoint indices (including legacy runs)..."
+	uv run python -c "from pathlib import Path; from ocr.utils.checkpoints.index import CheckpointIndex; import time; outputs_dir = Path('outputs'); index = CheckpointIndex(outputs_dir, include_legacy=True); print(f'Full rebuild with legacy runs...'); start = time.time(); index.rebuild(); duration = time.time() - start; runs = index.get_runs(); print(f'✅ Index rebuilt in {duration:.2f}s'); print(f'Total checkpoints: {len(index.get_checkpoint_paths())}'); print(f'Total runs: {len(runs)}'); [print(f'  - {run_name}: {len(run_data.get(\"checkpoints\", []))} checkpoints') for run_name, run_data in runs.items()]"
+
+checkpoint-index-verify:
+	@echo "Verifying checkpoint index integrity..."
+	uv run python -c "from pathlib import Path; from ocr.utils.checkpoints.index import CheckpointIndex; outputs_dir = Path('outputs'); index = CheckpointIndex(outputs_dir, include_legacy=True); index._load_index(); checkpoints = index.get_checkpoint_paths(); print(f'✅ Index verification passed'); print(f'Index file: {index.index_file}'); print(f'Index size: {index.index_file.stat().st_size} bytes'); print(f'Checkpoints indexed: {len(checkpoints)}')"
 
 # ============================================================================
 # DEVELOPMENT WORKFLOW

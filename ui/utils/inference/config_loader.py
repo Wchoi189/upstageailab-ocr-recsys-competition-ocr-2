@@ -124,11 +124,11 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
 
             if initialize_config_dir is not None:
                 with initialize_config_dir(config_dir=str(config_dir), job_name=job_name, version_base=None):
-                    resolved_cfg = compose(config_name=config_name)
+                    resolved_cfg = compose(config_name=config_name, return_hydra_config=False)
             else:  # pragma: no cover - legacy Hydra path
                 relative_config_path = _compute_relative_hydra_path(config_dir)
                 with initialize(config_path=relative_config_path, job_name=job_name, version_base=None):
-                    resolved_cfg = compose(config_name=config_name)
+                    resolved_cfg = compose(config_name=config_name, return_hydra_config=False)
 
             config_dict = resolved_cfg.to_container() if hasattr(resolved_cfg, "to_container") else dict(resolved_cfg)
             LOGGER.info("Resolved Hydra config with defaults: %s", path)

@@ -21,4 +21,6 @@ job_logging:
   handlers:
     file:
       # Incorporates fix from https://github.com/facebookresearch/hydra/pull/2242
-      filename: ${hydra.runtime.output_dir}/${task_name}.log
+      # Note: hydra.runtime.output_dir is only available during actual runs, not during compose()
+      # For inference, we'll use a relative path instead
+      filename: .hydra/${task_name}.log

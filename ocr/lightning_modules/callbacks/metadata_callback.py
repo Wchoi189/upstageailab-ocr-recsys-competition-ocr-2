@@ -251,6 +251,18 @@ class MetadataCallback(Callback):
             metadata_path = save_metadata(metadata, checkpoint_path)
             LOGGER.info("Generated metadata: %s", metadata_path)
 
+            # Update checkpoint index (Phase 4.3 optimization)
+            try:
+                from ocr.utils.checkpoints.index import CheckpointIndex
+
+                if self.outputs_dir:
+                    index = CheckpointIndex(self.outputs_dir, include_legacy=True)
+                    index.add_checkpoint(checkpoint_path, metadata)
+                    LOGGER.debug("Updated checkpoint index for: %s", checkpoint_path)
+            except Exception as e:
+                # Don't fail training if index update fails
+                LOGGER.debug("Failed to update checkpoint index: %s", e)
+
         except Exception as exc:  # noqa: BLE001
             LOGGER.error(
                 "Failed to generate metadata for %s: %s",
