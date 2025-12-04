@@ -32,7 +32,7 @@ All phases of the Checkpoint Catalog Refactor have been successfully completed:
 - **Key Finding**: Checkpoint loading accounts for 85-90% of catalog build time
 - **Opportunity**: YAML metadata files can eliminate checkpoint loading entirely
 - **Analysis Document**: docs/ai_handbook/05_changelog/2025-10/18_checkpoint_catalog_analysis.md
-- **Architecture Design**: docs/ai_handbook/03_references/architecture/checkpoint_catalog_v2_design.md
+- **Architecture Design**: docs/architecture/checkpoint_catalog_v2_design.md
 - **Module Implementation**: Complete Pydantic V2 models and module skeleton created in `ui/apps/inference/services/checkpoint/`
 - **Metadata Requirements**: Confirmed inclusion of precision, recall, hmean, epoch per user requirements
 - **Metadata Callback**: MetadataCallback implemented for automatic YAML generation during training

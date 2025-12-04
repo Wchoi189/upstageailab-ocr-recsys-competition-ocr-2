@@ -33,8 +33,9 @@
   "python.analysis.typeCheckingMode": "basic",
   "python.analysis.autoImportCompletions": true,
   "python.analysis.extraPaths": [
-    ".",
-    "ocr"
+    "ocr",
+    "ui",
+    "scripts"
   ],
   // ------------------------------------------------------------------
   // File & Search Exclusions
@@ -98,8 +99,9 @@
       "**/notebooks"
     ],
     "cursorpyright.analysis.extraPaths": [
-      ".",
-      "ocr"
+      "ocr",
+      "ui",
+      "scripts"
     ],
     "cursorpyright.analysis.typeCheckingMode": "basic"
 }

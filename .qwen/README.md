@@ -1,90 +1,89 @@
-# Qwen Coder + AgentQMS Integration
+# Qwen Coder + AgentQMS
 
-This directory contains configuration and scripts for running Qwen Coder with AgentQMS framework integration.
+## Table of Contents
 
-## ✅ Current Status: FIXED
+- [Quick Reference](#quick-reference)
+- [Chat Usage](#chat-usage)
+- [Commands](#commands)
+- [Configuration](#configuration)
+- [Workflows](#workflows)
 
-**Issue Resolved**: Qwen CLI checkpointing bug was fixed by disabling checkpointing in settings.json.
-**Status**: Fully functional with AgentQMS integration.
+## Quick Reference
 
-## Files
+- **Agent Name:** `Qwen AgentQMS` (use `@Qwen AgentQMS` in chat)
+- **Commands:** `.qwen/run.sh validate|create|interactive`
+- **Config:** `.qwen/settings.json`
+- **SST:** `AgentQMS/knowledge/agent/system.md`
 
-- `settings.json` - Qwen configuration optimized for AgentQMS (checkpointing disabled)
-- `prompts.md` - Pre-built prompts for common AgentQMS tasks
-- `run.sh` - Convenience script for AgentQMS operations
-- `manual_validate.sh` - Manual document validation script (backup)
+## Chat Usage
 
-## ✅ Working Usage
+### Agent Reference
+- `@Qwen AgentQMS` - Full agent name in Cursor chat
+- `@Qwen` - Short reference (if unique)
 
-### Document Validation
+### Examples
+- `@Qwen AgentQMS, validate all artifacts`
+- `@Qwen AgentQMS, create bug report for auth issue`
+- `@Qwen AgentQMS, check compliance and apply fixes`
+
+### Command Delegation
+- Reference commands: `Run: ./.qwen/run.sh validate`
+- Delegate tasks: `@Qwen AgentQMS, handle validation`
+
+## Commands
+
+### Validation
 ```bash
 ./.qwen/run.sh validate
-# Generates a prompt for AI-assisted document validation
 ```
 
-### Create New Artifacts
+### Artifact Creation
 ```bash
-./.qwen/run.sh create plan my-feature "Feature Plan"
-./.qwen/run.sh create assessment security-review "Security Assessment"
-./.qwen/run.sh create bug-report auth-issue "Authentication Bug Report"
+./.qwen/run.sh create <type> <name> <title>
 ```
+**Types:** plan, assessment, bug-report, design, research, template
 
-### Direct Qwen Commands
+### Interactive
 ```bash
-qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 --prompt "Follow AgentQMS/knowledge/agent/system.md and [your task]"
+./.qwen/run.sh interactive "<prompt>"
 ```
 
-### Manual Validation (Backup)
+### Direct Qwen CLI
 ```bash
-./.qwen/run.sh validate-manual
+qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 --prompt "<task>"
 ```
-
-## Manual Validation Results
-
-The manual validation script found **27 files** with naming convention violations in `docs/artifacts/`. All files need:
-
-1. **Renaming** to format: `YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md`
-2. **Frontmatter** addition with proper YAML headers
-3. **Directory** restructuring according to artifact categories
-
-Valid artifact types: `implementation_plan_`, `assessment-`, `audit-`, `design-`, `research-`, `template-`, `BUG_`, `SESSION_`
-
-## AgentQMS Integration
-
-- **Instructions**: Points to `AgentQMS/knowledge/agent/system.md`
-- **Architecture**: References `.agentqms/state/architecture.yaml`
-- **Artifacts Path**: `docs/artifacts/`
-- **Validation**: Configured to ignore non-artifact files
 
 ## Configuration
 
-**Key Fix**: Checkpointing disabled in `settings.json`:
-```json
-{
-  "general": {
-    "checkpointing": {
-      "enabled": false
-    }
-  }
-}
-```
+**Status:** Checkpointing disabled in `settings.json` (required fix)
 
-## Next Steps
+**Key Settings:**
+- Checkpointing: `enabled: false`
+- Workspace: `/workspaces/upstageailab-ocr-recsys-competition-ocr-2`
+- Model: `qwen/qwen3-coder`
 
-1. **Run validation**: `./.qwen/run.sh validate`
-2. **Fix document issues** using the generated prompts
-3. **Create new artifacts** with the create commands
-4. **Use direct Qwen commands** for custom tasks
+## Workflows
 
-## For Other AI Tools
+### Validation
+- Run: `./.qwen/run.sh validate`
+- Chat: `@Qwen AgentQMS, validate artifacts`
 
-The generated prompts work with any AI tool:
-- ChatGPT
-- Claude
-- Other AI coding assistants
+### Artifact Creation
+- Run: `./.qwen/run.sh create plan my-feature "Title"`
+- Chat: `@Qwen AgentQMS, create plan named "my-feature" with title "Title"`
 
-The AgentQMS framework ensures consistent development practices across all tools!
-- Adjust AgentQMS paths
-- Configure different models
+### Fixes
+- Run: `./.qwen/run.sh validate && cd AgentQMS/interface && make fix`
+- Chat: `@Qwen AgentQMS, apply fixes`
 
-Edit `prompts.md` to add new task templates.
+## Files
+
+- `settings.json` - Qwen config (checkpointing disabled)
+- `run.sh` - Wrapper script for AgentQMS operations
+- `prompts.md` - Pre-built prompts for common tasks
+
+## Notes
+
+- Always reference AgentQMS context: `AgentQMS/knowledge/agent/system.md`
+- Use automation only; never create artifacts manually
+- Validate after changes: `make validate && make compliance`
