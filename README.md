@@ -251,10 +251,14 @@ uv run pytest tests/ -v
 uv run python runners/train.py preset=example trainer.max_epochs=10
 
 # Test model
-uv run python runners/test.py preset=example checkpoint_path="outputs/ocr_training/checkpoints/best.ckpt"
+uv run python runners/test.py \
+    preset=example \
+    checkpoint_path="outputs/experiments/train/ocr/ocr_training_b/YOUR_RUN_ID/checkpoints/best.ckpt"
 
 # Generate predictions
-uv run python runners/predict.py preset=example checkpoint_path="outputs/ocr_training/checkpoints/best.ckpt"
+uv run python runners/predict.py \
+    preset=example \
+    checkpoint_path="outputs/experiments/train/ocr/ocr_training_b/YOUR_RUN_ID/checkpoints/best.ckpt"
 ```
 
 ### UI Tools
@@ -362,12 +366,12 @@ uv run python runners/train.py \
 # Test the trained model
 uv run python runners/test.py \
     preset=example \
-    checkpoint_path="outputs/ocr_training/checkpoints/latest.ckpt"
+    checkpoint_path="outputs/experiments/train/ocr/ocr_training_b/YOUR_RUN_ID/checkpoints/latest.ckpt"
 
 # Generate predictions
 uv run python runners/predict.py \
     preset=example \
-    checkpoint_path="outputs/ocr_training/checkpoints/latest.ckpt"
+    checkpoint_path="outputs/experiments/train/ocr/ocr_training_b/YOUR_RUN_ID/checkpoints/latest.ckpt"
 ```
 
 ### Step 7: Explore with UI
@@ -397,6 +401,7 @@ python run_ui.py inference
 │   ├── artifacts/       # AgentQMS implementation plans, audits, bug reports, assessments
 │   ├── maintainers/     # Maintainer documentation
 │   └── ...
+├── outputs/             # Generated artifacts (see outputs/README_outputs_structure.md)
 ├── ocr/                 # Core OCR modules
 │   ├── datasets/
 │   ├── lightning_modules/
