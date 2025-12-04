@@ -2,7 +2,7 @@
 exp_name: ocr_training
 exp_version: v1.0
 log_dir: outputs/ocr_training/logs
-checkpoint_dir: outputs/ocr_training/checkpoints
+checkpoint_dir: ../.deprecated/schemas/default_train.yaml
 seed: 42
 wandb: true
 resume: null

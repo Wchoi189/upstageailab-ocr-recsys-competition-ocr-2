@@ -60,7 +60,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
 
     def nest_at_path(value: dict, path: str) -> dict:
         """Nest a dictionary at a dot-separated path."""
-        if not path:
+        if not path or path == '_global_':
             return value
 
         parts = path.split(".")

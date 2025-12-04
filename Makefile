@@ -1,3 +1,24 @@
+# ============================================================================
+# CONFIGURATION SYSTEM MAINTENANCE
+# ============================================================================
+
+.PHONY: config-validate
+config-validate:  ## Validate configuration system for errors
+	python scripts/validate_config.py
+
+.PHONY: config-archive
+config-archive:   ## Archive legacy configs to .deprecated/
+	mkdir -p configs/.deprecated/schemas configs/.deprecated/benchmark configs/.deprecated/tools
+	mv configs/schemas/*.yaml configs/.deprecated/schemas/ 2>/dev/null || true
+	mv configs/benchmark/*.yaml configs/.deprecated/benchmark/ 2>/dev/null || true
+	mv configs/tools/* configs/.deprecated/tools/ 2>/dev/null || true
+	@echo "✅ Legacy configs archived to configs/.deprecated/"
+
+.PHONY: config-show-structure
+config-show-structure:  ## Show current config structure
+	find configs -name "*.yaml" -type f | wc -l | xargs echo "Total config files:"
+	find configs -mindepth 1 -maxdepth 1 -type d | wc -l | xargs echo "Config groups:"
+	grep -r "@package" configs --include="*.yaml" | cut -d: -f2 | sort | uniq -c | sort -rn
 # Makefile for OCR Project Development
 # Last Updated: 2025-10-21
 # Version: 0.1.1

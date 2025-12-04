@@ -18,14 +18,23 @@ experiment:
 
 defaults:
   - model: default
-  - metrics: cleval
+  - evaluation: metrics
   - paths: default
-  - logger: default
+  - logger: consolidated
   - trainer: default
   - callbacks: default
   - debug: default
   - hydra: default
-  - extras: default
+
+# Runtime extras (inlined from extras/default.yaml)
+# disable python warnings if they annoy you
+ignore_warnings: False
+
+# ask user for tags if none are provided in the config
+enforce_tags: True
+
+# pretty print config tree at the start of the run using Rich library
+print_config: True
 
 dataset_module: ocr.datasets
 dataset_config_module: ocr.datasets.schemas

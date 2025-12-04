@@ -94,49 +94,33 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
     path = Path(config_path)
     LOGGER.info("Using config file: %s", path)
 
-    with path.open("r", encoding="utf-8") as handle:
-        if path.suffix in {".yaml", ".yml"}:
-            if yaml is None:
-                raise RuntimeError("PyYAML is not available to parse configuration files.")
-            config_dict = yaml.safe_load(handle)
-        else:
-            config_dict = json.load(handle)
-
-    # Try to resolve Hydra defaults if present
-    if OCR_MODULES_AVAILABLE and isinstance(config_dict, dict) and "defaults" in config_dict:
+    def load_config_from_path(config_path: str | Path):
+        """
+        Load Hydra config from full path by extracting config name.
+        Uses ocr/utils/config_utils.py::load_config() which properly
+        resolves defaults and @package directives.
+        """
+        path = Path(config_path).resolve()
+        config_name = path.stem
         try:
-            from hydra import compose, initialize
-            from hydra.core.global_hydra import GlobalHydra
+            from ocr.utils.config_utils import load_config as load_hydra_config
+            cfg = load_hydra_config(config_name=config_name)
+            return cfg
+        except Exception as e:
+            LOGGER.error(f"Failed to load config from {config_path}: {e}")
+            raise
 
-            try:
-                from hydra import initialize_config_dir
-            except ImportError:  # pragma: no cover - hydra<1.2 fallback
-                initialize_config_dir = None  # type: ignore[assignment]
-
-            # Use Hydra to resolve the config with defaults
-            GlobalHydra.instance().clear()
-
-            # For Hydra initialization, we need the config directory (usually PROJECT_ROOT/configs)
-            # If the config file is in PROJECT_ROOT/configs, use that. Otherwise, use the file's parent.
-            path_resolved = Path(path).resolve()
-            config_dir, config_name = _determine_hydra_location(path_resolved)
-            job_name = "inference_config_loader"
-
-            if initialize_config_dir is not None:
-                with initialize_config_dir(config_dir=str(config_dir), job_name=job_name, version_base=None):
-                    resolved_cfg = compose(config_name=config_name, return_hydra_config=False)
-            else:  # pragma: no cover - legacy Hydra path
-                relative_config_path = _compute_relative_hydra_path(config_dir)
-                with initialize(config_path=relative_config_path, job_name=job_name, version_base=None):
-                    resolved_cfg = compose(config_name=config_name, return_hydra_config=False)
-
-            config_dict = resolved_cfg.to_container() if hasattr(resolved_cfg, "to_container") else dict(resolved_cfg)
-            LOGGER.info("Resolved Hydra config with defaults: %s", path)
-
-        except Exception as exc:  # noqa: BLE001
-            LOGGER.warning("Failed to resolve Hydra config %s, using raw config: %s", path, exc)
-
-    config_container = DictConfig(config_dict) if OCR_MODULES_AVAILABLE else config_dict
+    if OCR_MODULES_AVAILABLE:
+        config_container = load_config_from_path(path)
+    else:
+        with path.open("r", encoding="utf-8") as handle:
+            if path.suffix in {".yaml", ".yml"}:
+                if yaml is None:
+                    raise RuntimeError("PyYAML is not available to parse configuration files.")
+                config_dict = yaml.safe_load(handle)
+            else:
+                config_dict = json.load(handle)
+        config_container = DictConfig(config_dict)
 
     preprocess_settings = _extract_preprocess_settings(config_container)
     postprocess_settings = _extract_postprocess_settings(config_container)
