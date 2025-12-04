@@ -1,9 +1,20 @@
 hydra:
-  run:
-    dir: 'outputs/${exp_index:}'
+  # `run.dir` is configured in `configs/hydra/default.yaml` to place runs under
+  # `outputs/experiments/<kind>/<task>/<name>/<run_id>/`.
+  #
+  # Keep any additional Hydra settings here if needed; avoid duplicating `run.dir`
+  # so there is a single source of truth.
 
-# Task name for hydra logging
+# Task name for hydra logging (logical task label, not necessarily the path segment)
 task_name: "train"
+
+# Experiment identity used to construct the structured `outputs/experiments/...` path.
+# Individual entry-point configs (train/test/predict/etc.) can override these fields.
+experiment:
+  kind: "train"          # train | eval | preproc | other
+  task: "ocr"            # domain/task label (e.g., ocr, recsys, preproc)
+  name: ${exp_name}      # comes from the entry config (e.g., train.yaml)
+  run_id: ${now:%Y%m%d_%H%M%S}_${seed}
 
 defaults:
   - model: default
