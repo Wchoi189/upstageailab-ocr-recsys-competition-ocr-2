@@ -1,6 +1,6 @@
 ---
 title: "AI Agent System – Single Source of Truth"
-date: "2025-10-29 00:00 (KST)"
+date: "2025-12-04 00:00 (KST)"
 type: "guide"
 category: "ai_agent"
 status: "active"
