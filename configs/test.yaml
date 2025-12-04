@@ -15,3 +15,9 @@ project_name: null
 exp_name: "ocr_testing"
 checkpoint_path: null
 wandb: true
+
+# Place test runs under `outputs/experiments/eval/...` instead of `train/...`.
+experiment:
+  kind: "eval"
+  task: "ocr"
+  name: ${exp_name}

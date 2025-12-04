@@ -38,3 +38,9 @@ datasets:
       image_path: ${image_dir}
       annotation_path: null
     transform: ${transforms.test_transform}
+
+# Place shadow-removal prediction runs under `outputs/experiments/predict/...`.
+experiment:
+  kind: "predict"
+  task: "ocr"
+  name: ${exp_name}

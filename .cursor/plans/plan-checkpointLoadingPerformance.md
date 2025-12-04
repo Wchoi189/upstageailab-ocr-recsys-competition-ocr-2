@@ -26,8 +26,8 @@ The Next.js Inference Studio currently takes ~5 minutes to load 16 checkpoints, 
 
 ### 3. File System Traversal Overhead (Tertiary)
 - **Impact**: 2-3 seconds additional overhead per request
-- **Cause**: Recursive `outputs/*.ckpt` glob on every catalog build
-- **Evidence**: No indexing or caching of directory structure
+- **Cause**: Recursive glob across nested `outputs/experiments/<kind>/<task>/<name>/<run_id>/checkpoints/` on every catalog build
+- **Evidence**: No indexing or caching of directory structure; deeply nested structure increases traversal complexity
 
 ### 4. No Checkpoint Validation
 - **Impact**: Some checkpoints fail during inference
@@ -415,7 +415,7 @@ export const FEATURES = {
 **Priority**: P1 (Reduces file system overhead)
 
 #### 4.1 Create Checkpoint Index System
-**Task**: Build indexing system to avoid repeated file system scans
+**Task**: Build indexing system to avoid repeated file system scans with awareness of new outputs/ structure
 
 **File**: `ocr/utils/checkpoints/index.py` (NEW)
 
@@ -423,12 +423,15 @@ export const FEATURES = {
 """
 Checkpoint index management for fast lookup without file system scans.
 
-The index is a JSON file that maps experiment names to checkpoint metadata,
+Respects the new outputs/ structure:
+  outputs/experiments/<kind>/<task>/<name>/<run_id>/checkpoints/
+
+The index is a JSON file that maps run paths to checkpoint metadata,
 updated incrementally as new checkpoints are saved.
 """
 
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional
 import json
 from datetime import datetime
 
@@ -441,52 +444,103 @@ class CheckpointIndex:
       "version": "1.0",
       "last_updated": "2025-12-04T10:30:00Z",
       "checkpoints": {
-        "ocr_training_b": {
+        "experiments/train/ocr/ocr_training_b/20250101_120000_12345": {
+          "kind": "train",
+          "task": "ocr",
+          "name": "ocr_training_b",
+          "run_id": "20250101_120000_12345",
           "checkpoints": ["best.ckpt", "last.ckpt"],
-          "metadata_files": ["best.metadata.yaml", "last.metadata.yaml"],
-          "last_modified": "2025-12-03T15:20:00Z"
+          "metadata_files": ["best.ckpt.metadata.yaml", "last.ckpt.metadata.yaml"],
+          "last_modified": "2025-12-03T15:20:00Z",
+          "is_legacy": false
         }
-      }
+      },
+      "include_legacy": false,
+      "include_tmp": false
     }
     """
 
-    def __init__(self, outputs_dir: Path):
+    def __init__(self, outputs_dir: Path, include_legacy: bool = False, include_tmp: bool = False):
         self.outputs_dir = outputs_dir
         self.index_file = outputs_dir / ".checkpoint_index.json"
+        self.include_legacy = include_legacy
+        self.include_tmp = include_tmp
         self.index = self._load_index()
 
     def _load_index(self) -> dict:
         """Load existing index or create new one."""
         if self.index_file.exists():
             return json.loads(self.index_file.read_text())
-        return {"version": "1.0", "checkpoints": {}}
+        return {
+            "version": "1.0",
+            "checkpoints": {},
+            "include_legacy": self.include_legacy,
+            "include_tmp": self.include_tmp
+        }
 
-    def add_checkpoint(self, exp_name: str, checkpoint_name: str):
-        """Add checkpoint to index."""
-        if exp_name not in self.index["checkpoints"]:
-            self.index["checkpoints"][exp_name] = {
+    def add_checkpoint(
+        self,
+        run_path: Path,
+        kind: str,
+        task: str,
+        name: str,
+        run_id: str,
+        checkpoint_name: str,
+        is_legacy: bool = False
+    ):
+        """Add checkpoint to index with structured metadata."""
+        # Skip legacy runs unless enabled
+        if is_legacy and not self.include_legacy:
+            return
+
+        run_key = str(run_path.relative_to(self.outputs_dir))
+
+        if run_key not in self.index["checkpoints"]:
+            self.index["checkpoints"][run_key] = {
+                "kind": kind,
+                "task": task,
+                "name": name,
+                "run_id": run_id,
                 "checkpoints": [],
-                "metadata_files": []
+                "metadata_files": [],
+                "is_legacy": is_legacy
             }
 
-        if checkpoint_name not in self.index["checkpoints"][exp_name]["checkpoints"]:
-            self.index["checkpoints"][exp_name]["checkpoints"].append(checkpoint_name)
+        if checkpoint_name not in self.index["checkpoints"][run_key]["checkpoints"]:
+            self.index["checkpoints"][run_key]["checkpoints"].append(checkpoint_name)
 
         # Check for metadata file
         metadata_name = f"{checkpoint_name}.metadata.yaml"
-        metadata_path = self.outputs_dir / exp_name / "checkpoints" / metadata_name
+        metadata_path = run_path / "checkpoints" / metadata_name
         if metadata_path.exists():
-            self.index["checkpoints"][exp_name]["metadata_files"].append(metadata_name)
+            self.index["checkpoints"][run_key]["metadata_files"].append(metadata_name)
 
         self.save()
 
-    def get_checkpoint_paths(self) -> List[Path]:
-        """Get all checkpoint paths from index without file system scan."""
+    def get_checkpoint_paths(
+        self,
+        kind: Optional[str] = None,
+        task: Optional[str] = None,
+        name: Optional[str] = None
+    ) -> List[Path]:
+        """Get checkpoint paths from index, optionally filtered by kind/task/name."""
         paths = []
-        for exp_name, data in self.index["checkpoints"].items():
-            exp_dir = self.outputs_dir / exp_name / "checkpoints"
+        for run_key, data in self.index["checkpoints"].items():
+            # Skip legacy if not enabled
+            if data.get("is_legacy", False) and not self.include_legacy:
+                continue
+
+            # Apply filters
+            if kind and data["kind"] != kind:
+                continue
+            if task and data["task"] != task:
+                continue
+            if name and data["name"] != name:
+                continue
+
+            run_path = self.outputs_dir / run_key
             for ckpt in data["checkpoints"]:
-                paths.append(exp_dir / ckpt)
+                paths.append(run_path / "checkpoints" / ckpt)
         return paths
 
     def save(self):
@@ -496,12 +550,61 @@ class CheckpointIndex:
 
     def rebuild(self):
         """Full rebuild from file system (fallback/initialization)."""
-        self.index = {"version": "1.0", "checkpoints": {}}
+        self.index = {
+            "version": "1.0",
+            "checkpoints": {},
+            "include_legacy": self.include_legacy,
+            "include_tmp": self.include_tmp
+        }
 
-        for ckpt_path in self.outputs_dir.rglob("*.ckpt"):
-            exp_name = ckpt_path.parent.parent.name
-            ckpt_name = ckpt_path.name
-            self.add_checkpoint(exp_name, ckpt_name)
+        experiments_dir = self.outputs_dir / "experiments"
+        if not experiments_dir.exists():
+            return
+
+        # Scan experiments hierarchy: experiments/<kind>/<task>/<name>/<run_id>/checkpoints/
+        for kind_dir in experiments_dir.iterdir():
+            if not kind_dir.is_dir():
+                continue
+            kind = kind_dir.name
+
+            for task_dir in kind_dir.iterdir():
+                if not task_dir.is_dir():
+                    continue
+                task = task_dir.name
+
+                for name_dir in task_dir.iterdir():
+                    if not name_dir.is_dir():
+                        continue
+                    name = name_dir.name
+
+                    # Handle legacy runs
+                    if name == "legacy_run":
+                        if not self.include_legacy:
+                            continue
+                        is_legacy = True
+                    else:
+                        is_legacy = False
+
+                    for run_dir in name_dir.iterdir():
+                        if not run_dir.is_dir():
+                            continue
+                        run_id = run_dir.name
+
+                        checkpoints_dir = run_dir / "checkpoints"
+                        if not checkpoints_dir.exists():
+                            continue
+
+                        for ckpt_path in checkpoints_dir.glob("*.ckpt"):
+                            ckpt_name = ckpt_path.name
+                            self.add_checkpoint(
+                                run_path=run_dir,
+                                kind=kind,
+                                task=task,
+                                name=name,
+                                run_id=run_id,
+                                checkpoint_name=ckpt_name,
+                                is_legacy=is_legacy
+                            )
 ```
 
 **Acceptance Criteria**:
@@ -511,7 +614,7 @@ class CheckpointIndex:
 - Thread-safe for concurrent access
 
 #### 4.2 Integrate Index with Catalog Builder
-**Task**: Use index instead of file system scans
+**Task**: Use index instead of file system scans with support for new outputs/ hierarchy
 
 **File**: `ocr/utils/checkpoints/catalog.py`
 
@@ -521,15 +624,27 @@ from ocr.utils.checkpoints.index import CheckpointIndex
 def build_lightweight_catalog(options: CatalogOptions) -> CatalogResult:
     """Build checkpoint catalog using index for fast lookup."""
 
-    # Try to use index first
-    index = CheckpointIndex(options.outputs_dir)
+    # Try to use index first (skip legacy runs by default for performance)
+    index = CheckpointIndex(
+        options.outputs_dir,
+        include_legacy=getattr(options, 'include_legacy_runs', False),
+        include_tmp=False  # Never include tmp directory
+    )
 
     if index.index_file.exists():
         LOGGER.info("Using checkpoint index for fast catalog build")
-        checkpoint_paths = index.get_checkpoint_paths()
+        # Get checkpoints, filtering by kind if specified (e.g., 'train' only)
+        checkpoint_paths = index.get_checkpoint_paths(
+            kind=getattr(options, 'kind_filter', None)
+        )
     else:
         LOGGER.warning("Checkpoint index not found, falling back to file system scan")
-        checkpoint_paths = sorted(options.outputs_dir.rglob("*.ckpt"))
+        # Scan experiments directory (respects new structure)
+        checkpoint_paths = sorted(
+            (options.outputs_dir / "experiments").rglob("*.ckpt")
+            if (options.outputs_dir / "experiments").exists()
+            else []
+        )
 
         # Rebuild index in background for next time
         index.rebuild()
@@ -544,7 +659,7 @@ def build_lightweight_catalog(options: CatalogOptions) -> CatalogResult:
 - Logs which method was used
 
 #### 4.3 Update Metadata Callback to Update Index
-**Task**: Incrementally update index when checkpoints are saved
+**Task**: Incrementally update index when checkpoints are saved, aware of new outputs/ structure
 
 **File**: `ocr/lightning_modules/callbacks/metadata_callback.py`
 
@@ -552,8 +667,18 @@ def build_lightweight_catalog(options: CatalogOptions) -> CatalogResult:
 from ocr.utils.checkpoints.index import CheckpointIndex
 
 class MetadataCallback(Callback):
-    def __init__(self, exp_name: str, outputs_dir: Path, ...):
+    def __init__(
+        self,
+        exp_name: str,
+        outputs_dir: Path,
+        kind: str = "train",  # New parameter for experiment kind
+        task: str = "ocr",    # New parameter for task
+        ...
+    ):
         super().__init__()
+        self.exp_name = exp_name
+        self.kind = kind
+        self.task = task
         self.index = CheckpointIndex(outputs_dir)
         # ... rest of init
 
@@ -561,11 +686,27 @@ class MetadataCallback(Callback):
         """Generate metadata and update index after checkpoint save."""
         # ... existing metadata generation logic ...
 
-        # Update index
-        checkpoint_name = Path(checkpoint_path).name
-        self.index.add_checkpoint(self.exp_name, checkpoint_name)
+        # Extract run_id from checkpoint path
+        # Expected path: outputs/experiments/<kind>/<task>/<name>/<run_id>/checkpoints/<ckpt>
+        checkpoint_path = Path(checkpoint_path)
+        run_dir = checkpoint_path.parent.parent  # checkpoints -> <run_id>
+        run_id = run_dir.name
+        checkpoint_name = checkpoint_path.name
 
-        LOGGER.debug(f"Updated checkpoint index for {self.exp_name}/{checkpoint_name}")
+        # Update index with structured metadata
+        self.index.add_checkpoint(
+            run_path=run_dir,
+            kind=self.kind,
+            task=self.task,
+            name=self.exp_name,
+            run_id=run_id,
+            checkpoint_name=checkpoint_name,
+            is_legacy=False
+        )
+
+        LOGGER.debug(
+            f"Updated checkpoint index for {self.kind}/{self.task}/{self.exp_name}/{run_id}/{checkpoint_name}"
+        )
 ```
 
 **Acceptance Criteria**:
@@ -574,24 +715,35 @@ class MetadataCallback(Callback):
 - No race conditions with concurrent saves
 
 #### 4.4 Add Index Management Commands
-**Task**: Add Makefile targets for index operations
+**Task**: Add Makefile targets for index operations, aware of new hierarchy
 
 **File**: `Makefile`
 
 ```makefile
 .PHONY: checkpoint-index-rebuild
-checkpoint-index-rebuild:  ## Rebuild checkpoint index from file system
+checkpoint-index-rebuild:  ## Rebuild checkpoint index from file system (respects new outputs/experiments structure)
 	@echo "Rebuilding checkpoint index..."
 	python -c "from ocr.utils.checkpoints.index import CheckpointIndex; \
 	           from ocr.utils.path_utils import get_path_resolver; \
 	           index = CheckpointIndex(get_path_resolver().config.output_dir); \
 	           index.rebuild(); \
-	           print(f'Indexed {len(index.get_checkpoint_paths())} checkpoints')"
+	           train_ckpts = len(index.get_checkpoint_paths(kind='train')); \
+	           eval_ckpts = len(index.get_checkpoint_paths(kind='eval')); \
+	           print(f'Indexed {train_ckpts} train + {eval_ckpts} eval checkpoints')"
 
 .PHONY: checkpoint-index-verify
-checkpoint-index-verify:  ## Verify checkpoint index accuracy
+checkpoint-index-verify:  ## Verify checkpoint index accuracy against new structure
 	@echo "Verifying checkpoint index..."
 	python scripts/checkpoints/verify_index.py
+
+.PHONY: checkpoint-index-rebuild-with-legacy
+checkpoint-index-rebuild-with-legacy:  ## Rebuild index including legacy runs (legacy_run directories)
+	@echo "Rebuilding checkpoint index with legacy runs..."
+	python -c "from ocr.utils.checkpoints.index import CheckpointIndex; \
+	           from ocr.utils.path_utils import get_path_resolver; \
+	           index = CheckpointIndex(get_path_resolver().config.output_dir, include_legacy=True); \
+	           index.rebuild(); \
+	           print(f'Indexed {len(index.get_checkpoint_paths())} checkpoints (including legacy)')"
 ```
 
 **Acceptance Criteria**:
@@ -1628,23 +1780,64 @@ def test_checkpoint_loading_user_flow(browser):
 3. Should streaming endpoint replace the standard endpoint or coexist?
 4. What monitoring/alerting thresholds should we set?
 5. Should we implement checkpoint cleanup/archival as part of this work?
+6. Should the UI filter checkpoints to only active/recent training runs (exclude `legacy_run` by default)?
+7. Do we need to expose different checkpoint catalogs by run kind (train vs eval)?
+8. Should index be versioned/migrated if outputs/ structure changes again?
+9. For legacy runs in `legacy_run/` subdirectories, should they be treated as read-only in the UI?
 
 ---
 
 ## Appendix: File Structure
 
+### New outputs/ Hierarchy
+
+```
+outputs/
+├── experiments/
+│   ├── train/
+│   │   ├── ocr/
+│   │   │   ├── ocr_training_b/
+│   │   │   │   ├── 20250101_120000_12345/  # run_id
+│   │   │   │   │   ├── checkpoints/
+│   │   │   │   │   │   ├── best.ckpt
+│   │   │   │   │   │   ├── best.ckpt.metadata.yaml  # NEW
+│   │   │   │   │   │   ├── last.ckpt
+│   │   │   │   │   │   └── last.ckpt.metadata.yaml  # NEW
+│   │   │   │   │   ├── logs/
+│   │   │   │   │   ├── config.yaml
+│   │   │   │   │   └── .hydra/
+│   │   │   │   └── ...
+│   │   │   └── legacy_run/  # Old runs migrated here
+│   │   └── ...
+│   ├── eval/
+│   │   ├── perspective/
+│   │   ├── rembg/
+│   │   └── ...
+│   └── preproc/
+├── artifacts/
+│   ├── datasets/
+│   ├── models/
+│   └── submissions/
+├── logs/
+├── tmp/
+├── .checkpoint_index.json           # NEW (generated by indexing system)
+└── README_outputs_structure.md      # Documentation of new layout
+```
+
+### Source Files Modified/Created
+
 ```
 ocr/
 ├── utils/
 │   └── checkpoints/
-│       ├── catalog.py                    # Existing (modified)
+│       ├── catalog.py                    # Existing (modified for new structure)
 │       ├── schemas.py                    # Existing
 │       ├── metadata_loader.py            # Existing
-│       ├── index.py                      # NEW
+│       ├── index.py                      # NEW (hierarchy-aware indexing)
 │       └── validator.py                  # NEW
 ├── lightning_modules/
 │   └── callbacks/
-│       └── metadata_callback.py          # Existing (modified)
+│       └── metadata_callback.py          # Existing (modified: add kind/task)
 
 scripts/
 └── checkpoints/
@@ -1654,7 +1847,7 @@ scripts/
 
 configs/
 └── callbacks/
-    ├── default.yaml                      # Existing (modified)
+    ├── default.yaml                      # Existing (modified if needed)
     └── metadata.yaml                     # NEW
 
 apps/
@@ -1673,9 +1866,6 @@ apps/
                 ├── CheckpointPicker.tsx  # Existing (modified)
                 ├── CheckpointList.tsx    # NEW
                 └── CheckpointComparison.tsx  # NEW
-
-outputs/
-└── .checkpoint_index.json                # NEW (generated)
 ```
 
 ---

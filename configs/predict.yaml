@@ -35,3 +35,9 @@ postprocess_thresh: null
 postprocess_box_thresh: null
 postprocess_max_candidates: null
 postprocess_use_polygon: null
+
+# Place prediction runs under `outputs/experiments/predict/...`.
+experiment:
+  kind: "predict"
+  task: "ocr"
+  name: ${exp_name}
