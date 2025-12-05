@@ -2,7 +2,19 @@
 
 Research findings, investigations, and analysis.
 
-**Last Updated**: 2025-12-05 23:53:42
-**Total Artifacts**: 0
+**Last Updated**: 2025-12-06 02:01:44
+**Total Artifacts**: 1
 
-*No artifacts found in this directory.*
+## Active (1)
+
+- [AgentQMS & Tracking Database Integration Instructions](2025-12-06_0201_research-tracking-db-agentqms-integration.md) (📅 2025-12-06 02:01 (KS, 🔬 research) - What question is this research trying to answer? What do we expect to find?
+
+## Summary
+
+| Status | Count |
+|--------|-------|
+| Active | 1 |
+
+---
+
+*This index is automatically generated. Do not edit manually.*

@@ -98,7 +98,7 @@ tags: []
 **Project-Agnostic (INCLUDE in export):**
 - `.cursor/rules/` - Cursor IDE rules
 - `agent_qms/` - Complete framework package
-- `docs/agents/` - AI agent instruction structure
+- `AgentQMS/knowledge/` - AI agent instruction structure
 - `scripts/agent_tools/core/` - Core automation tools
 - `scripts/agent_tools/compliance/` - Validation tools
 - `scripts/agent_tools/documentation/` - Documentation tools
@@ -253,7 +253,7 @@ ai-collaboration-framework/
 **Core Framework:**
 - `.cursor/rules/prompts-artifacts-guidelines.mdc` (sanitized)
 - `agent_qms/` (complete package)
-- `docs/agents/` (complete structure, sanitized)
+- `AgentQMS/knowledge/` (complete structure, sanitized)
 - `scripts/agent_tools/core/` (core automation only)
 - `scripts/agent_tools/compliance/` (validation tools)
 - `scripts/agent_tools/documentation/` (doc management)

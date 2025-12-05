@@ -65,6 +65,66 @@ create-template: ## Create template (usage: make create-template NAME=my-templat
 create-bug-report: ## Create bug report (usage: make create-bug-report NAME=my-bug TITLE="My Bug Report")
 	python ../agent_tools/core/artifact_workflow.py create --type bug_report --name $(NAME) --title "$(TITLE)"
 
+# Smart Auto-Population for Artifacts
+smart-suggest-metadata: ## Suggest metadata for artifact (usage: make smart-suggest-metadata TYPE=implementation_plan)
+	@if [ -z "$(TYPE)" ]; then \
+		echo "ERROR: TYPE parameter required. Usage: make smart-suggest-metadata TYPE=implementation_plan"; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/smart_populate.py suggest-metadata --type "$(TYPE)" --json
+
+smart-suggest-tags: ## Suggest tags for artifact type (usage: make smart-suggest-tags TYPE=assessment)
+	@if [ -z "$(TYPE)" ]; then \
+		echo "ERROR: TYPE parameter required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/smart_populate.py suggest-tags --type "$(TYPE)"
+
+smart-suggest-files: ## Suggest related files (usage: make smart-suggest-files TYPE=bug_report LIMIT=5)
+	@if [ -z "$(TYPE)" ]; then \
+		echo "ERROR: TYPE parameter required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/smart_populate.py suggest-files --type "$(TYPE)" $(if $(LIMIT),--limit $(LIMIT),)
+
+smart-frontmatter: ## Generate artifact frontmatter (usage: make smart-frontmatter TYPE=design)
+	@if [ -z "$(TYPE)" ]; then \
+		echo "ERROR: TYPE parameter required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/smart_populate.py frontmatter --type "$(TYPE)"
+
+# Legacy Artifact Migration
+artifacts-find: ## Find legacy artifacts (usage: make artifacts-find LIMIT=10)
+	python ../agent_tools/utilities/legacy_migrator.py find $(if $(LIMIT),--limit $(LIMIT),)
+
+artifacts-migrate-dry: ## Show artifact migrations without applying (usage: make artifacts-migrate-dry FILE=path/to/artifact.md)
+	@if [ -n "$(FILE)" ]; then \
+		python ../agent_tools/utilities/legacy_migrator.py migrate --file "$(FILE)" --dry-run; \
+	else \
+		echo "ERROR: FILE parameter required. Usage: make artifacts-migrate-dry FILE=path/to/artifact.md"; \
+		exit 1; \
+	fi
+
+artifacts-migrate: ## Migrate artifacts to current naming convention (usage: make artifacts-migrate FILE=path --autofix)
+	@if [ -n "$(FILE)" ]; then \
+		python ../agent_tools/utilities/legacy_migrator.py migrate --file "$(FILE)" --autofix; \
+	elif [ "$(ALL)" = "1" ]; then \
+		python ../agent_tools/utilities/legacy_migrator.py migrate --all --autofix; \
+	else \
+		echo "ERROR: Use FILE=path or ALL=1. Example: make artifacts-migrate FILE=docs/artifacts/old.md --autofix"; \
+		exit 1; \
+	fi
+
+artifacts-detect-moves: ## Detect manually moved/renamed artifacts
+	python ../agent_tools/utilities/legacy_migrator.py detect-moves
+
+artifacts-repair-moves: ## Repair manually moved artifacts (remove duplicates)
+	python ../agent_tools/utilities/legacy_migrator.py detect-moves --repair
+
+artifacts-repair-moves-preview: ## Preview manual move repairs
+	python ../agent_tools/utilities/legacy_migrator.py detect-moves --repair --dry-run
+
 # Validation and Compliance
 validate: ## Validate all artifacts
 	python ../agent_tools/compliance/validate_artifacts.py --all
@@ -103,6 +163,48 @@ validate-naming: ## Check naming conventions only
 
 boundary: ## Validate framework/project boundaries
 	python ../agent_tools/compliance/validate_boundaries.py
+
+# Deprecated Code Registry
+deprecated-list: ## List all deprecated symbols
+	python ../agent_tools/utilities/deprecated_registry.py list
+
+deprecated-register: ## Register a deprecated symbol (usage: make deprecated-register SYMBOL=Name FILE=path REPLACEMENT=path)
+	@if [ -z "$(SYMBOL)" ] || [ -z "$(FILE)" ] || [ -z "$(REPLACEMENT)" ]; then \
+		echo "ERROR: SYMBOL, FILE, and REPLACEMENT parameters required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/deprecated_registry.py register "$(SYMBOL)" "$(FILE)" "$(REPLACEMENT)" \
+		$(if $(REMOVAL_PLAN),--removal-plan "$(REMOVAL_PLAN)",) \
+		$(if $(REMOVAL_DATE),--removal-date "$(REMOVAL_DATE)",) \
+		$(if $(DESCRIPTION),--description "$(DESCRIPTION)",)
+
+deprecated-validate: ## Validate artifacts for deprecated references (usage: make deprecated-validate [FILE=path|DIRECTORY=path|ALL=1])
+	@if [ -n "$(FILE)" ]; then \
+		python ../agent_tools/utilities/deprecated_registry.py validate --file "$(FILE)"; \
+	elif [ -n "$(DIRECTORY)" ]; then \
+		python ../agent_tools/utilities/deprecated_registry.py validate --directory "$(DIRECTORY)"; \
+	elif [ "$(ALL)" = "1" ]; then \
+		python ../agent_tools/utilities/deprecated_registry.py validate --all; \
+	else \
+		python ../agent_tools/utilities/deprecated_registry.py validate --all; \
+	fi
+
+# Tracking Database Repair
+track-init: ## Initialize tracking database
+	@python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.agent_tools.utilities.tracking.db import init_db; init_db(); print('✅ Tracking database initialized')"
+
+track-repair: ## Repair tracking database artifact paths (usage: make track-repair [DRY_RUN=1])
+	@if [ "$(DRY_RUN)" = "1" ]; then \
+		python ../agent_tools/utilities/tracking_repair.py --dry-run; \
+	else \
+		python ../agent_tools/utilities/tracking_repair.py; \
+	fi
+
+track-repair-preview: ## Preview tracking database repairs without applying
+	python ../agent_tools/utilities/tracking_repair.py --dry-run
+
+track-status: ## Show tracking database status
+	@python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.agent_tools.utilities.tracking.query import get_status; print(get_status('all'))"
 
 compliance: ## Check compliance status
 	python ../agent_tools/compliance/monitor_artifacts.py --check
@@ -154,6 +256,41 @@ context-plan: ## Get planning context bundle
 
 context-list: ## List all available context bundles
 	python ../agent_tools/utilities/get_context.py --list-bundles
+
+context-suggest: ## Suggest context bundles for task (usage: make context-suggest TASK="task description")
+	@if [ -z "$(TASK)" ]; then \
+		echo "ERROR: TASK parameter required. Usage: make context-suggest TASK=\"task description\""; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/suggest_context.py "$(TASK)"
+
+plan-progress: ## Show or update plan progress (usage: make plan-progress show FILE=path/to/plan.md)
+	@if [ -z "$(FILE)" ]; then \
+		echo "ERROR: FILE parameter required. Usage: make plan-progress show FILE=path/to/plan.md"; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/plan_progress.py $(ACTION) --file "$(FILE)"
+
+plan-progress-show: ## Show plan progress (usage: make plan-progress-show FILE=path/to/plan.md)
+	@if [ -z "$(FILE)" ]; then \
+		echo "ERROR: FILE parameter required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/plan_progress.py show --file "$(FILE)"
+
+plan-progress-update: ## Update plan status (usage: make plan-progress-update FILE=plan.md STATUS="New Status")
+	@if [ -z "$(FILE)" ] || [ -z "$(STATUS)" ]; then \
+		echo "ERROR: FILE and STATUS parameters required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/plan_progress.py update-status --file "$(FILE)" --status "$(STATUS)"
+
+plan-progress-complete: ## Mark task as complete (usage: make plan-progress-complete FILE=plan.md TASK="Task X.X")
+	@if [ -z "$(FILE)" ] || [ -z "$(TASK)" ]; then \
+		echo "ERROR: FILE and TASK parameters required."; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/plan_progress.py mark-complete --file "$(FILE)" --task "$(TASK)"
 
 # Audit Framework Tools
 audit-init: ## Initialize audit (usage: make audit-init FRAMEWORK="Framework Name" DATE="2025-11-09" SCOPE="Scope description")
@@ -268,9 +405,6 @@ workflow-docs: ## Complete documentation workflow: generate, validate, update
 	@echo "🎉 Documentation workflow completed!"
 
 # Tracking (CLI-first)
-track-init: ## Initialize tracking SQLite DB
-	python ../agent_tools/utilities/tracking/cli.py init
-
 plan-new: ## Create plan (usage: make plan-new TITLE="..." OWNER="me" [KEY=slug])
 	python ../agent_tools/utilities/tracking/cli.py plan new --title "$(TITLE)" $(if $(OWNER),--owner "$(OWNER)",) $(if $(KEY),--key "$(KEY)",)
 
@@ -283,6 +417,17 @@ exp-export: ## Export experiment runs to CSV (usage: make exp-export OUT=data/op
 		exit 1; \
 	fi
 	python ../agent_tools/utilities/tracking/cli.py exp export-runs --out "$(OUT)"
+
+# Framework Export & Adoption
+agentqms-init: ## Initialize AgentQMS in a new project (usage: make agentqms-init TARGET=/path/to/project)
+	@if [ -z "$(TARGET)" ]; then \
+		echo "ERROR: TARGET parameter required. Usage: make agentqms-init TARGET=/path/to/project"; \
+		exit 1; \
+	fi
+	./workflows/init_framework.sh "$(TARGET)"
+
+agentqms-init-here: ## Initialize AgentQMS in current directory
+	./workflows/init_framework.sh .
 
 # Maintenance Commands
 clean: ## Clean up temporary files and caches

@@ -761,3 +761,25 @@ qms-context-debug:
 
 qms-context-plan:
 	@cd AgentQMS/interface && make context-plan
+
+qms-validate-staged:
+	@cd AgentQMS/interface && python ../agent_tools/compliance/validate_artifacts.py --staged
+
+qms-validate-new:
+	@cd AgentQMS/interface && python ../agent_tools/compliance/validate_artifacts.py --staged
+
+qms-context-suggest:
+	@cd AgentQMS/interface && python ../agent_tools/utilities/suggest_context.py $(if $(TASK),--task "$(TASK)",)
+
+qms-plan-progress:
+	@cd AgentQMS/interface && python ../agent_tools/utilities/plan_progress.py $(if $(PLAN),--plan "$(PLAN)",) $(if $(TASK),--task "$(TASK)",)
+
+qms-migrate-legacy:
+	@cd AgentQMS/interface && python ../agent_tools/utilities/legacy_migrator.py $(if $(LIMIT),--limit $(LIMIT),--limit 20) $(if $(DRY_RUN),--dry-run,) $(if $(AUTOFIX),--autofix,)
+
+qms-tracking-repair:
+	@cd AgentQMS/interface && python ../agent_tools/utilities/tracking_repair.py $(if $(DRY_RUN),--dry-run,)
+
+# Wildcard pattern for extensibility: make agentqms-<target> delegates to AgentQMS/interface
+agentqms-%:
+	@cd AgentQMS/interface && make $*

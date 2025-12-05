@@ -2,12 +2,13 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2025-12-05 23:53:42
-**Total Artifacts**: 38
+**Last Updated**: 2025-12-06 02:01:44
+**Total Artifacts**: 39
 
-## Active (6)
+## Active (7)
 
-- [Remove Deprecated PathUtils Class and Legacy Helpers](2025-12-05_2353_implementation_plan_pathutils-removal.md) (📅 2025-12-05 23:53 (KS, 🚀 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Remove Deprecated PathUtils Class and Legacy Helpers**. Your primary responsibility is to execute the "Living Implementation Bl...
+- [AgentQMS Framework Enhancement & docs/agents Consolidation](2025-12-06_0112_implementation_plan_agentqms-framework-enhancement.md) (📅 2025-12-06 01:12 (KS, 🚀 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **AgentQMS Framework Enhancement & docs/agents Consolidation**. Your primary responsibility is to execute the "Living Implementat...
+- [Remove Deprecated PathUtils Class and Legacy Helpers](2025-12-05_2353_implementation_plan_pathutils-removal.md) (📅 2025-12-05 23:53 (KS, 🚀 implementation_plan) - "Remove deprecated PathUtils class: audit callers, migrate to modern resolver-based helpers, remove dead code to prevent AI agent confusion and architecture drift." Phase 4 refactoring introduced cent...
 - [Phase 4 Refactoring Plan: Reducing Redundancy and Complexity](2025-12-05_2307_implementation_plan_phase4-refactoring.md) (📅 2025-12-05 23:07 (KS, 🚀 implementation_plan) - "Run Phase 4 refactor: remove redundancy, factor shared helpers, keep imports lean, fail fast. Keep intermediate summaries ultra-short; final summary at end." - **STATUS:** Completed
 - [Python 3.11 Migration: Remove 3.12 References](2025-12-05_0243_implementation_plan_python-311-migration.md) (📅 2025-12-05 02:43 (KS, 🚀 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Python 3.11 Migration: Remove 3.12 References**. Your primary responsibility is to execute the "Living Implementation Blueprint...
 - [Phase 2 Refactoring: Logger Factory Extraction](2025-12-05_2247_implementation_plan_phase2-logger-factory.md) (📅 2025-12-05, 🚀 implementation_plan) - This guide provides exact code changes for Phase 2 refactoring - extracting logger creation logic into a reusable factory function. **Estimated Time:** 60 minutes
@@ -43,7 +44,7 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 6 |
+| Active | 7 |
 | Draft | 22 |
 
 ---

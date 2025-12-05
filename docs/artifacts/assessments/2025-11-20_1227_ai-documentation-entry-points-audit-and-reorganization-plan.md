@@ -28,7 +28,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 - **Purpose**: Quick reference for artifact creation and critical rules
 - **Length**: 167 lines
 - **Issues Identified**:
-  - Duplicates content from `docs/agents/system.md`
+  - Duplicates content from `AgentQMS/knowledge/system.md`
   - Verbose artifact creation examples (lines 33-116)
   - References deprecated/legacy methods alongside preferred methods
   - Missing explicit links to data contracts and API references
@@ -40,12 +40,12 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 - **Purpose**: Single entry point navigation
 - **Length**: 36 lines
 - **Issues Identified**:
-  - Minimal content, relies entirely on `docs/agents/system.md`
+  - Minimal content, relies entirely on `AgentQMS/knowledge/system.md`
   - Does not surface critical information (data contracts, API refs, coding standards)
   - No validation or compliance reminders
   - No feedback mechanism
 
-#### `docs/agents/system.md` (Single Source of Truth)
+#### `AgentQMS/knowledge/system.md` (Single Source of Truth)
 - **Status**: Active, version 1.1
 - **Purpose**: Comprehensive AI agent instructions
 - **Length**: 289 lines
@@ -60,7 +60,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 
 ### 1.2 Secondary Entry Points
 
-#### `docs/agents/index.md`
+#### `AgentQMS/knowledge/index.md`
 - **Status**: Active, documentation map
 - **Issues**: Does not highlight critical references (data contracts, API refs)
 
@@ -81,15 +81,15 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 **Evidence**:
 - Artifact creation rules duplicated in:
   - `.cursor/rules/prompts-artifacts-guidelines.mdc` (lines 29-128)
-  - `docs/agents/system.md` (lines 16-116)
-  - `docs/agents/protocols/governance.md` (lines 7-130)
+  - `AgentQMS/knowledge/system.md` (lines 16-116)
+  - `AgentQMS/knowledge/protocols/governance.md` (lines 7-130)
 - Naming conventions mentioned in 3 different formats across files
 
 ### 2.2 Problem: Project Documentation Rarely Referenced
 
 **Root Causes**:
 1. **No Prominent Links**: Data contracts and API references not in entry points
-2. **Buried in References**: `docs/agents/references/` exists but not surfaced
+2. **Buried in References**: `AgentQMS/knowledge/references/` exists but not surfaced
 3. **No Mandatory Checks**: No workflow step requiring documentation review
 4. **Context Switching**: Agents must navigate away from entry points to find docs
 
@@ -97,7 +97,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 - `docs/pipeline/data_contracts.md` (698+ lines) - Critical for preventing shape errors
 - `docs/backend/api/pipeline-contract.md` - API contract documentation
 - Neither mentioned in `.cursor/rules/` or `AGENT_ENTRY.md`
-- Only found via `docs/agents/index.md` → `references/` → indirect
+- Only found via `AgentQMS/knowledge/index.md` → `references/` → indirect
 
 ### 2.3 Problem: Lack of Regard for Artifact Generation Rules
 
@@ -109,13 +109,13 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 
 **Evidence**:
 - `.cursor/rules/prompts-artifacts-guidelines.mdc` shows both toolbelt AND legacy CLI
-- `docs/agents/system.md` shows both methods with equal prominence
+- `AgentQMS/knowledge/system.md` shows both methods with equal prominence
 - No clear "USE THIS, NOT THAT" hierarchy
 
 ### 2.4 Problem: Does Not Follow Coding Standards
 
 **Root Causes**:
-1. **Standards Not Prominent**: Coding standards in `docs/agents/protocols/development.md` (line 5-20)
+1. **Standards Not Prominent**: Coding standards in `AgentQMS/knowledge/protocols/development.md` (line 5-20)
 2. **No Quick Reference**: Must navigate to protocols to find standards
 3. **No Validation Reminders**: No mention of `ruff check` or `mypy` in entry points
 4. **Standards Scattered**: Formatting, naming, type hints in different sections
@@ -136,7 +136,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 **Evidence**:
 - No mention of periodic feedback in any entry point
 - Progress trackers exist for implementation plans but not for general work
-- No status update protocol in `docs/agents/protocols/`
+- No status update protocol in `AgentQMS/knowledge/protocols/`
 
 ## 3. Structural Problems
 
@@ -179,10 +179,10 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 **Action**: Create clear hierarchy:
 1. **`.cursor/rules/prompts-artifacts-guidelines.mdc`** → Ultra-concise critical rules only
 2. **`AGENT_ENTRY.md`** → Enhanced with prominent links to critical docs
-3. **`docs/agents/system.md`** → Split into:
+3. **`AgentQMS/knowledge/system.md`** → Split into:
    - `system.md` - Core rules only (50-100 lines)
-   - `docs/agents/references/operations.md` - Operational commands
-   - `docs/agents/references/quick-reference.md` - Quick lookup tables
+   - `AgentQMS/knowledge/references/operations.md` - Operational commands
+   - `AgentQMS/knowledge/references/quick-reference.md` - Quick lookup tables
 
 **Benefits**:
 - Reduced cognitive load
@@ -203,7 +203,7 @@ This audit examines AI agent documentation entry points for inefficiency, obsole
 **MUST READ**:
 - Data Contracts: `docs/pipeline/data_contracts.md` (prevents shape errors)
 - API Contracts: `docs/backend/api/pipeline-contract.md` (prevents API violations)
-- Coding Standards: `docs/agents/protocols/development.md#coding-standards`
+- Coding Standards: `AgentQMS/knowledge/protocols/development.md#coding-standards`
 ```
 
 #### 4.1.3 Consolidate Artifact Creation Instructions
@@ -234,7 +234,7 @@ Before committing, verify:
 #### 4.2.2 Create Periodic Feedback Protocol
 
 **Action**: Define feedback mechanism:
-1. **Template**: Create `docs/agents/protocols/status-update.md`
+1. **Template**: Create `AgentQMS/knowledge/protocols/status-update.md`
 2. **Triggers**: Every N tasks, on blockers, on completion
 3. **Format**: Structured status update with progress, blockers, next steps
 4. **Storage**: Status updates in `docs/sessions/` or artifacts
@@ -244,7 +244,7 @@ Before committing, verify:
 ## Periodic Status Updates
 
 **When**: Every 5 tasks, on blockers, on major milestones
-**Format**: See `docs/agents/protocols/status-update.md`
+**Format**: See `AgentQMS/knowledge/protocols/status-update.md`
 **Location**: `docs/sessions/YYYY-MM-DD_status.md`
 ```
 
@@ -295,7 +295,7 @@ Before committing, verify:
 
 AGENT_ENTRY.md                      (Enhanced: prominent critical links)
 
-docs/agents/
+AgentQMS/knowledge/
   system.md                         (100 lines: core rules only)
   quick-reference.md                (NEW: tables, commands, links)
   protocols/
@@ -321,13 +321,13 @@ docs/agents/
 - **NEW**: Pre-commit checklist
 - **NEW**: Status update reminder
 
-**`docs/agents/system.md`** (100 lines):
+**`AgentQMS/knowledge/system.md`** (100 lines):
 - Core rules only
 - Artifact creation (preferred method)
 - Links to detailed protocols
 - Links to quick references
 
-**`docs/agents/quick-reference.md`** (NEW):
+**`AgentQMS/knowledge/quick-reference.md`** (NEW):
 - Artifact creation cheat sheet
 - Coding standards quick ref
 - Common commands table
@@ -338,17 +338,17 @@ docs/agents/
 ### Phase 1: Immediate Restructuring (Week 1)
 1. Prune `.cursor/rules/prompts-artifacts-guidelines.mdc` to 50 lines
 2. Enhance `AGENT_ENTRY.md` with critical links
-3. Split `docs/agents/system.md` (extract operations to references)
-4. Create `docs/agents/quick-reference.md`
+3. Split `AgentQMS/knowledge/system.md` (extract operations to references)
+4. Create `AgentQMS/knowledge/quick-reference.md`
 
 ### Phase 2: Add Missing References (Week 1-2)
-1. Create `docs/agents/references/data-contracts.md` (links + quick ref)
-2. Create `docs/agents/references/api-contracts.md` (links + quick ref)
+1. Create `AgentQMS/knowledge/references/data-contracts.md` (links + quick ref)
+2. Create `AgentQMS/knowledge/references/api-contracts.md` (links + quick ref)
 3. Add coding standards quick ref to entry points
 4. Update all entry points with prominent links
 
 ### Phase 3: Feedback Mechanism (Week 2)
-1. Create `docs/agents/protocols/status-update.md`
+1. Create `AgentQMS/knowledge/protocols/status-update.md`
 2. Add status update reminders to entry points
 3. Create status update template
 

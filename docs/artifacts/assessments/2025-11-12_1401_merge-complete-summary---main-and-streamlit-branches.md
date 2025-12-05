@@ -53,7 +53,7 @@ Successfully merged improvements from `main` branch into `12_refactor/streamlit`
    - Improved automation capabilities
 
 3. **Documentation Structure** (17 files, 2,795+ lines)
-   - `docs/agents/` system with AI agent instructions
+   - `AgentQMS/knowledge/` system with AI agent instructions
    - Development and governance protocols
    - Architecture and tool references
 
@@ -139,7 +139,7 @@ Successfully merged improvements from `main` branch into `12_refactor/streamlit`
 1. `5181e70` - Port AgentQMS system from main
 2. `f4ad7a6` - Add Jinja2 dependency for AgentQMS
 3. `0102e1a` - Merge tests directory from main
-4. `77438fb` - Port docs/agents/ documentation structure from main
+4. `77438fb` - Port AgentQMS/knowledge/ documentation structure from main
 5. `e51a068` - Merge polygon_utils.py with PLAN-002 improvements
 6. `9b0660f` - Update CHANGELOG.md with merge details
 7. `21147e5` - Update CI/CD workflows for merged structure

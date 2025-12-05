@@ -60,7 +60,7 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **PLAN-00
 
 #### **Phase 4: AI Agent Discovery Improvements**
 4. [ ] **Task 4.1: Enhance Agent Documentation**
-   - [ ] Ensure all agent-facing docs are in `docs/agents/`
+   - [ ] Ensure all agent-facing docs are in `AgentQMS/knowledge/`
    - [ ] Update agent instructions with architecture guide
    - [ ] Create agent-specific documentation discovery guide
    - [ ] Test AI agent discovery workflows

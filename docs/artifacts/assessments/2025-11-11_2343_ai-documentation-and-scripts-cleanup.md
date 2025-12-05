@@ -35,13 +35,13 @@ The documentation and scripting layout still carries multiple legacy surfaces al
 ## Documentation Findings
 
 ### Split knowledge bases
-- Legacy `docs/ai_handbook/**` remains partially populated (e.g. onboarding, experiments, planning), while rules now live under `docs/agents/**`. The duplicated onboarding and planning material produces conflicting guidance.
+- Legacy `docs/ai_handbook/**` remains partially populated (e.g. onboarding, experiments, planning), while rules now live under `AgentQMS/knowledge/**`. The duplicated onboarding and planning material produces conflicting guidance.
 - `docs/_deprecated/proposed structure.md` is the only file in `_deprecated/`, signalling prior cleanup efforts but leaving the directory as noise.
 - `docs/maintainers/**` mirrors many planning and changelog entries that overlap with AgentQMS artifacts. Several files (session handovers, logs) should either graduate into curated artifacts or move to `docs/archive/`.
 
 ### Candidate removals / archives
 - Archive remaining `docs/ai_handbook/**` content or convert essential pieces into AgentQMS artifacts (e.g. onboarding quick reference) to remove the mixed terminology.
-- Drop the lone `_deprecated` file or merge its guidance into `docs/agents/protocols/governance.md`.
+- Drop the lone `_deprecated` file or merge its guidance into `AgentQMS/knowledge/protocols/governance.md`.
 - Review `docs/maintainers/experiments/**` and `docs/sessions/2025-10-21/**`; many are historical snapshots better suited for `docs/archive/` once distilled into assessments.
 - `docs/performance/` and `docs/project/` contain point-in-time writeups that predate the new tooling; consider migrating to artifacts or tagging as archived resources.
 
@@ -60,10 +60,10 @@ The documentation and scripting layout still carries multiple legacy surfaces al
 
 ## Architectural Recommendations
 
-1. **Single Source Documentation**: Retire `docs/ai_handbook` by converting any must-keep references into AgentQMS assessments or guides. Update navigation in `docs/agents/index.md` once finalized.
+1. **Single Source Documentation**: Retire `docs/ai_handbook` by converting any must-keep references into AgentQMS assessments or guides. Update navigation in `AgentQMS/knowledge/index.md` once finalized.
 2. **Archive Historical Logs**: Create `docs/archive/2025/` (or similar) and move session handovers, raw experiment logs, and migration diaries there after summarizing key learnings in artifacts.
 3. **Normalize Script Entry Points**: Adopt an `scripts/agent_tools/__main__.py` or CLI wrapper that enumerates supported commands, guiding AI agents away from deprecated paths.
-4. **Introduce Deprecation Map**: Ship a markdown matrix (e.g. `docs/agents/tracking/deprecations.md`) documenting legacy -> replacement scripts/docs so future cleanups become mechanical.
+4. **Introduce Deprecation Map**: Ship a markdown matrix (e.g. `AgentQMS/knowledge/tracking/deprecations.md`) documenting legacy -> replacement scripts/docs so future cleanups become mechanical.
 
 ## Next Steps
 
@@ -77,7 +77,7 @@ The documentation and scripting layout still carries multiple legacy surfaces al
 ## Progress Tracker
 
 - Completed
-  - Migrated AgentQMS toolbelt and `docs/agents/**`
+  - Migrated AgentQMS toolbelt and `AgentQMS/knowledge/**`
   - Pruned and archived legacy docs; removed `docs/ai_handbook/**`, `docs/_deprecated/**`, old `docs/performance/**`, `docs/project/**`
   - Implemented link pruning and fixed broken links after deletions
   - Reorganized `scripts/`:
@@ -89,7 +89,7 @@ The documentation and scripting layout still carries multiple legacy surfaces al
   - Imported implementation plans into `artifacts/implementation_plans/**` and refreshed indexes
 
 - In Scope (remaining)
-  - Optional: add a short section in `docs/agents/index.md` linking to `docs/sitemap.md`
+  - Optional: add a short section in `AgentQMS/knowledge/index.md` linking to `docs/sitemap.md`
   - Optional: retire any lingering ad-hoc validation scripts if discovered later
 
 - Out of Scope (future)

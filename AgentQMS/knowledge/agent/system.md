@@ -101,6 +101,31 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 Loader registry path issues: Use `LOADER_BASE_PATH` env var if needed. See `AgentQMS/knowledge/references/development/loader_path_resolution.md`.
 
+Agent Memory & State Tracking
+-----------------------------
+**Tracking Database** (`data/ops/tracking.db`) maintains agent memory across sessions:
+- **Feature Plans**: Implementation tracking with task hierarchies
+- **Experiments**: Experimental runs with parameters, metrics, outcomes
+- **Debug Sessions**: Debugging context with hypothesis and notes
+- **Summaries**: Ultra-concise entity summaries (≤280 chars)
+
+Quick commands:
+```bash
+# Create a plan
+python AgentQMS/agent_tools/utilities/tracking/cli.py plan new --title "My Feature" --owner me
+
+# Check plan status
+python AgentQMS/agent_tools/utilities/tracking/cli.py plan status --concise
+
+# Create an experiment
+python AgentQMS/agent_tools/utilities/tracking/cli.py exp new --title "Prompt tuning" --objective "Reduce tokens"
+
+# Add experiment run
+python AgentQMS/agent_tools/utilities/tracking/cli.py exp run-add <key> 1 --params '{"k":1}' --outcome pass
+```
+
+Full reference: `AgentQMS/knowledge/references/tracking/db_api.md` and `AgentQMS/knowledge/references/tracking/cli_reference.md`
+
 Do / Don't
 ----------
 Do:
