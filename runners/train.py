@@ -1,7 +1,6 @@
 import logging
 import math
 import os
-import signal
 import sys
 import warnings
 
@@ -34,44 +33,8 @@ setup_project_paths()
 
 # ocr.lightning_modules imported inside train() to avoid loading models/datasets at module level
 
-_shutdown_in_progress = False
-trainer = None
-data_module = None
-
-
-def signal_handler(signum, frame):
-    """Handle interrupt signals to ensure graceful shutdown without recursion."""
-    global _shutdown_in_progress
-    if _shutdown_in_progress:
-        return
-    _shutdown_in_progress = True
-
-    print(f"\nReceived signal {signum}. Shutting down gracefully...")
-
-    try:
-        if trainer is not None:
-            print("Stopping trainer...")
-            # Lightning handles SIGINT/SIGTERM for graceful shutdown
-    except Exception as e:
-        print(f"Error during trainer shutdown: {e}")
-
-    try:
-        if data_module is not None:
-            print("Cleaning up data module...")
-            # DataLoader workers will be cleaned up by process shutdown
-    except Exception as e:
-        print(f"Error during data module cleanup: {e}")
-
-    # Do not send SIGTERM to our own process group to avoid recursive signals
-    print("Shutdown complete.")
-    sys.exit(1)
-
-
-# Register signal handlers
-signal.signal(signal.SIGINT, signal_handler)
-signal.signal(signal.SIGTERM, signal_handler)
-
-# Avoid creating a new process group here; the caller (UI) manages process groups
+# PyTorch Lightning handles SIGINT/SIGTERM gracefully by default
+# No custom signal handlers needed (and they cause threading issues in Streamlit)
 
 
 # Setup consistent logging configuration
@@ -103,7 +66,7 @@ def train(config: DictConfig):
     Args:
         `config` (DictConfig): A dictionary containing configuration settings for training.
     """
-    global trainer, data_module
+    # No global state needed - all cleanup handled by Lightning
 
     # Disable struct mode to allow Hydra to populate runtime fields dynamically
     # This fixes "Key 'mode' is not in struct" errors with Hydra 1.3.2
@@ -134,35 +97,8 @@ def train(config: DictConfig):
     # Enable Tensor Core utilization for better GPU performance
     torch.set_float32_matmul_precision("high")
 
-    runtime_cfg = config.get("runtime") or {}
-    auto_gpu_devices = runtime_cfg.get("auto_gpu_devices", True)
-    preferred_strategy = runtime_cfg.get("ddp_strategy", "ddp_find_unused_parameters_false")
-    min_auto_devices = runtime_cfg.get("min_auto_devices", 2)
-
-    def _normalize_device_request(value):
-        if isinstance(value, str):
-            try:
-                return int(value)
-            except ValueError:
-                return value
-        return value
-
-    if auto_gpu_devices and config.trainer.get("accelerator", "cpu") == "gpu" and torch.cuda.is_available():
-        available_gpus = torch.cuda.device_count()
-        requested_devices = _normalize_device_request(config.trainer.get("devices"))
-        if available_gpus >= max(1, min_auto_devices):
-            if requested_devices in (None, 1):
-                config.trainer.devices = available_gpus
-                strategy_cfg = config.trainer.get("strategy")
-                if strategy_cfg in (None, "auto"):
-                    config.trainer.strategy = preferred_strategy
-                print(f"[AutoParallel] Scaling to {available_gpus} GPUs with strategy='{config.trainer.strategy}'.")
-            elif isinstance(requested_devices, int) and requested_devices > available_gpus:
-                config.trainer.devices = available_gpus
-                print(
-                    f"[AutoParallel] Requested {requested_devices} GPUs, but only {available_gpus} detected. "
-                    f"Falling back to {available_gpus}."
-                )
+    # GPU device selection is handled by PyTorch Lightning automatically
+    # For multi-GPU training, set trainer.devices=2 and trainer.strategy=ddp in config
 
     model_module, data_module = get_pl_modules_by_cfg(config)
 
