@@ -17,6 +17,7 @@ This automatically handles sys.path setup and environment variables.
 import os
 import sys
 import warnings
+from collections.abc import Iterable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
@@ -573,6 +574,29 @@ def setup_project_paths(config: dict[str, Any] | None = None) -> OCRPathResolver
 
 
 # Note: __all__ is defined later in the file to include all exports
+
+
+def ensure_output_dirs(paths: Iterable[str | os.PathLike[str] | Path]) -> list[Path]:
+    """Ensure each provided directory exists.
+
+    Creates the directories with parents and returns the resolved paths.
+    Raises if a provided path resolves to a file or is None to fail fast on misconfiguration.
+    """
+    resolved_paths: list[Path] = []
+
+    for raw_path in paths:
+        if raw_path is None:
+            raise ValueError("Received None in ensure_output_dirs paths")
+
+        path = Path(raw_path)
+        resolved_paths.append(path)
+
+        if path.exists() and not path.is_dir():
+            raise NotADirectoryError(f"Expected directory but found file at {path}")
+
+        path.mkdir(parents=True, exist_ok=True)
+
+    return resolved_paths
 
 
 # Convenience functions for backward compatibility and easy importing

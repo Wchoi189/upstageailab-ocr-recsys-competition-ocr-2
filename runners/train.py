@@ -1,6 +1,5 @@
 import logging
 import math
-import os
 import sys
 import warnings
 
@@ -27,7 +26,8 @@ except ImportError:
 
 # wandb imported lazily inside train() to avoid slow imports
 
-from ocr.utils.path_utils import setup_project_paths
+from ocr.utils.callbacks import build_callbacks
+from ocr.utils.path_utils import ensure_output_dirs, setup_project_paths
 
 setup_project_paths()
 
@@ -102,38 +102,18 @@ def train(config: DictConfig):
     model_module, data_module = get_pl_modules_by_cfg(config)
 
     # Ensure key output directories exist before creating callbacks
-    # Ensure key output directories exist before creating callbacks
-    os.makedirs(config.paths.log_dir, exist_ok=True)
-    os.makedirs(config.paths.checkpoint_dir, exist_ok=True)
+    output_dirs = [config.paths.log_dir, config.paths.checkpoint_dir]
     if hasattr(config.paths, "submission_dir"):
-        os.makedirs(config.paths.submission_dir, exist_ok=True)
+        output_dirs.append(config.paths.submission_dir)
+
+    ensure_output_dirs(output_dirs)
 
     # Create appropriate logger (W&B or TensorBoard) based on configuration
     from ocr.utils.logger_factory import create_logger
 
     logger = create_logger(config)
 
-    # --- Callback Configuration ---
-    # This is the new, Hydra-native way to handle callbacks.
-    # It iterates through the 'callbacks' config group and instantiates each one.
-    callbacks = []
-    if config.get("callbacks"):
-        for _, cb_conf in config.callbacks.items():
-            if isinstance(cb_conf, DictConfig) and "_target_" in cb_conf:
-                # Only instantiate enabled callbacks
-                if cb_conf.get("enabled", True):
-                    # Commented out: Callback instantiation logging to reduce noise
-                    # print(f"Instantiating callback <{cb_conf._target_}>")
-                    callback = hydra.utils.instantiate(cb_conf)
-
-                    # Pass resolved config to checkpoint callback for saving alongside checkpoints
-                    if hasattr(callback, "_resolved_config"):
-                        from omegaconf import OmegaConf
-
-                        resolved_config = OmegaConf.to_container(config, resolve=True)
-                        callback._resolved_config = resolved_config
-
-                    callbacks.append(callback)
+    callbacks = build_callbacks(config)
 
     # Always add LearningRateMonitor
     callbacks.append(LearningRateMonitor(logging_interval="step"))
