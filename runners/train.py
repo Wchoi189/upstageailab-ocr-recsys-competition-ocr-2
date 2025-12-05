@@ -83,7 +83,6 @@ def train(config: DictConfig):
     import lightning.pytorch as pl
     import torch
     from lightning.pytorch.callbacks import LearningRateMonitor
-    from lightning.pytorch.loggers import Logger
 
     import wandb
     from ocr.lightning_modules import get_pl_modules_by_cfg
@@ -112,58 +111,10 @@ def train(config: DictConfig):
     except Exception as e:
         print(f"Warning: failed to ensure output directories exist: {e}")
 
-    logger: Logger
+    # Create appropriate logger (W&B or TensorBoard) based on configuration
+    from ocr.utils.logger_factory import create_logger
 
-    wandb_cfg = getattr(config.logger, "wandb", None)
-    wandb_enabled = False
-    if isinstance(wandb_cfg, DictConfig):
-        wandb_enabled = wandb_cfg.get("enabled", True)
-    elif isinstance(wandb_cfg, dict):
-        wandb_enabled = wandb_cfg.get("enabled", True)
-    elif isinstance(wandb_cfg, bool):
-        wandb_enabled = wandb_cfg
-    elif wandb_cfg is not None:
-        wandb_enabled = bool(wandb_cfg)
-
-    if wandb_enabled:
-        from lightning.pytorch.loggers import WandbLogger
-        from omegaconf import OmegaConf
-
-        from ocr.utils.wandb_utils import generate_run_name, load_env_variables
-
-        # Load environment variables from .env.local/.env
-        load_env_variables()
-
-        # Resolve interpolations before generating run name
-        OmegaConf.resolve(config)
-
-        run_name = generate_run_name(config)
-
-        # Properly serialize config for wandb, handling hydra interpolations
-        try:
-            # Try to resolve interpolations for cleaner config
-            wandb_config = OmegaConf.to_container(config, resolve=True)
-        except Exception:
-            # Fall back to unresolved config if resolution fails
-            wandb_config = OmegaConf.to_container(config, resolve=False)
-
-        logger = WandbLogger(
-            name=run_name,
-            project=config.logger.wandb.project_name,
-            config=wandb_config,
-        )
-    else:
-        from lightning.pytorch.loggers.tensorboard import TensorBoardLogger
-
-        logger = TensorBoardLogger(
-            save_dir=config.paths.log_dir,
-            name=config.exp_name,
-            version=config.logger.wandb.exp_version if hasattr(config.logger, 'wandb') else "v1.0",
-            default_hp_metric=False,
-        )
-
-    # Ensure no default logger is created by explicitly setting logger
-    # This prevents lightning_logs from being created in the root directory
+    logger = create_logger(config)
 
     # --- Callback Configuration ---
     # This is the new, Hydra-native way to handle callbacks.
