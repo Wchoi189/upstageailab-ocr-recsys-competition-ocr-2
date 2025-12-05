@@ -65,12 +65,9 @@ def _create_wandb_logger(config: DictConfig, wandb_cfg: dict) -> WandbLogger:
     OmegaConf.resolve(config)
     run_name = generate_run_name(config)
 
-    # Serialize config for W&B, handling Hydra interpolations gracefully
-    try:
-        wandb_config = OmegaConf.to_container(config, resolve=True)
-    except Exception:
-        # Fall back to unresolved config if resolution fails
-        wandb_config = OmegaConf.to_container(config, resolve=False)
+    # Serialize config for W&B, handling Hydra interpolations
+    # If resolution fails, it's a config problem - let it propagate
+    wandb_config = OmegaConf.to_container(config, resolve=True)
 
     project_name = wandb_cfg.get("project_name", "ocr-training") if isinstance(wandb_cfg, dict) else "ocr-training"
 

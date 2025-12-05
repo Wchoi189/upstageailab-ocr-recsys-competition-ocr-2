@@ -102,14 +102,11 @@ def train(config: DictConfig):
     model_module, data_module = get_pl_modules_by_cfg(config)
 
     # Ensure key output directories exist before creating callbacks
-    try:
-        os.makedirs(config.paths.log_dir, exist_ok=True)
-        os.makedirs(config.paths.checkpoint_dir, exist_ok=True)
-        # Some workflows also expect a submission dir
-        if hasattr(config.paths, "submission_dir"):
-            os.makedirs(config.paths.submission_dir, exist_ok=True)
-    except Exception as e:
-        print(f"Warning: failed to ensure output directories exist: {e}")
+    # Ensure key output directories exist before creating callbacks
+    os.makedirs(config.paths.log_dir, exist_ok=True)
+    os.makedirs(config.paths.checkpoint_dir, exist_ok=True)
+    if hasattr(config.paths, "submission_dir"):
+        os.makedirs(config.paths.submission_dir, exist_ok=True)
 
     # Create appropriate logger (W&B or TensorBoard) based on configuration
     from ocr.utils.logger_factory import create_logger
