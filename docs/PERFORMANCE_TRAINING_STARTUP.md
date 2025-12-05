@@ -122,7 +122,7 @@ def main(cfg: DictConfig):
    - Moving hydra config inline to `configs/base.yaml` (workaround for `@package` directive issues with `version_base=None`)
 4. Fixed logger config paths (`config.logger.wandb.project_name`)
 
-**Result**: 
+**Result**:
 - ✅ Training works end-to-end
 - ✅ 26x startup speedup (85.8s → 3.25s)
 - ✅ Config validation now fast (<5s instead of 85s)
@@ -182,7 +182,7 @@ $ uv run python runners/train.py \
 # Result: ✅ Training completed successfully
 # - Model: 16.5M params
 # - Training: 8 batches
-# - Validation: 4 batches  
+# - Validation: 4 batches
 # - Testing: 101 batches
 # - Checkpoints saved: best.ckpt, last.ckpt
 ```

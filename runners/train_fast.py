@@ -76,10 +76,9 @@ def setup_logging(cfg: DictConfig) -> None:
 
 def setup_paths() -> None:
     """Setup project paths - lightweight operation."""
-    from ocr.utils.path_utils import get_path_resolver, setup_project_paths
+    from ocr.utils.path_utils import setup_project_paths
 
-    path_resolver = get_path_resolver()
-    setup_project_paths(path_resolver)
+    setup_project_paths()
 
 
 def handle_interrupt(signum, frame):
