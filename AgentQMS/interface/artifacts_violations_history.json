@@ -108,5 +108,25 @@
       "directory": 0,
       "frontmatter": 0
     }
+  },
+  {
+    "timestamp": "2025-12-05T21:46:31.726291",
+    "compliance_rate": 11.016949152542372,
+    "invalid_files": 105,
+    "violation_counts": {
+      "naming": 103,
+      "directory": 0,
+      "frontmatter": 105
+    }
+  },
+  {
+    "timestamp": "2025-12-05T21:46:43.458187",
+    "compliance_rate": 11.016949152542372,
+    "invalid_files": 105,
+    "violation_counts": {
+      "naming": 103,
+      "directory": 0,
+      "frontmatter": 105
+    }
   }
 ]

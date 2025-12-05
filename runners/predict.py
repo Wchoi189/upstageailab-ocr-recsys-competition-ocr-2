@@ -28,7 +28,7 @@ from ocr.lightning_modules import get_pl_modules_by_cfg  # noqa: E402
 from ocr.lightning_modules.utils.model_utils import load_state_dict_with_fallback  # noqa: E402
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base=None)
 def predict(config: DictConfig):
     """
     Train a OCR model using the provided configuration.

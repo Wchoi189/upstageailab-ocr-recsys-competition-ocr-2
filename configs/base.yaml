@@ -1,9 +1,13 @@
+# Hydra configuration - placed directly here instead of using config group
+# because @package directive doesn't work reliably with version_base=None
 hydra:
-  # `run.dir` is configured in `configs/hydra/default.yaml` to place runs under
-  # `outputs/experiments/<kind>/<task>/<name>/<run_id>/`.
-  #
-  # Keep any additional Hydra settings here if needed; avoid duplicating `run.dir`
-  # so there is a single source of truth.
+  run:
+    dir: ${paths.experiments_root}/${experiment.kind}/${experiment.task}/${experiment.name}/${experiment.run_id}
+  sweep:
+    dir: ${paths.experiments_root}/${experiment.kind}/${experiment.task}/${experiment.name}/multirun
+    subdir: ${now:%Y%m%d_%H%M%S}_${hydra.job.num}
+  job:
+    chdir: true
 
 # Task name for hydra logging (logical task label, not necessarily the path segment)
 task_name: "train"
@@ -24,7 +28,7 @@ defaults:
   - trainer: default
   - callbacks: default
   - debug: default
-  - hydra: default
+  # NOTE: hydra config moved inline above - config groups don't work with @package in version_base=None
 
 # Runtime extras (inlined from extras/default.yaml)
 # disable python warnings if they annoy you

@@ -1,7 +1,8 @@
 # Implementation Plan: Hydra Configuration System Overhaul
 
-**Status**: Ready for Implementation
+**Status**: Phase 2 Complete - Validation In Progress
 **Created**: 2025-12-04 21:00 UTC
+**Updated**: 2025-12-05 00:40 UTC
 **Scope**: Full Overhaul (Phase 0 + 1 + 2)
 **Estimated Duration**: 26+ hours
 **Priority**: P0 (Blocks inference functionality & AI agent productivity)
@@ -24,38 +25,95 @@
 
 # Progress Tracker
 
-| Phase/Task | Status | Notes |
-|------------|--------|-------|
-| Immediate Fix: Inference Config Loader | ✅ Completed | Inference config loader now uses proven wrapper |
-| Phase 0: Archive & Document | ✅ Completed | Legacy configs archived, docs and validation script added |
-| Phase 1.1: Consolidate Logger Configs | ✅ Completed | Created logger/consolidated.yaml merging 3 files |
-| Phase 1.2: Inline Single-File Groups | ✅ Completed | Moved metrics to evaluation/, inlined extras into base.yaml |
-| Phase 1.3: Reduce @package _global_ | ✅ Completed | Analyzed usage - 29 uses, most necessary for current structure |
-| Phase 1.4: Update References | ✅ Completed | Updated base.yaml defaults to reference new structure |
-| Phase 1.5: Validation | ⏳ Pending | Need to test training run and update docs |
-| Phase 2: Flatten & Restructure | ⏳ Not Started | Major restructuring - will flatten to 9 groups
-| Phase 1: Reduce @package Usage | 🔄 In Progress | Logger consolidation, @package reduction, group inlining |
-| Phase 2: Flatten & Restructure | ⏳ Not Started | Will flatten config structure, reduce files/groups |
-| Integration & Validation | ⏳ Not Started | Full system and compatibility testing |
+## Completed Phases
 
-**Last Completed:** Phase 1: Config Consolidation (Partial)
-**Current Task:** Phase 1: Validation & Testing  
-**Next Task:** Phase 2: Flatten & Restructure
+| Phase/Task | Status | Completion Date |
+|------------|--------|-----------------|
+| Immediate Fix: Inference Config Loader | ✅ Completed | 2025-12-04 |
+| Phase 0.1: Archive Legacy Configs | ✅ Completed | 2025-12-04 |
+| Phase 0.2: Create CONFIG_ARCHITECTURE.md | ✅ Completed | 2025-12-04 |
+| Phase 0.3: Add Config Validation Script | ✅ Completed | 2025-12-04 |
+| Phase 0.4: Update Makefile | ✅ Completed | 2025-12-04 |
+| Phase 1.1: Consolidate Logger Configs | ✅ Completed | 2025-12-04 |
+| Phase 1.2: Inline Single-File Groups | ✅ Completed | 2025-12-04 |
+| Phase 1.3: Analyze @package Usage | ✅ Completed | 2025-12-04 |
+| Phase 1.4: Update References | ✅ Completed | 2025-12-04 |
+| Phase 2.1: Create _base/ Directory | ✅ Completed | 2025-12-05 |
+| Phase 2.2: Create train_v2.yaml | ✅ Completed | 2025-12-05 |
+| Phase 2.3: Migrate train.yaml | ✅ Completed | 2025-12-05 |
+| Phase 2.4: Fix Hydra Config Issues | ✅ Completed | 2025-12-05 |
 
-**Phase 1 Achievements:**
-- Created `logger/consolidated.yaml` merging 3 logger configs
-- Created `evaluation/metrics.yaml` consolidating metrics
-- Inlined `extras` config into `base.yaml`
-- Updated `base.yaml` to reference new consolidated structure
-- Fixed `nest_at_path()` bug with `@package _global_` handling
-- Config validation passes (96 files, 21 groups)
-- **Issue Discovered:** Custom `load_config()` not recursively processing nested defaults
+## Current Status
 
-**Next Steps:**
-- Debug and fix `load_config()` recursive defaults processing
-- Test with actual Hydra @hydra.main decorator (standard path)
-- Run training validation test
-- Update CONFIG_ARCHITECTURE.md
+**Phase**: Integration & Testing
+**Status**: 🔄 In Progress
+**Blocker**: Training validation test interrupted during PyTorch initialization
+
+## What Was Accomplished (Phase 2)
+
+### Files Created
+- `configs/_base/core.yaml` - Core experiment configuration (no hydra conflicts)
+- `configs/_base/model.yaml` - Model defaults (@package model)
+- `configs/_base/data.yaml` - Data consolidation (@package _global_)
+- `configs/_base/trainer.yaml` - Lightning trainer settings (@package trainer)
+- `configs/_base/logging.yaml` - Logger configuration (@package logger)
+- `configs/train_v2.yaml` - Parallel entry point demonstrating new structure
+
+### Files Modified
+- `configs/train.yaml` - Updated to use _base/ structure with explicit hydra include
+- `configs/hydra/default.yaml` - Added `mode: RUN` field to fix Hydra errors
+- `ocr/utils/config_utils.py` - Fixed nest_at_path() for @package _global_ (Phase 1)
+- `ui/utils/inference/config_loader.py` - Fixed inference loader (Immediate Fix)
+
+### Critical Fixes
+1. **_base/core.yaml**: Removed hydra section that conflicted with /hydra: default
+2. **_base/data.yaml**: Changed @package from `data` → `_global_`
+3. **hydra/default.yaml**: Added missing `mode: RUN` field
+4. **train.yaml**: Simplified defaults list, explicitly includes /hydra: default
+
+### Validation Status
+✅ Config syntax validation passes (scripts/validate_config.py)
+✅ Custom load_config() loads all sections correctly
+✅ Inference config loader works with new structure
+✅ Hydra initialization succeeds (progresses to PyTorch loading)
+⏳ Full training run pending (interrupted during setup)
+
+## What's Next (Immediate Actions)
+
+### 1. Complete Training Validation Test
+**Goal**: Verify training can complete 1 epoch with new config structure
+**Command**:
+```bash
+python runners/train.py \
+  trainer.max_epochs=1 \
+  trainer.limit_train_batches=0.25 \
+  trainer.limit_val_batches=0.25 \
+  exp_name=phase2_validation
+```
+**Expected Result**: Training completes without config errors, checkpoint saved
+
+### 2. Update Documentation
+**Files to update**:
+- `docs/CONFIG_ARCHITECTURE.md` - Add Phase 2 section with new _base/ structure
+- `docs/PHASE_2_COMPLETION_SUMMARY.md` - Already created, needs minor updates
+- `README.md` - Update config examples if needed
+
+### 3. Optional: Archive Old Structure (Phase 3)
+**When ready**: Move old nested configs to `configs/.deprecated_phase2/`
+**Benefit**: Reduce from 102 → ~70 files, cleaner structure
+**Risk**: Low (both structures work in parallel currently)
+
+## Metrics Progress
+
+| Metric | Before | After Phase 2 | Target (Phase 3) |
+|--------|--------|---------------|------------------|
+| Config files | 96 | 102* | 60-70 |
+| Config groups | 21 | 22* | 15-17 |
+| Defaults chain | 28-30 files | ~20-25 files | 12-15 files |
+| @package targets | 11 | 6-7 | 3-4 |
+| Cognitive load | 7.1/10 | ~5.5/10 | 4.2/10 |
+
+*Temporary increase due to both old and new structures present during transition
 
 ---## Executive Summary
 

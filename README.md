@@ -3,7 +3,7 @@
 
 <!-- TODO: Update CI badge URL when repository is migrated -->
 [![CI](https://github.com/AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2/actions/workflows/ci.yml/badge.svg)](https://github.com/AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2/actions)
-[![Python](https://img.shields.io/badge/Python-3.10+-blue.svg)](https://python.org)
+[![Python](https://img.shields.io/badge/Python-3.11+-blue.svg)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.8+-red.svg)](https://pytorch.org)
 [![UV](https://img.shields.io/badge/UV-0.8+-purple.svg)](https://github.com/astral-sh/uv)
 [![Hydra](https://img.shields.io/badge/Hydra-1.3+-green.svg)](https://hydra.cc)
@@ -226,7 +226,7 @@ See implementation plans:
 
 ### Prerequisites
 
-- Python 3.10+
+- Python 3.11+
 - UV package manager
 - CUDA-compatible GPU (recommended for training)
 

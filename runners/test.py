@@ -26,7 +26,7 @@ except ImportError:
 from ocr.lightning_modules import get_pl_modules_by_cfg  # noqa: E402
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="test", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="test", version_base=None)
 def test(config):
     """
     Train a OCR model using the provided configuration.

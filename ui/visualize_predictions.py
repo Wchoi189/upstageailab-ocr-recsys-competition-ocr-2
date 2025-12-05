@@ -244,7 +244,7 @@ def draw_predictions_on_image(image_path: str, predictions: dict[str, Any]) -> I
     return image
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base=None)
 def main(cfg: DictConfig) -> None:
     print("--- Configuration ---")
     print(OmegaConf.to_yaml(cfg))

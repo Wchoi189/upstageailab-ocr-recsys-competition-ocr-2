@@ -422,7 +422,7 @@ def _run_single_decoder(
     return metrics_summary
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="benchmark/decoder", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="benchmark/decoder", version_base=None)
 def main(cfg: DictConfig) -> None:
     """Benchmark multiple decoder configurations sequentially."""
 

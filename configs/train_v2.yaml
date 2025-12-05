@@ -1,0 +1,18 @@
+# Simplified training config using _base/ consolidated structure
+defaults:
+  - _self_
+  - /_base/core
+  - /_base/model
+  - /_base/data
+  - /_base/trainer
+  - /_base/logging
+  - /paths: default
+  - /evaluation: metrics
+  - /callbacks: default
+  - /debug: default
+  - /hydra: default
+
+# Training-specific overrides
+seed: 42
+exp_name: "ocr_training_b"
+wandb: true

@@ -21,7 +21,7 @@ UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
   dataloaders.train_dataloader.num_workers=2 \
   dataloaders.val_dataloader.num_workers=2 \
   dataloaders.test_dataloader.num_workers=2 \
-  trainer.max_epochs=3 \
+  trainer.max_epochs=1 \
   trainer.limit_train_batches=0.15 \
   trainer.limit_val_batches=0.5 \
   trainer.limit_test_batches=0.5 \
@@ -49,3 +49,7 @@ UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
   dataloaders.train_dataloader.num_workers=8 \
   dataloaders.val_dataloader.num_workers=8
 ```
+
+
+UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
+

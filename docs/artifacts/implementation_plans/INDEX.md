@@ -2,11 +2,13 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2025-12-03 00:03:31
-**Total Artifacts**: 30
+**Last Updated**: 2025-12-05 21:42:51
+**Total Artifacts**: 35
 
-## Active (1)
+## Active (3)
 
+- [Phase 1 Quick Wins Refactoring](2025-12-05_2142_implementation_plan_phase1-refactoring.md) (📅 2025-12-05 21:42 (KS, 🚀 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Phase 1 Quick Wins Refactoring**. Your primary responsibility is to execute the "Living Implementation Blueprint" systematicall...
+- [Python 3.11 Migration: Remove 3.12 References](2025-12-05_0243_implementation_plan_python-311-migration.md) (📅 2025-12-05 02:43 (KS, 🚀 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Python 3.11 Migration: Remove 3.12 References**. Your primary responsibility is to execute the "Living Implementation Blueprint...
 - [AgentQMS Bootstrap Test Plan](2025-12-02_2335_implementation_plan_bootstrap-qms.md) (📅 2025-12-02 23:35 (KS, 🚀 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **AgentQMS Bootstrap Test Plan**. Your primary responsibility is to execute the "Living Implementation Blueprint" systematically,...
 
 ## Draft (22)
@@ -38,7 +40,7 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 1 |
+| Active | 3 |
 | Draft | 22 |
 
 ---

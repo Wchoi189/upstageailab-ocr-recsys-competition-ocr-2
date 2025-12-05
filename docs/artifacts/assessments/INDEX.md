@@ -2,8 +2,13 @@
 
 Evaluations and assessments of system components and processes.
 
-**Last Updated**: 2025-12-03 00:03:31
-**Total Artifacts**: 17
+**Last Updated**: 2025-12-05 21:42:51
+**Total Artifacts**: 19
+
+## Active (2)
+
+- [Training Pipeline Refactoring Assessment](2025-12-05_2142_assessment-train-py-refactoring.md) (📅 2025-12-05 21:42 (KS, 📊 assessment) - This assessment evaluates the system and provides recommendations for improvement. - **Subject**: the system
+- [Training Pipeline Refactoring Assessment](2025-12-05_2025_train_py_refactoring_assessment.md) (📅 2025-12-05, 📊 assessment) - After completing the lazy import optimization (24x startup speedup), this assessment identifies refactoring opportunities to reduce complexity and improve maintainability in the training pipeline, par...
 
 ## Draft (12)
 
@@ -29,6 +34,7 @@ Evaluations and assessments of system components and processes.
 
 | Status | Count |
 |--------|-------|
+| Active | 2 |
 | Draft | 12 |
 | Completed | 2 |
 

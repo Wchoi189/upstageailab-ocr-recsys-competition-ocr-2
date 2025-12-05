@@ -19,6 +19,36 @@ config-show-structure:  ## Show current config structure
 	find configs -name "*.yaml" -type f | wc -l | xargs echo "Total config files:"
 	find configs -mindepth 1 -maxdepth 1 -type d | wc -l | xargs echo "Config groups:"
 	grep -r "@package" configs --include="*.yaml" | cut -d: -f2 | sort | uniq -c | sort -rn
+
+.PHONY: profile-imports
+profile-imports:  ## Profile import times to identify startup bottlenecks
+	@echo "⏱️  Profiling import times (this will take ~90s)..."
+	python scripts/profile_imports.py
+
+.PHONY: analyze-imports
+analyze-imports:  ## Analyze import structure to identify heavy dependencies
+	python scripts/analyze_imports.py
+
+.PHONY: benchmark-startup
+benchmark-startup:  ## Benchmark startup times for training scripts
+	@echo "Benchmarking train.py (monolithic imports)..."
+	@/usr/bin/time -f "Time: %E (user: %U, sys: %S)" python -c "import runners.train" 2>&1 | grep "Time:"
+	@echo ""
+	@echo "Benchmarking train_fast.py (lazy imports)..."
+	@/usr/bin/time -f "Time: %E (user: %U, sys: %S)" python -c "import runners.train_fast" 2>&1 | grep "Time:"
+
+.PHONY: test-config-validation
+test-config-validation:  ## Test config validation speed with fast entry point
+	@echo "Testing config validation with train_fast.py..."
+	@/usr/bin/time -f "⏱️  Total time: %E" python runners/train_fast.py validate_only=true
+
+.PHONY: test-fast-train
+test-fast-train:  ## Run quick training test with optimized entry point
+	python runners/train_fast.py \
+		trainer.max_epochs=1 \
+		trainer.limit_train_batches=0.25 \
+		trainer.limit_val_batches=0.25 \
+		exp_name=fast_train_test
 # Makefile for OCR Project Development
 # Last Updated: 2025-10-21
 # Version: 0.1.1
