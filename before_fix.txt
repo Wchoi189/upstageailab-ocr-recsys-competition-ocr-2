@@ -1,0 +1,321 @@
+uv run python ../agent_tools/compliance/validate_artifacts.py --all
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 80
+Valid files: 45
+Invalid files: 35
+Compliance rate: 56.2%
+
+VIOLATION SUMMARY:
+----------------------------------------
+Rule                 |  Count
+----------------------------------------
+E002                 |     21
+E001                 |     11
+E004                 |      2
+E003                 |      1
+----------------------------------------
+
+VIOLATIONS FOUND:
+----------------------------------------
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-06_design_toolkit-deprecation-roadmap.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2024-12-04_OCR_EXPERIMENT_AGENT_IMPLEMENTATION.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_0158_implementation-plan-breakdown-architecture-refactoring.md
+   • Naming: [E003] Invalid format for artifact type 'implementation_plan' | Expected: Expected format: 2025-11-29_1800_implementation_plan_my-feature.md | Hint: Use _ separator and lowercase case for implementation_plan artifacts
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-001-core-training-stabilization.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-002-polygon-validation-consolidation.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-003-import-time-optimization.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-004-inference-service-consolidation.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-005-legacy-cleanup-config-consolidation.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_0226_data-contract-enforcement-implementation.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_1518_plan-005:-documentation-organization-and-tooling-updates.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_1518_plan-006:-documentation-architecture-enhancement.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_1556_ui-directory-legacy-files-cleanup-implementation-plan.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_plan-004-revised-inference-consolidation.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0126_phase-1:-implement-streamlit-caching-for-command-builder.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0130_phase-3:-advanced-optimizations.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0130_web-worker-prompt:-streamlit-performance-optimization.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0131_additional-performance-optimization-suggestions.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-18_0241_high-performance-playground-migration.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-19_1514_frontend-functionality-completion.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-19_1957_next.js-console-migration-and-chakra-adoption-plan.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-19_phase1_blockers.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_0130_autonomous-tasks-overnight.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_1254_agent-framework-state-tracking-module.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_1312_chakra-ui-v3-form-component-migration.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_1333_chakra-ui-v3-tab-component-migration-&-build-fix.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-22_0000_agentqms-direct-integration-implementation-plan.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-23_0000_project-reorganization-plan.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-29_1728_perspective-correction-implementation.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-03_padding-orientation-migration.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/session_handovers/2025-12-03_BUG-001_inference-overlay-misalignment-handover.md
+   • Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/vlm_reports/2025-12-03_1200_vlm_report_inference-overlay-misalignment_69.md
+   • Directory: [E004] File in wrong directory | Expected: Expected directory: ../vlm_reports | Hint: Move file to ../vlm_reports (detected type: vlm_report)
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/vlm_reports/2025-12-03_1200_vlm_report_inference-overlay-misalignment_gemma1.md
+   • Directory: [E004] File in wrong directory | Expected: Expected directory: ../vlm_reports | Hint: Move file to ../vlm_reports (detected type: vlm_report)
+
+SUGGESTED NEXT COMMAND:
+----------------------------------------
+  cd AgentQMS/interface && make fix ARGS="--limit 10 --dry-run"
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-01-20_1100_assessment-phase4-completion.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-11_2343_assessment-ai-documentation-and-scripts-cleanup.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1200_assessment-data-contract-assessment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1200_assessment-refactoring-assessment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1401_assessment-merge-complete-summary---main-and-streamlit-branches.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1419_assessment-scripts-directory-audit-and-reorganization.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1451_assessment-documentation-and-artifact-architecture.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1520_assessment-ui-directory-legacy-files-audit.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-12_1547_assessment-data-contracts-update-feasibility.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-16_1654_assessment-ai-collaboration-framework-extraction-and-standardization.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-17_0114_assessment-streamlit-command-builder-performance---page-switch-delays.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-17_0136_assessment-unified-ocr-app-performance.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-18_0109_assessment-albumentations-playground-architecture.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-19_1939_assessment-upstage-document-parsing-playground-tech-stack.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-20_1227_assessment-ai-documentation-entry-points-audit-and-reorganization-plan.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-20_1333_assessment-chakra-ui-v3-remaining-build-errors.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-21_0231_assessment-text-recognition-implementation-feasibility.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-11-22_0000_assessment-project-composition.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-05_2142_assessment-train-py-refactoring.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-11-28_0000_BUG_001_dominant-edge-extension-failure.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-02_2313_BUG_001_inference-studio-overlay-misalignment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-02_2335_BUG_001_bootstrap-bug.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_0003_BUG_001_inference-resize-misalignment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_1100_BUG_001_inference-studio-offsets-data-contract.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_2300_BUG_002_inference-studio-visual-padding-mismatch.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/completion_summaries/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-01-20_1000_design-artifact-versioning-lifecycle.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-02_2335_implementation_plan_bootstrap-qms.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-05_0243_implementation_plan_python-311-migration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-05_2142_implementation_plan_phase1-refactoring.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-05_2247_implementation_plan_phase2-logger-factory.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-05_2300_implementation_plan_phase3-error-handling.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-05_2307_implementation_plan_phase4-refactoring.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-05_2353_implementation_plan_pathutils-removal.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-06_0112_implementation_plan_agentqms-framework-enhancement.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-06_1200_implementation_plan_agentqms-metadata-branch-versioning.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-06_2009_implementation_plan_toolkit-deprecation-completion.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/2025-12-06_0201_research-tracking-db-agentqms-integration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/templates/INDEX.md
+
+FIX SUGGESTIONS:
+========================================
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-06_design_toolkit-deprecation-roadmap.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2024-12-04_OCR_EXPERIMENT_AGENT_IMPLEMENTATION.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_0158_implementation-plan-breakdown-architecture-refactoring.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-001-core-training-stabilization.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-002-polygon-validation-consolidation.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-003-import-time-optimization.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-004-inference-service-consolidation.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-11_plan-005-legacy-cleanup-config-consolidation.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_0226_data-contract-enforcement-implementation.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_1518_plan-005:-documentation-organization-and-tooling-updates.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_1518_plan-006:-documentation-architecture-enhancement.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_1556_ui-directory-legacy-files-cleanup-implementation-plan.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-12_plan-004-revised-inference-consolidation.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0126_phase-1:-implement-streamlit-caching-for-command-builder.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0130_phase-3:-advanced-optimizations.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0130_web-worker-prompt:-streamlit-performance-optimization.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0131_additional-performance-optimization-suggestions.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-18_0241_high-performance-playground-migration.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-19_1514_frontend-functionality-completion.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-19_1957_next.js-console-migration-and-chakra-adoption-plan.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-19_phase1_blockers.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_0130_autonomous-tasks-overnight.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_1254_agent-framework-state-tracking-module.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_1312_chakra-ui-v3-form-component-migration.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-20_1333_chakra-ui-v3-tab-component-migration-&-build-fix.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-22_0000_agentqms-direct-integration-implementation-plan.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-23_0000_project-reorganization-plan.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-11-29_1728_perspective-correction-implementation.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-03_padding-orientation-migration.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/session_handovers/2025-12-03_BUG-001_inference-overlay-misalignment-handover.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/vlm_reports/2025-12-03_1200_vlm_report_inference-overlay-misalignment_69.md
+   🔧 Move file to correct directory
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/vlm_reports/2025-12-03_1200_vlm_report_inference-overlay-misalignment_gemma1.md
+   🔧 Move file to correct directory
+make: *** [Makefile:130: validate] Error 1

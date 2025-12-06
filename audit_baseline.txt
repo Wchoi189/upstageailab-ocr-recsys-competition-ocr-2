@@ -1,0 +1,164 @@
+uv run python ../agent_tools/audit/artifact_audit.py --all --report
+🎯 Scanning all artifacts...
+ℹ️  Excluded 51 file(s) in: archive, deprecated, vlm_reports
+📊 Found 79 file(s) to process
+ℹ️  Excluding directories: archive, deprecated, vlm_reports
+   Use --include-excluded to process all directories
+
+
+📋 Report mode (validating only, not modifying files)
+
+❌ INVALID: MASTER_INDEX.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_; Frontmatter: Invalid type 'reference'. Valid types: implementation_plan, assessment, audit, design, research, template, bug_report, session_note, completion_summary, vlm_report, change_request, decision_record, meeting_notes, specification
+✅ VALID: 2025-01-20_1100_assessment-phase4-completion.md
+✅ VALID: 2025-11-11_2343_assessment-ai-documentation-and-scripts-cleanup.md
+✅ VALID: 2025-11-12_1200_assessment-data-contract-assessment.md
+✅ VALID: 2025-11-12_1200_assessment-refactoring-assessment.md
+✅ VALID: 2025-11-12_1401_assessment-merge-complete-summary---main-and-streamlit-branches.md
+✅ VALID: 2025-11-12_1419_assessment-scripts-directory-audit-and-reorganization.md
+✅ VALID: 2025-11-12_1451_assessment-documentation-and-artifact-architecture.md
+✅ VALID: 2025-11-12_1520_assessment-ui-directory-legacy-files-audit.md
+✅ VALID: 2025-11-12_1547_assessment-data-contracts-update-feasibility.md
+✅ VALID: 2025-11-16_1654_assessment-ai-collaboration-framework-extraction-and-standardization.md
+✅ VALID: 2025-11-17_0114_assessment-streamlit-command-builder-performance---page-switch-delays.md
+✅ VALID: 2025-11-17_0136_assessment-unified-ocr-app-performance.md
+✅ VALID: 2025-11-18_0109_assessment-albumentations-playground-architecture.md
+✅ VALID: 2025-11-19_1939_assessment-upstage-document-parsing-playground-tech-stack.md
+✅ VALID: 2025-11-20_1227_assessment-ai-documentation-entry-points-audit-and-reorganization-plan.md
+✅ VALID: 2025-11-20_1333_assessment-chakra-ui-v3-remaining-build-errors.md
+✅ VALID: 2025-11-21_0231_assessment-text-recognition-implementation-feasibility.md
+✅ VALID: 2025-11-22_0000_assessment-project-composition.md
+✅ VALID: 2025-12-05_2142_assessment-train-py-refactoring.md
+✅ VALID: INDEX.md
+✅ VALID: 2025-11-28_0000_BUG_001_dominant-edge-extension-failure.md
+✅ VALID: 2025-12-02_2313_BUG_001_inference-studio-overlay-misalignment.md
+✅ VALID: 2025-12-02_2335_BUG_001_bootstrap-bug.md
+✅ VALID: 2025-12-03_0003_BUG_001_inference-resize-misalignment.md
+✅ VALID: 2025-12-03_1100_BUG_001_inference-studio-offsets-data-contract.md
+✅ VALID: 2025-12-03_2300_BUG_002_inference-studio-visual-padding-mismatch.md
+✅ VALID: INDEX.md
+✅ VALID: INDEX.md
+✅ VALID: INDEX.md
+✅ VALID: 2025-01-20_1000_design-artifact-versioning-lifecycle.md
+❌ INVALID: 2025-12-06_design_toolkit-deprecation-roadmap.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+✅ VALID: INDEX.md
+❌ INVALID: 2024-12-04_OCR_EXPERIMENT_AGENT_IMPLEMENTATION.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-11_0158_implementation-plan-breakdown-architecture-refactoring.md
+   Reason: Naming: [E003] Invalid format for artifact type 'implementation_plan' | Expected: Expected format: 2025-11-29_1800_implementation_plan_my-feature.md | Hint: Use _ separator and lowercase case for implementation_plan artifacts
+❌ INVALID: 2025-11-11_plan-001-core-training-stabilization.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-11_plan-002-polygon-validation-consolidation.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-11_plan-003-import-time-optimization.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-11_plan-004-inference-service-consolidation.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-11_plan-005-legacy-cleanup-config-consolidation.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-12_0226_data-contract-enforcement-implementation.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-12_1518_plan-005:-documentation-organization-and-tooling-updates.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-12_1518_plan-006:-documentation-architecture-enhancement.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-12_1556_ui-directory-legacy-files-cleanup-implementation-plan.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-12_plan-004-revised-inference-consolidation.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-17_0126_phase-1:-implement-streamlit-caching-for-command-builder.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-17_0130_phase-3:-advanced-optimizations.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-17_0130_web-worker-prompt:-streamlit-performance-optimization.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-17_0131_additional-performance-optimization-suggestions.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-18_0241_high-performance-playground-migration.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-19_1514_frontend-functionality-completion.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-19_1957_next.js-console-migration-and-chakra-adoption-plan.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-19_phase1_blockers.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+❌ INVALID: 2025-11-20_0130_autonomous-tasks-overnight.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-20_1254_agent-framework-state-tracking-module.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-20_1312_chakra-ui-v3-form-component-migration.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-20_1333_chakra-ui-v3-tab-component-migration-&-build-fix.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-22_0000_agentqms-direct-integration-implementation-plan.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-23_0000_project-reorganization-plan.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+❌ INVALID: 2025-11-29_1728_perspective-correction-implementation.md
+   Reason: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+✅ VALID: 2025-12-02_2335_implementation_plan_bootstrap-qms.md
+❌ INVALID: 2025-12-03_padding-orientation-migration.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+✅ VALID: 2025-12-05_0243_implementation_plan_python-311-migration.md
+✅ VALID: 2025-12-05_2142_implementation_plan_phase1-refactoring.md
+✅ VALID: 2025-12-05_2247_implementation_plan_phase2-logger-factory.md
+✅ VALID: 2025-12-05_2300_implementation_plan_phase3-error-handling.md
+✅ VALID: 2025-12-05_2307_implementation_plan_phase4-refactoring.md
+✅ VALID: 2025-12-05_2353_implementation_plan_pathutils-removal.md
+✅ VALID: 2025-12-06_0112_implementation_plan_agentqms-framework-enhancement.md
+✅ VALID: 2025-12-06_1200_implementation_plan_agentqms-metadata-branch-versioning.md
+✅ VALID: 2025-12-06_2009_implementation_plan_toolkit-deprecation-completion.md
+✅ VALID: INDEX.md
+✅ VALID: 2025-12-06_0201_research-tracking-db-agentqms-integration.md
+✅ VALID: INDEX.md
+❌ INVALID: 2025-12-03_BUG-001_inference-overlay-misalignment-handover.md
+   Reason: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+✅ VALID: INDEX.md
+
+✅ Validation Summary:
+   Valid: 45
+   Invalid: 34
+
+❌ Invalid artifacts:
+   - MASTER_INDEX.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_; Frontmatter: Invalid type 'reference'. Valid types: implementation_plan, assessment, audit, design, research, template, bug_report, session_note, completion_summary, vlm_report, change_request, decision_record, meeting_notes, specification
+   - 2025-12-06_design_toolkit-deprecation-roadmap.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2024-12-04_OCR_EXPERIMENT_AGENT_IMPLEMENTATION.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-11_0158_implementation-plan-breakdown-architecture-refactoring.md: Naming: [E003] Invalid format for artifact type 'implementation_plan' | Expected: Expected format: 2025-11-29_1800_implementation_plan_my-feature.md | Hint: Use _ separator and lowercase case for implementation_plan artifacts
+   - 2025-11-11_plan-001-core-training-stabilization.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-11_plan-002-polygon-validation-consolidation.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-11_plan-003-import-time-optimization.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-11_plan-004-inference-service-consolidation.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-11_plan-005-legacy-cleanup-config-consolidation.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-12_0226_data-contract-enforcement-implementation.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-12_1518_plan-005:-documentation-organization-and-tooling-updates.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-12_1518_plan-006:-documentation-architecture-enhancement.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-12_1556_ui-directory-legacy-files-cleanup-implementation-plan.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-12_plan-004-revised-inference-consolidation.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-17_0126_phase-1:-implement-streamlit-caching-for-command-builder.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-17_0130_phase-2:-lazy-loading-and-progressive-rendering.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-17_0130_phase-3:-advanced-optimizations.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-17_0130_web-worker-prompt:-streamlit-performance-optimization.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-17_0131_additional-performance-optimization-suggestions.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-17_0136_unified-app-phase-1:-service-and-checkpoint-caching.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-17_0136_unified-app-phase-2:-image-processing-and-config-optimization.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-18_0241_high-performance-playground-migration.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-19_1514_frontend-functionality-completion.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-19_1957_next.js-console-migration-and-chakra-adoption-plan.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-19_phase1_blockers.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-11-20_0130_autonomous-tasks-overnight.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-20_1254_agent-framework-state-tracking-module.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-20_1312_chakra-ui-v3-form-component-migration.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-20_1333_chakra-ui-v3-tab-component-migration-&-build-fix.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-22_0000_agentqms-direct-integration-implementation-plan.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-23_0000_project-reorganization-plan.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-11-29_1728_perspective-correction-implementation.md: Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   - 2025-12-03_padding-orientation-migration.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+   - 2025-12-03_BUG-001_inference-overlay-misalignment-handover.md: Naming: [E001] Missing or invalid timestamp format | Expected: Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_) | Hint: Filename must start with date and time in format: YYYY-MM-DD_HHMM_
+make: *** [Makefile:214: audit-report] Error 1

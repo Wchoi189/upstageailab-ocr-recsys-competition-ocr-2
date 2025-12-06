@@ -252,6 +252,7 @@ class LegacyArtifactMigrator:
         directory: Path | None = None,
         autofix: bool = False,
         dry_run: bool = False,
+        force_large_batch: bool = False,
     ) -> list[dict[str, Any]]:
         """Migrate multiple artifacts.
 
@@ -260,11 +261,32 @@ class LegacyArtifactMigrator:
             directory: Directory to search
             autofix: Actually rename files
             dry_run: Don't make changes
+            force_large_batch: Allow operations >30 files
 
         Returns:
             List of migration results
         """
         legacy_files = self.find_legacy_artifacts(directory=directory, limit=limit)
+        
+        # DISASTER PREVENTION SAFEGUARD (added 2025-12-07 after catastrophic migration incident)
+        # Reject bulk operations >30 files without explicit override flag
+        if len(legacy_files) > 30 and autofix and not dry_run and not force_large_batch:
+            print(f"\n🚨 SAFETY CHECK FAILED: Attempting to migrate {len(legacy_files)} files")
+            print(f"   This exceeds the 30-file safety threshold.")
+            print(f"   ")
+            print(f"   ⚠️  LESSON FROM 2025-12-06 CATASTROPHIC MIGRATION:")
+            print(f"      Bulk operation destroyed 103 artifact filenames by overwriting")
+            print(f"      all dates to present (2025-12-06_0000), losing all historical")
+            print(f"      context. This safeguard prevents similar disasters.")
+            print(f"   ")
+            print(f"   Options to proceed:")
+            print(f"     1. Use --limit 30 to process in safer batches")
+            print(f"     2. Use --dry-run to preview changes first")
+            print(f"     3. Add explicit override if you're absolutely certain")
+            print(f"   ")
+            print(f"   Aborting migration.")
+            return []
+        
         results = []
 
         for filepath in legacy_files:
@@ -489,6 +511,11 @@ Examples:
         action="store_true",
         help="Show changes without applying",
     )
+    migrate_parser.add_argument(
+        "--force-large-batch",
+        action="store_true",
+        help="Allow batch operations >30 files (use with extreme caution)",
+    )
 
     # Detect manual moves command
     detect_parser = subparsers.add_parser(
@@ -566,6 +593,7 @@ Examples:
                     directory=directory,
                     autofix=args.autofix,
                     dry_run=args.dry_run or not args.autofix,
+                    force_large_batch=args.force_large_batch,
                 )
 
                 success = [r for r in results if r["status"] == "success"]

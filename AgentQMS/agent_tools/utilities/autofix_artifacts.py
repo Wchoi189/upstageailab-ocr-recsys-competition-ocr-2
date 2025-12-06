@@ -312,6 +312,8 @@ def main():
                         help="Rewrite links in other files after moves")
     parser.add_argument("--revalidate", action="store_true",
                         help="Run validation again after fixes to verify")
+    parser.add_argument("--force-large-batch", action="store_true",
+                        help="Allow batch operations >30 files (use with caution)")
     
     args = parser.parse_args()
     
@@ -332,6 +334,26 @@ def main():
     if not suggestions:
         print("✅ No fixes needed")
         return 0
+    
+    # DISASTER PREVENTION SAFEGUARD (added 2025-12-07 after catastrophic migration incident)
+    # Reject bulk operations >30 files without explicit override flag
+    actual_limit = min(args.limit, len(suggestions))
+    if actual_limit > 30 and not args.force_large_batch and not args.dry_run:
+        print(f"\n🚨 SAFETY CHECK FAILED: Attempting to modify {actual_limit} files")
+        print(f"   This exceeds the 30-file safety threshold.")
+        print(f"   ")
+        print(f"   ⚠️  LESSON FROM 2025-12-06 CATASTROPHIC MIGRATION:")
+        print(f"      Bulk operations >30 files destroyed 103 artifact filenames by")
+        print(f"      overwriting all dates to present (2025-12-06_0000), losing all")
+        print(f"      historical context. This safeguard prevents similar disasters.")
+        print(f"   ")
+        print(f"   Options to proceed:")
+        print(f"     1. Use --limit 30 to process in safer batches")
+        print(f"     2. Use --dry-run to preview changes first")
+        print(f"     3. Use --force-large-batch if you're absolutely certain")
+        print(f"   ")
+        print(f"   Recommended: make fix ARGS='--limit 30'")
+        return 1
     
     print(f"\n📋 Found {len(suggestions)} potential fixes")
     print(f"   Applying up to {args.limit} fixes {'(DRY RUN)' if args.dry_run else ''}")
