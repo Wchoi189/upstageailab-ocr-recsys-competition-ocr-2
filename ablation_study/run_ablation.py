@@ -127,7 +127,7 @@ def run_single_experiment(cfg: DictConfig) -> dict:
             wandb.finish()
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="train", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="train", version_base=None)
 def main(cfg: DictConfig) -> dict[str, Any]:
     """Main function for running ablation studies."""
     experiment_tag = (

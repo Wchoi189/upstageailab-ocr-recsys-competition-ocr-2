@@ -6,7 +6,7 @@ Checks documentation quality and reports issues
 
 import sys
 
-from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 
 def agent_quality_check():
@@ -21,7 +21,7 @@ def agent_quality_check():
     ensure_project_root_on_sys_path()
 
     try:
-        from AgentQMS.toolkit.compliance.documentation_quality_monitor import main
+        from AgentQMS.agent_tools.compliance.documentation_quality_monitor import main
 
         main()
     except ImportError as e:

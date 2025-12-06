@@ -1,16 +1,16 @@
 ---
-title: "NaN Gradients from Step Function Numerical Overflow"
-author: "ai-agent"
-date: "2025-11-10"
-timestamp: "2025-11-10 13:57 UTC"
+title: "Bug 20251110 002 Nan Gradients From Step Function Overflow"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
 category: "troubleshooting"
-status: "fixed"
+status: "active"
 version: "1.0"
-tags: ['bug', 'cuda', 'nan-gradients', 'numerical-stability', 'training', 'critical']
-bug_id: "BUG-20251110-002"
-severity: "Critical"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Bug Report: NaN Gradients from Step Function Numerical Overflow
 

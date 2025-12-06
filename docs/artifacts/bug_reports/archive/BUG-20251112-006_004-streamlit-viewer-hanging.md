@@ -1,3 +1,15 @@
+---
+title: "Bug 20251112 006 004 Streamlit Viewer Hanging"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG-2025-004: Streamlit Preprocessing Viewer Hangs on Full Pipeline
 
 **Date Reported**: 2025-10-18

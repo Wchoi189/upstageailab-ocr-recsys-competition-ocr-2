@@ -1,7 +1,7 @@
 {
   "general": {
     "checkpointing": {
-      "enabled": false
+      "enabled": true
     }
   },
   "ui": {
@@ -38,7 +38,8 @@
       "**/raw_metrics*.json",
       "**/*.jsonl",
       "**/multirun.yaml",
-      "**/test_runs/**"
+      "**/test_runs/**",
+      ".qwen/archive/**"
     ]
   },
   "agentqms": {
@@ -47,7 +48,7 @@
     "architecture": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/state/architecture.yaml",
     "artifactsPath": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts",
     "validation": {
-      "enabled": false,
+      "enabled": true,
       "ignorePaths": [
         "docs/*.md",
         "docs/assets/**",
@@ -66,7 +67,8 @@
         "**/*.py",
         "**/*.md",
         "**/requirements.txt",
-        "**/pyproject.toml"
+        "**/pyproject.toml",
+        "docs/artifacts/**"
       ],
       "excludePatterns": [
 

@@ -1,13 +1,16 @@
 ---
-title: "Dice loss assertion stops training"
-date: "2025-11-10"
+title: "Bug 20251110 001 Dice Loss Assertion Stops Training"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
-category: "training"
-status: "open"
+category: "troubleshooting"
+status: "active"
 version: "1.0"
-bug_id: "BUG-20251110-001"
-severity: "High"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 ## Summary
 Training run crashes with `AssertionError` in `ocr/models/loss/dice_loss.py` because the Dice loss briefly exceeds 1.0 during forward pass.

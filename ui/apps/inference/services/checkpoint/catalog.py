@@ -18,6 +18,7 @@ from pathlib import Path
 from time import time
 from typing import Any
 
+from ocr.utils.checkpoints.index import CheckpointIndex
 from ocr.utils.experiment_name import resolve_experiment_name
 
 from .cache import CatalogCache, get_global_cache
@@ -105,7 +106,24 @@ class CheckpointCatalogBuilder:
                 outputs_dir=self.outputs_dir,
             )
 
-        checkpoint_paths = sorted(self.outputs_dir.rglob("*.ckpt"))
+        # Try to use checkpoint index for fast lookup (Phase 4 optimization)
+        # Note: include_legacy=True for now since all existing checkpoints are in ocr_training_b/
+        # Will change to False in Phase 2 when we separate legacy from new runs
+        index = CheckpointIndex(self.outputs_dir, include_legacy=True)
+
+        if index.index_file.exists():
+            LOGGER.info("Using checkpoint index for fast catalog discovery")
+            checkpoint_paths = sorted(index.get_checkpoint_paths())
+        else:
+            LOGGER.warning("Checkpoint index not found, falling back to file system scan")
+            checkpoint_paths = sorted(self.outputs_dir.rglob("*.ckpt"))
+
+            # Rebuild index in background for next time
+            try:
+                index.rebuild()
+            except Exception as e:
+                LOGGER.debug(f"Failed to rebuild checkpoint index: {e}")
+
         LOGGER.info("Found %d checkpoint files in %s", len(checkpoint_paths), self.outputs_dir)
 
         entries: list[CheckpointCatalogEntry] = []

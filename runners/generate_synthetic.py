@@ -81,7 +81,7 @@ def _export_manifest(entries: list[dict], output_dir: str | Path, config: DictCo
     print(f"Manifest exported to {manifest_path}")
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="synthetic", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="synthetic", version_base=None)
 def generate_synthetic(config: DictConfig) -> None:
     """
     Generate synthetic OCR datasets using configurable backends.

@@ -1,29 +1,42 @@
+---
+title: "Master Index"
+date: "2025-12-06 20:41 (KST)"
+type: "reference"
+category: "reference"
+status: "active"
+version: "1.0"
+tags: ['reference', 'reference']
+---
+
+
+
 # Master Artifact Registry
 
-**Last Updated**: 2025-12-03 00:03:32
-**Total Artifacts**: 100
+**Last Updated**: 2025-12-06 20:09:13
+**Total Artifacts**: 118
 
 ## By Category
-- [🐛 Bug Reports](bug_reports/INDEX.md) (53)
-- [🚀 Implementation Plans](implementation_plans/INDEX.md) (30)
-- [📊 Assessments](assessments/INDEX.md) (17)
+- [🚀 Implementation Plans](implementation_plans/INDEX.md) (41)
+- [📊 Assessments](assessments/INDEX.md) (19)
+- [🐛 Bug Reports](bug_reports/INDEX.md) (55)
+- [🏗️ Design Documents](design_documents/INDEX.md) (2)
+- [🔬 Research](research/INDEX.md) (1)
 
 ## By Status
-- **Active**: 4 artifacts
-- **Draft**: 34 artifacts
-- **Completed**: 2 artifacts
+- **Active**: 108 artifacts
+- **Draft**: 10 artifacts
 
 ## Recent Activity
-- 2025-12-03 00:03 (KS: 🐛 Inference preview misalignment for resized images (bug_reports)
-- 2025-12-02 23:35 (KS: 🐛 AgentQMS Bootstrap Test Bug (bug_reports)
-- 2025-12-02 23:35 (KS: 🚀 AgentQMS Bootstrap Test Plan (implementation_plans)
-- 2025-12-02 23:13 (KS: 🐛 Inference Studio overlay misaligned with original image (bug_reports)
-- 2025-11-28 04:30 (KS: 🐛 Failure of Dominant Edge Extension Algorithm for Perspective Correction (bug_reports)
-- 2025-11-23: 🚀 Project Reorganization Implementation Plan (implementation_plans)
-- 2025-11-20: 🚀 Autonomous Overnight Tasks (implementation_plans)
-- 2025-11-19: 🚀 Frontend Functionality Completion (implementation_plans)
-- 2025-11-19: 🚀 Phase 1 Implementation Blockers - Frontend Functionality Completion (implementation_plans)
-- 2025-11-16: 📊 AI Collaboration Framework Extraction and Standardization Assessment (assessments)
+- 2025-12-06 20:09 (KS: 🚀 Complete AgentQMS Toolkit Deprecation and Migration (Phase 2) (implementation_plans)
+- 2025-12-06 18:08 (KS: 📊 Ai Documentation And Scripts Cleanup (assessments)
+- 2025-12-06 18:08 (KS: 📊 Merge Complete Summary Main And Streamlit Branches (assessments)
+- 2025-12-06 18:08 (KS: 📊 Scripts Directory Audit And Reorganization (assessments)
+- 2025-12-06 18:08 (KS: 📊 Documentation And Artifact Architecture (assessments)
+- 2025-12-06 18:08 (KS: 📊 Ai Collaboration Framework Extraction And Standardization (assessments)
+- 2025-12-06 18:08 (KS: 📊 Streamlit Command Builder Performance Page Switch Delays (assessments)
+- 2025-12-06 18:08 (KS: 📊 Unified Ocr App Performance (assessments)
+- 2025-12-06 18:08 (KS: 📊 Train Py Refactoring (assessments)
+- 2025-12-06 18:08 (KS: 🐛 001 Dominant Edge Extension Failure (bug_reports)
 
 ---
 

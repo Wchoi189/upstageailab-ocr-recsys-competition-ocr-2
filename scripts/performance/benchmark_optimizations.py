@@ -172,7 +172,7 @@ def _resolve_benchmark_options(cfg: DictConfig) -> tuple[str, int, int]:
     return dataset_key, num_samples, transform_samples
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="performance_test", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="performance_test", version_base=None)
 def main(cfg: DictConfig) -> dict[str, dict[str, list[float]]]:
     print("Data Loading Optimization Benchmark")
     print("=" * 40)

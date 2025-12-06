@@ -1,20 +1,44 @@
+# Hydra configuration - placed directly here instead of using config group
+# because @package directive doesn't work reliably with version_base=None
 hydra:
   run:
-    dir: 'outputs/${exp_index:}'
+    dir: ${paths.experiments_root}/${experiment.kind}/${experiment.task}/${experiment.name}/${experiment.run_id}
+  sweep:
+    dir: ${paths.experiments_root}/${experiment.kind}/${experiment.task}/${experiment.name}/multirun
+    subdir: ${now:%Y%m%d_%H%M%S}_${hydra.job.num}
+  job:
+    chdir: true
 
-# Task name for hydra logging
+# Task name for hydra logging (logical task label, not necessarily the path segment)
 task_name: "train"
+
+# Experiment identity used to construct the structured `outputs/experiments/...` path.
+# Individual entry-point configs (train/test/predict/etc.) can override these fields.
+experiment:
+  kind: "train"          # train | eval | preproc | other
+  task: "ocr"            # domain/task label (e.g., ocr, recsys, preproc)
+  name: ${exp_name}      # comes from the entry config (e.g., train.yaml)
+  run_id: ${now:%Y%m%d_%H%M%S}_${seed}
 
 defaults:
   - model: default
-  - metrics: cleval
+  - evaluation: metrics
   - paths: default
-  - logger: default
+  - logger: consolidated
   - trainer: default
   - callbacks: default
   - debug: default
-  - hydra: default
-  - extras: default
+  # NOTE: hydra config moved inline above - config groups don't work with @package in version_base=None
+
+# Runtime extras (inlined from extras/default.yaml)
+# disable python warnings if they annoy you
+ignore_warnings: False
+
+# ask user for tags if none are provided in the config
+enforce_tags: True
+
+# pretty print config tree at the start of the run using Rich library
+print_config: True
 
 dataset_module: ocr.datasets
 dataset_config_module: ocr.datasets.schemas

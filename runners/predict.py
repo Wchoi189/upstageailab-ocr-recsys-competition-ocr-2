@@ -1,7 +1,6 @@
 import warnings
 
 import hydra
-import lightning.pytorch as pl
 from omegaconf import DictConfig
 
 # Setup project paths automatically
@@ -24,11 +23,11 @@ except ImportError:
     # Pydantic v1 doesn't have this warning class
     pass
 
-from ocr.lightning_modules import get_pl_modules_by_cfg  # noqa: E402
-from ocr.lightning_modules.utils.model_utils import load_state_dict_with_fallback  # noqa: E402
+from ocr.utils.callbacks import build_callbacks
+from ocr.utils.logger_factory import create_logger
 
 
-@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base="1.2")
+@hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base=None)
 def predict(config: DictConfig):
     """
     Train a OCR model using the provided configuration.
@@ -36,20 +35,21 @@ def predict(config: DictConfig):
     Args:
         `config` (dict): A dictionary containing configuration settings for predict.
     """
+    # Lazy imports to keep startup light for config validation
+    import lightning.pytorch as pl
+
+    from ocr.lightning_modules import get_pl_modules_by_cfg
+    from ocr.lightning_modules.utils.model_utils import load_state_dict_with_fallback
+
     pl.seed_everything(config.get("seed", 42), workers=True)
 
     model_module, data_module = get_pl_modules_by_cfg(config)
 
-    # --- Callback Configuration ---
-    # Instantiate callbacks from config to match the checkpoint
-    callbacks = []
-    if config.get("callbacks"):
-        for _, cb_conf in config.callbacks.items():
-            if isinstance(cb_conf, DictConfig) and "_target_" in cb_conf:
-                print(f"Instantiating callback <{cb_conf._target_}>")
-                callbacks.append(hydra.utils.instantiate(cb_conf))
+    callbacks = build_callbacks(config)
 
-    trainer = pl.Trainer(logger=False, callbacks=callbacks)
+    logger = create_logger(config)
+
+    trainer = pl.Trainer(logger=logger, callbacks=callbacks)
 
     ckpt_path = config.get("checkpoint_path")
     assert ckpt_path, "checkpoint_path must be provided for prediction"
@@ -59,7 +59,7 @@ def predict(config: DictConfig):
 
     try:
         checkpoint = torch.load(ckpt_path, map_location="cpu")
-    except Exception:
+    except (RuntimeError, TypeError, ValueError):
         # Fallback for PyTorch 2.6+ compatibility with OmegaConf objects
         checkpoint = torch.load(ckpt_path, map_location="cpu", weights_only=False)
 

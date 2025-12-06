@@ -1,3 +1,15 @@
+---
+title: "2025 004 Streamlit Pandas Import Deadlock"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG_2025_004: Streamlit Pandas Import Deadlock
 
 **Date Reported:** 2025-10-19

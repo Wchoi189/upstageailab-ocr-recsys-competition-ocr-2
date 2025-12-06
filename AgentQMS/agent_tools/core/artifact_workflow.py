@@ -19,13 +19,13 @@ import sys
 from pathlib import Path
 from typing import cast
 
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
 from AgentQMS.agent_tools.core.artifact_templates import (
     ArtifactTemplates,
     create_artifact,
 )
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
@@ -74,19 +74,20 @@ class ArtifactWorkflow:
         self.validator = ArtifactValidator(self.artifacts_root)
 
     def create_artifact(
-        self, artifact_type: str, name: str, title: str, auto_validate: bool = True, auto_update_indexes: bool = True, **kwargs
+        self, artifact_type: str, name: str, title: str, auto_validate: bool = True, auto_update_indexes: bool = True, track: bool = True, **kwargs
     ) -> str:
         """Create a new artifact following project standards.
 
         Note: Implementation plans use Blueprint Protocol Template (PROTO-GOV-003).
         See AgentQMS/knowledge/protocols/governance/implementation_plan_protocol.md
-        
+
         Args:
             artifact_type: Type of artifact to create
             name: Artifact name (kebab-case)
             title: Artifact title
             auto_validate: Automatically validate after creation (default: True)
             auto_update_indexes: Automatically update indexes after creation (default: True)
+            track: Auto-register in tracking DB (default: True for trackable types)
             **kwargs: Additional arguments passed to create_artifact
         """
         print(f"🚀 Creating {artifact_type} artifact: {name}")
@@ -111,6 +112,10 @@ class ArtifactWorkflow:
                     for error in results["errors"]:
                         print(f"   • {error}")
                     # Continue even if validation fails - return path
+
+            # Auto-execution: Register in tracking DB
+            if track:
+                self._register_in_tracking(artifact_type, file_path, title, kwargs.get("owner"))
 
             # Auto-execution: Update indexes
             if auto_update_indexes:
@@ -229,18 +234,59 @@ class ArtifactWorkflow:
 
         return compliance_report
 
+    def _register_in_tracking(
+        self, artifact_type: str, file_path: str, title: str, owner: str | None
+    ) -> None:
+        """Register artifact in tracking database.
+
+        Args:
+            artifact_type: Type of artifact
+            file_path: Path to artifact file
+            title: Artifact title
+            owner: Artifact owner
+        """
+        try:
+            from AgentQMS.agent_tools.utilities.tracking_integration import (
+                register_artifact_in_tracking,
+            )
+
+            print("📊 Registering in tracking database...")
+            result = register_artifact_in_tracking(
+                artifact_type, file_path, title, owner, track_flag=True
+            )
+
+            if result.get("tracked"):
+                print(
+                    f"✅ Registered in tracking DB: {result.get('tracking_type')} "
+                    f"(key: {result.get('tracking_key')})"
+                )
+            elif not result.get("should_track"):
+                # Not an error - this artifact type just isn't tracked
+                pass
+            else:
+                # Failed to track but should have been tracked
+                reason = result.get("reason", "unknown")
+                print(f"⚠️  Tracking registration skipped: {reason}")
+
+        except ImportError:
+            # Tracking integration not available - silently continue
+            pass
+        except Exception as e:
+            # Don't fail artifact creation if tracking fails
+            print(f"⚠️  Tracking registration failed: {e}")
+
     def _suggest_next_steps(self, artifact_type: str, file_path: str) -> None:
         """Suggest next steps after artifact creation."""
         print("\n💡 Suggested next steps:")
-        
+
         # Suggest validation if not already done
         print("   1. Review the artifact:")
         print(f"      {file_path}")
-        
+
         # Suggest compliance check
         print("   2. Run compliance check:")
         print("      cd AgentQMS/interface && make compliance")
-        
+
         # Suggest context loading if applicable
         if artifact_type == "implementation_plan":
             print("   3. Load planning context:")
@@ -248,12 +294,12 @@ class ArtifactWorkflow:
         elif artifact_type == "bug_report":
             print("   3. Load debugging context:")
             print("      cd AgentQMS/interface && make context-debug")
-        
+
         # Suggest related workflows
         if artifact_type in ["implementation_plan", "design"]:
             print("   4. Consider creating related artifacts:")
             print("      cd AgentQMS/interface && make create-assessment NAME=... TITLE=...")
-        
+
         print()
 
     def update_bundles_on_artifact_change(self, artifact_path: str) -> None:
@@ -395,16 +441,16 @@ def main():
     create_parser.add_argument("--description", help="Artifact description")
     create_parser.add_argument("--tags", help="Comma-separated tags")
     create_parser.add_argument(
+        "--branch", help="Git branch name (auto-detected if not provided, defaults to main)"
+    )
+    create_parser.add_argument(
         "--interactive", action="store_true", help="Interactive mode"
     )
-
-    # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate artifacts")
     validate_parser.add_argument("--file", help="Validate specific file")
     validate_parser.add_argument(
         "--all", action="store_true", help="Validate all artifacts"
     )
-
     # Update indexes command
     subparsers.add_parser("update-indexes", help="Update artifact indexes")
 
@@ -439,6 +485,8 @@ def main():
                     kwargs["description"] = args.description
                 if args.tags:
                     kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
+                if args.branch:
+                    kwargs["branch"] = args.branch
 
                 file_path = workflow.create_artifact(
                     args.type, args.name, args.title, **kwargs

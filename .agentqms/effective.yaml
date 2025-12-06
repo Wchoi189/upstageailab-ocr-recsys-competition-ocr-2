@@ -1,7 +1,7 @@
 layers:
   settings: .agentqms/settings.yaml
 metadata:
-  generated_at: '2025-12-04T05:15:34.975695Z'
+  generated_at: '2025-12-06T16:33:22.686376Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:
@@ -9,6 +9,7 @@ resolved:
     name: AgentQMS Local
     version: 0.2.0
     container_name: AgentQMS
+    timezone: Asia/Seoul
     validation:
       strict_mode: true
       rules:
@@ -39,6 +40,9 @@ resolved:
     ignore_directories:
     - docs_deprecated
     - artifacts
+    excluded_directories:
+    - archive
+    - deprecated
     rules:
       naming: true
       frontmatter: true

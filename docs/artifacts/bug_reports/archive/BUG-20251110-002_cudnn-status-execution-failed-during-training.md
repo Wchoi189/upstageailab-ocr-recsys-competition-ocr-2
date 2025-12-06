@@ -1,13 +1,16 @@
 ---
-title: "cuDNN execution failure during training step"
-date: "2025-11-10"
+title: "Bug 20251110 002 Cudnn Status Execution Failed During Training"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
-category: "training"
-status: "open"
+category: "troubleshooting"
+status: "active"
 version: "1.0"
-bug_id: "BUG-20251110-002"
-severity: "Critical"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 ## Summary
 Training crashes with `RuntimeError: cuDNN error: CUDNN_STATUS_EXECUTION_FAILED`, followed by `torch.AcceleratorError: CUDA error: an illegal instruction was encountered` when the trainer attempts to tear down optimizers.

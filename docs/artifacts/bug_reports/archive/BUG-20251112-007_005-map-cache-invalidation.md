@@ -1,3 +1,15 @@
+---
+title: "Bug 20251112 007 005 Map Cache Invalidation"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG #2025-005: Map Generation Fallback Due to Stale Tensor Cache
 
 **Status**: IDENTIFIED

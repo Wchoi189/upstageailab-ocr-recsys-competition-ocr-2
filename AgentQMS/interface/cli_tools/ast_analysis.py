@@ -7,7 +7,7 @@ Provides AI agents with AST-based code analysis capabilities
 import os
 import sys
 
-from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 
 def agent_ast_analysis():

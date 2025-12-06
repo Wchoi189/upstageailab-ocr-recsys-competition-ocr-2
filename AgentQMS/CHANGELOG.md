@@ -6,6 +6,17 @@
 - **Conciseness**: Keep entries ultra-concise - focus on what changed, not why
 - **Categories**: Group related changes under appropriate section headers
 
+## Toolkit Deprecation Completion (2025-12-06)
+
+### [2025-12-06 20:24] - Completed AgentQMS Toolkit Migration to agent_tools
+**Scope**: AgentQMS framework architecture
+**Change**: Fully migrated all toolkit modules to agent_tools, archived toolkit directory
+**Modules Migrated**: audit (3), core (1), documentation (3), utilities (3), compliance (1), tracking (3)
+**Impact**: Clean architecture with single canonical location for all tools
+**Files**: All modules in `AgentQMS/agent_tools/`, CLI tools updated
+**Archive**: `AgentQMS/toolkit` → `AgentQMS/.old_toolkit`
+**Details**: Implementation plan `2025-12-06_2009_implementation_plan_toolkit-deprecation-completion.md`
+
 ## Artifact Naming Convention Standardization (2025-11-29)
 
 ### [2025-11-29 17:30] - Terminology Standardization Complete

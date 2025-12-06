@@ -6,7 +6,7 @@ Allows AI agents to report issues and suggest improvements
 
 import sys
 
-from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 
 def agent_feedback():
@@ -21,7 +21,7 @@ def agent_feedback():
     ensure_project_root_on_sys_path()
 
     try:
-        from AgentQMS.toolkit.utilities.agent_feedback import main
+        from AgentQMS.agent_tools.utilities.agent_feedback import main
 
         main()
     except ImportError as e:

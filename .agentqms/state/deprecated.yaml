@@ -1,0 +1,7 @@
+PathUtils:
+  file: ocr/utils/paths.py
+  replacement: AgentQMS/agent_tools/utils/paths.py
+  removal_plan: https://github.com/issue-123
+  removal_date: '2026-01-01'
+  description: Old path utilities module
+  block_modifications: true

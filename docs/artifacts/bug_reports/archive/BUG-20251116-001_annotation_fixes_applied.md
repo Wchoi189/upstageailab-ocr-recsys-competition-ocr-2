@@ -1,3 +1,15 @@
+---
+title: "Bug 20251116 001 Annotation Fixes Applied"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG-20251116-001: Annotation File Fixes Applied
 
 **Date**: 2025-11-16

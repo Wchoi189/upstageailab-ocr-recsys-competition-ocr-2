@@ -1,16 +1,16 @@
 ---
-title: "Code Changes for BUG-20251109-002"
-author: "ai-agent"
-date: "2025-11-09"
-timestamp: "2025-11-09 23:04 KST"
-type: "bug_fix"
+title: "Bug 20251109 002 Code Changes"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
 category: "troubleshooting"
-status: "in_progress"
+status: "active"
 version: "1.0"
-tags: ['bug', 'cuda', 'loss', 'bce', 'code-changes']
-bug_id: "BUG-20251109-002"
-severity: "High"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Code Changes for BUG-20251109-002: CUDA Illegal Memory Access in BCE Loss Computation
 

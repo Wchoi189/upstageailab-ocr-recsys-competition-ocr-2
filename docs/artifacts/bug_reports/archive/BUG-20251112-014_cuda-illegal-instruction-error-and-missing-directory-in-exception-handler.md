@@ -1,16 +1,16 @@
 ---
-title: "CUDA Illegal Instruction Error and Missing Directory in Exception Handler"
-author: "ai-agent"
-date: "2025-11-12"
-timestamp: "2025-11-12 12:17 KST"
+title: "Bug 20251112 014 Cuda Illegal Instruction Error And Missing Directory In Exception Handler"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
 category: "troubleshooting"
-status: "open"
+status: "active"
 version: "1.0"
-tags: ['bug', 'cuda', 'exception-handling', 'checkpoint', 'training']
-bug_id: "BUG-20251112-014"
-severity: "High"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Bug Report: CUDA Illegal Instruction Error and Missing Directory in Exception Handler
 

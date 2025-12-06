@@ -164,7 +164,7 @@ def main():
 
     # Also test the current config loading
     try:
-        with hydra.initialize(config_path="configs", version_base="1.2"):
+        with hydra.initialize(config_path="configs", version_base=None):
             cfg = hydra.compose(config_name="train")
             print(f"\nCurrent config experiment_tag: {cfg.get('experiment_tag', 'None')}")
             print(f"Current config wandb: {cfg.get('wandb', 'Not set')}")

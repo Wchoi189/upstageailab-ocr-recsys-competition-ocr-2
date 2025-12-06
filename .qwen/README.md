@@ -1,89 +1,181 @@
-# Qwen Coder + AgentQMS
+# .qwen/ Directory - AgentQMS Integration
 
-## Table of Contents
+**Last Updated**: 2025-12-06 22:30 (KST)  
+**Status**: Active - Organized schema established
 
-- [Quick Reference](#quick-reference)
-- [Chat Usage](#chat-usage)
-- [Commands](#commands)
-- [Configuration](#configuration)
-- [Workflows](#workflows)
+## Purpose
 
-## Quick Reference
+This directory contains Qwen AI agent integration files for AgentQMS. All tools here are **deprecated wrappers** - use AgentQMS tools directly instead.
 
-- **Agent Name:** `Qwen AgentQMS` (use `@Qwen AgentQMS` in chat)
-- **Commands:** `.qwen/run.sh validate|create|interactive`
-- **Config:** `.qwen/settings.json`
-- **SST:** `AgentQMS/knowledge/agent/system.md`
+## Directory Schema
 
-## Chat Usage
-
-### Agent Reference
-- `@Qwen AgentQMS` - Full agent name in Cursor chat
-- `@Qwen` - Short reference (if unique)
-
-### Examples
-- `@Qwen AgentQMS, validate all artifacts`
-- `@Qwen AgentQMS, create bug report for auth issue`
-- `@Qwen AgentQMS, check compliance and apply fixes`
-
-### Command Delegation
-- Reference commands: `Run: ./.qwen/run.sh validate`
-- Delegate tasks: `@Qwen AgentQMS, handle validation`
-
-## Commands
-
-### Validation
-```bash
-./.qwen/run.sh validate
+```
+.qwen/
+├── README.md              # This file - directory schema and guidance
+├── QWEN.md                # Agent context and quick reference (ACTIVE)
+├── settings.json          # Qwen CLI settings (deprecated - see note)
+└── archive/               # Deprecated/obsolete files
+    ├── python/           # Old Python scripts (replaced by AgentQMS)
+    ├── shell/            # Old shell scripts (replaced by Makefile)
+    ├── README_old.md     # Original README (pre-schema)
+    ├── README_new.md     # Attempted update (stale references)
+    └── prompts.md        # Qwen-specific prompts
 ```
 
-### Artifact Creation
+## Active Files
+
+### QWEN.md (Agent Context)
+- **Purpose**: Quick reference for AI agents using AgentQMS
+- **Audience**: AI agents (Claude, ChatGPT, etc.)
+- **Content**: Current AgentQMS structure, commands, workflows
+- **Maintenance**: Update when AgentQMS structure changes
+
+### settings.json (Qwen CLI Config)
+- **Purpose**: Configuration for Qwen CLI tool
+- **Status**: Deprecated - Qwen CLI integration discontinued
+- **Action**: Keep for historical reference, do not update
+
+## Archived Files (Obsolete)
+
+All files below are **obsolete** and replaced by AgentQMS tools:
+
+### Python Scripts → Replaced by `AgentQMS/agent_tools/audit/artifact_audit.py`
+- ❌ `fix_frontmatter.py` - Use `artifact_audit.py --batch N`
+- ❌ `fix_batch1_batch2.py` - Use `artifact_audit.py --batch 1` or `--batch 2`
+- ❌ `final_batch_fix.py` - Use `artifact_audit.py --all`
+
+**Replacement:**
 ```bash
-./.qwen/run.sh create <type> <name> <title>
-```
-**Types:** plan, assessment, bug-report, design, research, template
+# Old way (obsolete)
+python .qwen/fix_frontmatter.py --batch 2
 
-### Interactive
+# New way (current)
+cd AgentQMS/interface
+make audit-fix-batch BATCH=2
+# OR
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2
+```
+
+### Shell Scripts → Replaced by `AgentQMS/interface/Makefile`
+- ❌ `run.sh` - Echo-only wrapper, never executed Qwen properly
+- ❌ `run_improved.sh` - Attempted Qwen execution but had checkpointing issues
+- ❌ `manual_validate.sh` - Use `make validate` instead
+- ❌ `qwen-chat.sh` - Qwen CLI integration discontinued
+
+**Replacement:**
 ```bash
-./.qwen/run.sh interactive "<prompt>"
+# Old way (obsolete)
+bash .qwen/run.sh validate
+
+# New way (current)
+cd AgentQMS/interface
+make validate
 ```
 
-### Direct Qwen CLI
+### Documentation → Consolidated into QWEN.md
+- ❌ `README_old.md` - Original README (replaced by this schema)
+- ❌ `README_new.md` - Contained stale references to consolidate.py
+- ❌ `prompts.md` - Qwen-specific prompts, no longer relevant
+
+## Migration Guide
+
+### If You Find References to Obsolete Files
+
+| Old Reference | New Replacement |
+|---------------|-----------------|
+| `.qwen/consolidate.py` | `AgentQMS/agent_tools/audit/artifact_audit.py` |
+| `.qwen/fix_*.py` | `artifact_audit.py` with appropriate flags |
+| `.qwen/run*.sh` | `cd AgentQMS/interface && make <target>` |
+| `.qwen/manual_validate.sh` | `make validate` |
+| `.qwen/README_new.md` | `.qwen/QWEN.md` |
+
+### AgentQMS Commands Reference
+
+**Audit & Fix:**
 ```bash
-qwen --approval-mode yolo --include-directories /workspaces/upstageailab-ocr-recsys-competition-ocr-2 --prompt "<task>"
+cd AgentQMS/interface
+make audit-fix-batch BATCH=1         # Preview batch 1
+make audit-fix-batch-apply BATCH=1   # Apply batch 1 fixes
+make audit-fix-all                   # Fix all artifacts
+make audit-report                    # Report violations
 ```
 
-## Configuration
+**Validation:**
+```bash
+cd AgentQMS/interface
+make validate                        # Validate all artifacts
+make compliance                      # Check compliance
+make boundary                        # Check boundaries
+```
 
-**Status:** Checkpointing disabled in `settings.json` (required fix)
+**Creation:**
+```bash
+cd AgentQMS/interface
+make create-plan NAME=my-plan TITLE="My Plan"
+make create-assessment NAME=my-assessment TITLE="Assessment"
+```
 
-**Key Settings:**
-- Checkpointing: `enabled: false`
-- Workspace: `/workspaces/upstageailab-ocr-recsys-competition-ocr-2`
-- Model: `qwen/qwen3-coder`
+## Cleanup Status
 
-## Workflows
+### Archived (2025-12-06)
 
-### Validation
-- Run: `./.qwen/run.sh validate`
-- Chat: `@Qwen AgentQMS, validate artifacts`
+**Python Scripts** (→ `archive/python/`):
+- `fix_frontmatter.py`
+- `fix_batch1_batch2.py`
+- `final_batch_fix.py`
 
-### Artifact Creation
-- Run: `./.qwen/run.sh create plan my-feature "Title"`
-- Chat: `@Qwen AgentQMS, create plan named "my-feature" with title "Title"`
+**Shell Scripts** (→ `archive/shell/`):
+- `run.sh`
+- `run_improved.sh`
+- `manual_validate.sh`
+- `qwen-chat.sh`
 
-### Fixes
-- Run: `./.qwen/run.sh validate && cd AgentQMS/interface && make fix`
-- Chat: `@Qwen AgentQMS, apply fixes`
+**Documentation** (→ `archive/`):
+- `README_old.md` (original)
+- `README_new.md` (stale)
+- `prompts.md` (Qwen-specific)
 
-## Files
+### Retained
 
-- `settings.json` - Qwen config (checkpointing disabled)
-- `run.sh` - Wrapper script for AgentQMS operations
-- `prompts.md` - Pre-built prompts for common tasks
+- `QWEN.md` - Active agent context
+- `settings.json` - Historical reference
+- `README.md` - This schema document
 
-## Notes
+## Notes for AI Agents
 
-- Always reference AgentQMS context: `AgentQMS/knowledge/agent/system.md`
-- Use automation only; never create artifacts manually
-- Validate after changes: `make validate && make compliance`
+**⚠️ Important:** If you encounter references to:
+- `.qwen/consolidate.py`
+- `.qwen/fix_*.py`
+- `.qwen/run*.sh`
+
+These are **obsolete**. Use AgentQMS tools instead:
+- Read: `AgentQMS/knowledge/agent/system.md`
+- Reference: `.qwen/QWEN.md`
+- Execute: `cd AgentQMS/interface && make <command>`
+
+## Qwen CLI Integration (Deprecated)
+
+**Status**: Discontinued due to:
+1. Checkpointing issues with Git detection
+2. Inconsistent command syntax across versions
+3. Better integration via VS Code Copilot and native tools
+
+**Replacement**: Use GitHub Copilot (Claude/GPT-4) with AgentQMS context bundles.
+
+## Schema Maintenance
+
+**Update Triggers:**
+- New files added to `.qwen/`
+- AgentQMS structure changes
+- Tool deprecations or replacements
+- Integration method changes
+
+**Update Process:**
+1. Document new file purpose and status
+2. Move obsolete files to `archive/`
+3. Update this README schema
+4. Update `.qwen/QWEN.md` if agent workflows change
+
+---
+
+**Questions?** See `AgentQMS/knowledge/agent/system.md` for full AgentQMS documentation.

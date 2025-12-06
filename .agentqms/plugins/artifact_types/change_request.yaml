@@ -1,5 +1,5 @@
 # Change Request Artifact Type Plugin
-# Example plugin demonstrating artifact type extensibility
+# Structured change request document for tracking proposed changes requiring approval
 #
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
@@ -11,7 +11,7 @@ description: |
 scope: project
 
 metadata:
-  filename_pattern: "CR_{date}_{name}.md"
+  filename_pattern: "{date}_{type}_change-request-{name}.md"
   directory: change_requests/
   frontmatter:
     type: change_request
@@ -33,7 +33,7 @@ validation:
     - "## Justification"
     - "## Impact Assessment"
     - "## Approval"
-  filename_prefix: "CR_"
+  filename_prefix: "change_request_"
   allowed_statuses:
     - draft
     - pending
