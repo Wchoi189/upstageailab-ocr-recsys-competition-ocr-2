@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-06 20:41 (KST)"
+type: "research"
+category: "research"
+status: "active"
+version: "1.0"
+tags: ['research', 'research', 'analysis']
+---
+
 # 🔬 Research
 
 Research findings, investigations, and analysis.

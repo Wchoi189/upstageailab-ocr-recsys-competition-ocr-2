@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-06 20:41 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
+---
+
 # 🚀 Implementation Plans
 
 Active implementation plans and development roadmaps.
