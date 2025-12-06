@@ -2,7 +2,7 @@
 # This Makefile is ONLY for AI agents - humans should not use these commands
 # For human development, use the main project Makefile
 
-.PHONY: help discover tools status clean validate compliance docs feedback quality audit
+.PHONY: help discover tools status clean validate compliance docs feedback quality audit audit-framework audit-framework-verbose audit-framework-json audit-framework-plugins audit-framework-templates artifacts-status artifacts-status-dashboard artifacts-status-compact artifacts-status-aging artifacts-status-json artifacts-status-threshold
 
 export PYTHONPATH := $(abspath ../..):$(PYTHONPATH)
 
@@ -163,6 +163,21 @@ validate-naming: ## Check naming conventions only
 
 boundary: ## Validate framework/project boundaries
 	python ../agent_tools/compliance/validate_boundaries.py
+
+audit-framework: ## Audit framework plugins and templates for schema compliance
+	python ../agent_tools/audit/framework_audit.py
+
+audit-framework-verbose: ## Audit framework with verbose output
+	python ../agent_tools/audit/framework_audit.py --verbose
+
+audit-framework-json: ## Audit framework and output JSON results
+	python ../agent_tools/audit/framework_audit.py --json
+
+audit-framework-plugins: ## Audit plugins only
+	python ../agent_tools/audit/framework_audit.py --plugins-only
+
+audit-framework-templates: ## Audit templates only
+	python ../agent_tools/audit/framework_audit.py --templates-only
 
 # Deprecated Code Registry
 deprecated-list: ## List all deprecated symbols
@@ -551,6 +566,29 @@ changelog-draft: ## Generate changelog draft from tracking DB and git log
 
 changelog-preview: ## Preview changelog draft without writing file
 	python ../agent_tools/documentation/generate_changelog_draft.py --preview
+
+# Artifact Status and Lifecycle Management
+artifacts-status: ## Show artifact status dashboard with aging and lifecycle information
+	python ../agent_tools/utilities/artifacts_status.py
+
+artifacts-status-dashboard: ## Show full dashboard view of artifact health
+	python ../agent_tools/utilities/artifacts_status.py --dashboard
+
+artifacts-status-compact: ## Show compact table view of artifact status
+	python ../agent_tools/utilities/artifacts_status.py --compact
+
+artifacts-status-aging: ## Show aging information for all artifacts
+	python ../agent_tools/utilities/artifacts_status.py --aging-only
+
+artifacts-status-json: ## Output artifact status as JSON
+	python ../agent_tools/utilities/artifacts_status.py --json
+
+artifacts-status-threshold: ## Show artifacts older than threshold days (usage: make artifacts-status-threshold DAYS=90)
+	@if [ -z "$(DAYS)" ]; then \
+		echo "ERROR: DAYS parameter required. Usage: make artifacts-status-threshold DAYS=90"; \
+		exit 1; \
+	fi
+	python ../agent_tools/utilities/artifacts_status.py --threshold $(DAYS)
 
 # All-in-one Commands
 all-check: validate compliance quality-check ## Run all checks: validate, compliance, quality

@@ -13,6 +13,11 @@
             "type": "string",
             "format": "date"
         },
+        "branch": {
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_/-]+$",
+            "description": "Git branch name where artifact was created"
+        },
         "status": {
             "type": "string",
             "enum": ["draft", "in-progress", "completed"]
@@ -24,5 +29,5 @@
             }
         }
     },
-    "required": ["title", "author", "date", "status"]
+    "required": ["title", "author", "date", "branch", "status"]
 }

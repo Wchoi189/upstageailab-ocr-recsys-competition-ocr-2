@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2025-12-05T17:49:03.791426+00:00'
+  generated_at: '2025-12-06T06:13:11.004176+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -35,7 +35,8 @@ validation_errors:
   schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
 - path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
   type: artifact_type
-  error: '''metadata'' is a required property (path: [])'
+  error: 'Additional properties are not allowed (''instructions'', ''tools'' were
+    unexpected) (path: [])'
   schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
 resolved:
   artifact_types:
@@ -49,7 +50,7 @@ resolved:
         '
       scope: project
       metadata:
-        filename_pattern: CR_{date}_{name}.md
+        filename_pattern: '{date}_{type}_change-request-{name}.md'
         directory: change_requests/
         frontmatter:
           type: change_request
@@ -73,7 +74,7 @@ resolved:
         - '## Justification'
         - '## Impact Assessment'
         - '## Approval'
-        filename_prefix: CR_
+        filename_prefix: change_request_
         allowed_statuses:
         - draft
         - pending

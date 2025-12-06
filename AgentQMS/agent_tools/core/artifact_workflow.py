@@ -441,16 +441,16 @@ def main():
     create_parser.add_argument("--description", help="Artifact description")
     create_parser.add_argument("--tags", help="Comma-separated tags")
     create_parser.add_argument(
+        "--branch", help="Git branch name (auto-detected if not provided, defaults to main)"
+    )
+    create_parser.add_argument(
         "--interactive", action="store_true", help="Interactive mode"
     )
-
-    # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate artifacts")
     validate_parser.add_argument("--file", help="Validate specific file")
     validate_parser.add_argument(
         "--all", action="store_true", help="Validate all artifacts"
     )
-
     # Update indexes command
     subparsers.add_parser("update-indexes", help="Update artifact indexes")
 
@@ -485,6 +485,8 @@ def main():
                     kwargs["description"] = args.description
                 if args.tags:
                     kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
+                if args.branch:
+                    kwargs["branch"] = args.branch
 
                 file_path = workflow.create_artifact(
                     args.type, args.name, args.title, **kwargs
