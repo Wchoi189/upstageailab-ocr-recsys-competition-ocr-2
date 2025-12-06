@@ -179,6 +179,52 @@ audit-framework-plugins: ## Audit plugins only
 audit-framework-templates: ## Audit templates only
 	python ../agent_tools/audit/framework_audit.py --templates-only
 
+# Artifact Audit (Safe Mode)
+audit-fix-batch: ## Preview batch N changes (usage: make audit-fix-batch BATCH=1)
+	@if [ -z "$(BATCH)" ]; then \
+		echo "ERROR: BATCH parameter required. Usage: make audit-fix-batch BATCH=1"; \
+		exit 1; \
+	fi
+	@echo "🔍 Previewing changes for batch $(BATCH)..."
+	uv run python ../agent_tools/audit/artifact_audit.py --batch $(BATCH) --dry-run
+	@echo ""
+	@echo "💡 To apply changes, run: make audit-fix-batch-apply BATCH=$(BATCH)"
+
+audit-fix-batch-apply: ## Apply batch N fixes with confirmation (usage: make audit-fix-batch-apply BATCH=1)
+	@if [ -z "$(BATCH)" ]; then \
+		echo "ERROR: BATCH parameter required."; \
+		exit 1; \
+	fi
+	uv run python ../agent_tools/audit/artifact_audit.py --batch $(BATCH)
+
+audit-fix-all: ## Fix all artifacts with safety checks (excludes archive/deprecated)
+	uv run python ../agent_tools/audit/artifact_audit.py --all
+
+audit-fix-all-force: ## Fix ALL artifacts including excluded directories (DANGER)
+	@echo "⚠️  WARNING: This will process archive/, deprecated/, vlm_reports/"
+	@echo "Press Ctrl+C to cancel, or"
+	@read -p "Type 'YES' to continue: " response; \
+	if [ "$$response" = "YES" ]; then \
+		uv run python ../agent_tools/audit/artifact_audit.py --all --include-excluded; \
+	else \
+		echo "Aborted."; \
+	fi
+
+audit-report: ## Report violations without fixing
+	uv run python ../agent_tools/audit/artifact_audit.py --all --report
+
+audit-report-all: ## Report violations including excluded directories
+	uv run python ../agent_tools/audit/artifact_audit.py --all --report --include-excluded
+
+audit-vlm-migrate: ## Migrate VLM reports from BUG prefix to vlm_report_ prefix
+	@echo "🔍 Previewing VLM reports migration..."
+	python ../agent_tools/utilities/migrate_vlm_reports.py --dry-run
+	@echo ""
+	@echo "💡 To apply migration, run: make audit-vlm-migrate-apply"
+
+audit-vlm-migrate-apply: ## Apply VLM reports migration
+	python ../agent_tools/utilities/migrate_vlm_reports.py
+
 # Deprecated Code Registry
 deprecated-list: ## List all deprecated symbols
 	python ../agent_tools/utilities/deprecated_registry.py list

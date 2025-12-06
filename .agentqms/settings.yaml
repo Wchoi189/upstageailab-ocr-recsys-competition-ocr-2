@@ -35,6 +35,9 @@ validation:
   ignore_directories:
     - docs_deprecated
     - artifacts
+  excluded_directories:
+    - archive
+    - deprecated
   rules:
     naming: true
     frontmatter: true

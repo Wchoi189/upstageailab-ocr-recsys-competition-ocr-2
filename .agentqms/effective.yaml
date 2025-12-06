@@ -1,7 +1,7 @@
 layers:
   settings: .agentqms/settings.yaml
 metadata:
-  generated_at: '2025-12-06T11:24:08.110867Z'
+  generated_at: '2025-12-06T13:41:27.538024Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:
@@ -40,6 +40,9 @@ resolved:
     ignore_directories:
     - docs_deprecated
     - artifacts
+    excluded_directories:
+    - archive
+    - deprecated
     rules:
       naming: true
       frontmatter: true
