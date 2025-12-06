@@ -1,10 +1,16 @@
 ---
+type: assessment
 title: "Unified OCR App Performance Assessment"
-author: "ai-agent"
-timestamp: "2025-11-17 01:36 KST"
-branch: "main"
-status: "draft"
-tags: []
+date: "2025-11-17 01:36 (KST)"
+category: performance
+status: draft
+version: "1.0"
+tags:
+  - performance
+  - ocr
+  - optimization
+author: ai-agent
+branch: main
 ---
 
 ## Progress Tracker

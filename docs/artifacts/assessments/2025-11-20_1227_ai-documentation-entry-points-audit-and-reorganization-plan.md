@@ -1,16 +1,17 @@
 ---
-title: AI Documentation Entry Points Audit and Reorganization Plan
-author: ai-agent
-timestamp: 2025-11-20 12:27 KST
-branch: feature/nextjs-console-migration
-status: draft
-tags:
-- documentation
-- audit
-- ai-agents
-- compliance
 type: assessment
+title: "AI Documentation Entry Points Audit and Reorganization Plan"
+date: "2025-11-20 12:27 (KST)"
 category: evaluation
+status: draft
+version: "1.0"
+tags:
+  - documentation
+  - audit
+  - ai-agents
+  - compliance
+author: ai-agent
+branch: main
 ---
 
 # AI Documentation Entry Points Audit

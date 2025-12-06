@@ -1,4 +1,19 @@
-Albumentations’ AutoContrast playground is notably smooth because it keeps the whole “upload → configure → preview” loop on a single page, leaning on a few key ideas:
+---
+type: assessment
+title: "Albumentations Playground Architecture"
+date: "2025-11-18 01:09 (KST)"
+category: architecture
+status: draft
+version: "1.0"
+tags:
+  - albumentations
+  - architecture
+  - playground
+author: ai-agent
+branch: main
+---
+
+Albumentations' AutoContrast playground is notably smooth because it keeps the whole "upload → configure → preview" loop on a single page, leaning on a few key ideas:
 
 - **Client-side transforms where possible**: basic color/contrast adjustments (like AutoContrast) can be applied in-browser via WebAssembly-accelerated routines or optimized JS modules. That means the user doesn’t wait for round-trips to a server for every tweak, so sliders feel responsive even on modest machines. The UI on https://explore.albumentations.ai/transform/AutoContrast confirms parameters are image size dependent and encourages testing with user data, implying work happens close to the browser to keep latency low. [^1]
 

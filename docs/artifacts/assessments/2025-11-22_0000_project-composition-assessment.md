@@ -1,21 +1,15 @@
 ---
-
+type: assessment
 title: "Project Composition Assessment"
-
-author: "ai-agent"
-
-timestamp: "2025-11-22 00:00 KST"
-
-branch: "main"
-
-status: "draft"
-
-tags: ["created-by-script"]
-
-type: "assessment"
-
-category: "evaluation"
-
+date: "2025-11-22 00:00 (KST)"
+category: evaluation
+status: draft
+version: "1.0"
+tags:
+  - project-structure
+  - organization
+author: ai-agent
+branch: main
 ---
 
 # Project Composition Assessment

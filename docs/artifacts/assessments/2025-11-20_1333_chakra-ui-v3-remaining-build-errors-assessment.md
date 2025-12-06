@@ -1,16 +1,16 @@
 ---
-title: Chakra UI v3 Remaining Build Errors Assessment
-author: ai-agent
-timestamp: 2025-11-20 13:33 KST
-branch: feature/nextjs-console-migration
-status: draft
-tags:
-- chakra-ui
-- build-errors
-- migration
-- assessment
 type: assessment
+title: "Chakra UI v3 Remaining Build Errors Assessment"
+date: "2025-11-20 13:33 (KST)"
 category: evaluation
+status: draft
+version: "1.0"
+tags:
+  - chakra-ui
+  - build-errors
+  - migration
+author: ai-agent
+branch: main
 ---
 
 # Assessment: Chakra UI v3 Remaining Build Errors
