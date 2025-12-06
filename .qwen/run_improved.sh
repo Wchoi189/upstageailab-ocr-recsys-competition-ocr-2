@@ -12,14 +12,14 @@ AGENTQMS_INSTRUCTIONS="$PROJECT_ROOT/AgentQMS/knowledge/agent/system.md"
 # Function to actually run Qwen with AgentQMS context
 run_qwen_agentqms() {
     local prompt="$1"
-    
+
     echo "🤖 Executing Qwen Coder with AgentQMS integration..."
     echo "📋 Instructions: $AGENTQMS_INSTRUCTIONS"
     echo "⚙️  Config: $QWEN_CONFIG"
     echo "✅ Checkpointing: ENABLED"
     echo "✅ Validation: ENABLED"
     echo ""
-    
+
     # ACTUALLY EXECUTE Qwen with proper context
     qwen --approval-mode yolo \
          --include-directories "$PROJECT_ROOT" \
@@ -29,7 +29,7 @@ run_qwen_agentqms() {
 # Enhanced frontmatter-only batch prompt
 run_frontmatter_batch() {
     local batch_files="$1"
-    
+
     local batch_prompt=$(cat << 'EOF'
 You are an autonomous AI agent for AgentQMS artifact quality management.
 TASK: Fix ONLY frontmatter (YAML at top of file). Do NOT rename files.
@@ -80,7 +80,7 @@ EOF
     echo ""
     echo "These files need frontmatter correction:"
     echo "$batch_files"
-    
+
     cat << 'EOF'
 
 ## ACTIONS (FOR EACH FILE)
@@ -137,7 +137,7 @@ branch: main
 
 BEGIN NOW. Process all files with ONLY frontmatter fixes.
 EOF
-    
+
     run_qwen_agentqms "$batch_prompt"
 }
 
