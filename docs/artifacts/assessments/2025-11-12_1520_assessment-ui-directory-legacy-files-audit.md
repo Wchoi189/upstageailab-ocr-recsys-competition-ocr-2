@@ -1,10 +1,18 @@
 ---
+type: assessment
 title: "UI Directory Legacy Files Audit"
-author: "ai-agent"
-date: "2025-11-12"
-timestamp: "2025-11-12 15:20 KST"
-status: "draft"
-tags: ["legacy", "deprecation", "ui", "cleanup", "refactoring"]
+date: "2025-11-12 15:20 (KST)"
+category: governance
+status: draft
+version: "1.0"
+tags:
+  - legacy
+  - deprecation
+  - ui
+  - cleanup
+  - refactoring
+author: ai-agent
+branch: main
 ---
 
 ## Progress Tracker

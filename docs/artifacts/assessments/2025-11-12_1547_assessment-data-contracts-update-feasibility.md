@@ -1,10 +1,16 @@
 ---
+type: assessment
 title: "Data Contracts Update Feasibility Assessment"
-author: "ai-agent"
-date: "2025-11-12"
-timestamp: "2025-11-12 15:47 KST"
-status: "draft"
-tags: []
+date: "2025-11-12 15:47 (KST)"
+category: evaluation
+status: draft
+version: "1.0"
+tags:
+  - data-contracts
+  - feasibility
+  - validation
+author: ai-agent
+branch: main
 ---
 
 ## Progress Tracker
