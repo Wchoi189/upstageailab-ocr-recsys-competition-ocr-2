@@ -6,19 +6,19 @@
 
 ## 🎯 Quick Start
 
-### Frontmatter Fixes (Most Common)
+### Artifact Audit (Most Common)
 ```bash
-# Fix batch 2 artifacts (20 files)
-python .qwen/consolidate.py --batch 2
+# Audit and fix batch 2 artifacts (20 files)
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2
 
-# Fix specific files
-python .qwen/consolidate.py --files docs/artifacts/assessments/file1.md docs/artifacts/assessments/file2.md
+# Audit specific files
+python AgentQMS/agent_tools/audit/artifact_audit.py --files docs/artifacts/assessments/file1.md docs/artifacts/assessments/file2.md
 
 # Preview without modifying
-python .qwen/consolidate.py --batch 2 --dry-run
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2 --dry-run
 
-# Validate only
-python .qwen/consolidate.py --batch 2 --validate-only
+# Report violations only
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2 --report
 ```
 
 ### Artifact Validation
@@ -37,22 +37,23 @@ cd AgentQMS/interface && make validate && make compliance
 
 ## 📚 Available Tools
 
-### 1. **Consolidate Script** (`.qwen/consolidate.py`)
-**Purpose:** Batch fix artifacts using AgentQMS tools.
+### 1. **Artifact Audit Tool** (`AgentQMS/agent_tools/audit/artifact_audit.py`)
+**Purpose:** Audit and fix artifact compliance using AgentQMS tools.
 
 **What it does:**
 - Detects missing or broken frontmatter
 - Generates correct frontmatter using `FrontmatterGenerator`
 - Validates results using `ArtifactValidator`
-- Reports pass/fail status
+- Reports violations and compliance status
+- Fixes artifacts in-place with validation
 
 **Usage:**
 ```bash
-python .qwen/consolidate.py --batch N               # Fix batch N
-python .qwen/consolidate.py --files <paths>        # Fix specific files
-python .qwen/consolidate.py --all                   # Fix all artifacts
-python .qwen/consolidate.py --dry-run               # Preview changes
-python .qwen/consolidate.py --validate-only         # Just check (no fixes)
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch N         # Audit & fix batch N
+python AgentQMS/agent_tools/audit/artifact_audit.py --files <paths>  # Audit & fix specific files
+python AgentQMS/agent_tools/audit/artifact_audit.py --all             # Audit & fix all artifacts
+python AgentQMS/agent_tools/audit/artifact_audit.py --dry-run         # Preview changes
+python AgentQMS/agent_tools/audit/artifact_audit.py --report          # Report only (no fixes)
 ```
 
 **Exit codes:**
@@ -95,21 +96,21 @@ make validate --all  # Same as above
 
 ## 🔄 Standard Workflows
 
-### Workflow 1: Fix Batch Files
+### Workflow 1: Audit and Fix Batch
 
 ```bash
 # 1. Identify violations
 cd AgentQMS/interface && make validate
 
-# 2. Fix the batch
-python .qwen/consolidate.py --batch 2
+# 2. Audit and fix the batch
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2
 
-# 3. Verify all are valid
+# 3. Verify all are compliant
 cd AgentQMS/interface && make validate
 
 # 4. Commit fixes
 git add docs/artifacts/
-git commit -m "AgentQMS Phase 5: batch 2 - frontmatter fixes via consolidated tooling"
+git commit -m "AgentQMS Phase 5: batch 2 - artifact audit and compliance fixes"
 ```
 
 ### Workflow 2: Manual Artifact Creation (When Needed)
@@ -148,18 +149,17 @@ make validate
 
 | File | Purpose | Status |
 |------|---------|--------|
-| `consolidate.py` | Wrapper for batch frontmatter fixes | ✅ Active |
-| `run.sh` | Old script (echo-only) | ⚠️ Legacy |
-| `run_improved.sh` | Improved Qwen execution script | 🔧 Not yet active |
+| `run.sh` | Qwen integration script | ⚠️ Legacy (echo-only) |
 | `settings.json` | Qwen config (validation enabled) | ✅ Enabled |
 | `QWEN.md` | Qwen documentation (reference) | 📖 Reference |
 | `prompts.md` | Pre-built prompts | 📖 Reference |
+| `README.md` | This documentation | 📖 Active |
 
-### Removed (Duplicates - DO NOT USE)
+### AgentQMS Tools (in `/AgentQMS/`)
 
-- ~~`fix_frontmatter.py`~~ - Use `consolidate.py` instead
-- ~~`fix_batch1_batch2.py`~~ - Use `consolidate.py` instead  
-- ~~`final_batch_fix.py`~~ - Use `consolidate.py` instead
+- `agent_tools/audit/artifact_audit.py` - **Audit and fix artifacts** ✅ Active
+- `toolkit/maintenance/add_frontmatter.py` - Frontmatter generation (used by audit tool)
+- `agent_tools/compliance/validate_artifacts.py` - Validation (used by audit tool)
 
 ---
 
@@ -256,11 +256,11 @@ branch: "main"
 
 | Need | Tool | Command |
 |------|------|---------|
-| Fix batch of files | `consolidate.py` | `python .qwen/consolidate.py --batch N` |
-| Check all valid | AgentQMS validate | `cd AgentQMS/interface && make validate` |
+| Audit and fix batch | `artifact_audit.py` | `python AgentQMS/agent_tools/audit/artifact_audit.py --batch N` |
+| Report violations | `artifact_audit.py` | `python AgentQMS/agent_tools/audit/artifact_audit.py --batch N --report` |
+| Check compliance | AgentQMS validate | `cd AgentQMS/interface && make validate` |
 | Create new artifact | AgentQMS Makefile | `cd AgentQMS/interface && make create-*` |
-| Interactive Qwen | Not recommended | Use Copilot/manual approach |
-| Preview fixes | `consolidate.py` | `python .qwen/consolidate.py --batch N --dry-run` |
+| Preview changes | `artifact_audit.py` | `python AgentQMS/agent_tools/audit/artifact_audit.py --batch N --dry-run` |
 
 ---
 
@@ -268,8 +268,8 @@ branch: "main"
 
 Before merging:
 ```bash
-# 1. Fix artifacts
-python .qwen/consolidate.py --batch N
+# 1. Audit & fix artifacts
+python AgentQMS/agent_tools/audit/artifact_audit.py --batch N
 
 # 2. Validate all
 cd AgentQMS/interface && make validate && make compliance

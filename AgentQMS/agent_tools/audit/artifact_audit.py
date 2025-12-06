@@ -1,16 +1,25 @@
 #!/usr/bin/env python3
 """
-Consolidate Script: Wrapper for AgentQMS frontmatter & validation tools.
+Artifact Audit Tool: Comprehensive audit and repair of AgentQMS artifacts.
 
-This script reuses existing AgentQMS tools instead of duplicating logic:
+This tool provides intelligent auditing and fixing of artifacts using existing
+AgentQMS tools instead of duplicating logic:
 - FrontmatterGenerator (AgentQMS/toolkit/maintenance/add_frontmatter.py)
 - ArtifactValidator (AgentQMS/agent_tools/compliance/validate_artifacts.py)
 
+Features:
+- Audit artifacts for compliance issues
+- Fix incomplete or broken frontmatter
+- Batch operations with progress tracking
+- Dry-run mode for previewing changes
+- Validation-only mode for reporting without fixes
+
 Usage:
-    python consolidate.py --batch N         # Fix batch N files
-    python consolidate.py --files f1 f2 ... # Fix specific files
-    python consolidate.py --all              # Fix all artifacts missing frontmatter
-    python consolidate.py --dry-run          # Preview changes without modifying
+    python artifact_audit.py --batch N         # Audit & fix batch N
+    python artifact_audit.py --files f1 f2 ... # Audit & fix specific files
+    python artifact_audit.py --all              # Audit & fix all artifacts
+    python artifact_audit.py --dry-run          # Preview without modifying
+    python artifact_audit.py --report           # Report violations only
 """
 
 import argparse
@@ -19,12 +28,12 @@ from datetime import datetime, timezone
 from pathlib import Path
 
 # Add AgentQMS to path for imports
-AGENTQMS_PATH = Path(__file__).parent.parent / "AgentQMS"
-sys.path.insert(0, str(AGENTQMS_PATH))
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
-    from agent_tools.compliance.validate_artifacts import ArtifactValidator
-    from toolkit.maintenance.add_frontmatter import FrontmatterGenerator
+    from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
+    from AgentQMS.toolkit.maintenance.add_frontmatter import FrontmatterGenerator
 except ImportError as e:
     print(f"❌ Error importing AgentQMS tools: {e}")
     print("   Make sure you're running from project root")
@@ -51,8 +60,8 @@ def fix_date_format(content: str) -> str:
     return "\n".join(fixed_lines)
 
 
-class ConsolidateQMS:
-    """Wrapper around AgentQMS tools for batch operations."""
+class ArtifactAudit:
+    """Audit and repair AgentQMS artifacts."""
 
     def __init__(self):
         self.generator = FrontmatterGenerator()
@@ -216,7 +225,7 @@ class ConsolidateQMS:
         files: list[str] | None = None,
         all_artifacts: bool = False,
         dry_run: bool = False,
-        validate_only: bool = False,
+        report_only: bool = False,
     ) -> int:
         """Main execution method."""
         target_files = []
@@ -239,23 +248,23 @@ class ConsolidateQMS:
 
         print(f"📊 Found {len(target_files)} file(s) to process\n")
 
-        if validate_only:
-            print("🔍 Validation mode (not modifying files)\n")
+        if report_only:
+            print("📋 Report mode (validating only, not modifying files)\n")
             results = self.validate_files(target_files)
         else:
             if dry_run:
                 print("🔍 DRY RUN mode (not modifying files)\n")
 
-            print("📝 Fixing frontmatter...\n")
+            print("📝 Auditing and fixing artifacts...\n")
             fix_results = self.fix_files(target_files, dry_run=dry_run)
 
-            print("\n📊 Fix Summary:")
+            print("\n📊 Audit Summary:")
             print(f"   Processed: {fix_results['processed']}")
             print(f"   Success: {fix_results['success']}")
             print(f"   Skipped: {fix_results['skipped']}")
             print(f"   Errors: {fix_results['errors']}")
 
-            print("\n🔍 Validating files...\n")
+            print("\n🔍 Validating artifacts...\n")
             results = self.validate_files(target_files)
 
         print("\n✅ Validation Summary:")
@@ -263,7 +272,7 @@ class ConsolidateQMS:
         print(f"   Invalid: {len(results['invalid'])}")
 
         if results["invalid"]:
-            print("\n❌ Invalid files:")
+            print("\n❌ Invalid artifacts:")
             for filename, reason in results["invalid"]:
                 print(f"   - {filename}: {reason}")
             return 1
@@ -272,35 +281,35 @@ class ConsolidateQMS:
 
 
 def main():
-    """Parse arguments and run consolidation."""
+    """Parse arguments and run artifact audit."""
     parser = argparse.ArgumentParser(
-        description="Consolidate & fix artifact frontmatter using AgentQMS tools"
+        description="Audit and fix artifact compliance using AgentQMS tools"
     )
     parser.add_argument(
-        "--batch", type=int, help="Fix batch N files (1, 2, etc.)"
+        "--batch", type=int, help="Audit batch N artifacts (1, 2, etc.)"
     )
     parser.add_argument(
-        "--files", nargs="+", help="Specific files to process"
+        "--files", nargs="+", help="Specific files to audit"
     )
     parser.add_argument(
-        "--all", action="store_true", help="Process all artifacts"
+        "--all", action="store_true", help="Audit all artifacts"
     )
     parser.add_argument(
-        "--dry-run", action="store_true", help="Preview without modifying"
+        "--dry-run", action="store_true", help="Preview changes without modifying"
     )
     parser.add_argument(
-        "--validate-only", action="store_true", help="Only validate, don't fix"
+        "--report", action="store_true", help="Report violations only (no fixes)"
     )
 
     args = parser.parse_args()
 
-    consolidator = ConsolidateQMS()
-    return consolidator.run(
+    auditor = ArtifactAudit()
+    return auditor.run(
         batch=args.batch,
         files=args.files,
         all_artifacts=args.all,
         dry_run=args.dry_run,
-        validate_only=args.validate_only,
+        report_only=args.report,
     )
 
 
