@@ -1,16 +1,16 @@
 ---
-title: "cuDNN Workspace Memory Exhaustion on RTX 3060"
-author: "ai-agent"
-date: "2025-11-10"
-timestamp: "2025-11-10 14:40 UTC"
+title: "Bug 20251110 003 Cudnn Workspace Memory Exhaustion"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
 category: "troubleshooting"
-status: "diagnosed"
+status: "active"
 version: "1.0"
-tags: ['bug', 'cuda', 'cudnn', 'memory', 'rtx3060', 'critical']
-bug_id: "BUG-20251110-003"
-severity: "Critical"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Bug Report: cuDNN Workspace Memory Exhaustion on RTX 3060
 

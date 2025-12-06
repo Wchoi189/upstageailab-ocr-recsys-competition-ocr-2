@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-06 18:08 (KST)"
+type: "assessment"
+category: "evaluation"
+status: "active"
+version: "1.0"
+tags: ['assessment', 'evaluation', 'documentation']
+---
+
 # 📊 Assessments
 
 Evaluations and assessments of system components and processes.

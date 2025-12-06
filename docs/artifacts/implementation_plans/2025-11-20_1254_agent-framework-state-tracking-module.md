@@ -1,17 +1,16 @@
 ---
-title: Agent Framework State Tracking Module
-author: ai-agent
-timestamp: 2025-11-20 12:54 KST
-branch: feature/nextjs-console-migration
-status: draft
-tags:
-- state-tracking
-- framework
-- agent-memory
-- persistence
-type: implementation_plan
-category: development
+title: "Agent Framework State Tracking Module"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Master Prompt
 

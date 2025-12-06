@@ -1,3 +1,15 @@
+---
+title: "Bug 2025 012 Streamlit Duplicate Element Key"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG-2025-012: Streamlit Duplicate Element Key in Unified OCR App
 
 **Date:** October 21, 2025

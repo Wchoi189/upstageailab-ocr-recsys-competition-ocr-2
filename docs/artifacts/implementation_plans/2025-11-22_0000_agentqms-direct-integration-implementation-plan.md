@@ -1,13 +1,16 @@
 ---
-title: "AgentQMS Direct Integration Implementation Plan"
-author: "ai-agent"
-timestamp: "2025-11-22 00:00 KST"
-branch: "main"
-status: "draft"
-tags: ["created-by-script"]
+title: "Agentqms Direct Integration Implementation Plan"
+date: "2025-12-06 18:08 (KST)"
 type: "implementation_plan"
-category: "development"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Master Prompt
 

@@ -1,3 +1,15 @@
+---
+title: "Master Index"
+date: "2025-12-06 18:08 (KST)"
+type: "reference"
+category: "reference"
+status: "active"
+version: "1.0"
+tags: ['reference', 'reference']
+---
+
+
+
 # Master Artifact Registry
 
 **Last Updated**: 2025-12-06 02:01:45

@@ -1,17 +1,16 @@
 ---
-title: Perspective Correction Implementation
-author: ai-agent
-timestamp: 2025-11-29 17:28 KST
-branch: main
-status: draft
-tags:
-- perspective-correction
-- implementation
-- opencv
-- created-by-script
-type: implementation_plan
-category: development
+title: "Perspective Correction Implementation"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 ## Summary
 Implemented the perspective correction phase using the Max-Edge aspect ratio rule and Lanczos4 interpolation.

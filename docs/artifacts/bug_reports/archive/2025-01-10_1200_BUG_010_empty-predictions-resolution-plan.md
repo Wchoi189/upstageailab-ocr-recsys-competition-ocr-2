@@ -1,3 +1,15 @@
+---
+title: "010 Empty Predictions Resolution Plan"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # Empty Predictions Resolution Plan
 
 ## Overview

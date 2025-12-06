@@ -1,14 +1,16 @@
 ---
-title: "PLAN-005: Legacy Cleanup & Config Consolidation"
-author: "ai-agent"
-date: "2025-11-11"
+title: "2025 11 11 Plan 005 Legacy Cleanup Config Consolidation"
+date: "2025-12-06 18:08 (KST)"
 type: "implementation_plan"
-category: "architecture"
-status: "draft"
-version: "0.1"
-tags: ["implementation_plan", "architecture", "cleanup", "consolidation", "low-risk"]
-timestamp: "2025-11-11 02:00 KST"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Master Prompt
 

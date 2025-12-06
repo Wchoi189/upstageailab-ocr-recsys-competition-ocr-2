@@ -1,3 +1,15 @@
+---
+title: "2025 11 12 Plan 004 Revised Inference Consolidation"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
+---
+
+
+
 # PLAN-004 REVISED: Minimal Inference Service Consolidation
 
 **Created**: 2025-11-12

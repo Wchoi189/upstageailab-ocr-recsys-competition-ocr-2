@@ -1,3 +1,15 @@
+---
+title: "Bug 20251112 002 002 Mixed Precision Performance"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 ## 🐛 Bug Report: Mixed Precision Performance Degradation
 
 **Bug ID:** BUG-2025-002

@@ -1,18 +1,16 @@
 ---
-title: Chakra UI v3 Form Component Migration
-author: ai-agent
-timestamp: 2025-11-20 13:12 KST
-branch: feature/nextjs-console-migration
-status: draft
-tags:
-- chakra-ui
-- migration
-- form-components
-- nextjs
-- blocker-resolution
-type: implementation_plan
-category: development
+title: "Chakra Ui V3 Form Component Migration"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Master Prompt
 

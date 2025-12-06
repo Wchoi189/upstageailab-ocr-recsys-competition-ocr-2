@@ -1,3 +1,15 @@
+---
+title: "Bug 2025 10 09 001 Canonical Size Typeerror"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # Bug Report: canonical_size TypeError in Validation Pipeline
 
 **Bug ID**: BUG-2025-10-09-001

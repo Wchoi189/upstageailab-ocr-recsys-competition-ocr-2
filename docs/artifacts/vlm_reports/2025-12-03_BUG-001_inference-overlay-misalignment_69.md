@@ -1,13 +1,16 @@
 ---
-type: "bug_001_analysis"
-image_path: "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/logs/ui/image_69_test.png"
-image_id: "image_69_test.png"
-model: "google/gemma-3-27b-it:free"
-backend: "openrouter"
-timestamp: "2025-12-03T16:21:36.177760Z"
-tags: []
-status: "unknown"
+title: "2025 12 03 Bug 001 Inference Overlay Misalignment 69"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Analysis Result
 

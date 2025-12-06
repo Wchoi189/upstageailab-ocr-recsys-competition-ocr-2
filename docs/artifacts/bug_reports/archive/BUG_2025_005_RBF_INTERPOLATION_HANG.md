@@ -1,3 +1,15 @@
+---
+title: "2025 005 Rbf Interpolation Hang"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG_2025_005: RBF Interpolation Performance Hang
 
 **Date Reported**: 2025-10-18

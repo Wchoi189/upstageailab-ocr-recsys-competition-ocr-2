@@ -1,16 +1,16 @@
 ---
-title: "Out-of-Bounds Polygon Coordinates in Training Dataset"
-author: "ai-agent"
-date: "2025-11-10"
-timestamp: "2025-11-10 00:11 KST"
+title: "Bug 20251110 001 Out Of Bounds Polygon Coordinates In Training Dataset"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
 category: "troubleshooting"
-status: "open"
+status: "active"
 version: "1.0"
-tags: ['bug', 'data-quality', 'polygon-validation', 'training-error']
-bug_id: "BUG-20251110-001"
-severity: "High"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Bug Report: Out-of-Bounds Polygon Coordinates in Training Dataset
 

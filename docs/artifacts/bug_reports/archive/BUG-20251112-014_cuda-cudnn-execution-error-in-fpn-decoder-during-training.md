@@ -1,15 +1,16 @@
 ---
-title: "CUDA/cuDNN Execution Error in FPN Decoder During Training"
-date: "2025-11-12"
-timestamp: "2025-11-12 16:55 KST"
+title: "Bug 20251112 014 Cuda Cudnn Execution Error In Fpn Decoder During Training"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
-category: "bug"
-status: "new"
+category: "troubleshooting"
+status: "active"
 version: "1.0"
-tags: ["cuda", "cudnn", "training", "decoder", "critical"]
-bug_id: "BUG-20251112-014"
-severity: "Critical"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 ## Summary
 

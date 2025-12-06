@@ -1,17 +1,16 @@
 ---
-title: "Excessive Invalid Polygons Being Dropped During Training"
-author: "ai-agent"
-date: "2025-11-16"
-timestamp: "2025-11-16 01:56 KST"
+title: "Bug 20251116 001 Excessive Invalid Polygons During Training"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
-category: "data-quality"
-status: "open"
+category: "troubleshooting"
+status: "active"
 version: "1.0"
-tags: ['bug', 'data-quality', 'polygon-validation', 'training', 'high-severity']
-bug_id: "BUG-20251116-001"
-severity: "High"
-related_bugs: ["BUG-20251110-001"]
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Bug Report: Excessive Invalid Polygons Being Dropped During Training
 

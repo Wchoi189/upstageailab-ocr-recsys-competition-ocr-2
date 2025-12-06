@@ -1,18 +1,16 @@
 ---
-title: Chakra UI v3 Tab Component Migration & Build Fix
-author: ai-agent
-timestamp: 2025-11-20 13:33 KST
-branch: feature/nextjs-console-migration
-status: draft
-tags:
-- chakra-ui
-- tabs
-- migration
-- build-errors
-- nextjs
-type: implementation_plan
-category: development
+title: "Chakra Ui V3 Tab Component Migration & Build Fix"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Master Prompt
 

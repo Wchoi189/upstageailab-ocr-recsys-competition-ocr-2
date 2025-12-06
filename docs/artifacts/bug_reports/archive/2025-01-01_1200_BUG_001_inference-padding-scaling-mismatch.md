@@ -1,3 +1,15 @@
+---
+title: "001 Inference Padding Scaling Mismatch"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG-2025-001: Inference padding/scaling mismatch causes invalid boxes and 0 predictions
 
 Last Updated: 2025-10-21

@@ -1,13 +1,16 @@
 ---
+title: "2025 12 06 Design Toolkit Deprecation Roadmap"
+date: "2025-12-06 18:08 (KST)"
 type: "design"
 category: "architecture"
 status: "active"
 version: "1.0"
-date: "2025-12-06 14:30 (KST)"
-title: "AgentQMS Toolkit Deprecation Roadmap"
-tags: ['agentqms', 'toolkit', 'deprecation', 'migration', 'agent-tools']
-author: "ai-agent"
+tags: ['design', 'architecture', 'documentation']
 ---
+
+
+
+
 
 # AgentQMS Toolkit Deprecation Roadmap
 

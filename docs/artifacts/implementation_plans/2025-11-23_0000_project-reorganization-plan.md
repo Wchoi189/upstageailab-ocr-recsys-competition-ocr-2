@@ -1,9 +1,16 @@
 ---
-title: Project Reorganization Implementation Plan
-date: 2025-11-23
-status: Completed
-author: GitHub Copilot
+title: "Project Reorganization Plan"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Project Reorganization Implementation Plan
 

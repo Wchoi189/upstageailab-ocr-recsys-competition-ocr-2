@@ -1,13 +1,16 @@
 ---
-title: "Autonomous Overnight Tasks"
-author: "ai-agent"
-timestamp: "2025-11-20 01:30 KST"
-date: "2025-11-20"
-type: "autonomous_work_plan"
-category: "development"
-status: "ready"
-tags: ["autonomous", "testing", "code-quality", "documentation"]
+title: "Autonomous Tasks Overnight"
+date: "2025-12-06 18:08 (KST)"
+type: "implementation_plan"
+category: "planning"
+status: "active"
+version: "1.0"
+tags: ['implementation_plan', 'planning', 'documentation']
 ---
+
+
+
+
 
 # Autonomous Overnight Work Prompts
 

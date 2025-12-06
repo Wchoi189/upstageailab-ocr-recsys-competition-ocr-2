@@ -1,3 +1,15 @@
+---
+title: "Bug 20251112 010 Wandb Step Logging"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 # BUG REPORT: WandB Step Logging Non-Monotonic Warnings
 
 ## Issue Summary

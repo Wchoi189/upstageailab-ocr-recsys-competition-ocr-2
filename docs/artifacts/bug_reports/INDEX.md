@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
 # 🐛 Bug Reports
 
 Documentation of bugs, issues, and their resolution.

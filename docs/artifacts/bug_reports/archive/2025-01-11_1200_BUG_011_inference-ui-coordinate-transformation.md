@@ -1,3 +1,15 @@
+---
+title: "011 Inference Ui Coordinate Transformation"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 ## 🐛 Bug Report Template
 
 **Bug ID:** BUG-2025-011

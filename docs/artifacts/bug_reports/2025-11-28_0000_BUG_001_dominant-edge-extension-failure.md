@@ -1,12 +1,14 @@
 ---
-title: "Failure of Dominant Edge Extension Algorithm for Perspective Correction"
-date: 2025-11-28 04:30 (KST)
-status: Confirmed
-severity: High
-author: ai-agent
-bug_id: BUG-20251128-001
-tags: [perspective-correction, geometric-instability, failure-analysis]
+title: "001 Dominant Edge Extension Failure"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
 
 ## Summary
 The "Dominant Edge Extension" algorithm, designed to handle folded or torn document corners by extending infinite lines from dominant segments, failed to achieve any success (0/25) on the worst-case dataset. The failure stems from geometric instability where small angular errors in short segments are magnified when extended, and topological inconsistency where `approxPolyDP` rarely produces exactly 4 dominant segments.

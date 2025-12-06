@@ -1,3 +1,15 @@
+---
+title: "010 Empty Predictions Inference"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
+
+
 ## 🐛 Bug Report: Empty Predictions During Inference After Degenerate Polygon Filtering
 
 **Bug ID:** BUG-2025-010

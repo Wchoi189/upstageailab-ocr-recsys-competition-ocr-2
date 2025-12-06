@@ -1,111 +1,16 @@
 ---
+title: "002 Pil Image Transform Crash"
+date: "2025-12-06 18:08 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
 
-## 🐛 Bug Report
 
-**Bug ID:** BUG-2025-002
-**Date:** October 10, 2025
-**Reporter:** Development Team
-**Severity:** High (Training pipeline crash)
-**Status:** Identified - Fix Pending
 
-### Summary
-`AttributeError: 'Image' object has no attribute 'shape'` occurs in `transforms.py` line 42 when `preload_images=True` but `prenormalize_images=False`. The DBTransforms class expects numpy arrays with `.shape` attribute, but receives PIL Images instead.
-
-### Environment
-- **Pipeline Version:** Phase 6E (Tensor Caching)
-- **Components:** Dataset loader, DBTransforms, DataLoader workers
-- **Configuration:**
-  - `preload_images=True` (enabled in configs/data/base.yaml:31)
-  - `prenormalize_images=False` (not set, defaults to False)
-  - `cache_transformed_tensors=True` (Phase 6E feature)
-
-### Steps to Reproduce
-1. Enable RAM caching: `preload_images: true` in dataset config
-2. Ensure `prenormalize_images` is not set or set to `false`
-3. Run training with canonical data:
-   ```bash
-   HYDRA_FULL_ERROR=1 uv run python runners/train.py \
-     exp_name=pan_resnet18_polygons \
-     trainer.max_epochs=15 \
-     data=canonical \
-     model.component_overrides.decoder.name=pan_decoder \
-     logger.wandb.enabled=true \
-     trainer.log_every_n_steps=0
-   ```
-4. Observe crash during validation sanity check:
-   ```
-   AttributeError: 'Image' object has no attribute 'shape'. Did you mean: 'save'?
-   ```
-
-### Expected Behavior
-- Transforms should accept both PIL Images and numpy arrays
-- Or dataset should consistently pass numpy arrays to transforms
-- Training should complete without AttributeError
-
-### Actual Behavior
-```python
-File "ocr/datasets/transforms.py", line 42, in __call__
-  height, width = image.shape[:2]
-AttributeError: 'Image' object has no attribute 'shape'
-```
-
-**Stack Trace:**
-```
-File "ocr/datasets/base.py", line 307, in __getitem__
-  transformed = self.transform(image=image, polygons=polygons)
-
-File "ocr/datasets/transforms.py", line 42, in __call__
-  height, width = image.shape[:2]
-
-AttributeError: 'Image' object has no attribute 'shape'. Did you mean: 'save'?
-```
-
-### Root Cause Analysis
-
-**Type Confusion Between PIL Images and Numpy Arrays**
-
-The bug occurs due to inconsistent type handling across the image loading pipeline:
-
-#### Code Flow (Bug Path)
-
-1. **Image Caching** (`base.py:169`):
-   ```python
-   image_array = np.array(rgb_image)
-   self.image_cache[filename] = {
-       "image_array": image_array,  # ← Stored as numpy array
-       ...
-   }
-   ```
-
-2. **Cache Retrieval** (`base.py:220-232`):
-   ```python
-   if image_filename in self.image_cache:
-       cached_data = self.image_cache[image_filename]
-       image_array = cached_data["image_array"]
-       is_normalized = cached_data.get("is_normalized", False)
-
-       if is_normalized:
-           image = image_array  # numpy array
-       else:
-           image = Image.fromarray(image_array)  # ← Converted to PIL Image!
-   ```
-
-3. **Transform Call** (`base.py:307`):
-   ```python
-   transformed = self.transform(image=image, polygons=polygons)
-   # ← Passes PIL Image when is_normalized=False
-   ```
-
-4. **Transform Processing** (`transforms.py:42`):
-   ```python
-   def __call__(self, image, polygons):
-       height, width = image.shape[:2]  # ← CRASH: PIL Image has no .shape!
-   ```
-
-#### The Broken Logic
-
-| Configuration | Cache Type | Retrieved Type | Transform Expectation | Result |
-|--------------|------------|----------------|----------------------|--------|
+-----------|------------|----------------|----------------------|--------|
 | `prenormalize_images=True` | numpy float32 | numpy array | numpy array | ✅ Works |
 | `prenormalize_images=False` | numpy uint8 | **PIL Image** | numpy array | ❌ **Crashes** |
 | `preload_images=False` | None | PIL Image | numpy array | ❌ **Should crash but doesn't?** |

@@ -1,16 +1,16 @@
 ---
-title: "WandB Validation Images Show Black Background Due to PIL-OpenCV Color Format Mismatch"
-author: "ai-agent"
-timestamp: "2025-11-16 18:08 KST"
-branch: "main"
+title: "Bug 20251116 001 Wandb Validation Images Show Black Background Due To Pil Opencv Color Format Mismatch"
+date: "2025-12-06 18:08 (KST)"
 type: "bug_report"
 category: "troubleshooting"
-status: "open"
+status: "active"
 version: "1.0"
-tags: ['bug', 'wandb', 'validation', 'image-logging', 'opencv', 'pil', 'critical']
-bug_id: "BUG-20251116-001"
-severity: "Critical"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
+
+
 
 # Bug Report: WandB Validation Images Show Black Background Due to PIL-OpenCV Color Format Mismatch
 
