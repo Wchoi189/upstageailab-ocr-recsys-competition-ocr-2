@@ -160,6 +160,9 @@ class ArtifactValidator:
         # Strict mode controls validation strictness (default: True for strict validation)
         self.strict_mode = strict_mode
 
+        # Load excluded directories from settings
+        self.excluded_directories = self._load_excluded_directories()
+
         # Build artifact type mappings from rules or use builtins
         if self.rules and "artifact_types" in self.rules:
             self.valid_artifact_types = {}
@@ -208,6 +211,29 @@ class ArtifactValidator:
 
         # Extend with plugin-registered values
         self._load_plugin_extensions()
+
+    def _load_excluded_directories(self) -> list[str]:
+        """Load excluded directories from settings.yaml."""
+        try:
+            from AgentQMS.agent_tools.utils.config import load_config
+
+            config = load_config()
+            return config.get("validation", {}).get("excluded_directories", ["archive", "deprecated"])
+        except Exception:
+            # Fallback to sensible defaults if config loading fails
+            return ["archive", "deprecated"]
+
+    def _is_excluded_path(self, file_path: Path) -> bool:
+        """Check if a file path should be excluded from validation.
+        
+        Args:
+            file_path: Path to check (can be absolute or relative)
+            
+        Returns:
+            True if the path contains any excluded directory name
+        """
+        path_parts = file_path.parts
+        return any(excluded_dir in path_parts for excluded_dir in self.excluded_directories)
 
     def _load_plugin_extensions(self) -> None:
         """Load additional validation rules from plugin registry."""
@@ -724,6 +750,9 @@ class ArtifactValidator:
 
         for file_path in directory.rglob("*.md"):
             if file_path.is_file():
+                # Skip excluded directories (archive, deprecated, etc.)
+                if self._is_excluded_path(file_path):
+                    continue
                 result = self.validate_single_file(file_path, strict_mode)
                 results.append(result)
 

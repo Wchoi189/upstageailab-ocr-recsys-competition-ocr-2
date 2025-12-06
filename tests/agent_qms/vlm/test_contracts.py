@@ -1,15 +1,12 @@
 """Tests for Pydantic data contracts."""
 
-import pytest
-from pathlib import Path
 
+import pydantic
+import pytest
 from agent_qms.vlm.core.contracts import (
     AnalysisMode,
     AnalysisRequest,
     BackendConfig,
-    ImageData,
-    ImageFormat,
-    ProcessedImage,
 )
 
 
@@ -42,7 +39,7 @@ class TestBackendConfig:
 
     def test_invalid_backend_type(self):
         """Test invalid backend type raises error."""
-        with pytest.raises(Exception):  # Pydantic validation error
+        with pytest.raises(pydantic.ValidationError):
             BackendConfig(backend_type="invalid")
 
 

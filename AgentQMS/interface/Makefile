@@ -127,19 +127,19 @@ artifacts-repair-moves-preview: ## Preview manual move repairs
 
 # Validation and Compliance
 validate: ## Validate all artifacts
-	python ../agent_tools/compliance/validate_artifacts.py --all
+	uv run python ../agent_tools/compliance/validate_artifacts.py --all
 
 .PHONY: reindex
 reindex: ## Reindex artifacts
-	python ../agent_tools/documentation/reindex_artifacts.py
+	uv run python ../agent_tools/documentation/reindex_artifacts.py
 
 .PHONY: check-links
 check-links: ## Check Markdown links referring to artifacts
-	python ../agent_tools/documentation/check_links.py
+	uv run python ../agent_tools/documentation/check_links.py
 
 .PHONY: fix
 fix: ## Safe autofix pipeline
-	python ../agent_tools/utilities/autofix_artifacts.py $(ARGS)
+	uv run python ../agent_tools/utilities/autofix_artifacts.py $(ARGS)
 
 .PHONY: commit-fixes
 commit-fixes: ## Commit artifact fixes with standard message (usage: make commit-fixes MSG="description")
