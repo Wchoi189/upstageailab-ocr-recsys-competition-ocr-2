@@ -225,10 +225,10 @@ class ArtifactValidator:
 
     def _is_excluded_path(self, file_path: Path) -> bool:
         """Check if a file path should be excluded from validation.
-        
+
         Args:
             file_path: Path to check (can be absolute or relative)
-            
+
         Returns:
             True if the path contains any excluded directory name
         """

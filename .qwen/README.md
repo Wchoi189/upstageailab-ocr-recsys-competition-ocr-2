@@ -1,292 +1,181 @@
-# Qwen Coder + AgentQMS Integration
+# .qwen/ Directory - AgentQMS Integration
 
-**Purpose:** Consolidate Qwen Coder with AgentQMS for intelligent artifact management and quality assurance.
+**Last Updated**: 2025-12-06 22:30 (KST)  
+**Status**: Active - Organized schema established
 
----
+## Purpose
 
-## 🎯 Quick Start
+This directory contains Qwen AI agent integration files for AgentQMS. All tools here are **deprecated wrappers** - use AgentQMS tools directly instead.
 
-### Artifact Audit (Most Common)
-```bash
-# Audit and fix batch 2 artifacts (20 files)
-python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2
+## Directory Schema
 
-# Audit specific files
-python AgentQMS/agent_tools/audit/artifact_audit.py --files docs/artifacts/assessments/file1.md docs/artifacts/assessments/file2.md
-
-# Preview without modifying
-python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2 --dry-run
-
-# Report violations only
-python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2 --report
+```
+.qwen/
+├── README.md              # This file - directory schema and guidance
+├── QWEN.md                # Agent context and quick reference (ACTIVE)
+├── settings.json          # Qwen CLI settings (deprecated - see note)
+└── archive/               # Deprecated/obsolete files
+    ├── python/           # Old Python scripts (replaced by AgentQMS)
+    ├── shell/            # Old shell scripts (replaced by Makefile)
+    ├── README_old.md     # Original README (pre-schema)
+    ├── README_new.md     # Attempted update (stale references)
+    └── prompts.md        # Qwen-specific prompts
 ```
 
-### Artifact Validation
+## Active Files
+
+### QWEN.md (Agent Context)
+- **Purpose**: Quick reference for AI agents using AgentQMS
+- **Audience**: AI agents (Claude, ChatGPT, etc.)
+- **Content**: Current AgentQMS structure, commands, workflows
+- **Maintenance**: Update when AgentQMS structure changes
+
+### settings.json (Qwen CLI Config)
+- **Purpose**: Configuration for Qwen CLI tool
+- **Status**: Deprecated - Qwen CLI integration discontinued
+- **Action**: Keep for historical reference, do not update
+
+## Archived Files (Obsolete)
+
+All files below are **obsolete** and replaced by AgentQMS tools:
+
+### Python Scripts → Replaced by `AgentQMS/agent_tools/audit/artifact_audit.py`
+- ❌ `fix_frontmatter.py` - Use `artifact_audit.py --batch N`
+- ❌ `fix_batch1_batch2.py` - Use `artifact_audit.py --batch 1` or `--batch 2`
+- ❌ `final_batch_fix.py` - Use `artifact_audit.py --all`
+
+**Replacement:**
 ```bash
-# Validate all artifacts
-cd AgentQMS/interface && make validate
+# Old way (obsolete)
+python .qwen/fix_frontmatter.py --batch 2
 
-# Check compliance
-cd AgentQMS/interface && make compliance
-
-# Both together
-cd AgentQMS/interface && make validate && make compliance
-```
-
----
-
-## 📚 Available Tools
-
-### 1. **Artifact Audit Tool** (`AgentQMS/agent_tools/audit/artifact_audit.py`)
-**Purpose:** Audit and fix artifact compliance using AgentQMS tools.
-
-**What it does:**
-- Detects missing or broken frontmatter
-- Generates correct frontmatter using `FrontmatterGenerator`
-- Validates results using `ArtifactValidator`
-- Reports violations and compliance status
-- Fixes artifacts in-place with validation
-
-**Usage:**
-```bash
-python AgentQMS/agent_tools/audit/artifact_audit.py --batch N         # Audit & fix batch N
-python AgentQMS/agent_tools/audit/artifact_audit.py --files <paths>  # Audit & fix specific files
-python AgentQMS/agent_tools/audit/artifact_audit.py --all             # Audit & fix all artifacts
-python AgentQMS/agent_tools/audit/artifact_audit.py --dry-run         # Preview changes
-python AgentQMS/agent_tools/audit/artifact_audit.py --report          # Report only (no fixes)
-```
-
-**Exit codes:**
-- `0`: All files valid
-- `1`: Invalid files or errors
-
----
-
-### 2. **AgentQMS Frontmatter Generator**
-**Location:** `AgentQMS/toolkit/maintenance/add_frontmatter.py`
-
-**What it does:**
-- Analyzes file paths and content
-- Detects artifact type from directory structure
-- Generates complete frontmatter (title, date, type, category, status, tags)
-- Adds frontmatter to files missing it
-
-**Used by:** `consolidate.py` (no need to call directly)
-
----
-
-### 3. **AgentQMS Artifact Validator**
-**Location:** `AgentQMS/agent_tools/compliance/validate_artifacts.py`
-
-**What it does:**
-- Checks naming conventions (YYYY-MM-DD_HHMM_type_name.md)
-- Validates frontmatter structure and required fields
-- Verifies date format (YYYY-MM-DD HH:MM (KST))
-- Checks valid artifact types and categories
-- Reports detailed validation errors
-
-**Command line:**
-```bash
+# New way (current)
 cd AgentQMS/interface
-make validate        # Validate all artifacts
-make validate --all  # Same as above
-```
-
----
-
-## 🔄 Standard Workflows
-
-### Workflow 1: Audit and Fix Batch
-
-```bash
-# 1. Identify violations
-cd AgentQMS/interface && make validate
-
-# 2. Audit and fix the batch
+make audit-fix-batch BATCH=2
+# OR
 python AgentQMS/agent_tools/audit/artifact_audit.py --batch 2
-
-# 3. Verify all are compliant
-cd AgentQMS/interface && make validate
-
-# 4. Commit fixes
-git add docs/artifacts/
-git commit -m "AgentQMS Phase 5: batch 2 - artifact audit and compliance fixes"
 ```
 
-### Workflow 2: Manual Artifact Creation (When Needed)
+### Shell Scripts → Replaced by `AgentQMS/interface/Makefile`
+- ❌ `run.sh` - Echo-only wrapper, never executed Qwen properly
+- ❌ `run_improved.sh` - Attempted Qwen execution but had checkpointing issues
+- ❌ `manual_validate.sh` - Use `make validate` instead
+- ❌ `qwen-chat.sh` - Qwen CLI integration discontinued
 
+**Replacement:**
 ```bash
-# Use AgentQMS Makefile commands (NOT qwen)
+# Old way (obsolete)
+bash .qwen/run.sh validate
+
+# New way (current)
 cd AgentQMS/interface
-
-# Create implementation plan
-make create-plan NAME=my-plan TITLE="My Plan Title"
-
-# Create assessment
-make create-assessment NAME=my-assessment TITLE="Assessment Title"
-
-# Create bug report
-make create-bug-report NAME=my-bug TITLE="Bug Description"
-
-# Validate new artifact
 make validate
 ```
 
-### Workflow 3: Qwen Interactive Mode (Requires Enhancement)
+### Documentation → Consolidated into QWEN.md
+- ❌ `README_old.md` - Original README (replaced by this schema)
+- ❌ `README_new.md` - Contained stale references to consolidate.py
+- ❌ `prompts.md` - Qwen-specific prompts, no longer relevant
 
+## Migration Guide
+
+### If You Find References to Obsolete Files
+
+| Old Reference | New Replacement |
+|---------------|-----------------|
+| `.qwen/consolidate.py` | `AgentQMS/agent_tools/audit/artifact_audit.py` |
+| `.qwen/fix_*.py` | `artifact_audit.py` with appropriate flags |
+| `.qwen/run*.sh` | `cd AgentQMS/interface && make <target>` |
+| `.qwen/manual_validate.sh` | `make validate` |
+| `.qwen/README_new.md` | `.qwen/QWEN.md` |
+
+### AgentQMS Commands Reference
+
+**Audit & Fix:**
 ```bash
-# Currently not recommended - Qwen execution blocked
-# In future: ./.qwen/run.sh interactive "<task>"
-
-# For now, use AgentQMS tools directly or ask Copilot to implement fixes
+cd AgentQMS/interface
+make audit-fix-batch BATCH=1         # Preview batch 1
+make audit-fix-batch-apply BATCH=1   # Apply batch 1 fixes
+make audit-fix-all                   # Fix all artifacts
+make audit-report                    # Report violations
 ```
 
----
-
-## 🏗️ Architecture
-
-### Files in This Directory
-
-| File | Purpose | Status |
-|------|---------|--------|
-| `run.sh` | Qwen integration script | ⚠️ Legacy (echo-only) |
-| `settings.json` | Qwen config (validation enabled) | ✅ Enabled |
-| `QWEN.md` | Qwen documentation (reference) | 📖 Reference |
-| `prompts.md` | Pre-built prompts | 📖 Reference |
-| `README.md` | This documentation | 📖 Active |
-
-### AgentQMS Tools (in `/AgentQMS/`)
-
-- `agent_tools/audit/artifact_audit.py` - **Audit and fix artifacts** ✅ Active
-- `toolkit/maintenance/add_frontmatter.py` - Frontmatter generation (used by audit tool)
-- `agent_tools/compliance/validate_artifacts.py` - Validation (used by audit tool)
-
----
-
-## 📋 Batch Mappings
-
-### Batch 1 (Completed)
-10 assessment artifacts (2024-11-20_1430 through 2024-11-20_1730)
-- **Status:** ✅ Fixed and validated
-- **Compliance:** 100% pass
-
-### Batch 2 (In Progress)
-20 artifacts: 8 assessments + 12 bug reports (2024-11-20_1800 through 2024-11-20_2420)
-- **Status:** ⏳ Renamed, frontmatter needs fix
-- **Command:** `python .qwen/consolidate.py --batch 2`
-
-### Batches 3-6 (Pending)
-~70 more violations
-- **Status:** ❌ Not started
-- **Strategy:** Use `consolidate.py` with same workflow
-
----
-
-## 🔍 Troubleshooting
-
-### Issue: `consolidate.py` ImportError
-
-**Problem:** `ModuleNotFoundError: No module named 'toolkit.maintenance.add_frontmatter'`
-
-**Solution:**
-1. Ensure you're running from project root: `cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2`
-2. Check AgentQMS exists: `ls -la AgentQMS/`
-3. Run with full path: `python /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.qwen/consolidate.py --batch 2`
-
-### Issue: Validation Still Failing After Fix
-
-**Problem:** Files show as invalid after running `consolidate.py`
-
-**Cause:**
-- Date format: Must be `YYYY-MM-DD HH:MM (KST)`, not ISO format
-- Missing required fields: Check that all required fields are in frontmatter
-- Invalid status/category: Must match AgentQMS allowed values
-
-**Solution:**
-1. Run with `--validate-only` to see detailed errors: `python .qwen/consolidate.py --batch 2 --validate-only`
-2. Read error messages carefully (they specify what's wrong)
-3. Manually check file if needed: `head -30 docs/artifacts/assessments/filename.md`
-
-### Issue: File Not Found
-
-**Problem:** `⏭️  SKIP: filename (not found)`
-
-**Cause:** File path incorrect or batch mapping outdated
-
-**Solution:**
-1. Check file exists: `ls docs/artifacts/assessments/ | grep filename`
-2. Update batch mapping in `consolidate.py` if needed
-
----
-
-## 🎓 Key Concepts
-
-### Frontmatter Structure
-All artifacts require YAML frontmatter:
-```yaml
----
-title: "Artifact Title"
-date: "YYYY-MM-DD HH:MM (KST)"
-type: "assessment"          # or: implementation_plan, design, research, bug_report, etc.
-category: "evaluation"      # or: planning, architecture, research, troubleshooting, etc.
-status: "active"            # or: draft, inactive, archived
-version: "1.0"
-tags: ["tag1", "tag2"]
-branch: "main"
----
-```
-
-### Artifact Types
-- `implementation_plan` - Feature plans, milestones
-- `assessment` - Analysis, reviews, validation results
-- `design` - Architecture, design decisions
-- `research` - Investigation results, analysis
-- `bug_report` - Bug descriptions, defect tracking
-- `template` - Reusable templates for other artifacts
-
-### Status Values
-- `active` - Currently in use / relevant
-- `draft` - Work in progress
-- `inactive` - Archived / deprecated
-- `completed` - Task completed
-
----
-
-## 📞 When to Use What
-
-| Need | Tool | Command |
-|------|------|---------|
-| Audit and fix batch | `artifact_audit.py` | `python AgentQMS/agent_tools/audit/artifact_audit.py --batch N` |
-| Report violations | `artifact_audit.py` | `python AgentQMS/agent_tools/audit/artifact_audit.py --batch N --report` |
-| Check compliance | AgentQMS validate | `cd AgentQMS/interface && make validate` |
-| Create new artifact | AgentQMS Makefile | `cd AgentQMS/interface && make create-*` |
-| Preview changes | `artifact_audit.py` | `python AgentQMS/agent_tools/audit/artifact_audit.py --batch N --dry-run` |
-
----
-
-## ✅ Quality Standards
-
-Before merging:
+**Validation:**
 ```bash
-# 1. Audit & fix artifacts
-python AgentQMS/agent_tools/audit/artifact_audit.py --batch N
-
-# 2. Validate all
-cd AgentQMS/interface && make validate && make compliance
-
-# 3. Commit
-git add docs/artifacts/
-git commit -m "AgentQMS Phase 5: batch N - frontmatter fixes via consolidated tooling"
+cd AgentQMS/interface
+make validate                        # Validate all artifacts
+make compliance                      # Check compliance
+make boundary                        # Check boundaries
 ```
 
-**No manual .md edits** - Always use tooling for consistency.
+**Creation:**
+```bash
+cd AgentQMS/interface
+make create-plan NAME=my-plan TITLE="My Plan"
+make create-assessment NAME=my-assessment TITLE="Assessment"
+```
+
+## Cleanup Status
+
+### Archived (2025-12-06)
+
+**Python Scripts** (→ `archive/python/`):
+- `fix_frontmatter.py`
+- `fix_batch1_batch2.py`
+- `final_batch_fix.py`
+
+**Shell Scripts** (→ `archive/shell/`):
+- `run.sh`
+- `run_improved.sh`
+- `manual_validate.sh`
+- `qwen-chat.sh`
+
+**Documentation** (→ `archive/`):
+- `README_old.md` (original)
+- `README_new.md` (stale)
+- `prompts.md` (Qwen-specific)
+
+### Retained
+
+- `QWEN.md` - Active agent context
+- `settings.json` - Historical reference
+- `README.md` - This schema document
+
+## Notes for AI Agents
+
+**⚠️ Important:** If you encounter references to:
+- `.qwen/consolidate.py`
+- `.qwen/fix_*.py`
+- `.qwen/run*.sh`
+
+These are **obsolete**. Use AgentQMS tools instead:
+- Read: `AgentQMS/knowledge/agent/system.md`
+- Reference: `.qwen/QWEN.md`
+- Execute: `cd AgentQMS/interface && make <command>`
+
+## Qwen CLI Integration (Deprecated)
+
+**Status**: Discontinued due to:
+1. Checkpointing issues with Git detection
+2. Inconsistent command syntax across versions
+3. Better integration via VS Code Copilot and native tools
+
+**Replacement**: Use GitHub Copilot (Claude/GPT-4) with AgentQMS context bundles.
+
+## Schema Maintenance
+
+**Update Triggers:**
+- New files added to `.qwen/`
+- AgentQMS structure changes
+- Tool deprecations or replacements
+- Integration method changes
+
+**Update Process:**
+1. Document new file purpose and status
+2. Move obsolete files to `archive/`
+3. Update this README schema
+4. Update `.qwen/QWEN.md` if agent workflows change
 
 ---
 
-## 🔗 References
-
-- **AgentQMS SST:** `AgentQMS/knowledge/agent/system.md`
-- **Compliance Rules:** `AgentQMS/knowledge/agent/README.md`
-- **Architecture:** `.agentqms/state/architecture.yaml`
-- **Tool Catalog:** `.copilot/context/tool-catalog.md`
-- **Workflow Triggers:** `.copilot/context/workflow-triggers.yaml`
+**Questions?** See `AgentQMS/knowledge/agent/system.md` for full AgentQMS documentation.
