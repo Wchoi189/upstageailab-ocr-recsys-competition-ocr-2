@@ -3,7 +3,7 @@ title: "2025 11 11 Plan 001 Core Training Stabilization"
 date: "2025-12-06 18:08 (KST)"
 type: "implementation_plan"
 category: "planning"
-status: "active"
+status: "completed"
 version: "1.0"
 tags: ['implementation_plan', 'planning', 'documentation']
 ---

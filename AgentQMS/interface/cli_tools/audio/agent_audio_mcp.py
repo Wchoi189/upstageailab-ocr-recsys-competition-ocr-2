@@ -11,7 +11,6 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from agent.tools.audio.message_templates import (
     get_message,
     get_random_message,
@@ -20,6 +19,8 @@ from agent.tools.audio.message_templates import (
     suggest_message,
     validate_message,
 )
+
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 PROJECT_ROOT = ensure_project_root_on_sys_path()
 PLAY_AUDIO_PATH = PROJECT_ROOT / "AgentQMS" / "scripts" / "maintenance" / "play_audio.py"

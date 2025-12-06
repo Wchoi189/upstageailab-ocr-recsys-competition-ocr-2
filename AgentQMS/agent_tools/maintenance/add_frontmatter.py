@@ -346,7 +346,7 @@ def main():
         # Find all files missing frontmatter in the directory
         directory = Path(args.directory)
         file_paths = []
-        
+
         for file_path in directory.rglob("*.md"):
             if file_path.is_file() and file_path.name not in ["INDEX.md", "README.md", "MASTER_INDEX.md"]:
                 # Check if file is missing frontmatter

@@ -6,8 +6,8 @@ from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.toolkit.utils.paths import get_project_root
-from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.agent_tools.utils.paths import get_project_root
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 

@@ -21,7 +21,7 @@ def agent_feedback():
     ensure_project_root_on_sys_path()
 
     try:
-        from AgentQMS.toolkit.utilities.agent_feedback import main
+        from AgentQMS.agent_tools.utilities.agent_feedback import main
 
         main()
     except ImportError as e:
