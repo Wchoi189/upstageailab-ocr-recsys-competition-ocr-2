@@ -1,12 +1,14 @@
 ---
 title: "2025 12 03 Bug 001 Inference Overlay Misalignment Gemma1"
-date: "2025-12-06 18:08 (KST)"
+date: "2025-12-06 20:48 (KST)"
 type: "bug_report"
 category: "troubleshooting"
 status: "active"
 version: "1.0"
 tags: ['bug_report', 'troubleshooting']
 ---
+
+
 
 
 
