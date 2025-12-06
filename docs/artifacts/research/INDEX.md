@@ -1,29 +1,20 @@
----
-title: "Index"
-date: "2025-12-06 20:41 (KST)"
-type: "research"
-category: "research"
-status: "active"
-version: "1.0"
-tags: ['research', 'research', 'analysis']
----
+# Research
 
-# 🔬 Research
+Active research and development roadmaps.
 
-Research findings, investigations, and analysis.
-
-**Last Updated**: 2025-12-06 20:09:12
+**Last Updated**: 2025-12-07 01:32:42
 **Total Artifacts**: 1
 
 ## Active (1)
 
-- [AgentQMS & Tracking Database Integration Instructions](2025-12-06_0201_research-tracking-db-agentqms-integration.md) (📅 2025-12-06 02:01 (KS, 🔬 research) - The Tracking Database (`data/ops/tracking.db`) is a critical infrastructure component that AgentQMS tools must integrate with at two levels: 1. **Artifact Lifecycle**: When artifacts are created, vali...
+- [AgentQMS & Tracking Database Integration Instructions](2025-12-06_0201_research-tracking-db-agentqms-integration.md) (📅 2025-12-06 02:01 (KST), 📄 research) - The Tracking Database (`data/ops/tracking.db`) is a critical infrastructure component that AgentQMS 
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
 | Active | 1 |
+| Completed | 0 |
 
 ---
 

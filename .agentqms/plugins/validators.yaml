@@ -13,6 +13,7 @@ prefixes:
   CR_: change_requests/
   DR_: decision_records/
   SPEC_: specifications/
+  vlm_report_: vlm_reports/
 
 # Additional valid artifact types
 types:
@@ -20,6 +21,7 @@ types:
   - decision_record
   - specification
   - meeting_notes
+  - vlm_report
 
 # Additional valid categories
 categories:

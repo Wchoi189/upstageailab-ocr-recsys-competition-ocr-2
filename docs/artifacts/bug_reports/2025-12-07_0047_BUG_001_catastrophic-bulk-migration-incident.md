@@ -1,7 +1,7 @@
 ---
 type: "bug_report"
-category: "disaster_prevention"
-status: "resolved"
+category: "troubleshooting"
+status: "completed"
 severity: "critical"
 version: "1.0"
 tags: ['bug', 'issue', 'bulk-operations', 'data-loss', 'post-mortem']

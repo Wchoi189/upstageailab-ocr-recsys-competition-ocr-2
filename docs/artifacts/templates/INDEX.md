@@ -1,18 +1,17 @@
----
-title: "Index"
-date: "2025-12-06 20:41 (KST)"
-type: "template"
-category: "reference"
-status: "template"
-version: "1.0"
-tags: ['template', 'reference', 'reference']
----
+# Templates
 
-# 📋 Templates
+Active templates and development roadmaps.
 
-Reusable templates and guidelines for creating artifacts.
-
-**Last Updated**: 2025-12-06 20:09:12
+**Last Updated**: 2025-12-07 01:32:42
 **Total Artifacts**: 0
 
-*No artifacts found in this directory.*
+## Summary
+
+| Status | Count |
+|--------|-------|
+| Active | 0 |
+| Completed | 0 |
+
+---
+
+*This index is automatically generated. Do not edit manually.*

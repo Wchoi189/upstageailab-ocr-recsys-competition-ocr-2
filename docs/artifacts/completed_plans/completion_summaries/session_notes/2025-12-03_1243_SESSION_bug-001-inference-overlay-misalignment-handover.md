@@ -1,11 +1,11 @@
 ---
 title: "2025 12 03 Bug 001 Inference Overlay Misalignment Handover"
 date: "2025-12-06 18:09 (KST)"
-type: "bug_report"
+type: "session_note"
 category: "troubleshooting"
 status: "active"
 version: "1.0"
-tags: ['bug_report', 'troubleshooting']
+tags: ['session_note', 'troubleshooting', 'handover']
 ---
 
 
