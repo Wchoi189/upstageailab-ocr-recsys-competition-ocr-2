@@ -51,7 +51,7 @@ External Qwen AI agent executed `make artifacts-migrate ALL=1` on 2025-12-06, ca
 ```bash
 # BEFORE (valid or fixable):
 2025-11-11_2343_assessment-ai-documentation.md
-2025-01-20_1100_assessment-phase4-completion.md  
+2025-01-20_1100_assessment-phase4-completion.md
 INDEX.md
 
 # AFTER (broken):
@@ -84,12 +84,12 @@ INDEX.md
 4. **No Safety Limits**: Accepts `ALL=1` flag without any confirmation or file count limits
 5. **Wrong Tool Selection**: Qwen AI chose migration tool instead of audit tool (artifact_audit.py)
 
-**Location**: 
+**Location**:
 - `AgentQMS/agent_tools/utilities/legacy_migrator.py` - date logic bug
 - `AgentQMS/interface/Makefile` line 109-115 - artifacts-migrate target
 - No safeguards in place for bulk operations
 
-**Trigger**: 
+**Trigger**:
 - User asked external Qwen AI to "fix 10 compliance violations"
 - Qwen AI misunderstood task and executed bulk migration instead of audit
 - `ALL=1` flag processed all 103 files without confirmation

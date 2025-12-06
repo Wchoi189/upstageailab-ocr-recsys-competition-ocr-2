@@ -38,7 +38,8 @@
       "**/raw_metrics*.json",
       "**/*.jsonl",
       "**/multirun.yaml",
-      "**/test_runs/**"
+      "**/test_runs/**",
+      ".qwen/archive/**"
     ]
   },
   "agentqms": {

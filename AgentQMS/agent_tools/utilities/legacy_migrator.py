@@ -267,26 +267,26 @@ class LegacyArtifactMigrator:
             List of migration results
         """
         legacy_files = self.find_legacy_artifacts(directory=directory, limit=limit)
-        
+
         # DISASTER PREVENTION SAFEGUARD (added 2025-12-07 after catastrophic migration incident)
         # Reject bulk operations >30 files without explicit override flag
         if len(legacy_files) > 30 and autofix and not dry_run and not force_large_batch:
             print(f"\n🚨 SAFETY CHECK FAILED: Attempting to migrate {len(legacy_files)} files")
-            print(f"   This exceeds the 30-file safety threshold.")
-            print(f"   ")
-            print(f"   ⚠️  LESSON FROM 2025-12-06 CATASTROPHIC MIGRATION:")
-            print(f"      Bulk operation destroyed 103 artifact filenames by overwriting")
-            print(f"      all dates to present (2025-12-06_0000), losing all historical")
-            print(f"      context. This safeguard prevents similar disasters.")
-            print(f"   ")
-            print(f"   Options to proceed:")
-            print(f"     1. Use --limit 30 to process in safer batches")
-            print(f"     2. Use --dry-run to preview changes first")
-            print(f"     3. Add explicit override if you're absolutely certain")
-            print(f"   ")
-            print(f"   Aborting migration.")
+            print("   This exceeds the 30-file safety threshold.")
+            print("   ")
+            print("   ⚠️  LESSON FROM 2025-12-06 CATASTROPHIC MIGRATION:")
+            print("      Bulk operation destroyed 103 artifact filenames by overwriting")
+            print("      all dates to present (2025-12-06_0000), losing all historical")
+            print("      context. This safeguard prevents similar disasters.")
+            print("   ")
+            print("   Options to proceed:")
+            print("     1. Use --limit 30 to process in safer batches")
+            print("     2. Use --dry-run to preview changes first")
+            print("     3. Add explicit override if you're absolutely certain")
+            print("   ")
+            print("   Aborting migration.")
             return []
-        
+
         results = []
 
         for filepath in legacy_files:
