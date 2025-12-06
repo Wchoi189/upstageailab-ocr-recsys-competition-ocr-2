@@ -51,12 +51,12 @@ from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 ensure_project_root_on_sys_path()
 
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator  # noqa: E402
+from AgentQMS.agent_tools.utils.paths import ensure_within_project, get_project_root
 
 
 def load_artifact_rules() -> dict[str, Any] | None:
     """Load artifact rules from the YAML schema file."""
     try:
-        from AgentQMS.agent_tools.utils.paths import get_project_root
         rules_path = get_project_root() / "AgentQMS" / "knowledge" / "agent" / "artifact_rules.yaml"
         if rules_path.exists():
             with open(rules_path, encoding="utf-8") as f:
@@ -143,14 +143,13 @@ class ArtifactValidator:
         if artifacts_root is None:
             from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
 
-            self.artifacts_root = get_artifacts_dir()
+            self.artifacts_root = get_artifacts_dir().resolve()
         else:
             artifacts_root_path = Path(artifacts_root)
-            if artifacts_root_path.is_absolute():
-                self.artifacts_root = artifacts_root_path
-            else:
-                from AgentQMS.agent_tools.utils.paths import get_project_root
-                self.artifacts_root = get_project_root() / artifacts_root_path
+            if not artifacts_root_path.is_absolute():
+                artifacts_root_path = get_project_root() / artifacts_root_path
+
+            self.artifacts_root = ensure_within_project(artifacts_root_path.resolve())
 
         self.violations = []
 
@@ -1010,6 +1009,7 @@ def main():
     # Determine strict mode (inverse of lenient)
     strict_mode = not args.lenient_plugins
     validator = ArtifactValidator(args.artifacts_root, strict_mode=strict_mode)
+    artifacts_root = validator.artifacts_root
 
     if args.files:
         # Handle positional arguments (from pre-commit hooks passing explicit files)
@@ -1024,7 +1024,7 @@ def main():
         # Validate only staged files under the artifacts root (git required)
         import subprocess
 
-        rel_artifacts_root = Path(args.artifacts_root)
+        rel_artifacts_root = Path(artifacts_root)
         results = []
 
         try:
