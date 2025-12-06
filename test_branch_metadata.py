@@ -7,7 +7,7 @@ from pathlib import Path
 # Add AgentQMS to path
 sys.path.insert(0, str(Path(__file__).parent))
 
-from AgentQMS.toolkit.core.artifact_templates import ArtifactTemplates
+from AgentQMS.agent_tools.core.artifact_templates import ArtifactTemplates
 
 
 def test_branch_metadata():

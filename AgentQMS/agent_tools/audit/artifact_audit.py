@@ -33,7 +33,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
     from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
-    from AgentQMS.toolkit.maintenance.add_frontmatter import FrontmatterGenerator
+    from AgentQMS.agent_tools.maintenance.add_frontmatter import FrontmatterGenerator
 except ImportError as e:
     print(f"❌ Error importing AgentQMS tools: {e}")
     print("   Make sure you're running from project root")

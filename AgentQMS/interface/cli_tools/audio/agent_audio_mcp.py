@@ -11,7 +11,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from agent.tools.audio.message_templates import (
     get_message,
     get_random_message,
