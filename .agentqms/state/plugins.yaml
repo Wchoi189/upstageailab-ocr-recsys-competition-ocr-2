@@ -1,10 +1,10 @@
 metadata:
-  generated_at: '2025-12-06T11:51:32.293652+00:00'
+  generated_at: '2025-12-06T11:54:45.370666+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
-  framework: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
-  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
+  framework: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
+  project: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
 plugins_loaded:
   artifact_types:
   - change_request
@@ -16,28 +16,28 @@ plugin_metadata:
   type: artifact_type
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+  path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
 - name: validators
   type: validator
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
+  path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
 - name: security-review
   type: context_bundle
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
+  path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
 validation_errors:
-- path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
+- path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
   type: artifact_type
   error: 'Additional properties are not allowed (''allowed_categories'' was unexpected)
     (path: [''validation''])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
-- path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+  schema_path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
+- path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
   type: artifact_type
   error: 'Additional properties are not allowed (''instructions'', ''tools'' were
     unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
+  schema_path: /home/runner/work/upstageailab-ocr-recsys-competition-ocr-2/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
 resolved:
   artifact_types:
     change_request:
