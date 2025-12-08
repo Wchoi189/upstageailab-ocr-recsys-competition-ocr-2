@@ -27,11 +27,11 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **AgentQM
 # Living Implementation Blueprint: AgentQMS Manager Dashboard Integration Testing
 
 ## Progress Tracker
-- **STATUS:** Phase 0 - Sanity Check Complete
-- **CURRENT STEP:** Phase 1, Task 1.1 - Backend Bridge Verification
-- **LAST COMPLETED TASK:** Documentation recovery from Phase 1-2 archive
-- **NEXT TASK:** Verify backend bridge implementation status in `AgentQMS/agent_tools/bridge/`
-- **BRANCH STRATEGY:** Create `feature/agentqms-dashboard-integration` before Phase 1 implementation
+- **STATUS:** Phase 4 - Frontend Assessment
+- **CURRENT STEP:** Phase 4, Task 4.1 - Frontend Repository Assessment
+- **LAST COMPLETED TASK:** Task 3.2 - CRUD Workflow Testing
+- **NEXT TASK:** Assess frontend codebase and prepare for integration
+- **BRANCH STRATEGY:** Working on `feature/agentqms-dashboard-integration`
 
 ### Implementation Outline (Checklist)
 
@@ -45,59 +45,70 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **AgentQM
    - [x] Create implementation plan artifact: `2025-12-08_0231_implementation_plan_dashboard-integration-testing.md`
 
 #### **Phase 1: Backend Foundation (Week 1-2)**
-1. [ ] **Task 1.1: Backend Bridge Verification**
-   - [ ] Check existence of `AgentQMS/agent_tools/bridge/server.py`
-   - [ ] Check existence of `AgentQMS/agent_tools/bridge/fs_utils.py`
-   - [ ] Verify FastAPI/Uvicorn dependencies in `pyproject.toml`
-   - [ ] Review implementation against `docs/agentqms-manager-dashboard/DATA_CONTRACTS.md`
-   - [ ] Document gaps between spec and implementation
+1. [x] **Task 1.0: Project Restructuring**
+   - [x] Create `apps/agentqms-dashboard/frontend` and `apps/agentqms-dashboard/backend`
+   - [x] Move frontend files to `apps/agentqms-dashboard/frontend`
+   - [x] Move backend bridge files to `apps/agentqms-dashboard/backend`
+   - [x] Clean up root `agentqms-manager-dashboard` directory
 
-2. [ ] **Task 1.2: API Contract Modernization**
-   - [ ] Update `DATA_CONTRACTS.md` from 2024-05-23 to align with AgentQMS v0.3.1
-   - [ ] Add artifact schema definitions (implementation_plan, assessment, audit, bug_report)
-   - [ ] Define authentication/authorization strategy
-   - [ ] Document CORS configuration for development
-   - [ ] Version API endpoints (v1 namespace)
+2. [x] **Task 1.1: Backend Bridge Verification**
+   - [x] Check existence of `apps/agentqms-dashboard/backend/server.py` (Recreated)
+   - [x] Check existence of `apps/agentqms-dashboard/backend/fs_utils.py` (Recreated)
+   - [x] Verify FastAPI/Uvicorn dependencies in `apps/agentqms-dashboard/backend/requirements.txt`
+   - [x] Review implementation against `docs/agentqms-manager-dashboard/DATA_CONTRACTS.md` (Implemented based on `bridgeService.ts`)
+   - [x] Document gaps between spec and implementation (Bridge logic implemented, Tool execution pending)
 
-3. [ ] **Task 1.3: Feature Branch Setup**
-   - [ ] Create branch `feature/agentqms-dashboard-integration` from `main`
-   - [ ] Configure branch protection rules (require PR, passing tests)
-   - [ ] Update `.github/workflows/` to run tests on feature branch
-   - [ ] Document branch strategy in implementation plan
+3. [x] **Task 1.2: API Contract Modernization**
+   - [x] Update `DATA_CONTRACTS.md` (renamed to `api/2025-12-08-1430_api-contracts-spec.md`) to align with AgentQMS v0.3.1
+   - [x] Add artifact schema definitions (implementation_plan, assessment, audit, bug_report)
+   - [x] Define authentication/authorization strategy (Local/API Key)
+   - [x] Document CORS configuration for development
+   - [x] Version API endpoints (v1 namespace)
+
+4. [x] **Task 1.3: Feature Branch Setup**
+   - [x] Create branch `feature/agentqms-dashboard-integration` from `main`
+   - [x] Configure branch protection rules (Documented)
+   - [x] Update `.github/workflows/` to run tests on feature branch (Created `agentqms-dashboard-ci.yml`)
+   - [x] Document branch strategy in implementation plan
 
 #### **Phase 2: API Implementation (Week 2-3)**
-4. [ ] **Task 2.1: Artifact Management API Endpoints**
-   - [ ] Create `apps/backend/routes/artifacts.py` router
-   - [ ] Implement `GET /api/v1/artifacts/list` with filtering (type, status, date range)
-   - [ ] Implement `GET /api/v1/artifacts/{id}` for reading single artifact
-   - [ ] Implement `POST /api/v1/artifacts` for creating artifacts via API
-   - [ ] Implement `PUT /api/v1/artifacts/{id}` for updating artifacts
-   - [ ] Implement `DELETE /api/v1/artifacts/{id}` for deleting artifacts
-   - [ ] Add request/response Pydantic models with validation
+4. [x] **Task 2.1: Artifact Management API Endpoints**
+   - [x] Create `apps/agentqms-dashboard/backend/routes/artifacts.py` router
+   - [x] Implement `GET /api/v1/artifacts` with filtering
+   - [x] Implement `GET /api/v1/artifacts/{id}`
+   - [x] Implement `POST /api/v1/artifacts`
+   - [x] Implement `PUT /api/v1/artifacts/{id}`
+   - [x] Implement `DELETE /api/v1/artifacts/{id}`
+   - [x] Add request/response Pydantic models
 
-5. [ ] **Task 2.2: Compliance & Tracking Endpoints**
-   - [ ] Implement `GET /api/v1/artifacts/compliance` for validation status
-   - [ ] Expose `validate_artifacts.py` functionality via REST
-   - [ ] Implement `GET /api/v1/tracking/status` for tracking database access
-   - [ ] Add artifact metadata endpoints (tags, categories, statistics)
-   - [ ] Implement search/filter operations with query parameters
+5. [x] **Task 2.2: Compliance & Tracking Endpoints**
+   - [x] Implement `GET /api/v1/compliance/validate`
+   - [x] Expose `validate_artifacts.py` functionality via REST
+   - [ ] Implement `GET /api/v1/tracking/status` (Deferred)
+   - [ ] Add artifact metadata endpoints (tags, categories, statistics) (Deferred)
+   - [ ] Implement search/filter operations with query parameters (Covered by Artifacts API)
 
-6. [ ] **Task 2.3: Bridge Server Integration**
-   - [ ] Integrate artifact API with existing bridge server
-   - [ ] Configure CORS for localhost:3000, localhost:5173, localhost:8080
-   - [ ] Add health check endpoint `GET /api/v1/health`
-   - [ ] Add version endpoint `GET /api/v1/version`
-   - [ ] Setup logging and error handling middleware
+6. [x] **Task 2.3: Bridge Server Integration**
+   - [x] Integrate artifact API with existing bridge server
+   - [x] Configure CORS for localhost:3000, localhost:5173, localhost:8080
+   - [x] Add health check endpoint `GET /api/v1/health`
+   - [x] Add version endpoint `GET /api/v1/version`
+   - [x] Setup logging and error handling middleware
 
 #### **Phase 3: Integration Testing (Week 3-4)**
-7. [ ] **Task 3.1: Contract Testing**
-   - [ ] Create `tests/integration/dashboard/test_artifact_api_contracts.py`
-   - [ ] Test request schema validation (Pydantic models)
-   - [ ] Test response schema validation (JSON structure)
-   - [ ] Test error handling (400, 404, 500 responses)
-   - [ ] Test pagination and filtering parameters
+7. [x] **Task 3.1: Contract Testing**
+   - [x] Create `tests/integration/dashboard/test_api.py`
+   - [x] Test request schema validation (Pydantic models)
+   - [x] Test response schema validation (JSON structure)
+   - [x] Test error handling (400, 404, 500 responses)
+   - [x] Test pagination and filtering parameters
 
-8. [ ] **Task 3.2: CRUD Workflow Testing**
+8. [x] **Task 3.2: CRUD Workflow Testing**
+   - [x] Test full lifecycle: Create -> Read -> Update -> Delete
+   - [x] Verify file system changes match API operations
+   - [x] Test compliance validation execution
+
+#### **Phase 4: Frontend Assessment (Week 4)**
    - [ ] Test artifact creation workflow (POST → validate → confirm)
    - [ ] Test artifact read operations (GET by ID, GET list with filters)
    - [ ] Test artifact updates (PUT with validation)
