@@ -1,12 +1,14 @@
+import os
+import sys
+
 import pytest
 from fastapi.testclient import TestClient
-import sys
-import os
 
 # Add backend to path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../apps/agentqms-dashboard/backend")))
 
 from server import app
+
 
 @pytest.fixture
 def client():
@@ -77,7 +79,7 @@ def test_artifact_lifecycle(client):
     assert response.status_code == 200
     updated = response.json()
     assert updated["status"] == "active"
-    
+
     # Verify content update via Get
     response = client.get(f"/api/v1/artifacts/{artifact_id}")
     assert response.json()["content"] == "# Updated Content"
@@ -85,7 +87,7 @@ def test_artifact_lifecycle(client):
     # 5. Delete (Archive)
     response = client.delete(f"/api/v1/artifacts/{artifact_id}")
     assert response.status_code == 200
-    
+
     # 6. Verify Gone (or Archived)
     # The API returns 404 if not found in active folders
     response = client.get(f"/api/v1/artifacts/{artifact_id}")

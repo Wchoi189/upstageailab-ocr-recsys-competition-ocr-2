@@ -2,7 +2,9 @@
 import React, { useState } from 'react';
 import { ShieldCheck, AlertTriangle, CheckCircle, Loader2, ArrowRight, Terminal, Wand2 } from 'lucide-react';
 import { auditDocumentation } from '../services/aiService';
+import { bridgeService } from '../services/bridgeService';
 import { AuditResponse, AuditToolConfig } from '../types';
+import TrackingStatusComponent from './TrackingStatus';
 
 // Mock Tool Definitions based on 'AgentQMS/agent_tools/audit/*.py'
 const AUDIT_TOOLS: AuditToolConfig[] = [
@@ -34,7 +36,7 @@ const AUDIT_TOOLS: AuditToolConfig[] = [
 
 const FrameworkAuditor: React.FC = () => {
   const [mode, setMode] = useState<'ai' | 'tool'>('tool');
-  
+
   // AI State
   const [inputContent, setInputContent] = useState('');
   const [isAuditing, setIsAuditing] = useState(false);
@@ -49,7 +51,7 @@ const FrameworkAuditor: React.FC = () => {
     if (!inputContent.trim()) return;
     setIsAuditing(true);
     setResult(null);
-    
+
     try {
       const data = await auditDocumentation(inputContent, 'Generic');
       setResult(data);
@@ -81,6 +83,30 @@ const FrameworkAuditor: React.FC = () => {
       updateToolCommand(selectedTool, newArgs);
   };
 
+  const [toolOutput, setToolOutput] = useState<{tool: string, output: string, error?: string} | null>(null);
+  const [runningTool, setRunningTool] = useState<string | null>(null);
+
+  const runValidationTool = async (toolId: string) => {
+    setRunningTool(toolId);
+    setToolOutput(null);
+    try {
+      const result = await bridgeService.executeTool(toolId, {});
+      setToolOutput({
+        tool: toolId,
+        output: result.stdout,
+        error: result.exit_code !== 0 ? result.stderr : undefined
+      });
+    } catch (err) {
+      setToolOutput({
+        tool: toolId,
+        output: '',
+        error: err instanceof Error ? err.message : 'Unknown error'
+      });
+    } finally {
+      setRunningTool(null);
+    }
+  };
+
   return (
     <div className="h-full flex flex-col">
       <div className="mb-6 flex justify-between items-end">
@@ -89,18 +115,65 @@ const FrameworkAuditor: React.FC = () => {
             <p className="text-slate-400">Validate artifacts using AI Intelligence or Local Python Tools.</p>
         </div>
         <div className="flex bg-slate-800 rounded-lg p-1 border border-slate-700">
-            <button 
+            <button
                 onClick={() => setMode('ai')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-all ${mode === 'ai' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
             >
                 <Wand2 size={16} /> AI Analysis
             </button>
-            <button 
+            <button
                 onClick={() => setMode('tool')}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded text-sm transition-all ${mode === 'tool' ? 'bg-blue-600 text-white shadow' : 'text-slate-400 hover:text-slate-200'}`}
             >
                 <Terminal size={16} /> Tool Runner
             </button>
+        </div>
+      </div>
+
+      {/* Quick Actions Bar */}
+      <div className="bg-slate-800 p-4 rounded-xl border border-slate-700 mb-6">
+        <h3 className="text-sm font-semibold text-slate-300 mb-3">Quick Validation</h3>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+          <button
+            onClick={() => runValidationTool('validate')}
+            disabled={runningTool !== null}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-500 disabled:bg-slate-700 text-white rounded-lg transition-colors"
+          >
+            {runningTool === 'validate' ? <Loader2 className="animate-spin" size={16} /> : <CheckCircle size={16} />}
+            Validate All
+          </button>
+          <button
+            onClick={() => runValidationTool('compliance')}
+            disabled={runningTool !== null}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-purple-600 hover:bg-purple-500 disabled:bg-slate-700 text-white rounded-lg transition-colors"
+          >
+            {runningTool === 'compliance' ? <Loader2 className="animate-spin" size={16} /> : <ShieldCheck size={16} />}
+            Compliance Check
+          </button>
+          <button
+            onClick={() => runValidationTool('boundary')}
+            disabled={runningTool !== null}
+            className="flex items-center justify-center gap-2 px-4 py-3 bg-green-600 hover:bg-green-500 disabled:bg-slate-700 text-white rounded-lg transition-colors"
+          >
+            {runningTool === 'boundary' ? <Loader2 className="animate-spin" size={16} /> : <Terminal size={16} />}
+            Boundary Check
+          </button>
+        </div>
+        {toolOutput && (
+          <div className="mt-4 bg-slate-900 border border-slate-700 rounded-lg p-4 max-h-60 overflow-y-auto">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-semibold text-slate-400">Output: {toolOutput.tool}</span>
+              {toolOutput.error && <AlertTriangle size={14} className="text-red-400" />}
+            </div>
+            <pre className="text-xs text-slate-300 font-mono whitespace-pre-wrap">
+              {toolOutput.error || toolOutput.output || '(No output)'}
+            </pre>
+          </div>
+        )}
+
+        {/* Tracking Status Section */}
+        <div className="mt-6 bg-slate-800 p-4 rounded-xl border border-slate-700">
+          <TrackingStatusComponent />
         </div>
       </div>
 
@@ -204,8 +277,8 @@ const FrameworkAuditor: React.FC = () => {
                                     setGeneratedCommand(tool.command);
                                 }}
                                 className={`w-full text-left p-3 rounded-lg border transition-all ${
-                                    selectedTool.id === tool.id 
-                                    ? 'bg-blue-600/20 border-blue-500 text-white' 
+                                    selectedTool.id === tool.id
+                                    ? 'bg-blue-600/20 border-blue-500 text-white'
                                     : 'bg-slate-900 border-slate-800 text-slate-400 hover:bg-slate-800'
                                 }`}
                               >
@@ -234,8 +307,8 @@ const FrameworkAuditor: React.FC = () => {
                                           <label className="block text-xs font-medium text-slate-300 mb-1">
                                               {arg.name} <span className="text-slate-600">({arg.flag})</span>
                                           </label>
-                                          <input 
-                                              type="text" 
+                                          <input
+                                              type="text"
                                               className="w-full bg-slate-950 border border-slate-800 rounded px-3 py-2 text-sm text-white focus:border-blue-500 focus:outline-none"
                                               placeholder={`Enter ${arg.name}...`}
                                               onChange={(e) => handleArgChange(arg.name, e.target.value)}
@@ -252,7 +325,7 @@ const FrameworkAuditor: React.FC = () => {
                               <code className="flex-1 bg-black rounded-lg p-4 font-mono text-green-400 text-sm border border-slate-800">
                                   {generatedCommand}
                               </code>
-                              <button 
+                              <button
                                 onClick={() => {
                                     navigator.clipboard.writeText(generatedCommand);
                                     alert('Command copied! Run this in your terminal.');

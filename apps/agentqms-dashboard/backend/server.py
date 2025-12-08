@@ -88,16 +88,75 @@ async def write_file(request: WriteRequest):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/tracking/status")
+async def get_tracking_status(kind: str = Query("all", description="Kind: plan, experiment, debug, refactor, or all")):
+    """Get tracking database status for plans, experiments, debug sessions, or refactors."""
+    try:
+        from AgentQMS.agent_tools.utilities.tracking.query import get_status
+
+        status_text = get_status(kind)
+        return {
+            "kind": kind,
+            "status": status_text,
+            "success": True
+        }
+    except Exception as e:
+        return {
+            "kind": kind,
+            "status": "",
+            "success": False,
+            "error": str(e)
+        }
+
 @app.post("/tools/exec")
 async def execute_tool(request: ToolExecRequest):
-    """Execute a tool (Placeholder)."""
-    # This needs to be connected to the AgentQMS tool system
-    return {
-        "tool_id": request.tool_id,
-        "exit_code": 0,
-        "stdout": "Tool execution not yet implemented in bridge.",
-        "stderr": ""
+    """Execute an AgentQMS tool via make command."""
+    import subprocess
+
+    # Map tool IDs to make targets
+    tool_commands = {
+        "validate": ["make", "-C", "AgentQMS/interface", "validate"],
+        "compliance": ["make", "-C", "AgentQMS/interface", "compliance"],
+        "boundary": ["make", "-C", "AgentQMS/interface", "boundary"],
     }
+
+    if request.tool_id not in tool_commands:
+        return {
+            "tool_id": request.tool_id,
+            "exit_code": 1,
+            "stdout": "",
+            "stderr": f"Unknown tool_id: {request.tool_id}. Available: {list(tool_commands.keys())}"
+        }
+
+    try:
+        result = subprocess.run(
+            tool_commands[request.tool_id],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            cwd=os.path.abspath(".")
+        )
+
+        return {
+            "tool_id": request.tool_id,
+            "exit_code": result.returncode,
+            "stdout": result.stdout,
+            "stderr": result.stderr
+        }
+    except subprocess.TimeoutExpired:
+        return {
+            "tool_id": request.tool_id,
+            "exit_code": 124,
+            "stdout": "",
+            "stderr": "Tool execution timed out after 30 seconds"
+        }
+    except Exception as e:
+        return {
+            "tool_id": request.tool_id,
+            "exit_code": 1,
+            "stdout": "",
+            "stderr": str(e)
+        }
 
 if __name__ == "__main__":
     import uvicorn

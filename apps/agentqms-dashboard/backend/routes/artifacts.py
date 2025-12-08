@@ -156,7 +156,20 @@ async def create_artifact(artifact: ArtifactCreate):
     metadata = artifact.dict(exclude={"content"}, exclude_none=True)
     metadata["date"] = now.strftime("%Y-%m-%d %H:%M (KST)") # Mocking KST for now
 
-    post = frontmatter.Post(artifact.content, **metadata)
+    content_body = artifact.content
+    # Check if content already has frontmatter and parse it
+    if artifact.content.strip().startswith("---"):
+        try:
+            existing_post = frontmatter.loads(artifact.content)
+            # Merge metadata: content metadata overrides form metadata if present
+            if existing_post.metadata:
+                metadata.update(existing_post.metadata)
+            content_body = existing_post.content
+        except Exception:
+            # If parsing fails, treat as raw content
+            pass
+
+    post = frontmatter.Post(content_body, **metadata)
 
     try:
         os.makedirs(os.path.dirname(file_path), exist_ok=True)

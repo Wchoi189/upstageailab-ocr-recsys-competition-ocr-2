@@ -34,6 +34,48 @@ export interface ToolExecutionResult {
   stderr: string;
 }
 
+// --- New Interfaces for API v1 ---
+
+export interface Artifact {
+  id: string;
+  type: 'implementation_plan' | 'assessment' | 'audit' | 'bug_report';
+  title: string;
+  status: string;
+  path: string;
+  created_at: string;
+  content?: string; // Content might be included in detail view
+  frontmatter?: any;
+}
+
+export interface TrackingStatus {
+  kind: string;
+  status: string;
+  success: boolean;
+  error?: string;
+}
+
+export interface ArtifactListResponse {
+  items: Artifact[];
+  total: number;
+}
+
+export interface ArtifactCreate {
+  type: 'implementation_plan' | 'assessment' | 'audit' | 'bug_report';
+  title: string;
+  content: string;
+}
+
+export interface ArtifactUpdate {
+  content?: string;
+  frontmatter_updates?: Record<string, any>;
+}
+
+export interface ComplianceResult {
+  status: string;
+  violations?: any[];
+  // Add other fields as needed based on actual response
+}
+
 const API_URL = APP_CONFIG.API.BRIDGE_URL;
 
 async function fetchJson<T>(endpoint: string, options?: RequestInit): Promise<T> {
@@ -95,11 +137,93 @@ export const bridgeService = {
       body: JSON.stringify({ tool_id, args }),
     });
   },
-  
+
   /**
    * Get the Registry Index.
    */
   getRegistry: async (): Promise<any> => {
       return fetchJson<any>('/registry/index');
+  },
+
+  // --- API v1 Methods ---
+
+  /**
+   * Get System Health
+   */
+  getHealth: async (): Promise<{ status: string }> => {
+    return fetchJson<{ status: string }>('/api/v1/health');
+  },
+
+  /**
+   * Get System Version
+   */
+  getVersion: async (): Promise<{ version: string }> => {
+    return fetchJson<{ version: string }>('/api/v1/version');
+  },
+
+  /**
+   * List Artifacts
+   */
+  listArtifacts: async (params?: { type?: string; status?: string; limit?: number }): Promise<ArtifactListResponse> => {
+    const queryParams = new URLSearchParams();
+    if (params?.type) queryParams.append('type', params.type);
+    if (params?.status) queryParams.append('status', params.status);
+    if (params?.limit) queryParams.append('limit', params.limit.toString());
+
+    return fetchJson<ArtifactListResponse>(`/api/v1/artifacts?${queryParams.toString()}`);
+  },
+
+  /**
+   * Get Artifact Details
+   */
+  getArtifact: async (id: string): Promise<Artifact> => {
+    return fetchJson<Artifact>(`/api/v1/artifacts/${id}`);
+  },
+
+  /**
+   * Create New Artifact
+   */
+  createArtifact: async (data: ArtifactCreate): Promise<Artifact> => {
+    return fetchJson<Artifact>('/api/v1/artifacts', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Update Artifact
+   */
+  updateArtifact: async (id: string, data: ArtifactUpdate): Promise<Artifact> => {
+    return fetchJson<Artifact>(`/api/v1/artifacts/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+  },
+
+  /**
+   * Delete (Archive) Artifact
+   */
+  deleteArtifact: async (id: string): Promise<void> => {
+    return fetchJson<void>(`/api/v1/artifacts/${id}`, {
+      method: 'DELETE',
+    });
+  },
+
+  /**
+   * Run Compliance Validation
+   */
+  validateCompliance: async (target: string = 'all'): Promise<ComplianceResult> => {
+    const params = new URLSearchParams({ target });
+    return fetchJson<ComplianceResult>(`/api/v1/compliance/validate?${params.toString()}`);
+  },
+
+  /**
+   * Get Tracking Database Status
+   */
+  getTrackingStatus: async (kind: string = 'all'): Promise<TrackingStatus> => {
+    const params = new URLSearchParams({ kind });
+    return fetchJson<TrackingStatus>(`/tracking/status?${params.toString()}`);
   }
 };

@@ -55,7 +55,9 @@
     "**/wandb": true,
     "**/outputs": true,
     "**/data": true,
-    "**/logs": true
+    "**/logs": true,
+    "**/imports": true,
+    "**/node_modules": true
   },
   "python.analysis.exclude": [
     "**/wandb",
