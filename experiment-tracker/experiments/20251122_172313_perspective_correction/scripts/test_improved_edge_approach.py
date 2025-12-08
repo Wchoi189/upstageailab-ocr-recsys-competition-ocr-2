@@ -47,7 +47,7 @@ except ImportError:
 workspace_root = tracker_root.parent
 sys.path.insert(0, str(workspace_root))
 try:
-    from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+    from ocr.utils.path_utils import get_path_resolver
     OCR_RESOLVER = get_path_resolver()
 except ImportError:
     OCR_RESOLVER = None

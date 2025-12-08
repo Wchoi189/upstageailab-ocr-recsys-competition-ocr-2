@@ -105,7 +105,7 @@ def main():
     if str(script_dir) not in sys.path:
         sys.path.insert(0, str(script_dir))
 
-    from analyze_failures_rembg_approach import test_rembg_based_correction, OptimizedBackgroundRemover, GPU_AVAILABLE
+    from analyze_failures_rembg_approach import GPU_AVAILABLE, OptimizedBackgroundRemover, test_rembg_based_correction
 
     # Setup path utils for proper path resolution
     script_path = Path(__file__).resolve()
@@ -125,12 +125,11 @@ def main():
     workspace_root = tracker_root.parent
     sys.path.insert(0, str(workspace_root))
     try:
-        from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+        from ocr.utils.path_utils import get_path_resolver
         OCR_RESOLVER = get_path_resolver()
         workspace_root = OCR_RESOLVER.config.project_root
     except ImportError:
         OCR_RESOLVER = None
-        PROJECT_ROOT = None
         workspace_root = TRACKER_ROOT.parent if EXPERIMENT_PATHS else Path.cwd()
 
     # Get default paths using OCR resolver if available

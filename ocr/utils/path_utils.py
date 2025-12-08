@@ -390,7 +390,6 @@ def get_project_root() -> Path:
     Note:
         For new code, you can directly import PROJECT_ROOT instead:
         ```python
-        from ocr.utils.path_utils import PROJECT_ROOT
-        ```
+                ```
     """
     return PROJECT_ROOT

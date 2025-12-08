@@ -25,7 +25,7 @@ from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPa
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
 sys.path.insert(0, str(workspace_root))
-from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+from ocr.utils.path_utils import get_path_resolver
 
 # Auto-detect experiment context
 TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)

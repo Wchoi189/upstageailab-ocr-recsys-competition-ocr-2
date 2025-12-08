@@ -1,0 +1,5 @@
+{
+  "name": "AgentQMS Manager Dashboard",
+  "description": "A documentation quality framework dashboard focusing on UDI (Unique Documentation Identifier) management and reference system migration.",
+  "requestFramePermissions": []
+}

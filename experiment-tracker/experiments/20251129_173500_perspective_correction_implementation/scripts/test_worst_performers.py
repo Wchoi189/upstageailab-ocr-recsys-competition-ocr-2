@@ -2,26 +2,25 @@
 """
 Test perspective correction on worst performers from the list.
 """
-import sys
-import cv2
-import numpy as np
-import logging
-from pathlib import Path
 import datetime
 import json
-from typing import Optional, Dict, List
+import logging
+import sys
+from pathlib import Path
+
+import cv2
 
 # Setup experiment paths - auto-detect tracker root and experiment context
 script_path = Path(__file__).resolve()
 # Point to experiment-tracker/src
 tracker_root = script_path.parents[3] / "src"
 sys.path.insert(0, str(tracker_root))
-from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+from experiment_tracker.utils.path_utils import setup_script_paths
 
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
 sys.path.insert(0, str(workspace_root))
-from ocr.utils.path_utils import get_path_resolver, PROJECT_ROOT
+from ocr.utils.path_utils import get_path_resolver
 
 # Auto-detect experiment context
 TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
@@ -37,7 +36,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def find_mask_file(img_id: str, search_dirs: List[Path]) -> Optional[Path]:
+def find_mask_file(img_id: str, search_dirs: list[Path]) -> Path | None:
     """Find mask file for given image ID in multiple possible locations."""
     for search_dir in search_dirs:
         if not search_dir.exists():
@@ -56,7 +55,7 @@ def find_mask_file(img_id: str, search_dirs: List[Path]) -> Optional[Path]:
     return None
 
 
-def find_original_image(img_id: str, dataset_root: Path) -> Optional[Path]:
+def find_original_image(img_id: str, dataset_root: Path) -> Path | None:
     """Find original image file for given image ID."""
     extensions = [".jpg", ".png", ".JPG", ".jpeg", ".JPEG"]
     for ext in extensions:
@@ -70,11 +69,11 @@ def test_worst_performers(
     worst_performers_file: Path,
     output_base_dir: Path,
     dataset_root: Path,
-    mask_search_dirs: List[Path],
+    mask_search_dirs: list[Path],
     use_regression: bool = False,
     regression_epsilon_px: float = 10.0,
     use_dominant_extension: bool = True,
-) -> Dict:
+) -> dict:
     """Test perspective correction on worst performers from file."""
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = output_base_dir / f"{timestamp}_worst_performers_test"
@@ -86,7 +85,7 @@ def test_worst_performers(
         logger.error(f"Worst performers file not found: {worst_performers_file}")
         return {"error": "File not found"}
 
-    with open(worst_performers_file, "r") as f:
+    with open(worst_performers_file) as f:
         image_ids = [line.strip() for line in f if line.strip()]
 
     # Remove .jpg extension if present
@@ -200,7 +199,7 @@ def test_worst_performers(
         json.dump(results, f, indent=2)
 
     logger.info(f"\n{'='*60}")
-    logger.info(f"Test Results Summary:")
+    logger.info("Test Results Summary:")
     logger.info(f"  Total: {results['total']}")
     logger.info(f"  Success: {results['success']}")
     logger.info(f"  Failed: {results['failed']}")
