@@ -28,10 +28,10 @@ export interface FileReadResponse {
 }
 
 export interface ToolExecutionResult {
-  tool_id: string;
-  exit_code: number;
-  stdout: string;
-  stderr: string;
+  success: boolean;
+  output: string;
+  error?: string | null;
+  return_code?: number;
 }
 
 // --- New Interfaces for API v1 ---
@@ -131,7 +131,7 @@ export const bridgeService = {
    * Execute an AgentQMS tool script.
    */
   executeTool: async (tool_id: string, args: Record<string, any>): Promise<ToolExecutionResult> => {
-    return fetchJson<ToolExecutionResult>('/tools/exec', {
+    return fetchJson<ToolExecutionResult>('/v1/tools/exec', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ tool_id, args }),
@@ -151,14 +151,14 @@ export const bridgeService = {
    * Get System Health
    */
   getHealth: async (): Promise<{ status: string }> => {
-    return fetchJson<{ status: string }>('/api/v1/health');
+    return fetchJson<{ status: string }>('/v1/health');
   },
 
   /**
    * Get System Version
    */
   getVersion: async (): Promise<{ version: string }> => {
-    return fetchJson<{ version: string }>('/api/v1/version');
+    return fetchJson<{ version: string }>('/v1/version');
   },
 
   /**
@@ -170,21 +170,21 @@ export const bridgeService = {
     if (params?.status) queryParams.append('status', params.status);
     if (params?.limit) queryParams.append('limit', params.limit.toString());
 
-    return fetchJson<ArtifactListResponse>(`/api/v1/artifacts?${queryParams.toString()}`);
+    return fetchJson<ArtifactListResponse>(`/v1/artifacts?${queryParams.toString()}`);
   },
 
   /**
    * Get Artifact Details
    */
   getArtifact: async (id: string): Promise<Artifact> => {
-    return fetchJson<Artifact>(`/api/v1/artifacts/${id}`);
+    return fetchJson<Artifact>(`/v1/artifacts/${id}`);
   },
 
   /**
    * Create New Artifact
    */
   createArtifact: async (data: ArtifactCreate): Promise<Artifact> => {
-    return fetchJson<Artifact>('/api/v1/artifacts', {
+    return fetchJson<Artifact>('/v1/artifacts', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -195,7 +195,7 @@ export const bridgeService = {
    * Update Artifact
    */
   updateArtifact: async (id: string, data: ArtifactUpdate): Promise<Artifact> => {
-    return fetchJson<Artifact>(`/api/v1/artifacts/${id}`, {
+    return fetchJson<Artifact>(`/v1/artifacts/${id}`, {
       method: 'PUT',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(data),
@@ -206,7 +206,7 @@ export const bridgeService = {
    * Delete (Archive) Artifact
    */
   deleteArtifact: async (id: string): Promise<void> => {
-    return fetchJson<void>(`/api/v1/artifacts/${id}`, {
+    return fetchJson<void>(`/v1/artifacts/${id}`, {
       method: 'DELETE',
     });
   },
@@ -216,7 +216,7 @@ export const bridgeService = {
    */
   validateCompliance: async (target: string = 'all'): Promise<ComplianceResult> => {
     const params = new URLSearchParams({ target });
-    return fetchJson<ComplianceResult>(`/api/v1/compliance/validate?${params.toString()}`);
+    return fetchJson<ComplianceResult>(`/v1/compliance/validate?${params.toString()}`);
   },
 
   /**
@@ -224,6 +224,6 @@ export const bridgeService = {
    */
   getTrackingStatus: async (kind: string = 'all'): Promise<TrackingStatus> => {
     const params = new URLSearchParams({ kind });
-    return fetchJson<TrackingStatus>(`/tracking/status?${params.toString()}`);
+    return fetchJson<TrackingStatus>(`/v1/tracking/status?${params.toString()}`);
   }
 };

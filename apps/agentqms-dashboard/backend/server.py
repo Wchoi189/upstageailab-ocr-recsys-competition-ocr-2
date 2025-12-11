@@ -7,9 +7,13 @@ from pydantic import BaseModel
 
 # Import local utils
 # Ensure current directory is in path
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+# Add workspace root to path for AgentQMS imports
+workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
+sys.path.insert(0, workspace_root)
+
 import fs_utils
-from routes import artifacts, compliance, system
+from routes import artifacts, compliance, system, tools, tracking
 
 # Initialize FastAPI app
 app = FastAPI(
@@ -22,6 +26,8 @@ app = FastAPI(
 app.include_router(artifacts.router)
 app.include_router(compliance.router)
 app.include_router(system.router)
+app.include_router(tracking.router)
+app.include_router(tools.router)
 
 # Configure CORS
 app.add_middleware(
@@ -87,26 +93,6 @@ async def write_file(request: WriteRequest):
         return {"success": True, "bytes_written": bytes_written}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
-
-@app.get("/tracking/status")
-async def get_tracking_status(kind: str = Query("all", description="Kind: plan, experiment, debug, refactor, or all")):
-    """Get tracking database status for plans, experiments, debug sessions, or refactors."""
-    try:
-        from AgentQMS.agent_tools.utilities.tracking.query import get_status
-
-        status_text = get_status(kind)
-        return {
-            "kind": kind,
-            "status": status_text,
-            "success": True
-        }
-    except Exception as e:
-        return {
-            "kind": kind,
-            "status": "",
-            "success": False,
-            "error": str(e)
-        }
 
 @app.post("/tools/exec")
 async def execute_tool(request: ToolExecRequest):

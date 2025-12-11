@@ -93,8 +93,8 @@ const FrameworkAuditor: React.FC = () => {
       const result = await bridgeService.executeTool(toolId, {});
       setToolOutput({
         tool: toolId,
-        output: result.stdout,
-        error: result.exit_code !== 0 ? result.stderr : undefined
+                output: result.output,
+                error: result.success ? undefined : (result.error || 'Tool reported failure'),
       });
     } catch (err) {
       setToolOutput({

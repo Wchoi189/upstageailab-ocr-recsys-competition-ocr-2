@@ -1,0 +1,5 @@
+{
+  "name": "OCR Inference Console",
+  "description": "A high-fidelity prototype of a Document OCR dashboard featuring a split-pane interface and linked highlighting.",
+  "requestFramePermissions": []
+}
