@@ -6,7 +6,7 @@ Refer to ``docs/ai_handbook/02_protocols/11_streamlit_maintenance_protocol.md``
 and ``docs/ai_handbook/02_protocols/12_streamlit_refactoring_protocol.md``
 before changing layout or control flow. Configuration lives in
 ``configs/ui/inference.yaml`` with additional metadata in ``ui_meta/`` and
-schemas in ``configs/schemas/``—keep those sources authoritative and avoid
+schemas in ``docs/schemas/``—keep those sources authoritative and avoid
 guessing widget behaviour.
 """
 

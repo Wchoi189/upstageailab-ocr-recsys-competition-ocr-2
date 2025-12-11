@@ -1,0 +1,26 @@
+INFO:     Started server process [65380]
+INFO:     Waiting for application startup.
+Loading checkpoint from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/checkpoints/pan_resnet18_add_polygons_canonical/checkpoints/epoch-18_step-001957.ckpt...
+Instantiating model architecture directly...
+Loading state dict...
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/backend/services/ocr_bridge.py", line 161, in predict
+    boxes, scores = b.predict(image)
+                    ^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/backend/services/ocr_bridge.py", line 120, in predict
+    boxes_batch, scores_batch = self.model.model.get_polygons_from_maps(batch, preds)
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/models/architecture.py", line 62, in get_polygons_from_maps
+    return self.head.get_polygons_from_maps(batch, pred)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/models/head/db_head.py", line 211, in get_polygons_from_maps
+    return self.postprocess.represent(batch, pred)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/models/head/db_postprocess.py", line 117, in represent
+    assert "inverse_matrix" in batch is not None, "inverse_matrix is required in batch"
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+AssertionError: inverse_matrix is required in batch
+INFO:     172.20.0.1:47752 - "POST /ocr/predict HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:43730 - "GET /ocr/health HTTP/1.1" 200 OK

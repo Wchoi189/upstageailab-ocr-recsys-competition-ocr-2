@@ -106,10 +106,8 @@ class CheckpointCatalogBuilder:
                 outputs_dir=self.outputs_dir,
             )
 
-        # Try to use checkpoint index for fast lookup (Phase 4 optimization)
-        # Note: include_legacy=True for now since all existing checkpoints are in ocr_training_b/
-        # Will change to False in Phase 2 when we separate legacy from new runs
-        index = CheckpointIndex(self.outputs_dir, include_legacy=True)
+        # Legacy checkpoints have been archived, only index new experiment structure
+        index = CheckpointIndex(self.outputs_dir, include_legacy=False)
 
         if index.index_file.exists():
             LOGGER.info("Using checkpoint index for fast catalog discovery")

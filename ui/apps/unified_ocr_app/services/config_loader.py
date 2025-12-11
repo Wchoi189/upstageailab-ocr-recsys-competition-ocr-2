@@ -213,7 +213,7 @@ def _get_loader() -> ConfigLoader:
     """
     global _loader
     if _loader is None:
-        _loader = ConfigLoader(Path("configs/schemas"))
+        _loader = ConfigLoader(Path("docs/schemas"))
     return _loader
 
 

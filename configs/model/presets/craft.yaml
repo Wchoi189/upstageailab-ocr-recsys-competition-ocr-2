@@ -1,0 +1,26 @@
+# @package model
+
+defaults:
+  - /model/architectures: craft
+  - /model/optimizers: adamw
+  - /model/encoder/craft_vgg
+  - /model/decoder/craft_decoder
+  - /model/head/craft_head
+  - /model/loss/craft_loss
+  - _self_
+
+component_overrides:
+  encoder:
+    pretrained: true
+    output_indices: [1, 2, 3, 4]
+  decoder:
+    inner_channels: 256
+    out_channels: 256
+  head:
+    hidden_channels: 128
+
+optimizer:
+  lr: 0.0005
+  weight_decay: 0.0001
+
+# Scheduler is now defined in the base model config

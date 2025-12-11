@@ -110,7 +110,14 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
             LOGGER.error(f"Failed to load config from {config_path}: {e}")
             raise
 
-    if OCR_MODULES_AVAILABLE:
+    # Check if this is a .config.json file (pre-generated checkpoint config)
+    # These should be loaded directly as JSON, not through Hydra
+    if path.suffix == ".json" and ".config.json" in path.name:
+        LOGGER.info("Loading pre-generated checkpoint config from JSON file")
+        with path.open("r", encoding="utf-8") as handle:
+            config_dict = json.load(handle)
+        config_container = DictConfig(config_dict)
+    elif OCR_MODULES_AVAILABLE:
         config_container = load_config_from_path(path)
     else:
         with path.open("r", encoding="utf-8") as handle:

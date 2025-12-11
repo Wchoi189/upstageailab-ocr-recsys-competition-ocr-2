@@ -538,6 +538,8 @@ cleanup-dev:
 	echo "Cleanup complete."
 
 # Force kill ANY process using port 8000 (use as last resort)
+bk:
+	$(MAKE) backend-force-kill
 backend-force-kill:
 	@PORT=$(BACKEND_PORT); \
 	echo "Force killing ANY process using port $$PORT..."; \

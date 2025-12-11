@@ -2,9 +2,9 @@ from __future__ import annotations
 
 """Compatibility schema loading for model catalogues.
 
-Keep this in sync with ``configs/schemas/ui_inference_compat.yaml`` and the
+Keep this in sync with ``docs/schemas/ui_inference_compat.yaml`` and the
 protocols in ``docs/ai_handbook/02_protocols/``. Do not hand-edit mappings
-without updating the schema files and, when necessary, ``configs/schemas/default_model.yaml``.
+without updating the schema files and, when necessary, ``docs/schemas/default_model.yaml``.
 If you need broader context, read the maintenance and refactor protocols before
 changing the logic here.
 """
@@ -21,7 +21,7 @@ from ..models.checkpoint import CheckpointMetadata
 
 LOGGER = logging.getLogger(__name__)
 
-DEFAULT_SCHEMA_RELATIVE_PATH = Path("configs") / "schemas" / "ui_inference_compat.yaml"
+DEFAULT_SCHEMA_RELATIVE_PATH = Path("docs") / "schemas" / "ui_inference_compat.yaml"
 
 
 @dataclass(slots=True)

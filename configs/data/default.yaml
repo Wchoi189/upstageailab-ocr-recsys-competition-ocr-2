@@ -2,5 +2,5 @@
 
 defaults:
   - /data/base
-  - /transforms/base
-  - /dataloaders/default
+  - /data/transforms/base
+  - /data/dataloaders/default

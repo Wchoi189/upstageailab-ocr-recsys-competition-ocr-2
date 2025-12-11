@@ -1,0 +1,26 @@
+Error in call to target 'ocr.models.architecture.OCRModel':
+TypeError("OCRModel.__init__() got an unexpected keyword argument 'architecture_name'")
+full_key: model
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 92, in _call_target
+    return _target_(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: OCRModel.__init__() got an unexpected keyword argument 'architecture_name'
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/backend/services/ocr_bridge.py", line 61, in _load_model
+    model = hydra.utils.instantiate(cfg.model)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 226, in instantiate
+    return instantiate_node(
+           ^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 347, in instantiate_node
+    return _call_target(_target_, partial, args, kwargs, full_key)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/hydra/_internal/instantiate/_instantiate2.py", line 97, in _call_target
+    raise InstantiationException(msg) from e
+hydra.errors.InstantiationException: Error in call to target 'ocr.models.architecture.OCRModel':
+TypeError("OCRModel.__init__() got an unexpected keyword argument 'architecture_name'")
+full_key: model

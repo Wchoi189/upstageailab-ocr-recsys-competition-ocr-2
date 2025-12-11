@@ -7,8 +7,8 @@ import { cn } from '../utils';
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import jsonStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/github';
 import { ImageUploader } from './ImageUploader';
-import { InferenceViewer } from './InferenceOverlay';
-import { ApiService, type Prediction, type InferenceResponse } from '../services/api';
+import { PolygonOverlay } from './PolygonOverlay';
+import { ocrClient, type Prediction, type InferenceResponse } from '../api/ocrClient';
 
 export const Workspace: React.FC = () => {
     const [viewMode, setViewMode] = useState<'preview' | 'json'>('preview');
@@ -27,7 +27,7 @@ export const Workspace: React.FC = () => {
         setImageUrl(url);
 
         try {
-            const result: InferenceResponse = await ApiService.predict(file);
+            const result: InferenceResponse = await ocrClient.predict(file);
             setPredictions(result.predictions);
         } catch (e: any) {
             console.error(e);
@@ -133,7 +133,7 @@ export const Workspace: React.FC = () => {
                                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                                             </div>
                                         )}
-                                        <InferenceViewer imageUrl={imageUrl} predictions={predictions} />
+                                        <PolygonOverlay imageUrl={imageUrl} predictions={predictions} />
                                     </div>
                                 )}
                             </div>

@@ -11,7 +11,7 @@ Architecture:
 
 Configuration:
     - All UI behavior driven by YAML files in configs/ui/
-    - Schema validation via configs/schemas/
+    - Schema validation via docs/schemas/
     - Mode-specific configs in configs/ui/modes/
 """
 

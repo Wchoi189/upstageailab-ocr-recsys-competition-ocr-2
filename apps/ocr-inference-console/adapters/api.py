@@ -27,22 +27,33 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+import logging
+
+logger = logging.getLogger(__name__)
+
 # Global bridge instance
 bridge = None
-# Path to best checkpoint - hardcoded for now or env var
-CHECKPOINT_PATH = os.getenv("OCR_CHECKPOINT_PATH", "../../outputs/ocr_training_b/checkpoints/best.ckpt")
+# Use environment variable or None (will use UI selection)
+CHECKPOINT_PATH = os.getenv("OCR_CHECKPOINT_PATH")
+if not CHECKPOINT_PATH:
+    logger.warning(
+        "OCR_CHECKPOINT_PATH not set. Legacy default (ocr_training_b) has been removed. "
+        "Please select a checkpoint from the UI or set OCR_CHECKPOINT_PATH environment variable."
+    )
 
 @app.on_event("startup")
 async def startup_event():
     global bridge
-    if os.path.exists(CHECKPOINT_PATH):
+    if CHECKPOINT_PATH and os.path.exists(CHECKPOINT_PATH):
         try:
             bridge = OCRBridge(CHECKPOINT_PATH)
             print(f"Model loaded from {CHECKPOINT_PATH}")
         except Exception as e:
             print(f"Failed to load model: {e}")
-    else:
+    elif CHECKPOINT_PATH:
         print(f"Checkpoint not found at {CHECKPOINT_PATH}")
+    else:
+        print("No checkpoint path configured. Please select a model from the UI.")
 
 @app.get("/health")
 def health_check():

@@ -2,10 +2,10 @@ defaults:
   - _self_
   - base                  # Keep for other settings
   - data: base            # Compose data group
-  - transforms: base      # Compose transforms group
-  - dataloaders: default  # Compose dataloaders group
-  - /preset/models/model_example
-  - /preset/lightning_modules/base
+  - data/transforms: base      # Compose transforms group
+  - data/dataloaders: default  # Compose dataloaders group
+  - /model/presets/model_example
+  - /model/lightning_modules/base
 
 seed: 42
 exp_name: "cache_performance_test"

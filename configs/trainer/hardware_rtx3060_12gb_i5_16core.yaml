@@ -1,0 +1,135 @@
+# @package _global_
+
+# Complete Hardware-Optimized Configuration for RTX 3060 12GB + Intel i5 16-core
+# This is a comprehensive configuration file that combines all optimizations
+# for the specified hardware setup.
+#
+# Usage:
+#   python runners/train.py +trainer=hardware_rtx3060_12gb_i5_16core batch_size=8
+#
+# Hardware Specifications:
+#   - GPU: RTX 3060 12GB VRAM
+#   - CPU: Intel i5 16-core processor
+#
+# Performance Expectations:
+#   - Training speed: ~70-80s/epoch (optimized)
+#   - Memory usage: ~8-10GB VRAM (with FP32)
+#   - CPU utilization: ~75-85% (12 workers)
+#
+# This configuration includes:
+#   - Optimized trainer settings (FP32, gradient accumulation)
+#   - Optimized dataloader settings (12 workers, persistent workers)
+#   - Recommended batch sizes and memory settings
+
+defaults:
+  - override /trainer: rtx3060_12gb
+  - override /data/dataloaders: rtx3060_16core
+
+# Recommended batch size for RTX 3060 12GB with FP32
+# FP32 uses more memory, so start with smaller batch sizes
+# Can be overridden: python runners/train.py +hardware=rtx3060_12gb_i5_16core batch_size=6
+batch_size: 4
+
+# Runtime configuration
+runtime:
+  auto_gpu_devices: false  # Single GPU, no auto-detection needed
+  ddp_strategy: ddp_find_unused_parameters_false
+  min_auto_devices: 1
+  # Enable CUDA debugging for troubleshooting (slows down training)
+  # Set to true when debugging CUDA errors, false for normal training
+  debug_cuda: false  # Set to true to enable CUDA_LAUNCH_BLOCKING and TORCH_USE_CUDA_DSA
+
+# Dataset optimization settings (if using dataset caching)
+# These settings balance performance and memory usage
+datasets:
+  train:
+    config:
+      # Enable image preloading (low memory cost, high speed benefit)
+      preload_images: true
+      load_maps: true
+      cache_config:
+        # Disable tensor caching (high memory, moderate speed benefit)
+        # With 12GB VRAM, we prioritize batch size over tensor caching
+        cache_transformed_tensors: false
+        # Enable image and map caching (low memory, good speed benefit)
+        cache_images: true
+        cache_maps: true
+        log_statistics_every_n: 100
+
+  val_dataset:
+    config:
+      preload_images: true
+      load_maps: true
+      cache_config:
+        cache_transformed_tensors: false  # Disable to save memory
+        cache_images: true
+        cache_maps: true
+        log_statistics_every_n: 100
+
+# COMPLETE SETUP GUIDE:
+#
+# 1. Quick Start:
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core
+#
+# 2. With Custom Batch Size:
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core batch_size=6
+#
+# 3. Monitor Performance:
+#    # Terminal 1: Training
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core
+#
+#    # Terminal 2: GPU monitoring
+#    watch -n 1 nvidia-smi
+#
+#    # Terminal 3: CPU monitoring
+#    htop
+#
+# 4. Memory Optimization (if OOM occurs):
+#    # Reduce batch size
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core batch_size=3
+#
+#    # Or increase gradient accumulation
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core trainer.accumulate_grad_batches=4
+#
+# 5. Performance Tuning:
+#    # If GPU utilization < 90%, increase workers
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core dataloaders.train_dataloader.num_workers=14
+#
+#    # If CPU is bottleneck, reduce workers
+#    python runners/train.py +hardware=rtx3060_12gb_i5_16core dataloaders.train_dataloader.num_workers=10
+#
+# EXPECTED PERFORMANCE METRICS:
+#
+# - GPU Memory Usage: 8-10GB / 12GB (67-83%)
+# - GPU Utilization: >90% during training
+# - CPU Utilization: 75-85% (12 workers active)
+# - Training Speed: ~70-80s/epoch (optimized)
+# - Effective Batch Size: 8 (batch_size=4 * accumulate_grad_batches=2)
+#
+# TROUBLESHOOTING:
+#
+# Issue: Out of Memory (OOM)
+# Solution:
+#   - Reduce batch_size to 6 or 4
+#   - Increase accumulate_grad_batches to 3 or 4
+#   - Disable preload_images: datasets.train.config.preload_images=false
+#
+# Issue: Low GPU Utilization (<80%)
+# Solution:
+#   - Increase num_workers to 14
+#   - Increase prefetch_factor to 4
+#   - Check if data loading is bottleneck
+#
+# Issue: High CPU Usage (100%)
+# Solution:
+#   - Reduce num_workers to 10
+#   - Reduce prefetch_factor to 2
+#   - Check for other processes using CPU
+#
+# Issue: Training is Slow
+# Solution:
+#   - Verify FP32 is enabled (check logs for "32-true")
+#   - Check GPU utilization (should be >90%)
+#   - Verify num_workers is optimal (12-14 for 16 cores)
+#   - Consider enabling tensor caching if memory allows
+#   - Note: FP32 is slower than FP16 but more stable

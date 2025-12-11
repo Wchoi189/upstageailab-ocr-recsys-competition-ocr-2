@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  ocr-sample:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ocr-sample-data
+    image: ocr-sample:latest
+    volumes:
+      - ./data:/app/data:ro
+      - ./config:/app/config:ro
+      - ./docs:/app/docs:ro
+      - ./scripts:/app/scripts:rw
+    environment:
+      - PYTHONUNBUFFERED=1
+      - OCR_DATA_PATH=/app/data
+      - OCR_CONFIG_PATH=/app/config
+    ports:
+      - "8001:8000"
+    healthcheck:
+      test: ["CMD", "python", "-c", "import json; json.load(open('/app/data/annotations.json'))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+networks:
+  ocr-network:
+    driver: bridge

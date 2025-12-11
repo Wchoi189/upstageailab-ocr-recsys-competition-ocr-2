@@ -92,7 +92,7 @@ class TestHydraConfigurationValidation:
 
         for dataset, transforms in test_cases:
             overrides = [
-                f"+preset/datasets={dataset}",
+                f"+data/datasets={dataset}",
                 f'data.transforms.train_transform="${{{transforms}.train_transform}}"',
                 f'data.transforms.val_transform="${{{transforms}.val_transform}}"',
                 "exp_name=test_dataset_transform",
@@ -125,7 +125,7 @@ class TestHydraConfigurationValidation:
             "trainer.precision=32",
             "seed=42",
             "data=preprocessing",
-            "+preset/datasets=preprocessing_docTR_demo",
+            "+data/datasets=preprocessing_docTR_demo",
             'data.transforms.train_transform="${enhanced_transforms.train_transform}"',
             'data.transforms.val_transform="${enhanced_transforms.val_transform}"',
             'data.transforms.test_transform="${enhanced_transforms.test_transform}"',

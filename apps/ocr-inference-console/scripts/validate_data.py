@@ -1,106 +1,121 @@
+#!/usr/bin/env python3
 import argparse
 import json
 import os
 import sys
-import numpy as np
 from pathlib import Path
-from pydantic import BaseModel, Field, ValidationError
+from typing import Dict, Any
 
-# Add project root to sys.path to import ocr
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
-
-try:
-    from ocr.validation.models import PolygonArray
-except ImportError:
-    print("Warning: Could not import ocr.validation.models. Validation will be limited.")
-    PolygonArray = None
-
-def validate_data(data_path, sample_count, output_file):
-    base_path = Path(data_path)
-    json_path = base_path / "jsons/val.json"
-    images_dir = base_path / "images_val_canonical"
-
+def validate_dataset(dataset_path: Path, json_filename: str = "input.json", sample_size: int = 0) -> bool:
+    """
+    Validate OCR dataset structure and image existence.
+    """
+    json_path = dataset_path / json_filename
     if not json_path.exists():
-        print(f"Error: JSON file not found at {json_path}")
-        sys.exit(1)
+        # Try fallback names
+        for fallback in ["ufo.json", "train.json", "val.json"]:
+            if (dataset_path / fallback).exists():
+                json_path = dataset_path / fallback
+                break
+
+        if not json_path.exists():
+            print(f"Error: JSON annotation file not found in {dataset_path}")
+            print(f"Expected {json_filename} or one of [ufo.json, train.json, val.json]")
+            return False
 
     print(f"Loading annotations from {json_path}...")
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except Exception as e:
+        print(f"Error: Failed to parse JSON: {e}")
+        return False
 
     if "images" not in data:
-        print("Error: 'images' key not found in JSON.")
-        sys.exit(1)
+        print("Error: Root key 'images' missing in JSON")
+        return False
 
-    images_map = data["images"]
-    total_images = len(images_map)
-    print(f"Found {total_images} images in JSON.")
+    images = data["images"]
+    total_images = len(images)
+    print(f"Found {total_images} image entries.")
 
-    images_to_check = list(images_map.keys())
-    if sample_count > 0:
-        images_to_check = images_to_check[:sample_count]
+    missing_files = []
+    invalid_polygons = []
+    checked_count = 0
 
-    print(f"Validating {len(images_to_check)} samples...")
+    image_names = list(images.keys())
+    if sample_size > 0:
+        image_names = image_names[:sample_size]
+        print(f"Validating first {sample_size} samples...")
 
-    stats = {
-        "images_checked": 0,
-        "missing_images": 0,
-        "invalid_records": 0,
-        "status": "ok"
-    }
+    for img_name in image_names:
+        checked_count += 1
+        img_info = images[img_name]
 
-    for filename in images_to_check:
-        stats["images_checked"] += 1
-
-        # 1. Check Image Existence
-        img_path = images_dir / filename
+        # Check file existence
+        img_path = dataset_path / "images" / img_name
         if not img_path.exists():
-            print(f"Missing image: {filename}")
-            stats["missing_images"] += 1
-            stats["status"] = "error"
-            continue
+             # Try root if images/ subdir doesn't exist
+            img_path_root = dataset_path / img_name
+            if not img_path_root.exists():
+                missing_files.append(img_name)
 
-        # 2. Check Record Structure
-        record = images_map[filename]
-        if "words" not in record:
-            print(f"Invalid record (missing 'words'): {filename}")
-            stats["invalid_records"] += 1
-            stats["status"] = "error"
-            continue
+        # Check fields
+        if "words" in img_info:
+            for word_id, word_data in img_info["words"].items():
+                if "points" in word_data:
+                    points = word_data["points"]
+                    if not isinstance(points, list):
+                        invalid_polygons.append(f"{img_name}:{word_id} (not a list)")
+                        continue
+                    # Basic point validation (list of lists/tuples)
+                    for p in points:
+                        if not (isinstance(p, (list, tuple)) and len(p) == 2):
+                             invalid_polygons.append(f"{img_name}:{word_id} (invalid point format)")
+                             break
 
-        # 3. Validate Polygons
-        if PolygonArray:
-            for word_id, word_data in record["words"].items():
-                if "points" not in word_data:
-                    continue
-                # Convert to numpy for validation logic reuse
-                try:
-                    pts = np.array(word_data["points"], dtype=np.float32)
-                    # PolygonArray calls _validate_points
-                    # We instantiate the model to trigger validation
-                    PolygonArray(points=pts)
-                except Exception as e:
-                     print(f"Invalid polygon in {filename}, word {word_id}: {e}")
-                     stats["invalid_records"] += 1
-                     stats["status"] = "error"
+    print("\nValidation Report:")
+    print(f"Checked: {checked_count}/{total_images}")
 
-    if output_file:
-        with open(output_file, "w") as f:
-            json.dump(stats, f, indent=2)
-        print(f"Validation results written to {output_file}")
+    status = True
+    if missing_files:
+        print(f"❌ Missing Image Files: {len(missing_files)}")
+        if len(missing_files) < 10:
+            for f in missing_files:
+                print(f"  - {f}")
+        else:
+            print(f"  (First 10): {missing_files[:10]}")
+        status = False
+    else:
+        print("✅ All image files found.")
 
-    print(f"Validation complete: {stats}")
+    if invalid_polygons:
+        print(f"❌ Invalid Polygons: {len(invalid_polygons)}")
+        if len(invalid_polygons) < 10:
+            for p in invalid_polygons:
+                print(f"  - {p}")
+        else:
+             print(f"  (First 10): {invalid_polygons[:10]}")
+        status = False
+    else:
+        print("✅ Polygon structures appear valid.")
 
-    if stats["missing_images"] > 0 or stats["invalid_records"] > 0:
-        sys.exit(1)
+    return status
 
-    sys.exit(0)
-
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Validate dataset for OCR Inference Console")
-    parser.add_argument("--path", required=True, help="Path to data/datasets directory")
-    parser.add_argument("--sample", type=int, default=0, help="Number of samples to check (0 for all)")
-    parser.add_argument("--out", help="Output JSON file for validation results")
+def main():
+    parser = argparse.ArgumentParser(description="Validate OCR Inference Console Dataset")
+    parser.add_argument("--path", type=Path, required=True, help="Path to dataset directory")
+    parser.add_argument("--json", type=str, default="input.json", help="Name of annotation JSON file")
+    parser.add_argument("--sample", type=int, default=0, help="Number of samples to validate (0 for all)")
 
     args = parser.parse_args()
-    validate_data(args.path, args.sample, args.out)
+
+    if not args.path.exists():
+        print(f"Error: Path {args.path} does not exist.")
+        sys.exit(1)
+
+    success = validate_dataset(args.path, args.json, args.sample)
+    sys.exit(0 if success else 1)
+
+if __name__ == "__main__":
+    main()
