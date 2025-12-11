@@ -5,7 +5,8 @@
     "apps/frontend",
     "apps/playground-console",
     "packages/console-shared",
-    "apps/agentqms-dashboard/frontend"
+    "apps/agentqms-dashboard/frontend",
+    "apps/ocr-inference-console"
   ],
   "scripts": {
     "dev:spa": "npm run dev --workspace frontend-app",

@@ -645,6 +645,10 @@ all-feedback: feedback-report quality-check ## Run all feedback and quality chec
 emergency-fix: compliance-fix docs-update-indexes ## Emergency: fix all issues and update indexes
 emergency-reset: clean clean-feedback ## Emergency: reset and clean everything
 
+# IDE Configuration
+ide-config: ## Generate/Update configuration files for all IDEs (Antigravity, Cursor, etc.)
+	python ../agent_tools/utilities/generate_ide_configs.py
+
 # Show version and system info
 version: ## Show system version information
 	@echo "🤖 Agent Tools Makefile (AGENT-ONLY)"
