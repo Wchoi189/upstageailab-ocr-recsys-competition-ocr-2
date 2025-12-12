@@ -64,6 +64,17 @@ export const ocrClient = {
             throw new Error(err.detail || 'Inference failed');
         }
 
-        return res.json();
+        const data = await res.json();
+
+        // Validate data contract - ensure backend returns expected format
+        if (!data.predictions || !Array.isArray(data.predictions)) {
+            console.error('Invalid response format from backend:', data);
+            throw new Error(
+                'Backend returned unexpected format. Expected {filename: string, predictions: [{points: number[][], confidence: number}]}.\n' +
+                'Received: ' + JSON.stringify(data).substring(0, 200)
+            );
+        }
+
+        return data as InferenceResponse;
     }
 };

@@ -15,193 +15,145 @@ setup_project_paths()
 router = APIRouter(prefix="/ocr", tags=["OCR"])
 
 class OCRBridge:
-    """OCR inference bridge with lazy loading.
+    """OCR inference bridge using proven InferenceEngine.
 
-    Model loads only on first inference request, not at initialization.
-    This allows the server to start instantly without blocking on model loading.
+    This class wraps ui.utils.inference.InferenceEngine to provide a consistent
+    inference interface for the OCR Inference Console backend. The InferenceEngine
+    is a battle-tested implementation from the Playground Console with sophisticated
+    coordinate transformation, preprocessing support, and error handling.
+
+    Model loads only on first inference request (lazy loading) for fast server startup.
     """
-    def __init__(self, checkpoint_path: str, device: str = "cuda" if torch.cuda.is_available() else "cpu"):
-        self.device = device
+    def __init__(self, checkpoint_path: str, device: str = None):
         self.checkpoint_path = checkpoint_path
-        self.model = None  # Lazy loading: don't load until first use
-        print(f"OCR Bridge initialized with checkpoint: {checkpoint_path} (model will load on first request)")
+        self.device = device  # InferenceEngine auto-detects device, this is for compatibility
+        self.engine = None  # Lazy loading: don't load until first use
+        print(f"OCR Bridge initialized with checkpoint: {checkpoint_path}")
+        print(f"InferenceEngine will load on first request (lazy loading enabled)")
 
-    def _ensure_model_loaded(self) -> None:
-        """Lazy load model on first use."""
-        if self.model is None:
-            self.model = self._load_model()
-            if self.model:
-                self.model.eval()
-                self.model.to(self.device)
+    def _ensure_engine_loaded(self) -> None:
+        """Lazy load InferenceEngine on first use."""
+        if self.engine is None:
+            print(f"Loading InferenceEngine for checkpoint: {self.checkpoint_path}")
+            # Lazy import - only load when model is actually needed
+            from ui.utils.inference import InferenceEngine
 
-    def _load_model(self):
-        """Lazy load model - imports heavy dependencies only when called."""
-        # Lazy imports - only load when model is actually needed
-        import torch
-        from ocr.lightning_modules.ocr_pl import OCRPLModule
+            self.engine = InferenceEngine()
 
-        if not os.path.exists(self.checkpoint_path):
-            print(f"Warning: Checkpoint not found at {self.checkpoint_path}")
-            return None
+            # Load model using InferenceEngine's robust loading logic
+            if not self.engine.load_model(self.checkpoint_path, config_path=None):
+                self.engine = None
+                raise RuntimeError(
+                    f"InferenceEngine failed to load model from checkpoint: {self.checkpoint_path}\n"
+                    f"Check that the checkpoint exists and has an associated config.yaml file."
+                )
 
-        print(f"Loading checkpoint from {self.checkpoint_path}...")
-        try:
-            # 1. Resolve Config Path
-            # Structure: outputs/.../checkpoints/epoch-14.ckpt -> outputs/.../config.yaml
-            ckpt_path = Path(self.checkpoint_path)
-            # Go up two levels: checkpoints/epoch... -> checkpoints/ -> experiment_root/
-            exp_root = ckpt_path.parent.parent
-            config_path = exp_root / "config.yaml"
+            print(f"InferenceEngine loaded successfully")
 
-            if not config_path.exists():
-                print(f"Config not found at {config_path}, trying .hydra subdirectory", flush=True)
-                # Fallback: try .hydra subdirectory (legacy structure)
-                config_path = exp_root / ".hydra" / "config.yaml"
-                if not config_path.exists():
-                    print(f"Config also not found at {config_path}", flush=True)
-                    return None
+    def predict(self, image) -> tuple:
+        """Run OCR inference on image using InferenceEngine.
 
-            print(f"Using config: {config_path}", flush=True)
+        Args:
+            image: PIL Image object
 
-            from omegaconf import OmegaConf
-            import hydra
-            from ocr.models.architecture import OCRModel
+        Returns:
+            tuple: (boxes, scores) where boxes is list of np.ndarray polygons,
+                   scores is list of float confidence values
 
-            cfg = OmegaConf.load(config_path)
-
-            # Remove optimizer/scheduler config to prevent recursive instantiation error
-            if hasattr(cfg.model, "optimizer"):
-                del cfg.model.optimizer
-            if hasattr(cfg.model, "scheduler"):
-                del cfg.model.scheduler
-
-            # 2. Instantiate Model Architecture
-            # Note: OCRModel.__init__ takes (cfg) as a single argument.
-            # hydra.utils.instantiate tries to unpack cfg.model as kwargs, which fails.
-            print("Instantiating model architecture directly...", flush=True)
-            model = OCRModel(cfg.model)
-
-            # 3. Create Dummy Dataset (required by OCRPLModule __init__)
-            # It checks 'val' and 'test' keys
-            dummy_dataset = {}
-
-            # 4. Load Checkpoint with injected dependencies
-            print("Loading state dict...", flush=True)
-            # We pass required init args as kwargs
-            module = OCRPLModule.load_from_checkpoint(
-                self.checkpoint_path,
-                map_location="cpu",
-                # Args for __init__
-                model=model,
-                dataset=dummy_dataset,
-                config=cfg,
-                metric_cfg=None # Optional
-            )
-
-            return module
-
-        except Exception as e:
-            print(f"Error loading model: {e}", flush=True)
-            import traceback
-            traceback.print_exc()
-            try:
-                with open("load_error.txt", "w") as f:
-                    f.write(str(e) + "\n")
-                    f.write(traceback.format_exc())
-            except:
-                pass
-            return None
-
-    def predict(self, image: Image.Image) -> tuple[List[np.ndarray], List[float]]:
-        """Run OCR inference on image.
-
-        Model loads automatically on first call (lazy loading).
+        Raises:
+            RuntimeError: If InferenceEngine fails to load or inference fails
         """
         # Lazy imports
-        import torch
         import numpy as np
-        from PIL import Image
-        import torchvision.transforms.functional as F
-        from ocr.utils.geometry_utils import calculate_inverse_transform
+        from PIL import Image as PILImage
 
-        self._ensure_model_loaded()  # Load model if not already loaded
+        self._ensure_engine_loaded()  # Load engine if not already loaded
 
-        if not self.model:
-            # Check if there's a load error file with details
-            error_details = "Unknown error"
-            try:
-                if os.path.exists("load_error.txt"):
-                    with open("load_error.txt", "r") as f:
-                        error_details = f.read()
-            except:
-                pass
-            raise RuntimeError(
-                f"Model failed to load from checkpoint: {self.checkpoint_path}\n"
-                f"Error details: {error_details}"
-            )
+        if self.engine is None:
+            raise RuntimeError("InferenceEngine is not loaded")
 
-        # Store original size for inverse_matrix calculation
-        original_w, original_h = image.size
-
-        # Preprocessing: LongestMaxSize + PadIfNeeded (matching training pipeline)
-        target_size = 640
-
-        # Step 1: LongestMaxSize - scale longest side to target_size, preserving aspect ratio
-        max_side = max(original_w, original_h)
-        if max_side > 0:
-            scale = target_size / max_side
-            scaled_w = int(round(original_w * scale))
-            scaled_h = int(round(original_h * scale))
+        # Convert PIL Image to numpy array (BGR format for OpenCV/InferenceEngine)
+        if isinstance(image, PILImage.Image):
+            image_array = np.array(image)
+            # Convert RGB to BGR (OpenCV standard expected by InferenceEngine)
+            if len(image_array.shape) == 3 and image_array.shape[2] == 3:
+                image_array = image_array[:, :, ::-1]  # RGB -> BGR
         else:
-            scaled_w, scaled_h = original_w, original_h
+            image_array = image
 
-        # Resize preserving aspect ratio
-        if scaled_w != original_w or scaled_h != original_h:
-            image = image.resize((scaled_w, scaled_h), Image.Resampling.BILINEAR)
+        # Use InferenceEngine's proven predict_array method
+        print(f"Running inference on image with shape: {image_array.shape}")
+        result = self.engine.predict_array(image_array)
 
-        # Step 2: PadIfNeeded - pad to target_size x target_size with top_left position
-        pad_w = target_size - scaled_w
-        pad_h = target_size - scaled_h
+        if result is None:
+            print("InferenceEngine returned None - using empty predictions")
+            return [], []
 
-        if pad_w > 0 or pad_h > 0:
-            # Create a new image with black padding (top_left position means padding at bottom/right)
-            padded_image = Image.new("RGB", (target_size, target_size), (0, 0, 0))
-            padded_image.paste(image, (0, 0))  # Paste at top-left corner
-            image = padded_image
+        # InferenceEngine returns string format:
+        # {
+        #   "polygons": "x1 y1 x2 y2 ... | x1 y1 ...",
+        #   "confidences": [0.95, 0.87, ...],
+        #   "texts": [...],
+        #   "meta": {...}
+        # }
 
-        # Step 3: Convert to tensor and normalize
-        img_tensor = F.to_tensor(image)
-        img_tensor = F.normalize(img_tensor, mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225])
-        img_tensor = img_tensor.unsqueeze(0).to(self.device)
+        # Convert string format to array format for backward compatibility
+        boxes, scores = self._parse_inference_result(result)
 
-        # Calculate inverse_matrix for coordinate transformation
-        # This maps coordinates from the 640x640 padded space back to original image space
-        inverse_matrix = calculate_inverse_transform(
-            original_size=(original_w, original_h),
-            transformed_size=(target_size, target_size),
-            padding_position="top_left"
-        )
+        print(f"Inference complete: {len(boxes)} polygons detected")
+        return boxes, scores
 
-        batch = {
-            "images": img_tensor,
-            "image_filename": ["uploaded_image"],
-            "inverse_matrix": [inverse_matrix],  # Must be a list for batch processing
-        }
+    @staticmethod
+    def _parse_inference_result(result: dict) -> tuple:
+        """Parse InferenceEngine result into box arrays and scores.
 
-        with torch.no_grad():
-            preds = self.model(batch)
-            print(f"[DEBUG] Model predictions type: {type(preds)}", flush=True)
-            print(f"[DEBUG] Model predictions keys: {preds.keys() if isinstance(preds, dict) else 'not a dict'}", flush=True)
+        Converts from string format ("x1 y1 x2 y2|...") to array format
+        ([[x,y], [x,y], ...]) for backward compatibility with existing endpoint.
 
-            # Access the inner model to get polygons
-            # Note: OCRPLModule has model, which wraps the actual architecture
-            boxes_batch, scores_batch = self.model.model.get_polygons_from_maps(batch, preds)
+        Args:
+            result: Dictionary from InferenceEngine with 'polygons' and 'confidences' keys
 
-            print(f"[DEBUG] boxes_batch length: {len(boxes_batch)}", flush=True)
-            print(f"[DEBUG] boxes_batch[0] length: {len(boxes_batch[0]) if len(boxes_batch) > 0 else 0}", flush=True)
-            print(f"[DEBUG] scores_batch length: {len(scores_batch)}", flush=True)
+        Returns:
+            tuple: (boxes, scores) where boxes is list of np.ndarray, scores is list of float
+        """
+        import numpy as np
 
-            return boxes_batch[0], scores_batch[0]
+        polygons_str = result.get("polygons", "")
+        confidences = result.get("confidences", [])
+
+        boxes = []
+        scores = []
+
+        if not polygons_str:
+            return boxes, scores
+
+        # Parse polygons: space-separated coordinates, regions separated by "|"
+        polygon_groups = polygons_str.split("|")
+
+        for idx, polygon_str in enumerate(polygon_groups):
+            coords = polygon_str.strip().split()
+            if len(coords) < 6:  # Need at least 3 points (x1 y1 x2 y2 x3 y3)
+                continue
+
+            try:
+                # Convert to list of [x, y] pairs
+                coord_floats = [float(c) for c in coords]
+                polygon = np.array(
+                    [[coord_floats[i], coord_floats[i + 1]] for i in range(0, len(coord_floats), 2)],
+                    dtype=np.float32
+                )
+
+                # Get corresponding confidence
+                confidence = confidences[idx] if idx < len(confidences) else 0.0
+
+                boxes.append(polygon)
+                scores.append(confidence)
+
+            except (ValueError, IndexError) as e:
+                print(f"Warning: Failed to parse polygon coordinates: {polygon_str} - {e}")
+                continue
+
+        return boxes, scores
 
 # Singleton instance
 bridge: OCRBridge | None = None
@@ -337,39 +289,20 @@ async def predict(file: UploadFile = File(...), checkpoint_path: str = None):
         # Let's check the contract AGAIN.
         # "polygons": str, # Space-separated...
 
-        # However, for a JSON API, structured data is usually better.
-        # But if the InferenceEngine contract (which I copied from docs/pipeline/data_contracts.md) specifies a string,
-        # maybe I should follow it.
-        # Let's check apps/backend/services/ocr_bridge.py intent.
+        # Return structured JSON data (array format) for frontend compatibility
+        # Frontend TypeScript interface expects:
+        # { "filename": str, "predictions": [{ "points": [[x,y]...], "confidence": float }] }
 
-        # Actually, let's return JSON structured data, it's more flexible.
-        # And maybe update the contract documentation to reflect JSON structured data if "polygons" string format was legacy or specific to CSV submission.
-        # For now, I'll return structured data (list of lists) which is easier for frontend.
-        # I will return:
-        # "predictions": [ { "points": [[x,y]...], "score": float } ]
-
-        # Convert to string format matching Inference Studio
-        # Format: "x1 y1 x2 y2 x3 y3|x1 y1 x2 y2" (space-separated coords, | separates polygons)
-        polygon_strings = []
-        confidences = []
-
+        res_predictions = []
         for box, score in zip(boxes, scores):
-            # box is a list of [x, y] pairs
-            # Flatten to "x1 y1 x2 y2 x3 y3 ..."
-            coords = []
-            for point in box:
-                coords.append(str(int(point[0])))
-                coords.append(str(int(point[1])))
-            polygon_strings.append(" ".join(coords))
-            confidences.append(float(score))
-
-        # Join polygons with | separator
-        polygons_str = "|".join(polygon_strings)
+            res_predictions.append({
+                "points": box.tolist(),
+                "confidence": float(score)
+            })
 
         return {
-            "polygons": polygons_str,
-            "texts": [],  # OCR doesn't return text yet
-            "confidences": confidences
+            "filename": file.filename,
+            "predictions": res_predictions
         }
 
     except Exception as e:
