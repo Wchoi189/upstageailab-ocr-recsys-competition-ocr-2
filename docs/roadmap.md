@@ -62,12 +62,13 @@ This document outlines the development roadmap for the OCR Text Detection & Reco
 
 ### Phase 5: Next.js Console Migration 🟡 (75%)
 
-**Goals:** Migrate to modern Next.js console with Chakra UI
+**Goals:** Migrate to modern Next.js console with Chakra UI (Replacing Streamlit)
 
 **Current Work:**
 - ✅ Chakra UI theme and console shell
 - ✅ Command Builder migration
 - ✅ Extract pages (Universal & Prebuilt)
+- ✅ Archive Legacy Streamlit Apps (`ui/`)
 - 🟡 API proxy routes
 - ⚪ Session management and auth
 - ⚪ Analytics integration (GTM)

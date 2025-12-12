@@ -21,6 +21,7 @@
 - **Python 3.11 Migration**: Upgraded minimum Python version from 3.10 to 3.11. Updated all
   configuration files, CI/CD workflows, Docker images, and dependencies. Installed Python
   3.11.14 via pyenv and regenerated `uv.lock` with Python 3.11 support.
+- **Streamlit Deprecation & UI Archival**: Fully archived the legacy Streamlit application code (`ui/`) to `docs/archive/legacy_ui_code/`. Extracted shared business logic (InferenceEngine, config parsing) to the core `ocr` package. Updated `ocr_bridge.py` to use the new `ocr.inference` package. This resolves the fractured UI architecture and "legacy import" issues.
 - Restructured the `outputs/` directory into a structured `experiments/` and `artifacts/`
   layout and documented cleanup rules.
 - Updated Hydra and paths configs so new runs write under

@@ -78,7 +78,7 @@ INFO: Using environment variables: OCR_CONFIG_DIR, OCR_OUTPUT_DIR
 Environment variables are automatically loaded when the app starts:
 
 ```python
-# ui/apps/unified_ocr_app/app.py
+# ui/apps/inference/app.py
 # Paths are initialized at module level
 ```
 
@@ -141,7 +141,7 @@ export OCR_OUTPUT_DIR=/tmp/my_outputs
 export OCR_CHECKPOINTS_DIR=/tmp/my_checkpoints
 
 # Run application
-streamlit run ui/apps/unified_ocr_app/app.py
+streamlit run ui/apps/inference/app.py
 ```
 
 ## Logging

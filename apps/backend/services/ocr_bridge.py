@@ -17,10 +17,9 @@ router = APIRouter(prefix="/ocr", tags=["OCR"])
 class OCRBridge:
     """OCR inference bridge using proven InferenceEngine.
 
-    This class wraps ui.utils.inference.InferenceEngine to provide a consistent
+    This class wraps ocr.inference.InferenceEngine to provide a consistent
     inference interface for the OCR Inference Console backend. The InferenceEngine
-    is a battle-tested implementation from the Playground Console with sophisticated
-    coordinate transformation, preprocessing support, and error handling.
+    is a battle-tested implementation now moved to the core ocr package.
 
     Model loads only on first inference request (lazy loading) for fast server startup.
     """
@@ -36,7 +35,7 @@ class OCRBridge:
         if self.engine is None:
             print(f"Loading InferenceEngine for checkpoint: {self.checkpoint_path}")
             # Lazy import - only load when model is actually needed
-            from ui.utils.inference import InferenceEngine
+            from ocr.inference import InferenceEngine
 
             self.engine = InferenceEngine()
 

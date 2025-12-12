@@ -62,8 +62,8 @@ BACKEND_HOST ?= 127.0.0.1
 BACKEND_PORT ?= 8000
 BACKEND_APP ?= apps.backend.services.playground_api.app:app
 
-# UI Apps
-UI_APPS := command_builder evaluation_viewer inference preprocessing_viewer resource_monitor unified_app
+# UI Apps (Deprecated/Archived)
+# UI_APPS list removed as Streamlit apps are archived
 
 .PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop backend-force-kill stack-dev stack-stop fs stop-fs checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
 
@@ -104,18 +104,8 @@ help:
 	@echo "  diagrams-validate   - Validate diagram syntax"
 	@echo "  diagrams-update-specific - Update specific diagrams (use DIAGRAMS=...)"
 	@echo ""
-	@echo "🖥️  UI APPLICATIONS"
-	@echo "  serve-<app>         - Start UI app (apps: $(UI_APPS))"
-	@echo "  stop-<app>          - Stop UI app"
-	@echo "  status-<app>        - Check UI app status"
-	@echo "  logs-<app>          - View UI app logs"
-	@echo "  clear-logs-<app>    - Clear UI app logs"
-	@echo "  list-ui-processes   - List all running UI processes"
-	@echo "  stop-all-ui         - Stop all UI processes"
-	@echo "  Shortcuts           - cb eval infer prep monitor ua (start Unified App)"
-	@echo "  Stop Shortcuts      - stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua"
-	@echo "  start / stop        - Start/Stop Unified App (aliases for ua)"
-	@echo ""
+	@echo "🖥️  UI APPLICATIONS (Legacy Streamlit Apps are Archived)"
+	@echo "  Use 'frontend-dev' or 'console-dev' for modern UI apps."
 	@echo "🌐 FRONTEND"
 	@echo "  fe                 - Start Vite dev server (alias for frontend-dev)"
 	@echo "  frontend-dev       - Vite dev server on $(FRONTEND_HOST):$(FRONTEND_PORT)"
@@ -264,23 +254,8 @@ diagrams-update-specific:
 # UI APPLICATIONS (Parameterized)
 # ============================================================================
 
-# Friendly aliases (one-word shortcuts)
-cb: serve-command_builder
-eval: serve-evaluation_viewer
-infer: serve-inference
-prep: serve-preprocessing_viewer
-monitor: serve-resource_monitor
-ua: serve-unified_app
-
-stop-cb: stop-command_builder
-stop-eval: stop-evaluation_viewer
-stop-infer: stop-inference
-stop-prep: stop-preprocessing_viewer
-stop-monitor: stop-resource_monitor
-stop-ua: stop-unified_app
-
-start: ua
-stop: stop-unified_app
+# Friendly aliases (Legacy removed)
+# cb, eval, infer, prep, monitor, ua removed
 
 fe: frontend-dev
 
@@ -481,6 +456,45 @@ backend-stop:
 
 fs: stack-dev
 
+serve-ocr-console:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "Error: No checkpoint found in outputs/experiments/train/ocr. Please set OCR_CHECKPOINT_PATH manually."; \
+			exit 1; \
+		fi; \
+		echo "Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
+		echo "Starting FastAPI backend (with OCR bridge) on $(BACKEND_HOST):$(BACKEND_PORT)"; \
+		OCR_CHECKPOINT_PATH=$$OCR_CHECKPOINT_PATH uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload & \
+		BACK_PID=$$!; \
+		trap "echo \"Stopping backend (PID $$BACK_PID)\"; kill $$BACK_PID 2>/dev/null || true; $(MAKE) backend-stop 2>/dev/null || true" EXIT INT TERM; \
+		echo "Backend started (PID $$BACK_PID), waiting for port $(BACKEND_PORT) to be ready..."; \
+		MAX_WAIT=30; \
+		WAITED=0; \
+		while [ $$WAITED -lt $$MAX_WAIT ]; do \
+			if command -v lsof >/dev/null 2>&1; then \
+				if lsof -i:$(BACKEND_PORT) >/dev/null 2>&1; then \
+					echo "Backend is ready on port $(BACKEND_PORT)"; \
+					break; \
+				fi; \
+			elif command -v nc >/dev/null 2>&1; then \
+				if nc -z $(BACKEND_HOST) $(BACKEND_PORT) 2>/dev/null; then \
+					echo "Backend is ready on port $(BACKEND_PORT)"; \
+					break; \
+				fi; \
+			else \
+				sleep 3; \
+				break; \
+			fi; \
+			sleep 0.5; \
+			WAITED=$$((WAITED + 1)); \
+		done; \
+		if [ $$WAITED -ge $$MAX_WAIT ]; then \
+			echo "Warning: Backend may not be ready yet, but starting frontend anyway"; \
+		fi; \
+		$(MAKE) ocr-console-dev; \
+	'
+
 stack-dev:
 	@bash -c 'set -euo pipefail; \
 		echo "Starting FastAPI backend on $(BACKEND_HOST):$(BACKEND_PORT)"; \
@@ -567,146 +581,12 @@ backend-force-kill:
 		fi; \
 	fi
 
-# Start UI applications
-serve-command_builder:
-	uv run python scripts/process_manager.py start command_builder --port=$(PORT)
+# ============================================================================
+# UI APPLICATIONS (Legacy - Archived)
+# ============================================================================
 
-serve-evaluation_viewer:
-	uv run python scripts/process_manager.py start evaluation_viewer --port=$(PORT)
-
-serve-inference:
-	uv run python scripts/process_manager.py start inference --port=$(PORT)
-
-serve-preprocessing_viewer:
-	uv run python scripts/process_manager.py start preprocessing_viewer --port=$(PORT)
-
-serve-resource_monitor:
-	uv run python scripts/process_manager.py start resource_monitor --port=$(PORT)
-
-serve-unified_app:
-	uv run python scripts/process_manager.py start unified_app --port=$(PORT)
-
-serve-ocr-console:
-	@bash -c 'set -euo pipefail; \
-		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" | head -n 1); \
-		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
-			echo "Error: No checkpoint found in outputs/experiments/train/ocr. Please set OCR_CHECKPOINT_PATH manually."; \
-			exit 1; \
-		fi; \
-		echo "Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
-		echo "Starting FastAPI backend (with OCR bridge) on $(BACKEND_HOST):$(BACKEND_PORT)"; \
-		OCR_CHECKPOINT_PATH=$$OCR_CHECKPOINT_PATH uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload & \
-		BACK_PID=$$!; \
-		trap "echo \"Stopping backend (PID $$BACK_PID)\"; kill $$BACK_PID 2>/dev/null || true; $(MAKE) backend-stop 2>/dev/null || true" EXIT INT TERM; \
-		echo "Backend started (PID $$BACK_PID), waiting for port $(BACKEND_PORT) to be ready..."; \
-		MAX_WAIT=30; \
-		WAITED=0; \
-		while [ $$WAITED -lt $$MAX_WAIT ]; do \
-			if command -v lsof >/dev/null 2>&1; then \
-				if lsof -i:$(BACKEND_PORT) >/dev/null 2>&1; then \
-					echo "Backend is ready on port $(BACKEND_PORT)"; \
-					break; \
-				fi; \
-			elif command -v nc >/dev/null 2>&1; then \
-				if nc -z $(BACKEND_HOST) $(BACKEND_PORT) 2>/dev/null; then \
-					echo "Backend is ready on port $(BACKEND_PORT)"; \
-					break; \
-				fi; \
-			else \
-				sleep 3; \
-				break; \
-			fi; \
-			sleep 0.5; \
-			WAITED=$$((WAITED + 1)); \
-		done; \
-		if [ $$WAITED -ge $$MAX_WAIT ]; then \
-			echo "Warning: Backend may not be ready yet, but starting frontend anyway"; \
-		fi; \
-		$(MAKE) ocr-console-dev; \
-	'
-
-# Stop UI applications
-stop-command_builder:
-	uv run python scripts/process_manager.py stop command_builder --port=$(PORT)
-
-stop-evaluation_viewer:
-	uv run python scripts/process_manager.py stop evaluation_viewer --port=$(PORT)
-
-stop-inference:
-	uv run python scripts/process_manager.py stop inference --port=$(PORT)
-
-stop-preprocessing_viewer:
-	uv run python scripts/process_manager.py stop preprocessing_viewer --port=$(PORT)
-
-stop-resource_monitor:
-	uv run python scripts/process_manager.py stop resource_monitor --port=$(PORT)
-
-stop-unified_app:
-	uv run python scripts/process_manager.py stop unified_app --port=$(PORT)
-
-# Check UI application status
-status-command_builder:
-	uv run python scripts/process_manager.py status command_builder --port=$(PORT)
-
-status-evaluation_viewer:
-	uv run python scripts/process_manager.py status evaluation_viewer --port=$(PORT)
-
-status-inference:
-	uv run python scripts/process_manager.py status inference --port=$(PORT)
-
-status-preprocessing_viewer:
-	uv run python scripts/process_manager.py status preprocessing_viewer --port=$(PORT)
-
-status-resource_monitor:
-	uv run python scripts/process_manager.py status resource_monitor --port=$(PORT)
-
-status-unified_app:
-	uv run python scripts/process_manager.py status unified_app --port=$(PORT)
-
-# View UI application logs
-logs-command_builder:
-	uv run python scripts/process_manager.py logs command_builder --port=$(PORT)
-
-logs-evaluation_viewer:
-	uv run python scripts/process_manager.py logs evaluation_viewer --port=$(PORT)
-
-logs-inference:
-	uv run python scripts/process_manager.py logs inference --port=$(PORT)
-
-logs-preprocessing_viewer:
-	uv run python scripts/process_manager.py logs preprocessing_viewer --port=$(PORT)
-
-logs-resource_monitor:
-	uv run python scripts/process_manager.py logs resource_monitor --port=$(PORT)
-
-logs-unified_app:
-	uv run python scripts/process_manager.py logs unified_app --port=$(PORT)
-
-# Clear UI application logs
-clear-logs-command_builder:
-	uv run python scripts/process_manager.py clear-logs command_builder --port=$(PORT)
-
-clear-logs-evaluation_viewer:
-	uv run python scripts/process_manager.py clear-logs evaluation_viewer --port=$(PORT)
-
-clear-logs-inference:
-	uv run python scripts/process_manager.py clear-logs inference --port=$(PORT)
-
-clear-logs-preprocessing_viewer:
-	uv run python scripts/process_manager.py clear-logs preprocessing_viewer --port=$(PORT)
-
-clear-logs-resource_monitor:
-	uv run python scripts/process_manager.py clear-logs resource_monitor --port=$(PORT)
-
-clear-logs-unified_app:
-	uv run python scripts/process_manager.py clear-logs unified_app --port=$(PORT)
-
-# UI process management
-list-ui-processes:
-	uv run python scripts/process_manager.py list
-
-stop-all-ui:
-	uv run python scripts/process_manager.py stop-all
+# Note: Streamlit apps have been archived to docs/archive/legacy_ui_code/
+# Use 'frontend-dev' or 'console-dev' instead.
 
 # ============================================================================
 # CHECKPOINT MANAGEMENT
