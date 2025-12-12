@@ -13,6 +13,13 @@ export interface InferenceResponse {
     predictions: Prediction[];
 }
 
+export interface Checkpoint {
+    path: string;
+    name: string;
+    size_mb: number;
+    modified: number;
+}
+
 const API_BASE_URL = 'http://localhost:8000/ocr';
 
 export const ocrClient = {
@@ -28,9 +35,24 @@ export const ocrClient = {
         }
     },
 
-    predict: async (file: File): Promise<InferenceResponse> => {
+    listCheckpoints: async (): Promise<Checkpoint[]> => {
+        try {
+            const res = await fetch(`${API_BASE_URL}/checkpoints`);
+            if (!res.ok) return [];
+            const data = await res.json();
+            return data.checkpoints || [];
+        } catch (e) {
+            console.error('Failed to list checkpoints', e);
+            return [];
+        }
+    },
+
+    predict: async (file: File, checkpointPath?: string): Promise<InferenceResponse> => {
         const formData = new FormData();
         formData.append('file', file);
+        if (checkpointPath) {
+            formData.append('checkpoint_path', checkpointPath);
+        }
 
         const res = await fetch(`${API_BASE_URL}/predict`, {
             method: 'POST',

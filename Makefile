@@ -298,6 +298,9 @@ console-lint:
 
 sfe: frontend-stop
 
+ocr-console-dev:
+	cd apps/ocr-inference-console && npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
+
 frontend-stop:
 	@PORT=$(FRONTEND_PORT); \
 	PIDS=""; \
@@ -582,6 +585,45 @@ serve-resource_monitor:
 
 serve-unified_app:
 	uv run python scripts/process_manager.py start unified_app --port=$(PORT)
+
+serve-ocr-console:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "Error: No checkpoint found in outputs/experiments/train/ocr. Please set OCR_CHECKPOINT_PATH manually."; \
+			exit 1; \
+		fi; \
+		echo "Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
+		echo "Starting FastAPI backend (with OCR bridge) on $(BACKEND_HOST):$(BACKEND_PORT)"; \
+		OCR_CHECKPOINT_PATH=$$OCR_CHECKPOINT_PATH uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload & \
+		BACK_PID=$$!; \
+		trap "echo \"Stopping backend (PID $$BACK_PID)\"; kill $$BACK_PID 2>/dev/null || true; $(MAKE) backend-stop 2>/dev/null || true" EXIT INT TERM; \
+		echo "Backend started (PID $$BACK_PID), waiting for port $(BACKEND_PORT) to be ready..."; \
+		MAX_WAIT=30; \
+		WAITED=0; \
+		while [ $$WAITED -lt $$MAX_WAIT ]; do \
+			if command -v lsof >/dev/null 2>&1; then \
+				if lsof -i:$(BACKEND_PORT) >/dev/null 2>&1; then \
+					echo "Backend is ready on port $(BACKEND_PORT)"; \
+					break; \
+				fi; \
+			elif command -v nc >/dev/null 2>&1; then \
+				if nc -z $(BACKEND_HOST) $(BACKEND_PORT) 2>/dev/null; then \
+					echo "Backend is ready on port $(BACKEND_PORT)"; \
+					break; \
+				fi; \
+			else \
+				sleep 3; \
+				break; \
+			fi; \
+			sleep 0.5; \
+			WAITED=$$((WAITED + 1)); \
+		done; \
+		if [ $$WAITED -ge $$MAX_WAIT ]; then \
+			echo "Warning: Backend may not be ready yet, but starting frontend anyway"; \
+		fi; \
+		$(MAKE) ocr-console-dev; \
+	'
 
 # Stop UI applications
 stop-command_builder:

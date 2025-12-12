@@ -11,7 +11,7 @@ Modern API:
 
     # Initialize project paths
     setup_project_paths()
-    
+
     # Access path configuration
     resolver = get_path_resolver()
     data_dir = resolver.config.data_dir
@@ -88,7 +88,7 @@ class OCRPathConfig:
             annotations_dir=Path(config.get("annotations_dir", "data/datasets/jsons")),
             pseudo_labels_dir=Path(config.get("pseudo_labels_dir", "data/pseudo_label")),
             logs_dir=Path(config.get("logs_dir", "outputs/logs")),
-            checkpoints_dir=Path(config.get("checkpoints_dir", "outputs/checkpoints")),
+            checkpoints_dir=Path(config.get("checkpoints_dir", "outputs/experiments/train/ocr")),
             submissions_dir=Path(config.get("submissions_dir", "outputs/submissions")),
             models_dir=(Path(config.get("models_dir", "models")) if config.get("models_dir") else None),
             pretrained_models_dir=(

@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ocr.utils.path_utils import setup_project_paths
 
 from .routers import command_builder, evaluation, inference, metrics, pipeline
+from apps.backend.services import ocr_bridge
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +39,7 @@ def create_app() -> FastAPI:
     app.include_router(pipeline.router, prefix="/api/pipelines", tags=["pipelines"])
     app.include_router(evaluation.router, prefix="/api/evaluation", tags=["evaluation"])
     app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
+    app.include_router(ocr_bridge.router)
 
     @app.on_event("startup")
     def setup_paths_on_startup() -> None:

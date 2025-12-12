@@ -1,6 +1,7 @@
 
 import { Home, FileText, Settings, Database, UploadCloud } from 'lucide-react';
 import { cn } from '../utils';
+import { CheckpointSelector } from './CheckpointSelector';
 
 const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: string, isActive?: boolean }) => (
     <button className={cn(
@@ -14,7 +15,12 @@ const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: st
     </button>
 );
 
-export const Sidebar = () => {
+interface SidebarProps {
+    selectedCheckpoint: string | null;
+    onCheckpointChange: (checkpoint: string) => void;
+}
+
+export const Sidebar = ({ selectedCheckpoint, onCheckpointChange }: SidebarProps) => {
     return (
         <div className="w-64 border-r border-gray-200 h-full bg-white flex flex-col">
             <div className="p-4 border-b border-gray-100 flex items-center gap-2">
@@ -43,6 +49,13 @@ export const Sidebar = () => {
                     <div className="space-y-1">
                         <NavItem icon={Database} label="Universal Extraction" />
                     </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                    <CheckpointSelector
+                        selectedCheckpoint={selectedCheckpoint}
+                        onCheckpointChange={onCheckpointChange}
+                    />
                 </div>
             </div>
 

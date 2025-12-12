@@ -10,7 +10,11 @@ import { ImageUploader } from './ImageUploader';
 import { PolygonOverlay } from './PolygonOverlay';
 import { ocrClient, type Prediction, type InferenceResponse } from '../api/ocrClient';
 
-export const Workspace: React.FC = () => {
+interface WorkspaceProps {
+    selectedCheckpoint: string | null;
+}
+
+export const Workspace: React.FC<WorkspaceProps> = ({ selectedCheckpoint }) => {
     const [viewMode, setViewMode] = useState<'preview' | 'json'>('preview');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -27,7 +31,7 @@ export const Workspace: React.FC = () => {
         setImageUrl(url);
 
         try {
-            const result: InferenceResponse = await ocrClient.predict(file);
+            const result: InferenceResponse = await ocrClient.predict(file, selectedCheckpoint || undefined);
             setPredictions(result.predictions);
         } catch (e: any) {
             console.error(e);

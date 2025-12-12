@@ -1,16 +1,13 @@
 import os
 import io
 from pathlib import Path
-import torch
-import numpy as np
-from PIL import Image
-import torchvision.transforms.functional as F
-from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+# Lazy import: torch, numpy, PIL only loaded when needed
 from typing import List, Dict, Any
 
-from ocr.lightning_modules.ocr_pl import OCRPLModule
+from fastapi import APIRouter, UploadFile, File, HTTPException, Depends
+
+# Lightweight imports only
 from ocr.utils.path_utils import setup_project_paths
-from ocr.utils.geometry_utils import calculate_inverse_transform
 
 # Ensure project paths are set
 setup_project_paths()
@@ -18,32 +15,53 @@ setup_project_paths()
 router = APIRouter(prefix="/ocr", tags=["OCR"])
 
 class OCRBridge:
+    """OCR inference bridge with lazy loading.
+
+    Model loads only on first inference request, not at initialization.
+    This allows the server to start instantly without blocking on model loading.
+    """
     def __init__(self, checkpoint_path: str, device: str = "cuda" if torch.cuda.is_available() else "cpu"):
         self.device = device
         self.checkpoint_path = checkpoint_path
-        self.model = self._load_model()
-        if self.model:
-            self.model.eval()
-            self.model.to(self.device)
+        self.model = None  # Lazy loading: don't load until first use
+        print(f"OCR Bridge initialized with checkpoint: {checkpoint_path} (model will load on first request)")
 
-    def _load_model(self) -> OCRPLModule | None:
+    def _ensure_model_loaded(self) -> None:
+        """Lazy load model on first use."""
+        if self.model is None:
+            self.model = self._load_model()
+            if self.model:
+                self.model.eval()
+                self.model.to(self.device)
+
+    def _load_model(self):
+        """Lazy load model - imports heavy dependencies only when called."""
+        # Lazy imports - only load when model is actually needed
+        import torch
+        from ocr.lightning_modules.ocr_pl import OCRPLModule
+
         if not os.path.exists(self.checkpoint_path):
             print(f"Warning: Checkpoint not found at {self.checkpoint_path}")
             return None
 
         print(f"Loading checkpoint from {self.checkpoint_path}...")
         try:
-            # 1. Resolve Config Path (in .hydra sibling directory of checkpoints)
-            # Structure: outputs/.../checkpoints/best.ckpt -> outputs/.../.hydra/config.yaml
+            # 1. Resolve Config Path
+            # Structure: outputs/.../checkpoints/epoch-14.ckpt -> outputs/.../config.yaml
             ckpt_path = Path(self.checkpoint_path)
             # Go up two levels: checkpoints/epoch... -> checkpoints/ -> experiment_root/
             exp_root = ckpt_path.parent.parent
-            config_path = exp_root / ".hydra" / "config.yaml"
+            config_path = exp_root / "config.yaml"
 
             if not config_path.exists():
-                print(f"Config not found at {config_path}", flush=True)
-                # Fallback: try to find it via hydra if possible, or fail
-                return None
+                print(f"Config not found at {config_path}, trying .hydra subdirectory", flush=True)
+                # Fallback: try .hydra subdirectory (legacy structure)
+                config_path = exp_root / ".hydra" / "config.yaml"
+                if not config_path.exists():
+                    print(f"Config also not found at {config_path}", flush=True)
+                    return None
+
+            print(f"Using config: {config_path}", flush=True)
 
             from omegaconf import OmegaConf
             import hydra
@@ -95,8 +113,32 @@ class OCRBridge:
             return None
 
     def predict(self, image: Image.Image) -> tuple[List[np.ndarray], List[float]]:
+        """Run OCR inference on image.
+
+        Model loads automatically on first call (lazy loading).
+        """
+        # Lazy imports
+        import torch
+        import numpy as np
+        from PIL import Image
+        import torchvision.transforms.functional as F
+        from ocr.utils.geometry_utils import calculate_inverse_transform
+
+        self._ensure_model_loaded()  # Load model if not already loaded
+
         if not self.model:
-            raise RuntimeError("Model is not loaded.")
+            # Check if there's a load error file with details
+            error_details = "Unknown error"
+            try:
+                if os.path.exists("load_error.txt"):
+                    with open("load_error.txt", "r") as f:
+                        error_details = f.read()
+            except:
+                pass
+            raise RuntimeError(
+                f"Model failed to load from checkpoint: {self.checkpoint_path}\n"
+                f"Error details: {error_details}"
+            )
 
         # Store original size for inverse_matrix calculation
         original_w, original_h = image.size
@@ -164,42 +206,114 @@ class OCRBridge:
 # Singleton instance
 bridge: OCRBridge | None = None
 
+def get_default_checkpoint() -> str:
+    """Auto-detect latest checkpoint from outputs/experiments/train/ocr.
+
+    Returns:
+        Path to the most recently modified checkpoint file.
+
+    Raises:
+        ValueError: If no checkpoints found in the directory.
+    """
+    ckpt_dir = Path("outputs/experiments/train/ocr")
+    if not ckpt_dir.exists():
+        raise ValueError(f"Checkpoint directory not found: {ckpt_dir}")
+
+    checkpoints = list(ckpt_dir.rglob("*.ckpt"))
+    if not checkpoints:
+        raise ValueError(f"No checkpoints found in {ckpt_dir}")
+
+    # Sort by modification time, return latest
+    latest = max(checkpoints, key=lambda p: p.stat().st_mtime)
+    print(f"Auto-detected latest checkpoint: {latest}")
+    return str(latest)
+
+def get_checkpoint_path() -> str:
+    """Get checkpoint path from environment variable or auto-detect.
+
+    Priority:
+    1. OCR_CHECKPOINT_PATH environment variable (if set)
+    2. Auto-detect latest checkpoint from outputs/experiments/train/ocr
+
+    Returns:
+        Absolute path to checkpoint file.
+    """
+    ckpt_path = os.getenv("OCR_CHECKPOINT_PATH")
+    if ckpt_path:
+        print(f"Using checkpoint from OCR_CHECKPOINT_PATH: {ckpt_path}")
+        # Resolve to absolute path
+        if not os.path.isabs(ckpt_path):
+            ckpt_path = os.path.abspath(ckpt_path)
+        return ckpt_path
+    else:
+        return get_default_checkpoint()
+
 def get_bridge():
     global bridge
     if bridge is None:
-        # Default path or from env
-        # Use environment variable or fail with clear error message
-        ckpt_path = os.getenv("OCR_CHECKPOINT_PATH")
-        if not ckpt_path:
-            raise ValueError(
-                "OCR_CHECKPOINT_PATH environment variable must be set. "
-                "Legacy default checkpoint path (ocr_training_b) has been removed. "
-                "Please set OCR_CHECKPOINT_PATH to a valid checkpoint in outputs/experiments/train/ocr/"
-            )
-        # Resolve to absolute if needed, or assume running from workspace root
-        if not os.path.isabs(ckpt_path):
-            ckpt_path = os.path.abspath(ckpt_path)
+        ckpt_path = get_checkpoint_path()
         bridge = OCRBridge(ckpt_path)
     return bridge
 
 @router.on_event("startup")
 async def startup_event():
-    get_bridge()
+    """Initialize OCR Bridge on startup (lazy loading - model loads on first request)."""
+    try:
+        get_bridge()  # Initialize bridge but don't load model yet
+        print("OCR Bridge initialized successfully (model will load on first inference request)")
+    except Exception as e:
+        print(f"Warning: OCR Bridge initialization failed: {e}")
+        print("OCR endpoints will be unavailable until checkpoint is configured.")
+
+@router.get("/checkpoints")
+def list_checkpoints():
+    """List available checkpoints from outputs/experiments/train/ocr."""
+    from pathlib import Path
+
+    checkpoints_dir = Path("outputs/experiments/train/ocr")
+    if not checkpoints_dir.exists():
+        return {"checkpoints": []}
+
+    checkpoints = []
+    for ckpt_path in sorted(checkpoints_dir.rglob("*.ckpt")):
+        try:
+            stat = ckpt_path.stat()
+            checkpoints.append({
+                "path": str(ckpt_path),
+                "name": ckpt_path.stem,
+                "size_mb": round(stat.st_size / (1024 * 1024), 2),
+                "modified": stat.st_mtime
+            })
+        except Exception:
+            continue
+
+    # Sort by modification time (newest first)
+    checkpoints.sort(key=lambda x: x["modified"], reverse=True)
+    return {"checkpoints": checkpoints}
 
 @router.get("/health")
 def health_check():
+    """Health check endpoint - doesn't force model loading."""
     b = get_bridge()
     return {
         "status": "ok",
-        "model_loaded": b.model is not None if b else False,
+        "model_loaded": b.model is not None,  # Check if loaded, don't force load
+        "checkpoint_path": b.checkpoint_path,
         "device": b.device if b else "N/A"
     }
 
 @router.post("/predict")
-async def predict(file: UploadFile = File(...)):
+async def predict(file: UploadFile = File(...), checkpoint_path: str = None):
+    global bridge
+
+    # If checkpoint_path is provided and different from current, reload the model
+    if checkpoint_path and bridge and bridge.checkpoint_path != checkpoint_path:
+        print(f"Reloading model with checkpoint: {checkpoint_path}")
+        bridge = OCRBridge(checkpoint_path)
+
     b = get_bridge()
-    if not b or not b.model:
-         raise HTTPException(status_code=503, detail="Model not loaded or checkpoint missing")
+    # Don't check b.model here - lazy loading means it's None until first use
+    # The b.predict() method will handle lazy loading and error reporting
 
     try:
         contents = await file.read()
@@ -230,21 +344,32 @@ async def predict(file: UploadFile = File(...)):
 
         # Actually, let's return JSON structured data, it's more flexible.
         # And maybe update the contract documentation to reflect JSON structured data if "polygons" string format was legacy or specific to CSV submission.
-
         # For now, I'll return structured data (list of lists) which is easier for frontend.
         # I will return:
         # "predictions": [ { "points": [[x,y]...], "score": float } ]
 
-        res_predictions = []
+        # Convert to string format matching Inference Studio
+        # Format: "x1 y1 x2 y2 x3 y3|x1 y1 x2 y2" (space-separated coords, | separates polygons)
+        polygon_strings = []
+        confidences = []
+
         for box, score in zip(boxes, scores):
-            res_predictions.append({
-                "points": box.tolist(),
-                "confidence": float(score)
-            })
+            # box is a list of [x, y] pairs
+            # Flatten to "x1 y1 x2 y2 x3 y3 ..."
+            coords = []
+            for point in box:
+                coords.append(str(int(point[0])))
+                coords.append(str(int(point[1])))
+            polygon_strings.append(" ".join(coords))
+            confidences.append(float(score))
+
+        # Join polygons with | separator
+        polygons_str = "|".join(polygon_strings)
 
         return {
-            "filename": file.filename,
-            "predictions": res_predictions
+            "polygons": polygons_str,
+            "texts": [],  # OCR doesn't return text yet
+            "confidences": confidences
         }
 
     except Exception as e:

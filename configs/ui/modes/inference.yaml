@@ -5,7 +5,7 @@ display_name: "Model Inference Studio"
 # Paths configuration
 paths:
   outputs_dir: "outputs"
-  checkpoints_dir: "outputs/checkpoints"
+  checkpoints_dir: "outputs/experiments/train/ocr"
 
 # UI Layout
 layout:
