@@ -26,10 +26,29 @@ def create_app() -> FastAPI:
     )
 
     # Configure CORS
+    # Allow all origins in development for easier debugging
+    # In production, restrict to specific origins
+    import os
+    if os.getenv("ENV") == "production":
+        allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+        use_credentials = True
+    else:
+        # Development: allow common frontend ports and all localhost variants
+        # Use allow_origin_regex for more flexible matching in dev
+        allowed_origins = [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:5174",
+            "http://127.0.0.1:5174",
+        ]
+        use_credentials = True
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-        allow_credentials=True,
+        allow_origins=allowed_origins,
+        allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",  # Allow any localhost port in dev
+        allow_credentials=use_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )

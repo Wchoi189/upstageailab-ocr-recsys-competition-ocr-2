@@ -1,0 +1,4 @@
+uv run uvicorn apps.backend.services.playground_api.app:app --host 127.0.0.1 --port 8000 --reload
+INFO:     Will watch for changes in these directories: ['/workspaces/upstageailab-ocr-recsys-competition-ocr-2']
+ERROR:    [Errno 98] Address already in use
+make: *** [Makefile:344: backend-dev] Error 1

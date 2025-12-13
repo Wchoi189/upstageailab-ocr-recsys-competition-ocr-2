@@ -1,24 +1,28 @@
 # API Data Contracts
 
-## POST /ocr/predict
+## POST /api/inference/preview
 
-Runs OCR inference on an uploaded image.
+Runs OCR inference on an uploaded image and returns predictions with metadata.
 
 ### Request
 
-**Endpoint**: `POST http://localhost:8000/ocr/predict`
+**Endpoint**: `POST http://127.0.0.1:8000/api/inference/preview`
 
-**Content-Type**: `multipart/form-data`
+**Content-Type**: `application/json`
 
-**Parameters**:
-- `file` (required): Image file (JPG, PNG, BMP)
-- `checkpoint_path` (optional): Override default checkpoint path
+**Body**:
+```typescript
+interface InferencePreviewRequest {
+  image_base64: string;  // Base64-encoded image
+  checkpoint_path: string;
+}
+```
 
 **Example**:
 ```bash
-curl -X POST http://localhost:8000/ocr/predict \
-  -F "file=@image.jpg" \
-  -F "checkpoint_path=/path/to/checkpoint.ckpt"
+curl -X POST http://127.0.0.1:8000/api/inference/preview \
+  -H "Content-Type: application/json" \
+  -d '{"image_base64": "...", "checkpoint_path": "/path/to/checkpoint.ckpt"}'
 ```
 
 ### Response
@@ -27,14 +31,44 @@ curl -X POST http://localhost:8000/ocr/predict \
 
 **TypeScript Interface**:
 ```typescript
+interface InferencePreviewResponse {
+  status: string;
+  regions: TextRegion[];
+  processing_time_ms: number;
+  preview_image_base64?: string | null;  // Preprocessed image in processed_size space
+  meta?: InferenceMetadata;
+}
+
+interface TextRegion {
+  polygon: number[][];  // [[x1, y1], [x2, y2], ...] in processed_size space
+  confidence: number;    // 0.0 - 1.0
+  text?: string | null;
+}
+
+interface InferenceMetadata {
+  original_size: [number, number];  // [width, height] of source image
+  processed_size: [number, number]; // [width, height] of preprocessed image (typically 640x640)
+  padding: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
+  scale: number;                     // target_size / max(original_h, original_w)
+  coordinate_system: "pixel" | "normalized";
+}
+
 interface InferenceResponse {
   filename: string;
   predictions: Prediction[];
+  meta?: InferenceMetadata;
+  preview_image_base64?: string | null;
 }
 
 interface Prediction {
   points: number[][];  // [[x1, y1], [x2, y2], [x3, y3], [x4, y4]]
   confidence: number;   // 0.0 - 1.0
+  label?: string;
 }
 ```
 
@@ -71,10 +105,26 @@ class InferenceResponse(BaseModel):
 
 ### Coordinate System
 
-- **Origin**: Top-left corner of image (0, 0)
-- **Points**: Pixel coordinates in original image space
+**Important**: Coordinates are in `processed_size` space, not original image space.
+
+- **Origin**: Top-left corner of processed image (0, 0)
+- **Points**: Pixel coordinates relative to `processed_size` (typically 640x640)
 - **Polygon**: 4+ points defining a quadrilateral or polygon
 - **Order**: Points are ordered clockwise or counter-clockwise
+- **Preview Image**: Use `preview_image_base64` for display - it matches the coordinate system
+
+### Padding and Content Area
+
+The preprocessed image includes black padding. The content area (actual image without padding) can be calculated:
+
+```typescript
+// For top-left padding (default)
+const contentW = processed_size[0] - padding.right;
+const contentH = processed_size[1] - padding.bottom;
+const contentArea = { x: 0, y: 0, w: contentW, h: contentH };
+```
+
+See [Annotation Rendering](./annotation-rendering.md) for details on trimming padding during display.
 
 ### Error Responses
 
@@ -103,6 +153,7 @@ if (!data.predictions || !Array.isArray(data.predictions)) {
 
 ### Related
 
-- Backend implementation: [`apps/backend/services/ocr_bridge.py`](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/backend/services/ocr_bridge.py)
-- Frontend client: [`apps/ocr-inference-console/src/api/ocrClient.ts`](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/ocr-inference-console/src/api/ocrClient.ts)
-- Data contract docs: [`docs/pipeline/inference-data-contracts.md`](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/pipeline/inference-data-contracts.md)
+- Backend implementation: [`apps/backend/services/playground_api/routers/inference.py`](../../backend/services/playground_api/routers/inference.py)
+- Frontend client: [`apps/ocr-inference-console/src/api/ocrClient.ts`](../src/api/ocrClient.ts)
+- Annotation rendering: [`apps/ocr-inference-console/docs/annotation-rendering.md`](./annotation-rendering.md)
+- Pipeline data contracts: [`docs/pipeline/inference-data-contracts.md`](../../docs/pipeline/inference-data-contracts.md)

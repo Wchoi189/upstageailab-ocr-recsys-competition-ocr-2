@@ -1,5 +1,11 @@
 # Changelog
 
+## Changelog Format Guidelines
+- **Format**: `[YYYY-MM-DD HH:MM] - Brief description (max 80 chars)`
+- **Placement**: Add new entries at the very top, below this guidelines section
+- **Conciseness**: Keep entries ultra-concise - focus on what changed, not why
+- **Categories**: Group related changes under appropriate section headers
+
 ## [Unreleased]
 
 - **Config Architecture Consolidation (Phases 5-8)**: Completed major restructuring of Hydra configuration architecture, reducing cognitive load by 43% (7.0 → 4.0) and improving maintainability.

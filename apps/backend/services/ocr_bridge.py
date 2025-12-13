@@ -82,7 +82,8 @@ class OCRBridge:
 
         # Use InferenceEngine's proven predict_array method
         print(f"Running inference on image with shape: {image_array.shape}")
-        result = self.engine.predict_array(image_array)
+        # BUG FIX: return_preview=False ensures we get ORIGINAL coordinates, not resized 640x640 preview coords
+        result = self.engine.predict_array(image_array, return_preview=False)
 
         if result is None:
             print("InferenceEngine returned None - using empty predictions")
@@ -248,7 +249,7 @@ def health_check():
     b = get_bridge()
     return {
         "status": "ok",
-        "model_loaded": b.model is not None,  # Check if loaded, don't force load
+        "model_loaded": b.engine is not None,  # Check if loaded, don't force load
         "checkpoint_path": b.checkpoint_path,
         "device": b.device if b else "N/A"
     }
@@ -268,6 +269,7 @@ async def predict(file: UploadFile = File(...), checkpoint_path: str = None):
 
     try:
         contents = await file.read()
+        from PIL import Image
         image = Image.open(io.BytesIO(contents)).convert("RGB")
 
         boxes, scores = b.predict(image)

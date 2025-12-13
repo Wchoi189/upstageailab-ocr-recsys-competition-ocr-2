@@ -2,12 +2,18 @@
   "compilerOptions": {
     "target": "ES2019",
     "module": "ESNext",
+    "moduleResolution": "bundler",
     "declaration": true,
     "outDir": "dist",
     "rootDir": "src",
     "strict": true,
     "esModuleInterop": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src/**/*"]
+  "include": [
+    "src/**/*"
+  ]
 }

@@ -196,6 +196,7 @@ class InferenceEngine:
         box_thresh: float | None = None,
         max_candidates: int | None = None,
         min_detection_size: int | None = None,
+        return_preview: bool = True,
     ) -> dict[str, Any] | None:
         """Predict on an image array (numpy) directly.
 
@@ -208,6 +209,8 @@ class InferenceEngine:
             box_thresh: Box threshold override
             max_candidates: Max candidates override
             min_detection_size: Minimum detection size override
+            return_preview: If True, maps polygons to preview space and attaches preview image.
+                          If False, returns polygons in ORIGINAL image space.
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -234,7 +237,7 @@ class InferenceEngine:
 
         LOGGER.info(f"Image array received successfully. Shape: {image.shape}")
 
-        return self._predict_from_array(image)
+        return self._predict_from_array(image, return_preview=return_preview)
 
     def predict_image(
         self,
@@ -243,6 +246,7 @@ class InferenceEngine:
         box_thresh: float | None = None,
         max_candidates: int | None = None,
         min_detection_size: int | None = None,
+        return_preview: bool = True,
     ) -> dict[str, Any] | None:
         """Predict on an image file (legacy file path-based API).
 
@@ -254,6 +258,8 @@ class InferenceEngine:
             box_thresh: Box threshold override
             max_candidates: Max candidates override
             min_detection_size: Minimum detection size override
+            return_preview: If True, maps polygons to preview space and attaches preview image.
+                          If False, returns polygons in ORIGINAL image space.
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -301,13 +307,14 @@ class InferenceEngine:
 
         LOGGER.info(f"Image loaded successfully. Shape: {image.shape}, Orientation: {orientation}")
 
-        return self._predict_from_array(image)
+        return self._predict_from_array(image, return_preview=return_preview)
 
-    def _predict_from_array(self, image: np.ndarray) -> dict[str, Any] | None:
+    def _predict_from_array(self, image: np.ndarray, return_preview: bool = True) -> dict[str, Any] | None:
         """Internal method: shared prediction logic for both file and array paths.
 
         Args:
             image: Image as BGR numpy array
+            return_preview: Whether to attach preview image and map coordinates to it
 
         Returns:
             Predictions dict or None on failure
@@ -575,7 +582,9 @@ class InferenceEngine:
 
         if decoded is not None:
             LOGGER.info("Primary decoding successful")
-            return _attach_preview(decoded)
+            if return_preview:
+                return _attach_preview(decoded)
+            return decoded
 
         LOGGER.info("Primary decoding failed, trying fallback postprocessing...")
         try:
@@ -586,7 +595,9 @@ class InferenceEngine:
             return generate_mock_predictions()
 
         LOGGER.info("Fallback postprocessing completed")
-        return _attach_preview(result)
+        if return_preview:
+            return _attach_preview(result)
+        return result
 
     # Internal helpers ---------------------------------------------------
     def _apply_config_bundle(self, bundle: ModelConfigBundle) -> None:
@@ -650,7 +661,7 @@ def run_inference_on_image(
     binarization_thresh: float | None = None,
     box_thresh: float | None = None,
     max_candidates: int | None = None,
-    min_detection_size: int | None = None,
+    return_preview: bool = True,
 ) -> dict[str, Any] | None:
     """Run inference on an image (file path or numpy array).
 
@@ -665,6 +676,7 @@ def run_inference_on_image(
         box_thresh: Box threshold override
         max_candidates: Max candidates override
         min_detection_size: Minimum detection size override
+        return_preview: If True, maps polygons to preview space and attaches preview image.
 
     Returns:
         Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -684,6 +696,7 @@ def run_inference_on_image(
             box_thresh=box_thresh,
             max_candidates=max_candidates,
             min_detection_size=min_detection_size,
+            return_preview=return_preview,
         )
 
     # LEGACY: Support file path input (backward compatible)
@@ -693,6 +706,7 @@ def run_inference_on_image(
         box_thresh=box_thresh,
         max_candidates=max_candidates,
         min_detection_size=min_detection_size,
+        return_preview=return_preview,
     )
 
 

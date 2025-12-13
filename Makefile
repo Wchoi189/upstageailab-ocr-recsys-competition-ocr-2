@@ -65,7 +65,7 @@ BACKEND_APP ?= apps.backend.services.playground_api.app:app
 # UI Apps (Deprecated/Archived)
 # UI_APPS list removed as Streamlit apps are archived
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop backend-force-kill stack-dev stack-stop fs stop-fs checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop backend-force-kill kill-ports stack-dev stack-stop fs stop-fs checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
 
 # ============================================================================
 # HELP
@@ -118,8 +118,10 @@ help:
 	@echo ""
 	@echo "🧩 SPA STACK"
 	@echo "  backend-dev        - Start FastAPI playground backend (reload)"
+	@echo "  backend-ocr        - Start backend for OCR Inference Console (auto-detects checkpoint)"
 	@echo "  backend-stop       - Stop FastAPI backend on $(BACKEND_PORT)"
 	@echo "  backend-force-kill - Force kill ANY process using port $(BACKEND_PORT) (last resort)"
+	@echo "  kill-ports         - Kill processes on ports 3000 and 8000"
 	@echo "  fs                 - Run backend + frontend together (alias for stack-dev)"
 	@echo "  stack-dev          - Combined dev stack (kills backend when frontend exits)"
 	@echo "  stop-fs            - Stop combined stack (alias for stack-stop)"
@@ -342,6 +344,18 @@ frontend-stop:
 
 backend-dev:
 	uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload
+
+backend-ocr:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "Error: No checkpoint found in outputs/experiments/train/ocr. Please set OCR_CHECKPOINT_PATH manually."; \
+			exit 1; \
+		fi; \
+		echo "Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
+		echo "Starting OCR backend on $(BACKEND_HOST):$(BACKEND_PORT)"; \
+		OCR_CHECKPOINT_PATH=$$OCR_CHECKPOINT_PATH uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload; \
+	'
 
 backend-stop:
 	@PORT=$(BACKEND_PORT); \
@@ -578,6 +592,33 @@ backend-force-kill:
 		echo "  lsof not available, trying alternative methods..."; \
 		if command -v fuser >/dev/null 2>&1; then \
 			fuser -k $$PORT/tcp 2>/dev/null || true; \
+		fi; \
+	fi
+
+# Kill processes on ports 3000 and 8000
+kill-ports:
+	@echo "Killing processes on ports 3000 and 8000..."; \
+	if command -v lsof >/dev/null 2>&1; then \
+		for PORT in 3000 8000; do \
+			PIDS=$$(lsof -t -i:$$PORT 2>/dev/null || true); \
+			if [ -n "$$PIDS" ]; then \
+				echo "  Killing processes on port $$PORT: $$PIDS"; \
+				kill -9 $$PIDS 2>/dev/null || true; \
+			else \
+				echo "  No process found on port $$PORT"; \
+			fi; \
+		done; \
+		echo "✅ Done"; \
+	else \
+		echo "  lsof not available, trying alternative methods..."; \
+		if command -v fuser >/dev/null 2>&1; then \
+			for PORT in 3000 8000; do \
+				echo "  Killing processes on port $$PORT..."; \
+				fuser -k $$PORT/tcp 2>/dev/null || true; \
+			done; \
+		else \
+			echo "  No suitable tool found (lsof/fuser)"; \
+			exit 1; \
 		fi; \
 	fi
 

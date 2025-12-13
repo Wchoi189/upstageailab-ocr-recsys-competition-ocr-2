@@ -83,7 +83,7 @@ class RecommendationResponse(BaseModel):
 @lru_cache(maxsize=1)
 def _get_command_builder():
     """Lazy load CommandBuilder (triggers heavy imports on first call)."""
-    from ui.utils.command import CommandBuilder
+    from ocr.utils.command import CommandBuilder
 
     return CommandBuilder(project_root=str(PROJECT_ROOT))
 
@@ -91,7 +91,7 @@ def _get_command_builder():
 @lru_cache(maxsize=1)
 def _get_validator():
     """Lazy load CommandValidator."""
-    from ui.utils.command import CommandValidator
+    from ocr.utils.command import CommandValidator
 
     return CommandValidator()
 
@@ -99,7 +99,7 @@ def _get_validator():
 @lru_cache(maxsize=1)
 def _get_config_parser():
     """Lazy load ConfigParser (triggers registry/model initialization)."""
-    from ui.utils.config_parser import ConfigParser
+    from ocr.utils.config import ConfigParser
 
     return ConfigParser()
 
@@ -107,7 +107,7 @@ def _get_config_parser():
 @lru_cache(maxsize=1)
 def _get_recommendation_service():
     """Lazy load UseCaseRecommendationService."""
-    from ui.apps.command_builder.services.recommendations import UseCaseRecommendationService
+    from ocr.command_builder.recommendations import UseCaseRecommendationService
 
     return UseCaseRecommendationService(_get_config_parser())
 
@@ -191,8 +191,8 @@ def build_command(payload: CommandBuildRequest) -> CommandBuildResponse:
     """Build and validate a CLI command from the provided values."""
     # Lazy imports for heavy modules
     # Use override_compute instead of ui_generator to avoid Streamlit dependency
-    from ui.apps.command_builder.services.overrides import build_additional_overrides, maybe_suffix_exp_name
-    from ui.utils.override_compute import compute_overrides
+    from ocr.command_builder.overrides import build_additional_overrides, maybe_suffix_exp_name
+    from ocr.command_builder.compute import compute_overrides
 
     if payload.schema_id not in SCHEMA_REGISTRY:
         raise HTTPException(status_code=404, detail=f"Unknown schema_id '{payload.schema_id}'")
