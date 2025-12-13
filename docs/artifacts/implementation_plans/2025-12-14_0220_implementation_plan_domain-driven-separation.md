@@ -5,8 +5,8 @@ status: "active"
 version: "1.0"
 tags: ['implementation_plan', 'architecture', 'development']
 title: "Domain-Driven Separation for AgentQMS Dashboard Integration"
-date: "2025-12-13 17:33 (KST)"
-branch: "copilot/add-domain-driven-separation-docs"
+date: "2025-12-14 02:20 (KST)"
+branch: "feature/agentqms-dashboard-integration"
 ---
 
 # Master Prompt
