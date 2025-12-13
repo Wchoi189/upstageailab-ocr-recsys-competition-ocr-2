@@ -3,9 +3,9 @@ type: "implementation_plan"
 category: "development"
 status: "active"
 version: "1.0"
-tags: ['implementation', 'plan', 'development']
+tags: ['implementation_plan', 'architecture', 'development']
 title: "Domain-Driven Separation for AgentQMS Dashboard Integration"
-date: "2025-12-14 02:33 (KST)"
+date: "2025-12-13 17:33 (KST)"
 branch: "copilot/add-domain-driven-separation-docs"
 ---
 
@@ -322,7 +322,7 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Domain-
 
 ### **Related Implementation Plans**
 - `docs/artifacts/implementation_plans/2025-12-08_0231_implementation_plan_dashboard-integration-testing.md` - Dashboard integration context
-- `docs/artifacts/implementation_plans/2025-11-23_0000_implementation_plan_project-reorganization.md` - Previous refactoring efforts
+- `docs/artifacts/implementation_plans/2025-11-11_0158_implementation_plan_breakdown-architecture-refactoring.md` - Architecture refactoring foundation
 
 ### **Architecture Documentation**
 - `apps/agentqms-dashboard/frontend/docs/architecture/2025-12-08-1430_arch-frontend-patterns.md` - Frontend architecture guidelines
