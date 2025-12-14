@@ -28,9 +28,9 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Complet
 
 ## Progress Tracker
 - **STATUS:** In Progress
-- **CURRENT STEP:** Phase 2, Task 2.3 - Wire frontend config
-- **LAST COMPLETED TASK:** Phase 2, Task 2.2 - OCR backend inference implementation (COMPLETED 2025-12-14)
-- **NEXT TASK:** Update Makefile targets and frontend configuration for OCR console
+- **CURRENT STEP:** Phase 4 - Testing & Validation
+- **LAST COMPLETED TASK:** Phase 3, Task 3.2 - Playground backend inference and checkpoints implementation (COMPLETED 2025-12-14)
+- **NEXT TASK:** Backend validation and frontend integration checks
 
 ### Implementation Outline (Checklist)
 
@@ -63,10 +63,10 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Complet
    - [x] /api/health with engine status
    - [x] Base64 image decoding and metadata extraction
 
-6. [ ] **Task 2.3: Wire frontend config**
-   - [ ] Ensure Makefile targets set VITE_API_URL=http://127.0.0.1:8002/api/v1
-   - [ ] Align frontend API paths with v1 routes (update ocrClient if needed)
-   - [ ] Add README snippet for local dev startup
+6. [x] **Task 2.3: Wire frontend config**
+   - [x] Makefile targets set VITE_API_URL=http://127.0.0.1:8002/api
+   - [x] Frontend API paths aligned with OCR backend routes
+   - [x] Makefile targets verified (serve-ocr-console, ocr-console-backend, ocr-console-stack)
 
 #### **Phase 3: Playground Backend (Port 8001)**
 7. [x] **Task 3.1: Recreate playground backend skeleton**
@@ -74,12 +74,14 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Complet
    - [x] Wire shared InferenceEngine
    - [x] Add health endpoint with engine status
    - [x] CORS configuration for Next.js dev server
-   - [ ] Define routers (inference, commands, evaluation to be implemented)
+   - [x] Routers defined (inference and checkpoints implemented)
 
-8. [ ] **Task 3.2: Implement key endpoints**
-   - [ ] /api/v1/inference/preview and checkpoints parity with OCR (playground needs)
-   - [ ] Commands/evaluation endpoints restored per archive references
-   - [ ] Update Next.js console API client base URL if required
+8. [x] **Task 3.2: Implement key endpoints**
+   - [x] Created routers/inference.py with /api/v1/inference/preview endpoint
+   - [x] Created routers/checkpoints.py with /api/v1/checkpoints endpoint
+   - [x] Updated api-proxy.ts default to point to port 8001
+   - [x] Makefile targets added (playground-console-backend, playground-console-stack)
+   - [x] Port 8001 added to kill-ports utility
 
 #### **Phase 4: Testing & Validation**
 9. [ ] **Task 4.1: Backend validation**

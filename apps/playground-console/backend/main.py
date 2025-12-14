@@ -38,6 +38,10 @@ async def lifespan(app: FastAPI):
     _inference_engine = InferenceEngine()
     logger.info("✅ InferenceEngine initialized (lazy loading enabled)")
 
+    # Import and set up routers after engine initialization
+    from routers import inference
+    inference.set_inference_engine(_inference_engine)
+
     yield
 
     logger.info("🛑 Shutting down Playground Console Backend")
@@ -85,12 +89,16 @@ async def health():
     }
 
 
-# Import and include routers (to be implemented)
-# from .routers import inference, commands, evaluation, checkpoints
-# app.include_router(inference.router, prefix=f"{API_PREFIX}/inference", tags=["inference"])
+# Import and include routers
+from routers import inference, checkpoints
+
+app.include_router(inference.router, prefix=f"{API_PREFIX}/inference", tags=["inference"])
+app.include_router(checkpoints.router, prefix=f"{API_PREFIX}/checkpoints", tags=["checkpoints"])
+
+# Future routers (to be implemented)
+# from routers import commands, evaluation
 # app.include_router(commands.router, prefix=f"{API_PREFIX}/commands", tags=["commands"])
 # app.include_router(evaluation.router, prefix=f"{API_PREFIX}/evaluation", tags=["evaluation"])
-# app.include_router(checkpoints.router, prefix=f"{API_PREFIX}/checkpoints", tags=["checkpoints"])
 
 
 if __name__ == "__main__":

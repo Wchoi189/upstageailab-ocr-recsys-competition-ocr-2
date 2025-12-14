@@ -3,7 +3,9 @@
 Routers for inference, commands, evaluation, and checkpoints.
 """
 
-# Router modules will be implemented here
-# from . import inference, commands, evaluation, checkpoints
+from . import checkpoints, inference
 
-__all__ = []
+# Future routers (to be implemented)
+# from . import commands, evaluation
+
+__all__ = ["inference", "checkpoints"]

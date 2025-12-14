@@ -58,7 +58,7 @@ PORT ?= 8501
 FRONTEND_HOST ?= 0.0.0.0
 FRONTEND_PORT ?= 5173
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console ocr-console-backend ocr-console-stack playground-console-dev kill-ports
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console ocr-console-backend ocr-console-stack playground-console-dev playground-console-backend playground-console-stack kill-ports
 
 # ============================================================================
 # HELP
@@ -108,10 +108,12 @@ help:
 	@echo "  ocr-console-stack       - Start backend + frontend together"
 	@echo ""
 	@echo "🧩 APP SERVERS"
-	@echo "  playground-console-dev - Start Playground Console (alias for console-dev)"
+	@echo "  playground-console-dev      - Start Playground Console frontend (Next.js, port 3000)"
+	@echo "  playground-console-backend  - Start Playground Console backend (port 8001)"
+	@echo "  playground-console-stack    - Start backend + frontend together"
 	@echo ""
 	@echo "⚙️  PROCESS MANAGEMENT"
-	@echo "  kill-ports         - Force kill processes on ports 3000, 5173, 8000, 8002 (use when servers hang)"
+	@echo "  kill-ports         - Force kill processes on ports 3000, 5173, 8000, 8001, 8002 (use when servers hang)"
 	@echo ""
 	@echo "ℹ️  DOMAIN-DRIVEN ARCHITECTURE"
 	@echo "  Each app manages its own backend and is started independently."
@@ -333,11 +335,45 @@ ocr-console-stack:
 playground-console-dev:
 	npm run dev:console
 
+# Playground Console backend server (port 8001)
+playground-console-backend:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" 2>/dev/null | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "⚠️  Warning: No OCR checkpoint found in outputs/experiments/train/ocr/"; \
+			echo "   Backend will start but inference may fail without a checkpoint."; \
+		else \
+			echo "✅ Found checkpoint: $$OCR_CHECKPOINT_PATH"; \
+		fi; \
+		echo "🚀 Starting Playground Console backend on http://127.0.0.1:8001"; \
+		echo "   API Docs: http://127.0.0.1:8001/docs"; \
+		cd apps/playground-console/backend && \
+		uv run uvicorn main:app --host 127.0.0.1 --port 8001 --reload; \
+	'
+
+# Playground Console full stack (backend + frontend)
+playground-console-stack:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" 2>/dev/null | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "⚠️  No OCR checkpoint found. Backend will be unavailable."; \
+		else \
+			echo "✅ Starting backend with checkpoint: $$OCR_CHECKPOINT_PATH"; \
+			cd apps/playground-console/backend && \
+			uv run uvicorn main:app --host 127.0.0.1 --port 8001 --reload & \
+			BACK_PID=$$!; \
+			trap "echo Killing backend; kill $$BACK_PID 2>/dev/null || true" EXIT INT TERM; \
+			sleep 2; \
+		fi; \
+		echo "🌐 Starting frontend on http://localhost:3000"; \
+		npm run dev:console; \
+	'
+
 # Process Management Utilities
 kill-ports:
-	@echo "Killing processes on ports 3000, 5173, 8000, and 8002..."; \
+	@echo "Killing processes on ports 3000, 5173, 8000, 8001, and 8002..."; \
 	if command -v lsof >/dev/null 2>&1; then \
-		for PORT in 3000 5173 8000 8002; do \
+		for PORT in 3000 5173 8000 8001 8002; do \
 			PIDS=$$(lsof -t -i:$$PORT 2>/dev/null || true); \
 			if [ -n "$$PIDS" ]; then \
 				echo "  Killing processes on port $$PORT: $$PIDS"; \
@@ -350,7 +386,7 @@ kill-ports:
 	else \
 		echo "  lsof not available, trying fuser..."; \
 		if command -v fuser >/dev/null 2>&1; then \
-			for PORT in 3000 5173 8000 8002; do \
+			for PORT in 3000 5173 8000 8001 8002; do \
 				echo "  Killing processes on port $$PORT..."; \
 				fuser -k $$PORT/tcp 2>/dev/null || true; \
 			done; \
