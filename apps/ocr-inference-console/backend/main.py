@@ -37,7 +37,11 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO)
 
 API_PREFIX = "/api"
-DEFAULT_CHECKPOINT_ROOT = Path("outputs/experiments/train/ocr")
+
+# Resolve checkpoint root relative to project root (3 levels up from backend dir)
+BACKEND_DIR = Path(__file__).parent
+PROJECT_ROOT = BACKEND_DIR.parent.parent.parent
+DEFAULT_CHECKPOINT_ROOT = PROJECT_ROOT / "outputs/experiments/train/ocr"
 
 # Global inference engine (lazy loaded)
 _inference_engine: InferenceEngine | None = None

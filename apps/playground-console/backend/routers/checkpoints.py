@@ -17,7 +17,10 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter()
 
-DEFAULT_CHECKPOINT_ROOT = Path(os.getenv("OCR_CHECKPOINT_PATH", "outputs/experiments/train/ocr"))
+# Resolve checkpoint root relative to project root (4 levels up from routers dir)
+ROUTERS_DIR = Path(__file__).parent
+PROJECT_ROOT = ROUTERS_DIR.parent.parent.parent.parent
+DEFAULT_CHECKPOINT_ROOT = PROJECT_ROOT / "outputs/experiments/train/ocr"
 
 
 class Checkpoint(BaseModel):
