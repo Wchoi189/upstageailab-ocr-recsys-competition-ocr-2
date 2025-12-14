@@ -1,3 +1,14 @@
+---
+type: "implementation_plan"
+category: "development"
+status: "active"
+version: "1.0"
+tags: ['implementation', 'plan', 'ocr', 'integration']
+title: "Implementation Plan - OCR PIPELINE INTEGRATION"
+date: "2025-12-11 18:00 (KST)"
+branch: "feature/agentqms-dashboard-integration"
+---
+
 # Implementation Plan - OCR PIPELINE INTEGRATION
 
 **Goal**: Integrate the existing OCR pipeline (`ocr/`) into the `ocr-inference-console` application, enabling users to run inference on images and view polygon results.

@@ -1,7 +1,10 @@
 ---
 title: "Session Handover: AgentQMS Dashboard Integration - Phase 3 Complete"
-type: session_handover
+type: session_note
 status: active
+date: "2025-12-08 15:30 (KST)"
+category: "meeting"
+version: "1.0"
 created: 2025-12-08 15:30 (KST)
 phase: 3
 priority: high
