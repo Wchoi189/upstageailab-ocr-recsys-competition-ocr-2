@@ -105,6 +105,10 @@ class InferenceRequest(BaseModel):
         ge=0.0,
         le=1.0,
     )
+    enable_perspective_correction: bool = Field(
+        default=False,
+        description="Enable rembg-based perspective correction before inference",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -113,7 +117,8 @@ class InferenceRequest(BaseModel):
                     "checkpoint_path": "outputs/experiments/train/ocr/checkpoint.ckpt",
                     "image_base64": "data:image/png;base64,iVBORw0KG...",
                     "confidence_threshold": 0.3,
-                    "nms_threshold": 0.5,
+                    "nms_threshold": 0.4,
+                    "enable_perspective_correction": False,
                 }
             ]
         }

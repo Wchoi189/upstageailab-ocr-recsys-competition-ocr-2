@@ -10,7 +10,6 @@ See: docs/guides/setting-up-app-backends.md
 from __future__ import annotations
 
 import base64
-import io
 import logging
 import os
 from contextlib import asynccontextmanager
@@ -22,7 +21,7 @@ import numpy as np
 import yaml
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 
 # Import shared backend components
 from apps.shared.backend_shared.inference import InferenceEngine
@@ -35,13 +34,33 @@ from apps.shared.backend_shared.models.inference import (
 )
 
 logger = logging.getLogger(__name__)
-logging.basicConfig(level=logging.INFO)
-
-API_PREFIX = "/api"
 
 # Resolve checkpoint root relative to project root (3 levels up from backend dir)
 BACKEND_DIR = Path(__file__).parent
 PROJECT_ROOT = BACKEND_DIR.parent.parent.parent
+
+# Structured logging to file + console for backend diagnostics
+LOG_DIR = PROJECT_ROOT / "logs" / "ocr-inference-console"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / "backend.log"
+
+if not logger.handlers:
+    formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
+
+    file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
+    file_handler.setLevel(logging.INFO)
+    file_handler.setFormatter(formatter)
+
+    stream_handler = logging.StreamHandler()
+    stream_handler.setLevel(logging.INFO)
+    stream_handler.setFormatter(formatter)
+
+    logger.setLevel(logging.INFO)
+    logger.addHandler(file_handler)
+    logger.addHandler(stream_handler)
+
+API_PREFIX = "/api"
+
 DEFAULT_CHECKPOINT_ROOT = PROJECT_ROOT / "outputs/experiments/train/ocr"
 
 # Global inference engine (lazy loaded)
@@ -120,11 +139,13 @@ def _discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
         reverse=True,
     )
 
+    start_time = datetime.utcnow()
+    metadata_count = len(metadata_files)
     results: list[Checkpoint] = []
     for meta_path in metadata_files[:limit]:
         try:
             # Parse YAML metadata (fast - no state dict loading)
-            with open(meta_path, "r") as f:
+            with open(meta_path) as f:
                 meta = yaml.safe_load(f)
 
             # Reconstruct checkpoint path from metadata file path
@@ -152,6 +173,21 @@ def _discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
         except Exception as e:
             logger.warning("Failed to parse metadata file %s: %s", meta_path, e)
             continue
+
+    elapsed = (datetime.utcnow() - start_time).total_seconds()
+    logger.info(
+        "Checkpoint discovery complete | metadata_found=%d | metadata_files_scanned=%d | limit=%d | elapsed=%.3fs | root=%s",
+        len(results),
+        metadata_count,
+        limit,
+        elapsed,
+        DEFAULT_CHECKPOINT_ROOT,
+    )
+
+    if not metadata_files:
+        logger.warning(
+            "No checkpoint metadata files were found. Run 'make checkpoint-metadata' to generate .ckpt.metadata.yaml files for fast discovery."
+        )
 
     return results
 
@@ -275,6 +311,7 @@ async def run_inference(request: InferenceRequest):
             binarization_thresh=request.confidence_threshold,
             box_thresh=request.nms_threshold,
             return_preview=True,  # Get 640x640 preview with metadata
+            enable_perspective_correction=request.enable_perspective_correction,
         )
 
         if result is None:

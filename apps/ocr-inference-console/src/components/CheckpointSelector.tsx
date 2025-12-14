@@ -20,11 +20,13 @@ export const CheckpointSelector = ({ selectedCheckpoint, onCheckpointChange }: C
 
             // Test direct API access first with timeout
             try {
+                const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
+                const probeUrl = `${apiUrl}/inference/checkpoints?limit=5`;
                 // #region agent log
                 const testStartTime = Date.now();
-                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:20',message:'Testing direct API fetch',data:{url:'http://localhost:8000/api/inference/checkpoints?limit=5'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:20',message:'Testing direct API fetch',data:{url:probeUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
                 // #endregion
-                const fetchPromise = fetch('http://localhost:8000/api/inference/checkpoints?limit=5', {
+                const fetchPromise = fetch(probeUrl, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -48,7 +50,7 @@ export const CheckpointSelector = ({ selectedCheckpoint, onCheckpointChange }: C
             try {
                 // Add timeout to prevent infinite hanging
                 const timeoutPromise = new Promise<never>((_, reject) => {
-                    setTimeout(() => reject(new Error('Checkpoint loading timeout after 30 seconds')), 30000);
+                    setTimeout(() => reject(new Error('Checkpoint loading timeout after 60 seconds')), 60000);
                 });
 
                 const ckpts = await Promise.race([

@@ -29,8 +29,12 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Complet
 ## Progress Tracker
 - **STATUS:** In Progress
 - **CURRENT STEP:** Phase 4 - Testing & Validation
-- **LAST COMPLETED TASK:** Phase 3, Task 3.2 - Playground backend inference and checkpoints implementation (COMPLETED 2025-12-14)
-- **NEXT TASK:** Backend validation and frontend integration checks
+- **LAST COMPLETED TASK:** Perspective correction feature integrated as user-activated API parameter (COMPLETED 2025-12-14)
+- **NEXT TASK:** Phase 4 backend validation and frontend integration testing
+- **RECENT ADDITIONS:**
+  - ✅ Perspective correction API integration (enable_perspective_correction parameter)
+  - ✅ Backend endpoints updated (OCR console + Playground console)
+  - ✅ Feature documentation created at docs/artifacts/features/perspective-correction-api-integration.md
 
 ### Implementation Outline (Checklist)
 

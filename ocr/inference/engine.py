@@ -9,6 +9,7 @@ import threading
 import time
 import warnings
 from collections.abc import Callable
+from pathlib import Path
 from typing import Any
 
 import cv2
@@ -19,7 +20,6 @@ from PIL import Image
 warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:", category=UserWarning)
 warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has been renamed to 'validate_by_name'", category=UserWarning)
 
-from ocr.utils.geometry_utils import calculate_cropbox
 from ocr.utils.orientation import normalize_pil_image, orientation_requires_rotation, remap_polygons
 from ocr.utils.orientation_constants import ORIENTATION_INVERSE_INT
 from ocr.utils.path_utils import get_path_resolver
@@ -89,6 +89,8 @@ class InferenceEngine:
         self.config: Any | None = None
         self.device = "cuda" if torch is not None and torch.cuda.is_available() else "cpu"
 
+        self._current_checkpoint_path: str | None = None
+
         self._config_bundle: ModelConfigBundle | None = None
         self._transform = None
         self._postprocess_settings: PostprocessSettings | None = None
@@ -99,6 +101,12 @@ class InferenceEngine:
         if not OCR_MODULES_AVAILABLE:
             LOGGER.error("OCR modules are not installed. Cannot load a real model.")
             return False
+
+        total_start = time.perf_counter()
+        normalized_path = str(Path(checkpoint_path).resolve())
+        if self.model is not None and self._current_checkpoint_path == normalized_path:
+            LOGGER.info("Checkpoint already loaded; reusing cached model: %s", checkpoint_path)
+            return True
 
         # Include configs directory in search paths for config files
         # Use path resolver for config directory (supports environment variable override)
@@ -130,7 +138,10 @@ class InferenceEngine:
             LOGGER.exception("Failed to instantiate model from config %s", resolved_config)
             return False
 
+        load_start = time.perf_counter()
         checkpoint = load_checkpoint(checkpoint_path, self.device)
+        load_duration = time.perf_counter() - load_start
+        LOGGER.info("Checkpoint weights loaded in %.2fs", load_duration)
         if checkpoint is None:
             LOGGER.error("Failed to load checkpoint %s", checkpoint_path)
             return False
@@ -143,6 +154,13 @@ class InferenceEngine:
         assert self.model is not None  # Model loading succeeded
         self.model.eval()
         self.config = bundle.raw_config
+        self._current_checkpoint_path = normalized_path
+        LOGGER.info(
+            "Model ready | checkpoint=%s | device=%s | total_load=%.2fs",
+            checkpoint_path,
+            self.device,
+            time.perf_counter() - total_start,
+        )
         return True
 
     def update_postprocessor_params(
@@ -197,6 +215,7 @@ class InferenceEngine:
         max_candidates: int | None = None,
         min_detection_size: int | None = None,
         return_preview: bool = True,
+        enable_perspective_correction: bool | None = None,
     ) -> dict[str, Any] | None:
         """Predict on an image array (numpy) directly.
 
@@ -211,6 +230,7 @@ class InferenceEngine:
             min_detection_size: Minimum detection size override
             return_preview: If True, maps polygons to preview space and attaches preview image.
                           If False, returns polygons in ORIGINAL image space.
+            enable_perspective_correction: Enable rembg-based perspective correction before inference
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -237,7 +257,11 @@ class InferenceEngine:
 
         LOGGER.info(f"Image array received successfully. Shape: {image.shape}")
 
-        return self._predict_from_array(image, return_preview=return_preview)
+        return self._predict_from_array(
+            image,
+            return_preview=return_preview,
+            enable_perspective_correction=enable_perspective_correction,
+        )
 
     def predict_image(
         self,
@@ -247,6 +271,7 @@ class InferenceEngine:
         max_candidates: int | None = None,
         min_detection_size: int | None = None,
         return_preview: bool = True,
+        enable_perspective_correction: bool | None = None,
     ) -> dict[str, Any] | None:
         """Predict on an image file (legacy file path-based API).
 
@@ -260,6 +285,7 @@ class InferenceEngine:
             min_detection_size: Minimum detection size override
             return_preview: If True, maps polygons to preview space and attaches preview image.
                           If False, returns polygons in ORIGINAL image space.
+            enable_perspective_correction: Enable rembg-based perspective correction before inference
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -307,14 +333,24 @@ class InferenceEngine:
 
         LOGGER.info(f"Image loaded successfully. Shape: {image.shape}, Orientation: {orientation}")
 
-        return self._predict_from_array(image, return_preview=return_preview)
+        return self._predict_from_array(
+            image,
+            return_preview=return_preview,
+            enable_perspective_correction=enable_perspective_correction,
+        )
 
-    def _predict_from_array(self, image: np.ndarray, return_preview: bool = True) -> dict[str, Any] | None:
+    def _predict_from_array(
+        self,
+        image: np.ndarray,
+        return_preview: bool = True,
+        enable_perspective_correction: bool | None = None,
+    ) -> dict[str, Any] | None:
         """Internal method: shared prediction logic for both file and array paths.
 
         Args:
             image: Image as BGR numpy array
             return_preview: Whether to attach preview image and map coordinates to it
+            enable_perspective_correction: Enable rembg-based perspective correction before inference
 
         Returns:
             Predictions dict or None on failure
@@ -327,14 +363,19 @@ class InferenceEngine:
         if self._transform is None:
             self._transform = build_transform(bundle.preprocess)
 
-        # Optional perspective correction stage (guarded by config flag if present)
-        raw_config = bundle.raw_config
-        enable_persp = False
-        try:
-            # Prefer an explicit flag if available on the config
-            enable_persp = bool(getattr(raw_config, "enable_perspective_correction", False))
-        except Exception:
+        # Optional perspective correction stage (guarded by runtime parameter or config flag)
+        # Runtime parameter takes precedence over config
+        if enable_perspective_correction is not None:
+            enable_persp = bool(enable_perspective_correction)
+        else:
+            # Fall back to config flag
+            raw_config = bundle.raw_config
             enable_persp = False
+            try:
+                # Prefer an explicit flag if available on the config
+                enable_persp = bool(getattr(raw_config, "enable_perspective_correction", False))
+            except Exception:
+                enable_persp = False
 
         if enable_persp:
             # BUG-001: perspective-corrected image becomes the coordinate space

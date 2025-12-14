@@ -63,7 +63,7 @@ export const ocrClient = {
             // WORKAROUND: Direct fetch since shared package fetch is hanging
             // This bypasses the shared package API client which seems to have issues
             // Try 127.0.0.1 instead of localhost to avoid DNS resolution issues
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+            const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
             const url = `${apiUrl}/inference/checkpoints?limit=100`;
 
             // #region agent log
@@ -135,7 +135,7 @@ export const ocrClient = {
 
         // WORKAROUND: Direct fetch since shared package fetch is hanging
         // This bypasses the shared package API client which has issues
-        const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api';
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
         const url = `${apiUrl}/inference/preview`;
 
         // #region agent log

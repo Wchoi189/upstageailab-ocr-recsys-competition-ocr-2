@@ -142,6 +142,7 @@ async def run_inference(request: InferenceRequest):
             binarization_thresh=request.confidence_threshold,
             box_thresh=request.nms_threshold,
             return_preview=True,  # Get 640x640 preview with metadata
+            enable_perspective_correction=request.enable_perspective_correction,
         )
 
         if result is None:
