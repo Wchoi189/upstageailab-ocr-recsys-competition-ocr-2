@@ -111,7 +111,7 @@ help:
 	@echo "  playground-console-dev - Start Playground Console (alias for console-dev)"
 	@echo ""
 	@echo "⚙️  PROCESS MANAGEMENT"
-	@echo "  kill-ports         - Force kill processes on ports 3000, 5173, 8000 (use when servers hang)"
+	@echo "  kill-ports         - Force kill processes on ports 3000, 5173, 8000, 8002 (use when servers hang)"
 	@echo ""
 	@echo "ℹ️  DOMAIN-DRIVEN ARCHITECTURE"
 	@echo "  Each app manages its own backend and is started independently."
@@ -263,7 +263,7 @@ console-lint:
 	npm run lint:console
 
 ocr-console-dev:
-	cd apps/ocr-inference-console && npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
+	cd apps/ocr-inference-console && VITE_API_URL=$(if $(VITE_API_URL),$(VITE_API_URL),http://127.0.0.1:8002/api) npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
 
 # backend-dev, backend-ocr - removed (deprecated unified backend)
 # Use domain-specific backends instead:
@@ -287,8 +287,9 @@ serve-ocr-console:
 			echo "✅ Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
 		fi; \
 		echo "Starting OCR Inference Console on http://localhost:5173"; \
+		echo "Using VITE_API_URL=$${VITE_API_URL:-http://127.0.0.1:8002/api}"; \
 		cd apps/ocr-inference-console; \
-		npm run dev -- --host 0.0.0.0 --port 5173; \
+		VITE_API_URL=$${VITE_API_URL:-http://127.0.0.1:8002/api} npm run dev -- --host 0.0.0.0 --port 5173; \
 	'
 
 # OCR Console backend server (requires checkpoint)
@@ -323,8 +324,9 @@ ocr-console-stack:
 			sleep 2; \
 		fi; \
 		echo "🌐 Starting frontend on http://localhost:5173"; \
+		echo "Using VITE_API_URL=$${VITE_API_URL:-http://127.0.0.1:8002/api}"; \
 		cd apps/ocr-inference-console && \
-		npm run dev -- --host 0.0.0.0 --port 5173; \
+		VITE_API_URL=$${VITE_API_URL:-http://127.0.0.1:8002/api} npm run dev -- --host 0.0.0.0 --port 5173; \
 	'
 
 # Playground Console (Next.js App Router)
@@ -333,9 +335,9 @@ playground-console-dev:
 
 # Process Management Utilities
 kill-ports:
-	@echo "Killing processes on ports 3000, 5173, and 8000..."; \
+	@echo "Killing processes on ports 3000, 5173, 8000, and 8002..."; \
 	if command -v lsof >/dev/null 2>&1; then \
-		for PORT in 3000 5173 8000; do \
+		for PORT in 3000 5173 8000 8002; do \
 			PIDS=$$(lsof -t -i:$$PORT 2>/dev/null || true); \
 			if [ -n "$$PIDS" ]; then \
 				echo "  Killing processes on port $$PORT: $$PIDS"; \
@@ -348,7 +350,7 @@ kill-ports:
 	else \
 		echo "  lsof not available, trying fuser..."; \
 		if command -v fuser >/dev/null 2>&1; then \
-			for PORT in 3000 5173 8000; do \
+			for PORT in 3000 5173 8000 8002; do \
 				echo "  Killing processes on port $$PORT..."; \
 				fuser -k $$PORT/tcp 2>/dev/null || true; \
 			done; \
