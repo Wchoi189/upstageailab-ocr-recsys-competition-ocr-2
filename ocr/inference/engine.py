@@ -409,12 +409,14 @@ class InferenceEngine:
                     "left": 0,
                     "right": pad_w,
                 },
+                "padding_position": "top_left",  # Content starts at (0,0), padding at bottom/right
+                "content_area": (resized_w, resized_h),  # Content dimensions within processed_size frame
                 "scale": float(scale),
                 "coordinate_system": "pixel",  # BUG-001: Absolute pixels in processed_size frame [0-target_size, 0-target_size]
             }
             LOGGER.debug(
-                "BUG-001: Metadata created: original_size=%s, processed_size=%s, padding=%s, scale=%.4f",
-                meta["original_size"], meta["processed_size"], meta["padding"], meta["scale"]
+                "BUG-001: Metadata created: original_size=%s, processed_size=%s, padding=%s, content_area=%s, scale=%.4f",
+                meta["original_size"], meta["processed_size"], meta["padding"], meta["content_area"], meta["scale"]
             )
         except Exception:  # noqa: BLE001
             LOGGER.exception("Failed to preprocess image")
