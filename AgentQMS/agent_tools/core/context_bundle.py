@@ -17,7 +17,7 @@ Usage:
 
     # Explicit task type
     files = get_context_bundle("fix bug", task_type="debugging")
-    
+
     # Plugin-registered bundle
     files = get_context_bundle("security review", task_type="security-review")
 """
@@ -364,15 +364,15 @@ def list_available_bundles() -> list[str]:
 def auto_suggest_context(task_description: str) -> dict[str, Any]:
     """
     Automatically suggest context bundle and related information based on task description.
-    
+
     This function analyzes the task description and returns suggestions for:
     - Which context bundle to load
     - Related workflows to consider
     - Tools that might be useful
-    
+
     Args:
         task_description: Description of the current task
-        
+
     Returns:
         Dictionary with suggestions:
         - task_type: Detected task type
@@ -383,13 +383,13 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
     """
     # Detect task type
     detected_type = analyze_task_type(task_description)
-    
+
     # Get context bundle files
     try:
         bundle_files = get_context_bundle(task_description, detected_type)
     except FileNotFoundError:
         bundle_files = []
-    
+
     # Try to import workflow detector for enhanced suggestions
     suggestions: dict[str, Any] = {
         "task_type": detected_type,
@@ -398,10 +398,10 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
         "suggested_workflows": [],
         "suggested_tools": [],
     }
-    
+
     try:
         from AgentQMS.agent_tools.core.workflow_detector import suggest_workflows
-        
+
         workflow_suggestions = suggest_workflows(task_description)
         suggestions["suggested_workflows"] = workflow_suggestions.get("workflows", [])
         suggestions["suggested_tools"] = workflow_suggestions.get("tools", [])
@@ -421,7 +421,7 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
         elif detected_type == "planning":
             suggestions["suggested_workflows"] = ["create-plan", "create-design"]
             suggestions["suggested_tools"] = ["artifact_workflow"]
-    
+
     return suggestions
 
 

@@ -62,10 +62,10 @@ __all__ = [
 # Singleton Management
 # ---------------------------------------------------------------------------
 
-_plugin_loader: Optional[PluginLoader] = None
+_plugin_loader: PluginLoader | None = None
 
 
-def get_plugin_loader(project_root: Optional[Path] = None) -> PluginLoader:
+def get_plugin_loader(project_root: Path | None = None) -> PluginLoader:
     """
     Return a singleton plugin loader instance.
 
@@ -96,16 +96,16 @@ def get_plugin_registry(force: bool = False) -> PluginRegistry:
 
     Example:
         registry = get_plugin_registry()
-        
+
         # Get all artifact types
         types = registry.get_artifact_types()
-        
+
         # Get a specific artifact type
         cr_type = registry.get_artifact_type("change_request")
-        
+
         # Get validator extensions
         validators = registry.get_validators()
-        
+
         # Check for errors
         if registry.has_errors():
             for error in registry.validation_errors:

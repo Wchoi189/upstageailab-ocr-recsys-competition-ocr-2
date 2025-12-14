@@ -6,10 +6,8 @@ Generates IDE-specific configuration files (Antigravity workflows, Cursor rules,
 from the central AgentQMS source of truth.
 """
 
-import os
 import sys
 from pathlib import Path
-import shutil
 
 # Add project root to path
 current_dir = Path(__file__).resolve().parent

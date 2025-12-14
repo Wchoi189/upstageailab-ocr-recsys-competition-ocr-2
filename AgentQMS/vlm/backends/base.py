@@ -4,7 +4,7 @@ Provides common functionality for all VLM backends.
 """
 
 from AgentQMS.vlm.core.contracts import BackendConfig
-from AgentQMS.vlm.core.interfaces import BackendError, VLMBackend
+from AgentQMS.vlm.core.interfaces import VLMBackend
 
 
 class BaseVLMBackend(VLMBackend):

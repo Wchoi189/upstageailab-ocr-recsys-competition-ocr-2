@@ -5,7 +5,7 @@ PydanticV2 models for type-safe data validation throughout the VLM pipeline.
 
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -91,16 +91,16 @@ class ProcessedImage(BaseModel):
     """Preprocessed image data ready for VLM analysis."""
 
     original_path: Path
-    processed_path: Optional[Path] = None
+    processed_path: Path | None = None
     format: ImageFormat
     width: int = Field(..., gt=0, le=_IMAGE_MAX_DIMENSION)
     height: int = Field(..., gt=0, le=_IMAGE_MAX_DIMENSION)
     original_width: int = Field(..., gt=0)
     original_height: int = Field(..., gt=0)
     resize_ratio: float = Field(..., gt=0.0, le=1.0, description="Ratio of processed to original size")
-    base64_encoded: Optional[str] = None
+    base64_encoded: str | None = None
     size_bytes: int = Field(..., gt=0)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
     @field_validator("resize_ratio")
     @classmethod
@@ -119,8 +119,8 @@ class ProcessedImage(BaseModel):
 class VIARegion(BaseModel):
     """VIA annotation region (bounding box, polygon, etc.)."""
 
-    shape_attributes: Dict[str, Any] = Field(..., description="Shape attributes (x, y, width, height, etc.)")
-    region_attributes: Dict[str, Any] = Field(default_factory=dict, description="Region attributes (labels, etc.)")
+    shape_attributes: dict[str, Any] = Field(..., description="Shape attributes (x, y, width, height, etc.)")
+    region_attributes: dict[str, Any] = Field(default_factory=dict, description="Region attributes (labels, etc.)")
 
     class Config:
         """Pydantic configuration."""
@@ -133,8 +133,8 @@ class VIAAnnotation(BaseModel):
 
     filename: str
     size: int = Field(..., gt=0, description="File size in bytes")
-    regions: List[VIARegion] = Field(default_factory=list, description="Annotation regions")
-    file_attributes: Dict[str, Any] = Field(default_factory=dict, description="File-level attributes")
+    regions: list[VIARegion] = Field(default_factory=list, description="Annotation regions")
+    file_attributes: dict[str, Any] = Field(default_factory=dict, description="File-level attributes")
 
     @field_validator("filename")
     @classmethod
@@ -154,22 +154,22 @@ class AnalysisRequest(BaseModel):
     """Analysis request parameters."""
 
     mode: AnalysisMode
-    image_paths: List[Path] = Field(..., min_length=1, description="Paths to images to analyze")
-    compare_with: Optional[Path] = None
-    via_annotations: Optional[Path] = None
-    initial_description: Optional[str] = None
-    few_shot_examples: Optional[Path] = None
-    template: Optional[Path] = None
+    image_paths: list[Path] = Field(..., min_length=1, description="Paths to images to analyze")
+    compare_with: Path | None = None
+    via_annotations: Path | None = None
+    initial_description: str | None = None
+    few_shot_examples: Path | None = None
+    template: Path | None = None
     output_format: str = Field(default="markdown", pattern="^(text|markdown|json)$")
     auto_populate: bool = False
-    experiment_id: Optional[str] = None
-    incident_report: Optional[Path] = None
-    backend_preference: Optional[str] = Field(default=None, pattern="^(openrouter|solar_pro2|cli)$")
+    experiment_id: str | None = None
+    incident_report: Path | None = None
+    backend_preference: str | None = Field(default=None, pattern="^(openrouter|solar_pro2|cli)$")
     max_resolution: int = Field(default_factory=_default_analysis_max_resolution, gt=0, le=_IMAGE_MAX_DIMENSION)
 
     @field_validator("image_paths")
     @classmethod
-    def validate_image_paths(cls, v: List[Path]) -> List[Path]:
+    def validate_image_paths(cls, v: list[Path]) -> list[Path]:
         """Validate all image paths exist."""
         for path in v:
             if not path.exists():
@@ -178,7 +178,7 @@ class AnalysisRequest(BaseModel):
 
     @field_validator("compare_with")
     @classmethod
-    def validate_compare_with(cls, v: Optional[Path], info) -> Optional[Path]:
+    def validate_compare_with(cls, v: Path | None, info) -> Path | None:
         """Validate compare_with path exists if provided."""
         if v is not None:
             if not v.exists():
@@ -190,7 +190,7 @@ class AnalysisRequest(BaseModel):
 
     @field_validator("via_annotations")
     @classmethod
-    def validate_via_annotations(cls, v: Optional[Path]) -> Optional[Path]:
+    def validate_via_annotations(cls, v: Path | None) -> Path | None:
         """Validate VIA annotations file exists if provided."""
         if v is not None and not v.exists():
             raise ValueError(f"VIA annotations file does not exist: {v}")
@@ -206,12 +206,12 @@ class AnalysisResult(BaseModel):
     """VLM analysis result."""
 
     mode: AnalysisMode
-    image_paths: List[Path]
+    image_paths: list[Path]
     analysis_text: str = Field(..., description="Generated analysis text")
-    structured_data: Optional[Dict[str, Any]] = None
+    structured_data: dict[str, Any] | None = None
     backend_used: str
     processing_time_seconds: float = Field(..., ge=0.0)
-    metadata: Dict[str, Any] = Field(default_factory=dict)
+    metadata: dict[str, Any] = Field(default_factory=dict)
 
     class Config:
         """Pydantic configuration."""
@@ -223,16 +223,16 @@ class BackendConfig(BaseModel):
     """Backend configuration."""
 
     backend_type: str = Field(..., pattern="^(openrouter|solar_pro2|cli)$")
-    api_key: Optional[str] = None
-    model: Optional[str] = None
-    endpoint: Optional[str] = None
+    api_key: str | None = None
+    model: str | None = None
+    endpoint: str | None = None
     timeout_seconds: int = Field(default_factory=_backend_timeout_default, gt=0, le=300)
     max_retries: int = Field(default_factory=_backend_retries_default, ge=0, le=10)
     max_resolution: int = Field(default_factory=_backend_max_resolution_default, gt=0, le=_IMAGE_MAX_DIMENSION)
 
     @field_validator("api_key")
     @classmethod
-    def validate_api_key(cls, v: Optional[str], info) -> Optional[str]:
+    def validate_api_key(cls, v: str | None, info) -> str | None:
         """Validate API key is provided for API backends."""
         backend_type = info.data.get("backend_type")
         if backend_type in ("openrouter", "solar_pro2") and not v:

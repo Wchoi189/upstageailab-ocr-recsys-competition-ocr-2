@@ -11,7 +11,7 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 import yaml
 
@@ -87,7 +87,7 @@ Examples:
 def format_human_output(
     registry: PluginRegistry,
     args: argparse.Namespace,
-    discovery_paths: Dict[str, str],
+    discovery_paths: dict[str, str],
 ) -> str:
     """Format registry data for human-readable output."""
     lines = [
@@ -187,7 +187,7 @@ def format_json_output(
     args: argparse.Namespace,
 ) -> str:
     """Format registry data as JSON."""
-    output: Dict[str, Any]
+    output: dict[str, Any]
 
     if args.artifact_types:
         output = {"artifact_types": registry.artifact_types}
@@ -208,7 +208,7 @@ def format_json_output(
     return json.dumps(output, indent=2)
 
 
-def main(argv: Optional[list[str]] = None) -> int:
+def main(argv: list[str] | None = None) -> int:
     """
     Main entry point for the plugin CLI.
 
@@ -222,7 +222,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     args = parser.parse_args(argv)
 
     # Determine project root
-    project_root: Optional[Path] = None
+    project_root: Path | None = None
     if args.project_root:
         project_root = Path(args.project_root)
 

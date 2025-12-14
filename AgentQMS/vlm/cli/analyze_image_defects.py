@@ -8,12 +8,11 @@ import argparse
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from AgentQMS.vlm.core.client import VLMClient
 from AgentQMS.vlm.core.config import get_config
 from AgentQMS.vlm.core.contracts import AnalysisMode, AnalysisRequest
-from AgentQMS.vlm.core.template import ImageAnalysisTemplate
 from AgentQMS.vlm.integrations.reports import ReportIntegrator
 
 
@@ -156,8 +155,8 @@ def main():
         sys.exit(1)
 
     # Helper: build metadata summary from result
-    def _build_metadata(result_obj) -> Dict[str, Any]:
-        meta: Dict[str, Any] = {}
+    def _build_metadata(result_obj) -> dict[str, Any]:
+        meta: dict[str, Any] = {}
         # Base fields from result / metadata with safe fallbacks
         md = result_obj.metadata or {}
         image_paths = result_obj.image_paths or []

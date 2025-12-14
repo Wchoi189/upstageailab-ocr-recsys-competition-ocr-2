@@ -1,3 +1,13 @@
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "Context Bundles Index"
+date: "2025-12-14"
+branch: main
+---
+
 # Context Bundles Index
 
 Auto-generated index of available context bundles for task-specific context loading.
@@ -12,7 +22,7 @@ Context bundles provide task-specific file collections that help AI agents focus
 
 **Purpose**: Code implementation, features, and development tasks
 
-**When to use**: 
+**When to use**:
 - Implementing new features
 - Writing code
 - Refactoring
@@ -137,4 +147,11 @@ Each bundle is defined in `AgentQMS/knowledge/context_bundles/*.yaml` with:
 ## Custom Bundles
 
 Project-specific bundles can be added in `.agentqms/plugins/context_bundles/` and will be automatically discovered.
+
+## Related Documentation
+
+- **Framework Overview**: `agentqms-overview.md` - Complete framework architecture
+- **Tool Catalog**: `tool-catalog.md` - All available tools and workflows
+- **Migration Guide**: `migration-guide.md` - Toolkit → agent_tools migration
+- **Artifact Reference**: `artifact-versioning-lifecycle-reference.md` - Versioning and lifecycle management
 

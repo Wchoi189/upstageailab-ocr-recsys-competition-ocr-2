@@ -267,12 +267,12 @@ def main() -> None:
         agentqms_root = current_file.parent
         while agentqms_root.name != "AgentQMS" and agentqms_root.parent != agentqms_root:
             agentqms_root = agentqms_root.parent
-        
+
         validate_script = agentqms_root / "agent_tools/documentation/validate_manifest.py"
         if not validate_script.exists():
             print(f"⚠️  Warning: validate_manifest.py not found at {validate_script}")
             return
-            
+
         result = subprocess.run(
             [sys.executable, str(validate_script), str(args.output)],
             capture_output=True,

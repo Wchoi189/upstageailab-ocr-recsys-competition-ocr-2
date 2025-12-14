@@ -20,8 +20,8 @@ import sys
 from datetime import datetime, timedelta
 from pathlib import Path
 
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
@@ -33,7 +33,7 @@ class ArtifactMonitor:
         if artifacts_root is None:
             from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
             artifacts_root = get_artifacts_dir()
-        
+
         self.artifacts_root = Path(artifacts_root)
         self.validator = ArtifactValidator(self.artifacts_root)
         self.violations_history_file = Path("artifacts_violations_history.json")

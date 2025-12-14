@@ -1,3 +1,13 @@
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "AgentQMS Ultra-Concise Usage Guide"
+date: "2025-12-14"
+branch: main
+---
+
 # AgentQMS Ultra-Concise Usage Guide
 
 **Location**: Run all commands from `AgentQMS/interface/`.

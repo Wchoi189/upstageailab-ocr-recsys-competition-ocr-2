@@ -6,7 +6,7 @@ Analyzes task descriptions and suggests appropriate workflows, tools, and contex
 
 Usage:
     from AgentQMS.agent_tools.core.workflow_detector import suggest_workflows
-    
+
     suggestions = suggest_workflows("implement new feature")
     print(suggestions)
 """
@@ -113,21 +113,21 @@ ARTIFACT_TRIGGERS = {
 def detect_artifact_type(task_description: str) -> str | None:
     """Detect if task should create an artifact and which type."""
     task_lower = task_description.lower()
-    
+
     for artifact_type, keywords in ARTIFACT_TRIGGERS.items():
         for keyword in keywords:
             if keyword in task_lower:
                 return artifact_type
-    
+
     return None
 
 
 def suggest_workflows(task_description: str) -> dict[str, Any]:
     """Suggest workflows, tools, and context based on task description.
-    
+
     Args:
         task_description: Description of the task
-        
+
     Returns:
         Dictionary with suggestions including:
         - task_type: Detected task type
@@ -139,9 +139,9 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
     """
     task_type = analyze_task_type(task_description)
     artifact_type = detect_artifact_type(task_description)
-    
+
     base_suggestions = WORKFLOW_SUGGESTIONS.get(task_type, WORKFLOW_SUGGESTIONS["general"])
-    
+
     suggestions: dict[str, Any] = {
         "task_type": task_type,
         "context_bundle": base_suggestions["context_bundle"],
@@ -150,7 +150,7 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
         "artifact_type": artifact_type,
         "make_commands": [],
     }
-    
+
     # Add artifact creation workflow if detected
     if artifact_type:
         if artifact_type == "plan":
@@ -168,11 +168,11 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
         elif artifact_type == "research":
             suggestions["workflows"].insert(0, "create-research")
             suggestions["make_commands"].append(f'make create-research NAME=my-{artifact_type} TITLE="..."')
-    
+
     # Add context loading command
     context_cmd = f'make context-{suggestions["context_bundle"]}'
     suggestions["make_commands"].insert(0, context_cmd)
-    
+
     return suggestions
 
 
@@ -183,7 +183,7 @@ def generate_workflow_triggers_yaml(output_path: Path) -> None:
         "task_types": {},
         "artifact_triggers": ARTIFACT_TRIGGERS,
     }
-    
+
     for task_type, config in WORKFLOW_SUGGESTIONS.items():
         triggers["task_types"][task_type] = {
             "keywords": TASK_KEYWORDS.get(task_type, []),
@@ -191,17 +191,17 @@ def generate_workflow_triggers_yaml(output_path: Path) -> None:
             "suggested_workflows": config["suggested_workflows"],
             "suggested_tools": config["suggested_tools"],
         }
-    
+
     with output_path.open("w", encoding="utf-8") as f:
         yaml.dump(triggers, f, default_flow_style=False, sort_keys=False)
-    
+
     print(f"✓ Generated {output_path}")
 
 
 def main() -> int:
     """CLI entry point for testing."""
     import argparse
-    
+
     parser = argparse.ArgumentParser(description="Workflow detection and suggestion")
     parser.add_argument("task", nargs="?", help="Task description to analyze")
     parser.add_argument(
@@ -215,40 +215,40 @@ def main() -> int:
         default=str(PROJECT_ROOT / ".copilot" / "context" / "workflow-triggers.yaml"),
         help="Output path for triggers file",
     )
-    
+
     args = parser.parse_args()
-    
+
     if args.generate_triggers:
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
         generate_workflow_triggers_yaml(output_path)
         return 0
-    
+
     if not args.task:
         parser.print_help()
         return 1
-    
+
     suggestions = suggest_workflows(args.task)
-    
+
     print(f"Task: {args.task}")
     print(f"Detected Type: {suggestions['task_type']}")
     print(f"Context Bundle: {suggestions['context_bundle']}")
-    
+
     if suggestions["artifact_type"]:
         print(f"Suggested Artifact: {suggestions['artifact_type']}")
-    
+
     print("\nSuggested Workflows:")
     for wf in suggestions["workflows"]:
         print(f"  - {wf}")
-    
+
     print("\nSuggested Tools:")
     for tool in suggestions["tools"]:
         print(f"  - {tool}")
-    
+
     print("\nMake Commands:")
     for cmd in suggestions["make_commands"]:
         print(f"  cd AgentQMS/interface && {cmd}")
-    
+
     return 0
 
 

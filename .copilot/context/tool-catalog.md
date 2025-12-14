@@ -1,3 +1,13 @@
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "AgentQMS Tool Catalog"
+date: "2025-12-14"
+branch: main
+---
+
 # AgentQMS Tool Catalog
 
 Auto-generated tool registry for AI agent discovery.
@@ -117,3 +127,16 @@ Auto-generated tool registry for AI agent discovery.
 | `changelog-draft` | Generate changelog draft from tracking DB and git log | workflow |
 | `changelog-preview` | Preview changelog draft without writing file | workflow |
 | `version` | Show system version information | workflow |
+
+## Context Files
+
+The following context files in `.copilot/context/` provide guidance for different aspects of agent work:
+
+| File | Purpose | Audience |
+|---|---|---|
+| `agentqms-overview.md` | Framework architecture and structure | All agents |
+| `tool-catalog.md` | Complete tool registry and workflows | All agents |
+| `context-bundles-index.md` | Task-specific context bundle reference | Development agents |
+| `migration-guide.md` | Migration from deprecated toolkit to agent_tools | Refactoring agents |
+| `artifact-versioning-lifecycle-reference.md` | Artifact versioning and lifecycle management | Documentation agents |
+| `workflow-triggers.yaml` | Workflow automation configuration | Advanced users |

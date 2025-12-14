@@ -1,4 +1,11 @@
 ---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "Create Implementation Plan Workflow"
+date: "2025-12-14"
+branch: main
 description: Create a new implementation plan using AgentQMS
 ---
 1. Determine the appropriate NAME (slug) and TITLE for the plan.

@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from copy import deepcopy
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 @dataclass
@@ -22,9 +22,9 @@ class PluginValidationError:
     plugin_path: str
     plugin_type: str
     error_message: str
-    schema_path: Optional[str] = None
+    schema_path: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "path": self.plugin_path,
@@ -46,7 +46,7 @@ class PluginMetadata:
     scope: str = "project"
     description: str = ""
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "name": self.name,
@@ -71,30 +71,30 @@ class PluginRegistry:
     No I/O operations are performed by this class.
     """
 
-    artifact_types: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    validators: Dict[str, Any] = field(default_factory=dict)
-    context_bundles: Dict[str, Dict[str, Any]] = field(default_factory=dict)
-    metadata: List[PluginMetadata] = field(default_factory=list)
-    validation_errors: List[PluginValidationError] = field(default_factory=list)
-    loaded_at: Optional[str] = None
+    artifact_types: dict[str, dict[str, Any]] = field(default_factory=dict)
+    validators: dict[str, Any] = field(default_factory=dict)
+    context_bundles: dict[str, dict[str, Any]] = field(default_factory=dict)
+    metadata: list[PluginMetadata] = field(default_factory=list)
+    validation_errors: list[PluginValidationError] = field(default_factory=list)
+    loaded_at: str | None = None
 
-    def get_artifact_types(self) -> Dict[str, Dict[str, Any]]:
+    def get_artifact_types(self) -> dict[str, dict[str, Any]]:
         """Get all registered artifact types."""
         return deepcopy(self.artifact_types)
 
-    def get_artifact_type(self, name: str) -> Optional[Dict[str, Any]]:
+    def get_artifact_type(self, name: str) -> dict[str, Any] | None:
         """Get a specific artifact type by name."""
         return deepcopy(self.artifact_types.get(name))
 
-    def get_validators(self) -> Dict[str, Any]:
+    def get_validators(self) -> dict[str, Any]:
         """Get merged validator configuration."""
         return deepcopy(self.validators)
 
-    def get_context_bundles(self) -> Dict[str, Dict[str, Any]]:
+    def get_context_bundles(self) -> dict[str, dict[str, Any]]:
         """Get all registered context bundles."""
         return deepcopy(self.context_bundles)
 
-    def get_context_bundle(self, name: str) -> Optional[Dict[str, Any]]:
+    def get_context_bundle(self, name: str) -> dict[str, Any] | None:
         """Get a specific context bundle by name."""
         return deepcopy(self.context_bundles.get(name))
 
@@ -102,7 +102,7 @@ class PluginRegistry:
         """Check if any validation errors occurred during loading."""
         return len(self.validation_errors) > 0
 
-    def get_plugin_names(self, plugin_type: str) -> List[str]:
+    def get_plugin_names(self, plugin_type: str) -> list[str]:
         """Get names of all plugins of a given type."""
         if plugin_type == "artifact_type":
             return list(self.artifact_types.keys())
@@ -113,14 +113,14 @@ class PluginRegistry:
         return []
 
     def add_artifact_type(
-        self, name: str, data: Dict[str, Any], metadata: PluginMetadata
+        self, name: str, data: dict[str, Any], metadata: PluginMetadata
     ) -> None:
         """Add an artifact type to the registry."""
         self.artifact_types[name] = data
         self.metadata.append(metadata)
 
     def add_context_bundle(
-        self, name: str, data: Dict[str, Any], metadata: PluginMetadata
+        self, name: str, data: dict[str, Any], metadata: PluginMetadata
     ) -> None:
         """Add a context bundle to the registry."""
         self.context_bundles[name] = data
@@ -132,14 +132,14 @@ class PluginRegistry:
 
     def get_metadata_for_plugin(
         self, name: str, plugin_type: str
-    ) -> Optional[PluginMetadata]:
+    ) -> PluginMetadata | None:
         """Get metadata for a specific plugin."""
         for m in self.metadata:
             if m.name == name and m.plugin_type == plugin_type:
                 return m
         return None
 
-    def to_summary_dict(self) -> Dict[str, Any]:
+    def to_summary_dict(self) -> dict[str, Any]:
         """Return a summary dictionary for JSON serialization."""
         return {
             "artifact_types": list(self.artifact_types.keys()),

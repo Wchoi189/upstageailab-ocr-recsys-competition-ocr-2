@@ -5,7 +5,7 @@ Defines contracts for backend implementations and core components.
 
 from abc import ABC, abstractmethod
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from AgentQMS.vlm.core.contracts import AnalysisMode, AnalysisResult, BackendConfig, ProcessedImage
 
@@ -81,7 +81,7 @@ class ImagePreprocessor(ABC):
         self,
         image_path: Path,
         max_resolution: int,
-        target_format: Optional[str] = None,
+        target_format: str | None = None,
     ) -> ProcessedImage:
         """Preprocess an image for VLM analysis.
 
@@ -101,10 +101,10 @@ class ImagePreprocessor(ABC):
     @abstractmethod
     def preprocess_batch(
         self,
-        image_paths: List[Path],
+        image_paths: list[Path],
         max_resolution: int,
-        target_format: Optional[str] = None,
-    ) -> List[ProcessedImage]:
+        target_format: str | None = None,
+    ) -> list[ProcessedImage]:
         """Preprocess multiple images.
 
         Args:
@@ -125,8 +125,8 @@ class ReportIntegrator(ABC):
     def populate_report(
         self,
         report_path: Path,
-        analysis_results: List[AnalysisResult],
-        via_annotations: Optional[Path] = None,
+        analysis_results: list[AnalysisResult],
+        via_annotations: Path | None = None,
     ) -> None:
         """Populate a report with analysis results.
 

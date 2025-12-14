@@ -5,7 +5,7 @@ Handles VIA annotation export/import, overlay generation, and workflow integrati
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -17,7 +17,7 @@ from AgentQMS.vlm.utils.paths import get_path_resolver
 class VIAIntegration:
     """Integration with VGG Image Annotator."""
 
-    def __init__(self, via_dir: Optional[Path] = None):
+    def __init__(self, via_dir: Path | None = None):
         """Initialize VIA integration.
 
         Args:
@@ -84,7 +84,7 @@ class VIAIntegration:
         self,
         image_path: Path,
         annotation: VIAAnnotation,
-        output_path: Optional[Path] = None,
+        output_path: Path | None = None,
     ) -> Path:
         """Create an image overlay with VIA annotations.
 
@@ -129,7 +129,7 @@ class VIAIntegration:
                         all_points_y = shape_attrs.get("all_points_y", [])
 
                         if len(all_points_x) == len(all_points_y):
-                            points = list(zip(all_points_x, all_points_y))
+                            points = list(zip(all_points_x, all_points_y, strict=True))
                             draw.polygon(points, outline="red", width=2)
 
                     elif region_type == "circle":
@@ -169,8 +169,8 @@ class VIAIntegration:
     def export_annotations_for_vlm(
         self,
         annotation: VIAAnnotation,
-        output_path: Optional[Path] = None,
-    ) -> Dict[str, Any]:
+        output_path: Path | None = None,
+    ) -> dict[str, Any]:
         """Export annotations in a format suitable for VLM prompts.
 
         Args:
@@ -215,7 +215,7 @@ class VIAIntegration:
 
         return result
 
-    def get_via_html_path(self) -> Optional[Path]:
+    def get_via_html_path(self) -> Path | None:
         """Get path to VIA HTML file.
 
         Returns:

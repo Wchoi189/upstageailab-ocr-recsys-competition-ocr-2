@@ -1,3 +1,13 @@
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "AgentQMS Project Instructions"
+date: "2025-12-14"
+branch: main
+---
+
 # AgentQMS Project Instructions
 
 ## Core Rules

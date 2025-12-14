@@ -5,7 +5,7 @@ Handles loading and rendering of markdown and Jinja2 prompt templates.
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any
 
 try:
     from jinja2 import Environment, FileSystemLoader
@@ -23,7 +23,7 @@ from AgentQMS.vlm.utils.paths import get_path_resolver
 class PromptManager:
     """Manages prompt templates and rendering."""
 
-    def __init__(self, templates_dir: Optional[Path] = None):
+    def __init__(self, templates_dir: Path | None = None):
         """Initialize prompt manager.
 
         Args:
@@ -46,8 +46,8 @@ class PromptManager:
             self.jinja2_env = None
 
         # Cache for loaded templates
-        self._template_cache: Dict[str, str] = {}
-        self._examples_cache: Optional[List[Dict[str, Any]]] = None
+        self._template_cache: dict[str, str] = {}
+        self._examples_cache: list[dict[str, Any]] | None = None
 
     def load_markdown_template(self, mode: AnalysisMode) -> str:
         """Load a markdown template for the given analysis mode.
@@ -100,7 +100,7 @@ class PromptManager:
     def render_template(
         self,
         mode: AnalysisMode,
-        context: Optional[Dict[str, Any]] = None,
+        context: dict[str, Any] | None = None,
         use_jinja2: bool = True,
     ) -> str:
         """Render a prompt template with context.
@@ -131,7 +131,7 @@ class PromptManager:
         # Should not reach here, but just in case
         return self.load_markdown_template(mode)
 
-    def load_few_shot_examples(self) -> List[Dict[str, Any]]:
+    def load_few_shot_examples(self) -> list[dict[str, Any]]:
         """Load few-shot examples from JSON file.
 
         Returns:
@@ -155,7 +155,7 @@ class PromptManager:
             logger.warning(f"Failed to load few-shot examples: {e}")
             return []
 
-    def inject_few_shot_examples(self, context: Dict[str, Any]) -> Dict[str, Any]:
+    def inject_few_shot_examples(self, context: dict[str, Any]) -> dict[str, Any]:
         """Inject few-shot examples into template context.
 
         Args:

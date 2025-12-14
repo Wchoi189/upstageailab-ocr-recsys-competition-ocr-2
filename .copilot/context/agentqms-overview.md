@@ -1,3 +1,13 @@
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "AgentQMS Framework Overview"
+date: "2025-12-14"
+branch: main
+---
+
 # AgentQMS Framework Overview
 
 ## What is AgentQMS?
@@ -50,7 +60,12 @@ project_root/
 
 1. **System Instructions**: `AgentQMS/knowledge/agent/system.md` (REQUIRED)
 2. **Architecture Map**: `.agentqms/state/architecture.yaml`
-3. **Tool Catalog**: `.copilot/context/tool-catalog.md`
+3. **Context Resources**: `.copilot/context/` (auto-discovery guides)
+   - `agentqms-overview.md` - Framework overview
+   - `tool-catalog.md` - Tool registry and workflows
+   - `context-bundles-index.md` - Task-specific context bundles
+   - `migration-guide.md` - Toolkit to agent_tools migration
+   - `artifact-versioning-lifecycle-reference.md` - Artifact versioning guide
 4. **Workflow Triggers**: `.copilot/context/workflow-triggers.yaml`
 
 ## Quick Start

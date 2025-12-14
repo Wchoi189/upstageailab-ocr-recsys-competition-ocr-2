@@ -168,5 +168,25 @@
       "directory": 30,
       "frontmatter": 5
     }
+  },
+  {
+    "timestamp": "2025-12-14T12:58:31.214340",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-12-14T13:24:28.275648",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
   }
 ]

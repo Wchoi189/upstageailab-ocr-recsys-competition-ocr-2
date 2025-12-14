@@ -5,7 +5,6 @@ from __future__ import annotations
 import os
 from functools import lru_cache
 from pathlib import Path
-from typing import Dict, List, Optional
 
 import yaml
 from dotenv import dotenv_values
@@ -36,7 +35,7 @@ class CLISettings(BaseModel):
 
 class BackendSettings(BaseModel):
     default: str = "openrouter"
-    priority: List[str] = Field(default_factory=lambda: ["openrouter", "solar_pro2", "cli"])
+    priority: list[str] = Field(default_factory=lambda: ["openrouter", "solar_pro2", "cli"])
     openrouter: OpenRouterSettings
     solar_pro2: SolarPro2Settings
     cli: CLISettings
@@ -46,7 +45,7 @@ class ImageSettings(BaseModel):
     max_resolution: int = 2048
     max_dimension: int = 8192
     default_quality: int = 95
-    supported_formats: List[str] = Field(default_factory=lambda: ["JPEG", "PNG", "WEBP"])
+    supported_formats: list[str] = Field(default_factory=lambda: ["JPEG", "PNG", "WEBP"])
 
 
 class BackendDefaults(BaseModel):
@@ -56,8 +55,8 @@ class BackendDefaults(BaseModel):
 
 
 class EnvSettings(BaseModel):
-    search_paths: List[str] = Field(default_factory=lambda: ["AgentQMS/vlm", "."])
-    files: List[str] = Field(default_factory=lambda: [".env", ".env.local"])
+    search_paths: list[str] = Field(default_factory=lambda: ["AgentQMS/vlm", "."])
+    files: list[str] = Field(default_factory=lambda: [".env", ".env.local"])
     priority: str = "local"
 
 
@@ -68,7 +67,7 @@ class VLMConfig(BaseModel):
     env: EnvSettings
 
 
-def _load_yaml_config() -> Dict:
+def _load_yaml_config() -> dict:
     if not CONFIG_PATH.exists():
         raise FileNotFoundError(f"VLM configuration file not found: {CONFIG_PATH}")
     with CONFIG_PATH.open("r", encoding="utf-8") as fh:
@@ -76,7 +75,7 @@ def _load_yaml_config() -> Dict:
     return data
 
 
-def _resolve_search_paths(paths: List[str]) -> List[Path]:
+def _resolve_search_paths(paths: list[str]) -> list[Path]:
     resolved = []
     for entry in paths:
         candidate = (PROJECT_ROOT / entry).resolve()
@@ -85,8 +84,8 @@ def _resolve_search_paths(paths: List[str]) -> List[Path]:
     return resolved
 
 
-def _load_env_values(env_settings: EnvSettings) -> Dict[str, str]:
-    values: Dict[str, str] = {}
+def _load_env_values(env_settings: EnvSettings) -> dict[str, str]:
+    values: dict[str, str] = {}
     search_paths = _resolve_search_paths(env_settings.search_paths)
 
     for env_file in env_settings.files:
@@ -97,7 +96,7 @@ def _load_env_values(env_settings: EnvSettings) -> Dict[str, str]:
                 values.update({k: v for k, v in data.items() if v is not None})
 
     # Environment variables override everything else
-    values.update({k: v for k, v in os.environ.items()})
+    values.update(dict(os.environ.items()))
     return values
 
 
@@ -109,13 +108,13 @@ def get_config() -> VLMConfig:
 
 
 @lru_cache(maxsize=1)
-def get_env_values() -> Dict[str, str]:
+def get_env_values() -> dict[str, str]:
     """Load and cache environment values from .env files and OS environment."""
     config = get_config()
     return _load_env_values(config.env)
 
 
-def resolve_env_value(key: str, default: Optional[str] = None) -> Optional[str]:
+def resolve_env_value(key: str, default: str | None = None) -> str | None:
     """Lookup a configuration value from env files or OS environment."""
     env_values = get_env_values()
     return env_values.get(key) or os.getenv(key) or default

@@ -245,16 +245,29 @@ class FrameworkAudit:
                 if field not in bundle_data:
                     errors.append(f"Missing required field: {field}")
 
-            # Check for files section
-            if "files" not in bundle_data:
-                errors.append("Missing 'files' section")
+            # Check for tiers section (required by schema)
+            if "tiers" not in bundle_data:
+                errors.append("Missing 'tiers' section")
             else:
-                # Validate file paths exist
-                files = bundle_data.get("files", {})
-                if isinstance(files, dict):
-                    for file_path in files.values():
-                        if not (self.project_root / file_path).exists():
-                            warnings.append(f"Referenced file not found: {file_path}")
+                # Validate tier structure
+                tiers = bundle_data.get("tiers", {})
+                if isinstance(tiers, dict):
+                    for tier_name, tier_config in tiers.items():
+                        if not isinstance(tier_config, dict):
+                            errors.append(f"Tier '{tier_name}' must be a dictionary")
+                            continue
+                        if "files" not in tier_config:
+                            errors.append(f"Tier '{tier_name}' missing 'files' section")
+                        else:
+                            # Validate file paths exist
+                            files = tier_config.get("files", [])
+                            for file_entry in files:
+                                if isinstance(file_entry, dict) and "path" in file_entry:
+                                    file_path = file_entry["path"]
+                                    if not (self.project_root / file_path).exists():
+                                        warnings.append(f"Referenced file not found: {file_path}")
+                                else:
+                                    errors.append(f"Invalid file entry in tier '{tier_name}': {file_entry}")
 
             if errors or warnings:
                 return {
@@ -288,6 +301,9 @@ class FrameworkAudit:
             return []
 
         for template_file in templates_dir.glob("*.md"):
+            # Skip index files
+            if template_file.name.lower() in ["index.md", "readme.md"]:
+                continue
             issue = self._audit_template(template_file)
             if issue:
                 issues.append(issue)

@@ -11,7 +11,6 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional
 
 
 @dataclass
@@ -40,7 +39,7 @@ class PluginDiscovery:
     def __init__(
         self,
         project_root: Path,
-        framework_root: Optional[Path] = None,
+        framework_root: Path | None = None,
     ):
         """
         Initialize plugin discovery.
@@ -56,14 +55,14 @@ class PluginDiscovery:
         self.framework_plugins_dir = self.framework_root / "conventions" / "plugins"
         self.project_plugins_dir = self.project_root / ".agentqms" / "plugins"
 
-    def discover_all(self) -> List[DiscoveredPlugin]:
+    def discover_all(self) -> list[DiscoveredPlugin]:
         """
         Discover all plugin files from all registered sources.
 
         Returns:
             List of DiscoveredPlugin objects, framework plugins first.
         """
-        plugins: List[DiscoveredPlugin] = []
+        plugins: list[DiscoveredPlugin] = []
 
         # Framework plugins first (can be overridden by project)
         if self.framework_plugins_dir.exists():
@@ -79,7 +78,7 @@ class PluginDiscovery:
 
         return plugins
 
-    def discover_by_type(self) -> Dict[str, List[DiscoveredPlugin]]:
+    def discover_by_type(self) -> dict[str, list[DiscoveredPlugin]]:
         """
         Discover plugins grouped by type.
 
@@ -88,7 +87,7 @@ class PluginDiscovery:
         """
         all_plugins = self.discover_all()
 
-        grouped: Dict[str, List[DiscoveredPlugin]] = {
+        grouped: dict[str, list[DiscoveredPlugin]] = {
             "artifact_type": [],
             "validators": [],
             "context_bundle": [],
@@ -102,7 +101,7 @@ class PluginDiscovery:
 
     def _discover_from_directory(
         self, base_dir: Path, source: str
-    ) -> List[DiscoveredPlugin]:
+    ) -> list[DiscoveredPlugin]:
         """
         Discover plugins from a single base directory.
 
@@ -113,7 +112,7 @@ class PluginDiscovery:
         Returns:
             List of DiscoveredPlugin objects found in this directory.
         """
-        plugins: List[DiscoveredPlugin] = []
+        plugins: list[DiscoveredPlugin] = []
 
         # Artifact types: base_dir/artifact_types/*.yaml
         artifact_types_dir = base_dir / "artifact_types"
@@ -146,7 +145,7 @@ class PluginDiscovery:
 
         return plugins
 
-    def get_discovery_paths(self) -> Dict[str, str]:
+    def get_discovery_paths(self) -> dict[str, str]:
         """Return the discovery paths for debugging/logging."""
         return {
             "framework": str(self.framework_plugins_dir),

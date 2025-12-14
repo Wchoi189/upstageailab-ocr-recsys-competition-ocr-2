@@ -6,10 +6,9 @@ Structured framework for organizing image references and analysis results.
 import json
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
-from AgentQMS.vlm.core.contracts import AnalysisResult, VIAAnnotation
-from AgentQMS.vlm.utils.paths import get_path_resolver
+from AgentQMS.vlm.core.contracts import AnalysisResult
 
 
 class ImageAnalysisTemplate:
@@ -22,10 +21,10 @@ class ImageAnalysisTemplate:
             title: Template title
         """
         self.title = title
-        self.images: List[Dict[str, Any]] = []
-        self.few_shot_examples: List[Dict[str, Any]] = []
-        self.analysis_results: List[AnalysisResult] = []
-        self.metadata: Dict[str, Any] = {
+        self.images: list[dict[str, Any]] = []
+        self.few_shot_examples: list[dict[str, Any]] = []
+        self.analysis_results: list[AnalysisResult] = []
+        self.metadata: dict[str, Any] = {
             "created": datetime.now().isoformat(),
         }
 
@@ -33,9 +32,9 @@ class ImageAnalysisTemplate:
         self,
         image_id: str,
         image_path: Path,
-        initial_description: Optional[str] = None,
-        vlm_analysis: Optional[str] = None,
-        via_annotations: Optional[Path] = None,
+        initial_description: str | None = None,
+        vlm_analysis: str | None = None,
+        via_annotations: Path | None = None,
     ) -> None:
         """Add an image reference to the template.
 
@@ -141,7 +140,7 @@ class ImageAnalysisTemplate:
 
         return "\n".join(lines)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert template to dictionary.
 
         Returns:

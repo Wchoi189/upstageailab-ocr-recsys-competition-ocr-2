@@ -4,7 +4,7 @@ import json
 import subprocess
 import tempfile
 from pathlib import Path
-from typing import Any, List, Optional
+from typing import Any
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value
@@ -49,7 +49,7 @@ class CLIQwenBackend(BaseVLMBackend):
                 raise BackendError(f"Qwen VLM CLI not available. Command '{self.qwen_command}' failed.")
         except FileNotFoundError:
             raise BackendError(
-                f"Qwen VLM CLI not found. Install Qwen VLM or set QWEN_VLM_COMMAND environment variable."
+                "Qwen VLM CLI not found. Install Qwen VLM or set QWEN_VLM_COMMAND environment variable."
             )
         except subprocess.TimeoutExpired:
             raise BackendError("Qwen VLM CLI command timed out.")

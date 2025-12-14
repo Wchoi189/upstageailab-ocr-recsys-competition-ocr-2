@@ -1,3 +1,13 @@
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "Custom Agent Instructions"
+date: "2025-12-14"
+branch: main
+---
+
 # Custom Agent Instructions
 
 ## 🚨 CRITICAL: STRICT PROTOCOL ADHERENCE REQUIRED

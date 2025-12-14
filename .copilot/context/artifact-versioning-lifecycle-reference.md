@@ -1,4 +1,14 @@
-# Phase 4 Quick Reference: Artifact Versioning & Lifecycle
+---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "AgentQMS Artifact Versioning & Lifecycle Reference"
+date: "2025-12-14"
+branch: main
+---
+
+# AgentQMS Artifact Versioning & Lifecycle Reference
 
 ## View Artifact Status
 
@@ -123,9 +133,9 @@ if lifecycle.can_transition(Path("..."), "draft", "active"):
 
 - **Versioning Module**: `AgentQMS/agent_tools/utilities/versioning.py`
 - **Status Dashboard**: `AgentQMS/agent_tools/utilities/artifacts_status.py`
-- **Design Document**: `docs/artifacts/design_documents/2025-01-20_1000_design-artifact-versioning-lifecycle.md`
-- **Completion Assessment**: `docs/artifacts/assessments/2025-01-20_1100_assessment-phase4-completion.md`
-- **Implementation Plan**: `docs/artifacts/implementation_plans/2025-12-06_1200_implementation_plan_agentqms-metadata-branch-versioning.md`
+- **Design Document**: `docs/artifacts/design_documents/[DATE]_design-artifact-versioning-lifecycle.md`
+- **Completion Assessment**: `docs/artifacts/assessments/[DATE]_assessment-phase4-completion.md`
+- **Implementation Plan**: `docs/artifacts/implementation_plans/[DATE]_implementation_plan_agentqms-metadata-branch-versioning.md`
 
 ## Common Tasks
 
@@ -154,16 +164,16 @@ make validate
 ```yaml
 # In the artifact frontmatter:
 lifecycle_state: superseded
-superseded_by: "2025-01-20_1200_design-new-feature.md"
-deprecation_date: "2025-06-20"
-archived_date: "2025-09-20"  # When to expect removal
+superseded_by: "[NEW_ARTIFACT_FILENAME]"
+deprecation_date: "[YYYY-MM-DD]"
+archived_date: "[YYYY-MM-DD]"  # When to expect removal
 ```
 
 ### Archive Old Artifact
 
 ```yaml
 lifecycle_state: archived
-archived_date: "2025-01-20"
+archived_date: "[YYYY-MM-DD]"
 ```
 
 ## Dashboard Example Output
@@ -218,9 +228,10 @@ deprecated-api.md          401d   superseded  1.0
 
 ## Next Steps
 
-Phase 4 is complete. Next phase (Phase 5) will:
-- Add version field to existing 113 artifacts
-- Add lifecycle_state field to existing artifacts
-- Standardize timestamps
+This reference covers the core artifact versioning and lifecycle management capabilities. For ongoing maintenance:
 
-All tools created in Phase 4 will be used to monitor artifact health during migration.
+- Use `make artifacts-status` to monitor artifact health
+- Run `make validate` regularly to ensure compliance
+- Update artifact versions and lifecycle states as needed
+
+All versioning tools are available through the AgentQMS interface for managing artifact lifecycles.

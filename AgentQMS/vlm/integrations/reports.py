@@ -5,7 +5,6 @@ Auto-populates incident reports and assessments with VLM-generated content.
 
 import re
 from pathlib import Path
-from typing import List, Optional
 
 from AgentQMS.vlm.core.contracts import AnalysisResult
 from AgentQMS.vlm.core.interfaces import IntegrationError
@@ -17,8 +16,8 @@ class ReportIntegrator:
     def populate_report(
         self,
         report_path: Path,
-        analysis_results: List[AnalysisResult],
-        via_annotations: Optional[Path] = None,
+        analysis_results: list[AnalysisResult],
+        via_annotations: Path | None = None,
     ) -> None:
         """Populate a report with analysis results.
 
@@ -56,8 +55,8 @@ class ReportIntegrator:
     def _populate_incident_report(
         self,
         content: str,
-        results: List[AnalysisResult],
-        via_annotations: Optional[Path],
+        results: list[AnalysisResult],
+        via_annotations: Path | None,
     ) -> str:
         """Populate incident report with analysis results.
 
@@ -115,8 +114,8 @@ class ReportIntegrator:
     def _populate_assessment(
         self,
         content: str,
-        results: List[AnalysisResult],
-        via_annotations: Optional[Path],
+        results: list[AnalysisResult],
+        via_annotations: Path | None,
     ) -> str:
         """Populate assessment with analysis results.
 

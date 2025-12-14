@@ -8,7 +8,7 @@ This provides an audit trail and debugging aid.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 import yaml
 
@@ -40,7 +40,7 @@ class SnapshotWriter:
     def write(
         self,
         registry: PluginRegistry,
-        discovery_paths: Dict[str, str],
+        discovery_paths: dict[str, str],
     ) -> Path:
         """
         Write a snapshot of the plugin registry.
@@ -64,8 +64,8 @@ class SnapshotWriter:
     def _build_snapshot(
         self,
         registry: PluginRegistry,
-        discovery_paths: Dict[str, str],
-    ) -> Dict[str, Any]:
+        discovery_paths: dict[str, str],
+    ) -> dict[str, Any]:
         """Build the snapshot dictionary."""
         return {
             "metadata": {
@@ -88,7 +88,7 @@ class SnapshotWriter:
             },
         }
 
-    def read(self) -> Dict[str, Any]:
+    def read(self) -> dict[str, Any]:
         """
         Read the existing snapshot (if any).
 

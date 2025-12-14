@@ -6,7 +6,6 @@ Handles image resizing, format conversion, and optimization for VLM analysis.
 import base64
 import io
 from pathlib import Path
-from typing import List, Optional
 
 from PIL import Image
 
@@ -18,7 +17,7 @@ from AgentQMS.vlm.core.interfaces import ImagePreprocessor, PreprocessingError
 class VLMImagePreprocessor(ImagePreprocessor):
     """Image preprocessor for VLM analysis."""
 
-    def __init__(self, cache_dir: Optional[Path] = None):
+    def __init__(self, cache_dir: Path | None = None):
         """Initialize preprocessor.
 
         Args:
@@ -33,7 +32,7 @@ class VLMImagePreprocessor(ImagePreprocessor):
         self,
         image_path: Path,
         max_resolution: int,
-        target_format: Optional[str] = None,
+        target_format: str | None = None,
     ) -> ProcessedImage:
         """Preprocess an image for VLM analysis.
 
@@ -126,10 +125,10 @@ class VLMImagePreprocessor(ImagePreprocessor):
 
     def preprocess_batch(
         self,
-        image_paths: List[Path],
+        image_paths: list[Path],
         max_resolution: int,
-        target_format: Optional[str] = None,
-    ) -> List[ProcessedImage]:
+        target_format: str | None = None,
+    ) -> list[ProcessedImage]:
         """Preprocess multiple images.
 
         Args:

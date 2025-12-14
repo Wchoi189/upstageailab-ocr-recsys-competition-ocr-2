@@ -8,9 +8,9 @@ This is the main entry point for loading plugins into a registry.
 from __future__ import annotations
 
 import sys
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, Optional
+from typing import Any
 
 try:
     import yaml
@@ -38,7 +38,7 @@ class PluginLoader:
         registry = loader.load()
     """
 
-    def __init__(self, project_root: Optional[Path] = None):
+    def __init__(self, project_root: Path | None = None):
         """
         Initialize the plugin loader.
 
@@ -62,7 +62,7 @@ class PluginLoader:
         )
 
         # Cached registry
-        self._registry: Optional[PluginRegistry] = None
+        self._registry: PluginRegistry | None = None
 
     def load(self, force: bool = False) -> PluginRegistry:
         """
@@ -78,7 +78,7 @@ class PluginLoader:
             return self._registry
 
         registry = PluginRegistry(
-            loaded_at=datetime.now(timezone.utc).isoformat()
+            loaded_at=datetime.now(UTC).isoformat()
         )
 
         # Discover all plugins
@@ -92,7 +92,7 @@ class PluginLoader:
         self._registry = registry
         return registry
 
-    def _load_yaml(self, path: Path) -> Dict[str, Any]:
+    def _load_yaml(self, path: Path) -> dict[str, Any]:
         """Load YAML file and return dictionary."""
         with path.open("r", encoding="utf-8") as f:
             data = yaml.safe_load(f) or {}
@@ -150,7 +150,7 @@ class PluginLoader:
         self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]
     ) -> None:
         """Load and merge validator plugins."""
-        merged: Dict[str, Any] = {
+        merged: dict[str, Any] = {
             "prefixes": {},
             "types": [],
             "categories": [],
@@ -275,7 +275,7 @@ class PluginLoader:
         return False  # Framework cannot override project
 
     def _merge_validators(
-        self, base: Dict[str, Any], override: Dict[str, Any]
+        self, base: dict[str, Any], override: dict[str, Any]
     ) -> None:
         """Merge validator configurations (mutates base)."""
         # Merge prefixes (override wins)
@@ -305,7 +305,7 @@ class PluginLoader:
             existing.update(override.get("disabled_validators", []))
             base["disabled_validators"] = sorted(existing)
 
-    def get_discovery_paths(self) -> Dict[str, str]:
+    def get_discovery_paths(self) -> dict[str, str]:
         """Get the discovery paths used by this loader."""
         return self.discovery.get_discovery_paths()
 

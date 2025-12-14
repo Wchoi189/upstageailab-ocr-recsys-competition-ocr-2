@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 # Optional jsonschema import
 try:
@@ -29,7 +29,7 @@ except ImportError:
 class SchemaValidationError(Exception):
     """Raised when schema validation fails."""
 
-    def __init__(self, message: str, path: List[Any] = None):
+    def __init__(self, message: str, path: list[Any] = None):
         super().__init__(message)
         self.message = message
         self.path = path or []
@@ -50,7 +50,7 @@ class PluginValidator:
         "context_bundle": "plugin_context_bundle.json",
     }
 
-    def __init__(self, schemas_dir: Optional[Path] = None):
+    def __init__(self, schemas_dir: Path | None = None):
         """
         Initialize the validator.
 
@@ -59,7 +59,7 @@ class PluginValidator:
                          If None, schema validation is disabled.
         """
         self.schemas_dir = schemas_dir
-        self._schema_cache: Dict[str, Dict[str, Any]] = {}
+        self._schema_cache: dict[str, dict[str, Any]] = {}
 
     @property
     def is_available(self) -> bool:
@@ -67,8 +67,8 @@ class PluginValidator:
         return JSONSCHEMA_AVAILABLE and self.schemas_dir is not None
 
     def validate(
-        self, plugin_data: Dict[str, Any], plugin_type: str
-    ) -> List[str]:
+        self, plugin_data: dict[str, Any], plugin_type: str
+    ) -> list[str]:
         """
         Validate plugin data against its schema.
 
@@ -98,7 +98,7 @@ class PluginValidator:
             return [f"Validation error: {e}"]
 
     def validate_or_raise(
-        self, plugin_data: Dict[str, Any], plugin_type: str
+        self, plugin_data: dict[str, Any], plugin_type: str
     ) -> None:
         """
         Validate plugin data and raise if invalid.
@@ -114,7 +114,7 @@ class PluginValidator:
         if errors:
             raise SchemaValidationError("; ".join(errors))
 
-    def _load_schema(self, plugin_type: str) -> Optional[Dict[str, Any]]:
+    def _load_schema(self, plugin_type: str) -> dict[str, Any] | None:
         """
         Load and cache a schema file.
 
@@ -143,10 +143,10 @@ class PluginValidator:
                 schema = json.load(f)
             self._schema_cache[plugin_type] = schema
             return schema
-        except (json.JSONDecodeError, IOError):
+        except (OSError, json.JSONDecodeError):
             return None
 
-    def get_schema(self, plugin_type: str) -> Optional[Dict[str, Any]]:
+    def get_schema(self, plugin_type: str) -> dict[str, Any] | None:
         """
         Get the schema for a plugin type (for inspection).
 
@@ -158,7 +158,7 @@ class PluginValidator:
         """
         return self._load_schema(plugin_type)
 
-    def get_schema_path(self, plugin_type: str) -> Optional[Path]:
+    def get_schema_path(self, plugin_type: str) -> Path | None:
         """
         Get the path to a schema file.
 

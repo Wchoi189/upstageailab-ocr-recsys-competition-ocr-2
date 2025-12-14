@@ -1,11 +1,14 @@
-# AgentQMS Toolkit → Agent Tools Migration Guide
-
-**Version**: 1.0
-**Last Updated**: 2025-12-06
-**Status**: In Progress (0.3.2 → 0.4.0)
-**Timeline**: Version 0.3.2 (deprecation warnings), Version 0.4.0 (removal)
-
 ---
+type: instruction
+category: agent_guidance
+status: active
+version: "1.0"
+title: "AgentQMS Toolkit to Agent Tools Migration Guide"
+date: "2025-12-14"
+branch: main
+---
+
+# AgentQMS Toolkit → Agent Tools Migration Guide
 
 ## Quick Reference
 
@@ -118,23 +121,17 @@ results = validator.validate_all()
 
 ---
 
-## Deprecated Modules with No Direct Replacements
-
-### Toolkit-Only Code (Keep Using Toolkit Until 0.4.0)
-
-Some toolkit code doesn't have agent_tools equivalents yet:
-
-| Toolkit Module | Reason | Timeline |
-|---|---|---|
-| `AgentQMS.toolkit.migration.migrate` | Specific to batch migration; not commonly used | Scheduled for 0.4.0 |
-| `AgentQMS.toolkit.maintenance.*` | Legacy maintenance scripts | Will consolidate into agent_tools |
-| `AgentQMS.toolkit.utils.config` | Configuration loading; being moved to agent_tools.utils.config | Scheduled for 0.4.0 |
-
-**For these modules**: Continue using toolkit until they're available in agent_tools.
-
----
-
 ## Deprecation Warning Handling
+
+When you import from toolkit, you'll see:
+
+```
+DeprecationWarning: AgentQMS.toolkit is deprecated as of 0.3.2 and will be removed in 0.4.0.
+Use AgentQMS.agent_tools instead.
+See docs/artifacts/design_documents/2025-12-06_design_toolkit-deprecation-roadmap.md for migration guide.
+```
+
+### Suppress Warnings (If Needed)
 
 When you import from toolkit, you'll see:
 
@@ -229,29 +226,29 @@ warnings.filterwarnings('ignore', category=DeprecationWarning, module='AgentQMS.
 
 ---
 
-## FAQ
+## Resources
 
-**Q: When will toolkit be removed?**
-A: Version 0.4.0, planned for ~4 weeks after 0.3.2 release.
-
-**Q: Will my code break?**
-A: No, not until 0.4.0. In 0.3.2, you'll just see deprecation warnings.
-
-**Q: Can I suppress the warnings?**
-A: Yes, but migration to agent_tools is preferred. See "Deprecation Warning Handling" section.
-
-**Q: Are there any behavioral differences?**
-A: Generally no, but agent_tools may have new features (e.g., `strict_mode` in ArtifactValidator). Check release notes.
-
-**Q: What if I find a bug in agent_tools?**
-A: Report it with the mapping from toolkit to agent_tools, and we'll fix it.
-
-**Q: Can I migrate gradually?**
-A: Yes, absolutely. Migrate files one at a time. You can mix toolkit and agent_tools imports during 0.3.2.
+- **Detailed Deprecation Roadmap**: `docs/artifacts/design_documents/2025-12-06_design_toolkit-deprecation-roadmap.md`
+- **Agent Tools README**: `AgentQMS/agent_tools/README.md`
+- **Toolkit README (Legacy)**: `AgentQMS/toolkit/README.md`
+- **System Documentation**: `AgentQMS/knowledge/agent/system.md`
 
 ---
 
-## Resources
+## Contact & Support
+
+If you encounter issues during migration:
+
+1. Check this guide and the mapping table
+2. Review the detailed roadmap document
+3. Check `AgentQMS/agent_tools/` for available modules and functions
+4. Run `make discover` to list all available tools
+
+---
+
+**Last Updated**: 2025-12-06
+**Status**: Ready for Phase 3 implementation
+**Next Step**: Complete deprecation warnings in toolkit/__init__.py
 
 - **Detailed Deprecation Roadmap**: `docs/artifacts/design_documents/2025-12-06_design_toolkit-deprecation-roadmap.md`
 - **Agent Tools README**: `AgentQMS/agent_tools/README.md`

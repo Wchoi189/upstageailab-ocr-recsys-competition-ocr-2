@@ -6,17 +6,15 @@ few-shot learning, and error handling.
 
 import json
 import time
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from AgentQMS.vlm.backends import create_backend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value
 from AgentQMS.vlm.core.contracts import (
-    AnalysisMode,
     AnalysisRequest,
     AnalysisResult,
-    ProcessedImage,
 )
 from AgentQMS.vlm.core.interfaces import BackendError, VLMBackend
 from AgentQMS.vlm.core.preprocessor import VLMImagePreprocessor
@@ -30,8 +28,8 @@ class VLMClient:
 
     def __init__(
         self,
-        backend_preference: Optional[str] = None,
-        cache_dir: Optional[Path] = None,
+        backend_preference: str | None = None,
+        cache_dir: Path | None = None,
     ):
         """Initialize VLM client.
 
@@ -51,7 +49,7 @@ class VLMClient:
         self.prompt_manager = PromptManager()
         self.via_integration = VIAIntegration()
 
-        self._backend: Optional[VLMBackend] = None
+        self._backend: VLMBackend | None = None
 
     def _get_backend(self) -> VLMBackend:
         """Get or create backend instance.
@@ -77,7 +75,7 @@ class VLMClient:
                 if backend.is_available():
                     self._backend = backend
                     return backend
-            except Exception as e:
+            except Exception:
                 # Try next backend
                 continue
 
@@ -127,7 +125,7 @@ class VLMClient:
                 logger.warning(f"Failed to load VIA annotations: {e}")
 
         # Build prompt context
-        context: Dict[str, Any] = {
+        context: dict[str, Any] = {
             "initial_description": request.initial_description,
             **via_context,
         }
@@ -166,8 +164,8 @@ class VLMClient:
         processing_time = time.time() - start_time
 
         # Build rich metadata for downstream consumers (CLI, experiment agents, etc.)
-        timestamp = datetime.now(timezone.utc).isoformat().replace("+00:00", "Z")
-        image_info: List[Dict[str, Any]] = []
+        timestamp = datetime.now(UTC).isoformat().replace("+00:00", "Z")
+        image_info: list[dict[str, Any]] = []
         for img in processed_images:
             image_info.append(
                 {
@@ -183,7 +181,7 @@ class VLMClient:
                 }
             )
 
-        metadata: Dict[str, Any] = {
+        metadata: dict[str, Any] = {
             "max_resolution": max_resolution,
             "images_processed": len(processed_images),
             "backend_type": backend.config.backend_type,
@@ -207,8 +205,8 @@ class VLMClient:
 
     def analyze_batch(
         self,
-        requests: List[AnalysisRequest],
-    ) -> List[AnalysisResult]:
+        requests: list[AnalysisRequest],
+    ) -> list[AnalysisResult]:
         """Analyze multiple images in batch.
 
         Args:
@@ -232,8 +230,8 @@ class VLMClient:
 
         return results
 
-    def _build_backend_priority(self) -> List[str]:
-        priority: List[str] = []
+    def _build_backend_priority(self) -> list[str]:
+        priority: list[str] = []
         ordered = [self.backend_preference] if self.backend_preference else []
         ordered.extend(self._config.backends.priority)
         for backend in ordered:
@@ -241,9 +239,9 @@ class VLMClient:
                 priority.append(backend)
         return priority
 
-    def _build_backend_config(self, backend_type: str) -> Dict[str, Any]:
+    def _build_backend_config(self, backend_type: str) -> dict[str, Any]:
         defaults = self._config.backend_defaults
-        config: Dict[str, Any] = {
+        config: dict[str, Any] = {
             "timeout_seconds": defaults.timeout_seconds,
             "max_retries": defaults.max_retries,
             "max_resolution": defaults.max_resolution,

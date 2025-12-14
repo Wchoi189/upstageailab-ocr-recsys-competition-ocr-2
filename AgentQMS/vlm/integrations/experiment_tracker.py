@@ -4,10 +4,9 @@ Bridges VLM tools with the experiment-tracker module.
 """
 
 from pathlib import Path
-from typing import List, Optional
 
-from AgentQMS.vlm.core.contracts import AnalysisRequest, AnalysisResult
 from AgentQMS.vlm.core.client import VLMClient
+from AgentQMS.vlm.core.contracts import AnalysisRequest, AnalysisResult
 from AgentQMS.vlm.integrations.reports import ReportIntegrator
 from AgentQMS.vlm.utils.paths import get_path_resolver
 
@@ -24,10 +23,10 @@ class ExperimentTrackerIntegration:
     def analyze_experiment_artifacts(
         self,
         experiment_id: str,
-        artifact_paths: List[Path],
+        artifact_paths: list[Path],
         mode: str = "defect",
         auto_populate: bool = True,
-    ) -> List[AnalysisResult]:
+    ) -> list[AnalysisResult]:
         """Analyze artifacts from an experiment.
 
         Args:
@@ -64,7 +63,7 @@ class ExperimentTrackerIntegration:
     def _populate_experiment_reports(
         self,
         experiment_id: str,
-        results: List[AnalysisResult],
+        results: list[AnalysisResult],
     ) -> None:
         """Populate experiment reports with analysis results.
 
