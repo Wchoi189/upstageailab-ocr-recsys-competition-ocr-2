@@ -1,12 +1,14 @@
 ---
 title: "Master Index"
-date: "2025-12-06 20:41 (KST)"
-type: "reference"
+date: "2025-12-14 16:00 (KST)"
+type: "template"
 category: "reference"
 status: "active"
 version: "1.0"
-tags: ['reference', 'reference']
+tags: ['reference', 'index']
 ---
+
+
 
 
 

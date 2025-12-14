@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-07 01:33 (KST)"
+type: "design"
+category: "architecture"
+status: "active"
+version: "1.0"
+tags: ['design', 'architecture', 'documentation']
+---
+
 # Design Documents
 
 Active design documents and development roadmaps.

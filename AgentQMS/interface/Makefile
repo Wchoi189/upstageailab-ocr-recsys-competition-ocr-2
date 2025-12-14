@@ -216,6 +216,16 @@ audit-report: ## Report violations without fixing
 audit-report-all: ## Report violations including excluded directories
 	uv run python ../agent_tools/audit/artifact_audit.py --all --report --include-excluded
 
+# Archive Management
+archive-artifacts-dry: ## Preview artifacts marked for archival (status='archived')
+	@echo "🗄️  Previewing artifacts marked for archival..."
+	uv run python ../agent_tools/archive/archive_artifacts.py --dry-run
+	@echo ""
+	@echo "💡 To move files to archive, run: make archive-artifacts"
+
+archive-artifacts: ## Move archived artifacts to docs/archive/artifacts/
+	uv run python ../agent_tools/archive/archive_artifacts.py
+
 audit-vlm-migrate: ## Migrate VLM reports from BUG prefix to vlm_report_ prefix
 	@echo "🔍 Previewing VLM reports migration..."
 	python ../agent_tools/utilities/migrate_vlm_reports.py --dry-run

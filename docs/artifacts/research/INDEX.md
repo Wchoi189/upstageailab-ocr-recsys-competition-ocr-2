@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-07 01:33 (KST)"
+type: "research"
+category: "research"
+status: "active"
+version: "1.0"
+tags: ['research', 'research', 'analysis']
+---
+
 # Research
 
 Active research and development roadmaps.

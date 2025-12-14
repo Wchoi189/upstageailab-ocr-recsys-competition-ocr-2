@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-07 01:33 (KST)"
+type: "bug_report"
+category: "troubleshooting"
+status: "active"
+version: "1.0"
+tags: ['bug_report', 'troubleshooting']
+---
+
 # Bug Reports
 
 Active bug reports and development roadmaps.

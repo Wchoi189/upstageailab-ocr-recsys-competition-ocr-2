@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-07 01:33 (KST)"
+type: "template"
+category: "reference"
+status: "template"
+version: "1.0"
+tags: ['template', 'reference', 'reference']
+---
+
 # Templates
 
 Active templates and development roadmaps.

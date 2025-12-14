@@ -1,3 +1,13 @@
+---
+title: "Index"
+date: "2025-12-07 01:33 (KST)"
+type: "completion_summary"
+category: "reference"
+status: "active"
+version: "1.0"
+tags: ['completion_summary', 'reference']
+---
+
 # Completion Summaries
 
 Active completion summaries and development roadmaps.
