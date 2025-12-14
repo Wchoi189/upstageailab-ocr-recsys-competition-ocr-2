@@ -55,17 +55,10 @@ test-fast-train:  ## Run quick training test with optimized entry point
 # Changes: Reorganized structure, eliminated duplication, improved help system
 
 PORT ?= 8501
-FRONTEND_DIR := apps/frontend
 FRONTEND_HOST ?= 0.0.0.0
 FRONTEND_PORT ?= 5173
-BACKEND_HOST ?= 127.0.0.1
-BACKEND_PORT ?= 8000
-BACKEND_APP ?= apps.backend.services.playground_api.app:app
 
-# UI Apps (Deprecated/Archived)
-# UI_APPS list removed as Streamlit apps are archived
-
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua frontend-dev frontend-stop fe sfe console-dev console-build console-lint backend-dev backend-stop backend-force-kill kill-ports stack-dev stack-stop fs stop-fs checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
 
 # ============================================================================
 # HELP
@@ -104,27 +97,15 @@ help:
 	@echo "  diagrams-validate   - Validate diagram syntax"
 	@echo "  diagrams-update-specific - Update specific diagrams (use DIAGRAMS=...)"
 	@echo ""
-	@echo "🖥️  UI APPLICATIONS (Legacy Streamlit Apps are Archived)"
-	@echo "  Use 'frontend-dev' or 'console-dev' for modern UI apps."
-	@echo "🌐 FRONTEND"
-	@echo "  fe                 - Start Vite dev server (alias for frontend-dev)"
-	@echo "  frontend-dev       - Vite dev server on $(FRONTEND_HOST):$(FRONTEND_PORT)"
-	@echo "  sfe                - Stop Vite dev server listening on $(FRONTEND_PORT)"
-	@echo ""
 	@echo "🧭 NEXT.JS CONSOLE"
 	@echo "  console-dev        - Start Next.js App Router dev server (apps/playground-console)"
 	@echo "  console-build      - Build the Next.js console for production deploys"
 	@echo "  console-lint       - Run console linting (see docs/maintainers/coding_standards.md)"
 	@echo ""
-	@echo "🧩 SPA STACK"
-	@echo "  backend-dev        - Start FastAPI playground backend (reload)"
-	@echo "  backend-ocr        - Start backend for OCR Inference Console (auto-detects checkpoint)"
-	@echo "  backend-stop       - Stop FastAPI backend on $(BACKEND_PORT)"
-	@echo "  backend-force-kill - Force kill ANY process using port $(BACKEND_PORT) (last resort)"
-	@echo "  kill-ports         - Kill processes on ports 3000 and 8000"
-	@echo "  fs                 - Run backend + frontend together (alias for stack-dev)"
-	@echo "  stack-dev          - Combined dev stack (kills backend when frontend exits)"
-	@echo "  stop-fs            - Stop combined stack (alias for stack-stop)"
+	@echo "ℹ️  UI APPLICATIONS"
+	@echo "  Legacy Vite and FastAPI components have been archived."
+	@echo "  See docs/archive/archive_code/deprecated/ for historical reference."
+	@echo "  Domain-driven separation: Each app has its own backend."
 	@echo ""
 	@echo "📦 CHECKPOINT MANAGEMENT"
 	@echo "  checkpoint-metadata  - Generate metadata files for all checkpoints (speeds up loading)"
@@ -258,11 +239,8 @@ diagrams-update-specific:
 
 # Friendly aliases (Legacy removed)
 # cb, eval, infer, prep, monitor, ua removed
-
-fe: frontend-dev
-
-frontend-dev:
-	cd $(FRONTEND_DIR) && npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
+# frontend-dev, fe, sfe, frontend-stop - removed (deprecated legacy Vite app)
+# See apps/playground-console or apps/ocr-inference-console for current frontend apps
 
 console-dev:
 	npm run dev:console
@@ -273,354 +251,24 @@ console-build:
 console-lint:
 	npm run lint:console
 
-sfe: frontend-stop
-
 ocr-console-dev:
 	cd apps/ocr-inference-console && npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
 
-frontend-stop:
-	@PORT=$(FRONTEND_PORT); \
-	PIDS=""; \
-	PARENT_PIDS=""; \
-	\
-	# Find processes listening on the port \
-	if command -v lsof >/dev/null 2>&1; then \
-		for PID in $$(lsof -t -i:$$PORT 2>/dev/null || true); do \
-			CMD=$$(ps -p $$PID -o args= 2>/dev/null || true); \
-			if echo "$$CMD" | grep -qi "vite"; then \
-				PIDS="$$PIDS $$PID"; \
-				# Find parent processes (uv run make, make, npm, etc.) \
-				PPID=$$(ps -p $$PID -o ppid= 2>/dev/null | tr -d ' ' || true); \
-				if [ -n "$$PPID" ] && [ "$$PPID" != "1" ]; then \
-					PCMD=$$(ps -p $$PPID -o args= 2>/dev/null || true); \
-					if echo "$$PCMD" | grep -Eq "uv run.*make.*fe|make.*frontend-dev|npm.*dev.*--port $$PORT"; then \
-						PARENT_PIDS="$$PARENT_PIDS $$PPID"; \
-					fi; \
-				fi; \
-			fi; \
-		done; \
-	fi; \
-	\
-	# Also find by process name pattern (fallback) \
-	if command -v pgrep >/dev/null 2>&1; then \
-		for PID in $$(pgrep -f "vite.*--port $$PORT|vite.*--host.*--port $$PORT" 2>/dev/null || true); do \
-			if ! echo "$$PIDS" | grep -q "$$PID"; then \
-				PIDS="$$PIDS $$PID"; \
-			fi; \
-		done; \
-		# Find uv run make fe wrappers \
-		for PID in $$(pgrep -f "uv run.*make.*fe|uv run.*make.*frontend-dev" 2>/dev/null || true); do \
-			if ! echo "$$PARENT_PIDS" | grep -q "$$PID"; then \
-				PARENT_PIDS="$$PARENT_PIDS $$PID"; \
-			fi; \
-		done; \
-	fi; \
-	\
-	# Kill all found processes (children first, then parents) \
-	if [ -n "$$PIDS" ] || [ -n "$$PARENT_PIDS" ]; then \
-		echo "Stopping project frontend dev server on port $$PORT"; \
-		if [ -n "$$PIDS" ]; then \
-			echo "  Killing server processes (PID(s) $$PIDS)"; \
-			kill $$PIDS 2>/dev/null || true; \
-			sleep 0.5; \
-		fi; \
-		if [ -n "$$PARENT_PIDS" ]; then \
-			echo "  Killing parent wrapper processes (PID(s) $$PARENT_PIDS)"; \
-			kill $$PARENT_PIDS 2>/dev/null || true; \
-		fi; \
-		# Force kill if still running after 1 second \
-		sleep 0.5; \
-		if [ -n "$$PIDS" ]; then \
-			for PID in $$PIDS; do \
-				if ps -p $$PID >/dev/null 2>&1; then \
-					echo "  Force killing PID $$PID"; \
-					kill -9 $$PID 2>/dev/null || true; \
-				fi; \
-			done; \
-		fi; \
-	else \
-		echo "No project frontend dev server detected on port $$PORT"; \
-	fi
+# backend-dev, backend-ocr - removed (deprecated unified backend)
+# Use domain-specific backends instead:
+#   - apps/playground-console/backend for playground-specific features
+#   - apps/ocr-inference-console/backend for OCR inference
+#   - apps/shared/backend_shared for shared InferenceEngine
 
-backend-dev:
-	uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload
+# backend-stop - removed (deprecated unified backend)
+# Use domain-specific backend targets or kill-ports for process management
 
-backend-ocr:
-	@bash -c 'set -euo pipefail; \
-		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" | head -n 1); \
-		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
-			echo "Error: No checkpoint found in outputs/experiments/train/ocr. Please set OCR_CHECKPOINT_PATH manually."; \
-			exit 1; \
-		fi; \
-		echo "Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
-		echo "Starting OCR backend on $(BACKEND_HOST):$(BACKEND_PORT)"; \
-		OCR_CHECKPOINT_PATH=$$OCR_CHECKPOINT_PATH uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload; \
-	'
-
-backend-stop:
-	@PORT=$(BACKEND_PORT); \
-	PIDS=""; \
-	PARENT_PIDS=""; \
-	APP_PATTERN="$(BACKEND_APP)"; \
-	CURRENT_PID=$$$$; \
-	EXCLUDE_PIDS="$$CURRENT_PID"; \
-	\
-	# Build exclusion list: current process and all ancestors (up to 5 levels) \
-	PPID=$$CURRENT_PID; \
-	for i in 1 2 3 4 5; do \
-		PPID=$$(ps -p $$PPID -o ppid= 2>/dev/null | tr -d ' ' || echo ""); \
-		if [ -z "$$PPID" ] || [ "$$PPID" = "1" ]; then \
-			break; \
-		fi; \
-		EXCLUDE_PIDS="$$EXCLUDE_PIDS $$PPID"; \
-	done; \
-	\
-	# Find processes listening on the port \
-	if command -v lsof >/dev/null 2>&1; then \
-		for PID in $$(lsof -t -i:$$PORT 2>/dev/null || true); do \
-			# Skip if PID is in exclusion list \
-			if echo "$$EXCLUDE_PIDS" | grep -qw "$$PID"; then \
-				continue; \
-			fi; \
-			CMD=$$(ps -p $$PID -o args= 2>/dev/null || true); \
-			if echo "$$CMD" | grep -Eq "uvicorn.*$$APP_PATTERN|run_spa\.py|run_ui\.py|mkdocs"; then \
-				PIDS="$$PIDS $$PID"; \
-				# Find parent processes (uv run make, make, etc.) \
-				PPID=$$(ps -p $$PID -o ppid= 2>/dev/null | tr -d ' ' || true); \
-				if [ -n "$$PPID" ] && [ "$$PPID" != "1" ] && ! echo "$$EXCLUDE_PIDS" | grep -qw "$$PPID"; then \
-					PCMD=$$(ps -p $$PPID -o args= 2>/dev/null || true); \
-					if echo "$$PCMD" | grep -Eq "uv run.*make.*backend|make.*backend-dev|make.*docs-serve|uv run.*uvicorn|uv run.*mkdocs"; then \
-						PARENT_PIDS="$$PARENT_PIDS $$PPID"; \
-					fi; \
-				fi; \
-			fi; \
-		done; \
-	fi; \
-	\
-	# Also find by process name pattern (fallback if lsof fails or misses processes) \
-	if command -v pgrep >/dev/null 2>&1; then \
-		for PID in $$(pgrep -f "uvicorn.*$$APP_PATTERN" 2>/dev/null || true); do \
-			if ! echo "$$EXCLUDE_PIDS" | grep -qw "$$PID" && ! echo "$$PIDS" | grep -qw "$$PID"; then \
-				PIDS="$$PIDS $$PID"; \
-			fi; \
-		done; \
-		# Find mkdocs processes (also uses port 8000) \
-		for PID in $$(pgrep -f "mkdocs.*serve.*8000" 2>/dev/null || true); do \
-			if ! echo "$$EXCLUDE_PIDS" | grep -qw "$$PID" && ! echo "$$PIDS" | grep -qw "$$PID"; then \
-				PIDS="$$PIDS $$PID"; \
-			fi; \
-		done; \
-		# Find uv run make backend-dev wrappers \
-		for PID in $$(pgrep -f "uv run.*make.*backend-dev" 2>/dev/null || true); do \
-			if ! echo "$$EXCLUDE_PIDS" | grep -qw "$$PID" && ! echo "$$PARENT_PIDS" | grep -qw "$$PID"; then \
-				PARENT_PIDS="$$PARENT_PIDS $$PID"; \
-			fi; \
-		done; \
-	fi; \
-	\
-	# Kill all found processes (children first, then parents) \
-	if [ -n "$$PIDS" ] || [ -n "$$PARENT_PIDS" ]; then \
-		echo "Stopping project backend server on port $$PORT"; \
-		if [ -n "$$PIDS" ]; then \
-			echo "  Killing server processes (PID(s) $$PIDS)"; \
-			for PID in $$PIDS; do \
-				if ps -p $$PID >/dev/null 2>&1; then \
-					kill $$PID 2>/dev/null && echo "    Sent TERM to PID $$PID" || echo "    Failed to kill PID $$PID"; \
-				fi; \
-			done; \
-			sleep 0.5; \
-		fi; \
-		if [ -n "$$PARENT_PIDS" ]; then \
-			echo "  Killing parent wrapper processes (PID(s) $$PARENT_PIDS)"; \
-			for PID in $$PARENT_PIDS; do \
-				if ps -p $$PID >/dev/null 2>&1; then \
-					kill $$PID 2>/dev/null && echo "    Sent TERM to parent PID $$PID" || echo "    Failed to kill parent PID $$PID"; \
-				fi; \
-			done; \
-		fi; \
-		# Force kill if still running after 1 second \
-		sleep 0.5; \
-		STILL_RUNNING=""; \
-		if [ -n "$$PIDS" ]; then \
-			for PID in $$PIDS; do \
-				if ps -p $$PID >/dev/null 2>&1; then \
-					echo "  Force killing PID $$PID"; \
-					kill -9 $$PID 2>/dev/null || true; \
-					STILL_RUNNING="$$STILL_RUNNING $$PID"; \
-				fi; \
-			done; \
-		fi; \
-		if [ -n "$$PARENT_PIDS" ]; then \
-			for PID in $$PARENT_PIDS; do \
-				if ps -p $$PID >/dev/null 2>&1; then \
-					echo "  Force killing parent PID $$PID"; \
-					kill -9 $$PID 2>/dev/null || true; \
-					STILL_RUNNING="$$STILL_RUNNING $$PID"; \
-				fi; \
-			done; \
-		fi; \
-		if [ -n "$$STILL_RUNNING" ]; then \
-			echo "  Warning: Some processes may still be running: $$STILL_RUNNING"; \
-		else \
-			echo "  All processes stopped successfully"; \
-		fi; \
-	else \
-		echo "No project backend server detected on port $$PORT"; \
-	fi
-
-fs: stack-dev
-
-serve-ocr-console:
-	@bash -c 'set -euo pipefail; \
-		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" | head -n 1); \
-		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
-			echo "Error: No checkpoint found in outputs/experiments/train/ocr. Please set OCR_CHECKPOINT_PATH manually."; \
-			exit 1; \
-		fi; \
-		echo "Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
-		echo "Starting FastAPI backend (with OCR bridge) on $(BACKEND_HOST):$(BACKEND_PORT)"; \
-		OCR_CHECKPOINT_PATH=$$OCR_CHECKPOINT_PATH uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload & \
-		BACK_PID=$$!; \
-		trap "echo \"Stopping backend (PID $$BACK_PID)\"; kill $$BACK_PID 2>/dev/null || true; $(MAKE) backend-stop 2>/dev/null || true" EXIT INT TERM; \
-		echo "Backend started (PID $$BACK_PID), waiting for port $(BACKEND_PORT) to be ready..."; \
-		MAX_WAIT=30; \
-		WAITED=0; \
-		while [ $$WAITED -lt $$MAX_WAIT ]; do \
-			if command -v lsof >/dev/null 2>&1; then \
-				if lsof -i:$(BACKEND_PORT) >/dev/null 2>&1; then \
-					echo "Backend is ready on port $(BACKEND_PORT)"; \
-					break; \
-				fi; \
-			elif command -v nc >/dev/null 2>&1; then \
-				if nc -z $(BACKEND_HOST) $(BACKEND_PORT) 2>/dev/null; then \
-					echo "Backend is ready on port $(BACKEND_PORT)"; \
-					break; \
-				fi; \
-			else \
-				sleep 3; \
-				break; \
-			fi; \
-			sleep 0.5; \
-			WAITED=$$((WAITED + 1)); \
-		done; \
-		if [ $$WAITED -ge $$MAX_WAIT ]; then \
-			echo "Warning: Backend may not be ready yet, but starting frontend anyway"; \
-		fi; \
-		$(MAKE) ocr-console-dev; \
-	'
-
-stack-dev:
-	@bash -c 'set -euo pipefail; \
-		echo "Starting FastAPI backend on $(BACKEND_HOST):$(BACKEND_PORT)"; \
-		uv run uvicorn $(BACKEND_APP) --host $(BACKEND_HOST) --port $(BACKEND_PORT) --reload & \
-		BACK_PID=$$!; \
-		trap "echo \"Stopping backend (PID $$BACK_PID)\"; kill $$BACK_PID 2>/dev/null || true; $(MAKE) backend-stop 2>/dev/null || true" EXIT INT TERM; \
-		echo "Backend started (PID $$BACK_PID), waiting for port $(BACKEND_PORT) to be ready..."; \
-		MAX_WAIT=30; \
-		WAITED=0; \
-		while [ $$WAITED -lt $$MAX_WAIT ]; do \
-			if command -v lsof >/dev/null 2>&1; then \
-				if lsof -i:$(BACKEND_PORT) >/dev/null 2>&1; then \
-					echo "Backend is ready on port $(BACKEND_PORT)"; \
-					break; \
-				fi; \
-			elif command -v nc >/dev/null 2>&1; then \
-				if nc -z $(BACKEND_HOST) $(BACKEND_PORT) 2>/dev/null; then \
-					echo "Backend is ready on port $(BACKEND_PORT)"; \
-					break; \
-				fi; \
-			else \
-				# Fallback: just wait a bit longer \
-				sleep 3; \
-				break; \
-			fi; \
-			sleep 0.5; \
-			WAITED=$$((WAITED + 1)); \
-		done; \
-		if [ $$WAITED -ge $$MAX_WAIT ]; then \
-			echo "Warning: Backend may not be ready yet, but starting frontend anyway"; \
-		fi; \
-		cd $(FRONTEND_DIR); \
-		echo "Starting frontend dev server on $(FRONTEND_HOST):$(FRONTEND_PORT)"; \
-		npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT); \
-	'
-
-sfs: stack-stop
-
-stack-stop: backend-stop
+# fs, stack-dev, stack-stop, sfs - removed (deprecated unified SPA stack)
+# Use domain-specific app targets instead
 	$(MAKE) sfe
 
 cd: cleanup-dev
-# Force cleanup of any orphaned backend/frontend processes (use when stop targets fail)
-cleanup-dev:
-	@trap '' TERM INT; \
-	echo "Force cleaning up all dev processes..."; \
-	$(MAKE) backend-stop 2>&1 || true; \
-	$(MAKE) sfe 2>&1 || true; \
-	if command -v pkill >/dev/null 2>&1; then \
-		CURRENT_PID=$$$$; \
-		for PID in $$(pgrep -f "uv run.*make.*backend-dev|uv run.*make.*fe|uv run.*make.*frontend-dev" 2>/dev/null || true); do \
-			if [ "$$PID" != "$$CURRENT_PID" ]; then \
-				pkill -P $$PID 2>/dev/null || true; \
-				kill $$PID 2>/dev/null || true; \
-			fi; \
-		done; \
-	fi; \
-	echo "Cleanup complete."
-
-# Force kill ANY process using port 8000 (use as last resort)
-bk:
-	$(MAKE) backend-force-kill
-backend-force-kill:
-	@PORT=$(BACKEND_PORT); \
-	echo "Force killing ANY process using port $$PORT..."; \
-	if command -v lsof >/dev/null 2>&1; then \
-		for PID in $$(lsof -t -i:$$PORT 2>/dev/null || true); do \
-			echo "  Killing PID $$PID"; \
-			kill -9 $$PID 2>/dev/null || true; \
-		done; \
-		sleep 1; \
-		# Check if port is still in use \
-		if lsof -t -i:$$PORT >/dev/null 2>&1; then \
-			echo "  Warning: Port $$PORT may still be in use (could be TIME_WAIT state)"; \
-			echo "  Waiting 5 seconds for TIME_WAIT sockets to clear..."; \
-			sleep 5; \
-		else \
-			echo "  Port $$PORT is now free"; \
-		fi; \
-	else \
-		echo "  lsof not available, trying alternative methods..."; \
-		if command -v fuser >/dev/null 2>&1; then \
-			fuser -k $$PORT/tcp 2>/dev/null || true; \
-		fi; \
-	fi
-
-# Kill processes on ports 3000 and 8000
-kill-ports:
-	@echo "Killing processes on ports 3000 and 8000..."; \
-	if command -v lsof >/dev/null 2>&1; then \
-		for PORT in 3000 8000; do \
-			PIDS=$$(lsof -t -i:$$PORT 2>/dev/null || true); \
-			if [ -n "$$PIDS" ]; then \
-				echo "  Killing processes on port $$PORT: $$PIDS"; \
-				kill -9 $$PIDS 2>/dev/null || true; \
-			else \
-				echo "  No process found on port $$PORT"; \
-			fi; \
-		done; \
-		echo "✅ Done"; \
-	else \
-		echo "  lsof not available, trying alternative methods..."; \
-		if command -v fuser >/dev/null 2>&1; then \
-			for PORT in 3000 8000; do \
-				echo "  Killing processes on port $$PORT..."; \
-				fuser -k $$PORT/tcp 2>/dev/null || true; \
-			done; \
-		else \
-			echo "  No suitable tool found (lsof/fuser)"; \
-			exit 1; \
-		fi; \
-	fi
+# Cleanup of dev processes (deprecated backend/frontend, now using domain-driven apps)
 
 # ============================================================================
 # UI APPLICATIONS (Legacy - Archived)
