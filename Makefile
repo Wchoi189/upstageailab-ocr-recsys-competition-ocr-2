@@ -58,7 +58,7 @@ PORT ?= 8501
 FRONTEND_HOST ?= 0.0.0.0
 FRONTEND_PORT ?= 5173
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console playground-console-dev kill-ports
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console ocr-console-backend ocr-console-stack playground-console-dev kill-ports
 
 # ============================================================================
 # HELP
@@ -103,8 +103,9 @@ help:
 	@echo "  console-lint       - Run console linting (see docs/maintainers/coding_standards.md)"
 	@echo ""
 	@echo "🔍 OCR INFERENCE CONSOLE"
-	@echo "  serve-ocr-console  - Start OCR Console frontend with auto-detected checkpoint"
-	@echo "  ocr-console-dev    - Start just the OCR Console frontend (Vite dev server)"
+	@echo "  serve-ocr-console       - Start frontend only (port 5173)"
+	@echo "  ocr-console-backend     - Start backend only (port 8002, requires checkpoint)"
+	@echo "  ocr-console-stack       - Start backend + frontend together"
 	@echo ""
 	@echo "🧩 APP SERVERS"
 	@echo "  playground-console-dev - Start Playground Console (alias for console-dev)"
@@ -287,6 +288,42 @@ serve-ocr-console:
 		fi; \
 		echo "Starting OCR Inference Console on http://localhost:5173"; \
 		cd apps/ocr-inference-console; \
+		npm run dev -- --host 0.0.0.0 --port 5173; \
+	'
+
+# OCR Console backend server (requires checkpoint)
+ocr-console-backend:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" 2>/dev/null | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "❌ Error: No OCR checkpoint found in outputs/experiments/train/ocr/"; \
+			echo "   Please train a model or set OCR_CHECKPOINT_PATH manually."; \
+			exit 1; \
+		fi; \
+		echo "✅ Using checkpoint: $$OCR_CHECKPOINT_PATH"; \
+		echo "🚀 Starting OCR Console backend on http://127.0.0.1:8002"; \
+		echo "   API Docs: http://127.0.0.1:8002/docs"; \
+		cd apps/ocr-inference-console/backend && \
+		uv run uvicorn main:app --host 127.0.0.1 --port 8002 --reload; \
+	'
+
+# OCR Console full stack (backend + frontend)
+ocr-console-stack:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" 2>/dev/null | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "⚠️  No OCR checkpoint found. Backend will be unavailable."; \
+			echo "   Start frontend only with: make serve-ocr-console"; \
+		else \
+			echo "✅ Starting backend with checkpoint: $$OCR_CHECKPOINT_PATH"; \
+			cd apps/ocr-inference-console/backend && \
+			uv run uvicorn main:app --host 127.0.0.1 --port 8002 --reload &\
+			BACK_PID=$$!; \
+			trap "echo Killing backend; kill $$BACK_PID 2>/dev/null || true" EXIT INT TERM; \
+			sleep 2; \
+		fi; \
+		echo "🌐 Starting frontend on http://localhost:5173"; \
+		cd apps/ocr-inference-console && \
 		npm run dev -- --host 0.0.0.0 --port 5173; \
 	'
 
