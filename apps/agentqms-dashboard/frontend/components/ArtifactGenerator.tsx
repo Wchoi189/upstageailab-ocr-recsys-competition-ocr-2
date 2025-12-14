@@ -1,8 +1,9 @@
 
 import React, { useState, useEffect } from 'react';
-import { Copy, RefreshCw, FileText } from 'lucide-react';
+import { Copy, RefreshCw, FileText, Save } from 'lucide-react';
 import { ArtifactFormData } from '../types';
 import { APP_CONFIG } from '../config/constants';
+import { bridgeService } from '../services/bridgeService';
 
 const ArtifactGenerator: React.FC = () => {
   const [formData, setFormData] = useState<ArtifactFormData>({
@@ -17,6 +18,7 @@ const ArtifactGenerator: React.FC = () => {
 
   const [generatedOutput, setGeneratedOutput] = useState('');
   const [timestamp, setTimestamp] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
 
   const generateTimestamp = () => {
     const now = new Date();
@@ -67,6 +69,36 @@ version: 1.0.0
     alert("Copied to clipboard!");
   };
 
+  const mapTypeToApi = (type: string): 'implementation_plan' | 'assessment' | 'audit' | 'bug_report' => {
+      switch(type) {
+          case 'ImplementationPlan': return 'implementation_plan';
+          case 'BugReport': return 'bug_report';
+          case 'Audit': return 'audit';
+          default: return 'assessment';
+      }
+  }
+
+  const handleSave = async () => {
+    if (!formData.title) {
+        alert("Title is required");
+        return;
+    }
+    setIsSaving(true);
+    try {
+        await bridgeService.createArtifact({
+            type: mapTypeToApi(formData.type),
+            title: formData.title,
+            content: generatedOutput
+        });
+        alert("Artifact saved successfully!");
+    } catch (error) {
+        console.error("Failed to save artifact:", error);
+        alert(`Failed to save: ${error instanceof Error ? error.message : String(error)}`);
+    } finally {
+        setIsSaving(false);
+    }
+  };
+
   return (
     <div className="flex flex-col h-full overflow-hidden">
       <div className="mb-6">
@@ -99,6 +131,7 @@ version: 1.0.0
                 <option value="Assessment">Assessment</option>
                 <option value="ImplementationPlan">Implementation Plan</option>
                 <option value="BugReport">Bug Report</option>
+                <option value="Audit">Audit</option>
                 <option value="ArchitectureDecision">Architecture Decision</option>
               </select>
             </div>
@@ -195,13 +228,25 @@ version: 1.0.0
                     <FileText size={16} />
                     <span className="text-sm font-mono">preview.md</span>
                 </div>
-                <button
-                    onClick={copyToClipboard}
-                    className="flex items-center gap-2 text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded transition-colors"
-                >
-                    <Copy size={14} />
-                    Copy Code
-                </button>
+                <div className="flex gap-2">
+                    <button
+                        onClick={handleSave}
+                        disabled={isSaving}
+                        className={`flex items-center gap-2 text-xs px-3 py-1.5 rounded transition-colors ${
+                            isSaving ? 'bg-green-800 text-slate-400' : 'bg-green-600 hover:bg-green-500 text-white'
+                        }`}
+                    >
+                        {isSaving ? <RefreshCw size={14} className="animate-spin"/> : <Save size={14} />}
+                        {isSaving ? 'Saving...' : 'Save to Disk'}
+                    </button>
+                    <button
+                        onClick={copyToClipboard}
+                        className="flex items-center gap-2 text-xs bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded transition-colors"
+                    >
+                        <Copy size={14} />
+                        Copy Code
+                    </button>
+                </div>
             </div>
             <div className="flex-1 bg-slate-950 border-x border-b border-slate-700 rounded-b-xl p-4 overflow-auto">
                 <pre className="font-mono text-sm text-green-400 whitespace-pre-wrap">

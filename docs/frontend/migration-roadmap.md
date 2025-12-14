@@ -9,7 +9,7 @@ status: "draft"
 
 - Deliverables: FastAPI service stubs, parity matrix, ADR, worker blueprint (✅).
 - Actions:
-  - Surface "Try the new playground" banner in Command Builder + Unified App (links to SPA dev server once available).
+  - Surface "Try the new playground" banner in Command Builder (links to SPA dev server once available).
   - Gate SPA access behind feature flag `PLAYGROUND_BETA_URL`.
 - Exit criteria: SPA skeleton renders, command builder API reachable.
 

@@ -6,6 +6,14 @@
 - **Conciseness**: Keep entries ultra-concise - focus on what changed, not why
 - **Categories**: Group related changes under appropriate section headers
 
+## Centralized IDE Configuration (2025-12-11)
+
+### [2025-12-11 14:35] - Added Centralized IDE Configuration Generator
+**Scope**: Agent settings management
+**Change**: Created `AgentQMS/agent_tools/utilities/generate_ide_configs.py` and `make ide-config` targeting Antigravity, Cursor, Claude, and Copilot
+**Impact**: Solves settings divergence by generating all IDE-specific configuration files from a single source of truth
+**Details**: Logic consolidation of 4 different IDE config formats into one generator script
+
 ## AgentQMS Manager Dashboard Integration Planning (2025-12-08)
 
 ### [2025-12-08 02:45] - Recovered Phase 1-2 Dashboard Documentation

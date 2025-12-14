@@ -1,17 +1,18 @@
 ---
 title: AgentQMS – Cursor Instructions
-updated: 2025-11-27 15:20 UTC
+generated_by: AgentQMS/agent_tools/utilities/generate_ide_configs.py
 ---
 
-1. Read `AgentQMS/knowledge/agent/system.md` (SST) before acting.
-2. Use automation only: run `cd AgentQMS/interface && make help` for commands.
-3. Artifacts live in `docs/artifacts/` with names `YYYY-MM-DD_HHMM_[type]_name.md`.
-4. Always validate after changes: `make validate && make compliance`.
-5. Need context? run `make context` (auto-detects) or `make context-development/docs/debug/plan`.
-6. For architecture map + tools, open:
-   - `.agentqms/state/architecture.yaml`
-   - `.copilot/context/tool-catalog.md`
-   - `.copilot/context/workflow-triggers.yaml`
-7. Never edit artifacts manually; use `make create-*` targets.
+## Core Rules (AgentQMS)
 
-Follow the SST for anything not covered here.
+1. **Source of Truth**: Read `AgentQMS/knowledge/agent/system.md` first.
+2. **No Manual Artifacts**: Always use `cd AgentQMS/interface && make create-*`.
+3. **Validation**: Run `make validate` after edits.
+4. **Context**: Use `make context` to load relevant docs.
+
+## Workflows
+- Create Plan: `make create-plan NAME=foo TITLE="Bar"`
+- Validate: `make validate`
+- Status: `make status`
+
+For full details, run `make help`.

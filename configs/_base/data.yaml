@@ -3,7 +3,7 @@
 # Consolidated data configuration
 defaults:
   - /data/base
-  - /transforms/base
-  - /dataloaders/default
+  - /data/transforms/base
+  - /data/dataloaders/default
   - _self_
 

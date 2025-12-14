@@ -1,2 +1,3 @@
-export * from "./types/schema";
-export * from "./utils/visibility";
+export * from "./types/schema.js";
+export * from "./utils/visibility.js";
+export * from "./api/index.js";

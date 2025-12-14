@@ -18,18 +18,17 @@ from pydantic import BaseModel, Field
 
 from ocr.utils.experiment_name import resolve_experiment_name
 from ocr.utils.path_utils import get_path_resolver
-from ui.apps.inference.models.config import PathConfig
-from ui.apps.inference.services.checkpoint import CatalogOptions, build_lightweight_catalog
+from ocr.utils.checkpoints import CatalogOptions, build_lightweight_catalog
 
 from ..utils.paths import PROJECT_ROOT
 
 # Import inference engine
 if TYPE_CHECKING:
-    from ui.utils.inference import InferenceEngine
+    from ocr.inference import InferenceEngine
 
 INFERENCE_AVAILABLE: bool
 try:
-    from ui.utils.inference import InferenceEngine
+    from ocr.inference import InferenceEngine
 
     INFERENCE_AVAILABLE = True
 except ImportError:
@@ -133,8 +132,10 @@ def _load_mode_descriptors() -> list[_ModeDescriptor]:
 @lru_cache(maxsize=1)
 def _catalog_options() -> CatalogOptions:
     """Create catalog options based on resolved project paths."""
-    path_config = PathConfig(outputs_dir=OUTPUTS_ROOT)
-    return CatalogOptions.from_paths(path_config)
+    return CatalogOptions(
+        OUTPUTS_ROOT,
+        ("config.yaml", "hparams.yaml", "train.yaml", "predict.yaml"),
+    )
 
 
 def _discover_checkpoints(limit: int = 50) -> list[CheckpointSummary]:

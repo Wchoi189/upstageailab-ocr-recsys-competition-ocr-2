@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { Terminal, Bot, Copy, CheckCircle, Database, Activity, HardDrive, RefreshCw, Share2 } from 'lucide-react';
 import { generateAgentSystemPrompt } from '../services/aiService';
+import { bridgeService } from '../services/bridgeService';
 import { DBStatus } from '../types';
 
 const IntegrationHub: React.FC = () => {
@@ -9,7 +10,7 @@ const IntegrationHub: React.FC = () => {
   const [projectContext, setProjectContext] = useState('');
   const [generatedProtocol, setGeneratedProtocol] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
-  
+
   // Mock Database State
   const [dbStatus, setDbStatus] = useState<DBStatus>({
     connected: false,
@@ -21,6 +22,10 @@ const IntegrationHub: React.FC = () => {
   });
 
   const [isInitializingDB, setIsInitializingDB] = useState(false);
+
+  useEffect(() => {
+    initializeDB();
+  }, []);
 
   const bootstrapScript = `#!/bin/bash
 # AgentQMS Bootstrap Script
@@ -50,20 +55,35 @@ echo "✅ AgentQMS initialized with 'agent_tools' structure."
 echo "👉 Use '.agentqms/config.json' for local settings."
 `;
 
-  const initializeDB = () => {
+  const initializeDB = async () => {
     setIsInitializingDB(true);
-    // Simulate API/Script latency
-    setTimeout(() => {
-        setDbStatus({
-            connected: true,
-            version: '1.2.0',
-            lastBackup: 'Just now',
-            recordCount: 12,
-            health: 'healthy',
-            issues: []
-        });
+    try {
+        const health = await bridgeService.getHealth();
+        const version = await bridgeService.getVersion();
+        const artifacts = await bridgeService.listArtifacts({ limit: 1000 });
+
+        if (health.status === 'ok') {
+             setDbStatus({
+                connected: true,
+                version: version.version,
+                lastBackup: 'Unknown',
+                recordCount: artifacts.total,
+                health: 'healthy',
+                issues: []
+            });
+        } else {
+             setDbStatus(prev => ({...prev, health: 'degraded', issues: ['Health check returned non-ok status']}));
+        }
+    } catch (error) {
+        console.error("Failed to connect:", error);
+        setDbStatus(prev => ({
+            ...prev,
+            health: 'offline',
+            issues: [`Connection failed: ${error instanceof Error ? error.message : String(error)}`]
+        }));
+    } finally {
         setIsInitializingDB(false);
-    }, 1500);
+    }
   };
 
   const handleGenerateProtocol = async () => {
@@ -96,8 +116,8 @@ echo "👉 Use '.agentqms/config.json' for local settings."
         <button
           onClick={() => setActiveTab('bootstrap')}
           className={`pb-3 px-2 flex items-center gap-2 transition-colors ${
-            activeTab === 'bootstrap' 
-              ? 'text-blue-400 border-b-2 border-blue-400 font-medium' 
+            activeTab === 'bootstrap'
+              ? 'text-blue-400 border-b-2 border-blue-400 font-medium'
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
@@ -107,8 +127,8 @@ echo "👉 Use '.agentqms/config.json' for local settings."
         <button
           onClick={() => setActiveTab('protocol')}
           className={`pb-3 px-2 flex items-center gap-2 transition-colors ${
-            activeTab === 'protocol' 
-              ? 'text-purple-400 border-b-2 border-purple-400 font-medium' 
+            activeTab === 'protocol'
+              ? 'text-purple-400 border-b-2 border-purple-400 font-medium'
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
@@ -118,8 +138,8 @@ echo "👉 Use '.agentqms/config.json' for local settings."
         <button
           onClick={() => setActiveTab('database')}
           className={`pb-3 px-2 flex items-center gap-2 transition-colors ${
-            activeTab === 'database' 
-              ? 'text-green-400 border-b-2 border-green-400 font-medium' 
+            activeTab === 'database'
+              ? 'text-green-400 border-b-2 border-green-400 font-medium'
               : 'text-slate-400 hover:text-slate-200'
           }`}
         >
@@ -134,13 +154,13 @@ echo "👉 Use '.agentqms/config.json' for local settings."
             <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 mb-6">
               <h3 className="text-lg font-semibold text-white mb-2">Quick Start Installation</h3>
               <p className="text-slate-400 text-sm mb-4">
-                Run this script in your project root to scaffold the canonical AgentQMS directory structure. 
+                Run this script in your project root to scaffold the canonical AgentQMS directory structure.
                 It creates the separation between the framework (`AgentQMS/`) and local config (`.agentqms/`).
               </p>
-              
+
               <div className="relative group">
                 <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity">
-                    <button 
+                    <button
                         onClick={() => copyToClipboard(bootstrapScript)}
                         className="bg-slate-700 hover:bg-slate-600 text-white p-1.5 rounded"
                         title="Copy Script"
@@ -179,10 +199,10 @@ echo "👉 Use '.agentqms/config.json' for local settings."
                     <Share2 className="text-purple-400" size={20} /> Context Injector
                 </h3>
                 <p className="text-slate-400 text-sm mb-4">
-                  Describe your project context. We will generate a "System Prompt" you can paste into 
+                  Describe your project context. We will generate a "System Prompt" you can paste into
                   Cursor, Windsurf, or ChatGPT to force them to use AgentQMS.
                 </p>
-                <textarea 
+                <textarea
                     className="w-full h-32 bg-slate-900 border border-slate-700 rounded p-3 text-slate-300 focus:border-purple-500 focus:outline-none resize-none mb-4"
                     placeholder="e.g., This is a Python OCR project using PyTorch. We are strict about code reviews..."
                     value={projectContext}
@@ -212,7 +232,7 @@ echo "👉 Use '.agentqms/config.json' for local settings."
             <div className="bg-slate-950 rounded-xl border border-slate-800 p-0 flex flex-col h-full overflow-hidden">
                 <div className="p-3 border-b border-slate-800 bg-slate-900 flex justify-between items-center">
                     <span className="text-xs font-mono text-purple-300">system_protocol.md</span>
-                    <button 
+                    <button
                         onClick={() => copyToClipboard(generatedProtocol)}
                         disabled={!generatedProtocol}
                         className="flex items-center gap-2 text-xs bg-purple-900/50 hover:bg-purple-900 text-purple-200 px-3 py-1.5 rounded transition-colors disabled:opacity-50"
@@ -270,7 +290,7 @@ echo "👉 Use '.agentqms/config.json' for local settings."
                        <h3 className="font-semibold text-white">Control</h3>
                     </div>
                     {dbStatus.connected ? (
-                        <button 
+                        <button
                             className="w-full bg-slate-700 hover:bg-slate-600 text-slate-200 py-2 rounded flex items-center justify-center gap-2 transition-colors"
                             onClick={() => {
                                 setDbStatus(prev => ({...prev, connected: false, health: 'offline', recordCount: 0}))
@@ -279,7 +299,7 @@ echo "👉 Use '.agentqms/config.json' for local settings."
                             Disconnect
                         </button>
                     ) : (
-                        <button 
+                        <button
                             onClick={initializeDB}
                             disabled={isInitializingDB}
                             className="w-full bg-green-600 hover:bg-green-500 text-white py-2 rounded flex items-center justify-center gap-2 transition-colors disabled:opacity-50"

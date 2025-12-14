@@ -59,7 +59,20 @@
 - `padding` values must match `padding_position` (top-left: top=0, left=0)
 - Coordinates must be within content_area bounds
 
+## Implementation Notes
+
+### OCR Inference Console
+
+The OCR Inference Console uses `preview_image_base64` to display annotations aligned with the coordinate system:
+
+- **Preview Image**: Preprocessed image in `processed_size` space (matches coordinates)
+- **Padding Trim**: Uses SVG `viewBox` to crop black padding using `content_area` calculated from padding metadata
+- **No Coordinate Transformation**: Since image and coordinates are in the same space, direct mapping is used
+
+See [`apps/ocr-inference-console/docs/annotation-rendering.md`](../../apps/ocr-inference-console/docs/annotation-rendering.md) for implementation details.
+
 ## Related Contracts
 
 - [Pipeline Data Contracts](data_contracts.md#inference-engine-contract)
 - [Coordinate Transformation](data_contracts.md#critical-areas---do-not-modify-without-tests)
+- [OCR Inference Console Annotation Rendering](../../apps/ocr-inference-console/docs/annotation-rendering.md)

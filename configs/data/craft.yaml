@@ -3,7 +3,7 @@
 # Standalone CRAFT data configuration
 
 defaults:
-  - /transforms/base
+  - /data/transforms/base
 
 batch_size: 16
 

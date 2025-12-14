@@ -64,7 +64,7 @@ shared:
 paths:
   outputs_dir: "outputs"
   configs_dir: "configs"
-  checkpoints_dir: "outputs/checkpoints"
+  checkpoints_dir: "outputs/experiments/train/ocr"
   presets_dir: "configs/ui/presets"
   schemas_dir: "configs/schemas"
 

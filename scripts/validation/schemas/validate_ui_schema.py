@@ -103,7 +103,7 @@ def validate_schema(schema_path: Path) -> bool:
 
 
 def main():
-    schema_path = Path("configs/schemas/ui_inference_compat.yaml")
+    schema_path = Path("docs/schemas/ui_inference_compat.yaml")
 
     if not schema_path.exists():
         print(f"❌ Schema file not found: {schema_path}")

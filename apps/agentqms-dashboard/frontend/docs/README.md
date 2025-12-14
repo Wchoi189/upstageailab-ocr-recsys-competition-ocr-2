@@ -29,13 +29,13 @@ tags: [index, navigation, toc]
 | Phase | Result | Timeline | Notes |
 |-------|--------|----------|-------|
 | 1 | ✅ Complete | 24h | Documentation & architecture |
-| 2 | ⚠️ Incomplete | 1h actual | Backend bridge not implemented |
+| 2 | 🟡 In Progress | 1h actual | Backend bridge implemented (v0.1), awaiting integration |
 | 3 | 🔴 Pending | 4-6 weeks | Implementation awaiting start |
 
 ## Blockers
 
-1. 🔴 **Missing Backend Bridge** — `AgentQMS/agent_tools/bridge/` (20-30h to implement)
-2. 🔴 **No Integration Tests** — Python ↔ React tests not written (15h)
+1. 🟡 **Integration Tests** — Python ↔ React tests not written (15h)
+2. 🟢 **Backend Bridge** — Implemented in `apps/agentqms-dashboard/backend/` (Needs verification)
 3. 🔴 **Repo Status Unknown** — GitHub dashboard repo needs sanity check (2h)
 
 ## Workflow

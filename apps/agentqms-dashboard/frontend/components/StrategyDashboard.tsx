@@ -62,22 +62,24 @@ const StrategyDashboard: React.FC = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
         {/* Chart */}
-        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700 h-80">
+        <div className="bg-slate-800 p-6 rounded-xl border border-slate-700" style={{ minHeight: '320px' }}>
           <h3 className="text-lg font-semibold text-white mb-4">Framework Health Audit</h3>
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={mockMetrics} layout="vertical" margin={{ top: 5, right: 30, left: 40, bottom: 5 }}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#334155" horizontal={false} />
-              <XAxis type="number" domain={[0, 100]} stroke="#94a3b8" />
-              <YAxis dataKey="name" type="category" stroke="#94a3b8" width={120} tick={{fontSize: 12}} />
-              <Tooltip 
-                contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#fff' }} 
-                itemStyle={{ color: '#fff' }}
-              />
-              <Legend />
-              <Bar dataKey="current" name="Current State" fill="#3b82f6" radius={[0, 4, 4, 0]} barSize={20} />
-              <Bar dataKey="target" name="Target" fill="#1e293b" stroke="#3b82f6" strokeDasharray="4 4" radius={[0, 4, 4, 0]} barSize={20} />
-            </BarChart>
-          </ResponsiveContainer>
+          <div style={{ width: '100%', height: '280px' }}>
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={mockMetrics} layout="vertical" margin={{ top: 5, right: 30, left: 120, bottom: 5 }}>
+                <CartesianGrid strokeDasharray="3 3" stroke="#334155" horizontal={false} />
+                <XAxis type="number" domain={[0, 100]} stroke="#94a3b8" />
+                <YAxis dataKey="name" type="category" stroke="#94a3b8" width={110} tick={{fontSize: 12}} />
+                <Tooltip
+                  contentStyle={{ backgroundColor: '#1e293b', borderColor: '#475569', color: '#fff' }}
+                  itemStyle={{ color: '#fff' }}
+                />
+                <Legend />
+                <Bar dataKey="current" name="Current State" fill="#3b82f6" radius={[0, 4, 4, 0]} />
+                <Bar dataKey="target" name="Target" fill="#1e293b" stroke="#3b82f6" strokeDasharray="4 4" radius={[0, 4, 4, 0]} />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
         </div>
 
         {/* AI Architect */}

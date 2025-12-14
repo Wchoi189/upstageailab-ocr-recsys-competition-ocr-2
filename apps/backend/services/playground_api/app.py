@@ -10,6 +10,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from ocr.utils.path_utils import setup_project_paths
 
 from .routers import command_builder, evaluation, inference, metrics, pipeline
+from apps.backend.services import ocr_bridge
 
 LOGGER = logging.getLogger(__name__)
 
@@ -25,10 +26,29 @@ def create_app() -> FastAPI:
     )
 
     # Configure CORS
+    # Allow all origins in development for easier debugging
+    # In production, restrict to specific origins
+    import os
+    if os.getenv("ENV") == "production":
+        allowed_origins = ["http://localhost:5173", "http://127.0.0.1:5173"]
+        use_credentials = True
+    else:
+        # Development: allow common frontend ports and all localhost variants
+        # Use allow_origin_regex for more flexible matching in dev
+        allowed_origins = [
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "http://localhost:3000",
+            "http://127.0.0.1:3000",
+            "http://localhost:5174",
+            "http://127.0.0.1:5174",
+        ]
+        use_credentials = True
     app.add_middleware(
         CORSMiddleware,
-        allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],
-        allow_credentials=True,
+        allow_origins=allowed_origins,
+        allow_origin_regex=r"http://(localhost|127\.0\.0\.1):\d+",  # Allow any localhost port in dev
+        allow_credentials=use_credentials,
         allow_methods=["*"],
         allow_headers=["*"],
     )
@@ -38,6 +58,7 @@ def create_app() -> FastAPI:
     app.include_router(pipeline.router, prefix="/api/pipelines", tags=["pipelines"])
     app.include_router(evaluation.router, prefix="/api/evaluation", tags=["evaluation"])
     app.include_router(metrics.router, prefix="/api/metrics", tags=["metrics"])
+    app.include_router(ocr_bridge.router)
 
     @app.on_event("startup")
     def setup_paths_on_startup() -> None:

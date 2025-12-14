@@ -120,6 +120,9 @@ make context-plan           # Load planning context bundle
 
 # Registry Generation (for auto-discovery)
 make generate-registry  # Regenerate tool registries and context files
+
+# IDE Configuration (Centralized Settings)
+make ide-config         # Generate configuration files for Antigravity, Cursor, Claude, Copilot
 ```
 
 ---

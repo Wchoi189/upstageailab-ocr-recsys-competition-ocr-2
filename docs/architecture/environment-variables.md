@@ -24,8 +24,34 @@ All path-related environment variables use the `OCR_` prefix:
 | `OCR_IMAGES_DIR` | `{root}/data/datasets/images` | Images directory |
 | `OCR_ANNOTATIONS_DIR` | `{root}/data/datasets/jsons` | Annotations directory |
 | `OCR_LOGS_DIR` | `{root}/outputs/logs` | Logs directory |
-| `OCR_CHECKPOINTS_DIR` | `{root}/outputs/checkpoints` | Checkpoints directory |
+| `OCR_CHECKPOINTS_DIR` | `{root}/outputs/experiments/train/ocr` | Checkpoints directory |
+| `OCR_CHECKPOINT_PATH` | **Auto-detected** (latest) | Specific checkpoint file (optional) |
 | `OCR_SUBMISSIONS_DIR` | `{root}/outputs/submissions` | Submissions directory |
+
+## OCR_CHECKPOINT_PATH (Special Behavior)
+
+**Purpose**: Specify which checkpoint file to use for OCR inference.
+
+**Auto-Detection** (Default):
+- If `OCR_CHECKPOINT_PATH` is **not set**, the system automatically detects the **latest checkpoint** from `outputs/experiments/train/ocr/`
+- Sorted by modification time (most recent first)
+- No manual configuration required!
+
+**Manual Override**:
+- Set `OCR_CHECKPOINT_PATH` to use a specific checkpoint file
+- Must be full path to `.ckpt` file (relative or absolute)
+- Example: `export OCR_CHECKPOINT_PATH=outputs/experiments/train/ocr/pan_resnet18/checkpoints/epoch-18.ckpt`
+
+**Examples**:
+```bash
+# Auto-detection (recommended for development)
+unset OCR_CHECKPOINT_PATH
+make serve-ocr-console  # Uses latest checkpoint automatically
+
+# Manual override (for testing specific checkpoints)
+export OCR_CHECKPOINT_PATH=outputs/experiments/train/ocr/pan_resnet18/checkpoints/epoch-14.ckpt
+make serve-ocr-console  # Uses specified checkpoint
+```
 
 ## Usage
 
@@ -52,7 +78,7 @@ INFO: Using environment variables: OCR_CONFIG_DIR, OCR_OUTPUT_DIR
 Environment variables are automatically loaded when the app starts:
 
 ```python
-# ui/apps/unified_ocr_app/app.py
+# ui/apps/inference/app.py
 # Paths are initialized at module level
 ```
 
@@ -115,7 +141,7 @@ export OCR_OUTPUT_DIR=/tmp/my_outputs
 export OCR_CHECKPOINTS_DIR=/tmp/my_checkpoints
 
 # Run application
-streamlit run ui/apps/unified_ocr_app/app.py
+streamlit run ui/apps/inference/app.py
 ```
 
 ## Logging

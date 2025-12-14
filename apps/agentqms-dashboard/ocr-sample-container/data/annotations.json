@@ -1,0 +1,121 @@
+{
+  "info": {
+    "description": "OCR Inference Sample",
+    "version": "1.0",
+    "year": 2025,
+    "date_created": "2025-12-11T18:50:44.787818"
+  },
+  "images": [
+    {
+      "id": 1,
+      "file_name": "sample_001.jpg",
+      "height": 600,
+      "width": 400
+    },
+    {
+      "id": 2,
+      "file_name": "sample_002.jpg",
+      "height": 300,
+      "width": 400
+    },
+    {
+      "id": 3,
+      "file_name": "sample_003.jpg",
+      "height": 300,
+      "width": 400
+    }
+  ],
+  "annotations": [
+    {
+      "id": 1,
+      "image_id": 1,
+      "category_id": 1,
+      "bbox": [
+        80,
+        20,
+        240,
+        30
+      ],
+      "area": 7200,
+      "text": "SAMPLE RECEIPT",
+      "language": "en"
+    },
+    {
+      "id": 2,
+      "image_id": 1,
+      "category_id": 1,
+      "bbox": [
+        30,
+        240,
+        200,
+        30
+      ],
+      "area": 6000,
+      "text": "TOTAL: $58.58",
+      "language": "en"
+    },
+    {
+      "id": 3,
+      "image_id": 2,
+      "category_id": 1,
+      "bbox": [
+        50,
+        30,
+        300,
+        30
+      ],
+      "area": 9000,
+      "text": "Sample Document #2",
+      "language": "en"
+    },
+    {
+      "id": 4,
+      "image_id": 2,
+      "category_id": 1,
+      "bbox": [
+        50,
+        100,
+        350,
+        25
+      ],
+      "area": 8750,
+      "text": "This is a sample document for OCR testing.",
+      "language": "en"
+    },
+    {
+      "id": 5,
+      "image_id": 3,
+      "category_id": 1,
+      "bbox": [
+        50,
+        30,
+        300,
+        30
+      ],
+      "area": 9000,
+      "text": "Sample Document #3",
+      "language": "en"
+    },
+    {
+      "id": 6,
+      "image_id": 3,
+      "category_id": 1,
+      "bbox": [
+        50,
+        100,
+        350,
+        25
+      ],
+      "area": 8750,
+      "text": "This is a sample document for OCR testing.",
+      "language": "en"
+    }
+  ],
+  "categories": [
+    {
+      "id": 1,
+      "name": "text_region",
+      "supercategory": "text"
+    }
+  ]
+}
