@@ -58,7 +58,7 @@ PORT ?= 8501
 FRONTEND_HOST ?= 0.0.0.0
 FRONTEND_PORT ?= 5173
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console playground-console-dev kill-ports
 
 # ============================================================================
 # HELP
@@ -102,10 +102,20 @@ help:
 	@echo "  console-build      - Build the Next.js console for production deploys"
 	@echo "  console-lint       - Run console linting (see docs/maintainers/coding_standards.md)"
 	@echo ""
-	@echo "ℹ️  UI APPLICATIONS"
-	@echo "  Legacy Vite and FastAPI components have been archived."
-	@echo "  See docs/archive/archive_code/deprecated/ for historical reference."
-	@echo "  Domain-driven separation: Each app has its own backend."
+	@echo "🔍 OCR INFERENCE CONSOLE"
+	@echo "  serve-ocr-console  - Start OCR Console frontend with auto-detected checkpoint"
+	@echo "  ocr-console-dev    - Start just the OCR Console frontend (Vite dev server)"
+	@echo ""
+	@echo "🧩 APP SERVERS"
+	@echo "  playground-console-dev - Start Playground Console (alias for console-dev)"
+	@echo ""
+	@echo "⚙️  PROCESS MANAGEMENT"
+	@echo "  kill-ports         - Force kill processes on ports 3000, 5173, 8000 (use when servers hang)"
+	@echo ""
+	@echo "ℹ️  DOMAIN-DRIVEN ARCHITECTURE"
+	@echo "  Each app manages its own backend and is started independently."
+	@echo "  Legacy unified backend/frontend have been archived."
+	@echo "  See DEPRECATION_MANIFEST.md for migration details."
 	@echo ""
 	@echo "📦 CHECKPOINT MANAGEMENT"
 	@echo "  checkpoint-metadata  - Generate metadata files for all checkpoints (speeds up loading)"
@@ -260,15 +270,56 @@ ocr-console-dev:
 #   - apps/ocr-inference-console/backend for OCR inference
 #   - apps/shared/backend_shared for shared InferenceEngine
 
-# backend-stop - removed (deprecated unified backend)
-# Use domain-specific backend targets or kill-ports for process management
+# ============================================================================
+# DOMAIN-DRIVEN APP SERVERS
+# ============================================================================
 
-# fs, stack-dev, stack-stop, sfs - removed (deprecated unified SPA stack)
-# Use domain-specific app targets instead
-	$(MAKE) sfe
+# OCR Inference Console with auto-detected checkpoint
+serve-ocr-console:
+	@bash -c 'set -euo pipefail; \
+		export OCR_CHECKPOINT_PATH=$$(find outputs/experiments/train/ocr -name "*.ckpt" 2>/dev/null | head -n 1); \
+		if [ -z "$$OCR_CHECKPOINT_PATH" ]; then \
+			echo "⚠️  No OCR checkpoint found in outputs/experiments/train/ocr/"; \
+			echo "   Set OCR_CHECKPOINT_PATH manually if needed."; \
+			echo "   Proceeding with OCR Console frontend only..."; \
+		else \
+			echo "✅ Auto-detected checkpoint: $$OCR_CHECKPOINT_PATH"; \
+		fi; \
+		echo "Starting OCR Inference Console on http://localhost:5173"; \
+		cd apps/ocr-inference-console; \
+		npm run dev -- --host 0.0.0.0 --port 5173; \
+	'
 
-cd: cleanup-dev
-# Cleanup of dev processes (deprecated backend/frontend, now using domain-driven apps)
+# Playground Console (Next.js App Router)
+playground-console-dev:
+	npm run dev:console
+
+# Process Management Utilities
+kill-ports:
+	@echo "Killing processes on ports 3000, 5173, and 8000..."; \
+	if command -v lsof >/dev/null 2>&1; then \
+		for PORT in 3000 5173 8000; do \
+			PIDS=$$(lsof -t -i:$$PORT 2>/dev/null || true); \
+			if [ -n "$$PIDS" ]; then \
+				echo "  Killing processes on port $$PORT: $$PIDS"; \
+				kill -9 $$PIDS 2>/dev/null || true; \
+			else \
+				echo "  No process on port $$PORT"; \
+			fi; \
+		done; \
+		echo "✅ Done"; \
+	else \
+		echo "  lsof not available, trying fuser..."; \
+		if command -v fuser >/dev/null 2>&1; then \
+			for PORT in 3000 5173 8000; do \
+				echo "  Killing processes on port $$PORT..."; \
+				fuser -k $$PORT/tcp 2>/dev/null || true; \
+			done; \
+		else \
+			echo "  No suitable tool found (lsof/fuser)"; \
+			exit 1; \
+		fi; \
+	fi
 
 # ============================================================================
 # UI APPLICATIONS (Legacy - Archived)
