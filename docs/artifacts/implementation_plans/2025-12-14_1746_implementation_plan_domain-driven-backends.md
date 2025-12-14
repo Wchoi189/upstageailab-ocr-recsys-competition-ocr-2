@@ -166,23 +166,23 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Complet
 
 ## 🚀 **Immediate Next Action**
 
-**TASK:** Implement shared backend package (inference engine + Pydantic models)
+**TASK:** Implement Playground backend inference router and wire frontend configuration
 
-**OBJECTIVE:** Create the shared backend package implementation with InferenceEngine re-export and Pydantic v2 models matching the documented contract.
+**OBJECTIVE:** Complete Playground backend with inference endpoint matching OCR backend functionality, then wire both frontends to their respective backends via Makefile targets.
 
 **APPROACH:**
-1. Create `apps/shared/backend_shared/__init__.py` with package-level exports
-2. Create `apps/shared/backend_shared/inference/__init__.py` and re-export InferenceEngine from ocr.inference.engine
-3. Create `apps/shared/backend_shared/models/inference.py` with all Pydantic v2 models (InferenceRequest, InferenceResponse, TextRegion, InferenceMetadata, Padding)
-4. Create `apps/shared/backend_shared/README.md` with usage examples
-5. Test imports to ensure all paths resolve correctly
+1. Create `apps/playground-console/backend/routers/inference.py` matching OCR backend inference logic
+2. Create `apps/playground-console/backend/routers/checkpoints.py` for checkpoint discovery
+3. Update Makefile to add backend startup targets (ocr-console-backend, playground-console-backend)
+4. Verify both backends can start without port conflicts (8001, 8002)
+5. Update frontend environment config (VITE_API_URL, NEXT_PUBLIC_API_URL)
 
 **SUCCESS CRITERIA:**
-- All imports from shared package work correctly
-- InferenceEngine can be imported from apps.shared.backend_shared.inference
-- All Pydantic models can be imported from apps.shared.backend_shared.models.inference
-- No circular import issues
-- Code is type-hinted and lint-clean
+- Playground backend /api/v1/inference/preview endpoint functional
+- Playground backend /api/v1/checkpoints endpoint functional
+- Makefile targets start both backends successfully
+- No port conflicts between backends
+- Frontend API clients point to correct backend URLs
 
 ---
 
