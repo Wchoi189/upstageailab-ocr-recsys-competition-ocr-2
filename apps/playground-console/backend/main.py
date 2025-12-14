@@ -46,6 +46,16 @@ async def lifespan(app: FastAPI):
 
     logger.info("🛑 Shutting down Playground Console Backend")
 
+    # Clean up engine resources to prevent memory/semaphore leaks
+    if _inference_engine is not None:
+        try:
+            _inference_engine.cleanup()
+        except Exception as e:
+            logger.error(f"Error during engine cleanup: {e}")
+
+    _inference_engine = None
+    logger.info("✅ Shutdown complete")
+
 
 app = FastAPI(
     title="Playground Console Backend",
@@ -90,7 +100,7 @@ async def health():
 
 
 # Import and include routers
-from routers import inference, checkpoints
+from routers import checkpoints, inference
 
 app.include_router(inference.router, prefix=f"{API_PREFIX}/inference", tags=["inference"])
 app.include_router(checkpoints.router, prefix=f"{API_PREFIX}/checkpoints", tags=["checkpoints"])
@@ -102,7 +112,17 @@ app.include_router(checkpoints.router, prefix=f"{API_PREFIX}/checkpoints", tags=
 
 
 if __name__ == "__main__":
+    import multiprocessing
+
     import uvicorn
+
+    # Set multiprocessing start method to prevent semaphore leaks
+    # This must be called before any multiprocessing/threading operations
+    try:
+        multiprocessing.set_start_method('spawn', force=True)
+    except RuntimeError:
+        # Already set, ignore
+        pass
 
     uvicorn.run(
         "main:app",

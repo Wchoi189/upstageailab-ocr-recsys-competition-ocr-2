@@ -18,3 +18,62 @@
 2025-12-15 02:23:28,274 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.086s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
 2025-12-15 02:23:31,593 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
 2025-12-15 02:23:48,449 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 02:30:29,966 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-15 03:07:22,518 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:07:22,575 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-15 03:08:47,623 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.061s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:08:47,758 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.059s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:08:47,906 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.061s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:08:48,041 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:11:50,584 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:12:36,944 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:13:34,898 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:14:17,232 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:14:31,994 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:14:35,471 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-15 03:15:53,941 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:15:53,968 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-15 03:15:54,107 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.073s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:15:54,296 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.075s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:15:54,410 | INFO | main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.027s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:15:54,457 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:15:58,915 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:15:59,046 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:20:10,088 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.080s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:20:10,253 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.072s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:20:10,410 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:20:10,567 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.070s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:20:14,300 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:20:36,041 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:21:04,444 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-15 03:24:33,657 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:24:33,697 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-15 03:27:53,496 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:27:53,635 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.059s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:27:53,775 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.070s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:27:53,911 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.064s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:27:59,463 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:29:06,119 | INFO | main | Loading checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-16_step-001751.ckpt
+2025-12-15 03:30:48,964 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-15 03:32:01,132 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:32:01,159 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-15 03:33:18,978 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:33:19,004 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-15 03:39:07,512 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:39:07,537 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-15 03:39:22,935 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.078s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:39:23,089 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.064s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:39:23,274 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.071s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:39:23,448 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.079s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:39:28,837 | INFO | main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:39:31,737 | INFO | main | ✅ Model load complete | elapsed=2.90s
+2025-12-15 03:39:45,388 | INFO | main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:39:45,414 | INFO | main | ✅ Model load complete | elapsed=0.03s
+2025-12-15 03:40:32,285 | INFO | main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-15 03:40:32,315 | INFO | main | ✅ Model load complete | elapsed=0.03s
+2025-12-15 03:48:30,089 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:48:30,236 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=5 | elapsed=0.070s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:48:30,458 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.101s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:48:30,603 | INFO | main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.067s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-15 03:53:34,276 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-15 03:53:34,306 | INFO | main | ✅ InferenceEngine initialized (lazy loading enabled)

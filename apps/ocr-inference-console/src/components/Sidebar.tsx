@@ -18,9 +18,20 @@ const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: st
 interface SidebarProps {
     selectedCheckpoint: string | null;
     onCheckpointChange: (checkpoint: string) => void;
+    enablePerspectiveCorrection: boolean;
+    onPerspectiveCorrectionChange: (enabled: boolean) => void;
+    displayMode: string;
+    onDisplayModeChange: (mode: string) => void;
 }
 
-export const Sidebar = ({ selectedCheckpoint, onCheckpointChange }: SidebarProps) => {
+export const Sidebar = ({
+    selectedCheckpoint,
+    onCheckpointChange,
+    enablePerspectiveCorrection,
+    onPerspectiveCorrectionChange,
+    displayMode,
+    onDisplayModeChange
+}: SidebarProps) => {
     return (
         <div className="w-64 border-r border-gray-200 h-full bg-white flex flex-col">
             <div className="p-4 border-b border-gray-100 flex items-center gap-2">
@@ -56,6 +67,47 @@ export const Sidebar = ({ selectedCheckpoint, onCheckpointChange }: SidebarProps
                         selectedCheckpoint={selectedCheckpoint}
                         onCheckpointChange={onCheckpointChange}
                     />
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                    <h4 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        Perspective Correction
+                    </h4>
+                    <div className="px-4 space-y-2">
+                        <label className="flex items-center gap-2 text-sm">
+                            <input
+                                type="checkbox"
+                                checked={enablePerspectiveCorrection}
+                                onChange={(e) => onPerspectiveCorrectionChange(e.target.checked)}
+                                className="rounded border-gray-300"
+                            />
+                            <span>Enable Correction</span>
+                        </label>
+                        {enablePerspectiveCorrection && (
+                            <div className="ml-6 space-y-1">
+                                <label className="flex items-center gap-2 text-xs">
+                                    <input
+                                        type="radio"
+                                        name="displayMode"
+                                        value="corrected"
+                                        checked={displayMode === "corrected"}
+                                        onChange={(e) => onDisplayModeChange(e.target.value)}
+                                    />
+                                    <span>Show Corrected</span>
+                                </label>
+                                <label className="flex items-center gap-2 text-xs">
+                                    <input
+                                        type="radio"
+                                        name="displayMode"
+                                        value="original"
+                                        checked={displayMode === "original"}
+                                        onChange={(e) => onDisplayModeChange(e.target.value)}
+                                    />
+                                    <span>Show Original</span>
+                                </label>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </div>
 

@@ -48,16 +48,20 @@ if not logger.handlers:
     formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(name)s | %(message)s")
 
     file_handler = logging.FileHandler(LOG_FILE, encoding="utf-8")
-    file_handler.setLevel(logging.INFO)
+    file_handler.setLevel(logging.DEBUG)  # Capture DEBUG in file
     file_handler.setFormatter(formatter)
 
     stream_handler = logging.StreamHandler()
     stream_handler.setLevel(logging.INFO)
     stream_handler.setFormatter(formatter)
 
-    logger.setLevel(logging.INFO)
+    logger.setLevel(logging.DEBUG)  # Set root level to DEBUG
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
+
+    # Also set DEBUG for ocr.inference logger
+    inference_logger = logging.getLogger("ocr.inference")
+    inference_logger.setLevel(logging.DEBUG)
 
 API_PREFIX = "/api"
 
@@ -81,6 +85,16 @@ async def lifespan(app: FastAPI):
     yield
 
     logger.info("🛑 Shutting down OCR Inference Console Backend")
+
+    # Clean up engine resources to prevent memory/semaphore leaks
+    if _inference_engine is not None:
+        try:
+            _inference_engine.cleanup()
+        except Exception as e:
+            logger.error(f"Error during engine cleanup: {e}")
+
+    _inference_engine = None
+    logger.info("✅ Shutdown complete")
 
 
 app = FastAPI(
@@ -300,9 +314,12 @@ async def run_inference(request: InferenceRequest):
         raise HTTPException(status_code=400, detail=f"Image decoding failed: {str(e)}")
 
     # Load model if needed
-    logger.info(f"Loading checkpoint: {checkpoint_path}")
+    logger.info("🔄 Attempting to load checkpoint: %s", checkpoint_path)
+    load_start_time = datetime.utcnow()
     if not _inference_engine.load_model(str(ckpt_path)):
         raise HTTPException(status_code=500, detail="Failed to load model checkpoint")
+    load_elapsed = (datetime.utcnow() - load_start_time).total_seconds()
+    logger.info("✅ Model load complete | elapsed=%.2fs", load_elapsed)
 
     # Run inference
     try:
@@ -350,7 +367,17 @@ async def run_inference(request: InferenceRequest):
 
 
 if __name__ == "__main__":
+    import multiprocessing
+
     import uvicorn
+
+    # Set multiprocessing start method to prevent semaphore leaks
+    # This must be called before any multiprocessing/threading operations
+    try:
+        multiprocessing.set_start_method('spawn', force=True)
+    except RuntimeError:
+        # Already set, ignore
+        pass
 
     uvicorn.run(
         "main:app",

@@ -111,7 +111,12 @@ export const ocrClient = {
         }
     },
 
-    predict: async (file: File, checkpointPath?: string): Promise<InferenceResponse> => {
+    predict: async (
+        file: File,
+        checkpointPath?: string,
+        enablePerspectiveCorrection?: boolean,
+        perspectiveDisplayMode?: string
+    ): Promise<InferenceResponse> => {
         // #region agent log
         const predictStartTime = Date.now();
         fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ocrClient.ts:98',message:'predict called',data:{fileName:file.name,fileSize:file.size,hasCheckpointPath:!!checkpointPath,checkpointPath:checkpointPath||'null'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'G'})}).catch(()=>{});
@@ -147,7 +152,9 @@ export const ocrClient = {
             checkpoint_path: checkpointPath || "",
             image_base64: base64Image,
             confidence_threshold: 0.1,
-            nms_threshold: 0.4
+            nms_threshold: 0.4,
+            enable_perspective_correction: enablePerspectiveCorrection || false,
+            perspective_display_mode: perspectiveDisplayMode || "corrected"
         };
 
         const response = await fetch(url, {

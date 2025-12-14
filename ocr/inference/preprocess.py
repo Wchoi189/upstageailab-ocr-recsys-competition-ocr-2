@@ -114,25 +114,40 @@ def preprocess_image(
 def apply_optional_perspective_correction(
     image_bgr: Any,
     enable_perspective_correction: bool,
-) -> Any:
+    return_matrix: bool = False,
+) -> Any | tuple[Any, Any]:
     """
     Optionally apply rembg-based perspective correction before standard transforms.
 
     Args:
         image_bgr: Input image in BGR format.
         enable_perspective_correction: If False, the image is returned unchanged.
+        return_matrix: If True, return tuple of (corrected_image, transform_matrix).
 
     Returns:
-        Potentially perspective-corrected BGR image.
+        Potentially perspective-corrected BGR image, or tuple (corrected_image, transform_matrix)
+        if return_matrix is True.
     """
 
     if not enable_perspective_correction:
+        if return_matrix:
+            import numpy as np
+            return image_bgr, np.eye(3, dtype=np.float32)
         return image_bgr
 
     try:
         image_no_bg, mask = remove_background_and_mask(image_bgr)
-        corrected, _result = correct_perspective_from_mask(image_no_bg, mask)
-        return corrected
+        if return_matrix:
+            corrected, _result, matrix = correct_perspective_from_mask(
+                image_no_bg, mask, return_matrix=True
+            )
+            return corrected, matrix
+        else:
+            corrected, _result = correct_perspective_from_mask(image_no_bg, mask)
+            return corrected
     except Exception as exc:  # noqa: BLE001
         LOGGER.warning("Perspective correction failed or unavailable: %s", exc)
+        if return_matrix:
+            import numpy as np
+            return image_bgr, np.eye(3, dtype=np.float32)
         return image_bgr

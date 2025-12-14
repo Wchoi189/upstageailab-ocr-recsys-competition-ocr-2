@@ -28,13 +28,16 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Complet
 
 ## Progress Tracker
 - **STATUS:** In Progress
-- **CURRENT STEP:** Phase 4 - Testing & Validation
-- **LAST COMPLETED TASK:** Perspective correction feature integrated as user-activated API parameter (COMPLETED 2025-12-14)
-- **NEXT TASK:** Phase 4 backend validation and frontend integration testing
+- **CURRENT STEP:** Phase 4 - Testing & Validation + Perspective Correction Phase 2
+- **LAST COMPLETED TASK:** Perspective correction Phase 2 infrastructure (80% complete) (2025-12-14)
+- **NEXT TASK:** Complete Phase 2 implementation (inverse transformation logic)
 - **RECENT ADDITIONS:**
   - ✅ Perspective correction API integration (enable_perspective_correction parameter)
   - ✅ Backend endpoints updated (OCR console + Playground console)
-  - ✅ Feature documentation created at docs/artifacts/features/perspective-correction-api-integration.md
+  - ✅ Phase 2 infrastructure: Transform matrix support + inverse transformation function
+  - ✅ API model updated with perspective_display_mode parameter
+  - 🔨 IN PROGRESS: Inference engine updates for display mode switching
+  - 📋 Completion guide: docs/artifacts/implementation_guides/perspective-correction-phase2-completion-guide.md
 
 ### Implementation Outline (Checklist)
 

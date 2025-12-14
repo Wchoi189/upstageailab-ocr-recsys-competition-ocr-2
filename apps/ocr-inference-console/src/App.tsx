@@ -6,6 +6,8 @@ import { Workspace } from './components/Workspace';
 
 function App() {
   const [selectedCheckpoint, setSelectedCheckpoint] = useState<string | null>(null);
+  const [enablePerspectiveCorrection, setEnablePerspectiveCorrection] = useState(false);
+  const [displayMode, setDisplayMode] = useState("corrected");
 
   return (
     <div className="flex h-screen w-full bg-white font-sans text-gray-900 overflow-hidden">
@@ -13,6 +15,10 @@ function App() {
       <Sidebar
         selectedCheckpoint={selectedCheckpoint}
         onCheckpointChange={setSelectedCheckpoint}
+        enablePerspectiveCorrection={enablePerspectiveCorrection}
+        onPerspectiveCorrectionChange={setEnablePerspectiveCorrection}
+        displayMode={displayMode}
+        onDisplayModeChange={setDisplayMode}
       />
 
       {/* Main Content Area */}
@@ -23,7 +29,11 @@ function App() {
 
         {/* Main Workspace (Image + Results) */}
         <div className="flex-1 overflow-hidden relative">
-          <Workspace selectedCheckpoint={selectedCheckpoint} />
+          <Workspace
+            selectedCheckpoint={selectedCheckpoint}
+            enablePerspectiveCorrection={enablePerspectiveCorrection}
+            displayMode={displayMode}
+          />
         </div>
       </main>
     </div>

@@ -272,25 +272,54 @@ def _order_points(points: np.ndarray) -> np.ndarray:
     return np.array([tl, tr, br, bl], dtype=np.float32)
 
 
-def correct_perspective_from_mask(image: np.ndarray, mask: np.ndarray) -> tuple[np.ndarray, MaskRectangleResult]:
+def correct_perspective_from_mask(
+    image: np.ndarray,
+    mask: np.ndarray,
+    return_matrix: bool = False,
+) -> tuple[np.ndarray, MaskRectangleResult] | tuple[np.ndarray, MaskRectangleResult, np.ndarray]:
     """
     High-level helper: correct perspective of an image given a foreground mask.
 
     Args:
         image: Input image as numpy array (BGR or RGB).
         mask: Binary mask (0 background, >0 foreground).
+        return_matrix: If True, also return the perspective transform matrix.
 
     Returns:
-        Tuple of (warped_image, fit_result).
+        Tuple of (warped_image, fit_result) or (warped_image, fit_result, transform_matrix)
+        if return_matrix is True.
         If fitting fails, the original image is returned.
     """
 
     fit_result = fit_mask_rectangle(mask)
     if fit_result.corners is None:
         # No usable rectangle; return original image for safety.
+        if return_matrix:
+            return image, fit_result, np.eye(3, dtype=np.float32)
         return image, fit_result
 
+    # Calculate transform matrix before warping
+    if fit_result.corners is not None and fit_result.corners.dtype != np.float32:
+        pts = fit_result.corners.astype(np.float32)
+    else:
+        pts = fit_result.corners
+
+    max_width, max_height = calculate_target_dimensions(pts)
+    dst = np.array(
+        [
+            [0, 0],
+            [max_width - 1, 0],
+            [max_width - 1, max_height - 1],
+            [0, max_height - 1],
+        ],
+        dtype="float32",
+    )
+    transform_matrix = cv2.getPerspectiveTransform(pts, dst)
+
     warped = four_point_transform(image, fit_result.corners)
+
+    if return_matrix:
+        return warped, fit_result, transform_matrix
     return warped, fit_result
 
 
@@ -357,6 +386,67 @@ def remove_background_and_mask(image_bgr: np.ndarray) -> tuple[np.ndarray, np.nd
     return image_no_bg_bgr, mask_binary
 
 
+def transform_polygons_inverse(
+    polygons_str: str,
+    transform_matrix: np.ndarray,
+) -> str:
+    """
+    Transform polygon coordinates from corrected image space back to original image space.
+
+    Args:
+        polygons_str: Polygons in string format "x1 y1 x2 y2 ... | x1 y1 x2 y2 ..."
+        transform_matrix: Forward perspective transform matrix (original -> corrected)
+
+    Returns:
+        Transformed polygons in the same string format, mapped back to original space
+    """
+    if not polygons_str or polygons_str.strip() == "":
+        return polygons_str
+
+    # Compute inverse transform matrix
+    try:
+        inverse_matrix = cv2.invert(transform_matrix)[1]
+    except Exception:
+        # If inversion fails, return original polygons unchanged
+        return polygons_str
+
+    # Parse polygons
+    polygon_groups = polygons_str.split("|")
+    transformed_groups = []
+
+    for polygon_str in polygon_groups:
+        coords = polygon_str.strip().split()
+        if len(coords) < 2:
+            transformed_groups.append(polygon_str)
+            continue
+
+        try:
+            # Convert to float array
+            coord_floats = [float(c) for c in coords]
+            points = np.array(
+                [[coord_floats[i], coord_floats[i + 1]] for i in range(0, len(coord_floats), 2)],
+                dtype=np.float32,
+            )
+
+            # Transform points using inverse matrix
+            # cv2.perspectiveTransform expects shape (1, N, 2)
+            points_reshaped = points.reshape(1, -1, 2)
+            transformed_points = cv2.perspectiveTransform(points_reshaped, inverse_matrix)
+            transformed_points = transformed_points.reshape(-1, 2)
+
+            # Convert back to string format
+            transformed_str = " ".join(
+                f"{float(pt[0]):.6f} {float(pt[1]):.6f}" for pt in transformed_points
+            )
+            transformed_groups.append(transformed_str)
+
+        except (ValueError, IndexError):
+            # If parsing fails, keep original
+            transformed_groups.append(polygon_str)
+
+    return " | ".join(transformed_groups)
+
+
 __all__ = [
     "MaskRectangleResult",
     "calculate_target_dimensions",
@@ -364,6 +454,7 @@ __all__ = [
     "fit_mask_rectangle",
     "correct_perspective_from_mask",
     "remove_background_and_mask",
+    "transform_polygons_inverse",
 ]
 
 

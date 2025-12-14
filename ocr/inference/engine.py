@@ -94,7 +94,57 @@ class InferenceEngine:
         self._config_bundle: ModelConfigBundle | None = None
         self._transform = None
         self._postprocess_settings: PostprocessSettings | None = None
+        self._active_threads: list[threading.Thread] = []  # Track active threads
         LOGGER.info("Using device: %s", self.device)
+
+    def __enter__(self):
+        """Context manager entry."""
+        return self
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        """Context manager exit with cleanup."""
+        self.cleanup()
+        return False
+
+    def cleanup(self) -> None:
+        """Clean up resources and prevent memory leaks.
+
+        This method should be called during shutdown to:
+        - Wait for active threads to complete
+        - Release CUDA memory
+        - Clear model references
+        """
+        LOGGER.info("Cleaning up InferenceEngine resources...")
+
+        # Wait for active threads to complete (with timeout)
+        for thread in self._active_threads:
+            if thread.is_alive():
+                LOGGER.debug(f"Waiting for thread {thread.name} to complete...")
+                thread.join(timeout=5.0)
+                if thread.is_alive():
+                    LOGGER.warning(f"Thread {thread.name} did not complete within timeout")
+
+        self._active_threads.clear()
+
+        # Clear model and free CUDA memory
+        if self.model is not None:
+            LOGGER.debug("Clearing model from memory")
+            del self.model
+            self.model = None
+
+        if torch is not None and torch.cuda.is_available():
+            LOGGER.debug("Clearing CUDA cache")
+            torch.cuda.empty_cache()
+            torch.cuda.synchronize()
+
+        # Clear other references
+        self.trainer = None
+        self.config = None
+        self._config_bundle = None
+        self._transform = None
+        self._current_checkpoint_path = None
+
+        LOGGER.info("InferenceEngine cleanup completed")
 
     # Public API ---------------------------------------------------------
     def load_model(self, checkpoint_path: str, config_path: str | None = None) -> bool:
@@ -104,8 +154,18 @@ class InferenceEngine:
 
         total_start = time.perf_counter()
         normalized_path = str(Path(checkpoint_path).resolve())
+
+        # Debug logging for cache check
+        LOGGER.debug(
+            "Cache check | model_loaded=%s | current_path=%s | requested_path=%s | match=%s",
+            self.model is not None,
+            self._current_checkpoint_path,
+            normalized_path,
+            self._current_checkpoint_path == normalized_path
+        )
+
         if self.model is not None and self._current_checkpoint_path == normalized_path:
-            LOGGER.info("Checkpoint already loaded; reusing cached model: %s", checkpoint_path)
+            LOGGER.info("✅ Checkpoint already loaded; reusing cached model: %s", checkpoint_path)
             return True
 
         # Include configs directory in search paths for config files
@@ -377,10 +437,25 @@ class InferenceEngine:
             except Exception:
                 enable_persp = False
 
+        # Phase 2: Store original image and transform matrix for inverse transformation
+        original_image_for_display = None
+        perspective_transform_matrix = None
+
+        LOGGER.info(f"🔍 Perspective check: enable={enable_persp}, mode={perspective_display_mode}")
+
         if enable_persp:
-            # BUG-001: perspective-corrected image becomes the coordinate space
-            # for decoded polygons; keep this version for downstream preview.
-            image = apply_optional_perspective_correction(image, enable_perspective_correction=True)
+            if perspective_display_mode == "original":
+                # Phase 2: Store original, get matrix, correct for inference only
+                LOGGER.info(f"📸 Storing original image (shape={image.shape}) before correction")
+                original_image_for_display = image.copy()
+                image, perspective_transform_matrix = apply_optional_perspective_correction(
+                    image, enable_perspective_correction=True, return_matrix=True
+                )
+                LOGGER.info(f"✅ Original mode: stored original, matrix type={type(perspective_transform_matrix)}")
+            else:
+                # Phase 1: Correct and display corrected (current behavior)
+                image = apply_optional_perspective_correction(image, enable_perspective_correction=True)
+                LOGGER.info("✅ Corrected mode: applied correction")
 
         # BUG-001: Capture original shape BEFORE preprocessing for coordinate mapping.
         # We'll capture the resized/padded preview AFTER preprocessing for consistent output resolution.
@@ -493,6 +568,65 @@ class InferenceEngine:
         # BUG-001: Postprocessing maps polygons from resized/padded space back to original_shape.
         # We then map them forward to the resized/padded preview space for consistent output resolution.
         decoded = decode_polygons_with_head(self.model, batch, predictions, original_shape)
+
+        # Phase 2: Transform polygons back to original space if in "original" display mode
+        LOGGER.info(f"🔍 Transform check: has_matrix={perspective_transform_matrix is not None}, mode={perspective_display_mode}, has_orig={original_image_for_display is not None}")
+
+        if perspective_transform_matrix is not None and perspective_display_mode == "original":
+            from ocr.utils.perspective_correction import transform_polygons_inverse
+
+            LOGGER.info("🔄 Entering inverse transformation block")
+
+            if decoded is not None and "polygons" in decoded and decoded["polygons"]:
+                polygon_count = len(decoded["polygons"].split("|")) if decoded["polygons"] else 0
+                LOGGER.info(f"🔄 Transforming {polygon_count} polygons back to original space")
+                decoded["polygons"] = transform_polygons_inverse(
+                    decoded["polygons"],
+                    perspective_transform_matrix
+                )
+                LOGGER.info(f"✅ Polygon transformation complete")
+
+            # Create preview from original image instead of corrected image
+            if original_image_for_display is not None:
+                LOGGER.info(f"🖼️  Creating preview from ORIGINAL image (shape={original_image_for_display.shape})")
+                try:
+                    # Preprocess original image to get preview in same format
+                    _, preview_image_bgr = preprocess_image(
+                        original_image_for_display,
+                        self._transform,
+                        target_size=target_size,
+                        return_processed_image=True
+                    )
+
+                    # Update original_shape and metadata for original image space
+                    original_shape = original_image_for_display.shape
+                    original_h, original_w = original_shape[:2]
+
+                    # Recalculate metadata for original image dimensions
+                    max_side = max(original_h, original_w)
+                    scale = target_size / max_side if max_side > 0 else 1.0
+                    resized_h = int(round(original_h * scale))
+                    resized_w = int(round(original_w * scale))
+                    pad_h = target_size - resized_h
+                    pad_w = target_size - resized_w
+
+                    meta = {
+                        "original_size": (original_w, original_h),
+                        "processed_size": (target_size, target_size),
+                        "padding": {
+                            "top": 0,
+                            "bottom": pad_h,
+                            "left": 0,
+                            "right": pad_w,
+                        },
+                        "padding_position": "top_left",
+                        "content_area": (resized_w, resized_h),
+                        "scale": float(scale),
+                        "coordinate_system": "pixel",
+                    }
+                    LOGGER.info(f"✅ Preview from ORIGINAL: {original_w}x{original_h}, preview: {preview_image_bgr.shape}")
+                except Exception:  # noqa: BLE001
+                    LOGGER.exception("❌ Failed to create preview from original image")
 
         # BUG-001: Helper to map polygons from original_shape to resized/padded preview space.
         # Note: x_offset is captured from outer scope (calculated when centering preview image)
@@ -704,6 +838,7 @@ def run_inference_on_image(
     binarization_thresh: float | None = None,
     box_thresh: float | None = None,
     max_candidates: int | None = None,
+    min_detection_size: int | None = None,
     return_preview: bool = True,
 ) -> dict[str, Any] | None:
     """Run inference on an image (file path or numpy array).

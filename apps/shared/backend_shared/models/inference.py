@@ -109,6 +109,11 @@ class InferenceRequest(BaseModel):
         default=False,
         description="Enable rembg-based perspective correction before inference",
     )
+    perspective_display_mode: str = Field(
+        default="corrected",
+        description="Display mode: 'corrected' shows corrected image with annotations, 'original' shows original image with transformed annotations",
+        pattern="^(corrected|original)$",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -119,6 +124,7 @@ class InferenceRequest(BaseModel):
                     "confidence_threshold": 0.3,
                     "nms_threshold": 0.4,
                     "enable_perspective_correction": False,
+                    "perspective_display_mode": "corrected",
                 }
             ]
         }

@@ -12,9 +12,15 @@ import { ocrClient, type Prediction, type InferenceResponse, type PredictionMeta
 
 interface WorkspaceProps {
     selectedCheckpoint: string | null;
+    enablePerspectiveCorrection: boolean;
+    displayMode: string;
 }
 
-export const Workspace: React.FC<WorkspaceProps> = ({ selectedCheckpoint }) => {
+export const Workspace: React.FC<WorkspaceProps> = ({
+    selectedCheckpoint,
+    enablePerspectiveCorrection,
+    displayMode
+}) => {
     const [viewMode, setViewMode] = useState<'preview' | 'json'>('preview');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -37,7 +43,12 @@ export const Workspace: React.FC<WorkspaceProps> = ({ selectedCheckpoint }) => {
         setImageUrl(url);
 
         try {
-            const result: InferenceResponse = await ocrClient.predict(file, selectedCheckpoint || undefined);
+            const result: InferenceResponse = await ocrClient.predict(
+                file,
+                selectedCheckpoint || undefined,
+                enablePerspectiveCorrection,
+                displayMode
+            );
             // #region agent log
             fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Workspace.tsx:37',message:'Inference response received - predictions data',data:{predictionsCount:result.predictions.length,filename:result.filename,hasMeta:!!result.meta,firstPrediction:result.predictions[0]?{points:result.predictions[0].points,confidence:result.predictions[0].confidence,label:result.predictions[0].label}:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
             // #endregion
