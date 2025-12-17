@@ -112,6 +112,7 @@ def get_kst_timestamp(dt: datetime | None = None) -> str:
             # Try to create timezone from IANA name
             try:
                 import zoneinfo
+
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = datetime.now(tz)
             except (ImportError, Exception):
@@ -213,6 +214,7 @@ def format_timestamp_for_filename(dt: datetime | None = None) -> str:
         else:
             try:
                 import zoneinfo
+
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = datetime.now(tz)
             except (ImportError, Exception):

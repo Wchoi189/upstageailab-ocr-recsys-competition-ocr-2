@@ -76,9 +76,7 @@ def main() -> None:
     parser.add_argument("title", help="Brief title for the fix")
     parser.add_argument("--issue", required=True, help="One-line problem description")
     parser.add_argument("--fix", required=True, help="One-line solution description")
-    parser.add_argument(
-        "--files", required=True, help="Comma-separated list of affected files"
-    )
+    parser.add_argument("--files", required=True, help="Comma-separated list of affected files")
     parser.add_argument(
         "--impact",
         choices=["minimal", "major", "none"],

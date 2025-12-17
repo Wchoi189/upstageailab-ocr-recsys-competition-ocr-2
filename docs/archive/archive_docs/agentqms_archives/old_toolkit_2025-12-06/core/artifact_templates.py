@@ -709,9 +709,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
             # Plugin loading is non-critical - continue with builtins
             pass
 
-    def _convert_plugin_to_template(
-        self, name: str, plugin_def: dict[str, Any]
-    ) -> dict[str, Any] | None:
+    def _convert_plugin_to_template(self, name: str, plugin_def: dict[str, Any]) -> dict[str, Any] | None:
         """Convert a plugin artifact type definition to template format.
 
         Plugin schema format:
@@ -743,13 +741,16 @@ High/Medium/Low (urgency for fixing, separate from severity above)
             template: dict[str, Any] = {
                 "filename_pattern": filename_pattern,
                 "directory": directory,
-                "frontmatter": metadata.get("frontmatter", {
-                    "type": name,
-                    "category": "development",
-                    "status": "active",
-                    "version": "1.0",
-                    "tags": [name],
-                }),
+                "frontmatter": metadata.get(
+                    "frontmatter",
+                    {
+                        "type": name,
+                        "category": "development",
+                        "status": "active",
+                        "version": "1.0",
+                        "tags": [name],
+                    },
+                ),
                 "content_template": template_content,
             }
 
@@ -778,13 +779,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         # Normalize name to lowercase kebab-case (artifacts must be lowercase)
         # Convert to lowercase and replace spaces/underscores with hyphens
-        normalized_name = (
-            name.lower()
-            .replace(" ", "-")
-            .replace("_", "-")
-            .replace("--", "-")
-            .strip("-")
-        )
+        normalized_name = name.lower().replace(" ", "-").replace("_", "-").replace("--", "-").strip("-")
 
         now = datetime.now()
         timestamp = now.strftime("%Y-%m-%d_%H%M")
@@ -799,10 +794,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
                 bug_id = "001"  # Default bug ID
                 descriptive_name = normalized_name
             return str(
-                template["filename_pattern"]
-                .format(name=descriptive_name)
-                .replace("YYYY-MM-DD_HHMM", timestamp)
-                .replace("NNN", bug_id)
+                template["filename_pattern"].format(name=descriptive_name).replace("YYYY-MM-DD_HHMM", timestamp).replace("NNN", bug_id)
             )
         else:
             # For plugin-based templates, use .format() with available variables
@@ -840,6 +832,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
             frontmatter["date"] = get_kst_timestamp()
         else:
             from datetime import timedelta, timezone
+
             kst = timezone(timedelta(hours=9))  # KST is UTC+9
             frontmatter["date"] = datetime.now(kst).strftime("%Y-%m-%d %H:%M (KST)")
 
@@ -918,13 +911,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         # Check for recently created files with the same base name to prevent duplicates
         # Look for files created within the last 5 minutes with matching type and name
-        normalized_name = (
-            name.lower()
-            .replace(" ", "-")
-            .replace("_", "-")
-            .replace("--", "-")
-            .strip("-")
-        )
+        normalized_name = name.lower().replace(" ", "-").replace("_", "-").replace("--", "-").strip("-")
 
         # Build pattern to match files based on artifact type
         now = datetime.now()
@@ -951,9 +938,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         # Check if any existing file was created recently (within 5 minutes)
         if existing_files:
-            for existing_file in sorted(
-                existing_files, key=lambda p: p.stat().st_mtime, reverse=True
-            ):
+            for existing_file in sorted(existing_files, key=lambda p: p.stat().st_mtime, reverse=True):
                 file_mtime = datetime.fromtimestamp(existing_file.stat().st_mtime)
                 time_diff = (now - file_mtime).total_seconds()
 

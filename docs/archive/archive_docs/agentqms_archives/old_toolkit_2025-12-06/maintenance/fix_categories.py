@@ -286,13 +286,9 @@ class CategoryTypeFixer:
 
         return fixes
 
-    def _check_category(
-        self, file_path: Path, frontmatter_content: str
-    ) -> CategoryFix | None:
+    def _check_category(self, file_path: Path, frontmatter_content: str) -> CategoryFix | None:
         """Check for invalid category value"""
-        category_match = re.search(
-            r'category:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content
-        )
+        category_match = re.search(r'category:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content)
         if not category_match:
             return None
 
@@ -336,9 +332,7 @@ class CategoryTypeFixer:
             confidence=0.5,
         )
 
-    def _check_type(
-        self, file_path: Path, frontmatter_content: str
-    ) -> CategoryFix | None:
+    def _check_type(self, file_path: Path, frontmatter_content: str) -> CategoryFix | None:
         """Check for invalid type value"""
         type_match = re.search(r'type:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content)
         if not type_match:
@@ -478,9 +472,7 @@ class CategoryTypeFixer:
 
         return fixes
 
-    def fix_directory(
-        self, directory: Path, dry_run: bool = False, limit: int | None = None
-    ) -> dict[str, list[CategoryFix]]:
+    def fix_directory(self, directory: Path, dry_run: bool = False, limit: int | None = None) -> dict[str, list[CategoryFix]]:
         """Fix category/type issues for all files in a directory"""
         results = {}
         count = 0
@@ -508,12 +500,8 @@ class CategoryTypeFixer:
         total_fixes = sum(len(fixes) for fixes in results.values())
 
         # Count fixes by field
-        category_fixes = sum(
-            1 for fixes in results.values() for fix in fixes if fix.field == "category"
-        )
-        type_fixes = sum(
-            1 for fixes in results.values() for fix in fixes if fix.field == "type"
-        )
+        category_fixes = sum(1 for fixes in results.values() for fix in fixes if fix.field == "category")
+        type_fixes = sum(1 for fixes in results.values() for fix in fixes if fix.field == "type")
 
         report.append(f"Files processed: {total_files}")
         report.append(f"Total fixes: {total_fixes}")
@@ -528,12 +516,8 @@ class CategoryTypeFixer:
             for file_path, fixes in results.items():
                 report.append(f"\n📁 {file_path}")
                 for fix in fixes:
-                    report.append(
-                        f"   • {fix.field}: {fix.old_value} -> {fix.new_value}"
-                    )
-                    report.append(
-                        f"     Reason: {fix.reason} (confidence: {fix.confidence:.1f})"
-                    )
+                    report.append(f"   • {fix.field}: {fix.old_value} -> {fix.new_value}")
+                    report.append(f"     Reason: {fix.reason} (confidence: {fix.confidence:.1f})")
         else:
             report.append("✅ No category/type issues found!")
 
@@ -552,25 +536,19 @@ class CategoryTypeFixer:
                         content = f.read()
 
                     # Check frontmatter
-                    frontmatter_match = re.match(
-                        r"^---\n(.*?)\n---", content, re.DOTALL
-                    )
+                    frontmatter_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
                     if frontmatter_match:
                         frontmatter_content = frontmatter_match.group(1)
 
                         # Check category
-                        category_match = re.search(
-                            r'category:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content
-                        )
+                        category_match = re.search(r'category:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content)
                         if category_match:
                             category = category_match.group(1).strip()
                             if category not in self.valid_categories:
                                 file_issues.append(f"Invalid category: '{category}'")
 
                         # Check type
-                        type_match = re.search(
-                            r'type:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content
-                        )
+                        type_match = re.search(r'type:\s*["\']?([^"\'\n]+)["\']?', frontmatter_content)
                         if type_match:
                             file_type = type_match.group(1).strip()
                             if file_type not in self.valid_types:
@@ -589,20 +567,14 @@ def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Fix invalid category and type values")
     parser.add_argument("--file", help="Fix specific file")
-    parser.add_argument(
-        "--directory", default="docs/artifacts", help="Directory to process"
-    )
-    parser.add_argument(
-        "--auto-correct", action="store_true", help="Apply automatic corrections"
-    )
+    parser.add_argument("--directory", default="docs/artifacts", help="Directory to process")
+    parser.add_argument("--auto-correct", action="store_true", help="Apply automatic corrections")
     parser.add_argument(
         "--dry-run",
         action="store_true",
         help="Show what would be fixed without making changes",
     )
-    parser.add_argument(
-        "--validate-only", action="store_true", help="Only validate, do not fix"
-    )
+    parser.add_argument("--validate-only", action="store_true", help="Only validate, do not fix")
     parser.add_argument("--output", help="Output file for report")
     parser.add_argument(
         "--artifacts-root",

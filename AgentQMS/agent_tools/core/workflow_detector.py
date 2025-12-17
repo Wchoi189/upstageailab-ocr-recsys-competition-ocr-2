@@ -103,7 +103,16 @@ WORKFLOW_SUGGESTIONS = {
 ARTIFACT_TRIGGERS = {
     "plan": ["plan", "design", "architecture", "blueprint", "strategy", "roadmap"],
     "assessment": ["assess", "evaluate", "review", "analysis"],
-    "audit": ["audit", "compliance", "framework audit", "quality audit", "security audit", "accessibility audit", "performance audit", "code quality audit"],
+    "audit": [
+        "audit",
+        "compliance",
+        "framework audit",
+        "quality audit",
+        "security audit",
+        "accessibility audit",
+        "performance audit",
+        "code quality audit",
+    ],
     "bug_report": ["bug", "error", "issue", "fix", "broken", "crash", "exception"],
     "design": ["design", "spec", "specification", "schema"],
     "research": ["research", "investigate", "explore", "study"],
@@ -170,7 +179,7 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
             suggestions["make_commands"].append(f'make create-research NAME=my-{artifact_type} TITLE="..."')
 
     # Add context loading command
-    context_cmd = f'make context-{suggestions["context_bundle"]}'
+    context_cmd = f"make context-{suggestions['context_bundle']}"
     suggestions["make_commands"].insert(0, context_cmd)
 
     return suggestions
@@ -254,4 +263,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

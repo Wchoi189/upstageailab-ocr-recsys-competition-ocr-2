@@ -8,32 +8,31 @@ ensuring every component resolves paths the same way.
 
 from __future__ import annotations
 
+import json
+import os
+from collections.abc import Iterable
 from copy import deepcopy
 from datetime import datetime
-import json
 from pathlib import Path
-from typing import Any, Dict, Optional, Iterable
-import os
+from typing import Any
 
 import yaml
 
-
-
-_DEFAULT_CONFIG: Dict[str, Any] = {}
+_DEFAULT_CONFIG: dict[str, Any] = {}
 
 
 class ConfigLoader:
     """Central configuration loader with caching."""
 
     def __init__(self) -> None:
-        self._config_cache: Optional[Dict[str, Any]] = None
+        self._config_cache: dict[str, Any] | None = None
         self.framework_root = self._detect_framework_root()
         self.project_root = self._detect_project_root(self.framework_root)
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
-    def load(self, force: bool = False) -> Dict[str, Any]:
+    def load(self, force: bool = False) -> dict[str, Any]:
         """Load configuration following the precedence hierarchy."""
         if self._config_cache is not None and not force:
             return deepcopy(self._config_cache)
@@ -81,9 +80,9 @@ class ConfigLoader:
             return framework_root.parent
         return framework_root
 
-    def _load_framework_defaults(self) -> Dict[str, Any]:
+    def _load_framework_defaults(self) -> dict[str, Any]:
         defaults_dir = self.framework_root / "config_defaults"
-        config: Dict[str, Any] = {}
+        config: dict[str, Any] = {}
         yaml_files: Iterable[Path] = (
             defaults_dir / "framework.yaml",
             defaults_dir / "interface.yaml",
@@ -98,10 +97,10 @@ class ConfigLoader:
                 config["tool_mappings"] = json.load(handle)
         return config
 
-    def _load_project_overrides(self) -> Dict[str, Any]:
+    def _load_project_overrides(self) -> dict[str, Any]:
         # Check for project-level config/ (used by consuming projects)
         config_dir = self.project_root / "config"
-        config: Dict[str, Any] = {}
+        config: dict[str, Any] = {}
 
         if config_dir.exists():
             yaml_files: Iterable[Path] = (
@@ -132,8 +131,8 @@ class ConfigLoader:
 
         return config
 
-    def _load_environment_overrides(self) -> Dict[str, Any]:
-        overrides: Dict[str, Any] = {}
+    def _load_environment_overrides(self) -> dict[str, Any]:
+        overrides: dict[str, Any] = {}
 
         artifacts = os.getenv("AGENTQMS_PATHS_ARTIFACTS")
         docs = os.getenv("AGENTQMS_PATHS_DOCS")
@@ -144,24 +143,22 @@ class ConfigLoader:
         if docs:
             overrides.setdefault("paths", {})["docs"] = docs
         if strict_mode is not None:
-            overrides.setdefault("validation", {})["strict_mode"] = (
-                strict_mode.lower() == "true"
-            )
+            overrides.setdefault("validation", {})["strict_mode"] = strict_mode.lower() == "true"
         return overrides
 
-    def _load_yaml(self, path: Path) -> Dict[str, Any]:
+    def _load_yaml(self, path: Path) -> dict[str, Any]:
         with path.open("r", encoding="utf-8") as handle:
             data = yaml.safe_load(handle) or {}
         if not isinstance(data, dict):
             raise ValueError(f"Invalid configuration format: {path}")
         return data
 
-    def _merge_yaml_if_exists(self, base: Dict[str, Any], path: Path) -> Dict[str, Any]:
+    def _merge_yaml_if_exists(self, base: dict[str, Any], path: Path) -> dict[str, Any]:
         if not path.exists():
             return base
         return self._merge_config(base, self._load_yaml(path))
 
-    def _merge_directory_overrides(self, base: Dict[str, Any], directory: Path) -> Dict[str, Any]:
+    def _merge_directory_overrides(self, base: dict[str, Any], directory: Path) -> dict[str, Any]:
         if not directory.exists():
             return base
         result = deepcopy(base)
@@ -169,13 +166,13 @@ class ConfigLoader:
             result = self._merge_yaml_if_exists(result, path)
         return result
 
-    def _write_runtime_snapshot(self, config: Dict[str, Any], *, settings_path: Optional[Path] = None) -> None:
+    def _write_runtime_snapshot(self, config: dict[str, Any], *, settings_path: Path | None = None) -> None:
         runtime_dir = self.project_root / ".agentqms"
         runtime_dir.mkdir(parents=True, exist_ok=True)
         runtime_config = runtime_dir / "effective.yaml"
 
         if settings_path is not None:
-            layers: Dict[str, Any] = {
+            layers: dict[str, Any] = {
                 "settings": str(settings_path.relative_to(self.project_root))
                 if settings_path.is_relative_to(self.project_root)
                 else str(settings_path)
@@ -210,21 +207,17 @@ class ConfigLoader:
         with runtime_config.open("w", encoding="utf-8") as handle:
             yaml.safe_dump(payload, handle, sort_keys=False)
 
-    def _merge_config(self, base: Dict[str, Any], override: Dict[str, Any]) -> Dict[str, Any]:
+    def _merge_config(self, base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
         result = deepcopy(base)
         for key, value in override.items():
-            if (
-                key in result
-                and isinstance(result[key], dict)
-                and isinstance(value, dict)
-            ):
+            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
                 result[key] = self._merge_config(result[key], value)
             else:
                 result[key] = deepcopy(value)
         return result
 
 
-_config_loader: Optional[ConfigLoader] = None
+_config_loader: ConfigLoader | None = None
 
 
 def get_config_loader() -> ConfigLoader:
@@ -235,6 +228,6 @@ def get_config_loader() -> ConfigLoader:
     return _config_loader
 
 
-def load_config(force: bool = False) -> Dict[str, Any]:
+def load_config(force: bool = False) -> dict[str, Any]:
     """Convenience helper for callers that only need the merged config."""
     return get_config_loader().load(force=force)

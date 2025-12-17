@@ -16,6 +16,7 @@ from pathlib import Path
 # Import PROJECT_ROOT from central path utility (stable, works from any location)
 try:
     from ocr.utils.path_utils import PROJECT_ROOT
+
     project_root = PROJECT_ROOT
 except ImportError:
     # Fallback: add project root to path first, then import
@@ -30,7 +31,6 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import streamlit as st
-
 from ui.apps.unified_ocr_app.components.comparison import (
     render_metrics_display,
     render_parameter_sweep,

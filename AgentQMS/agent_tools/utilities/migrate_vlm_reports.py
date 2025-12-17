@@ -37,7 +37,7 @@ def migrate_vlm_report(file_path: Path, dry_run: bool = False) -> bool:
     # Pattern: 2025-12-03_BUG-001_inference-overlay-misalignment_69.md
     # Target:  2025-12-03_1200_vlm_report_inference-overlay-misalignment_69.md
 
-    match = re.match(r'(\d{4}-\d{2}-\d{2})_BUG-(\d+)_(.+)\.md', file_path.name)
+    match = re.match(r"(\d{4}-\d{2}-\d{2})_BUG-(\d+)_(.+)\.md", file_path.name)
     if not match:
         print(f"⏭️  SKIP: {file_path.name} (doesn't match BUG pattern)")
         return False
@@ -60,20 +60,10 @@ def migrate_vlm_report(file_path: Path, dry_run: bool = False) -> bool:
             content = file_path.read_text(encoding="utf-8")
 
             # Update type in frontmatter
-            content = re.sub(
-                r'type:\s*["\']?bug_report["\']?',
-                'type: "vlm_report"',
-                content,
-                flags=re.IGNORECASE
-            )
+            content = re.sub(r'type:\s*["\']?bug_report["\']?', 'type: "vlm_report"', content, flags=re.IGNORECASE)
 
             # Also update category if it's "troubleshooting"
-            content = re.sub(
-                r'category:\s*["\']?troubleshooting["\']?',
-                'category: "evaluation"',
-                content,
-                flags=re.IGNORECASE
-            )
+            content = re.sub(r'category:\s*["\']?troubleshooting["\']?', 'category: "evaluation"', content, flags=re.IGNORECASE)
 
             # Rename file
             file_path.rename(new_path)
@@ -93,14 +83,8 @@ def migrate_vlm_report(file_path: Path, dry_run: bool = False) -> bool:
 
 def main():
     """Main execution function."""
-    parser = argparse.ArgumentParser(
-        description="Migrate VLM reports from BUG prefix to vlm_report_ prefix"
-    )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Preview changes without modifying files"
-    )
+    parser = argparse.ArgumentParser(description="Migrate VLM reports from BUG prefix to vlm_report_ prefix")
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without modifying files")
     args = parser.parse_args()
 
     if not VLM_DIR.exists():
@@ -121,7 +105,7 @@ def main():
     else:
         print("⚠️  This will rename files and modify frontmatter!")
         response = input("Continue? [y/N]: ").strip().lower()
-        if response != 'y':
+        if response != "y":
             print("❌ Aborted by user")
             return 1
         print()
@@ -136,7 +120,7 @@ def main():
             success_count += 1
         else:
             # Check if it was skipped (not matching pattern)
-            if not re.match(r'.*_BUG-\d+_.*\.md', file_path.name):
+            if not re.match(r".*_BUG-\d+_.*\.md", file_path.name):
                 skip_count += 1
             else:
                 error_count += 1

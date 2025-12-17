@@ -1,5 +1,6 @@
-import pandas as pd
 import io
+
+import pandas as pd
 from PIL import Image
 
 # Use the test split as it's smaller (18MB vs 248MB)
@@ -15,11 +16,11 @@ try:
     # 'image' column usually contains valid image data
     # In HF datasets converted to parquet, it's often a dictionary with 'bytes'
 
-    img_data = row['image']
+    img_data = row["image"]
     print(f"Image data type: {type(img_data)}")
 
-    if isinstance(img_data, dict) and 'bytes' in img_data:
-        image_bytes = img_data['bytes']
+    if isinstance(img_data, dict) and "bytes" in img_data:
+        image_bytes = img_data["bytes"]
     elif isinstance(img_data, bytes):
         image_bytes = img_data
     else:

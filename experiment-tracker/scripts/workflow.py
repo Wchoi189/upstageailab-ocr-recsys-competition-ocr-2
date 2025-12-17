@@ -8,17 +8,16 @@ Provides unified commands for common workflows including:
 - Metadata synchronization
 - Smart artifact recording
 """
+
 import argparse
-import json
+import re
 import sys
 from pathlib import Path
-import re
 
 # Add src to path
 sys.path.append(str(Path(__file__).parent.parent / "src"))
 
 from experiment_tracker.core import ExperimentTracker
-from experiment_tracker.utils.path_utils import ExperimentPaths
 from experiment_tracker.utils.sync import MetadataSync, sync_experiment_metadata
 
 
@@ -27,15 +26,15 @@ def incident_draft(tracker: ExperimentTracker, experiment_id: str, observations:
     Start incident report workflow - drafting phase.
     Creates a preliminary draft with raw observations.
     """
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("INCIDENT REPORT - DRAFTING PHASE")
-    print("="*60)
+    print("=" * 60)
     print(f"\nExperiment: {experiment_id}")
-    print(f"\nObservations:")
+    print("\nObservations:")
     print(f"  {observations}")
-    print(f"\nContext:")
+    print("\nContext:")
     print(f"  {context}")
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("\nNext step: Run 'generate-incident-report.py' to create structured report")
     print("Then run 'workflow.py incident-assess' to evaluate against quality rubric")
 
@@ -56,9 +55,9 @@ def incident_assess(tracker: ExperimentTracker, report_path: str):
         print(f"Warning: Rubric template not found at {rubric_path}")
         print("Proceeding with basic assessment...")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("INCIDENT REPORT - ASSESSMENT PHASE")
-    print("="*60)
+    print("=" * 60)
     print(f"\nAssessing: {report_path}")
     print("\nQuality Rubric Check:")
     print("-" * 60)
@@ -141,6 +140,7 @@ def incident_commit(tracker: ExperimentTracker, report_path: str, experiment_id:
         # Copy to incident_reports directory
         dest_path = incident_reports_dir / report_file.name
         import shutil
+
         shutil.copy2(report_file, dest_path)
         report_file = dest_path
         print(f"Copied report to: {dest_path}")
@@ -149,9 +149,9 @@ def incident_commit(tracker: ExperimentTracker, report_path: str, experiment_id:
     rel_path = f"incident_reports/{report_file.name}"
     tracker.record_incident_report(rel_path, experiment_id)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("INCIDENT REPORT - COMMITTAL PHASE")
-    print("="*60)
+    print("=" * 60)
     print(f"\n✅ Report committed to: {experiment_id}")
     print(f"   Path: {rel_path}")
     print("\nNext steps:")
@@ -196,13 +196,7 @@ def record_test_results(tracker: ExperimentTracker, experiment_id: str = None, p
                     "auto_detected": True,
                     "pattern": pattern,
                 }
-                return tracker.record_artifact(
-                    str(artifact_path),
-                    metadata,
-                    experiment_id,
-                    show_context=True,
-                    confirm=True
-                )
+                return tracker.record_artifact(str(artifact_path), metadata, experiment_id, show_context=True, confirm=True)
 
     print("No matching artifacts found.")
     return False
@@ -248,9 +242,9 @@ def suggest_assessment(tracker: ExperimentTracker, experiment_id: str = None, co
         if not experiment_id:
             return False
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("ASSESSMENT SUGGESTION")
-    print("="*60)
+    print("=" * 60)
     print(f"\nExperiment: {experiment_id}")
 
     if context and "test_results" in context:
@@ -279,9 +273,9 @@ def suggest_incident_report(tracker: ExperimentTracker, experiment_id: str = Non
         if not experiment_id:
             return False
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("INCIDENT REPORT SUGGESTION")
-    print("="*60)
+    print("=" * 60)
     print(f"\nExperiment: {experiment_id}")
 
     if context and "failures" in context:
@@ -311,7 +305,7 @@ Examples:
   # Suggestions
   workflow.py suggest-assessment
   workflow.py suggest-incident-report
-        """
+        """,
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")

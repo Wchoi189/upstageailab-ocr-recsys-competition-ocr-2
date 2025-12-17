@@ -127,10 +127,10 @@ class SimplePerspectiveCorrector:
 
         # Find top-left (smallest x+y) and bottom-right (largest x+y)
         sums = sorted_corners.sum(axis=1)
-        diffs = np.diff(sorted_corners, axis=1).flatten()
+        np.diff(sorted_corners, axis=1).flatten()
 
         top_left_idx = np.argmin(sums)
-        bottom_right_idx = np.argmax(sums)
+        np.argmax(sums)
 
         # Reorder to start from top-left
         reordered = np.roll(sorted_corners, -top_left_idx, axis=0)
@@ -340,6 +340,7 @@ def process_image(
             corners, method = detector.detect(image_no_bg)
 
             if corners is not None:
+
                 def ensure_doctr(feature: str) -> bool:
                     return True
 
@@ -390,8 +391,7 @@ def process_image(
     results["success"] = results.get("rembg_success", False) and results.get("perspective_success", False)
 
     logger.info(
-        f"Completed {image_path.name}: rembg={rembg_time:.2f}s, "
-        f"perspective={results['perspective_time']:.2f}s, total={total_time:.2f}s"
+        f"Completed {image_path.name}: rembg={rembg_time:.2f}s, perspective={results['perspective_time']:.2f}s, total={total_time:.2f}s"
     )
 
     return results
@@ -496,4 +496,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

@@ -1,4 +1,5 @@
 """Tracking database status endpoint."""
+
 import os
 import sys
 
@@ -17,15 +18,6 @@ async def get_tracking_status(kind: str = Query("all", description="Kind: plan, 
         from AgentQMS.agent_tools.utilities.tracking.query import get_status
 
         status_text = get_status(kind)
-        return {
-            "kind": kind,
-            "status": status_text,
-            "success": True
-        }
+        return {"kind": kind, "status": status_text, "success": True}
     except Exception as e:
-        return {
-            "kind": kind,
-            "status": "",
-            "success": False,
-            "error": str(e)
-        }
+        return {"kind": kind, "status": "", "success": False, "error": str(e)}

@@ -65,9 +65,7 @@ class FrontmatterGenerator:
         # Extract information from file path
         filename = path.stem
         directory = path.parent.name
-        parent_directory = (
-            path.parent.parent.name if path.parent.parent.name != "artifacts" else None
-        )
+        parent_directory = path.parent.parent.name if path.parent.parent.name != "artifacts" else None
 
         # Determine type from directory structure
         file_type = self._determine_type(directory, parent_directory, filename)
@@ -92,9 +90,7 @@ class FrontmatterGenerator:
             "tags": tags,
         }
 
-    def _determine_type(
-        self, directory: str, parent_directory: str | None, filename: str
-    ) -> str:
+    def _determine_type(self, directory: str, parent_directory: str | None, filename: str) -> str:
         """Determine file type from directory structure"""
         # Check parent directory first
         if parent_directory and parent_directory in self.type_mapping:
@@ -125,9 +121,7 @@ class FrontmatterGenerator:
         # Default fallback
         return "reference"
 
-    def _determine_category(
-        self, directory: str, parent_directory: str | None, filename: str
-    ) -> str:
+    def _determine_category(self, directory: str, parent_directory: str | None, filename: str) -> str:
         """Determine category from directory structure"""
         # Check parent directory first
         if parent_directory and parent_directory in self.category_mapping:
@@ -221,9 +215,7 @@ class FrontmatterGenerator:
         else:
             return "active"
 
-    def _generate_tags(
-        self, file_type: str, category: str, directory: str
-    ) -> list[str]:
+    def _generate_tags(self, file_type: str, category: str, directory: str) -> list[str]:
         """Generate appropriate tags"""
         tags = [file_type, category]
 
@@ -278,9 +270,7 @@ class FrontmatterGenerator:
             print(f"Error processing {file_path}: {e}")
             return False
 
-    def process_files(
-        self, file_paths: list[str], dry_run: bool = False, limit: int | None = None
-    ) -> dict[str, bool]:
+    def process_files(self, file_paths: list[str], dry_run: bool = False, limit: int | None = None) -> dict[str, bool]:
         """Process multiple files"""
         results = {}
         count = 0
@@ -296,9 +286,7 @@ class FrontmatterGenerator:
             count += 1
 
             if success:
-                print(
-                    f"✅ {'Would add' if dry_run else 'Added'} frontmatter to {file_path}"
-                )
+                print(f"✅ {'Would add' if dry_run else 'Added'} frontmatter to {file_path}")
             else:
                 print(f"❌ Failed to process {file_path}")
 
@@ -312,9 +300,7 @@ def main():
 
     parser = argparse.ArgumentParser(description="Add frontmatter to files missing it")
     parser.add_argument("--files", nargs="+", help="Specific files to process")
-    parser.add_argument(
-        "--all", action="store_true", help="Process all files missing frontmatter"
-    )
+    parser.add_argument("--all", action="store_true", help="Process all files missing frontmatter")
     parser.add_argument(
         "--batch-process",
         action="store_true",
@@ -344,7 +330,7 @@ def main():
         # Find all files missing frontmatter in the directory
         directory = Path(args.directory)
         file_paths = []
-        
+
         for file_path in directory.rglob("*.md"):
             if file_path.is_file() and file_path.name not in ["INDEX.md", "README.md", "MASTER_INDEX.md"]:
                 # Check if file is missing frontmatter

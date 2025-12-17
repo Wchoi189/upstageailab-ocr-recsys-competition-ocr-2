@@ -58,9 +58,7 @@ class VLMImagePreprocessor(ImagePreprocessor):
                     img = img.convert("RGB")
 
                 # Calculate resize dimensions
-                width, height, resize_ratio = self._calculate_resize(
-                    original_width, original_height, max_resolution
-                )
+                width, height, resize_ratio = self._calculate_resize(original_width, original_height, max_resolution)
 
                 # Resize if needed
                 if resize_ratio < 1.0:
@@ -155,9 +153,7 @@ class VLMImagePreprocessor(ImagePreprocessor):
         return results
 
     @staticmethod
-    def _calculate_resize(
-        original_width: int, original_height: int, max_resolution: int
-    ) -> tuple[int, int, float]:
+    def _calculate_resize(original_width: int, original_height: int, max_resolution: int) -> tuple[int, int, float]:
         """Calculate resize dimensions preserving aspect ratio.
 
         Args:

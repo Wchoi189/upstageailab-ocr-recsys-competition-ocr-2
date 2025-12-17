@@ -31,7 +31,7 @@ try:
     if str(script_dir) not in sys.path:
         sys.path.insert(0, str(script_dir))
 
-    from optimized_rembg import OptimizedBackgroundRemover, REMBG_AVAILABLE, GPU_AVAILABLE
+    from optimized_rembg import GPU_AVAILABLE, REMBG_AVAILABLE, OptimizedBackgroundRemover
 except ImportError as e:
     logger.error(f"Failed to import optimized_rembg: {e}")
     REMBG_AVAILABLE = False
@@ -212,9 +212,7 @@ def test_doctr_rembg_pipeline(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Test DocTR perspective correction on rembg-processed images"
-    )
+    parser = argparse.ArgumentParser(description="Test DocTR perspective correction on rembg-processed images")
     parser.add_argument(
         "--input-dir",
         type=Path,
@@ -293,17 +291,13 @@ def main():
     logger.info(f"DocTR detection success: {len(doctr_success)}/{len(all_results)}")
 
     if regular_success:
-        avg_regular_time = np.mean([
-            r["regular_detection"]["detection_time"] + r["regular_detection"]["correction_time"]
-            for r in regular_success
-        ])
+        avg_regular_time = np.mean(
+            [r["regular_detection"]["detection_time"] + r["regular_detection"]["correction_time"] for r in regular_success]
+        )
         logger.info(f"Average regular time: {avg_regular_time:.3f}s")
 
     if doctr_success:
-        avg_doctr_time = np.mean([
-            r["doctr_detection"]["detection_time"] + r["doctr_detection"]["correction_time"]
-            for r in doctr_success
-        ])
+        avg_doctr_time = np.mean([r["doctr_detection"]["detection_time"] + r["doctr_detection"]["correction_time"] for r in doctr_success])
         logger.info(f"Average DocTR time: {avg_doctr_time:.3f}s")
 
         if regular_success:
@@ -319,4 +313,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

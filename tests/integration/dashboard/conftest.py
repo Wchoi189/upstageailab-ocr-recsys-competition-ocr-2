@@ -14,6 +14,7 @@ from server import app
 def client():
     return TestClient(app)
 
+
 @pytest.fixture
 def clean_artifacts():
     """Cleanup artifacts created during tests."""

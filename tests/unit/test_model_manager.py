@@ -1,7 +1,5 @@
 """Unit tests for model manager."""
 
-import pytest
-
 
 class TestModelManagerInit:
     """Tests for ModelManager initialization."""
@@ -87,10 +85,10 @@ class TestModelManagerLoadModel:
 
     def test_load_model_without_ocr_modules(self, monkeypatch):
         """Test that load fails gracefully when OCR modules unavailable."""
-        from ocr.inference.model_manager import ModelManager
-
         # Mock OCR_MODULES_AVAILABLE to False
         import ocr.inference.model_manager as mm_module
+        from ocr.inference.model_manager import ModelManager
+
         monkeypatch.setattr(mm_module, "OCR_MODULES_AVAILABLE", False)
 
         manager = ModelManager()

@@ -31,12 +31,7 @@ def main():
     metadata["type"] = args.type
 
     tracker = ExperimentTracker()
-    tracker.record_artifact(
-        args.path,
-        metadata,
-        show_context=not args.no_context,
-        confirm=not args.no_confirm
-    )
+    tracker.record_artifact(args.path, metadata, show_context=not args.no_context, confirm=not args.no_confirm)
 
 
 if __name__ == "__main__":

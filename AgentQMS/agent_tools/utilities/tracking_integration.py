@@ -4,6 +4,7 @@ This module handles auto-registration of artifacts in the tracking database
 when they are created. It maps artifact types to tracking entity types
 (plans, experiments, debug sessions, refactors) and registers them automatically.
 """
+
 from __future__ import annotations
 
 from pathlib import Path

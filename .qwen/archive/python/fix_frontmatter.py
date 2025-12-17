@@ -27,14 +27,21 @@ except ImportError:
 
 
 VALID_CATEGORIES = {
-    "development", "architecture", "evaluation", "compliance",
-    "code_quality", "reference", "planning", "research",
-    "troubleshooting", "governance", "meeting", "security"
+    "development",
+    "architecture",
+    "evaluation",
+    "compliance",
+    "code_quality",
+    "reference",
+    "planning",
+    "research",
+    "troubleshooting",
+    "governance",
+    "meeting",
+    "security",
 }
 
-VALID_STATUSES = {
-    "active", "draft", "completed", "archived", "deprecated"
-}
+VALID_STATUSES = {"active", "draft", "completed", "archived", "deprecated"}
 
 TYPE_TO_PREFIX = {
     "assessment": "assessment-",
@@ -83,7 +90,7 @@ def parse_frontmatter(fm_text: str) -> dict[str, str]:
         if ":" in line and not line.startswith("#"):
             key, val = line.split(":", 1)
             key = key.strip()
-            val = val.strip().strip('"\'')
+            val = val.strip().strip("\"'")
             fm[key] = val
     return fm
 
@@ -93,16 +100,16 @@ def normalize_date_format(date_str: str) -> str:
     date_str = date_str.strip()
 
     # Already correct format
-    if re.match(r'^\d{4}-\d{2}-\d{2} \d{2}:\d{2} \(KST\)$', date_str):
+    if re.match(r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2} \(KST\)$", date_str):
         return date_str
 
     # Try various formats
     formats_to_try = [
         ("%Y-%m-%d %H:%M (KST)", None),  # Already normalized but check anyway
-        ("%Y-%m-%d_%H%M", " (KST)"),     # 2025-11-17_1336 → add time format
-        ("%Y-%m-%d %H:%M", " (KST)"),    # 2025-11-17 13:36 → add timezone
-        ("%Y-%m-%d", " 12:00 (KST)"),    # 2025-11-17 → add time
-        ("%Y-%m-%dT%H:%M:%SZ", None),    # ISO format → reformat
+        ("%Y-%m-%d_%H%M", " (KST)"),  # 2025-11-17_1336 → add time format
+        ("%Y-%m-%d %H:%M", " (KST)"),  # 2025-11-17 13:36 → add timezone
+        ("%Y-%m-%d", " 12:00 (KST)"),  # 2025-11-17 → add time
+        ("%Y-%m-%dT%H:%M:%SZ", None),  # ISO format → reformat
     ]
 
     for fmt, suffix in formats_to_try:
@@ -150,7 +157,7 @@ def fix_frontmatter(file_path: Path, dry_run: bool = False, verbose: bool = Fals
         return False
 
     fm_text = content[3:end]
-    body = content[end + 3:].lstrip("\n")
+    body = content[end + 3 :].lstrip("\n")
 
     # Parse frontmatter
     fm = parse_frontmatter(fm_text)

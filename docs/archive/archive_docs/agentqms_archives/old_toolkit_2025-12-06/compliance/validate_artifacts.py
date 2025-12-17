@@ -19,8 +19,8 @@ import sys
 from datetime import datetime
 from pathlib import Path
 
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
@@ -43,10 +43,7 @@ def _assert_boundaries() -> None:
     errors = [v for v in violations if v.severity == "error"]
     if errors:
         formatted = "\n".join(f"- {v.path}: {v.message}" for v in errors)
-        raise RuntimeError(
-            "Boundary validation failed. Resolve the following issues before running validators:\n"
-            f"{formatted}"
-        )
+        raise RuntimeError(f"Boundary validation failed. Resolve the following issues before running validators:\n{formatted}")
 
 
 _assert_boundaries()
@@ -121,18 +118,12 @@ class ArtifactValidator:
         # Valid statuses
         self.valid_statuses = ["active", "draft", "completed", "archived", "deprecated"]
 
-    def validate_timestamp_format(
-        self, filename: str
-    ) -> tuple[bool, str, re.Match | None]:
+    def validate_timestamp_format(self, filename: str) -> tuple[bool, str, re.Match | None]:
         """Validate timestamp format in filename."""
         timestamp_pattern = r"^\d{4}-\d{2}-\d{2}_\d{4}_"
         match = re.match(timestamp_pattern, filename)
         valid = bool(match)
-        msg = (
-            "Valid timestamp format"
-            if valid
-            else "Missing or invalid timestamp format (expected: YYYY-MM-DD_HHMM_)"
-        )
+        msg = "Valid timestamp format" if valid else "Missing or invalid timestamp format (expected: YYYY-MM-DD_HHMM_)"
         match_result = match if valid else None
         return valid, msg, match_result
 
@@ -148,9 +139,7 @@ class ArtifactValidator:
         after_timestamp = filename[match.end() :]
 
         # Check for valid artifact type after timestamp
-        has_valid_artifact_type = any(
-            after_timestamp.startswith(artifact_type) for artifact_type in self.valid_artifact_types
-        )
+        has_valid_artifact_type = any(after_timestamp.startswith(artifact_type) for artifact_type in self.valid_artifact_types)
         if not has_valid_artifact_type:
             valid_types_str = ", ".join(self.valid_artifact_types.keys())
             return (
@@ -166,18 +155,14 @@ class ArtifactValidator:
 
                 # Check for ALL CAPS or uppercase words (artifacts must be lowercase)
                 if descriptive_part.isupper() or any(
-                    word.isupper() and len(word) > 1
-                    for word in descriptive_part.replace("-", "_").split("_")
+                    word.isupper() and len(word) > 1 for word in descriptive_part.replace("-", "_").split("_")
                 ):
                     return (
                         False,
                         "Artifact filenames must be lowercase. No ALL CAPS allowed. Use kebab-case (lowercase with hyphens)",
                     )
 
-                if (
-                    "_" in descriptive_part
-                    and not descriptive_part.replace("-", "").replace("_", "").isalnum()
-                ):
+                if "_" in descriptive_part and not descriptive_part.replace("-", "").replace("_", "").isalnum():
                     return (
                         False,
                         "Descriptive name should use kebab-case (hyphens, not underscores)",
@@ -193,14 +178,14 @@ class ArtifactValidator:
         current_dir = str(relative_path.parent)
 
         # Validate timestamp format first
-        timestamp_match = re.match(r'^\d{4}-\d{2}-\d{2}_\d{4}_', filename)
+        timestamp_match = re.match(r"^\d{4}-\d{2}-\d{2}_\d{4}_", filename)
         if not timestamp_match:
             # File doesn't match timestamp-first format, can't validate directory
             return True, "Cannot validate directory (non-standard format)"
-        
+
         # Extract everything after timestamp
-        after_timestamp = filename[timestamp_match.end():]
-        
+        after_timestamp = filename[timestamp_match.end() :]
+
         # Find which artifact type this file matches
         expected_dir = None
         for artifact_type, directory in self.valid_artifact_types.items():
@@ -265,27 +250,16 @@ class ArtifactValidator:
             try:
                 datetime.strptime(date_value, DATE_FORMAT)
             except ValueError:
-                validation_errors.append(
-                    "Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock)."
-                )
+                validation_errors.append("Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).")
 
         if "type" in frontmatter and frontmatter["type"] not in self.valid_types:
-            validation_errors.append(
-                f"Invalid type '{frontmatter['type']}'. Valid types: {', '.join(self.valid_types)}"
-            )
+            validation_errors.append(f"Invalid type '{frontmatter['type']}'. Valid types: {', '.join(self.valid_types)}")
 
-        if (
-            "category" in frontmatter
-            and frontmatter["category"] not in self.valid_categories
-        ):
-            validation_errors.append(
-                f"Invalid category '{frontmatter['category']}'. Valid categories: {', '.join(self.valid_categories)}"
-            )
+        if "category" in frontmatter and frontmatter["category"] not in self.valid_categories:
+            validation_errors.append(f"Invalid category '{frontmatter['category']}'. Valid categories: {', '.join(self.valid_categories)}")
 
         if "status" in frontmatter and frontmatter["status"] not in self.valid_statuses:
-            validation_errors.append(
-                f"Invalid status '{frontmatter['status']}'. Valid statuses: {', '.join(self.valid_statuses)}"
-            )
+            validation_errors.append(f"Invalid status '{frontmatter['status']}'. Valid statuses: {', '.join(self.valid_statuses)}")
 
         if validation_errors:
             return False, "; ".join(validation_errors)
@@ -413,25 +387,18 @@ class ArtifactValidator:
                             file_path = project_root / file_path_str
                             if not file_path.exists():
                                 bundle_result["valid"] = False
-                                bundle_result["errors"].append(
-                                    f"Missing file in {bundle_name} bundle: {file_path_str}"
-                                )
+                                bundle_result["errors"].append(f"Missing file in {bundle_name} bundle: {file_path_str}")
                             elif not is_fresh(file_path, days=30):
                                 bundle_result["warnings"].append(
-                                    f"Stale file in {bundle_name} bundle: {file_path_str} "
-                                    "(not modified in last 30 days)"
+                                    f"Stale file in {bundle_name} bundle: {file_path_str} (not modified in last 30 days)"
                                 )
 
                 except FileNotFoundError:
                     bundle_result["valid"] = False
-                    bundle_result["errors"].append(
-                        f"Bundle definition file not found: {bundle_name}.yaml"
-                    )
+                    bundle_result["errors"].append(f"Bundle definition file not found: {bundle_name}.yaml")
                 except Exception as e:
                     bundle_result["valid"] = False
-                    bundle_result["errors"].append(
-                        f"Error validating bundle {bundle_name}: {e!s}"
-                    )
+                    bundle_result["errors"].append(f"Error validating bundle {bundle_name}: {e!s}")
 
                 results.append(bundle_result)
 
@@ -461,11 +428,7 @@ class ArtifactValidator:
         report.append(f"Total files: {total_files}")
         report.append(f"Valid files: {valid_files}")
         report.append(f"Invalid files: {invalid_files}")
-        report.append(
-            f"Compliance rate: {(valid_files / total_files * 100):.1f}%"
-            if total_files > 0
-            else "N/A"
-        )
+        report.append(f"Compliance rate: {(valid_files / total_files * 100):.1f}%" if total_files > 0 else "N/A")
         report.append("")
 
         if invalid_files > 0:
@@ -498,40 +461,30 @@ class ArtifactValidator:
                 for error in result["errors"]:
                     if "Naming:" in error:
                         suggestions.append("   🔧 Rename file to follow convention:")
-                        suggestions.append(
-                            "      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md"
-                        )
+                        suggestions.append("      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md")
                     elif "Directory:" in error:
                         suggestions.append("   🔧 Move file to correct directory")
                     elif "Frontmatter:" in error:
                         suggestions.append("   🔧 Add or fix frontmatter:")
-                        suggestions.append(
-                            "      Required fields: title, date, type, category, status, version"
-                        )
+                        suggestions.append("      Required fields: title, date, type, category, status, version")
 
         return "\n".join(suggestions)
 
 
 def main():
     """Main entry point for the validation script."""
-    parser = argparse.ArgumentParser(
-        description="Validate artifact naming conventions and structure"
-    )
+    parser = argparse.ArgumentParser(description="Validate artifact naming conventions and structure")
     parser.add_argument("--file", help="Validate a specific file")
     parser.add_argument("--directory", help="Validate all files in a directory")
     parser.add_argument("--all", action="store_true", help="Validate all artifacts")
-    parser.add_argument(
-        "--check-naming", action="store_true", help="Check naming conventions only"
-    )
+    parser.add_argument("--check-naming", action="store_true", help="Check naming conventions only")
     parser.add_argument(
         "--artifacts-root",
         default="docs/artifacts",
         help="Root directory for artifacts",
     )
     parser.add_argument("--output", help="Output file for report")
-    parser.add_argument(
-        "--json", action="store_true", help="Output results in JSON format"
-    )
+    parser.add_argument("--json", action="store_true", help="Output results in JSON format")
     parser.add_argument(
         "files",
         nargs="*",

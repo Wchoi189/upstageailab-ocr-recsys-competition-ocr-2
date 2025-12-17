@@ -70,5 +70,3 @@ def ensure_within_project(path: Path) -> Path:
     except ValueError as exc:  # pragma: no cover - defensive guard
         raise ValueError(f"Path '{path}' escapes project root '{project_root}'") from exc
     return path
-
-

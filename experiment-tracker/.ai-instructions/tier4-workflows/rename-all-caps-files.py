@@ -20,19 +20,19 @@ from pathlib import Path
 
 def is_all_caps(filename: str) -> bool:
     """Check if filename is ALL-CAPS (excluding extension)."""
-    name_without_ext = filename.replace('.md', '')
-    return name_without_ext.replace('_', '').isupper()
+    name_without_ext = filename.replace(".md", "")
+    return name_without_ext.replace("_", "").isupper()
 
 
 def infer_type_from_content(file_path: Path) -> str:
     """Infer artifact type by reading frontmatter."""
     try:
-        content = file_path.read_text(encoding='utf-8')
+        content = file_path.read_text(encoding="utf-8")
 
         # Check if frontmatter exists
-        if content.startswith('---'):
+        if content.startswith("---"):
             # Extract frontmatter
-            match = re.search(r'^---\s*\n(.*?)\n---', content, re.DOTALL)
+            match = re.search(r"^---\s*\n(.*?)\n---", content, re.DOTALL)
             if match:
                 frontmatter = match.group(1)
 
@@ -43,17 +43,17 @@ def infer_type_from_content(file_path: Path) -> str:
 
         # Fallback to filename analysis
         filename_lower = file_path.name.lower()
-        if any(kw in filename_lower for kw in ['summary', 'state', 'execution']):
-            return 'assessment'
-        elif any(kw in filename_lower for kw in ['guide', 'reference', 'instructions']):
-            return 'guide'
-        elif any(kw in filename_lower for kw in ['roadmap', 'plan']):
-            return 'guide'
+        if any(kw in filename_lower for kw in ["summary", "state", "execution"]):
+            return "assessment"
+        elif any(kw in filename_lower for kw in ["guide", "reference", "instructions"]):
+            return "guide"
+        elif any(kw in filename_lower for kw in ["roadmap", "plan"]):
+            return "guide"
         else:
-            return 'assessment'  # Default
+            return "assessment"  # Default
 
     except Exception:
-        return 'assessment'
+        return "assessment"
 
 
 def generate_new_filename(old_filename: str, artifact_type: str, timestamp: str) -> str:
@@ -63,10 +63,10 @@ def generate_new_filename(old_filename: str, artifact_type: str, timestamp: str)
     Pattern: YYYYMMDD_HHMM_{TYPE}_{slug}.md
     """
     # Remove extension and convert to lowercase
-    name_without_ext = old_filename.replace('.md', '')
+    name_without_ext = old_filename.replace(".md", "")
 
     # Convert to lowercase and replace underscores with hyphens
-    slug = name_without_ext.lower().replace('_', '-')
+    slug = name_without_ext.lower().replace("_", "-")
 
     # Truncate if too long
     if len(slug) > 50:
@@ -97,7 +97,7 @@ def rename_file(file_path: Path, experiment_id: str, dry_run: bool = False) -> t
     # Generate timestamp (use experiment_id date if available, otherwise now)
     if experiment_id:
         # Extract date from experiment_id (YYYYMMDD_HHMMSS_name)
-        match = re.match(r'^(\d{8})_(\d{6})', experiment_id)
+        match = re.match(r"^(\d{8})_(\d{6})", experiment_id)
         if match:
             date_part = match.group(1)
             time_part = match.group(2)[:4]  # HHMM
@@ -144,11 +144,11 @@ def rename_experiment(experiment_dir: Path, dry_run: bool = False) -> dict:
     print(f"\n📂 Processing: {experiment_id}")
 
     # Find all markdown files
-    md_files = list(experiment_dir.rglob('*.md'))
+    md_files = list(experiment_dir.rglob("*.md"))
 
     for md_file in md_files:
         # Skip README.md
-        if md_file.name == 'README.md':
+        if md_file.name == "README.md":
             skipped_count += 1
             continue
 
@@ -165,10 +165,10 @@ def rename_experiment(experiment_dir: Path, dry_run: bool = False) -> dict:
             skipped_count += 1
 
     return {
-        'experiment_id': experiment_id,
-        'renamed_count': renamed_count,
-        'skipped_count': skipped_count,
-        'renames': renames,
+        "experiment_id": experiment_id,
+        "renamed_count": renamed_count,
+        "skipped_count": skipped_count,
+        "renames": renames,
     }
 
 
@@ -214,10 +214,10 @@ def main():
         results.append(result)
 
     # Summary
-    total_renamed = sum(r['renamed_count'] for r in results)
-    total_skipped = sum(r['skipped_count'] for r in results)
+    total_renamed = sum(r["renamed_count"] for r in results)
+    total_skipped = sum(r["skipped_count"] for r in results)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     if args.dry_run:
         print("🔍 DRY RUN SUMMARY:")
     else:
@@ -229,9 +229,9 @@ def main():
     if total_renamed > 0:
         print("\n📋 Renamed Files:")
         for result in results:
-            if result['renamed_count'] > 0:
+            if result["renamed_count"] > 0:
                 print(f"\n   {result['experiment_id']}:")
-                for old_name, new_name in result['renames']:
+                for old_name, new_name in result["renames"]:
                     print(f"     • {old_name} → {new_name}")
 
     if not args.dry_run and total_renamed > 0:
@@ -241,5 +241,5 @@ def main():
         print("   3. Verify all experiments at 100% compliance")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

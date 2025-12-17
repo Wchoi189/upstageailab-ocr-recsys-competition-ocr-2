@@ -58,9 +58,7 @@ MESSAGES: dict[str, list[str]] = {
 }
 
 # All messages flattened for random selection
-ALL_MESSAGES: list[str] = [
-    message for messages in MESSAGES.values() for message in messages
-]
+ALL_MESSAGES: list[str] = [message for messages in MESSAGES.values() for message in messages]
 
 
 def get_message(category: str, index: int | None = None) -> str:
@@ -78,9 +76,7 @@ def get_message(category: str, index: int | None = None) -> str:
         IndexError: If index is out of range
     """
     if category not in MESSAGES:
-        raise KeyError(
-            f"Unknown category: {category}. Available: {list(MESSAGES.keys())}"
-        )
+        raise KeyError(f"Unknown category: {category}. Available: {list(MESSAGES.keys())}")
 
     messages = MESSAGES[category]
     if index is None:
@@ -123,9 +119,7 @@ def list_messages(category: str) -> list[str]:
         KeyError: If category doesn't exist
     """
     if category not in MESSAGES:
-        raise KeyError(
-            f"Unknown category: {category}. Available: {list(MESSAGES.keys())}"
-        )
+        raise KeyError(f"Unknown category: {category}. Available: {list(MESSAGES.keys())}")
     return MESSAGES[category]
 
 

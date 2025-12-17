@@ -163,19 +163,14 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
     print("\n⚠️  ITEMS NEEDING ATTENTION:")
     print("-" * 100)
 
-    attention_items = [
-        s for s in statuses if s.age_category in ["warning", "stale", "archive"]
-    ]
+    attention_items = [s for s in statuses if s.age_category in ["warning", "stale", "archive"]]
     if attention_items:
         print(f"{'ARTIFACT':<60} {'AGE':<12} {'STATE':<12} {'VERSION':<10}")
         print("-" * 100)
         sorted_items = sorted(attention_items, key=lambda x: x.age_days or 0, reverse=True)
         for status in sorted_items:
             age_str = f"{status.age_days}d" if status.age_days else "unknown"
-            print(
-                f"{status.path:<60} {age_str:<12} "
-                f"{status.lifecycle_state:<12} {status.version or 'N/A':<10}"
-            )
+            print(f"{status.path:<60} {age_str:<12} {status.lifecycle_state:<12} {status.version or 'N/A':<10}")
     else:
         print("✅ All artifacts are in good health!")
 
@@ -185,10 +180,7 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
 def print_compact(statuses: list[ArtifactStatus]) -> None:
     """Print compact table view."""
     print("\n" + "-" * 120)
-    print(
-        f"{'ARTIFACT':<60} {'AGE':<10} {'CATEGORY':<12} "
-        f"{'LIFECYCLE':<12} {'VERSION':<10} {'STATUS':<20}"
-    )
+    print(f"{'ARTIFACT':<60} {'AGE':<10} {'CATEGORY':<12} {'LIFECYCLE':<12} {'VERSION':<10} {'STATUS':<20}")
     print("-" * 120)
 
     sorted_statuses = sorted(statuses, key=lambda x: x.age_days or 0, reverse=True)
@@ -205,9 +197,7 @@ def print_compact(statuses: list[ArtifactStatus]) -> None:
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Display artifact status dashboard with aging and lifecycle information"
-    )
+    parser = argparse.ArgumentParser(description="Display artifact status dashboard with aging and lifecycle information")
     parser.add_argument(
         "--dashboard",
         action="store_true",

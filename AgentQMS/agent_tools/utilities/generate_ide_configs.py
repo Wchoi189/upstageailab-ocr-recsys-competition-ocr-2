@@ -21,6 +21,7 @@ AGENT_WORKFLOWS_DIR = PROJECT_ROOT / ".agent" / "workflows"
 CURSOR_DIR = PROJECT_ROOT / ".cursor"
 COPILOT_DIR = PROJECT_ROOT / ".copilot" / "context"
 
+
 def generate_antigravity_workflows():
     """Generates Antigravity .md workflows from AgentQMS templates."""
     print("Generating Antigravity workflows...")
@@ -60,13 +61,14 @@ description: Check the status of the AgentQMS framework and available tools
    ```bash
    cd AgentQMS/interface && make discover
    ```
-"""
+""",
     }
 
     for filename, content in workflows.items():
         path = AGENT_WORKFLOWS_DIR / filename
         path.write_text(content)
         print(f"  - Created {path}")
+
 
 def generate_cursor_config():
     """Generates Cursor instructions."""
@@ -98,6 +100,7 @@ For full details, run `make help`.
     path.write_text(content)
     print(f"  - Created {path}")
 
+
 def generate_claude_config():
     """Generates Claude instructions."""
     print("Generating Claude config...")
@@ -124,6 +127,7 @@ See `.agentqms/state/architecture.yaml` for component maps.
     path.write_text(content)
     print(f"  - Created {path}")
 
+
 def generate_copilot_config():
     """Generates GitHub Copilot instructions."""
     print("Generating Copilot config...")
@@ -148,6 +152,7 @@ You are working in an AgentQMS-enabled project.
     path.write_text(content)
     print(f"  - Created {path}")
 
+
 def main():
     try:
         generate_antigravity_workflows()
@@ -160,6 +165,7 @@ def main():
     except Exception as e:
         print(f"Error: {e}")
         return 1
+
 
 if __name__ == "__main__":
     exit(main())

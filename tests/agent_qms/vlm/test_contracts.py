@@ -1,6 +1,5 @@
 """Tests for Pydantic data contracts."""
 
-
 import pydantic
 import pytest
 from agent_qms.vlm.core.contracts import (

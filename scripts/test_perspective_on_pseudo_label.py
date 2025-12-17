@@ -12,8 +12,8 @@ and writes side-by-side comparison images to the specified output directory.
 import argparse
 import logging
 import time
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import cv2
 import numpy as np
@@ -142,11 +142,7 @@ def main() -> int:
 
     total = len(results)
     success = sum(1 for r in results if r.get("success"))
-    avg_time = (
-        float(sum(r.get("time_sec", 0.0) for r in results if r.get("success"))) / max(success, 1)
-        if results
-        else 0.0
-    )
+    avg_time = float(sum(r.get("time_sec", 0.0) for r in results if r.get("success"))) / max(success, 1) if results else 0.0
 
     LOGGER.info("Completed. Success: %d/%d, avg_time=%.3fs", success, total, avg_time)
     LOGGER.info("Output directory: %s", args.output_dir)
@@ -156,5 +152,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-

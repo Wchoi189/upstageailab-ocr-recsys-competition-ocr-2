@@ -23,23 +23,17 @@ def get_status(kind: str, key: str | None = None) -> str:
         rows = get_plan_status(key)
         if not rows:
             return "No plans found."
-        return " | ".join(
-            f"{r['key']}:{r['status']} open={r['open_tasks']}" for r in rows
-        )
+        return " | ".join(f"{r['key']}:{r['status']} open={r['open_tasks']}" for r in rows)
 
     try:
         conn = get_connection()
         if kind == "experiment":
             if not key:
-                rows = conn.execute(
-                    "SELECT key,status FROM experiments ORDER BY updated_at DESC"
-                ).fetchall()
+                rows = conn.execute("SELECT key,status FROM experiments ORDER BY updated_at DESC").fetchall()
                 if not rows:
                     return "No experiments found."
                 return " | ".join(f"{r['key']}:{r['status']}" for r in rows)
-            row = conn.execute(
-                "SELECT id,status FROM experiments WHERE key=?", (key,)
-            ).fetchone()
+            row = conn.execute("SELECT id,status FROM experiments WHERE key=?", (key,)).fetchone()
             if not row:
                 return f"Experiment not found: {key}"
             runs = conn.execute(
@@ -53,23 +47,17 @@ def get_status(kind: str, key: str | None = None) -> str:
 
         if kind == "debug":
             if key:
-                row = conn.execute(
-                    "SELECT key,status,title FROM debug_sessions WHERE key=?", (key,)
-                ).fetchone()
+                row = conn.execute("SELECT key,status,title FROM debug_sessions WHERE key=?", (key,)).fetchone()
                 if not row:
                     return f"Debug not found: {key}"
                 return f"{row['key']}:{row['status']} · {row['title']}"
-            rows = conn.execute(
-                "SELECT key,status FROM debug_sessions ORDER BY started_at DESC"
-            ).fetchall()
+            rows = conn.execute("SELECT key,status FROM debug_sessions ORDER BY started_at DESC").fetchall()
             if not rows:
                 return "No debug sessions."
             return " | ".join(f"{r['key']}:{r['status']}" for r in rows)
 
         if kind == "refactor":
-            rows = conn.execute(
-                "SELECT key,status FROM refactors ORDER BY updated_at DESC"
-            ).fetchall()
+            rows = conn.execute("SELECT key,status FROM refactors ORDER BY updated_at DESC").fetchall()
             if not rows:
                 return "No refactors."
             return " | ".join(f"{r['key']}:{r['status']}" for r in rows)

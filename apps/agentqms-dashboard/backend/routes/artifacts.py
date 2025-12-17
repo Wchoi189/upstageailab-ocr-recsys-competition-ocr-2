@@ -15,8 +15,9 @@ ARTIFACT_TYPES = {
     "implementation_plan": "implementation_plans",
     "assessment": "assessments",
     "audit": "audits",
-    "bug_report": "bug_reports"
+    "bug_report": "bug_reports",
 }
+
 
 # Models
 class ArtifactBase(BaseModel):
@@ -26,22 +27,27 @@ class ArtifactBase(BaseModel):
     category: str | None = None
     tags: list[str] = []
 
+
 class ArtifactCreate(ArtifactBase):
     content: str
+
 
 class ArtifactUpdate(BaseModel):
     content: str | None = None
     frontmatter_updates: dict[str, Any] | None = None
 
+
 class ArtifactResponse(ArtifactBase):
     id: str
     path: str
     created_at: str | None = None
-    content: str | None = None # Only for detail view
+    content: str | None = None  # Only for detail view
+
 
 class ArtifactListResponse(BaseModel):
     items: list[ArtifactResponse]
     total: int
+
 
 # Helpers
 def get_artifact_path(artifact_type: str, artifact_id: str) -> str:
@@ -52,6 +58,7 @@ def get_artifact_path(artifact_type: str, artifact_id: str) -> str:
     # The ID in spec is "2025-12-08_1430_plan_dashboard-integration"
     # The file is "2025-12-08_1430_plan_dashboard-integration.md"
     return os.path.join(ARTIFACTS_ROOT, subdir, f"{artifact_id}.md")
+
 
 def parse_artifact(file_path: str, include_content: bool = False) -> ArtifactResponse:
     if not os.path.exists(file_path):
@@ -72,17 +79,14 @@ def parse_artifact(file_path: str, include_content: bool = False) -> ArtifactRes
         status=metadata.get("status", "draft"),
         category=metadata.get("category"),
         tags=metadata.get("tags", []),
-        created_at=metadata.get("date"), # Or parse from filename
-        content=post.content if include_content else None
+        created_at=metadata.get("date"),  # Or parse from filename
+        content=post.content if include_content else None,
     )
+
 
 # Endpoints
 @router.get("", response_model=ArtifactListResponse)
-async def list_artifacts(
-    type: str | None = None,
-    status: str | None = None,
-    limit: int = 50
-):
+async def list_artifacts(type: str | None = None, status: str | None = None, limit: int = 50):
     """List artifacts with filtering."""
     items = []
 
@@ -109,10 +113,8 @@ async def list_artifacts(
     # Sort by ID (descending -> newest first)
     items.sort(key=lambda x: x.id, reverse=True)
 
-    return {
-        "items": items[:limit],
-        "total": len(items)
-    }
+    return {"items": items[:limit], "total": len(items)}
+
 
 @router.get("/{id}", response_model=ArtifactResponse)
 async def get_artifact(id: str):
@@ -135,6 +137,7 @@ async def get_artifact(id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+
 @router.post("", response_model=ArtifactResponse)
 async def create_artifact(artifact: ArtifactCreate):
     """Create a new artifact."""
@@ -154,7 +157,7 @@ async def create_artifact(artifact: ArtifactCreate):
 
     # Prepare content with frontmatter
     metadata = artifact.dict(exclude={"content"}, exclude_none=True)
-    metadata["date"] = now.strftime("%Y-%m-%d %H:%M (KST)") # Mocking KST for now
+    metadata["date"] = now.strftime("%Y-%m-%d %H:%M (KST)")  # Mocking KST for now
 
     content_body = artifact.content
     # Check if content already has frontmatter and parse it
@@ -179,6 +182,7 @@ async def create_artifact(artifact: ArtifactCreate):
         return parse_artifact(file_path, include_content=True)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.put("/{id}", response_model=ArtifactResponse)
 async def update_artifact(id: str, update: ArtifactUpdate):
@@ -212,6 +216,7 @@ async def update_artifact(id: str, update: ArtifactUpdate):
         return parse_artifact(found_path, include_content=True)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
 
 @router.delete("/{id}")
 async def delete_artifact(id: str):

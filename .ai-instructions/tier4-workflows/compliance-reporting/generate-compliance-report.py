@@ -23,9 +23,7 @@ RESET = "\033[0m"
 
 def run_command(cmd: list[str], cwd=None) -> tuple[int, str, str]:
     """Run shell command and return exit code, stdout, stderr"""
-    result = subprocess.run(
-        cmd, cwd=cwd or ROOT, capture_output=True, text=True, check=False
-    )
+    result = subprocess.run(cmd, cwd=cwd or ROOT, capture_output=True, text=True, check=False)
     return result.returncode, result.stdout, result.stderr
 
 
@@ -38,13 +36,7 @@ def check_ads_compliance() -> dict:
     """Check ADS v1.0 compliance for all YAML files"""
     yaml_files = list(Path(ROOT / ".ai-instructions").rglob("*.yaml"))
 
-    results = {
-        "total": len(yaml_files),
-        "passed": 0,
-        "failed": 0,
-        "warnings": 0,
-        "details": []
-    }
+    results = {"total": len(yaml_files), "passed": 0, "failed": 0, "warnings": 0, "details": []}
 
     for yaml_file in yaml_files:
         cmd = ["python3", ".ai-instructions/schema/compliance-checker.py", str(yaml_file)]
@@ -54,18 +46,12 @@ def check_ads_compliance() -> dict:
             results["passed"] += 1
             if "⚠️" in stdout:
                 results["warnings"] += 1
-                results["details"].append({
-                    "file": yaml_file.relative_to(ROOT),
-                    "status": "pass_with_warnings",
-                    "message": "Contains user-oriented phrases"
-                })
+                results["details"].append(
+                    {"file": yaml_file.relative_to(ROOT), "status": "pass_with_warnings", "message": "Contains user-oriented phrases"}
+                )
         else:
             results["failed"] += 1
-            results["details"].append({
-                "file": yaml_file.relative_to(ROOT),
-                "status": "fail",
-                "message": stderr or stdout
-            })
+            results["details"].append({"file": yaml_file.relative_to(ROOT), "status": "fail", "message": stderr or stdout})
 
     return results
 
@@ -81,11 +67,7 @@ def check_naming_violations() -> dict:
                 if md_file.stem.replace("_", "").isupper():
                     violations.append(md_file.relative_to(ROOT))
 
-    return {
-        "total_checked": count_files("docs/*.md"),
-        "violations": len(violations),
-        "files": violations
-    }
+    return {"total_checked": count_files("docs/*.md"), "violations": len(violations), "files": violations}
 
 
 def check_placement_violations() -> dict:
@@ -108,19 +90,14 @@ def check_placement_violations() -> dict:
     return {
         "total_violations": len(violations),
         "docs_root": [f for loc, f in violations if loc == "docs_root"],
-        "artifacts_root": [f for loc, f in violations if loc == "artifacts_root"]
+        "artifacts_root": [f for loc, f in violations if loc == "artifacts_root"],
     }
 
 
 def check_agent_configs() -> dict:
     """Check all agent configurations exist and validate"""
     agents = ["claude", "copilot", "cursor", "gemini"]
-    results = {
-        "total_agents": len(agents),
-        "complete": 0,
-        "missing": [],
-        "details": []
-    }
+    results = {"total_agents": len(agents), "complete": 0, "missing": [], "details": []}
 
     for agent in agents:
         agent_dir = ROOT / ".ai-instructions" / "tier3-agents" / agent
@@ -144,11 +121,7 @@ def check_agent_configs() -> dict:
             results["missing"].append(agent)
             status = "incomplete"
 
-        results["details"].append({
-            "agent": agent,
-            "status": status,
-            "missing_files": missing
-        })
+        results["details"].append({"agent": agent, "status": status, "missing_files": missing})
 
     return results
 
@@ -183,7 +156,7 @@ def calculate_token_footprint() -> dict:
         "total_lines": total_lines,
         "estimated_tokens": estimated_tokens,
         "tier_breakdown": dict(tier_breakdown),
-        "files_analyzed": len(yaml_files)
+        "files_analyzed": len(yaml_files),
     }
 
 
@@ -200,99 +173,99 @@ def generate_report() -> str:
 
     # Build report
     report = f"""
-{'='*80}
+{"=" * 80}
 AI DOCUMENTATION COMPLIANCE DASHBOARD
-Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
-{'='*80}
+Generated: {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}
+{"=" * 80}
 
 📊 OVERALL STATUS
-├─ ADS v1.0 Compliance: {ads_compliance['passed']}/{ads_compliance['total']} files pass
-├─ Naming Violations: {naming['violations']} files
-├─ Placement Violations: {placement['total_violations']} files
-├─ Agent Configs: {agents['complete']}/{agents['total_agents']} complete
-└─ Token Footprint: ~{footprint['estimated_tokens']:,} tokens ({footprint['total_lines']:,} lines)
+├─ ADS v1.0 Compliance: {ads_compliance["passed"]}/{ads_compliance["total"]} files pass
+├─ Naming Violations: {naming["violations"]} files
+├─ Placement Violations: {placement["total_violations"]} files
+├─ Agent Configs: {agents["complete"]}/{agents["total_agents"]} complete
+└─ Token Footprint: ~{footprint["estimated_tokens"]:,} tokens ({footprint["total_lines"]:,} lines)
 
-{'─'*80}
+{"─" * 80}
 
 ✅ ADS v1.0 COMPLIANCE
-├─ Total YAML Files: {ads_compliance['total']}
-├─ Passed: {GREEN}{ads_compliance['passed']}{RESET}
-├─ Failed: {RED if ads_compliance['failed'] > 0 else GREEN}{ads_compliance['failed']}{RESET}
-└─ Warnings: {YELLOW if ads_compliance['warnings'] > 0 else GREEN}{ads_compliance['warnings']}{RESET}
+├─ Total YAML Files: {ads_compliance["total"]}
+├─ Passed: {GREEN}{ads_compliance["passed"]}{RESET}
+├─ Failed: {RED if ads_compliance["failed"] > 0 else GREEN}{ads_compliance["failed"]}{RESET}
+└─ Warnings: {YELLOW if ads_compliance["warnings"] > 0 else GREEN}{ads_compliance["warnings"]}{RESET}
 """
 
-    if ads_compliance['failed'] > 0:
+    if ads_compliance["failed"] > 0:
         report += "\n   ❌ Failed Files:\n"
-        for detail in ads_compliance['details']:
-            if detail['status'] == 'fail':
+        for detail in ads_compliance["details"]:
+            if detail["status"] == "fail":
                 report += f"      - {detail['file']}\n"
 
     report += f"""
-{'─'*80}
+{"─" * 80}
 
 📛 NAMING VIOLATIONS
-├─ Files Checked: {naming['total_checked']}
-├─ ALL-CAPS Violations: {RED if naming['violations'] > 0 else GREEN}{naming['violations']}{RESET}
+├─ Files Checked: {naming["total_checked"]}
+├─ ALL-CAPS Violations: {RED if naming["violations"] > 0 else GREEN}{naming["violations"]}{RESET}
 """
 
-    if naming['violations'] > 0:
+    if naming["violations"] > 0:
         report += "   ❌ Violations Found:\n"
-        for viol in naming['files']:
+        for viol in naming["files"]:
             report += f"      - {viol}\n"
     else:
         report += f"   {GREEN}✓ No naming violations{RESET}\n"
 
     report += f"""
-{'─'*80}
+{"─" * 80}
 
 📂 PLACEMENT VIOLATIONS
-├─ Total Violations: {RED if placement['total_violations'] > 0 else GREEN}{placement['total_violations']}{RESET}
-├─ Files at docs/ root: {len(placement['docs_root'])}
-└─ Files at docs/artifacts/ root: {len(placement['artifacts_root'])}
+├─ Total Violations: {RED if placement["total_violations"] > 0 else GREEN}{placement["total_violations"]}{RESET}
+├─ Files at docs/ root: {len(placement["docs_root"])}
+└─ Files at docs/artifacts/ root: {len(placement["artifacts_root"])}
 """
 
-    if placement['total_violations'] > 0:
-        if placement['docs_root']:
+    if placement["total_violations"] > 0:
+        if placement["docs_root"]:
             report += "\n   ❌ docs/ root violations:\n"
-            for viol in placement['docs_root']:
+            for viol in placement["docs_root"]:
                 report += f"      - {viol}\n"
-        if placement['artifacts_root']:
+        if placement["artifacts_root"]:
             report += "\n   ❌ docs/artifacts/ root violations:\n"
-            for viol in placement['artifacts_root']:
+            for viol in placement["artifacts_root"]:
                 report += f"      - {viol}\n"
     else:
         report += f"   {GREEN}✓ No placement violations{RESET}\n"
 
     report += f"""
-{'─'*80}
+{"─" * 80}
 
 🤖 AGENT CONFIGURATIONS
-├─ Total Agents: {agents['total_agents']}
-├─ Complete Configs: {GREEN if agents['complete'] == agents['total_agents'] else YELLOW}{agents['complete']}{RESET}
-└─ Missing Configs: {RED if agents['missing'] else GREEN}{len(agents['missing'])}{RESET}
+├─ Total Agents: {agents["total_agents"]}
+├─ Complete Configs: {GREEN if agents["complete"] == agents["total_agents"] else YELLOW}{agents["complete"]}{RESET}
+└─ Missing Configs: {RED if agents["missing"] else GREEN}{len(agents["missing"])}{RESET}
 
    Status by Agent:
 """
 
-    for detail in agents['details']:
-        status_icon = "✓" if detail['status'] == "pass" else "✗"
-        status_color = GREEN if detail['status'] == "pass" else RED
+    for detail in agents["details"]:
+        status_icon = "✓" if detail["status"] == "pass" else "✗"
+        status_color = GREEN if detail["status"] == "pass" else RED
         report += f"   {status_color}{status_icon}{RESET} {detail['agent']}: {detail['status']}\n"
-        if detail['missing_files']:
+        if detail["missing_files"]:
             report += f"      Missing: {', '.join(detail['missing_files'])}\n"
 
     report += f"""
-{'─'*80}
+{"─" * 80}
 
 💾 TOKEN FOOTPRINT ANALYSIS
-├─ Total Lines: {footprint['total_lines']:,}
-├─ Estimated Tokens: ~{footprint['estimated_tokens']:,}
-└─ Files Analyzed: {footprint['files_analyzed']}
+├─ Total Lines: {footprint["total_lines"]:,}
+├─ Estimated Tokens: ~{footprint["estimated_tokens"]:,}
+└─ Files Analyzed: {footprint["files_analyzed"]}
 
    Breakdown by Tier:
 """
 
-    for tier, lines in sorted(footprint['tier_breakdown'].items()):
+    for tier, lines in sorted(footprint["tier_breakdown"].items()):
         tokens = lines * 4
         report += f"   ├─ {tier}: {lines} lines (~{tokens} tokens)\n"
 
@@ -300,19 +273,19 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     total_checks = 4  # ADS, naming, placement, agents
     passed_checks = 0
 
-    if ads_compliance['failed'] == 0:
+    if ads_compliance["failed"] == 0:
         passed_checks += 1
-    if naming['violations'] == 0:
+    if naming["violations"] == 0:
         passed_checks += 1
-    if placement['total_violations'] == 0:
+    if placement["total_violations"] == 0:
         passed_checks += 1
-    if agents['complete'] == agents['total_agents']:
+    if agents["complete"] == agents["total_agents"]:
         passed_checks += 1
 
     compliance_percent = (passed_checks / total_checks) * 100
 
     report += f"""
-{'─'*80}
+{"─" * 80}
 
 🎯 COMPLIANCE SCORE: {compliance_percent:.0f}% ({passed_checks}/{total_checks} checks passed)
 
@@ -325,7 +298,7 @@ Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
     else:
         report += f"{RED}❌ COMPLIANCE ISSUES DETECTED - Action required{RESET}\n"
 
-    report += f"\n{'='*80}\n"
+    report += f"\n{'=' * 80}\n"
 
     return report
 

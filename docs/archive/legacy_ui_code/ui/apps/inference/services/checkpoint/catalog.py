@@ -19,6 +19,7 @@ from time import time
 from typing import Any
 
 from ocr.utils.checkpoints.index import CheckpointIndex
+
 from ocr.utils.experiment_name import resolve_experiment_name
 
 from .cache import CatalogCache, get_global_cache

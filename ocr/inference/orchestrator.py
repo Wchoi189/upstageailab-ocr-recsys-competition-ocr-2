@@ -18,7 +18,7 @@ from typing import Any
 
 import numpy as np
 
-from .config_loader import ModelConfigBundle, PostprocessSettings
+from .config_loader import PostprocessSettings
 from .dependencies import OCR_MODULES_AVAILABLE
 from .model_manager import ModelManager
 from .postprocessing_pipeline import PostprocessingPipeline
@@ -136,11 +136,9 @@ class InferenceOrchestrator:
 
         try:
             import torch
+
             with torch.no_grad():
-                predictions = self.model_manager.model(
-                    return_loss=False,
-                    images=preprocess_result.batch.to(self.model_manager.device)
-                )
+                predictions = self.model_manager.model(return_loss=False, images=preprocess_result.batch.to(self.model_manager.device))
         except Exception:
             LOGGER.exception("Model inference failed")
             return None
@@ -165,10 +163,11 @@ class InferenceOrchestrator:
         }
 
         # Stage 4: Handle inverse perspective transformation if needed
-        if (preprocess_result.perspective_matrix is not None and
-            perspective_display_mode == "original" and
-            preprocess_result.original_image is not None):
-
+        if (
+            preprocess_result.perspective_matrix is not None
+            and perspective_display_mode == "original"
+            and preprocess_result.original_image is not None
+        ):
             # Transform polygons back to original space
             from ocr.utils.perspective_correction import transform_polygons_inverse
 
@@ -179,9 +178,7 @@ class InferenceOrchestrator:
                 )
 
             # Create preview from original image
-            original_preview = self.preprocessing_pipeline.process_for_original_display(
-                preprocess_result.original_image
-            )
+            original_preview = self.preprocessing_pipeline.process_for_original_display(preprocess_result.original_image)
             if original_preview is not None:
                 preview_image, metadata = original_preview
                 preprocess_result = preprocess_result.__class__(

@@ -5,9 +5,9 @@ from pathlib import Path
 import numpy as np
 import pytest
 from PIL import Image
+from ui.visualize_annotations import _extract_polygons, _normalize_image_and_polygons
 
 from ocr.utils.orientation import EXIF_ORIENTATION_TAG
-from ui.visualize_annotations import _extract_polygons, _normalize_image_and_polygons
 
 
 def _save_image_with_orientation(tmp_path: Path, size: tuple[int, int], orientation: int) -> Path:

@@ -87,9 +87,7 @@ class PromptManager:
             ImportError: If Jinja2 not installed
         """
         if self.jinja2_env is None:
-            raise ImportError(
-                "Jinja2 is required for template rendering. Install with: pip install Jinja2"
-            )
+            raise ImportError("Jinja2 is required for template rendering. Install with: pip install Jinja2")
 
         template_file = f"{mode.value}_analysis.j2"
         try:

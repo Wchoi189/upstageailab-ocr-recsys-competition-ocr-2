@@ -225,9 +225,7 @@ def scan_directory(handbook_dir: Path) -> dict[str, Any]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Auto-generate AI handbook index.json from directory structure"
-    )
+    parser = argparse.ArgumentParser(description="Auto-generate AI handbook index.json from directory structure")
     parser.add_argument(
         "--handbook-dir",
         type=Path,
@@ -240,9 +238,7 @@ def main() -> None:
         default=Path("AgentQMS/knowledge/index.json"),
         help="Output path for the generated index.json",
     )
-    parser.add_argument(
-        "--validate", action="store_true", help="Run validation after generation"
-    )
+    parser.add_argument("--validate", action="store_true", help="Run validation after generation")
 
     args = parser.parse_args()
 

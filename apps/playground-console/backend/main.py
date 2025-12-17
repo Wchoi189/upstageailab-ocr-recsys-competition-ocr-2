@@ -40,6 +40,7 @@ async def lifespan(app: FastAPI):
 
     # Import and set up routers after engine initialization
     from routers import inference
+
     inference.set_inference_engine(_inference_engine)
 
     yield
@@ -119,7 +120,7 @@ if __name__ == "__main__":
     # Set multiprocessing start method to prevent semaphore leaks
     # This must be called before any multiprocessing/threading operations
     try:
-        multiprocessing.set_start_method('spawn', force=True)
+        multiprocessing.set_start_method("spawn", force=True)
     except RuntimeError:
         # Already set, ignore
         pass

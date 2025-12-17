@@ -143,9 +143,7 @@ class ConfigLoader:
         if docs:
             overrides.setdefault("paths", {})["docs"] = docs
         if strict_mode is not None:
-            overrides.setdefault("validation", {})["strict_mode"] = (
-                strict_mode.lower() == "true"
-            )
+            overrides.setdefault("validation", {})["strict_mode"] = strict_mode.lower() == "true"
         return overrides
 
     def _load_yaml(self, path: Path) -> dict[str, Any]:
@@ -212,11 +210,7 @@ class ConfigLoader:
     def _merge_config(self, base: dict[str, Any], override: dict[str, Any]) -> dict[str, Any]:
         result = deepcopy(base)
         for key, value in override.items():
-            if (
-                key in result
-                and isinstance(result[key], dict)
-                and isinstance(value, dict)
-            ):
+            if key in result and isinstance(result[key], dict) and isinstance(value, dict):
                 result[key] = self._merge_config(result[key], value)
             else:
                 result[key] = deepcopy(value)

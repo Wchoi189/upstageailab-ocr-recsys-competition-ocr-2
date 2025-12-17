@@ -14,6 +14,7 @@ from server import app
 def client():
     return TestClient(app)
 
+
 def test_system_status(client):
     response = client.get("/status")
     assert response.status_code == 200
@@ -21,15 +22,18 @@ def test_system_status(client):
     assert data["status"] == "online"
     assert "version" in data
 
+
 def test_system_health(client):
     response = client.get("/api/v1/health")
     assert response.status_code == 200
     assert response.json() == {"status": "ok"}
 
+
 def test_system_version(client):
     response = client.get("/api/v1/version")
     assert response.status_code == 200
     assert "version" in response.json()
+
 
 def test_fs_list_root(client):
     # List project root
@@ -42,13 +46,10 @@ def test_fs_list_root(client):
     names = [item["name"] for item in data["items"]]
     assert "apps" in names or "README.md" in names
 
+
 def test_artifact_lifecycle(client):
     # 1. Create
-    new_artifact = {
-        "type": "implementation_plan",
-        "title": "Integration Test Plan",
-        "content": "# Test Content\nThis is a test."
-    }
+    new_artifact = {"type": "implementation_plan", "title": "Integration Test Plan", "content": "# Test Content\nThis is a test."}
     response = client.post("/api/v1/artifacts", json=new_artifact)
     assert response.status_code == 200
     created = response.json()
@@ -71,10 +72,7 @@ def test_artifact_lifecycle(client):
     assert artifact_id in ids
 
     # 4. Update
-    update_data = {
-        "content": "# Updated Content",
-        "frontmatter_updates": {"status": "active"}
-    }
+    update_data = {"content": "# Updated Content", "frontmatter_updates": {"status": "active"}}
     response = client.put(f"/api/v1/artifacts/{artifact_id}", json=update_data)
     assert response.status_code == 200
     updated = response.json()
@@ -92,6 +90,7 @@ def test_artifact_lifecycle(client):
     # The API returns 404 if not found in active folders
     response = client.get(f"/api/v1/artifacts/{artifact_id}")
     assert response.status_code == 404
+
 
 def test_compliance_validate(client):
     # Test validation endpoint

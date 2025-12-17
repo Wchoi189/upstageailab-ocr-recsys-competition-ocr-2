@@ -31,9 +31,7 @@ from typing import Any
 try:
     import yaml
 except ImportError:
-    print(
-        "ERROR: PyYAML not installed. Install with: pip install pyyaml", file=sys.stderr
-    )
+    print("ERROR: PyYAML not installed. Install with: pip install pyyaml", file=sys.stderr)
     sys.exit(1)
 
 from AgentQMS.agent_tools.utils.paths import get_project_root
@@ -175,10 +173,7 @@ def load_bundle_definition(bundle_name: str) -> dict[str, Any]:
     # Not found in either location
     available = list_available_bundles()
     available_str = ", ".join(available) if available else "none"
-    raise FileNotFoundError(
-        f"Bundle '{bundle_name}' not found. "
-        f"Available bundles: {available_str}"
-    )
+    raise FileNotFoundError(f"Bundle '{bundle_name}' not found. Available bundles: {available_str}")
 
 
 def is_fresh(path: Path | str, days: int = 30) -> bool:
@@ -285,9 +280,7 @@ def validate_bundle_files(bundle_def: dict[str, Any]) -> list[str]:
     return valid_paths
 
 
-def get_context_bundle(
-    task_description: str, task_type: str | None = None
-) -> list[str]:
+def get_context_bundle(task_description: str, task_type: str | None = None) -> list[str]:
     """
     Get context bundle for a task.
 
@@ -429,9 +422,7 @@ def main():
     """Main entry point for CLI usage."""
     import argparse
 
-    parser = argparse.ArgumentParser(
-        description="Generate context bundles for AI agent tasks"
-    )
+    parser = argparse.ArgumentParser(description="Generate context bundles for AI agent tasks")
     parser.add_argument(
         "--task",
         type=str,
@@ -471,7 +462,7 @@ def main():
         print(f"Task Type: {suggestions['task_type']}")
         print(f"Context Bundle: {suggestions['context_bundle']}")
         print(f"\nBundle Files ({len(suggestions['bundle_files'])}):")
-        for f in suggestions['bundle_files']:
+        for f in suggestions["bundle_files"]:
             print(f"  - {f}")
         if suggestions.get("suggested_workflows"):
             print("\nSuggested Workflows:")
@@ -493,4 +484,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-

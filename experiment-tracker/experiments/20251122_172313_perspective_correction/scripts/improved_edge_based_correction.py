@@ -11,8 +11,6 @@ This approach:
 
 import logging
 import math
-from pathlib import Path
-from typing import Any
 
 import cv2
 import numpy as np
@@ -28,6 +26,7 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # BUG-20251124-002: Validation / Utility Functions
 # ============================================================================
+
 
 def calculate_background_ratio(mask: np.ndarray) -> float:
     """
@@ -218,7 +217,7 @@ def reinforce_mask(mask: np.ndarray, collar: int = 3) -> np.ndarray:
     kernel = np.ones((collar, collar), np.uint8)
 
     # Treat background as white for morphology operations
-    background = ((mask == 0).astype(np.uint8) * 255)
+    background = (mask == 0).astype(np.uint8) * 255
     background = cv2.morphologyEx(background, cv2.MORPH_CLOSE, kernel)
     expanded_bg = cv2.dilate(background, kernel, iterations=1)
 
@@ -266,13 +265,13 @@ def enforce_single_edge_per_side(edge_groups: dict[str, np.ndarray], image_shape
 
     for edge_name, points in edge_groups.items():
         pts = points
-        if edge_name == 'top':
+        if edge_name == "top":
             pts = _select_outer_band(points, axis=1, keep_high=False, band_size=band_y, min_points=25)
-        elif edge_name == 'bottom':
+        elif edge_name == "bottom":
             pts = _select_outer_band(points, axis=1, keep_high=True, band_size=band_y, min_points=25)
-        elif edge_name == 'left':
+        elif edge_name == "left":
             pts = _select_outer_band(points, axis=0, keep_high=False, band_size=band_x, min_points=25)
-        elif edge_name == 'right':
+        elif edge_name == "right":
             pts = _select_outer_band(points, axis=0, keep_high=True, band_size=band_x, min_points=25)
 
         refined[edge_name] = pts
@@ -445,7 +444,7 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
     """
     points = ensure_point_array(points)
     if points is None or len(points) == 0:
-        return {'top': np.array([]), 'right': np.array([]), 'bottom': np.array([]), 'left': np.array([])}
+        return {"top": np.array([]), "right": np.array([]), "bottom": np.array([]), "left": np.array([])}
 
     h, w = image_shape[:2]
 
@@ -505,10 +504,10 @@ def group_edge_points(points: np.ndarray, image_shape: tuple[int, int]) -> dict[
     # Convert boolean masks to indices and ensure arrays are 2D
     result = {}
     for edge_name, mask_array in [
-        ('top', top_mask),
-        ('right', right_mask),
-        ('bottom', bottom_mask),
-        ('left', left_mask),
+        ("top", top_mask),
+        ("right", right_mask),
+        ("bottom", bottom_mask),
+        ("left", left_mask),
     ]:
         if np.any(mask_array):
             edge_points = ensure_point_array(points[mask_array])
@@ -639,12 +638,15 @@ def fit_quadrilateral_from_edges(
     if edge_points is None or len(edge_points) < 4:
         # Fallback: use bounding box
         h, w = image_shape[:2]
-        corners = np.array([
-            [0, 0],
-            [w-1, 0],
-            [w-1, h-1],
-            [0, h-1],
-        ], dtype=np.float32)
+        corners = np.array(
+            [
+                [0, 0],
+                [w - 1, 0],
+                [w - 1, h - 1],
+                [0, h - 1],
+            ],
+            dtype=np.float32,
+        )
 
         # BUG-20251124-002: Bounding box fallback must bypass proximity check so
         # we still return a quadrilateral when edges are missing.
@@ -671,56 +673,56 @@ def fit_quadrilateral_from_edges(
     corners = []
 
     # Top-left: top and left lines
-    corner_tl = intersect_lines(lines.get('top'), lines.get('left'))
+    corner_tl = intersect_lines(lines.get("top"), lines.get("left"))
     if corner_tl is not None:
         corners.append(corner_tl)
     else:
         # Fallback: use extreme point
-        if len(edge_groups['top']) > 0 and len(edge_groups['left']) > 0:
-            top_min_x = edge_groups['top'][np.argmin(edge_groups['top'][:, 0])]
-            left_min_y = edge_groups['left'][np.argmin(edge_groups['left'][:, 1])]
+        if len(edge_groups["top"]) > 0 and len(edge_groups["left"]) > 0:
+            top_min_x = edge_groups["top"][np.argmin(edge_groups["top"][:, 0])]
+            left_min_y = edge_groups["left"][np.argmin(edge_groups["left"][:, 1])]
             corners.append(np.array([top_min_x[0], left_min_y[1]], dtype=np.float32))
         else:
             corners.append(np.array([0, 0], dtype=np.float32))
 
     # Top-right: top and right lines
-    corner_tr = intersect_lines(lines.get('top'), lines.get('right'))
+    corner_tr = intersect_lines(lines.get("top"), lines.get("right"))
     if corner_tr is not None:
         corners.append(corner_tr)
     else:
-        if len(edge_groups['top']) > 0 and len(edge_groups['right']) > 0:
-            top_max_x = edge_groups['top'][np.argmax(edge_groups['top'][:, 0])]
-            right_min_y = edge_groups['right'][np.argmin(edge_groups['right'][:, 1])]
+        if len(edge_groups["top"]) > 0 and len(edge_groups["right"]) > 0:
+            top_max_x = edge_groups["top"][np.argmax(edge_groups["top"][:, 0])]
+            right_min_y = edge_groups["right"][np.argmin(edge_groups["right"][:, 1])]
             corners.append(np.array([top_max_x[0], right_min_y[1]], dtype=np.float32))
         else:
             h, w = image_shape[:2]
-            corners.append(np.array([w-1, 0], dtype=np.float32))
+            corners.append(np.array([w - 1, 0], dtype=np.float32))
 
     # Bottom-right: bottom and right lines
-    corner_br = intersect_lines(lines.get('bottom'), lines.get('right'))
+    corner_br = intersect_lines(lines.get("bottom"), lines.get("right"))
     if corner_br is not None:
         corners.append(corner_br)
     else:
-        if len(edge_groups['bottom']) > 0 and len(edge_groups['right']) > 0:
-            bottom_max_x = edge_groups['bottom'][np.argmax(edge_groups['bottom'][:, 0])]
-            right_max_y = edge_groups['right'][np.argmax(edge_groups['right'][:, 1])]
+        if len(edge_groups["bottom"]) > 0 and len(edge_groups["right"]) > 0:
+            bottom_max_x = edge_groups["bottom"][np.argmax(edge_groups["bottom"][:, 0])]
+            right_max_y = edge_groups["right"][np.argmax(edge_groups["right"][:, 1])]
             corners.append(np.array([bottom_max_x[0], right_max_y[1]], dtype=np.float32))
         else:
             h, w = image_shape[:2]
-            corners.append(np.array([w-1, h-1], dtype=np.float32))
+            corners.append(np.array([w - 1, h - 1], dtype=np.float32))
 
     # Bottom-left: bottom and left lines
-    corner_bl = intersect_lines(lines.get('bottom'), lines.get('left'))
+    corner_bl = intersect_lines(lines.get("bottom"), lines.get("left"))
     if corner_bl is not None:
         corners.append(corner_bl)
     else:
-        if len(edge_groups['bottom']) > 0 and len(edge_groups['left']) > 0:
-            bottom_min_x = edge_groups['bottom'][np.argmin(edge_groups['bottom'][:, 0])]
-            left_max_y = edge_groups['left'][np.argmax(edge_groups['left'][:, 1])]
+        if len(edge_groups["bottom"]) > 0 and len(edge_groups["left"]) > 0:
+            bottom_min_x = edge_groups["bottom"][np.argmin(edge_groups["bottom"][:, 0])]
+            left_max_y = edge_groups["left"][np.argmax(edge_groups["left"][:, 1])]
             corners.append(np.array([bottom_min_x[0], left_max_y[1]], dtype=np.float32))
         else:
             h, w = image_shape[:2]
-            corners.append(np.array([0, h-1], dtype=np.float32))
+            corners.append(np.array([0, h - 1], dtype=np.float32))
 
     corners = np.array(corners, dtype=np.float32)
 
@@ -775,10 +777,10 @@ def visualize_edges_and_lines(
 
     # Draw edge points with different colors
     colors = {
-        'top': (0, 255, 0),      # Green
-        'right': (255, 0, 0),   # Blue
-        'bottom': (0, 0, 255),  # Red
-        'left': (255, 255, 0),  # Cyan
+        "top": (0, 255, 0),  # Green
+        "right": (255, 0, 0),  # Blue
+        "bottom": (0, 0, 255),  # Red
+        "left": (255, 255, 0),  # Cyan
     }
 
     for edge_name, points in edge_groups.items():
@@ -801,12 +803,10 @@ def visualize_edges_and_lines(
     for i, corner in enumerate(corners):
         pt = tuple(corner.astype(int))
         cv2.circle(vis, pt, 10, (0, 255, 255), -1)
-        cv2.putText(vis, str(i), (pt[0] + 15, pt[1]),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
+        cv2.putText(vis, str(i), (pt[0] + 15, pt[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 255), 2)
 
     # Draw quadrilateral
     pts = corners.astype(int).reshape((-1, 1, 2))
     cv2.polylines(vis, [pts], True, (255, 255, 255), 2)
 
     return vis
-

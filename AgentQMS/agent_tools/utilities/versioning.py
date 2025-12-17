@@ -242,9 +242,7 @@ class VersionManager:
             return None
 
     @staticmethod
-    def update_version_in_frontmatter(
-        artifact_path: Path, new_version: SemanticVersion
-    ) -> bool:
+    def update_version_in_frontmatter(artifact_path: Path, new_version: SemanticVersion) -> bool:
         """Update version in artifact frontmatter.
 
         Args:
@@ -301,9 +299,7 @@ class VersionValidator:
         return bool(VersionValidator.VERSION_PATTERN.match(str(version_str).strip()))
 
     @staticmethod
-    def validate_version_consistency(
-        artifact_path: Path, artifact_type: str
-    ) -> tuple[bool, str]:
+    def validate_version_consistency(artifact_path: Path, artifact_type: str) -> tuple[bool, str]:
         """Validate version consistency for artifact.
 
         Args:

@@ -71,8 +71,9 @@ def train(config: DictConfig):
     # Disable struct mode to allow Hydra to populate runtime fields dynamically
     # This fixes "Key 'mode' is not in struct" errors with Hydra 1.3.2
     from omegaconf import OmegaConf
+
     OmegaConf.set_struct(config, False)
-    if hasattr(config, 'hydra') and config.hydra is not None:
+    if hasattr(config, "hydra") and config.hydra is not None:
         OmegaConf.set_struct(config.hydra, False)
 
     # === LAZY IMPORTS: Heavy ML libraries loaded here after Hydra config validation ===
@@ -82,9 +83,9 @@ def train(config: DictConfig):
     # - Improved development iteration speed (3-5x faster)
     import lightning.pytorch as pl
     import torch
+    import wandb
     from lightning.pytorch.callbacks import LearningRateMonitor
 
-    import wandb
     from ocr.lightning_modules import get_pl_modules_by_cfg
     # === END LAZY IMPORTS ===
 

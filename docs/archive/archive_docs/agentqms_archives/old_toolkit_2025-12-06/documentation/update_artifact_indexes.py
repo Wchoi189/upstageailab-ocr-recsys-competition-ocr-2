@@ -15,8 +15,8 @@ import argparse
 from datetime import datetime
 from pathlib import Path
 
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from AgentQMS.agent_tools.utils.paths import get_project_root
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
@@ -24,9 +24,7 @@ ensure_project_root_on_sys_path()
 class ArtifactIndexUpdater:
     """Updates INDEX.md files in artifact directories."""
 
-    def __init__(
-        self, artifacts_root: str = "docs/artifacts", public_only: bool = True
-    ):
+    def __init__(self, artifacts_root: str = "docs/artifacts", public_only: bool = True):
         artifacts_root_path = Path(artifacts_root)
         if not artifacts_root_path.is_absolute():
             artifacts_root_path = get_project_root() / artifacts_root_path
@@ -145,9 +143,7 @@ class ArtifactIndexUpdater:
 
             if description_lines:
                 info["description"] = (
-                    " ".join(description_lines)[:200] + "..."
-                    if len(" ".join(description_lines)) > 200
-                    else " ".join(description_lines)
+                    " ".join(description_lines)[:200] + "..." if len(" ".join(description_lines)) > 200 else " ".join(description_lines)
                 )
 
         except Exception as e:
@@ -162,9 +158,7 @@ class ArtifactIndexUpdater:
             tags = [t.strip() for t in tags.split(",")]
         return "internal" in tags or "Internal" in tags
 
-    def filter_public(
-        self, artifacts: list[dict], public_only: bool = True
-    ) -> list[dict]:
+    def filter_public(self, artifacts: list[dict], public_only: bool = True) -> list[dict]:
         """Filter out internal docs if public_only is True."""
         if not public_only:
             return artifacts
@@ -190,9 +184,7 @@ class ArtifactIndexUpdater:
         lines.append("")
         lines.append(dir_info["description"])
         lines.append("")
-        lines.append(
-            f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        )
+        lines.append(f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         lines.append(f"**Total Artifacts**: {len(artifacts)}")
         lines.append("")
 
@@ -233,9 +225,7 @@ class ArtifactIndexUpdater:
                     if artifact.get("date"):
                         try:
                             # Parse ISO date and format nicely
-                            date_str = artifact["date"].split("T")[
-                                0
-                            ]  # Get just the date part
+                            date_str = artifact["date"].split("T")[0]  # Get just the date part
                             metadata.append(f"📅 {date_str}")
                         except Exception:
                             pass
@@ -357,9 +347,7 @@ class ArtifactIndexUpdater:
         lines = []
         lines.append("# Master Artifact Registry")
         lines.append("")
-        lines.append(
-            f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}"
-        )
+        lines.append(f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
         lines.append(f"**Total Artifacts**: {len(all_artifacts)}")
         lines.append("")
 
@@ -373,12 +361,8 @@ class ArtifactIndexUpdater:
 
         lines.append("## By Category")
         for dir_name, artifacts in by_directory.items():
-            dir_info = self.directories.get(
-                dir_name, {"title": dir_name.title(), "icon": "📁"}
-            )
-            lines.append(
-                f"- [{dir_info['icon']} {dir_info['title']}]({dir_name}/INDEX.md) ({len(artifacts)})"
-            )
+            dir_info = self.directories.get(dir_name, {"title": dir_name.title(), "icon": "📁"})
+            lines.append(f"- [{dir_info['icon']} {dir_info['title']}]({dir_name}/INDEX.md) ({len(artifacts)})")
 
         lines.append("")
 
@@ -415,16 +399,12 @@ class ArtifactIndexUpdater:
             if "T" in date_str:
                 date_str = date_str.split("T")[0]
             dir_info = self.directories.get(artifact["directory"], {"icon": "📁"})
-            lines.append(
-                f"- {date_str}: {dir_info['icon']} {artifact['title']} ({artifact['directory']})"
-            )
+            lines.append(f"- {date_str}: {dir_info['icon']} {artifact['title']} ({artifact['directory']})")
 
         lines.append("")
         lines.append("---")
         lines.append("")
-        lines.append(
-            "*This master index is automatically generated. Do not edit manually.*"
-        )
+        lines.append("*This master index is automatically generated. Do not edit manually.*")
 
         # Write master index
         try:
@@ -442,9 +422,7 @@ def main():
     parser = argparse.ArgumentParser(description="Update artifact INDEX.md files")
     parser.add_argument("--directory", help="Update index for specific directory")
     parser.add_argument("--all", action="store_true", help="Update all indexes")
-    parser.add_argument(
-        "--master", action="store_true", help="Update master index only"
-    )
+    parser.add_argument("--master", action="store_true", help="Update master index only")
     parser.add_argument(
         "--artifacts-root",
         default="docs/artifacts",
@@ -458,9 +436,7 @@ def main():
 
     args = parser.parse_args()
 
-    updater = ArtifactIndexUpdater(
-        args.artifacts_root, public_only=not args.include_internal
-    )
+    updater = ArtifactIndexUpdater(args.artifacts_root, public_only=not args.include_internal)
 
     if args.directory:
         directory = Path(args.directory)

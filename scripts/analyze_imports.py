@@ -14,19 +14,16 @@ def extract_imports(file_path: Path):
     except Exception as e:
         return None, str(e)
 
-    imports = {
-        'direct': [],
-        'from': []
-    }
+    imports = {"direct": [], "from": []}
 
     for node in ast.walk(tree):
         if isinstance(node, ast.Import):
             for alias in node.names:
-                imports['direct'].append(alias.name)
+                imports["direct"].append(alias.name)
         elif isinstance(node, ast.ImportFrom):
-            module = node.module or ''
+            module = node.module or ""
             for alias in node.names:
-                imports['from'].append(f"{module}.{alias.name}" if module else alias.name)
+                imports["from"].append(f"{module}.{alias.name}" if module else alias.name)
 
     return imports, None
 
@@ -62,12 +59,12 @@ def analyze_training_imports():
         project_imports = []
         stdlib_imports = []
 
-        all_imps = imports['direct'] + imports['from']
+        all_imps = imports["direct"] + imports["from"]
         for imp in all_imps:
-            if any(heavy in imp for heavy in ['torch', 'transformers', 'lightning', 'wandb', 'albumentations', 'cv2', 'PIL']):
+            if any(heavy in imp for heavy in ["torch", "transformers", "lightning", "wandb", "albumentations", "cv2", "PIL"]):
                 heavy_imports.append(imp)
-                all_imports['heavy'].append((file_path.name, imp))
-            elif imp.startswith('ocr.') or imp.startswith('ui.'):
+                all_imports["heavy"].append((file_path.name, imp))
+            elif imp.startswith("ocr.") or imp.startswith("ui."):
                 project_imports.append(imp)
             else:
                 stdlib_imports.append(imp)
@@ -95,8 +92,8 @@ def analyze_training_imports():
     print("SUMMARY: Heavy imports across all training files")
     print("=" * 90)
 
-    if all_imports['heavy']:
-        for file, imp in sorted(set(all_imports['heavy'])):
+    if all_imports["heavy"]:
+        for file, imp in sorted(set(all_imports["heavy"])):
             print(f"  {file:30s} → {imp}")
     else:
         print("  ✅ No heavy imports at top level!")
@@ -104,7 +101,7 @@ def analyze_training_imports():
     print("\n\n" + "=" * 90)
     print("RECOMMENDATIONS")
     print("=" * 90)
-    if all_imports['heavy']:
+    if all_imports["heavy"]:
         print("❌ Heavy imports found at top level - these slow down startup!")
         print("\nTo fix:")
         print("  1. Move heavy imports inside functions (lazy loading)")

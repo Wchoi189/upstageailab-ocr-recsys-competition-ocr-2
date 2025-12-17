@@ -6,10 +6,7 @@ import pytest
 from ocr.inference.dependencies import torch, transforms
 
 # Skip all tests if torch/transforms not available
-pytestmark = pytest.mark.skipif(
-    torch is None or transforms is None,
-    reason="Torch or torchvision not available"
-)
+pytestmark = pytest.mark.skipif(torch is None or transforms is None, reason="Torch or torchvision not available")
 
 
 @pytest.fixture
@@ -18,11 +15,13 @@ def sample_transform():
     if transforms is None:
         pytest.skip("Torchvision not available")
 
-    return transforms.Compose([
-        transforms.ToPILImage(),
-        transforms.ToTensor(),
-        transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
-    ])
+    return transforms.Compose(
+        [
+            transforms.ToPILImage(),
+            transforms.ToTensor(),
+            transforms.Normalize(mean=[0.485, 0.456, 0.406], std=[0.229, 0.224, 0.225]),
+        ]
+    )
 
 
 @pytest.fixture

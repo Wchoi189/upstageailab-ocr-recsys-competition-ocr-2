@@ -31,10 +31,10 @@ try:
         sys.path.insert(0, str(script_dir))
 
     from optimized_rembg import (
-        OptimizedBackgroundRemover,
-        REMBG_AVAILABLE,
         GPU_AVAILABLE,
+        REMBG_AVAILABLE,
         TENSORRT_AVAILABLE,
+        OptimizedBackgroundRemover,
     )
 except ImportError as e:
     logger.error(f"Failed to import optimized_rembg: {e}")
@@ -280,10 +280,14 @@ def main():
             logger.info(f"  CPU:      {np.mean(cpu_times):.3f}s (min: {np.min(cpu_times):.3f}s, max: {np.max(cpu_times):.3f}s)")
         if gpu_times:
             speedup = np.mean(cpu_times) / np.mean(gpu_times) if cpu_times else 0
-            logger.info(f"  GPU:      {np.mean(gpu_times):.3f}s (min: {np.min(gpu_times):.3f}s, max: {np.max(gpu_times):.3f}s) - {speedup:.2f}x faster")
+            logger.info(
+                f"  GPU:      {np.mean(gpu_times):.3f}s (min: {np.min(gpu_times):.3f}s, max: {np.max(gpu_times):.3f}s) - {speedup:.2f}x faster"
+            )
         if trt_times:
             speedup = np.mean(cpu_times) / np.mean(trt_times) if cpu_times else 0
-            logger.info(f"  TensorRT: {np.mean(trt_times):.3f}s (min: {np.min(trt_times):.3f}s, max: {np.max(trt_times):.3f}s) - {speedup:.2f}x faster")
+            logger.info(
+                f"  TensorRT: {np.mean(trt_times):.3f}s (min: {np.min(trt_times):.3f}s, max: {np.max(trt_times):.3f}s) - {speedup:.2f}x faster"
+            )
 
     logger.info("\n" + "=" * 80)
     logger.info(f"Output directory: {args.output_dir}")
@@ -294,4 +298,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

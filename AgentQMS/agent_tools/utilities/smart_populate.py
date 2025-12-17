@@ -102,12 +102,16 @@ class SmartPopulator:
 
         try:
             # Get recent changed files
-            changed_files = subprocess.run(
-                ["git", "diff", "--name-only", "HEAD~5..HEAD"],
-                cwd=self.project_root,
-                capture_output=True,
-                text=True,
-            ).stdout.strip().split("\n")
+            changed_files = (
+                subprocess.run(
+                    ["git", "diff", "--name-only", "HEAD~5..HEAD"],
+                    cwd=self.project_root,
+                    capture_output=True,
+                    text=True,
+                )
+                .stdout.strip()
+                .split("\n")
+            )
             context["recent_files"] = [f for f in changed_files if f][:10]
         except Exception:
             context["recent_files"] = []

@@ -110,12 +110,7 @@ def check_prohibited_content(file_path: Path) -> tuple[bool, list[str]]:
 
 def validate_file(file_path: Path) -> dict:
     """Validate a single file against ADS v1.0"""
-    result = {
-        "file": str(file_path),
-        "valid": False,
-        "errors": [],
-        "warnings": []
-    }
+    result = {"file": str(file_path), "valid": False, "errors": [], "warnings": []}
 
     # 1. Validate YAML structure
     valid, msg = validate_yaml_structure(file_path)

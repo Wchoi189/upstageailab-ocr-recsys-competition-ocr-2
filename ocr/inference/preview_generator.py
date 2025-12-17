@@ -136,8 +136,7 @@ class PreviewGenerator:
             if metadata is not None:
                 result["meta"] = metadata
                 LOGGER.debug(
-                    "Attached meta to preview response: original_size=%s, processed_size=%s, "
-                    "coordinate_system=%s",
+                    "Attached meta to preview response: original_size=%s, processed_size=%s, coordinate_system=%s",
                     metadata.get("original_size"),
                     metadata.get("processed_size"),
                     metadata.get("coordinate_system"),

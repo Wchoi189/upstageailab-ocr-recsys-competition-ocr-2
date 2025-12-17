@@ -60,9 +60,7 @@ def validate_schema(schema_path: Path) -> bool:
             warnings.append(f"{family_id}: encoder 'model_names' is empty")
         else:
             encoder_names = encoder["model_names"]
-            print(
-                f"✓ {family_id}: {len(encoder_names)} encoder(s) - {', '.join(encoder_names)}"
-            )
+            print(f"✓ {family_id}: {len(encoder_names)} encoder(s) - {', '.join(encoder_names)}")
 
         # Check decoder
         decoder = family.get("decoder", {})
@@ -74,13 +72,9 @@ def validate_schema(schema_path: Path) -> bool:
             errors.append(f"{family_id}: decoder 'in_channels' must be a list")
 
         if "output_channels" not in decoder:
-            warnings.append(
-                f"{family_id}: Missing decoder 'output_channels' (optional but recommended)"
-            )
+            warnings.append(f"{family_id}: Missing decoder 'output_channels' (optional but recommended)")
         if "inner_channels" not in decoder:
-            warnings.append(
-                f"{family_id}: Missing decoder 'inner_channels' (optional but recommended)"
-            )
+            warnings.append(f"{family_id}: Missing decoder 'inner_channels' (optional but recommended)")
 
         # Check head
         head = family.get("head", {})
@@ -89,9 +83,7 @@ def validate_schema(schema_path: Path) -> bool:
 
         # Optional description
         if "description" not in family:
-            warnings.append(
-                f"{family_id}: Missing 'description' (recommended for documentation)"
-            )
+            warnings.append(f"{family_id}: Missing 'description' (recommended for documentation)")
 
     # Print warnings
     if warnings:

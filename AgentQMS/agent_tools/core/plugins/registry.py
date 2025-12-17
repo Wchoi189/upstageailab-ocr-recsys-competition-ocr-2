@@ -112,16 +112,12 @@ class PluginRegistry:
             return ["validators"] if self.validators else []
         return []
 
-    def add_artifact_type(
-        self, name: str, data: dict[str, Any], metadata: PluginMetadata
-    ) -> None:
+    def add_artifact_type(self, name: str, data: dict[str, Any], metadata: PluginMetadata) -> None:
         """Add an artifact type to the registry."""
         self.artifact_types[name] = data
         self.metadata.append(metadata)
 
-    def add_context_bundle(
-        self, name: str, data: dict[str, Any], metadata: PluginMetadata
-    ) -> None:
+    def add_context_bundle(self, name: str, data: dict[str, Any], metadata: PluginMetadata) -> None:
         """Add a context bundle to the registry."""
         self.context_bundles[name] = data
         self.metadata.append(metadata)
@@ -130,9 +126,7 @@ class PluginRegistry:
         """Add a validation error to the registry."""
         self.validation_errors.append(error)
 
-    def get_metadata_for_plugin(
-        self, name: str, plugin_type: str
-    ) -> PluginMetadata | None:
+    def get_metadata_for_plugin(self, name: str, plugin_type: str) -> PluginMetadata | None:
         """Get metadata for a specific plugin."""
         for m in self.metadata:
             if m.name == name and m.plugin_type == plugin_type:
@@ -147,4 +141,3 @@ class PluginRegistry:
             "validators": bool(self.validators),
             "errors": len(self.validation_errors),
         }
-

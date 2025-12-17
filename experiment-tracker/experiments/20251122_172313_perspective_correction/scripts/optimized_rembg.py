@@ -10,18 +10,18 @@ This module provides an optimized background removal class that:
 - Supports INT8 quantized models
 """
 
+import logging
+import os
+from pathlib import Path
+
 import cv2
 import numpy as np
-import os
-import logging
-from pathlib import Path
-from typing import Optional
 from PIL import Image
 
 logger = logging.getLogger(__name__)
 
 try:
-    from rembg import remove, new_session
+    from rembg import new_session, remove
 
     REMBG_AVAILABLE = True
 except ImportError:
@@ -86,10 +86,8 @@ class OptimizedBackgroundRemover:
             sess_opts = ort.SessionOptions()
             # Set providers explicitly to ensure GPU is used
             if self.use_tensorrt and TENSORRT_AVAILABLE:
-                providers = ["TensorrtExecutionProvider", "CUDAExecutionProvider", "CPUExecutionProvider"]
                 logger.info("Using TensorRT + CUDA providers")
             else:
-                providers = ["CUDAExecutionProvider", "CPUExecutionProvider"]
                 logger.info("Using CUDA provider")
             # Note: rembg's new_session may not directly accept providers,
             # but we can try to pass sess_opts
@@ -113,12 +111,12 @@ class OptimizedBackgroundRemover:
             self.session = new_session(actual_model_name)
 
         # Verify which provider is actually being used
-        if hasattr(self.session, 'inner_session'):
+        if hasattr(self.session, "inner_session"):
             actual_providers = self.session.inner_session.get_providers()
             logger.info(f"Session is using providers: {actual_providers}")
-            if actual_providers and 'CUDAExecutionProvider' in actual_providers[0]:
+            if actual_providers and "CUDAExecutionProvider" in actual_providers[0]:
                 logger.info("✓ GPU (CUDA) is active")
-            elif actual_providers and 'TensorrtExecutionProvider' in actual_providers[0]:
+            elif actual_providers and "TensorrtExecutionProvider" in actual_providers[0]:
                 logger.info("✓ TensorRT is active")
             else:
                 logger.warning(f"⚠ Using CPU provider: {actual_providers[0] if actual_providers else 'Unknown'}")
@@ -150,9 +148,7 @@ class OptimizedBackgroundRemover:
             logger.info("CUDA GPU enabled")
         else:
             if self.use_gpu or self.use_tensorrt:
-                logger.warning(
-                    f"GPU/TensorRT requested but not available. Available providers: {available_providers}"
-                )
+                logger.warning(f"GPU/TensorRT requested but not available. Available providers: {available_providers}")
             logger.info("Using CPU execution provider")
 
     def _get_model_name(self) -> str:
@@ -161,7 +157,6 @@ class OptimizedBackgroundRemover:
             # Check if INT8 quantized model exists
             # Note: rembg doesn't officially support INT8 models, but we can check
             # for custom quantized models if they exist
-            int8_model_name = f"{self.model_name}_int8"
             logger.info(f"INT8 requested, but rembg may not have quantized models. Using {self.model_name}")
             # For now, return original model name
             # In the future, if quantized models are available, check for them here
@@ -237,4 +232,3 @@ class OptimizedBackgroundRemover:
             result_bgr = cv2.cvtColor(output_array, cv2.COLOR_RGB2BGR)
 
         return result_bgr
-

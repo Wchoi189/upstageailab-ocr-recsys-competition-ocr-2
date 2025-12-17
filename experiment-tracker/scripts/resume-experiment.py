@@ -8,6 +8,7 @@ This script allows you to:
 - List available experiments
 - Show current active experiment
 """
+
 import argparse
 import sys
 from pathlib import Path
@@ -40,7 +41,8 @@ def list_experiments(tracker: ExperimentTracker):
         # Format timestamp for display
         try:
             from datetime import datetime
-            dt = datetime.fromisoformat(timestamp.replace('Z', '+00:00'))
+
+            dt = datetime.fromisoformat(timestamp.replace("Z", "+00:00"))
             created = dt.strftime("%Y-%m-%d %H:%M")
         except:
             created = timestamp[:16] if len(timestamp) > 16 else timestamp
@@ -68,6 +70,7 @@ def show_current(tracker: ExperimentTracker):
             state_file = paths.get_context_file("state")
             if state_file.exists():
                 import yaml
+
                 with open(state_file) as f:
                     meta = yaml.safe_load(f) or {}
                     if "current_phase" in meta:
@@ -97,6 +100,7 @@ def resume_by_id(tracker: ExperimentTracker, experiment_id: str):
         state_file = paths.get_context_file("state")
         if state_file.exists():
             import yaml
+
             with open(state_file) as f:
                 meta = yaml.safe_load(f) or {}
                 if "current_phase" in meta:
@@ -151,27 +155,13 @@ Examples:
 
   # Show current experiment
   resume-experiment.py --current
-        """
+        """,
     )
 
-    parser.add_argument(
-        "--id",
-        help="Experiment ID to resume (e.g., 20251122_172313_perspective_correction)"
-    )
-    parser.add_argument(
-        "--type",
-        help="Resume latest experiment of this type"
-    )
-    parser.add_argument(
-        "--list",
-        action="store_true",
-        help="List all available experiments"
-    )
-    parser.add_argument(
-        "--current",
-        action="store_true",
-        help="Show current active experiment"
-    )
+    parser.add_argument("--id", help="Experiment ID to resume (e.g., 20251122_172313_perspective_correction)")
+    parser.add_argument("--type", help="Resume latest experiment of this type")
+    parser.add_argument("--list", action="store_true", help="List all available experiments")
+    parser.add_argument("--current", action="store_true", help="Show current active experiment")
 
     args = parser.parse_args()
 
@@ -194,4 +184,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-

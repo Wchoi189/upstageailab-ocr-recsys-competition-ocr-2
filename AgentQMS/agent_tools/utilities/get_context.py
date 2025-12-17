@@ -32,6 +32,7 @@ try:
         list_available_bundles,
         print_context_bundle,
     )
+
     CONTEXT_BUNDLES_AVAILABLE = True
 except ImportError:
     # Graceful fallback if context_bundle module not available
@@ -50,6 +51,7 @@ def _get_doc_index_path() -> Path:
         return new_path
     # Fall back to deprecated location
     from AgentQMS.agent_tools.utils.paths import get_project_root
+
     deprecated_path = get_project_root() / "docs_deprecated" / "ai_handbook" / "index.json"
     if deprecated_path.exists():
         return deprecated_path
@@ -136,9 +138,7 @@ def lookup_entry(index: dict[str, Any], entry_id: str) -> None:
 
 def parse_args(argv: list[str]) -> argparse.Namespace:
     """Parse command line arguments."""
-    parser = argparse.ArgumentParser(
-        description="Print documentation bundles or entries for agents."
-    )
+    parser = argparse.ArgumentParser(description="Print documentation bundles or entries for agents.")
 
     # Context bundle arguments (recommended)
     context_group = parser.add_argument_group("Context Bundles (YAML) - Recommended")
@@ -176,9 +176,7 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     context_args = [args.task, args.type, args.list_context_bundles]
 
     if not any(legacy_args) and not any(context_args):
-        parser.error(
-            "At least one argument required. Use --help to see available options."
-        )
+        parser.error("At least one argument required. Use --help to see available options.")
 
     return args
 
@@ -244,4 +242,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

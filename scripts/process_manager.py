@@ -7,10 +7,12 @@ This script is no longer functional.
 
 import sys
 
+
 def main():
     print("ERROR: Streamlit applications have been archived and this manager is deprecated.")
     print("See docs/archive/legacy_ui_code/ui/ for the archived code.")
     sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

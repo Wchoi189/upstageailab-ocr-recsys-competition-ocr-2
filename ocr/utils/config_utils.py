@@ -34,7 +34,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
 
     from omegaconf import OmegaConf
 
-    config_dir = Path('configs').resolve()
+    config_dir = Path("configs").resolve()
 
     def resolve_config_path(path_spec: str) -> Path | None:
         """Resolve a Hydra config path specification to an actual file."""
@@ -60,7 +60,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
 
     def nest_at_path(value: dict, path: str) -> dict:
         """Nest a dictionary at a dot-separated path."""
-        if not path or path == '_global_':
+        if not path or path == "_global_":
             return value
 
         parts = path.split(".")
@@ -112,7 +112,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
                     if config_path:
                         # Load the sub-config and apply ITS @package directive
                         sub_cfg = process_config(config_path, skip_own_package=False)
-                        sub_package = extract_package_directive(config_path)
+                        extract_package_directive(config_path)
 
                         # Remove defaults from sub_cfg
                         sub_cfg.pop("defaults", None)
@@ -157,15 +157,15 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
         # HACK: Fix double-nested model key
         # This happens because model/default.yaml and model/architectures/dbnet.yaml
         # both have @package model, causing double nesting
-        if 'model' in cfg and hasattr(cfg.model, 'keys'):
-            if 'model' in cfg.model and 'encoder' not in cfg.model:
+        if "model" in cfg and hasattr(cfg.model, "keys"):
+            if "model" in cfg.model and "encoder" not in cfg.model:
                 # We have cfg.model.model with encoder/decoder/head/loss
                 # Also have cfg.model with optimizer and other top-level keys
                 # Merge them properly
-                model_content = cfg.model['model']
-                optimizer = cfg.model.get('optimizer')
+                model_content = cfg.model["model"]
+                optimizer = cfg.model.get("optimizer")
                 # Keep all keys from model_content and add optimizer if present
-                merged_model = OmegaConf.merge(model_content, {'optimizer': optimizer} if optimizer else {})
+                merged_model = OmegaConf.merge(model_content, {"optimizer": optimizer} if optimizer else {})
                 cfg.model = merged_model
 
         # Apply command-line overrides

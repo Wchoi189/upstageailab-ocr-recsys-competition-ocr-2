@@ -38,8 +38,7 @@ def _detect_project_root() -> Path:
             if any((root / marker).exists() for marker in markers):
                 return root
             warnings.warn(
-                f"VLM_PROJECT_ROOT={env_root} does not appear to be project root "
-                "(missing pyproject.toml or .git). Using anyway.",
+                f"VLM_PROJECT_ROOT={env_root} does not appear to be project root (missing pyproject.toml or .git). Using anyway.",
                 UserWarning,
                 stacklevel=2,
             )
@@ -103,23 +102,13 @@ class VLMPathConfig:
             project_root=project_root,
             vlm_module_dir=vlm_module_dir,
             cache_dir=Path(config.get("cache_dir", project_root / ".vlm_cache")),
-            via_annotations_dir=Path(
-                config.get("via_annotations_dir", vlm_module_dir / "via" / "annotations")
-            ),
-            prompt_templates_dir=Path(
-                config.get("prompt_templates_dir", vlm_module_dir / "prompts")
-            ),
-            analysis_output_dir=Path(
-                config.get("analysis_output_dir", project_root / "artifacts" / "vlm_analysis")
-            ),
+            via_annotations_dir=Path(config.get("via_annotations_dir", vlm_module_dir / "via" / "annotations")),
+            prompt_templates_dir=Path(config.get("prompt_templates_dir", vlm_module_dir / "prompts")),
+            analysis_output_dir=Path(config.get("analysis_output_dir", project_root / "artifacts" / "vlm_analysis")),
             experiment_tracker_dir=(
-                Path(config["experiment_tracker_dir"])
-                if config.get("experiment_tracker_dir")
-                else (project_root / "experiment-tracker")
+                Path(config["experiment_tracker_dir"]) if config.get("experiment_tracker_dir") else (project_root / "experiment-tracker")
             ),
-            artifacts_dir=(
-                Path(config["artifacts_dir"]) if config.get("artifacts_dir") else (project_root / "artifacts")
-            ),
+            artifacts_dir=(Path(config["artifacts_dir"]) if config.get("artifacts_dir") else (project_root / "artifacts")),
         )
 
     def resolve_path(self, path: str | Path, base: Path | None = None) -> Path:
@@ -180,27 +169,15 @@ class VLMPathResolver:
 
     def get_via_annotations_path(self, filename: str = "") -> Path:
         """Get path to VIA annotations directory."""
-        return (
-            self.config.via_annotations_dir / filename
-            if filename
-            else self.config.via_annotations_dir
-        )
+        return self.config.via_annotations_dir / filename if filename else self.config.via_annotations_dir
 
     def get_prompt_templates_path(self, filename: str = "") -> Path:
         """Get path to prompt templates directory."""
-        return (
-            self.config.prompt_templates_dir / filename
-            if filename
-            else self.config.prompt_templates_dir
-        )
+        return self.config.prompt_templates_dir / filename if filename else self.config.prompt_templates_dir
 
     def get_analysis_output_path(self, filename: str = "") -> Path:
         """Get path to analysis output directory."""
-        return (
-            self.config.analysis_output_dir / filename
-            if filename
-            else self.config.analysis_output_dir
-        )
+        return self.config.analysis_output_dir / filename if filename else self.config.analysis_output_dir
 
     def get_experiment_tracker_path(self, *parts: str) -> Path:
         """Get path relative to experiment-tracker directory."""

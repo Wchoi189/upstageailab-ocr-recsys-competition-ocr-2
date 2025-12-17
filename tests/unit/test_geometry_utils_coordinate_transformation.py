@@ -100,9 +100,7 @@ class TestCoordinateTransformationCorrectness:
         recovered = (recovered[:2] / recovered[2]).T
 
         # Should recover original point (within rounding error)
-        assert np.allclose(recovered, original_point, atol=1.0), (
-            f"Roundtrip failed: original={original_point[0]}, " f"recovered={recovered[0]}"
-        )
+        assert np.allclose(recovered, original_point, atol=1.0), f"Roundtrip failed: original={original_point[0]}, recovered={recovered[0]}"
 
     def test_coordinate_roundtrip_center(self):
         """Test that coordinates can be transformed and back with center padding."""
@@ -134,9 +132,7 @@ class TestCoordinateTransformationCorrectness:
         recovered = (recovered[:2] / recovered[2]).T
 
         # Should recover original point (within rounding error)
-        assert np.allclose(recovered, original_point, atol=1.0), (
-            f"Roundtrip failed: original={original_point[0]}, " f"recovered={recovered[0]}"
-        )
+        assert np.allclose(recovered, original_point, atol=1.0), f"Roundtrip failed: original={original_point[0]}, recovered={recovered[0]}"
 
     def test_no_negative_coordinates_top_left(self):
         """Test that top_left padding doesn't produce negative coordinates."""
@@ -171,12 +167,12 @@ class TestCoordinateTransformationCorrectness:
         assert np.all(transformed >= 0), f"Negative coordinates detected: {transformed[transformed < 0]}"
 
         # All coordinates should be within original image bounds
-        assert np.all(
-            transformed[:, 0] <= original_size[0]
-        ), f"X coordinates out of bounds: {transformed[transformed[:, 0] > original_size[0]]}"
-        assert np.all(
-            transformed[:, 1] <= original_size[1]
-        ), f"Y coordinates out of bounds: {transformed[transformed[:, 1] > original_size[1]]}"
+        assert np.all(transformed[:, 0] <= original_size[0]), (
+            f"X coordinates out of bounds: {transformed[transformed[:, 0] > original_size[0]]}"
+        )
+        assert np.all(transformed[:, 1] <= original_size[1]), (
+            f"Y coordinates out of bounds: {transformed[transformed[:, 1] > original_size[1]]}"
+        )
 
     def test_no_negative_coordinates_center(self):
         """Test that center padding doesn't produce negative coordinates."""
@@ -211,12 +207,12 @@ class TestCoordinateTransformationCorrectness:
         assert np.all(transformed >= 0), f"Negative coordinates detected: {transformed[transformed < 0]}"
 
         # All coordinates should be within original image bounds
-        assert np.all(
-            transformed[:, 0] <= original_size[0]
-        ), f"X coordinates out of bounds: {transformed[transformed[:, 0] > original_size[0]]}"
-        assert np.all(
-            transformed[:, 1] <= original_size[1]
-        ), f"Y coordinates out of bounds: {transformed[transformed[:, 1] > original_size[1]]}"
+        assert np.all(transformed[:, 0] <= original_size[0]), (
+            f"X coordinates out of bounds: {transformed[transformed[:, 0] > original_size[0]]}"
+        )
+        assert np.all(transformed[:, 1] <= original_size[1]), (
+            f"Y coordinates out of bounds: {transformed[transformed[:, 1] > original_size[1]]}"
+        )
 
     def test_padding_position_mismatch_detection(self):
         """Test that different padding positions produce different inverse matrices."""
@@ -242,9 +238,9 @@ class TestCoordinateTransformationCorrectness:
         )
 
         # Matrices should be different (translation components differ)
-        assert not np.allclose(
-            inv_matrix_top_left, inv_matrix_center
-        ), "Top-left and center padding should produce different inverse matrices"
+        assert not np.allclose(inv_matrix_top_left, inv_matrix_center), (
+            "Top-left and center padding should produce different inverse matrices"
+        )
 
         # Specifically, translation components should differ
         translation_diff = np.abs(inv_matrix_top_left[:2, 2] - inv_matrix_center[:2, 2])

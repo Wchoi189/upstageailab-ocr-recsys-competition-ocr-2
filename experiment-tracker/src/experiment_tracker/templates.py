@@ -4,7 +4,6 @@ import json
 import re
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Dict, List, Optional
 
 
 @dataclass(frozen=True)
@@ -25,14 +24,14 @@ class TemplateRegistry:
         self.config = config or {}
         self.templates_dir = self.root_dir / self.config.get("templates_path", ".templates")
         self.assessment_index_path = self.templates_dir / "assessment_templates.json"
-        self._assessment_templates: Dict[str, AssessmentTemplate] = {}
+        self._assessment_templates: dict[str, AssessmentTemplate] = {}
         self._load_assessment_templates()
 
-    def list_assessment_templates(self) -> List[AssessmentTemplate]:
+    def list_assessment_templates(self) -> list[AssessmentTemplate]:
         """Return all registered assessment templates."""
         return list(self._assessment_templates.values())
 
-    def get_assessment_template(self, template_key: str) -> Optional[AssessmentTemplate]:
+    def get_assessment_template(self, template_key: str) -> AssessmentTemplate | None:
         """Resolve a template either by id or slugified title."""
         if not template_key:
             return None
@@ -78,5 +77,3 @@ class TemplateRegistry:
         slug = value.strip().lower()
         slug = re.sub(r"[^a-z0-9]+", "-", slug)
         return slug.strip("-")
-
-

@@ -22,7 +22,9 @@ if __name__ == "__main__":
     failed_cases_path = Path("outputs/perspective_comprehensive/failed_cases.json")
     if not failed_cases_path.exists():
         print(f"Error: {failed_cases_path} not found")
-        print("Run: python3 -c \"import json; data = json.load(open('outputs/perspective_comprehensive/results.json')); failures = [r['input_path'] for r in data if not r.get('regular_method', {}).get('validation', {}).get('valid', False)]; json.dump(failures, open('outputs/perspective_comprehensive/failed_cases.json', 'w'), indent=2)\"")
+        print(
+            "Run: python3 -c \"import json; data = json.load(open('outputs/perspective_comprehensive/results.json')); failures = [r['input_path'] for r in data if not r.get('regular_method', {}).get('validation', {}).get('valid', False)]; json.dump(failures, open('outputs/perspective_comprehensive/failed_cases.json', 'w'), indent=2)\""
+        )
         sys.exit(1)
 
     with open(failed_cases_path) as f:
@@ -63,14 +65,18 @@ if __name__ == "__main__":
     regular_valid = [r for r in all_results if r.get("regular_method", {}).get("validation", {}).get("valid")]
     doctr_valid = [r for r in all_results if r.get("doctr_method", {}).get("validation", {}).get("valid")]
     fallback_used = [r for r in all_results if r.get("fallback_used")]
-    both_failed = [r for r in all_results if not r.get("regular_method", {}).get("validation", {}).get("valid") and
-                   not r.get("doctr_method", {}).get("validation", {}).get("valid")]
+    both_failed = [
+        r
+        for r in all_results
+        if not r.get("regular_method", {}).get("validation", {}).get("valid")
+        and not r.get("doctr_method", {}).get("validation", {}).get("valid")
+    ]
 
     print(f"\nTotal retested: {len(all_results)}")
-    print(f"Regular method now valid: {len(regular_valid)} ({100*len(regular_valid)/len(all_results):.1f}%)")
-    print(f"DocTR method now valid: {len(doctr_valid)} ({100*len(doctr_valid)/len(all_results):.1f}%)")
-    print(f"Fallback used: {len(fallback_used)} ({100*len(fallback_used)/len(all_results):.1f}%)")
-    print(f"Both methods still failed: {len(both_failed)} ({100*len(both_failed)/len(all_results):.1f}%)")
+    print(f"Regular method now valid: {len(regular_valid)} ({100 * len(regular_valid) / len(all_results):.1f}%)")
+    print(f"DocTR method now valid: {len(doctr_valid)} ({100 * len(doctr_valid) / len(all_results):.1f}%)")
+    print(f"Fallback used: {len(fallback_used)} ({100 * len(fallback_used) / len(all_results):.1f}%)")
+    print(f"Both methods still failed: {len(both_failed)} ({100 * len(both_failed) / len(all_results):.1f}%)")
 
     # Improvement
     improvement = len(regular_valid) / len(all_results) * 100
@@ -78,4 +84,3 @@ if __name__ == "__main__":
 
     print(f"\nResults saved to: {results_path}")
     print(f"Output images in: {output_dir}")
-

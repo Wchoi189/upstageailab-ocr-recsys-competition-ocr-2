@@ -75,9 +75,7 @@ def cmd_plan_status(ns: argparse.Namespace) -> None:
     rows = get_plan_status(ns.key)
     if ns.concise:
         for r in rows:
-            print(
-                f"{r['key']}: {r['status']} · open_tasks={r['open_tasks']} · {r['title']}"
-            )
+            print(f"{r['key']}: {r['status']} · open_tasks={r['open_tasks']} · {r['title']}")
     else:
         _print(rows)
 
@@ -140,9 +138,7 @@ def cmd_debug_new(ns: argparse.Namespace) -> None:
     key = ns.key or ns.title.lower().replace(" ", "-")
     id_ = create_debug_session(key, ns.title, ns.hypothesis or "", ns.scope or "")
     try:
-        artifact_path = _create_artifact(
-            "bug_report", name=key, title=f"Debug {key} session"
-        )
+        artifact_path = _create_artifact("bug_report", name=key, title=f"Debug {key} session")
     except Exception:
         artifact_path = ""
     _print({"key": key, "id": id_, "artifact": artifact_path})
@@ -192,9 +188,7 @@ def cmd_exp_summarize(ns: argparse.Namespace) -> None:
     if not row:
         raise SystemExit(f"Experiment not found: {ns.key}")
     id_ = save_summary("experiment", int(row[0]), ns.style, text)
-    artifact_path = _create_artifact(
-        "research", name=f"{ns.key}-summary", title=f"Experiment {ns.key} summary"
-    )
+    artifact_path = _create_artifact("research", name=f"{ns.key}-summary", title=f"Experiment {ns.key} summary")
     if artifact_path:
         link_experiment_artifact(ns.key, "summary", artifact_path, None)
     _print({"summary_id": id_, "artifact": artifact_path})
@@ -204,9 +198,7 @@ def cmd_exp_status(ns: argparse.Namespace) -> None:
     from .db import get_connection
 
     conn = get_connection()
-    row = conn.execute(
-        "SELECT id,title,status FROM experiments WHERE key=?", (ns.key,)
-    ).fetchone()
+    row = conn.execute("SELECT id,title,status FROM experiments WHERE key=?", (ns.key,)).fetchone()
     if not row:
         raise SystemExit(f"Experiment not found: {ns.key}")
     runs = conn.execute(
@@ -241,9 +233,7 @@ def cmd_exp_export_runs(ns: argparse.Namespace) -> None:
 
 
 def build_parser() -> argparse.ArgumentParser:
-    p = argparse.ArgumentParser(
-        prog="tracking", description="Development/Debug and Experiment tracking CLI"
-    )
+    p = argparse.ArgumentParser(prog="tracking", description="Development/Debug and Experiment tracking CLI")
     sub = p.add_subparsers(dest="cmd", required=True)
 
     init_p = sub.add_parser("init", help="Initialize SQLite DB schema")
@@ -343,9 +333,7 @@ def build_parser() -> argparse.ArgumentParser:
     er.add_argument("run_no")
     er.add_argument("--params", required=True)
     er.add_argument("--metrics", required=False)
-    er.add_argument(
-        "--outcome", required=True, choices=["pass", "fail", "inconclusive"]
-    )
+    er.add_argument("--outcome", required=True, choices=["pass", "fail", "inconclusive"])
     er.set_defaults(func=cmd_exp_run_add)
 
     el = esub.add_parser("link", help="Link an artifact to an experiment")

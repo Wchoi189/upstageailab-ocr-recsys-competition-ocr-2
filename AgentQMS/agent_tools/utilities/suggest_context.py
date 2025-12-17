@@ -40,9 +40,7 @@ class ContextSuggester:
             project_root = get_project_root()
 
         self.project_root = Path(project_root)
-        self.triggers_file = (
-            self.project_root / ".copilot" / "context" / "workflow-triggers.yaml"
-        )
+        self.triggers_file = self.project_root / ".copilot" / "context" / "workflow-triggers.yaml"
 
         self._task_types: dict[str, Any] = {}
         self._load_triggers()
@@ -50,9 +48,7 @@ class ContextSuggester:
     def _load_triggers(self) -> None:
         """Load workflow triggers configuration."""
         if not self.triggers_file.exists():
-            raise FileNotFoundError(
-                f"Workflow triggers file not found: {self.triggers_file}"
-            )
+            raise FileNotFoundError(f"Workflow triggers file not found: {self.triggers_file}")
 
         try:
             with open(self.triggers_file, encoding="utf-8") as f:
@@ -96,26 +92,30 @@ class ContextSuggester:
         suggestions = []
         for task_type, score in ranked:
             config = self._task_types[task_type]
-            suggestions.append({
-                "task_type": task_type,
-                "score": score,
-                "context_bundle": config.get("context_bundle"),
-                "matched_keywords": matched_keywords.get(task_type, []),
-                "suggested_workflows": config.get("suggested_workflows", []),
-                "suggested_tools": config.get("suggested_tools", []),
-            })
+            suggestions.append(
+                {
+                    "task_type": task_type,
+                    "score": score,
+                    "context_bundle": config.get("context_bundle"),
+                    "matched_keywords": matched_keywords.get(task_type, []),
+                    "suggested_workflows": config.get("suggested_workflows", []),
+                    "suggested_tools": config.get("suggested_tools", []),
+                }
+            )
 
         # Always include general as fallback if nothing matched
         if not suggestions:
             config = self._task_types.get("general", {})
-            suggestions.append({
-                "task_type": "general",
-                "score": 0,
-                "context_bundle": config.get("context_bundle"),
-                "matched_keywords": [],
-                "suggested_workflows": config.get("suggested_workflows", []),
-                "suggested_tools": config.get("suggested_tools", []),
-            })
+            suggestions.append(
+                {
+                    "task_type": "general",
+                    "score": 0,
+                    "context_bundle": config.get("context_bundle"),
+                    "matched_keywords": [],
+                    "suggested_workflows": config.get("suggested_workflows", []),
+                    "suggested_tools": config.get("suggested_tools", []),
+                }
+            )
 
         return {
             "task_description": task_description,
@@ -158,7 +158,7 @@ class ContextSuggester:
                 workflow_cmds = [f"make {w}" for w in workflows]
                 lines.append(f"   💡 Try: {' | '.join(workflow_cmds)}")
 
-            lines.append(f"   🔧 Usage: make context TASK=\"{result['task_description']}\"")
+            lines.append(f'   🔧 Usage: make context TASK="{result["task_description"]}"')
             lines.append("")
 
         return "\n".join(lines)

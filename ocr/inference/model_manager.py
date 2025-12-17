@@ -144,8 +144,7 @@ class ModelManager:
         self._current_checkpoint_path = normalized_path
 
         LOGGER.info(
-            f"Model ready | checkpoint={checkpoint_path} | device={self.device} | "
-            f"total_load={time.perf_counter() - total_start:.2f}s"
+            f"Model ready | checkpoint={checkpoint_path} | device={self.device} | total_load={time.perf_counter() - total_start:.2f}s"
         )
         return True
 
@@ -216,19 +215,13 @@ class ModelManager:
 
         if model_config is None:
             # Fallback: Try root level extraction (for Hydra configs)
-            LOGGER.warning(
-                f"Configuration missing direct 'model' section, "
-                f"trying root level extraction: {config_path}"
-            )
+            LOGGER.warning(f"Configuration missing direct 'model' section, trying root level extraction: {config_path}")
             model_config = bundle.raw_config
 
             # Verify this looks like a model config
             model_attrs = ["architecture", "encoder", "decoder", "head"]
             if not any(hasattr(model_config, attr) for attr in model_attrs):
-                LOGGER.error(
-                    f"Configuration has neither 'model' section nor model attributes "
-                    f"at root level: {config_path}"
-                )
+                LOGGER.error(f"Configuration has neither 'model' section nor model attributes at root level: {config_path}")
                 return None
 
         return model_config

@@ -37,10 +37,10 @@ try:
         sys.path.insert(0, str(script_dir))
 
     from optimized_rembg import (
-        OptimizedBackgroundRemover,
-        REMBG_AVAILABLE,
         GPU_AVAILABLE,
+        REMBG_AVAILABLE,
         TENSORRT_AVAILABLE,
+        OptimizedBackgroundRemover,
         available_providers,
     )
 except ImportError as e:
@@ -88,7 +88,7 @@ def test_configuration(
     Returns:
         Dictionary with results and metrics
     """
-    logger.info(f"\nTesting configuration:")
+    logger.info("\nTesting configuration:")
     logger.info(f"  Model: {model_name}")
     logger.info(f"  Image size: {image_size}")
     logger.info(f"  GPU: {use_gpu}")
@@ -369,4 +369,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

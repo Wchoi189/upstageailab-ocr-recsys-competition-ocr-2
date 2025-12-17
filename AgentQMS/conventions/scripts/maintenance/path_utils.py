@@ -53,9 +53,7 @@ class PathResolver:
                     return project_root / path
                 return default
 
-            self.data_dir = resolve_path(
-                "GRAMMAR_CORRECTION_DATA_DIR", project_root / "data"
-            )
+            self.data_dir = resolve_path("GRAMMAR_CORRECTION_DATA_DIR", project_root / "data")
 
             # Config directory can be overridden
             config_dir_env = os.getenv("STREAMLIT_CONFIG_DIR")
@@ -68,9 +66,7 @@ class PathResolver:
             else:
                 self.config_dir = project_root / "streamlit_app" / "config"
 
-            self.output_dir = resolve_path(
-                "GRAMMAR_CORRECTION_OUTPUT_DIR", project_root / "outputs"
-            )
+            self.output_dir = resolve_path("GRAMMAR_CORRECTION_OUTPUT_DIR", project_root / "outputs")
 
             cache_dir_env = os.getenv("GRAMMAR_CORRECTION_CACHE_DIR")
             if cache_dir_env:

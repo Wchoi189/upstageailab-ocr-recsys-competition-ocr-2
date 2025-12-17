@@ -225,9 +225,7 @@ def scan_directory(handbook_dir: Path) -> dict[str, Any]:
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Auto-generate AI handbook index.json from directory structure"
-    )
+    parser = argparse.ArgumentParser(description="Auto-generate AI handbook index.json from directory structure")
     parser.add_argument(
         "--handbook-dir",
         type=Path,
@@ -240,9 +238,7 @@ def main() -> None:
         default=Path("AgentQMS/knowledge/index.json"),
         help="Output path for the generated index.json",
     )
-    parser.add_argument(
-        "--validate", action="store_true", help="Run validation after generation"
-    )
+    parser.add_argument("--validate", action="store_true", help="Run validation after generation")
 
     args = parser.parse_args()
 
@@ -267,12 +263,12 @@ def main() -> None:
         agentqms_root = current_file.parent
         while agentqms_root.name != "AgentQMS" and agentqms_root.parent != agentqms_root:
             agentqms_root = agentqms_root.parent
-        
+
         validate_script = agentqms_root / "agent_tools/documentation/validate_manifest.py"
         if not validate_script.exists():
             print(f"⚠️  Warning: validate_manifest.py not found at {validate_script}")
             return
-            
+
         result = subprocess.run(
             [sys.executable, str(validate_script), str(args.output)],
             capture_output=True,

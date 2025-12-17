@@ -38,11 +38,11 @@ def _lazy_import_training_deps():
 
     # Import heavy libraries only when actually training
     import torch  # noqa: F401 - imported for side effects
+    import wandb  # noqa: F401
     from lightning.pytorch import Trainer
     from lightning.pytorch.callbacks import LearningRateMonitor
     from lightning.pytorch.loggers import Logger, TensorBoardLogger, WandbLogger
 
-    import wandb  # noqa: F401
     from ocr.lightning_modules import get_pl_modules_by_cfg
     from ocr.utils.wandb_utils import (
         finalize_run,
@@ -53,24 +53,24 @@ def _lazy_import_training_deps():
     logger.info("✅ Training dependencies loaded")
 
     return {
-        'Trainer': Trainer,
-        'LearningRateMonitor': LearningRateMonitor,
-        'Logger': Logger,
-        'WandbLogger': WandbLogger,
-        'TensorBoardLogger': TensorBoardLogger,
-        'get_pl_modules_by_cfg': get_pl_modules_by_cfg,
-        'finalize_run': finalize_run,
-        'generate_run_name': generate_run_name,
-        'load_env_variables': load_env_variables,
+        "Trainer": Trainer,
+        "LearningRateMonitor": LearningRateMonitor,
+        "Logger": Logger,
+        "WandbLogger": WandbLogger,
+        "TensorBoardLogger": TensorBoardLogger,
+        "get_pl_modules_by_cfg": get_pl_modules_by_cfg,
+        "finalize_run": finalize_run,
+        "generate_run_name": generate_run_name,
+        "load_env_variables": load_env_variables,
     }
 
 
 def setup_logging(cfg: DictConfig) -> None:
     """Configure logging without heavy imports."""
-    log_level = getattr(logging, cfg.get('log_level', 'INFO').upper())
+    log_level = getattr(logging, cfg.get("log_level", "INFO").upper())
     logging.basicConfig(
         level=log_level,
-        format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
 
@@ -101,7 +101,9 @@ def main(cfg: DictConfig) -> None:
 
     logger.info("🚀 Fast training entry point")
     logger.info(f"Experiment: {cfg.get('exp_name', 'unknown')}")
-    logger.info(f"Config loaded successfully in {signal.getsignal(signal.SIGINT).__name__ if hasattr(signal.getsignal(signal.SIGINT), '__name__') else 'fast'} mode")
+    logger.info(
+        f"Config loaded successfully in {signal.getsignal(signal.SIGINT).__name__ if hasattr(signal.getsignal(signal.SIGINT), '__name__') else 'fast'} mode"
+    )
 
     # NOW load heavy dependencies (only when actually training)
     deps = _lazy_import_training_deps()
@@ -110,48 +112,48 @@ def main(cfg: DictConfig) -> None:
     logger.info("Setting up training...")
 
     # Load environment variables for wandb
-    deps['load_env_variables'](cfg)
+    deps["load_env_variables"](cfg)
 
     # Generate run name
-    run_name = deps['generate_run_name'](cfg)
+    run_name = deps["generate_run_name"](cfg)
     logger.info(f"Run name: {run_name}")
 
     # Setup logger
-    if cfg.logger.get('wandb', {}).get('enabled', False):
-        wandb_logger = deps['WandbLogger'](
+    if cfg.logger.get("wandb", {}).get("enabled", False):
+        wandb_logger = deps["WandbLogger"](
             name=run_name,
             project=cfg.logger.wandb.project,
             save_dir=cfg.paths.output_dir,
-            log_model=cfg.logger.wandb.get('log_model', False),
+            log_model=cfg.logger.wandb.get("log_model", False),
         )
         logger_instance = wandb_logger
     else:
-        logger_instance = deps['TensorBoardLogger'](
+        logger_instance = deps["TensorBoardLogger"](
             save_dir=cfg.paths.output_dir,
             name=run_name,
         )
 
     # Setup callbacks
     callbacks = []
-    if cfg.trainer.get('enable_progress_bar', True):
-        callbacks.append(deps['LearningRateMonitor'](logging_interval='step'))
+    if cfg.trainer.get("enable_progress_bar", True):
+        callbacks.append(deps["LearningRateMonitor"](logging_interval="step"))
 
     # Create trainer
-    trainer = deps['Trainer'](
+    trainer = deps["Trainer"](
         max_epochs=cfg.trainer.max_epochs,
-        accelerator=cfg.trainer.get('accelerator', 'auto'),
-        devices=cfg.trainer.get('devices', 'auto'),
+        accelerator=cfg.trainer.get("accelerator", "auto"),
+        devices=cfg.trainer.get("devices", "auto"),
         logger=logger_instance,
         callbacks=callbacks,
-        limit_train_batches=cfg.trainer.get('limit_train_batches', 1.0),
-        limit_val_batches=cfg.trainer.get('limit_val_batches', 1.0),
-        enable_checkpointing=cfg.trainer.get('enable_checkpointing', True),
-        enable_progress_bar=cfg.trainer.get('enable_progress_bar', True),
-        enable_model_summary=cfg.trainer.get('enable_model_summary', True),
+        limit_train_batches=cfg.trainer.get("limit_train_batches", 1.0),
+        limit_val_batches=cfg.trainer.get("limit_val_batches", 1.0),
+        enable_checkpointing=cfg.trainer.get("enable_checkpointing", True),
+        enable_progress_bar=cfg.trainer.get("enable_progress_bar", True),
+        enable_model_summary=cfg.trainer.get("enable_model_summary", True),
     )
 
     # Get model and dataloaders
-    pl_module, train_dataloader, val_dataloader = deps['get_pl_modules_by_cfg'](cfg)
+    pl_module, train_dataloader, val_dataloader = deps["get_pl_modules_by_cfg"](cfg)
 
     # Train
     logger.info("🏋️ Starting training...")
@@ -159,19 +161,19 @@ def main(cfg: DictConfig) -> None:
         model=pl_module,
         train_dataloaders=train_dataloader,
         val_dataloaders=val_dataloader,
-        ckpt_path=cfg.get('ckpt_path', None),
+        ckpt_path=cfg.get("ckpt_path", None),
     )
 
     # Finalize
-    if cfg.logger.get('wandb', {}).get('enabled', False):
-        deps['finalize_run'](logger_instance)
+    if cfg.logger.get("wandb", {}).get("enabled", False):
+        deps["finalize_run"](logger_instance)
 
     logger.info("✅ Training complete!")
 
 
 if __name__ == "__main__":
     # Suppress warnings before heavy imports
-    warnings.filterwarnings('ignore', category=UserWarning)
-    warnings.filterwarnings('ignore', message='.*Pydantic.*')
+    warnings.filterwarnings("ignore", category=UserWarning)
+    warnings.filterwarnings("ignore", message=".*Pydantic.*")
 
     main()

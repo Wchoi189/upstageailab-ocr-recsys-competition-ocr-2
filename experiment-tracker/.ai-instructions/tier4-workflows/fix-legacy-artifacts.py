@@ -25,36 +25,36 @@ def infer_artifact_type(file_path: Path, experiment_dir: Path) -> str:
     # Check parent directory
     if len(parts) > 1:
         parent_dir = parts[-2]
-        if parent_dir == 'assessments':
-            return 'assessment'
-        elif parent_dir == 'reports':
-            return 'report'
-        elif parent_dir == 'guides':
-            return 'guide'
-        elif parent_dir == 'scripts':
-            return 'script'
-        elif parent_dir == 'artifacts':
+        if parent_dir == "assessments":
+            return "assessment"
+        elif parent_dir == "reports":
+            return "report"
+        elif parent_dir == "guides":
+            return "guide"
+        elif parent_dir == "scripts":
+            return "script"
+        elif parent_dir == "artifacts":
             # Try to infer from filename
             filename_lower = file_path.name.lower()
-            if any(keyword in filename_lower for keyword in ['test', 'result', 'analysis', 'failure', 'implementation']):
-                return 'assessment'
-            elif any(keyword in filename_lower for keyword in ['metric', 'comparison', 'performance']):
-                return 'report'
-            elif any(keyword in filename_lower for keyword in ['guide', 'readme', 'setup', 'start']):
-                return 'guide'
+            if any(keyword in filename_lower for keyword in ["test", "result", "analysis", "failure", "implementation"]):
+                return "assessment"
+            elif any(keyword in filename_lower for keyword in ["metric", "comparison", "performance"]):
+                return "report"
+            elif any(keyword in filename_lower for keyword in ["guide", "readme", "setup", "start"]):
+                return "guide"
             else:
-                return 'assessment'  # Default
+                return "assessment"  # Default
 
     # Fallback to filename analysis
     filename_lower = file_path.name.lower()
-    if any(keyword in filename_lower for keyword in ['guide', 'readme', 'setup', 'quick-start']):
-        return 'guide'
-    elif any(keyword in filename_lower for keyword in ['test', 'result', 'analysis', 'failure', 'summary', 'implementation']):
-        return 'assessment'
-    elif any(keyword in filename_lower for keyword in ['metric', 'performance', 'comparison']):
-        return 'report'
+    if any(keyword in filename_lower for keyword in ["guide", "readme", "setup", "quick-start"]):
+        return "guide"
+    elif any(keyword in filename_lower for keyword in ["test", "result", "analysis", "failure", "summary", "implementation"]):
+        return "assessment"
+    elif any(keyword in filename_lower for keyword in ["metric", "performance", "comparison"]):
+        return "report"
     else:
-        return 'assessment'  # Default
+        return "assessment"  # Default
 
 
 def extract_tags_from_filename(filename: str, experiment_id: str) -> list:
@@ -62,28 +62,28 @@ def extract_tags_from_filename(filename: str, experiment_id: str) -> list:
     tags = []
 
     # Extract experiment focus from experiment_id
-    if 'perspective_correction' in experiment_id:
-        tags.append('perspective-correction')
-    elif 'image_enhancements' in experiment_id:
-        tags.append('image-enhancements')
+    if "perspective_correction" in experiment_id:
+        tags.append("perspective-correction")
+    elif "image_enhancements" in experiment_id:
+        tags.append("image-enhancements")
 
     # Extract keywords from filename
-    filename_lower = filename.lower().replace('.md', '').replace('_', '-')
+    filename_lower = filename.lower().replace(".md", "").replace("_", "-")
 
     keywords = {
-        'failure': 'failure-analysis',
-        'test': 'testing',
-        'analysis': 'analysis',
-        'implementation': 'implementation',
-        'setup': 'setup',
-        'guide': 'guide',
-        'result': 'results',
-        'metric': 'metrics',
-        'performance': 'performance',
-        'optimization': 'optimization',
-        'rembg': 'rembg',
-        'pipeline': 'pipeline',
-        'gpu': 'gpu',
+        "failure": "failure-analysis",
+        "test": "testing",
+        "analysis": "analysis",
+        "implementation": "implementation",
+        "setup": "setup",
+        "guide": "guide",
+        "result": "results",
+        "metric": "metrics",
+        "performance": "performance",
+        "optimization": "optimization",
+        "rembg": "rembg",
+        "pipeline": "pipeline",
+        "gpu": "gpu",
     }
 
     for keyword, tag in keywords.items():
@@ -92,7 +92,7 @@ def extract_tags_from_filename(filename: str, experiment_id: str) -> list:
 
     # Ensure at least one tag
     if not tags:
-        tags.append('experiment')
+        tags.append("experiment")
 
     return tags
 
@@ -113,21 +113,21 @@ tags: {tags}
 """
 
     # Add type-specific fields
-    if artifact_type == 'assessment':
+    if artifact_type == "assessment":
         frontmatter += """phase: "phase_0"
 priority: "medium"
 evidence_count: 0
 """
-    elif artifact_type == 'report':
+    elif artifact_type == "report":
         frontmatter += """metrics: {}
 baseline: "unknown"
 comparison: "neutral"
 """
-    elif artifact_type == 'guide':
+    elif artifact_type == "guide":
         frontmatter += """commands: []
 prerequisites: []
 """
-    elif artifact_type == 'script':
+    elif artifact_type == "script":
         frontmatter += """dependencies: []
 """
 
@@ -142,16 +142,16 @@ def fix_artifact(file_path: Path, experiment_id: str, dry_run: bool = False) -> 
     Returns:
         True if fixed, False if already compliant
     """
-    content = file_path.read_text(encoding='utf-8')
+    content = file_path.read_text(encoding="utf-8")
 
     # Check if frontmatter already exists
-    if content.startswith('---'):
+    if content.startswith("---"):
         # Already has frontmatter, skip
         return False
 
     # Infer artifact type
     experiment_dir = file_path
-    while experiment_dir.name != 'experiments' and experiment_dir.parent != experiment_dir:
+    while experiment_dir.name != "experiments" and experiment_dir.parent != experiment_dir:
         experiment_dir = experiment_dir.parent
     experiment_dir = experiment_dir / experiment_id
 
@@ -164,7 +164,7 @@ def fix_artifact(file_path: Path, experiment_id: str, dry_run: bool = False) -> 
     new_content = frontmatter + "\n" + content
 
     if not dry_run:
-        file_path.write_text(new_content, encoding='utf-8')
+        file_path.write_text(new_content, encoding="utf-8")
         print(f"   ✅ Fixed: {file_path.name} (added {artifact_type} frontmatter)")
     else:
         print(f"   [DRY RUN] Would fix: {file_path.name} (add {artifact_type} frontmatter)")
@@ -190,11 +190,11 @@ def fix_experiment(experiment_dir: Path, dry_run: bool = False) -> dict:
     print(f"\n📂 Processing: {experiment_id}")
 
     # Find all markdown files
-    md_files = list(experiment_dir.rglob('*.md'))
+    md_files = list(experiment_dir.rglob("*.md"))
 
     for md_file in md_files:
         # Skip README.md
-        if md_file.name == 'README.md':
+        if md_file.name == "README.md":
             skipped_count += 1
             continue
 
@@ -208,9 +208,9 @@ def fix_experiment(experiment_dir: Path, dry_run: bool = False) -> dict:
             print(f"   ⏭️  Skipped: {md_file.name} (already has frontmatter)")
 
     return {
-        'experiment_id': experiment_id,
-        'fixed_count': fixed_count,
-        'skipped_count': skipped_count,
+        "experiment_id": experiment_id,
+        "fixed_count": fixed_count,
+        "skipped_count": skipped_count,
     }
 
 
@@ -256,10 +256,10 @@ def main():
         results.append(result)
 
     # Summary
-    total_fixed = sum(r['fixed_count'] for r in results)
-    total_skipped = sum(r['skipped_count'] for r in results)
+    total_fixed = sum(r["fixed_count"] for r in results)
+    total_skipped = sum(r["skipped_count"] for r in results)
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     if args.dry_run:
         print("🔍 DRY RUN SUMMARY:")
     else:
@@ -275,5 +275,5 @@ def main():
         print("   3. Commit changes: git add . && git commit -m 'Add EDS v1.0 frontmatter to legacy artifacts'")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

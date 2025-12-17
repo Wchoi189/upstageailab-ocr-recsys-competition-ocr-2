@@ -7,7 +7,6 @@ from datetime import datetime
 from pathlib import Path
 
 import yaml
-
 from AgentQMS.toolkit.utils.paths import get_project_root
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
@@ -224,9 +223,7 @@ def generate_draft() -> str:
     feat_commits = [c for c in commits if c.get("type") == "feat"]
     fix_commits = [c for c in commits if c.get("type") == "fix"]
     refactor_commits = [c for c in commits if c.get("type") == "refactor"]
-    other_commits = [
-        c for c in commits if c.get("type") not in ("feat", "fix", "refactor")
-    ]
+    other_commits = [c for c in commits if c.get("type") not in ("feat", "fix", "refactor")]
 
     # Features (from plans and feat commits)
     if plans or feat_commits:
@@ -291,23 +288,15 @@ def generate_draft() -> str:
         lines.append(f"\n**Total**: {total_items} items")
 
     lines.append("\n---")
-    lines.append(
-        "\n*This draft was automatically generated. Review and edit before merging into CHANGELOG.md*"
-    )
+    lines.append("\n*This draft was automatically generated. Review and edit before merging into CHANGELOG.md*")
 
     return "\n".join(lines)
 
 
 def main() -> int:
-    parser = argparse.ArgumentParser(
-        description="Generate changelog draft from tracking DB and git log"
-    )
-    parser.add_argument(
-        "--output", default=str(CHANGELOG_DRAFT), help="Output file path"
-    )
-    parser.add_argument(
-        "--preview", action="store_true", help="Print to stdout instead of file"
-    )
+    parser = argparse.ArgumentParser(description="Generate changelog draft from tracking DB and git log")
+    parser.add_argument("--output", default=str(CHANGELOG_DRAFT), help="Output file path")
+    parser.add_argument("--preview", action="store_true", help="Print to stdout instead of file")
     args = parser.parse_args()
 
     try:

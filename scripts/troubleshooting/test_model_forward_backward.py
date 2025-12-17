@@ -125,11 +125,11 @@ try:
         loss.backward()
         optimizer.step()
 
-        print(f"  Iteration {i+1}/10 ✓ (loss: {loss.item():.2f})")
+        print(f"  Iteration {i + 1}/10 ✓ (loss: {loss.item():.2f})")
 
     print("  ✓ All iterations passed")
 except Exception as e:
-    print(f"  ✗ Failed at iteration {i+1}: {e}")
+    print(f"  ✗ Failed at iteration {i + 1}: {e}")
     import traceback
 
     traceback.print_exc()

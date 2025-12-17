@@ -2,6 +2,7 @@
 """
 Test perspective correction on worst performers from the list.
 """
+
 import datetime
 import json
 import logging
@@ -198,15 +199,15 @@ def test_worst_performers(
     with open(results_file, "w") as f:
         json.dump(results, f, indent=2)
 
-    logger.info(f"\n{'='*60}")
+    logger.info(f"\n{'=' * 60}")
     logger.info("Test Results Summary:")
     logger.info(f"  Total: {results['total']}")
     logger.info(f"  Success: {results['success']}")
     logger.info(f"  Failed: {results['failed']}")
     logger.info(f"  Missing Mask: {results['missing_mask']}")
     logger.info(f"  Missing Image: {results['missing_image']}")
-    logger.info(f"  Success Rate: {results['success']/results['total']*100:.1f}%")
-    logger.info(f"{'='*60}")
+    logger.info(f"  Success Rate: {results['success'] / results['total'] * 100:.1f}%")
+    logger.info(f"{'=' * 60}")
     logger.info(f"Results saved to: {results_file}")
 
     return results
@@ -215,19 +216,11 @@ def test_worst_performers(
 if __name__ == "__main__":
     # Path to worst performers file
     worst_performers_file = (
-        workspace_root
-        / "experiment-tracker"
-        / "experiments"
-        / "20251128_220100_perspective_correction"
-        / "worst_performers_top25.txt"
+        workspace_root / "experiment-tracker" / "experiments" / "20251128_220100_perspective_correction" / "worst_performers_top25.txt"
     )
 
     # Output directory
-    output_base_dir = (
-        EXPERIMENT_PATHS.get_artifacts_path()
-        if EXPERIMENT_PATHS
-        else Path.cwd() / "artifacts"
-    )
+    output_base_dir = EXPERIMENT_PATHS.get_artifacts_path() if EXPERIMENT_PATHS else Path.cwd() / "artifacts"
 
     # Dataset root
     dataset_root = Path(OCR_RESOLVER.config.images_dir) / "train"

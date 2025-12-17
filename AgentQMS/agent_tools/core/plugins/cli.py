@@ -157,27 +157,23 @@ def format_human_output(
     if args.show:
         lines.append(f"\n🔍 Plugin Details: {args.show}")
         if args.show in registry.artifact_types:
-            lines.append(yaml.dump(
-                registry.artifact_types[args.show],
-                default_flow_style=False
-            ))
+            lines.append(yaml.dump(registry.artifact_types[args.show], default_flow_style=False))
         elif args.show in registry.context_bundles:
-            lines.append(yaml.dump(
-                registry.context_bundles[args.show],
-                default_flow_style=False
-            ))
+            lines.append(yaml.dump(registry.context_bundles[args.show], default_flow_style=False))
         else:
             lines.append(f"   Plugin '{args.show}' not found")
 
     # Footer
-    lines.extend([
-        "",
-        "=" * 60,
-        f"Loaded at: {registry.loaded_at}",
-        f"Framework: {discovery_paths.get('framework', 'N/A')}",
-        f"Project: {discovery_paths.get('project', 'N/A')}",
-        "=" * 60,
-    ])
+    lines.extend(
+        [
+            "",
+            "=" * 60,
+            f"Loaded at: {registry.loaded_at}",
+            f"Framework: {discovery_paths.get('framework', 'N/A')}",
+            f"Project: {discovery_paths.get('project', 'N/A')}",
+            "=" * 60,
+        ]
+    )
 
     return "\n".join(lines)
 
@@ -233,6 +229,7 @@ def main(argv: list[str] | None = None) -> int:
     # Write snapshot if requested
     if args.write_snapshot:
         from AgentQMS.agent_tools.utils.paths import get_project_root
+
         state_dir = (project_root or get_project_root()) / ".agentqms" / "state"
         writer = SnapshotWriter(state_dir)
         snapshot_path = writer.write(registry, loader.get_discovery_paths())
@@ -240,10 +237,7 @@ def main(argv: list[str] | None = None) -> int:
             print(f"Snapshot written to: {snapshot_path}")
 
     # Default to --list if no specific action
-    if not any([
-        args.list, args.validate, args.artifact_types,
-        args.context_bundles, args.validators, args.show
-    ]):
+    if not any([args.list, args.validate, args.artifact_types, args.context_bundles, args.validators, args.show]):
         args.list = True
 
     # Format output
@@ -257,4 +251,3 @@ def main(argv: list[str] | None = None) -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

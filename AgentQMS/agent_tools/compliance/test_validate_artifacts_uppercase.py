@@ -3,6 +3,7 @@
 Unit tests for uppercase validation in validate_artifacts.py
 Tests the fix for Bug 2: uppercase validation skip for uppercase_prefix artifact types.
 """
+
 import pytest
 from validate_artifacts import ArtifactValidator
 
@@ -61,9 +62,15 @@ class TestUppercasePrefixValidation:
     def test_session_note_lowercase_descriptive_passes(self, validator, tmp_path):
         """Test that SESSION_ files with lowercase descriptive part pass validation."""
         # Valid: SESSION_sprint-review.md
-        file_path = (tmp_path / "docs" / "artifacts" / "completed_plans" /
-                     "completion_summaries" / "session_notes" /
-                     "2025-11-30_1200_SESSION_sprint-review.md")
+        file_path = (
+            tmp_path
+            / "docs"
+            / "artifacts"
+            / "completed_plans"
+            / "completion_summaries"
+            / "session_notes"
+            / "2025-11-30_1200_SESSION_sprint-review.md"
+        )
         file_path.write_text("# Test Session Note\n")
 
         is_valid, message = validator.validate_naming_convention(file_path)
@@ -74,9 +81,15 @@ class TestUppercasePrefixValidation:
     def test_session_note_uppercase_descriptive_fails(self, validator, tmp_path):
         """Test that SESSION_ files with uppercase descriptive part fail validation."""
         # Invalid: SESSION_ALL-CAPS.md
-        file_path = (tmp_path / "docs" / "artifacts" / "completed_plans" /
-                     "completion_summaries" / "session_notes" /
-                     "2025-11-30_1200_SESSION_ALL-CAPS.md")
+        file_path = (
+            tmp_path
+            / "docs"
+            / "artifacts"
+            / "completed_plans"
+            / "completion_summaries"
+            / "session_notes"
+            / "2025-11-30_1200_SESSION_ALL-CAPS.md"
+        )
         file_path.write_text("# Test Session Note\n")
 
         is_valid, message = validator.validate_naming_convention(file_path)
@@ -88,9 +101,15 @@ class TestUppercasePrefixValidation:
     def test_session_note_with_number_lowercase_passes(self, validator, tmp_path):
         """Test that SESSION_ files with numbers in lowercase descriptive part pass."""
         # Valid: SESSION_001_test-session.md
-        file_path = (tmp_path / "docs" / "artifacts" / "completed_plans" /
-                     "completion_summaries" / "session_notes" /
-                     "2025-11-30_1200_SESSION_001_test-session.md")
+        file_path = (
+            tmp_path
+            / "docs"
+            / "artifacts"
+            / "completed_plans"
+            / "completion_summaries"
+            / "session_notes"
+            / "2025-11-30_1200_SESSION_001_test-session.md"
+        )
         file_path.write_text("# Test Session Note\n")
 
         is_valid, message = validator.validate_naming_convention(file_path)
@@ -119,9 +138,15 @@ class TestUppercasePrefixValidation:
         assert is_valid1, f"BUG_ prefix should be allowed: {message1}"
 
         # Test SESSION_ prefix is recognized and allowed
-        file_path2 = (tmp_path / "docs" / "artifacts" / "completed_plans" /
-                      "completion_summaries" / "session_notes" /
-                      "2025-11-30_1200_SESSION_test-session.md")
+        file_path2 = (
+            tmp_path
+            / "docs"
+            / "artifacts"
+            / "completed_plans"
+            / "completion_summaries"
+            / "session_notes"
+            / "2025-11-30_1200_SESSION_test-session.md"
+        )
         file_path2.write_text("# Test\n")
 
         is_valid2, message2 = validator.validate_naming_convention(file_path2)

@@ -76,9 +76,9 @@ def aggregate_validations(input_dir: Path, output_file: Path):
         fail_count = sum(1 for r in results if r["success"].lower() == "fail")
 
         f.write("## Success Rate\n\n")
-        f.write(f"- **Pass**: {pass_count}/{len(results)} ({100*pass_count/len(results):.1f}%)\n")
-        f.write(f"- **Partial**: {partial_count}/{len(results)} ({100*partial_count/len(results):.1f}%)\n")
-        f.write(f"- **Fail**: {fail_count}/{len(results)} ({100*fail_count/len(results):.1f}%)\n\n")
+        f.write(f"- **Pass**: {pass_count}/{len(results)} ({100 * pass_count / len(results):.1f}%)\n")
+        f.write(f"- **Partial**: {partial_count}/{len(results)} ({100 * partial_count / len(results):.1f}%)\n")
+        f.write(f"- **Fail**: {fail_count}/{len(results)} ({100 * fail_count / len(results):.1f}%)\n\n")
 
         # Average improvements
         bg_deltas = [r["background_delta"] for r in results if r["background_delta"] is not None]
@@ -104,9 +104,9 @@ def aggregate_validations(input_dir: Path, output_file: Path):
         f.write("|-------|--------------|-------------|------------|--------|\n")
 
         for r in results:
-            bg = f"{r['background_delta']:+.1f}" if r['background_delta'] is not None else "N/A"
-            align = f"{r['alignment_delta']:+.1f}" if r['alignment_delta'] is not None else "N/A"
-            contrast = f"{r['contrast_delta']:+.1f}" if r['contrast_delta'] is not None else "N/A"
+            bg = f"{r['background_delta']:+.1f}" if r["background_delta"] is not None else "N/A"
+            align = f"{r['alignment_delta']:+.1f}" if r["alignment_delta"] is not None else "N/A"
+            contrast = f"{r['contrast_delta']:+.1f}" if r["contrast_delta"] is not None else "N/A"
             status_emoji = {
                 "pass": "✅",
                 "partial": "⚠️",
@@ -130,7 +130,7 @@ def aggregate_validations(input_dir: Path, output_file: Path):
             f.write("- **Success rate ≥80%**: Phase validation criteria met ✅\n")
 
     print(f"Summary written to: {output_file}")
-    print(f"Pass rate: {pass_count}/{len(results)} ({100*pass_count/len(results):.1f}%)")
+    print(f"Pass rate: {pass_count}/{len(results)} ({100 * pass_count / len(results):.1f}%)")
 
 
 if __name__ == "__main__":

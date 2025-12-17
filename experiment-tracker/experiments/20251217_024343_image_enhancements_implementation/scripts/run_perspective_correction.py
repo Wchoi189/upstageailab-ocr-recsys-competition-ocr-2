@@ -1,19 +1,17 @@
 #!/usr/bin/env python3
-import sys
-import cv2
-import numpy as np
-import logging
-from pathlib import Path
 import datetime
-import glob
-from typing import Optional
+import logging
+import sys
+from pathlib import Path
+
+import cv2
 
 # Setup experiment paths - auto-detect tracker root and experiment context
 script_path = Path(__file__).resolve()
 # Point to experiment-tracker/src
 tracker_root = script_path.parents[3] / "src"
 sys.path.insert(0, str(tracker_root))
-from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+from experiment_tracker.utils.path_utils import setup_script_paths
 
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
@@ -32,6 +30,7 @@ from perspective_transformer import four_point_transform
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def run_perspective_correction(
     worst_case_dir: str,
@@ -59,7 +58,7 @@ def run_perspective_correction(
 
     # Process a subset for testing if needed
     # selected_files = mask_files[:10]
-    selected_files = mask_files # Process all found
+    selected_files = mask_files  # Process all found
 
     logger.info(f"Found {len(all_mask_files)} masks, processing {len(selected_files)} selections")
 
@@ -84,20 +83,17 @@ def run_perspective_correction(
                 break
 
         if not found_img:
-             logger.warning(f"Could not find original image for {img_id} in {dataset_root}")
-             continue
+            logger.warning(f"Could not find original image for {img_id} in {dataset_root}")
+            continue
 
         original_img = cv2.imread(str(img_path))
         if original_img is None:
-             logger.error(f"Could not load original image {img_path}")
-             continue
+            logger.error(f"Could not load original image {img_path}")
+            continue
 
         # Run edge detector
         result = fit_mask_rectangle(
-            mask,
-            use_regression=use_regression,
-            regression_epsilon_px=regression_epsilon_px,
-            use_dominant_extension=use_dominant_extension
+            mask, use_regression=use_regression, regression_epsilon_px=regression_epsilon_px, use_dominant_extension=use_dominant_extension
         )
 
         if result.corners is not None:
@@ -120,6 +116,7 @@ def run_perspective_correction(
     logger.info(f"Completed. Success rate: {success_count}/{len(selected_files)}")
     return output_dir
 
+
 if __name__ == "__main__":
     # Use the path from evaluate_worst_performers.py logic
     # Note: Using OCR_RESOLVER logic from evaluate_worst_performers.py
@@ -137,11 +134,10 @@ if __name__ == "__main__":
 
     # Fallback for dataset root if config is wrong
     if not Path(dataset_root).exists():
-         dataset_root = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/datasets/images/train"
+        dataset_root = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/datasets/images/train"
 
     run_perspective_correction(
         worst_case_dir,
         output_base_dir,
         dataset_root,
     )
-

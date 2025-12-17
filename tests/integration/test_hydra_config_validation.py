@@ -1,5 +1,4 @@
 import pytest
-
 from ui.utils.command import CommandBuilder, CommandValidator
 from ui.utils.config_parser import ConfigParser
 

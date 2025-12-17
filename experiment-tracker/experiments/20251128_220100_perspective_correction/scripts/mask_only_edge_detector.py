@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import cv2
 import numpy as np
@@ -17,16 +17,16 @@ import numpy as np
 
 @dataclass
 class MaskRectangleResult:
-    corners: Optional[np.ndarray]
-    raw_corners: Optional[np.ndarray]
+    corners: np.ndarray | None
+    raw_corners: np.ndarray | None
     contour_area: float
     hull_area: float
     mask_area: float
-    contour: Optional[np.ndarray]
-    hull: Optional[np.ndarray]
-    reason: Optional[str] = None
-    line_quality: Optional["LineQualityReport"] = None
-    used_epsilon: Optional[float] = None
+    contour: np.ndarray | None
+    hull: np.ndarray | None
+    reason: str | None = None
+    line_quality: LineQualityReport | None = None
+    used_epsilon: float | None = None
 
 
 @dataclass
@@ -68,7 +68,7 @@ def _geometric_synthesis(
     fitted_quad: np.ndarray,
     bbox_corners: np.ndarray,
     image_shape: tuple[int, int],
-) -> Optional[np.ndarray]:
+) -> np.ndarray | None:
     """
     Geometric Synthesis: Intersect fitted_quad with bbox_corners using bitwise operations.
 
@@ -137,12 +137,15 @@ def _geometric_synthesis(
         y_min = np.min(approx[:, 1])
         y_max = np.max(approx[:, 1])
         # Create 4 corners
-        approx = np.array([
-            [x_min, y_min],
-            [x_max, y_min],
-            [x_max, y_max],
-            [x_min, y_max],
-        ], dtype=np.float32)
+        approx = np.array(
+            [
+                [x_min, y_min],
+                [x_max, y_min],
+                [x_max, y_max],
+                [x_min, y_max],
+            ],
+            dtype=np.float32,
+        )
     elif len(approx) == 4:
         approx = approx.reshape(-1, 2).astype(np.float32)
     else:
@@ -155,8 +158,10 @@ def _order_points(points: np.ndarray) -> np.ndarray:
     """Order quadrilateral corners as TL, TR, BR, BL."""
     pts = np.asarray(points, dtype=np.float32)
     centers = np.mean(pts, axis=0)
+
     def angle(pt):
         return math.atan2(pt[1] - centers[1], pt[0] - centers[0])
+
     sorted_pts = sorted(pts, key=angle)
     # Convert to consistent order by rotating so smallest y+x first
     arr = np.array(sorted_pts, dtype=np.float32)
@@ -335,9 +340,9 @@ def _fit_quadrilateral_from_hull(
     eps_start_ratio: float = 0.008,
     eps_growth: float = 1.5,
     eps_max_ratio: float = 0.08,
-    max_epsilon_px: Optional[float] = None,
+    max_epsilon_px: float | None = None,
     strict_mode: bool = False,
-) -> tuple[Optional[np.ndarray], float]:
+) -> tuple[np.ndarray | None, float]:
     """
     Fit a quadrilateral to the convex hull using adaptive approxPolyDP.
 
@@ -361,7 +366,7 @@ def _fit_quadrilateral_from_hull(
 
     eps_max = max(eps_limit, eps)
 
-    best_candidate: Optional[np.ndarray] = None
+    best_candidate: np.ndarray | None = None
     best_eps: float = 0.0
 
     while eps <= eps_max:
@@ -389,10 +394,7 @@ def _fit_quadrilateral_from_hull(
     return None, 0.0
 
 
-def _intersect_lines(
-    line1: tuple[float, float, float, float],
-    line2: tuple[float, float, float, float]
-) -> Optional[np.ndarray]:
+def _intersect_lines(line1: tuple[float, float, float, float], line2: tuple[float, float, float, float]) -> np.ndarray | None:
     """
     Find intersection of two lines given in (vx, vy, x0, y0) format.
     Returns (x, y) or None if parallel.
@@ -423,7 +425,7 @@ def _intersect_lines(
 def _fit_quadrilateral_regression(
     hull: np.ndarray,
     epsilon_px: float = 10.0,
-) -> tuple[Optional[np.ndarray], float]:
+) -> tuple[np.ndarray | None, float]:
     """
     Fit quadrilateral by approximating hull with low epsilon, classifying sides,
     regressing lines, and solving intersections.
@@ -479,7 +481,7 @@ def _fit_quadrilateral_regression(
             else:
                 bottom_points.append(p1)
                 bottom_points.append(p2)
-        else: # vertical
+        else:  # vertical
             if mid[0] < cx:
                 left_points.append(p1)
                 left_points.append(p2)
@@ -520,7 +522,7 @@ def _fit_quadrilateral_regression(
 def _fit_quadrilateral_dominant_extension(
     hull: np.ndarray,
     epsilon_px: float = 10.0,
-) -> tuple[Optional[np.ndarray], float]:
+) -> tuple[np.ndarray | None, float]:
     """
     BUG-20251128-001: Stabilize dominant-edge fitting via angle-based bucketing.
 
@@ -555,15 +557,17 @@ def _fit_quadrilateral_dominant_extension(
         dy = float(p2[1] - p1[1])
         mid = (p1 + p2) / 2.0
         mid_x, mid_y = float(mid[0]), float(mid[1])
-        segments.append({
-            "p1": p1,
-            "p2": p2,
-            "mid": mid,
-            "dx": dx,
-            "dy": dy,
-            "mid_x": mid_x,
-            "mid_y": mid_y,
-        })
+        segments.append(
+            {
+                "p1": p1,
+                "p2": p2,
+                "mid": mid,
+                "dx": dx,
+                "dy": dy,
+                "mid_x": mid_x,
+                "mid_y": mid_y,
+            }
+        )
 
     if not segments:
         return None, eps
@@ -620,7 +624,6 @@ def _fit_quadrilateral_dominant_extension(
 
         # Try to borrow from adjacent bins first
         best_seg = None
-        best_source_bin = None
 
         # First, try adjacent bins
         for adj_bin in adjacent_map.get(bin_name, []):
@@ -629,7 +632,6 @@ def _fit_quadrilateral_dominant_extension(
                 for seg in segments:
                     if assign_bin(seg) == adj_bin:
                         best_seg = seg
-                        best_source_bin = adj_bin
                         break
                 if best_seg is not None:
                     break
@@ -641,7 +643,6 @@ def _fit_quadrilateral_dominant_extension(
                     for seg in segments:
                         if assign_bin(seg) == other_bin:
                             best_seg = seg
-                            best_source_bin = other_bin
                             break
                     if best_seg is not None:
                         break
@@ -650,7 +651,7 @@ def _fit_quadrilateral_dominant_extension(
             bins[bin_name].append(best_seg["p1"])
             bins[bin_name].append(best_seg["p2"])
 
-    def fit_line(points: list[np.ndarray]) -> Optional[tuple[float, float, float, float]]:
+    def fit_line(points: list[np.ndarray]) -> tuple[float, float, float, float] | None:
         if len(points) < 2:
             return None
         pts_array = np.array(points, dtype=np.float32)
@@ -741,11 +742,7 @@ def _collect_edge_support_data(
         perp = rel - np.outer(proj, dir_vec)
         dist = np.linalg.norm(perp, axis=1)
 
-        mask = (
-            (proj >= -distance_threshold)
-            & (proj <= edge_len + distance_threshold)
-            & (dist <= distance_threshold)
-        )
+        mask = (proj >= -distance_threshold) & (proj <= edge_len + distance_threshold) & (dist <= distance_threshold)
 
         edge_data.append(
             {
@@ -869,7 +866,7 @@ def _compute_corner_sharpness_deviation(
     corners: np.ndarray,
     hull: np.ndarray,
     neighborhood: int = 6,
-) -> Optional[dict[str, float]]:
+) -> dict[str, float] | None:
     """Measure maximum and mean deviation from 90° using hull neighbors."""
     if corners is None or hull is None or len(hull) < 4:
         return None
@@ -909,7 +906,7 @@ def _compute_corner_sharpness_deviation(
     }
 
 
-def _compute_parallelism_misalignment(corners: np.ndarray) -> Optional[float]:
+def _compute_parallelism_misalignment(corners: np.ndarray) -> float | None:
     """Return maximum angular deviation between opposite edges."""
     if corners is None or len(corners) != 4:
         return None
@@ -918,7 +915,7 @@ def _compute_parallelism_misalignment(corners: np.ndarray) -> Optional[float]:
     if len(edges) != 4:
         return None
 
-    def _parallel_angle(v1: np.ndarray, v2: np.ndarray) -> Optional[float]:
+    def _parallel_angle(v1: np.ndarray, v2: np.ndarray) -> float | None:
         n1 = np.linalg.norm(v1)
         n2 = np.linalg.norm(v2)
         if n1 < 1e-6 or n2 < 1e-6:
@@ -954,16 +951,16 @@ def fit_mask_rectangle(
     min_area_ratio: float = 0.005,
     min_support_points: int = 50,
     edge_support_threshold: float = 0.50,  # Loosened from 0.90
-    edge_support_ratio_floor: float = 0.40, # Loosened from 0.80
+    edge_support_ratio_floor: float = 0.40,  # Loosened from 0.80
     edge_support_bins: int = 64,
     edge_support_distance: float = 5.0,
-    linearity_rmse_threshold: float = 5.0, # Loosened from 2.0
-    solidity_threshold: float = 0.85, # Loosened from 0.95
-    corner_sharpness_threshold: float = 45.0, # Loosened from 15.0 to allow perspective
-    parallelism_threshold: float = 20.0, # Loosened from 5.0 to allow perspective
+    linearity_rmse_threshold: float = 5.0,  # Loosened from 2.0
+    solidity_threshold: float = 0.85,  # Loosened from 0.95
+    corner_sharpness_threshold: float = 45.0,  # Loosened from 15.0 to allow perspective
+    parallelism_threshold: float = 20.0,  # Loosened from 5.0 to allow perspective
     partial_pass_threshold: int = 3,
     blend_weight: float = 0.65,
-    max_epsilon_px: Optional[float] = None,
+    max_epsilon_px: float | None = None,
     strict_mode: bool = False,
     use_regression: bool = False,
     regression_epsilon_px: float = 10.0,
@@ -1074,21 +1071,11 @@ def fit_mask_rectangle(
     hull_area = float(cv2.contourArea(hull))
 
     if use_dominant_extension:
-        fitted_quad, used_eps = _fit_quadrilateral_dominant_extension(
-            hull,
-            epsilon_px=regression_epsilon_px
-        )
+        fitted_quad, used_eps = _fit_quadrilateral_dominant_extension(hull, epsilon_px=regression_epsilon_px)
     elif use_regression:
-        fitted_quad, used_eps = _fit_quadrilateral_regression(
-            hull,
-            epsilon_px=regression_epsilon_px
-        )
+        fitted_quad, used_eps = _fit_quadrilateral_regression(hull, epsilon_px=regression_epsilon_px)
     else:
-        fitted_quad, used_eps = _fit_quadrilateral_from_hull(
-            hull,
-            max_epsilon_px=max_epsilon_px,
-            strict_mode=strict_mode
-        )
+        fitted_quad, used_eps = _fit_quadrilateral_from_hull(hull, max_epsilon_px=max_epsilon_px, strict_mode=strict_mode)
 
     if fitted_quad is None:
         ordered = None
@@ -1146,11 +1133,7 @@ def fit_mask_rectangle(
 
         # Apply geometric synthesis: intersect fitted_quad with bbox_corners
         # Use image dimensions (img_h, img_w) not bounding box dimensions (h, w)
-        synthesized_corners = _geometric_synthesis(
-            ordered,
-            ordered_bbox,
-            (img_h, img_w)
-        )
+        synthesized_corners = _geometric_synthesis(ordered, ordered_bbox, (img_h, img_w))
 
         if synthesized_corners is not None and len(synthesized_corners) == 4:
             # Trust regression results - accept synthesized corners
@@ -1184,13 +1167,13 @@ def fit_mask_rectangle(
     validation_failed = False
     validation_reason = None
 
-    if not _validate_edge_angles(ordered, angle_tolerance_deg=45.0): # Loosened from 15.0
+    if not _validate_edge_angles(ordered, angle_tolerance_deg=45.0):  # Loosened from 15.0
         validation_failed = True
         validation_reason = "invalid_edge_angles"
     elif not _validate_edge_lengths(ordered, min_aspect_ratio=0.1, max_aspect_ratio=10.0):
         validation_failed = True
         validation_reason = "invalid_edge_proportions"
-    elif not _validate_contour_alignment(ordered, largest, mask_bbox, alignment_tolerance=0.25): # Loosened from 0.15
+    elif not _validate_contour_alignment(ordered, largest, mask_bbox, alignment_tolerance=0.25):  # Loosened from 0.15
         validation_failed = True
         validation_reason = "poor_bbox_alignment"
 
@@ -1259,13 +1242,8 @@ def fit_mask_rectangle(
     line_quality_passes["corner_sharpness"] = bool(corner_ok)
 
     parallelism_misalignment = _compute_parallelism_misalignment(ordered)
-    line_quality_metrics["parallelism_misalignment_deg"] = (
-        float(parallelism_misalignment) if parallelism_misalignment is not None else None
-    )
-    parallel_ok = (
-        parallelism_misalignment is not None
-        and parallelism_misalignment <= parallelism_threshold
-    )
+    line_quality_metrics["parallelism_misalignment_deg"] = float(parallelism_misalignment) if parallelism_misalignment is not None else None
+    parallel_ok = parallelism_misalignment is not None and parallelism_misalignment <= parallelism_threshold
     line_quality_passes["parallelism"] = bool(parallel_ok)
 
     total_checks = max(len(line_quality_passes), 1)
@@ -1333,6 +1311,5 @@ def visualize_mask_fit(
         cv2.polylines(vis, [pts], True, (0, 255, 255), 2)
         for idx, corner in enumerate(corners):
             cv2.circle(vis, tuple(corner.astype(int)), 6, (0, 255, 255), -1)
-            cv2.putText(vis, str(idx), (int(corner[0]) + 8, int(corner[1]) - 8),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+            cv2.putText(vis, str(idx), (int(corner[0]) + 8, int(corner[1]) - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
     return vis

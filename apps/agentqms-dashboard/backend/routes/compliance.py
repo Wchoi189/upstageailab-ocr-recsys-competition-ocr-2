@@ -9,6 +9,7 @@ from pydantic import BaseModel
 
 router = APIRouter(prefix="/api/v1/compliance", tags=["compliance"])
 
+
 # Models
 class ValidationResult(BaseModel):
     compliance_rate: float
@@ -16,10 +17,9 @@ class ValidationResult(BaseModel):
     valid_files: int
     violations: list[dict[str, Any]]
 
+
 @router.get("/validate", response_model=ValidationResult)
-async def validate_artifacts(
-    target: str = Query("all", description="Target to validate: 'all', directory path, or file path")
-):
+async def validate_artifacts(target: str = Query("all", description="Target to validate: 'all', directory path, or file path")):
     """
     Run the artifact validation tool.
     """
@@ -40,8 +40,8 @@ async def validate_artifacts(
         # Sanitize target to prevent command injection or path traversal
         # For now, just ensure it's relative and doesn't contain ..
         if ".." in target or target.startswith("/"):
-             raise HTTPException(status_code=400, detail="Invalid target path")
-        cmd.extend(["--file", target]) # Assuming --file works for dirs too or we need logic
+            raise HTTPException(status_code=400, detail="Invalid target path")
+        cmd.extend(["--file", target])  # Assuming --file works for dirs too or we need logic
 
     try:
         # Run subprocess
@@ -50,19 +50,19 @@ async def validate_artifacts(
             cwd=project_root,
             capture_output=True,
             text=True,
-            check=False # Don't raise on non-zero exit, as validation failure returns non-zero
+            check=False,  # Don't raise on non-zero exit, as validation failure returns non-zero
         )
 
         if not result.stdout:
-             raise HTTPException(status_code=500, detail=f"No output from validator. Stderr: {result.stderr}")
+            raise HTTPException(status_code=500, detail=f"No output from validator. Stderr: {result.stderr}")
 
         try:
             data = json.loads(result.stdout)
             return data
         except json.JSONDecodeError:
-             # Fallback if output is not pure JSON (e.g. logs mixed in)
-             # Try to find JSON object in output
-             raise HTTPException(status_code=500, detail=f"Invalid JSON output: {result.stdout[:200]}...")
+            # Fallback if output is not pure JSON (e.g. logs mixed in)
+            # Try to find JSON object in output
+            raise HTTPException(status_code=500, detail=f"Invalid JSON output: {result.stdout[:200]}...")
 
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

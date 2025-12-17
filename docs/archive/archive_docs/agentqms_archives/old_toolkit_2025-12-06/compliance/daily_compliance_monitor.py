@@ -133,9 +133,7 @@ class DailyComplianceMonitor:
 
     def run_daily_check(self, auto_fix: bool = False) -> DailyComplianceReport:
         """Run comprehensive daily compliance check"""
-        print(
-            f"🔍 Running daily compliance check for {datetime.now().strftime('%Y-%m-%d')}"
-        )
+        print(f"🔍 Running daily compliance check for {datetime.now().strftime('%Y-%m-%d')}")
 
         # Calculate current compliance metrics
         metrics = self._calculate_compliance_metrics()
@@ -146,16 +144,11 @@ class DailyComplianceMonitor:
 
         # Apply auto-fixes if enabled and below threshold
         auto_fixes_applied = 0
-        if (
-            auto_fix
-            and metrics["compliance_rate"] < self.auto_fix_settings["threshold"]
-        ):
+        if auto_fix and metrics["compliance_rate"] < self.auto_fix_settings["threshold"]:
             auto_fixes_applied = self._apply_auto_fixes()
 
         # Generate recommendations
-        recommendations = self._generate_recommendations(
-            metrics, trend_7day, trend_30day
-        )
+        recommendations = self._generate_recommendations(metrics, trend_7day, trend_30day)
 
         # Create report
         report = DailyComplianceReport(
@@ -218,9 +211,7 @@ class DailyComplianceMonitor:
                     file_path = Path(file_result["file"])
                     relative_path = file_path.relative_to(self.artifacts_root)
                     directory = str(relative_path.parent)
-                    metrics["files_by_directory"][directory] = (
-                        metrics["files_by_directory"].get(directory, 0) + 1
-                    )
+                    metrics["files_by_directory"][directory] = metrics["files_by_directory"].get(directory, 0) + 1
 
                     if file_result["valid"]:
                         metrics["compliant_files"] += 1
@@ -230,15 +221,11 @@ class DailyComplianceMonitor:
                         # Count issues by type
                         for error in file_result["errors"]:
                             issue_type = error.split(":")[0].strip()
-                            metrics["issues_by_type"][issue_type] = (
-                                metrics["issues_by_type"].get(issue_type, 0) + 1
-                            )
+                            metrics["issues_by_type"][issue_type] = metrics["issues_by_type"].get(issue_type, 0) + 1
 
                 # Calculate compliance rate
                 if metrics["total_files"] > 0:
-                    metrics["compliance_rate"] = (
-                        metrics["compliant_files"] / metrics["total_files"]
-                    )
+                    metrics["compliance_rate"] = metrics["compliant_files"] / metrics["total_files"]
 
         except Exception as e:
             print(f"Warning: Could not run validation script: {e}")
@@ -294,9 +281,7 @@ class DailyComplianceMonitor:
                             str(script_path),
                             "--directory",
                             str(self.artifacts_root),
-                            "--auto-fix"
-                            if script != "reorganize_files.py"
-                            else "--move-to-correct-dirs",
+                            "--auto-fix" if script != "reorganize_files.py" else "--move-to-correct-dirs",
                         ],
                         capture_output=True,
                         text=True,
@@ -307,9 +292,7 @@ class DailyComplianceMonitor:
                         # Count fixes from output (basic parsing)
                         output_lines = result.stdout.split("\n")
                         for line in output_lines:
-                            if "✅" in line and (
-                                "Fixed" in line or "Added" in line or "Moved" in line
-                            ):
+                            if "✅" in line and ("Fixed" in line or "Added" in line or "Moved" in line):
                                 fixes_applied += 1
 
                     # Log execution
@@ -354,61 +337,39 @@ class DailyComplianceMonitor:
         conn.commit()
         conn.close()
 
-    def _generate_recommendations(
-        self, metrics: dict[str, Any], trend_7day: float, trend_30day: float
-    ) -> list[str]:
+    def _generate_recommendations(self, metrics: dict[str, Any], trend_7day: float, trend_30day: float) -> list[str]:
         """Generate actionable recommendations based on metrics"""
         recommendations = []
 
         # Compliance rate recommendations
         if metrics["compliance_rate"] < self.thresholds["critical"]:
-            recommendations.append(
-                "🚨 CRITICAL: Compliance rate below 80%. Immediate action required."
-            )
+            recommendations.append("🚨 CRITICAL: Compliance rate below 80%. Immediate action required.")
         elif metrics["compliance_rate"] < self.thresholds["warning"]:
-            recommendations.append(
-                "⚠️ WARNING: Compliance rate below 90%. Consider running automated fixes."
-            )
+            recommendations.append("⚠️ WARNING: Compliance rate below 90%. Consider running automated fixes.")
         elif metrics["compliance_rate"] < self.thresholds["target"]:
-            recommendations.append(
-                "📈 IMPROVEMENT: Compliance rate below target. Run automated fixes to reach 95%."
-            )
+            recommendations.append("📈 IMPROVEMENT: Compliance rate below target. Run automated fixes to reach 95%.")
         elif metrics["compliance_rate"] >= self.thresholds["excellent"]:
-            recommendations.append(
-                "🎉 EXCELLENT: Compliance rate above 98%. Maintain current practices."
-            )
+            recommendations.append("🎉 EXCELLENT: Compliance rate above 98%. Maintain current practices.")
 
         # Trend recommendations
         if trend_7day < -0.05:
-            recommendations.append(
-                "📉 DECLINING: 7-day trend shows declining compliance. Investigate recent changes."
-            )
+            recommendations.append("📉 DECLINING: 7-day trend shows declining compliance. Investigate recent changes.")
         elif trend_7day > 0.05:
-            recommendations.append(
-                "📈 IMPROVING: 7-day trend shows improving compliance. Continue current efforts."
-            )
+            recommendations.append("📈 IMPROVING: 7-day trend shows improving compliance. Continue current efforts.")
 
         # Issue type recommendations
         if "Naming" in metrics["issues_by_type"]:
-            recommendations.append(
-                "📝 NAMING: Run naming convention fixes for better file organization."
-            )
+            recommendations.append("📝 NAMING: Run naming convention fixes for better file organization.")
 
         if "Frontmatter" in metrics["issues_by_type"]:
-            recommendations.append(
-                "📄 FRONTMATTER: Add missing frontmatter to improve metadata compliance."
-            )
+            recommendations.append("📄 FRONTMATTER: Add missing frontmatter to improve metadata compliance.")
 
         if "Directory" in metrics["issues_by_type"]:
-            recommendations.append(
-                "📁 ORGANIZATION: Reorganize misplaced files to correct directories."
-            )
+            recommendations.append("📁 ORGANIZATION: Reorganize misplaced files to correct directories.")
 
         # Auto-fix recommendations
         if metrics["compliance_rate"] < self.auto_fix_settings["threshold"]:
-            recommendations.append(
-                "🔧 AUTO-FIX: Enable automated fixes to improve compliance quickly."
-            )
+            recommendations.append("🔧 AUTO-FIX: Enable automated fixes to improve compliance quickly.")
 
         return recommendations
 
@@ -649,32 +610,22 @@ python scripts/agent_tools/daily_compliance_monitor.py --run-daily-check --auto-
 def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Daily compliance monitoring system")
-    parser.add_argument(
-        "--run-daily-check", action="store_true", help="Run daily compliance check"
-    )
-    parser.add_argument(
-        "--generate-report", help="Generate report for specific date (YYYY-MM-DD)"
-    )
-    parser.add_argument(
-        "--setup-cron", action="store_true", help="Set up cron job for daily monitoring"
-    )
+    parser.add_argument("--run-daily-check", action="store_true", help="Run daily compliance check")
+    parser.add_argument("--generate-report", help="Generate report for specific date (YYYY-MM-DD)")
+    parser.add_argument("--setup-cron", action="store_true", help="Set up cron job for daily monitoring")
     parser.add_argument(
         "--auto-fix-threshold",
         type=float,
         default=0.85,
         help="Auto-fix threshold (0.0-1.0)",
     )
-    parser.add_argument(
-        "--history", type=int, help="Show compliance history for N days"
-    )
+    parser.add_argument("--history", type=int, help="Show compliance history for N days")
     parser.add_argument(
         "--artifacts-root",
         default="docs/artifacts",
         help="Root directory for artifacts",
     )
-    parser.add_argument(
-        "--db-path", default="compliance_monitoring.db", help="Database file path"
-    )
+    parser.add_argument("--db-path", default="compliance_monitoring.db", help="Database file path")
 
     args = parser.parse_args()
 
@@ -709,9 +660,7 @@ def main():
         print(f"\n📈 Compliance History ({args.history} days)")
         print("-" * 50)
         for entry in history:
-            print(
-                f"{entry['date']}: {entry['compliance_rate']:.1%} ({entry['total_files']} files, {entry['total_issues']} issues)"
-            )
+            print(f"{entry['date']}: {entry['compliance_rate']:.1%} ({entry['total_files']} files, {entry['total_issues']} issues)")
 
     else:
         parser.print_help()

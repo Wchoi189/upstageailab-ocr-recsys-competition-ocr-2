@@ -8,7 +8,8 @@ consistent transformation calculations.
 """
 
 import logging
-from typing import Any, Sequence
+from collections.abc import Sequence
+from typing import Any
 
 from .coordinate_manager import calculate_transform_metadata
 
@@ -71,8 +72,7 @@ def create_preprocessing_metadata(
     }
 
     LOGGER.debug(
-        "Created preprocessing metadata: original_size=%s, processed_size=%s, "
-        "padding=%s, content_area=%s, scale=%.4f",
+        "Created preprocessing metadata: original_size=%s, processed_size=%s, padding=%s, content_area=%s, scale=%.4f",
         metadata["original_size"],
         metadata["processed_size"],
         metadata["padding"],

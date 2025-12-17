@@ -1,17 +1,16 @@
 #!/usr/bin/env python3
-import sys
-import cv2
-import numpy as np
-import logging
-from pathlib import Path
 import datetime
-import glob
+import logging
+import sys
+from pathlib import Path
+
+import cv2
 
 # Setup experiment paths - auto-detect tracker root and experiment context
 script_path = Path(__file__).resolve()
 tracker_root = script_path.parent.parent.parent.parent.parent / "src"
 sys.path.insert(0, str(tracker_root))
-from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+from experiment_tracker.utils.path_utils import setup_script_paths
 
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
@@ -29,6 +28,7 @@ from mask_only_edge_detector import fit_mask_rectangle, visualize_mask_fit
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 def evaluate_worst_performers(
     worst_case_dir: str,
@@ -54,7 +54,9 @@ def evaluate_worst_performers(
 
     # Limit to 25 samples if there are more
     selected_files = mask_files[:25]
-    logger.info(f"Found {len(all_mask_files)} total mask files, filtered to {len(mask_files)} original masks. Selecting {len(selected_files)} for evaluation")
+    logger.info(
+        f"Found {len(all_mask_files)} total mask files, filtered to {len(mask_files)} original masks. Selecting {len(selected_files)} for evaluation"
+    )
 
     results = []
 
@@ -71,10 +73,7 @@ def evaluate_worst_performers(
 
         # Run fit with new parameters
         result = fit_mask_rectangle(
-            mask,
-            use_regression=use_regression,
-            regression_epsilon_px=regression_epsilon_px,
-            use_dominant_extension=use_dominant_extension
+            mask, use_regression=use_regression, regression_epsilon_px=regression_epsilon_px, use_dominant_extension=use_dominant_extension
         )
 
         # Visualize
@@ -96,16 +95,18 @@ def evaluate_worst_performers(
         cv2.imwrite(str(output_path), vis)
         logger.info(f"Processed {img_id}: {result.reason or 'Success'} (Eps: {result.used_epsilon})")
 
-        results.append({
-            "id": img_id,
-            "reason": result.reason,
-            "decision": result.line_quality.decision if result.line_quality else "N/A",
-            "used_epsilon": result.used_epsilon
-        })
+        results.append(
+            {
+                "id": img_id,
+                "reason": result.reason,
+                "decision": result.line_quality.decision if result.line_quality else "N/A",
+                "used_epsilon": result.used_epsilon,
+            }
+        )
 
     # Summary
     success_count = sum(1 for r in results if r["reason"] is None)
-    logger.info(f"Success rate: {success_count}/{len(results)} ({success_count/len(results)*100:.1f}%)")
+    logger.info(f"Success rate: {success_count}/{len(results)} ({success_count / len(results) * 100:.1f}%)")
 
     # Write summary to file
     with open(output_dir / "summary.txt", "w") as f:
@@ -114,6 +115,7 @@ def evaluate_worst_performers(
         f.write(f"Success rate: {success_count}/{len(results)}\n\n")
         for r in results:
             f.write(f"{r['id']}: {r['reason']} ({r['decision']})\n")
+
 
 if __name__ == "__main__":
     worst_case_dir = str(OCR_RESOLVER.config.output_dir / "improved_edge_approach" / "worst_force_improved")

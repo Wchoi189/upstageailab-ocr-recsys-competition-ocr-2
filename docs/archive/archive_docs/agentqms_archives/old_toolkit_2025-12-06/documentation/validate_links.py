@@ -115,13 +115,9 @@ class LinkValidator:
             if not self.validate_internal_link(url, file_path):
                 if url.startswith(("http://", "https://")):
                     if not self.validate_external_link(url):
-                        self.errors.append(
-                            f"Broken external link in {file_path}:{line_num}: {url}"
-                        )
+                        self.errors.append(f"Broken external link in {file_path}:{line_num}: {url}")
                 else:
-                    self.errors.append(
-                        f"Broken internal link in {file_path}:{line_num}: {url}"
-                    )
+                    self.errors.append(f"Broken internal link in {file_path}:{line_num}: {url}")
 
     def validate_all(self) -> bool:
         """Validate all documentation files."""

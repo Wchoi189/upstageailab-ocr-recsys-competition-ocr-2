@@ -30,9 +30,7 @@ class OpenRouterBackend(BaseVLMBackend):
         settings = get_config().backends.openrouter
         api_key = config.api_key or resolve_env_value(settings.api_key_env)
         if not api_key:
-            raise BackendError(
-                "OpenRouter API key is required. Provide it via configuration or environment variables."
-            )
+            raise BackendError("OpenRouter API key is required. Provide it via configuration or environment variables.")
 
         base_url = config.endpoint or settings.base_url
         self.client = OpenAI(
@@ -105,7 +103,7 @@ class OpenRouterBackend(BaseVLMBackend):
             except Exception as e:
                 last_error = e
                 if attempt < max_retries:
-                    time.sleep(2 ** attempt)  # Exponential backoff
+                    time.sleep(2**attempt)  # Exponential backoff
                     continue
                 break
 

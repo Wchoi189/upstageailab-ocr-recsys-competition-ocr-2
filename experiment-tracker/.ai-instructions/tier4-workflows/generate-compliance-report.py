@@ -26,12 +26,7 @@ def run_compliance_checker(file_path: Path, checker_path: Path) -> tuple[bool, l
         (is_valid, errors, warnings)
     """
     try:
-        result = subprocess.run(
-            ["python3", str(checker_path), str(file_path)],
-            capture_output=True,
-            text=True,
-            timeout=10
-        )
+        result = subprocess.run(["python3", str(checker_path), str(file_path)], capture_output=True, text=True, timeout=10)
 
         output = result.stdout + result.stderr
         is_valid = result.returncode == 0
@@ -40,10 +35,10 @@ def run_compliance_checker(file_path: Path, checker_path: Path) -> tuple[bool, l
         errors = []
         warnings = []
 
-        for line in output.split('\n'):
-            if '• ' in line or 'Missing' in line or 'Invalid' in line:
+        for line in output.split("\n"):
+            if "• " in line or "Missing" in line or "Invalid" in line:
                 errors.append(line.strip())
-            elif '⚠️' in line:
+            elif "⚠️" in line:
                 warnings.append(line.strip())
 
         return is_valid, errors, warnings
@@ -81,21 +76,21 @@ def analyze_experiment(experiment_dir: Path, checker_path: Path) -> dict:
     missing_frontmatter_count = 0
 
     # Check for .metadata/ directory
-    has_metadata_dir = (experiment_dir / '.metadata').exists()
+    has_metadata_dir = (experiment_dir / ".metadata").exists()
 
     # Find all markdown files
-    md_files = list(experiment_dir.rglob('*.md'))
+    md_files = list(experiment_dir.rglob("*.md"))
 
     for md_file in md_files:
         # Skip README.md
-        if md_file.name == 'README.md':
+        if md_file.name == "README.md":
             continue
 
         filename = md_file.name
         relative_path = md_file.relative_to(experiment_dir)
 
         # Check for ALL-CAPS
-        is_all_caps = filename.replace('.md', '').replace('_', '').isupper()
+        is_all_caps = filename.replace(".md", "").replace("_", "").isupper()
         if is_all_caps:
             all_caps_count += 1
 
@@ -103,17 +98,17 @@ def analyze_experiment(experiment_dir: Path, checker_path: Path) -> dict:
         is_valid, errors, warnings = run_compliance_checker(md_file, checker_path)
 
         # Check for missing frontmatter
-        has_missing_frontmatter = any('No YAML frontmatter' in err for err in errors)
+        has_missing_frontmatter = any("No YAML frontmatter" in err for err in errors)
         if has_missing_frontmatter:
             missing_frontmatter_count += 1
 
         artifact_info = {
-            'filename': filename,
-            'relative_path': str(relative_path),
-            'is_valid': is_valid,
-            'is_all_caps': is_all_caps,
-            'errors': errors,
-            'warnings': warnings,
+            "filename": filename,
+            "relative_path": str(relative_path),
+            "is_valid": is_valid,
+            "is_all_caps": is_all_caps,
+            "errors": errors,
+            "warnings": warnings,
         }
 
         artifacts.append(artifact_info)
@@ -133,16 +128,16 @@ def analyze_experiment(experiment_dir: Path, checker_path: Path) -> dict:
     compliance_percentage = (compliant_count / total_count * 100) if total_count > 0 else 0
 
     return {
-        'experiment_id': experiment_id,
-        'artifacts': artifacts,
-        'total_count': total_count,
-        'compliant_count': compliant_count,
-        'violation_count': violation_count,
-        'critical_violations': critical_violations,
-        'compliance_percentage': compliance_percentage,
-        'has_metadata_dir': has_metadata_dir,
-        'all_caps_count': all_caps_count,
-        'missing_frontmatter_count': missing_frontmatter_count,
+        "experiment_id": experiment_id,
+        "artifacts": artifacts,
+        "total_count": total_count,
+        "compliant_count": compliant_count,
+        "violation_count": violation_count,
+        "critical_violations": critical_violations,
+        "compliance_percentage": compliance_percentage,
+        "has_metadata_dir": has_metadata_dir,
+        "all_caps_count": all_caps_count,
+        "missing_frontmatter_count": missing_frontmatter_count,
     }
 
 
@@ -151,25 +146,25 @@ def generate_markdown_report(experiments_data: list[dict], output_path: Path):
     timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
     # Sort experiments by compliance percentage (worst first)
-    experiments_data.sort(key=lambda x: x['compliance_percentage'])
+    experiments_data.sort(key=lambda x: x["compliance_percentage"])
 
     # Calculate aggregate metrics
     total_experiments = len(experiments_data)
-    total_artifacts = sum(e['total_count'] for e in experiments_data)
-    total_compliant = sum(e['compliant_count'] for e in experiments_data)
-    total_violations = sum(e['violation_count'] for e in experiments_data)
-    avg_compliance = sum(e['compliance_percentage'] for e in experiments_data) / total_experiments if total_experiments > 0 else 0
+    total_artifacts = sum(e["total_count"] for e in experiments_data)
+    total_compliant = sum(e["compliant_count"] for e in experiments_data)
+    total_violations = sum(e["violation_count"] for e in experiments_data)
+    avg_compliance = sum(e["compliance_percentage"] for e in experiments_data) / total_experiments if total_experiments > 0 else 0
 
-    total_all_caps = sum(e['all_caps_count'] for e in experiments_data)
-    total_missing_frontmatter = sum(e['missing_frontmatter_count'] for e in experiments_data)
-    experiments_without_metadata = sum(1 for e in experiments_data if not e['has_metadata_dir'])
+    total_all_caps = sum(e["all_caps_count"] for e in experiments_data)
+    total_missing_frontmatter = sum(e["missing_frontmatter_count"] for e in experiments_data)
+    experiments_without_metadata = sum(1 for e in experiments_data if not e["has_metadata_dir"])
 
     # Calculate percentages safely
-    compliant_pct = (total_compliant/total_artifacts*100) if total_artifacts > 0 else 0
-    violation_pct = (total_violations/total_artifacts*100) if total_artifacts > 0 else 0
-    all_caps_pct = (total_all_caps/total_artifacts*100) if total_artifacts > 0 else 0
-    missing_fm_pct = (total_missing_frontmatter/total_artifacts*100) if total_artifacts > 0 else 0
-    missing_meta_pct = (experiments_without_metadata/total_experiments*100) if total_experiments > 0 else 0
+    compliant_pct = (total_compliant / total_artifacts * 100) if total_artifacts > 0 else 0
+    violation_pct = (total_violations / total_artifacts * 100) if total_artifacts > 0 else 0
+    all_caps_pct = (total_all_caps / total_artifacts * 100) if total_artifacts > 0 else 0
+    missing_fm_pct = (total_missing_frontmatter / total_artifacts * 100) if total_artifacts > 0 else 0
+    missing_meta_pct = (experiments_without_metadata / total_experiments * 100) if total_experiments > 0 else 0
 
     # Generate report
     report = f"""# EDS v1.0 Compliance Report
@@ -201,32 +196,32 @@ def generate_markdown_report(experiments_data: list[dict], output_path: Path):
 """
 
     for exp in experiments_data:
-        metadata_status = "✅" if exp['has_metadata_dir'] else "❌"
+        metadata_status = "✅" if exp["has_metadata_dir"] else "❌"
         report += f"| {exp['experiment_id']} | {exp['total_count']} | {exp['compliant_count']} | {exp['violation_count']} | {exp['compliance_percentage']:.1f}% | {metadata_status} | {exp['all_caps_count']} | {exp['missing_frontmatter_count']} |\n"
 
     # Detailed violations per experiment
     report += "\n## Detailed Violations\n\n"
 
     for exp in experiments_data:
-        if exp['violation_count'] == 0:
+        if exp["violation_count"] == 0:
             continue
 
         report += f"### {exp['experiment_id']}\n\n"
         report += f"**Compliance**: {exp['compliance_percentage']:.1f}% ({exp['compliant_count']}/{exp['total_count']} artifacts)\n\n"
 
-        if exp['critical_violations']:
+        if exp["critical_violations"]:
             report += "**Critical Violations**:\n\n"
-            for violation in exp['critical_violations']:
+            for violation in exp["critical_violations"]:
                 report += f"- ❌ {violation}\n"
             report += "\n"
 
         # List non-compliant artifacts
-        non_compliant_artifacts = [a for a in exp['artifacts'] if not a['is_valid']]
+        non_compliant_artifacts = [a for a in exp["artifacts"] if not a["is_valid"]]
         if non_compliant_artifacts:
             report += "**Non-Compliant Artifacts**:\n\n"
             for artifact in non_compliant_artifacts:
                 report += f"- `{artifact['relative_path']}`\n"
-                for error in artifact['errors'][:3]:  # Limit to 3 errors per file
+                for error in artifact["errors"][:3]:  # Limit to 3 errors per file
                     report += f"  - {error}\n"
             report += "\n"
 
@@ -240,7 +235,7 @@ def generate_markdown_report(experiments_data: list[dict], output_path: Path):
         report += "**Action**: Create .metadata/ directory structure:\n\n"
         report += "```bash\n"
         for exp in experiments_data:
-            if not exp['has_metadata_dir']:
+            if not exp["has_metadata_dir"]:
                 report += f"mkdir -p experiment-tracker/experiments/{exp['experiment_id']}/.metadata/{{assessments,reports,guides,scripts,artifacts}}\n"
         report += "```\n\n"
 
@@ -250,11 +245,11 @@ def generate_markdown_report(experiments_data: list[dict], output_path: Path):
         report += f"**Count**: {total_all_caps} files\n\n"
         report += "**Action**: Rename using lowercase-hyphenated pattern:\n\n"
         for exp in experiments_data:
-            all_caps_artifacts = [a for a in exp['artifacts'] if a['is_all_caps']]
+            all_caps_artifacts = [a for a in exp["artifacts"] if a["is_all_caps"]]
             if all_caps_artifacts:
                 report += f"**{exp['experiment_id']}**:\n"
                 for artifact in all_caps_artifacts:
-                    old_name = artifact['filename']
+                    old_name = artifact["filename"]
                     # Suggest new name (simplified example)
                     new_name = f"20251217_1200_guide_{old_name.lower().replace('_', '-').replace('.md', '')}.md"
                     report += f"- `{old_name}` → `{new_name}`\n"
@@ -336,19 +331,19 @@ def main():
     generate_markdown_report(experiments_data, output_path)
 
     # Print summary to console
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("Experiments by Compliance:")
-    for exp in sorted(experiments_data, key=lambda x: x['compliance_percentage']):
-        status = "✅" if exp['compliance_percentage'] == 100 else "❌"
+    for exp in sorted(experiments_data, key=lambda x: x["compliance_percentage"]):
+        status = "✅" if exp["compliance_percentage"] == 100 else "❌"
         print(f"  {status} {exp['experiment_id']:<50} {exp['compliance_percentage']:>5.1f}%")
 
     # Print critical issues
-    total_critical = sum(len(e['critical_violations']) for e in experiments_data)
+    total_critical = sum(len(e["critical_violations"]) for e in experiments_data)
     if total_critical > 0:
-        print("\n" + "="*60)
+        print("\n" + "=" * 60)
         print(f"⚠️  {total_critical} critical violations require immediate attention")
         print(f"📖 See detailed report: {output_path}")
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

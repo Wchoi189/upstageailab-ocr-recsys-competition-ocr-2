@@ -112,23 +112,17 @@ class ExperimentTracker:
         # Create experiment manifest
         manifest = self._generate_manifest(experiment_id, name, description, tags or [])
         manifest_path = exp_path / "README.md"
-        manifest_path.write_text(manifest, encoding='utf-8')
+        manifest_path.write_text(manifest, encoding="utf-8")
 
         print(f"✅ Initialized experiment: {experiment_id}")
         print(f"📂 Location: {exp_path}")
         print("\n📋 Next steps:")
         print(f"   cd {exp_path}")
-        print("   etk create assessment \"Initial baseline evaluation\"")
+        print('   etk create assessment "Initial baseline evaluation"')
 
         return experiment_id
 
-    def create_artifact(
-        self,
-        artifact_type: str,
-        title: str,
-        experiment_id: str | None = None,
-        **kwargs
-    ) -> Path:
+    def create_artifact(self, artifact_type: str, title: str, experiment_id: str | None = None, **kwargs) -> Path:
         """
         Create new artifact with EDS v1.0 compliant frontmatter.
 
@@ -163,15 +157,10 @@ class ExperimentTracker:
             raise ValueError(f"Artifact already exists: {filename}")
 
         # Generate content
-        content = self._generate_artifact_content(
-            artifact_type=artifact_type,
-            title=title,
-            experiment_id=experiment_id,
-            **kwargs
-        )
+        content = self._generate_artifact_content(artifact_type=artifact_type, title=title, experiment_id=experiment_id, **kwargs)
 
         # Write artifact
-        artifact_path.write_text(content, encoding='utf-8')
+        artifact_path.write_text(content, encoding="utf-8")
 
         print(f"✅ Created {artifact_type}: {filename}")
         print(f"📂 Location: {artifact_path}")
@@ -235,7 +224,7 @@ class ExperimentTracker:
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=self.tracker_root)
-            return result.returncode == 0, result.stdout.split('\n')
+            return result.returncode == 0, result.stdout.split("\n")
         except Exception as e:
             return False, [f"Validation error: {str(e)}"]
 
@@ -263,7 +252,7 @@ class ExperimentTracker:
         Returns:
             Statistics dict: {synced: int, failed: int, skipped: int}
         """
-        stats = {'synced': 0, 'failed': 0, 'skipped': 0}
+        stats = {"synced": 0, "failed": 0, "skipped": 0}
 
         if not self.db_path.exists():
             raise FileNotFoundError(f"Database not found: {self.db_path}")
@@ -273,7 +262,7 @@ class ExperimentTracker:
 
         try:
             if sync_all:
-                experiments = [exp['experiment_id'] for exp in self.list_experiments()]
+                experiments = [exp["experiment_id"] for exp in self.list_experiments()]
             elif experiment_id:
                 experiments = [experiment_id]
             else:
@@ -287,7 +276,7 @@ class ExperimentTracker:
                     self._sync_experiment(conn, exp_id, stats)
                 except Exception as e:
                     print(f"⚠️  Failed to sync {exp_id}: {e}", file=sys.stderr)
-                    stats['failed'] += 1
+                    stats["failed"] += 1
 
             conn.commit()
 
@@ -305,10 +294,10 @@ class ExperimentTracker:
 
         # Parse experiment info from directory
         # Extract timestamp and name from experiment_id (format: YYYYMMDD_HHMMSS_name)
-        parts = experiment_id.split('_', 2)
+        parts = experiment_id.split("_", 2)
         if len(parts) >= 3:
             timestamp_str = f"{parts[0]}_{parts[1]}"
-            name = parts[2].replace('_', ' ').title()
+            name = parts[2].replace("_", " ").title()
         else:
             timestamp_str = parts[0] if parts else experiment_id
             name = experiment_id
@@ -323,65 +312,62 @@ class ExperimentTracker:
         exists = cursor.fetchone() is not None
 
         if exists:
-            conn.execute(
-                "UPDATE experiments SET updated_at = ? WHERE experiment_id = ?",
-                (datetime.now(UTC).isoformat(), experiment_id)
-            )
+            conn.execute("UPDATE experiments SET updated_at = ? WHERE experiment_id = ?", (datetime.now(UTC).isoformat(), experiment_id))
         else:
             conn.execute(
                 "INSERT INTO experiments (experiment_id, name, status, created_at, updated_at, ads_version) VALUES (?, ?, ?, ?, ?, ?)",
-                (experiment_id, name, "active", created_at, datetime.now(UTC).isoformat(), EDS_VERSION)
+                (experiment_id, name, "active", created_at, datetime.now(UTC).isoformat(), EDS_VERSION),
             )
 
         # Find all markdown files matching EDS naming pattern (YYYYMMDD_HHMM_TYPE_slug.md)
-        artifact_pattern = re.compile(r'^\d{8}_\d{4}_(assessment|report|guide|script)_.*\.md$')
+        artifact_pattern = re.compile(r"^\d{8}_\d{4}_(assessment|report|guide|script)_.*\.md$")
 
         # Scan experiment directory recursively
         for artifact_path in exp_path.rglob("*.md"):
             # Skip README and other non-artifact files
-            if artifact_path.name.lower() in ['readme.md', 'index.md']:
+            if artifact_path.name.lower() in ["readme.md", "index.md"]:
                 continue
 
             # Check if filename matches EDS pattern
             if artifact_pattern.match(artifact_path.name):
                 try:
                     # Extract artifact type from filename
-                    artifact_type = artifact_path.name.split('_')[2]
+                    artifact_type = artifact_path.name.split("_")[2]
                     self._sync_artifact(conn, experiment_id, artifact_path, artifact_type, stats)
                 except Exception as e:
                     print(f"⚠️  Failed to sync {artifact_path.name}: {e}", file=sys.stderr)
-                    stats['failed'] += 1
+                    stats["failed"] += 1
 
     def _sync_artifact(self, conn: sqlite3.Connection, experiment_id: str, artifact_path: Path, artifact_type: str, stats: dict):
         """Sync single artifact to database."""
-        with open(artifact_path, encoding='utf-8') as f:
+        with open(artifact_path, encoding="utf-8") as f:
             content = f.read()
 
         # Extract frontmatter
-        frontmatter_match = re.match(r'^---\s*\n(.*?)\n---\s*\n', content, re.DOTALL)
+        frontmatter_match = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
         if not frontmatter_match:
-            stats['skipped'] += 1
+            stats["skipped"] += 1
             return
 
         frontmatter_text = frontmatter_match.group(1)
         frontmatter = {}
 
         # Parse YAML-like frontmatter (simple key: value extraction)
-        for line in frontmatter_text.split('\n'):
-            if ':' in line:
-                key, value = line.split(':', 1)
+        for line in frontmatter_text.split("\n"):
+            if ":" in line:
+                key, value = line.split(":", 1)
                 key = key.strip()
                 value = value.strip().strip('"').strip("'")
                 frontmatter[key] = value
 
         artifact_id = artifact_path.stem
-        title = frontmatter.get('title', artifact_id)
-        status = frontmatter.get('status', 'active')
-        created = frontmatter.get('created', datetime.now(UTC).isoformat())
-        updated = frontmatter.get('updated', datetime.now(UTC).isoformat())
+        title = frontmatter.get("title", artifact_id)
+        status = frontmatter.get("status", "active")
+        created = frontmatter.get("created", datetime.now(UTC).isoformat())
+        updated = frontmatter.get("updated", datetime.now(UTC).isoformat())
 
         # Extract main content (after frontmatter)
-        main_content = content[frontmatter_match.end():]
+        main_content = content[frontmatter_match.end() :]
 
         # Check if artifact exists
         cursor = conn.execute("SELECT artifact_id FROM artifacts WHERE artifact_id = ?", (artifact_id,))
@@ -389,77 +375,79 @@ class ExperimentTracker:
 
         if exists:
             conn.execute(
-                "UPDATE artifacts SET title = ?, status = ?, updated_at = ? WHERE artifact_id = ?",
-                (title, status, updated, artifact_id)
+                "UPDATE artifacts SET title = ?, status = ?, updated_at = ? WHERE artifact_id = ?", (title, status, updated, artifact_id)
             )
         else:
             conn.execute(
                 "INSERT INTO artifacts (artifact_id, experiment_id, type, title, file_path, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (artifact_id, experiment_id, artifact_type, title, str(artifact_path.relative_to(self.tracker_root)), status, created, updated)
+                (
+                    artifact_id,
+                    experiment_id,
+                    artifact_type,
+                    title,
+                    str(artifact_path.relative_to(self.tracker_root)),
+                    status,
+                    created,
+                    updated,
+                ),
             )
 
         # Sync FTS
         conn.execute("DELETE FROM artifacts_fts WHERE artifact_id = ?", (artifact_id,))
         conn.execute(
             "INSERT INTO artifacts_fts (artifact_id, experiment_id, title, content) VALUES (?, ?, ?, ?)",
-            (artifact_id, experiment_id, title, main_content)
+            (artifact_id, experiment_id, title, main_content),
         )
 
         # Sync tags
-        tags_str = frontmatter.get('tags', '')
+        tags_str = frontmatter.get("tags", "")
         if tags_str:
-            tags = [t.strip() for t in tags_str.split(',')]
+            tags = [t.strip() for t in tags_str.split(",")]
             for tag in tags:
                 # Insert tag if not exists
-                conn.execute(
-                    "INSERT OR IGNORE INTO tags (experiment_id, tag_name) VALUES (?, ?)",
-                    (experiment_id, tag)
-                )
+                conn.execute("INSERT OR IGNORE INTO tags (experiment_id, tag_name) VALUES (?, ?)", (experiment_id, tag))
                 # Link artifact to tag
-                conn.execute(
-                    "INSERT OR IGNORE INTO artifact_tags (artifact_id, tag_name) VALUES (?, ?)",
-                    (artifact_id, tag)
-                )
+                conn.execute("INSERT OR IGNORE INTO artifact_tags (artifact_id, tag_name) VALUES (?, ?)", (artifact_id, tag))
 
         # Sync type-specific metadata
-        if artifact_type == 'assessment':
-            phase = frontmatter.get('phase')
-            priority = frontmatter.get('priority')
-            evidence_count = frontmatter.get('evidence_count')
+        if artifact_type == "assessment":
+            phase = frontmatter.get("phase")
+            priority = frontmatter.get("priority")
+            evidence_count = frontmatter.get("evidence_count")
 
             # Validate phase against CHECK constraint
-            valid_phases = ['planning', 'execution', 'analysis', 'complete']
+            valid_phases = ["planning", "execution", "analysis", "complete"]
             if phase and phase not in valid_phases:
                 phase = None
 
             # Validate priority against CHECK constraint
-            valid_priorities = ['low', 'medium', 'high', 'critical']
+            valid_priorities = ["low", "medium", "high", "critical"]
             if priority and priority not in valid_priorities:
                 priority = None
 
             if phase or priority or evidence_count:
                 conn.execute(
                     "INSERT OR REPLACE INTO artifact_metadata (artifact_id, phase, priority, evidence_count) VALUES (?, ?, ?, ?)",
-                    (artifact_id, phase, priority, int(evidence_count) if evidence_count else None)
+                    (artifact_id, phase, priority, int(evidence_count) if evidence_count else None),
                 )
 
-        elif artifact_type == 'report':
-            metrics = frontmatter.get('metrics')
-            baseline = frontmatter.get('baseline')
-            comparison = frontmatter.get('comparison')
+        elif artifact_type == "report":
+            metrics = frontmatter.get("metrics")
+            baseline = frontmatter.get("baseline")
+            comparison = frontmatter.get("comparison")
 
             # Validate comparison against CHECK constraint
-            valid_comparisons = ['baseline', 'previous', 'best']
+            valid_comparisons = ["baseline", "previous", "best"]
             if comparison and comparison not in valid_comparisons:
                 comparison = None
 
             if metrics or baseline or comparison:
                 conn.execute(
                     "INSERT OR REPLACE INTO artifact_metadata (artifact_id, metrics, baseline, comparison) VALUES (?, ?, ?, ?)",
-                    (artifact_id, metrics, baseline, comparison)
+                    (artifact_id, metrics, baseline, comparison),
                 )
 
-        stats['synced'] += 1
+        stats["synced"] += 1
 
     def query_artifacts(self, query: str) -> list[dict]:
         """
@@ -478,7 +466,8 @@ class ExperimentTracker:
         conn.row_factory = sqlite3.Row
 
         try:
-            cursor = conn.execute("""
+            cursor = conn.execute(
+                """
                 SELECT
                     f.artifact_id,
                     f.experiment_id,
@@ -492,19 +481,23 @@ class ExperimentTracker:
                 WHERE artifacts_fts MATCH ?
                 ORDER BY rank
                 LIMIT 20
-            """, (query,))
+            """,
+                (query,),
+            )
 
             results = []
             for row in cursor.fetchall():
-                results.append({
-                    'artifact_id': row['artifact_id'],
-                    'experiment_id': row['experiment_id'],
-                    'title': row['title'],
-                    'snippet': row['snippet'],
-                    'type': row['type'],
-                    'status': row['status'],
-                    'file_path': row['file_path']
-                })
+                results.append(
+                    {
+                        "artifact_id": row["artifact_id"],
+                        "experiment_id": row["experiment_id"],
+                        "title": row["title"],
+                        "snippet": row["snippet"],
+                        "type": row["type"],
+                        "status": row["status"],
+                        "file_path": row["file_path"],
+                    }
+                )
 
             return results
 
@@ -537,11 +530,11 @@ class ExperimentTracker:
                 FROM experiments
             """)
             row = cursor.fetchone()
-            analytics['experiments'] = {
-                'total': row['total'],
-                'active': row['active'],
-                'complete': row['complete'],
-                'deprecated': row['deprecated']
+            analytics["experiments"] = {
+                "total": row["total"],
+                "active": row["active"],
+                "complete": row["complete"],
+                "deprecated": row["deprecated"],
             }
 
             # Artifact counts by type
@@ -551,11 +544,11 @@ class ExperimentTracker:
                 GROUP BY type
                 ORDER BY count DESC
             """)
-            analytics['artifacts_by_type'] = {row['type']: row['count'] for row in cursor.fetchall()}
+            analytics["artifacts_by_type"] = {row["type"]: row["count"] for row in cursor.fetchall()}
 
             # Total artifacts
             cursor = conn.execute("SELECT COUNT(*) as count FROM artifacts")
-            analytics['total_artifacts'] = cursor.fetchone()['count']
+            analytics["total_artifacts"] = cursor.fetchone()["count"]
 
             # Recent activity (last 10 artifacts)
             cursor = conn.execute("""
@@ -570,7 +563,7 @@ class ExperimentTracker:
                 ORDER BY a.updated_at DESC
                 LIMIT 10
             """)
-            analytics['recent_activity'] = [dict(row) for row in cursor.fetchall()]
+            analytics["recent_activity"] = [dict(row) for row in cursor.fetchall()]
 
             # Artifacts per experiment
             cursor = conn.execute("""
@@ -583,7 +576,7 @@ class ExperimentTracker:
                 GROUP BY e.experiment_id
                 ORDER BY artifact_count DESC
             """)
-            analytics['artifacts_per_experiment'] = [dict(row) for row in cursor.fetchall()]
+            analytics["artifacts_per_experiment"] = [dict(row) for row in cursor.fetchall()]
 
             # Tag statistics
             cursor = conn.execute("""
@@ -597,7 +590,7 @@ class ExperimentTracker:
                 ORDER BY artifact_count DESC
                 LIMIT 10
             """)
-            analytics['popular_tags'] = [dict(row) for row in cursor.fetchall()]
+            analytics["popular_tags"] = [dict(row) for row in cursor.fetchall()]
 
             return analytics
 
@@ -607,12 +600,12 @@ class ExperimentTracker:
     def _generate_slug(self, title: str) -> str:
         """Generate URL-safe slug from title."""
         slug = title.lower()
-        slug = re.sub(r'[^\w\s-]', '', slug)
-        slug = re.sub(r'[-\s]+', '-', slug)
-        slug = slug.strip('-')
+        slug = re.sub(r"[^\w\s-]", "", slug)
+        slug = re.sub(r"[-\s]+", "-", slug)
+        slug = slug.strip("-")
 
         if len(slug) > 50:
-            slug = slug[:50].rstrip('-')
+            slug = slug[:50].rstrip("-")
 
         return slug
 
@@ -669,7 +662,7 @@ etk validate
 
 ## Tags
 
-{', '.join(tags) if tags else 'No tags'}
+{", ".join(tags) if tags else "No tags"}
 
 ---
 
@@ -677,13 +670,7 @@ etk validate
 """
         return manifest
 
-    def _generate_artifact_content(
-        self,
-        artifact_type: str,
-        title: str,
-        experiment_id: str,
-        **kwargs
-    ) -> str:
+    def _generate_artifact_content(self, artifact_type: str, title: str, experiment_id: str, **kwargs) -> str:
         """Generate artifact content with compliant frontmatter."""
         now = datetime.now(UTC).isoformat()
 
@@ -722,9 +709,9 @@ etk validate
             if isinstance(value, str):
                 yaml_lines.append(f'{key}: "{value}"')
             elif isinstance(value, list):
-                yaml_lines.append(f'{key}: {json.dumps(value)}')
+                yaml_lines.append(f"{key}: {json.dumps(value)}")
             elif isinstance(value, (int, float)):
-                yaml_lines.append(f'{key}: {value}')
+                yaml_lines.append(f"{key}: {value}")
         yaml_lines.append("---")
 
         # Generate content template
@@ -864,7 +851,7 @@ python script.py --example
 ## Notes
 
 Additional notes and considerations.
-"""
+""",
         }
 
         return templates.get(artifact_type, "## Content\n\nAdd content here.\n")
@@ -882,7 +869,7 @@ Examples:
   etk status
   etk validate --all
   etk list
-        """
+        """,
     )
 
     parser.add_argument("--version", action="version", version=f"ETK v{ETK_VERSION} | EDS v{EDS_VERSION}")
@@ -916,7 +903,7 @@ Examples:
     validate_parser.add_argument("--all", action="store_true", help="Validate all experiments")
 
     # list command
-    list_parser = subparsers.add_parser("list", help="List all experiments")
+    subparsers.add_parser("list", help="List all experiments")
 
     # sync command
     sync_parser = subparsers.add_parser("sync", help="Sync artifacts to database")
@@ -928,7 +915,7 @@ Examples:
     query_parser.add_argument("query", help="Search query")
 
     # analytics command
-    analytics_parser = subparsers.add_parser("analytics", help="Show analytics dashboard")
+    subparsers.add_parser("analytics", help="Show analytics dashboard")
 
     args = parser.parse_args()
 
@@ -944,9 +931,7 @@ Examples:
             tracker.init_experiment(args.name, args.description, tags)
 
         elif args.command == "create":
-            kwargs = {
-                "tags": [t.strip() for t in args.tags.split(",")] if args.tags else []
-            }
+            kwargs = {"tags": [t.strip() for t in args.tags.split(",")] if args.tags else []}
 
             if args.type == "assessment":
                 if args.phase:
@@ -960,12 +945,7 @@ Examples:
                 if args.baseline:
                     kwargs["baseline"] = args.baseline
 
-            tracker.create_artifact(
-                artifact_type=args.type,
-                title=args.title,
-                experiment_id=args.experiment,
-                **kwargs
-            )
+            tracker.create_artifact(artifact_type=args.type, title=args.title, experiment_id=args.experiment, **kwargs)
 
         elif args.command == "status":
             status = tracker.get_status(args.experiment_id)
@@ -973,7 +953,7 @@ Examples:
             print(f"\n📊 Experiment Status: {status['experiment_id']}")
             print(f"📂 Location: {status['path']}")
             print("\n📋 Artifacts:")
-            for artifact_type, count in status['artifacts'].items():
+            for artifact_type, count in status["artifacts"].items():
                 icon = "✅" if count > 0 else "⚪"
                 print(f"   {icon} {artifact_type}: {count}")
             print(f"\n📦 Total: {status['total_artifacts']} artifacts")
@@ -1002,10 +982,12 @@ Examples:
             print(f"\n📊 Total Experiments: {len(experiments)}\n")
 
             for exp in experiments:
-                total = exp['total_artifacts']
+                total = exp["total_artifacts"]
                 icon = "📦" if total > 0 else "📭"
                 print(f"{icon} {exp['experiment_id']}")
-                print(f"   Artifacts: {total} (A:{exp['artifacts']['assessments']} R:{exp['artifacts']['reports']} G:{exp['artifacts']['guides']} S:{exp['artifacts']['scripts']})")
+                print(
+                    f"   Artifacts: {total} (A:{exp['artifacts']['assessments']} R:{exp['artifacts']['reports']} G:{exp['artifacts']['guides']} S:{exp['artifacts']['scripts']})"
+                )
                 print()
 
         elif args.command == "sync":
@@ -1014,9 +996,9 @@ Examples:
 
             print("\n✅ Sync complete:")
             print(f"   ✓ Synced: {stats['synced']}")
-            if stats['skipped'] > 0:
+            if stats["skipped"] > 0:
                 print(f"   ⊘ Skipped: {stats['skipped']}")
-            if stats['failed'] > 0:
+            if stats["failed"] > 0:
                 print(f"   ✗ Failed: {stats['failed']}")
 
         elif args.command == "query":
@@ -1041,7 +1023,7 @@ Examples:
             print("\n📊 Experiment Tracker Analytics Dashboard\n")
 
             # Experiments section
-            exp = analytics['experiments']
+            exp = analytics["experiments"]
             print("🧪 Experiments")
             print(f"   Total: {exp['total']}")
             print(f"   Active: {exp['active']}")
@@ -1050,23 +1032,23 @@ Examples:
 
             # Artifacts section
             print(f"\n📋 Artifacts: {analytics['total_artifacts']} total")
-            for artifact_type, count in analytics['artifacts_by_type'].items():
+            for artifact_type, count in analytics["artifacts_by_type"].items():
                 print(f"   {artifact_type}: {count}")
 
             # Artifacts per experiment
             print("\n📦 Artifacts per Experiment")
-            for exp_data in analytics['artifacts_per_experiment'][:5]:
+            for exp_data in analytics["artifacts_per_experiment"][:5]:
                 print(f"   {exp_data['name']}: {exp_data['artifact_count']}")
 
             # Popular tags
-            if analytics['popular_tags']:
+            if analytics["popular_tags"]:
                 print("\n🏷️  Popular Tags")
-                for tag_data in analytics['popular_tags'][:5]:
+                for tag_data in analytics["popular_tags"][:5]:
                     print(f"   {tag_data['tag_name']}: {tag_data['artifact_count']} artifacts, {tag_data['experiment_count']} experiments")
 
             # Recent activity
             print("\n🕒 Recent Activity (Last 5 Updates)")
-            for activity in analytics['recent_activity'][:5]:
+            for activity in analytics["recent_activity"][:5]:
                 print(f"   [{activity['type']}] {activity['title']}")
                 print(f"      Experiment: {activity['experiment_name']}")
                 print(f"      Updated: {activity['updated_at']}")

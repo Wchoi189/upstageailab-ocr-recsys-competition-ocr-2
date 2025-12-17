@@ -48,9 +48,7 @@ class CLIQwenBackend(BaseVLMBackend):
             if result.returncode != 0:
                 raise BackendError(f"Qwen VLM CLI not available. Command '{self.qwen_command}' failed.")
         except FileNotFoundError:
-            raise BackendError(
-                "Qwen VLM CLI not found. Install Qwen VLM or set QWEN_VLM_COMMAND environment variable."
-            )
+            raise BackendError("Qwen VLM CLI not found. Install Qwen VLM or set QWEN_VLM_COMMAND environment variable.")
         except subprocess.TimeoutExpired:
             raise BackendError("Qwen VLM CLI command timed out.")
 
@@ -91,9 +89,12 @@ class CLIQwenBackend(BaseVLMBackend):
             cmd = [
                 self.qwen_command,
                 "analyze",
-                "--image", str(image_path),
-                "--prompt-file", str(prompt_file_path),
-                "--mode", mode.value,
+                "--image",
+                str(image_path),
+                "--prompt-file",
+                str(prompt_file_path),
+                "--mode",
+                mode.value,
             ]
 
             # Execute command
@@ -106,10 +107,7 @@ class CLIQwenBackend(BaseVLMBackend):
             )
 
             if result.returncode != 0:
-                raise BackendError(
-                    f"Qwen VLM CLI failed with return code {result.returncode}.\n"
-                    f"Error: {result.stderr}"
-                )
+                raise BackendError(f"Qwen VLM CLI failed with return code {result.returncode}.\nError: {result.stderr}")
 
             # Parse output (assuming JSON or plain text)
             output = result.stdout.strip()

@@ -12,7 +12,7 @@ import json
 import logging
 import sys
 from pathlib import Path
-from typing import Any, Optional
+from typing import Any
 
 import cv2
 import numpy as np
@@ -36,6 +36,7 @@ try:
     tracker_root = script_path.parent.parent.parent.parent
     sys.path.insert(0, str(tracker_root / "src"))
     from experiment_tracker.utils.path_utils import setup_script_paths
+
     TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
 except ImportError:
     # Fallback if path_utils not available
@@ -48,27 +49,28 @@ workspace_root = tracker_root.parent
 sys.path.insert(0, str(workspace_root))
 try:
     from ocr.utils.path_utils import get_path_resolver
+
     OCR_RESOLVER = get_path_resolver()
 except ImportError:
     OCR_RESOLVER = None
     PROJECT_ROOT = None
 
 from analyze_failures_rembg_approach import (
-    extract_rembg_mask,
-    fit_quadrilateral_to_points,
-    find_outer_points_from_mask,
-    OptimizedBackgroundRemover,
     GPU_AVAILABLE,
+    OptimizedBackgroundRemover,
+    extract_rembg_mask,
+    find_outer_points_from_mask,
+    fit_quadrilateral_to_points,
 )
 from mask_only_edge_detector import (
     fit_mask_rectangle,
     visualize_mask_fit,
 )
-from improved_edge_based_correction import validate_homography_matrix
 
 # Import perspective correction
 try:
     from ocr.datasets.preprocessing.perspective import PerspectiveCorrector
+
     PERSPECTIVE_AVAILABLE = True
 except ImportError:
     PERSPECTIVE_AVAILABLE = False
@@ -79,7 +81,8 @@ except ImportError:
 # Document-aware metric helpers
 # ============================================================================
 
-def _order_corners_clockwise(corners: np.ndarray) -> Optional[np.ndarray]:
+
+def _order_corners_clockwise(corners: np.ndarray) -> np.ndarray | None:
     """Return corners ordered as TL, TR, BR, BL for downstream measurements."""
     if corners is None:
         return None
@@ -103,7 +106,7 @@ def _order_corners_clockwise(corners: np.ndarray) -> Optional[np.ndarray]:
     return ordered
 
 
-def compute_skew_deviation_degrees(corners: np.ndarray) -> Optional[float]:
+def compute_skew_deviation_degrees(corners: np.ndarray) -> float | None:
     """
     Calculate mean absolute deviation from 90° between adjacent edges.
     Lower values mean the quadrilateral is closer to a rectangle.
@@ -112,7 +115,7 @@ def compute_skew_deviation_degrees(corners: np.ndarray) -> Optional[float]:
     if ordered is None:
         return None
 
-    def _angle(v1: np.ndarray, v2: np.ndarray) -> Optional[float]:
+    def _angle(v1: np.ndarray, v2: np.ndarray) -> float | None:
         denom = np.linalg.norm(v1) * np.linalg.norm(v2)
         if denom < 1e-6:
             return None
@@ -141,7 +144,7 @@ def compute_skew_deviation_degrees(corners: np.ndarray) -> Optional[float]:
     return float(np.mean(deviations))
 
 
-def warp_mask(mask: np.ndarray, matrix: np.ndarray, corrected_shape: tuple[int, ...]) -> Optional[np.ndarray]:
+def warp_mask(mask: np.ndarray, matrix: np.ndarray, corrected_shape: tuple[int, ...]) -> np.ndarray | None:
     """Warp mask with the same homography used for the image."""
     if matrix is None or mask is None:
         return None
@@ -257,6 +260,7 @@ def test_both_approaches(
 
             # Apply perspective correction
             if PERSPECTIVE_AVAILABLE:
+
                 def ensure_doctr(feature: str) -> bool:
                     return False
 
@@ -315,11 +319,7 @@ def test_both_approaches(
         current_ratio = results["current_approach"].get("area_ratio")
         skip_improved = False
         skip_reason = None
-        if (
-            skip_threshold is not None
-            and current_ratio is not None
-            and current_ratio >= skip_threshold
-        ):
+        if skip_threshold is not None and current_ratio is not None and current_ratio >= skip_threshold:
             skip_improved = True
             skip_reason = f"Current area ratio {current_ratio:.2%} >= {skip_threshold:.0%}"
 
@@ -362,6 +362,7 @@ def test_both_approaches(
                     cv2.imwrite(str(vis_output), vis)
 
                     if PERSPECTIVE_AVAILABLE:
+
                         def ensure_doctr(feature: str) -> bool:
                             return False
 
@@ -375,6 +376,7 @@ def test_both_approaches(
                         corrected_improved, matrix, _method = corrector.correct(image_no_bg, corners_improved)
 
                         from improved_edge_based_correction import validate_homography_matrix
+
                         is_valid_matrix, condition_number = validate_homography_matrix(matrix)
 
                         if not is_valid_matrix:
@@ -475,7 +477,7 @@ def test_both_approaches(
             elif improvement < 0:
                 logger.warning(f"    ✗ Worsened by {abs(improvement):.2%}")
             else:
-                logger.info(f"    = No change")
+                logger.info("    = No change")
         elif "skipped" in results.get("improved_approach", {}) or "rejected" in results.get("improved_approach", {}):
             # Passthrough or rejected case
             reason = results["improved_approach"].get("reason") or results["improved_approach"].get("error", "Unknown")
@@ -499,9 +501,8 @@ def test_both_approaches(
                         (corrected_improved, "improved"),
                     ]:
                         h, w = img.shape[:2]
-                        comparison[:h, x_offset:x_offset+w] = img
-                        cv2.putText(comparison, label, (x_offset + 10, 30),
-                                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+                        comparison[:h, x_offset : x_offset + w] = img
+                        cv2.putText(comparison, label, (x_offset + 10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
                         x_offset += w + 20
 
                     comparison_output = output_dir / f"{image_path.stem}_comparison.jpg"
@@ -517,9 +518,7 @@ def test_both_approaches(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Test improved edge-based perspective correction"
-    )
+    parser = argparse.ArgumentParser(description="Test improved edge-based perspective correction")
     # Get workspace root using path resolvers
     if OCR_RESOLVER:
         default_input_dir = OCR_RESOLVER.config.images_dir / "train"
@@ -598,14 +597,18 @@ def main():
 
             # Resolve image paths
             image_files = []
-            for w in worst_list[:args.num_samples]:
+            for w in worst_list[: args.num_samples]:
                 input_path = Path(w["input_path"])
 
                 # Try absolute path first
                 if input_path.exists():
                     image_files.append(input_path)
                 # Try relative to workspace root
-                workspace_root = OCR_RESOLVER.config.project_root if OCR_RESOLVER else (TRACKER_ROOT.parent if EXPERIMENT_PATHS else PROJECT_ROOT if PROJECT_ROOT else Path.cwd())
+                workspace_root = (
+                    OCR_RESOLVER.config.project_root
+                    if OCR_RESOLVER
+                    else (TRACKER_ROOT.parent if EXPERIMENT_PATHS else PROJECT_ROOT if PROJECT_ROOT else Path.cwd())
+                )
                 if (workspace_root / input_path).exists():
                     image_files.append(workspace_root / input_path)
                 # Try in input_dir by filename
@@ -630,7 +633,7 @@ def main():
         for ext in [".jpg", ".jpeg", ".png", ".bmp"]:
             image_files.extend(args.input_dir.glob(f"*{ext}"))
             image_files.extend(args.input_dir.glob(f"*{ext.upper()}"))
-        image_files = sorted(image_files)[:args.num_samples]
+        image_files = sorted(image_files)[: args.num_samples]
 
     logger.info(f"Testing {len(image_files)} images...")
 
@@ -678,14 +681,16 @@ def main():
             improvements.append(result["comparison"]["improvement"])
 
     # Summary
-    logger.info("\n" + "="*80)
+    logger.info("\n" + "=" * 80)
     logger.info("RESULTS SUMMARY")
-    logger.info("="*80)
+    logger.info("=" * 80)
     logger.info(f"Total tested: {len(all_results)}")
-    logger.info(f"Current approach success: {current_success}/{len(all_results)} ({100*current_success/len(all_results):.1f}%)")
+    logger.info(f"Current approach success: {current_success}/{len(all_results)} ({100 * current_success / len(all_results):.1f}%)")
     if improved_attempts > 0:
         logger.info(f"Improved approach attempts: {improved_attempts}/{len(all_results)}")
-        logger.info(f"Improved approach success: {improved_success}/{improved_attempts} ({100*improved_success/max(1, improved_attempts):.1f}%)")
+        logger.info(
+            f"Improved approach success: {improved_success}/{improved_attempts} ({100 * improved_success / max(1, improved_attempts):.1f}%)"
+        )
     else:
         logger.info("Improved approach attempts: 0/0")
     if improved_skipped or improved_rejected:
@@ -695,7 +700,7 @@ def main():
         avg_improvement = np.mean(improvements)
         logger.info(f"Average area ratio improvement: {avg_improvement:.2%}")
         positive_improvements = sum(1 for imp in improvements if imp > 0)
-        logger.info(f"Cases improved: {positive_improvements}/{len(improvements)} ({100*positive_improvements/len(improvements):.1f}%)")
+        logger.info(f"Cases improved: {positive_improvements}/{len(improvements)} ({100 * positive_improvements / len(improvements):.1f}%)")
 
     # Save results
     results_output = args.output_dir / "test_results.json"
@@ -708,4 +713,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

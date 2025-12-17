@@ -33,9 +33,7 @@ class SolarPro2Backend(BaseVLMBackend):
         settings = get_config().backends.solar_pro2
         api_key = config.api_key or resolve_env_value(settings.api_key_env)
         if not api_key:
-            raise BackendError(
-                "Solar Pro 2 API key is required. Provide it via configuration or environment variables."
-            )
+            raise BackendError("Solar Pro 2 API key is required. Provide it via configuration or environment variables.")
 
         self.api_key = api_key
         self.endpoint = config.endpoint or settings.endpoint
@@ -107,7 +105,7 @@ class SolarPro2Backend(BaseVLMBackend):
             except Exception as e:
                 last_error = e
                 if attempt < max_retries:
-                    time.sleep(2 ** attempt)  # Exponential backoff
+                    time.sleep(2**attempt)  # Exponential backoff
                     continue
                 break
 

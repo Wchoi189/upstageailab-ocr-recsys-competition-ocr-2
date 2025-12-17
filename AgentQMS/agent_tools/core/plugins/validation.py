@@ -66,9 +66,7 @@ class PluginValidator:
         """Check if schema validation is available."""
         return JSONSCHEMA_AVAILABLE and self.schemas_dir is not None
 
-    def validate(
-        self, plugin_data: dict[str, Any], plugin_type: str
-    ) -> list[str]:
+    def validate(self, plugin_data: dict[str, Any], plugin_type: str) -> list[str]:
         """
         Validate plugin data against its schema.
 
@@ -97,9 +95,7 @@ class PluginValidator:
         except Exception as e:
             return [f"Validation error: {e}"]
 
-    def validate_or_raise(
-        self, plugin_data: dict[str, Any], plugin_type: str
-    ) -> None:
+    def validate_or_raise(self, plugin_data: dict[str, Any], plugin_type: str) -> None:
         """
         Validate plugin data and raise if invalid.
 
@@ -177,4 +173,3 @@ class PluginValidator:
 
         schema_path = self.schemas_dir / schema_file
         return schema_path if schema_path.exists() else None
-

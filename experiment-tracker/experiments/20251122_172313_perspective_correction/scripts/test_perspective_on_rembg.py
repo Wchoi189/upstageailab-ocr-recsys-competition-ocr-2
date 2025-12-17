@@ -41,7 +41,7 @@ try:
     if str(script_dir) not in sys.path:
         sys.path.insert(0, str(script_dir))
 
-    from optimized_rembg import OptimizedBackgroundRemover, REMBG_AVAILABLE, GPU_AVAILABLE
+    from optimized_rembg import GPU_AVAILABLE, REMBG_AVAILABLE, OptimizedBackgroundRemover
 except ImportError as e:
     logger.error(f"Failed to import optimized_rembg: {e}")
     REMBG_AVAILABLE = False
@@ -188,7 +188,7 @@ def test_perspective_on_rembg(
             rembg_time = 0.0
             results["rembg_success"] = True
             results["rembg_time"] = 0.0
-            logger.info(f"  ✓ rembg: skipped (already processed)")
+            logger.info("  ✓ rembg: skipped (already processed)")
         else:
             rembg_start = time.perf_counter()
 
@@ -230,6 +230,7 @@ def test_perspective_on_rembg(
             corners, method = detector.detect(image_no_bg)
 
             if corners is not None:
+
                 def ensure_doctr(feature: str) -> bool:
                     return True
 
@@ -252,21 +253,10 @@ def test_perspective_on_rembg(
             if corners is not None:
                 # Calculate destination points
                 h, w = image_no_bg.shape[:2]
-                max_width = int(max(
-                    np.linalg.norm(corners[0] - corners[1]),
-                    np.linalg.norm(corners[2] - corners[3])
-                ))
-                max_height = int(max(
-                    np.linalg.norm(corners[0] - corners[3]),
-                    np.linalg.norm(corners[1] - corners[2])
-                ))
+                max_width = int(max(np.linalg.norm(corners[0] - corners[1]), np.linalg.norm(corners[2] - corners[3])))
+                max_height = int(max(np.linalg.norm(corners[0] - corners[3]), np.linalg.norm(corners[1] - corners[2])))
 
-                dst = np.array([
-                    [0, 0],
-                    [max_width - 1, 0],
-                    [max_width - 1, max_height - 1],
-                    [0, max_height - 1]
-                ], dtype=np.float32)
+                dst = np.array([[0, 0], [max_width - 1, 0], [max_width - 1, max_height - 1], [0, max_height - 1]], dtype=np.float32)
 
                 matrix = cv2.getPerspectiveTransform(corners, dst)
                 corrected_image = cv2.warpPerspective(image_no_bg, matrix, (max_width, max_height))
@@ -309,9 +299,7 @@ def test_perspective_on_rembg(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Test perspective correction on rembg-processed images"
-    )
+    parser = argparse.ArgumentParser(description="Test perspective correction on rembg-processed images")
     parser.add_argument(
         "--input-dir",
         type=Path,
@@ -433,7 +421,7 @@ def main():
         avg_perspective = np.mean([r["perspective_time"] for r in successful])
         avg_total = np.mean([r["total_time"] for r in successful])
 
-        logger.info(f"\nAverage times (successful only):")
+        logger.info("\nAverage times (successful only):")
         logger.info(f"  rembg:      {avg_rembg:.3f}s")
         logger.info(f"  perspective: {avg_perspective:.3f}s")
         logger.info(f"  total:      {avg_total:.3f}s")
@@ -445,12 +433,12 @@ def main():
             avg_sharpness_rembg = np.mean([r["metrics_after_rembg"]["sharpness"] for r in successful])
             avg_sharpness_perspective = np.mean([r["metrics_after_perspective"]["sharpness"] for r in successful])
 
-            logger.info(f"\nAverage metrics:")
+            logger.info("\nAverage metrics:")
             logger.info(f"  Contrast (rembg → perspective): {avg_contrast_rembg:.2f} → {avg_contrast_perspective:.2f}")
             logger.info(f"  Sharpness (rembg → perspective): {avg_sharpness_rembg:.2f} → {avg_sharpness_perspective:.2f}")
 
     if failed:
-        logger.info(f"\nFailed images:")
+        logger.info("\nFailed images:")
         for r in failed:
             logger.info(f"  - {Path(r['input_path']).name}: {r.get('error', 'Corner detection failed')}")
 
@@ -468,4 +456,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

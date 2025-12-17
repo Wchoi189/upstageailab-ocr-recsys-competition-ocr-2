@@ -91,9 +91,7 @@ class FreshnessChecker:
             "fresh_files": len(self.fresh_files),
             "stale_files": len(self.stale_files),
             "max_age_days": self.max_age_days,
-            "stale_file_details": [
-                {"path": str(fp), "age_days": age} for fp, age in self.stale_files
-            ],
+            "stale_file_details": [{"path": str(fp), "age_days": age} for fp, age in self.stale_files],
         }
 
 
