@@ -54,7 +54,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
                     line = line.strip()
                     if line.startswith("# @package"):
                         return line.replace("# @package", "").strip()
-        except:
+        except Exception:
             pass
         return None
 

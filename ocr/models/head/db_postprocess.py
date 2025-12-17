@@ -219,9 +219,7 @@ class DBPostProcessor:
 
             # Get the score of the box
             score = self.box_score_fast(pred, points.reshape(-1, 2))
-            print(f"[DEBUG POSTPROC] Polygon score: {score:.4f}, thresh: {self.box_thresh}", flush=True)
             if self.box_thresh > score:
-                print(f"[DEBUG POSTPROC] Filtered out (score {score:.4f} < thresh {self.box_thresh})", flush=True)
                 continue
 
             # Unclip the box
