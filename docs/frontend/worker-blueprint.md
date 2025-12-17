@@ -1,59 +1,151 @@
 ---
-title: "Worker Utilization Blueprint"
-status: "draft"
+type: architecture
+component: worker_pipeline
+status: current
+version: "1.0"
+last_updated: "2025-12-15"
 ---
 
 # Worker Utilization Blueprint
 
+**Purpose**: Web worker architecture for <100ms slider feedback, <400ms client rembg; automatic backend routing on device saturation.
+
+---
+
 ## Goals
 
-- Exploit the two-day unlimited web-worker allowance for spike builds.
-- Guarantee <100 ms slider feedback for lightweight transforms and <400 ms for client-side rembg.
-- Provide automatic routing to backend services when devices are saturated (>8 MP images, throttled CPUs).
+| Goal | Target | Implementation |
+|------|--------|----------------|
+| **Slider feedback** | <100ms | Lightweight transforms (contrast, blur, crop) |
+| **Client rembg** | <400ms | ONNX.js model (~3MB) with WASM SIMD |
+| **Backend routing** | Automatic | >8MP images or throttled CPUs |
 
-## Architecture
+---
 
-1. **Task Types**
-   - `preview::transform` – synchronous canvas updates (contrast, blur, crop, rembg-lite).
-   - `preview::layout` – layout/text recognition (future TODO).
-   - `job::batch` – long-running preprocessing/inference jobs forwarded to FastAPI + background queue.
-2. **Pool Manager**
-   - Default pool size = `min(available_cores - 1, 6)`.
-   - Dynamic scaling: workers spin up lazily; after 60 s idle they terminate.
-   - Queues implemented via `PriorityQueue` (user interactions priority=1, background tasks priority=5).
-3. **RPC Interface**
-   - Comlink wrappers with message envelope `{taskId, type, payload, traceId}`.
-   - Cancellation tokens: if a slider emits a newer task with same `controlId`, previous task is cancelled.
-4. **rembg Routing**
-   - First attempt: ONNX.js model (~3 MB) running in dedicated worker with WASM SIMD.
-   - If image > 2048px on longer side or worker latency > 400 ms, fall back to `/api/inference/preview` with `routed_backend="server-rembg"`.
+## Task Types
+
+| Task Type | Execution | Priority | Notes |
+|-----------|-----------|----------|-------|
+| `preview::transform` | Synchronous canvas updates | High | Contrast, blur, crop, rembg-lite |
+| `preview::layout` | Layout/text recognition | Medium | Future TODO |
+| `job::batch` | Long-running preprocessing/inference | Low | Forwarded to FastAPI + background queue |
+
+---
+
+## Pool Manager
+
+| Parameter | Value | Notes |
+|-----------|-------|-------|
+| **Pool size** | `min(available_cores - 1, 6)` | Default |
+| **Dynamic scaling** | Lazy spin-up | Workers terminate after 60s idle |
+| **Queue** | `PriorityQueue` | User interactions priority=1, background=5 |
+
+---
+
+## RPC Interface
+
+**Message Envelope**:
+```typescript
+{
+  taskId: string,
+  type: TaskType,
+  payload: any,
+  traceId: string
+}
+```
+
+**Features**:
+- Comlink wrappers for RPC
+- Cancellation tokens: newer task with same `controlId` cancels previous
+
+---
+
+## rembg Routing Strategy
+
+| Condition | Route | Implementation |
+|-----------|-------|----------------|
+| **Image ≤ 2048px** | Client | ONNX.js model in dedicated worker |
+| **Latency < 400ms** | Client | Continue client-side processing |
+| **Image > 2048px** | Backend | `/api/inference/preview` with `routed_backend="server-rembg"` |
+| **Latency > 400ms** | Backend | Fallback to server |
+
+---
 
 ## Telemetry
 
-- Worker lifecycle events dispatched via `postMessage` to main thread and mirrored to `/api/metrics` (future).
-- Metrics captured:
-  - Queue depth per task type.
-  - Average duration per transform.
-  - Client vs backend route counts.
-  - rembg cache hit rate `(imageHash, paramsHash)`.
-- Surfaced in UI via `WorkerStatusList` component.
+**Metrics Captured**:
+- Queue depth per task type
+- Average duration per transform
+- Client vs backend route counts
+- rembg cache hit rate `(imageHash, paramsHash)`
+
+**Destination**: `postMessage` to main thread → `/api/metrics` (future)
+
+**UI Surface**: `WorkerStatusList` component
+
+---
 
 ## Failure Modes
 
-- **Worker crash**: auto respawn + toast message referencing affected control.
-- **SharedArrayBuffer restrictions**: fallback to single-threaded path (flag surfaces in telemetry).
-- **rembg memory pressure**: release ONNX session when queue idle for >30 s.
+| Failure | Recovery | UI Feedback |
+|---------|----------|-------------|
+| **Worker crash** | Auto respawn | Toast message referencing affected control |
+| **SharedArrayBuffer restrictions** | Fallback to single-threaded | Flag surfaces in telemetry |
+| **rembg memory pressure** | Release ONNX session after 30s idle | None (automatic) |
+
+---
 
 ## Implementation Steps
 
-1. Define TypeScript contract `WorkerTask`, `WorkerResult`, `WorkerError`.
-2. Build `packages/workers/pipelineWorker.ts` handling transform registry + cancellation.
-3. Implement `workerHost.ts` to manage pools (create, recycle, monitor).
-4. Connect UI controls to host via hooks (`useWorkerTask`).
-5. Integrate backend fallback by calling `/api/inference/preview` when heuristics trigger.
-6. Emit telemetry events and bind to HUD.
+| Step | Component | Purpose |
+|------|-----------|---------|
+| 1 | `WorkerTask`, `WorkerResult`, `WorkerError` | TypeScript contracts |
+| 2 | `packages/workers/pipelineWorker.ts` | Transform registry + cancellation |
+| 3 | `workerHost.ts` | Pool management (create, recycle, monitor) |
+| 4 | `useWorkerTask` hook | Connect UI controls to host |
+| 5 | Backend fallback integration | Call `/api/inference/preview` on heuristics |
+| 6 | Telemetry | Emit events, bind to HUD |
+
+---
+
+## Dependencies
+
+| Component | Dependencies |
+|-----------|-------------|
+| **ONNX.js** | WASM SIMD support |
+| **Comlink** | RPC wrappers |
+| **Backend API** | `/api/inference/preview`, `/api/metrics` |
+
+---
+
+## Constraints
+
+- Pool size limited to `min(cores - 1, 6)`
+- rembg model: ~3MB download
+- Worker idle timeout: 60s
+- Backend fallback threshold: 400ms latency or >2048px image
+
+---
 
 ## Stop Conditions
 
-- Pause development if browser metrics show consistent >400 ms latency even after throttling – escalate to GPU-backed rendering.
-- Suspend rembg client path if ONNX bundle destabilizes worker memory.
+| Condition | Action |
+|-----------|--------|
+| Consistent >400ms latency | Escalate to GPU-backed rendering |
+| ONNX bundle destabilizes worker memory | Suspend rembg client path |
+
+---
+
+## Backward Compatibility
+
+**Status**: New system (v1.0)
+
+**Breaking Changes**: N/A (new implementation)
+
+---
+
+## References
+
+- [Design System](design-system.md)
+- [Testing Observability](testing-observability.md)
+- [Backend Pipeline Contract](../backend/api/backend-pipeline-contract.md)

@@ -1,73 +1,127 @@
 ---
-title: "Playground Design System"
-status: "draft"
+type: reference
+component: design_system
+status: current
+version: "1.0"
+last_updated: "2025-12-15"
 ---
 
 # Playground Design System
 
-This system defines the initial component/visual language for the Albumentations/Upstage-inspired playground. It will evolve with usability studies, but these primitives unblock SPA scaffolding immediately.
+**Purpose**: Component and visual language for Albumentations/Upstage-inspired playground; defines tokens, layouts, components for SPA scaffolding.
 
-## Foundations
+---
 
-- **Grid**: 12-column fluid grid with 24px gutters, 72px max content padding.
-- **Spacing scale**: 4px base unit (4, 8, 12, 16, 24, 32, 40, 64).
-- **Typography**:
-  - Display: Inter 24/32 semi-bold (section headings).
-  - Body: Inter 14/20 regular; captions 12/16.
-  - Mono: JetBrains Mono for command console/log output.
-- **Color tokens**:
-  - `surface.base`: `#0F1115`
-  - `surface.raise`: `#161922`
-  - `border.default`: `rgba(255,255,255,0.08)`
-  - `accent.primary`: `#5AE4A7` (interactive sliders/buttons)
-  - `accent.warning`: `#FFB155`
-  - `accent.danger`: `#FF6B6B`
-  - `text.primary`: `#F5F7FA`
-  - `text.secondary`: `#B4BCD0`
-- **Elevation**:
-  - Card: `0 8px 30px rgba(0,0,0,0.35)`
-  - Floating panels (worker queue, logs) use blurred backdrop with 0.6 alpha.
+## Foundation Tokens
+
+| Category | Token | Value | Purpose |
+|----------|-------|-------|---------|
+| **Grid** | Columns | 12-column fluid | Layout structure |
+| **Grid** | Gutters | 24px | Column spacing |
+| **Grid** | Max padding | 72px | Content padding |
+| **Spacing** | Base unit | 4px | Spacing scale: 4, 8, 12, 16, 24, 32, 40, 64 |
+
+---
+
+## Typography
+
+| Type | Font | Size/Height | Weight | Usage |
+|------|------|-------------|--------|-------|
+| **Display** | Inter | 24/32 | Semi-bold | Section headings |
+| **Body** | Inter | 14/20 | Regular | Main text |
+| **Caption** | Inter | 12/16 | Regular | Secondary text |
+| **Mono** | JetBrains Mono | N/A | Regular | Command console, logs |
+
+---
+
+## Color Tokens
+
+| Token | Value | Usage |
+|-------|-------|-------|
+| `surface.base` | `#0F1115` | Base background |
+| `surface.raise` | `#161922` | Elevated surfaces |
+| `border.default` | `rgba(255,255,255,0.08)` | Default borders |
+| `accent.primary` | `#5AE4A7` | Interactive elements (sliders, buttons) |
+| `accent.warning` | `#FFB155` | Warning states |
+| `accent.danger` | `#FF6B6B` | Error states |
+| `text.primary` | `#F5F7FA` | Primary text |
+| `text.secondary` | `#B4BCD0` | Secondary text |
+
+---
+
+## Elevation
+
+| Surface | Shadow | Alpha |
+|---------|--------|-------|
+| **Card** | `0 8px 30px rgba(0,0,0,0.35)` | N/A |
+| **Floating panels** | Blurred backdrop | 0.6 |
+
+---
 
 ## Layout Patterns
 
-1. **Playground Canvas**
-   - Left: persistent controls column (max 420px) with sticky header for dataset + checkpoint selectors.
-   - Center: before/after canvas with split-view toggle and zoom controls.
-   - Right: Insight rail for metrics, worker statuses, command diff.
-2. **Command Console Drawer**
-   - Slides from bottom; 480px height.
-   - Tabs: Generated Command, Execution Log, Parameters (JSON).
-3. **Worker Queue HUD**
-   - Floating widget in bottom-right summarizing active jobs, CPU usage, route (client vs backend).
-4. **Document OCR Showcase**
-   - Multi-panel view (similar to Upstage console) combining page preview, detected layout tree, extracted key-value tables.
+| Pattern | Structure | Notes |
+|---------|-----------|-------|
+| **Playground Canvas** | Left (controls, max 420px) + Center (before/after canvas) + Right (insights rail) | Sticky header for dataset/checkpoint selectors |
+| **Command Console Drawer** | Slides from bottom, 480px height | Tabs: Generated Command, Execution Log, Parameters (JSON) |
+| **Worker Queue HUD** | Floating widget, bottom-right | Active jobs, CPU usage, route (client vs backend) |
+| **Document OCR Showcase** | Multi-panel view | Page preview, layout tree, key-value tables |
+
+---
 
 ## Component Library
 
-| Component | Description | Notes |
-| --- | --- | --- |
-| `ImageUploader` | Drag-drop + paste support, previews, metadata pill (resolution, size). | Accepts rembg toggle, dataset quick-pick actions. |
-| `SliderField` | Debounced slider with `<100 ms` response requirement. | Emits `onCommit` + `onLiveChange` events for workers. |
-| `SegmentedControl` | Mode selectors (single/batch). | Keyboard navigable. |
-| `MetricCard` | Displays value, delta, sparkline. | Used for KPIs (hmean, latency). |
-| `CanvasDiff` | WebGL canvas showing before/after, polygon overlays, heatmaps. | Must support streaming frames + zoom/pan gestures. |
-| `CommandPreview` | Syntax-highlighted CLI string with copy/download buttons. | Pulls metadata from `/api/commands/build`. |
-| `WorkerStatusList` | Table of active worker tasks, backend routes, durations. | Feeds from worker blueprint instrumentation. |
-| `ComparisonTimeline` | Horizontal timeline of configurations, similar to Upstage "Document OCR" timeline. | Shows parameter sets + results badges. |
+| Component | Purpose | Key Features |
+|-----------|---------|--------------|
+| `ImageUploader` | Drag-drop + paste, previews, metadata pill | Resolution, size; rembg toggle, dataset quick-pick |
+| `SliderField` | Debounced slider (<100ms response) | `onCommit` + `onLiveChange` events for workers |
+| `SegmentedControl` | Mode selectors (single/batch) | Keyboard navigable |
+| `MetricCard` | Value, delta, sparkline | KPIs (hmean, latency) |
+| `CanvasDiff` | WebGL before/after, polygon overlays, heatmaps | Streaming frames, zoom/pan gestures |
+| `CommandPreview` | Syntax-highlighted CLI, copy/download buttons | Pulls from `/api/commands/build` |
+| `WorkerStatusList` | Active worker tasks table | Backend routes, durations, instrumentation |
+| `ComparisonTimeline` | Horizontal timeline (Upstage-style) | Parameter sets, results badges |
+
+---
 
 ## Accessibility & Responsiveness
 
-- Minimum contrast ratio 4.5:1 for primary text.
-- Keyboard focus ring: `2px accent.primary`.
-- Breakpoints: 1280 (desktop), 1024 (tablet, collapses insights), <768 (stacked layout with condensed console).
+| Requirement | Implementation |
+|-------------|----------------|
+| **Contrast ratio** | Minimum 4.5:1 for primary text |
+| **Keyboard focus** | 2px `accent.primary` ring |
+| **Breakpoints** | 1280 (desktop), 1024 (tablet, collapses insights), <768 (stacked layout, condensed console) |
 
-## Visual Inspirations
+---
 
-- Albumentations AutoContrast playground for immediate preview feedback.
-- Upstage Playground (Document OCR & Parsing) for layout overlays, three-panel document breakdown.
+## Dependencies
 
-## Implementation Notes
+| Component | Dependencies |
+|-----------|-------------|
+| **Design tokens** | CSS custom properties from `packages/design-tokens` |
+| **Canvas** | WebGL, polygon rendering |
+| **Workers** | Worker blueprint instrumentation |
 
-- Implement tokens via CSS custom properties exported from `packages/design-tokens`.
-- Wrap high-frequency controls (sliders, switches) with memoized React components to avoid re-renders when worker events stream back.
-- Provide skeleton states for every panel to avoid flash during worker warm-up.
+---
+
+## Constraints
+
+- Memoized React components for high-frequency controls (sliders, switches)
+- Skeleton states for every panel (avoid flash during worker warm-up)
+- Token implementation via CSS custom properties
+
+---
+
+## Backward Compatibility
+
+**Status**: New system (v1.0)
+
+**Breaking Changes**: N/A (new implementation)
+
+---
+
+## References
+
+- [Worker Blueprint](worker-blueprint.md)
+- [High Performance Playground](high-performance-playground.md)
+- [Testing Observability](testing-observability.md)

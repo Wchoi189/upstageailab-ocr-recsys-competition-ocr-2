@@ -114,6 +114,7 @@ frontmatter:
     - category
     - status
     - version
+    - ads_version
 
   date_format: "YYYY-MM-DD HH:MM (KST)"
   date_example: "2025-11-29 18:00 (KST)"
@@ -171,7 +172,7 @@ error_templates:
   frontmatter_missing_field:
     code: "E006"
     message: "Missing required frontmatter field"
-    expected: "Required fields: title, date, type, category, status, version"
+    expected: "Required fields: title, date, type, category, status, version, ads_version"
     hint: "Add missing field '{field}' to frontmatter"
 
   invalid_date_format:

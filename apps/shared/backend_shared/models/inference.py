@@ -114,6 +114,10 @@ class InferenceRequest(BaseModel):
         description="Display mode: 'corrected' shows corrected image with annotations, 'original' shows original image with transformed annotations",
         pattern="^(corrected|original)$",
     )
+    enable_grayscale: bool = Field(
+        default=False,
+        description="Enable grayscale preprocessing (converts image to grayscale before inference)",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -125,6 +129,7 @@ class InferenceRequest(BaseModel):
                     "nms_threshold": 0.4,
                     "enable_perspective_correction": False,
                     "perspective_display_mode": "corrected",
+                    "enable_grayscale": False,
                 }
             ]
         }

@@ -1,83 +1,100 @@
+---
+type: architecture
+component: api
+status: current
+version: "1.0"
+last_updated: "2025-12-15"
+---
+
 # API Decoupling from Streamlit
 
-## Overview
+**Purpose**: FastAPI playground API decoupled from Streamlit; enables Next.js frontend without Streamlit dependencies or initialization overhead.
 
-The FastAPI playground API (`services/playground_api`) is fully decoupled from Streamlit. This allows the Next.js frontend and other clients to use the API without any Streamlit dependencies or initialization overhead.
+---
 
 ## Architecture
 
-### Universal API Endpoints
+| Component | Endpoints | Streamlit Dependency |
+|-----------|-----------|---------------------|
+| **Playground API** | `/api/commands/schemas`, `/api/commands/schemas/{schema_id}`, `/api/commands/build`, `/api/commands/recommendations` | ❌ None |
+| **Next.js Console** | Calls FastAPI via Next.js API routes | ❌ None |
+| **Legacy Streamlit** | Can use same API endpoints or internal functions | ✅ Optional |
 
-All API endpoints in `services/playground_api` are Streamlit-free:
+---
 
-- `/api/commands/schemas` - List available command schemas
-- `/api/commands/schemas/{schema_id}` - Get schema details
-- `/api/commands/build` - Build CLI command from form values
-- `/api/commands/recommendations` - Get architecture recommendations
+## Decoupling Strategy
 
-### Frontend Clients
+| Approach | Implementation | Benefit |
+|----------|----------------|---------|
+| **Pure Functions Module** | Created `ui/utils/override_compute.py` (Streamlit-free); API imports from `override_compute` | API doesn't trigger Streamlit init |
+| **Lazy Package Imports** | `ui/apps/command_builder/__init__.py`, `ui/apps/command_builder/services/__init__.py` use lazy imports | Prevents circular dependencies |
+| **Dependency Clarification** | `ConfigParser` doesn't import Streamlit; only triggers registry/model init | Framework-independent |
 
-**Next.js Playground Console** (`apps/playground-console`):
-- Calls FastAPI endpoints via Next.js API routes
-- No Streamlit dependency
-- Zero Streamlit initialization overhead
+---
 
-**Legacy Streamlit Apps** (`ui/apps/`):
-- Can use the same API endpoints
-- Or use internal functions directly (for Streamlit-specific features)
+## Import Chain Evolution
 
-## Implementation Details
-
-### Decoupling Strategy
-
-**1. Pure Functions Module**
-- Created `ui/utils/override_compute.py` (Streamlit-free)
-- Extracted `compute_overrides()` function used by API
-- API imports from `override_compute`, not `ui_generator`
-
-**2. Lazy Package Imports**
-- `ui/apps/command_builder/__init__.py` - lazy imports to avoid Streamlit app loading
-- `ui/apps/command_builder/services/__init__.py` - lazy imports to prevent circular dependencies
-
-**3. Dependency Clarification**
-- `ConfigParser` does NOT import Streamlit
-- Only triggers registry/model initialization
-- Can be used independently of UI framework
-
-### Import Chain Example
-
-**Before (Caused Streamlit Import):**
+**Before** (Streamlit import):
 ```python
-# In API router
 from ui.utils.ui_generator import compute_overrides
 # → Imports ui_generator → imports streamlit → initializes Streamlit
 ```
 
-**After (Streamlit-Free):**
+**After** (Streamlit-free):
 ```python
-# In API router
 from ui.utils.override_compute import compute_overrides
 # → Pure function, no Streamlit dependency
 ```
 
-## Performance Benefits
+---
 
-### Startup Time
-- **Before:** 10-15 seconds (Streamlit + registry initialization)
-- **After:** < 2 seconds (only registry initialization on first API call)
+## Performance Impact
 
-### Memory Usage
-- **Before:** Streamlit session state loaded at startup
-- **After:** No Streamlit overhead until Streamlit app is actually used
+| Metric | Before | After | Improvement |
+|--------|--------|-------|-------------|
+| **Startup Time** | 10-15s (Streamlit + registry) | <2s (registry only on first call) | 5-7x faster |
+| **Memory** | Streamlit session state at startup | No Streamlit overhead | Reduced |
+| **Cold Start** | Immediate API start + lazy load on first call | Cached with `@lru_cache` | Instant subsequent calls |
 
-### Cold Start
-- API starts immediately
-- First API call triggers lazy loading (one-time cost)
-- Subsequent calls are instant (cached with `@lru_cache`)
+---
 
-## Verification
+## Dependencies
 
-### Check for Streamlit Imports
+| Component | Imports | Internal Dependencies |
+|-----------|---------|----------------------|
+| **Playground API** | FastAPI, override_compute | ConfigParser (Streamlit-free) |
+| **override_compute** | None (pure functions) | None |
+| **ConfigParser** | Registry, model init | No Streamlit |
+
+---
+
+## Constraints
+
+- **Lazy Loading**: First API call triggers one-time registry initialization
+- **LRU Cache**: `@lru_cache` decorator required for performance
+- **Import Isolation**: API must import from `override_compute`, not `ui_generator`
+
+---
+
+## Backward Compatibility
+
+**Status**: Maintained for legacy Streamlit apps
+
+**Breaking Changes**: None (legacy apps can still use internal functions)
+
+**Compatibility Matrix**:
+
+| Client | API Access | Streamlit Dependency | Status |
+|--------|------------|---------------------|--------|
+| Next.js Console | ✅ FastAPI | ❌ None | ✅ Full support |
+| Legacy Streamlit | ✅ FastAPI or internal | ✅ Optional | ✅ Full support |
+
+---
+
+## References
+
+- [System Architecture](system-architecture.md)
+- [Backend Pipeline Contract](../backend/api/backend-pipeline-contract.md)
 ```bash
 grep -r "import streamlit\|from streamlit" services/playground_api
 # Should return no results

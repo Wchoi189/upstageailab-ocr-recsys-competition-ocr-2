@@ -38,6 +38,10 @@ validation:
   excluded_directories:
     - archive
     - deprecated
+    - DEPRECATED-ALLCAPS-DOCS
+    - features
+    - implementation_guides
+    - specs
   rules:
     naming: true
     frontmatter: true

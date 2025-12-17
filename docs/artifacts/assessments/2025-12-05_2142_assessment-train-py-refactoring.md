@@ -1,12 +1,15 @@
 ---
+ads_version: "1.0"
 title: "Train Py Refactoring"
-date: "2025-12-06 18:08 (KST)"
+date: "2025-12-06 18:09 (KST)"
 type: "assessment"
 category: "evaluation"
 status: "active"
 version: "1.0"
 tags: ['assessment', 'evaluation', 'documentation']
 ---
+
+
 
 
 

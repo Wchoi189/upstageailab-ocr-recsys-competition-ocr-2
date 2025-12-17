@@ -1,0 +1,75 @@
+---
+# Tier 1 - Critical Naming Rules
+# EDS v1.0 Artifact Naming Enforcement
+
+specification_version: "1.0"
+source: "EDS v1.0 Section: naming_conventions"
+enforcement: "critical"
+auto_block: true
+
+required_pattern:
+  format: "YYYYMMDD_HHMM_{TYPE}_{slug}.md"
+  example: "20251217_1530_assessment_failure_analysis.md"
+  components:
+    date: "YYYYMMDD (ISO 8601 date)"
+    time: "HHMM (24-hour time)"
+    type: "assessment|report|guide|script|manifest"
+    slug: "lowercase-hyphenated-description"
+
+slug_requirements:
+  allowed_characters: "lowercase letters, numbers, hyphens"
+  max_length: 50
+  pattern: "^[a-z0-9]+(-[a-z0-9]+)*$"
+  examples:
+    valid:
+      - "failure_analysis"
+      - "metrics-report"
+      - "setup-guide"
+    invalid:
+      - "Failure_Analysis"  # uppercase letters
+      - "metrics_report_"   # trailing separator
+      - "setup--guide"      # double separator
+
+prohibited_patterns:
+  ALL_CAPS:
+    pattern: "^[A-Z_]+\\.md$"
+    severity: "critical"
+    examples:
+      - "MASTER_ROADMAP.md"
+      - "EXECUTIVE_SUMMARY.md"
+    action: "pre_commit_block"
+  camelCase:
+    pattern: "[a-z][A-Z]"
+    severity: "high"
+    examples:
+      - "failureAnalysis.md"
+      - "metricsReport.md"
+    action: "pre_commit_block"
+  PascalCase:
+    pattern: "^[A-Z][a-z]+([A-Z][a-z]+)+\\.md$"
+    severity: "high"
+    examples:
+      - "FailureAnalysis.md"
+      - "MetricsReport.md"
+    action: "pre_commit_block"
+  spaces:
+    pattern: "\\s"
+    severity: "critical"
+    examples:
+      - "failure analysis.md"
+      - "metrics report.md"
+    action: "pre_commit_block"
+
+validation_command: "eds_naming_validate"
+error_message: |
+  ❌ CRITICAL: Invalid artifact name
+
+  Required pattern: YYYYMMDD_HHMM_{TYPE}_{slug}.md
+  Your file: {filename}
+
+  Violations:
+  {violations}
+
+  Valid example: 20251217_1530_assessment_failure_analysis.md
+
+  Fix: Rename using lowercase-hyphenated slug

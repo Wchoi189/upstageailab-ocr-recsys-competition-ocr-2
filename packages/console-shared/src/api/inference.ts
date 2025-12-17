@@ -46,34 +46,18 @@ export async function listInferenceModes(): Promise<InferenceModeSummary[]> {
  */
 export async function listCheckpoints(
     limit = 50,
-): Promise<CheckpointWithMetadata[]> {
-    // #region agent log
-    const startTime = Date.now();
-    fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'inference.ts:47',message:'listCheckpoints API call started',data:{limit,apiBaseUrl:import.meta.env.VITE_API_URL||'http://localhost:8000/api',endpoint:`/inference/checkpoints?limit=${limit}`},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-    // #endregion
-    try {
+): Promise<CheckpointWithMetadata[]> {    try {
         // Use longer timeout for checkpoint loading (30 seconds)
         // as it can be slow on first load if metadata files are missing
         const checkpoints = await apiGet<CheckpointSummary[]>(
             `/inference/checkpoints?limit=${limit}`,
             { maxRetries: 3, retryDelay: 2000 } // More retries with longer delay
-        );
-        // #region agent log
-        const duration = Date.now() - startTime;
-        fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'inference.ts:55',message:'listCheckpoints API call succeeded',data:{checkpointsCount:checkpoints.length,durationMs:duration,firstCheckpoint:checkpoints[0]||null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-        // #endregion
-
-        // Parse datetime strings
+        );        // Parse datetime strings
         return checkpoints.map((ckpt) => ({
             ...ckpt,
             modifiedDate: new Date(ckpt.modified_at),
         }));
-    } catch (error: any) {
-        // #region agent log
-        const duration = Date.now() - startTime;
-        fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'inference.ts:67',message:'listCheckpoints API call failed',data:{errorMessage:error?.message,errorStatus:error?.status,errorStack:error?.stack,durationMs:duration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-        // #endregion
-        throw error;
+    } catch (error: any) {        throw error;
     }
 }
 

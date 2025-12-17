@@ -1,53 +1,39 @@
-# Inference Pipeline Data Contracts
+---
+type: data_reference
+component: inference
+status: current
+version: "1.0"
+last_updated: "2025-12-15"
+---
 
-**Purpose**: Coordinate transformation and padding contracts for inference pipeline.
+# Inference Data Contracts
 
-## InferenceMetadata
+**Purpose**: This file redirects to the canonical inference data contracts documentation.
 
-```python
-{
-    "original_size": Tuple[int, int],      # (width, height) source image
-    "processed_size": Tuple[int, int],      # (width, height) preprocessed image (typically 640x640)
-    "padding": {
-        "top": int,
-        "bottom": int,
-        "left": int,
-        "right": int
-    },
-    "padding_position": Literal["top_left", "center"],  # REQUIRED: Padding alignment
-    "content_area": Tuple[int, int, int, int],          # REQUIRED: (x, y, width, height) content bounds in processed_size
-    "scale": float,                        # target_size / max(original_h, original_w)
-    "coordinate_system": Literal["pixel", "normalized"]
-}
-```
+**Canonical Reference**: [../reference/inference-data-contracts.md](../reference/inference-data-contracts.md)
 
-## Coordinate Transformation
+---
 
-### Top-Left Padding
-- Content at `(0, 0)` in processed_size frame
-- Padding on right/bottom only
-- No translation offset: `x_original = x_processed * (original_w / resized_w)`
+## Quick Reference
 
-### Centered Padding
-- Content centered in processed_size frame
-- Padding distributed evenly (left/right, top/bottom)
-- Translation required: `x_original = (x_processed - pad_left) * (original_w / resized_w)`
+For complete inference data contracts including:
+- InferenceMetadata
+- PreprocessingResult
+- PostprocessingResult
+- LoadedImage
+- Coordinate transformation rules
+- Padding strategies
 
-## Polygon Coordinate Space
+See the canonical documentation: [../reference/inference-data-contracts.md](../reference/inference-data-contracts.md)
 
-**Pixel coordinates**: Absolute pixels relative to `processed_size` frame.
-- Top-left: Coordinates in `[0, processed_w] x [0, processed_h]` range
-- Centered: Coordinates in `[pad_left, pad_left+content_w] x [pad_top, pad_top+content_h]` range
+---
 
-**Content area**: Actual image content bounds within processed_size frame.
-- Top-left: `(0, 0, resized_w, resized_h)`
-- Centered: `(pad_left, pad_top, resized_w, resized_h)`
+## References
 
-## Frontend Contract
+- [Canonical Inference Data Contracts](../reference/inference-data-contracts.md)
+- [Training Data Contracts](data-contracts.md)
+- [Preprocessing Data Contracts](preprocessing-data-contracts.md)
 
-**Input**: `InferencePreviewResponse` with `meta` field
-**Requirements**:
-- Verify `displayBitmap` dimensions match `meta.processed_size`
 - Use `meta.padding_position` to determine coordinate handling
 - Apply display centering offsets (dx, dy) only
 - For centered padding: coordinates already include padding offset

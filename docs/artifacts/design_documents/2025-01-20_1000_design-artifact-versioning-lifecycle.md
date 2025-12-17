@@ -1,18 +1,15 @@
 ---
-type: design
-title: Artifact Versioning & Lifecycle Management
-date: "2025-01-20 10:00 (KST)"
-category: reference
-status: active
+ads_version: "1.0"
+title: "Artifact Versioning Lifecycle"
+date: "2025-12-06 15:48 (KST)"
+type: "design"
+category: "architecture"
+status: "active"
 version: "1.0"
-tags:
-  - versioning
-  - lifecycle
-  - artifact-management
-  - agentqms
-author: ai-agent
-branch: main
+tags: ['design', 'architecture', 'documentation']
 ---
+
+
 
 # Artifact Versioning & Lifecycle Management
 

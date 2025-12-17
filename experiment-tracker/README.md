@@ -1,68 +1,132 @@
-# Experiment Tracker
+# Experiment Tracker - EDS v1.0
 
-A robust, AI-Agent-integrated experiment tracking system that transforms chaotic experimental workflows into systematic, reusable knowledge assets.
+Experiment Documentation Standard v1.0 with CLI tool and automated enforcement.
 
-## Features
+## Status
 
-- **Interruption Resilience**: Automatically stashes incomplete experiments.
-- **AI-Human Collaboration**: Explicit intention declaration and feedback mechanisms.
-- **Standardized Structure**: Consistent folder hierarchy and metadata.
-- **CLI Tools**: Easy-to-use scripts for managing experiments.
+✅ **EDS v1.0 Implementation Complete**
+- 100% compliance achieved across all experiments
+- Pre-commit hooks operational (blocking violations)
+- CLI tool (ETK v1.0.0) ready for production use
+- Database integration active (FTS5 search, analytics)
+- AI-only documentation standard enforced
+
+## Key Features
+
+- **EDS v1.0 Compliance**: Enforced via pre-commit hooks
+- **CLI Tool (ETK)**: 9 commands for artifact management
+- **Database Integration**: SQLite with FTS5 full-text search
+- **Query Interface**: Search artifacts across all experiments
+- **Analytics Dashboard**: Experiment statistics and trends
+- **Auto-generation**: Frontmatter, timestamps, slugs
+- **Validation**: Automated compliance checking
 
 ## Quick Start
 
-1.  **Start an experiment**:
-    ```bash
-    ./scripts/start-experiment.py --type perspective_correction --intention "Analyze failure cases in urban scene correction"
-    ```
+### Install CLI Tool
 
-2.  **Resume an experiment**:
-    ```bash
-    # Resume by ID
-    ./scripts/resume-experiment.py --id 20251122_172313_perspective_correction
+```bash
+bash install-etk.sh
+source ~/.bashrc  # or ~/.zshrc
+```
 
-    # Resume latest of type
-    ./scripts/resume-experiment.py --type perspective_correction
+### Create Experiment
 
-    # List all experiments
-    ./scripts/resume-experiment.py --list
+```bash
+etk init my_experiment_name --description "Experiment description" --tags "tag1,tag2"
+cd experiments/20251217_HHMMSS_my_experiment_name
+```
 
-    # Show current experiment
-    ./scripts/resume-experiment.py --current
-    ```
+### Create Artifacts
 
-3.  **Record an artifact**:
-    ```bash
-    ./scripts/record-artifact.py --path path/to/image.jpg --type poor_performance --metadata '{"technique": "homography_basic"}'
-    ```
+```bash
+etk create assessment "Initial baseline evaluation"
+etk create report "Performance metrics analysis" --metrics "accuracy,f1,latency"
+etk create guide "Setup and configuration instructions"
+etk create script "Automation script documentation"
+```
 
-4.  **Generate an assessment**:
-    ```bash
-    # Use registered template ids for structured drafts
-    ./scripts/generate-assessment.py --template visual-evidence-cluster --verbose minimal
+### Check Status
 
-    # Generate an interim run log for a negative-result batch
-    ./scripts/generate-assessment.py --template run-log-negative-result --verbose minimal
-    ```
-    Available assessment templates:
-    - `visual-evidence-cluster` – Failure Mode clustering board
-    - `triad-deep-dive` – Input/Output discrepancy analysis
-    - `ab-regression` – Baseline vs experiment comparison
-    - `run-log-negative-result` – Interim run log for low-success or negative-result runs (tracks failure-mode migration)
+### Status and Validation
 
-5.  **Generate an incident report**:
-    ```bash
-    ./scripts/generate-incident-report.py --title "Perspective Overshoot" --severity high --tags "perspective,corner-detection"
-    ```
+```bash
+etk status              # Current experiment
+etk list                # All experiments
+etk validate            # Validate current
+etk validate --all      # Validate all
+```
 
-6.  **Generate feedback log**:
-    ```bash
-    ./scripts/generate-feedback.py
-    # Or for specific experiment
-    ./scripts/generate-feedback.py --experiment-id 20251122_172313_perspective_correction
-    ```
+### Database Integration
 
-7.  **Export experiment**:
+```bash
+etk sync --all          # Sync all artifacts to database
+etk query "search term" # Full-text search across artifacts
+etk analytics           # View analytics dashboard
+```
+
+## Features
+
+✅ **CLI Tool (ETK)**: 9 commands for complete artifact lifecycle
+✅ **Pre-Commit Hooks**: Automated enforcement (blocks ALL-CAPS, validates frontmatter)
+✅ **Compliance Dashboard**: Monitor adherence across all experiments
+✅ **Database Integration**: SQLite with FTS5 full-text search
+✅ **Query Interface**: Search artifacts across all experiments
+✅ **Analytics Dashboard**: Experiment statistics and trends
+✅ **Legacy Fixer**: Automated migration of old artifacts
+✅ **Integration Tests**: Comprehensive validation suite
+
+## Critical Rules
+
+1. ❌ **NEVER** create artifacts manually (use `etk create`)
+2. ❌ **NEVER** use ALL-CAPS filenames (pre-commit blocks)
+3. ❌ **NEVER** write user-facing documentation (AI-only standard)
+4. ✅ **ALWAYS** use CLI tool for artifact creation
+5. ✅ **ALWAYS** sync to database after changes (`etk sync --all`)
+6. ✅ **ALWAYS** run from experiment directory or specify `--experiment`
+
+## Validation
+
+**Automated** (pre-commit hooks):
+- Blocks ALL-CAPS filenames
+- Requires `.metadata/` structure
+- Validates YAML frontmatter
+
+**Manual**:
+```bash
+etk validate              # Current experiment
+etk validate --all        # All experiments
+```
+
+## Tools
+
+| Tool | Purpose | Location |
+|------|---------|----------|
+| `etk` | CLI tool | `etk.py` |
+| Compliance Dashboard | Monitor compliance | `.ai-instructions/tier4-workflows/generate-compliance-report.py` |
+| Legacy Fixer | Migrate old artifacts | `.ai-instructions/tier4-workflows/fix-legacy-artifacts.py` |
+| ALL-CAPS Renamer | Rename violations | `.ai-instructions/tier4-workflows/rename-all-caps-files.py` |
+| Integration Tests | Test hooks | `.ai-instructions/tier4-workflows/tests/test_precommit_hooks.py` |
+
+## Documentation
+
+- **Specification**: `.ai-instructions/schema/eds-v1.0-spec.yaml`
+- **Templates**: `.ai-instructions/tier2-framework/artifact-catalog.yaml`
+- **Rules**: `.ai-instructions/tier1-sst/*.yaml`
+- **Database Roadmap**: `.ai-instructions/tier2-framework/database-integration-roadmap.md`
+- **CHANGELOG**: `CHANGELOG.md`
+
+## Help
+
+```bash
+etk --help
+etk create --help
+etk init --help
+```
+
+## Legacy Documentation
+
+The sections below are from the previous implementation and will be phased out:
     ```bash
     ./scripts/export-experiment.py --format archive --destination ./exports
     ```

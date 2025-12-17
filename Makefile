@@ -306,8 +306,7 @@ ocr-console-backend:
 		echo "✅ Using checkpoint: $$OCR_CHECKPOINT_PATH"; \
 		echo "🚀 Starting OCR Console backend on http://127.0.0.1:8002"; \
 		echo "   API Docs: http://127.0.0.1:8002/docs"; \
-		cd apps/ocr-inference-console/backend && \
-		uv run uvicorn main:app --host 127.0.0.1 --port 8002 --reload; \
+		uv run uvicorn apps.ocr-inference-console.backend.main:app --host 127.0.0.1 --port 8002 --reload --reload-dir apps/ocr-inference-console/backend; \
 	'
 
 # OCR Console full stack (backend + frontend)
@@ -347,8 +346,7 @@ playground-console-backend:
 		fi; \
 		echo "🚀 Starting Playground Console backend on http://127.0.0.1:8001"; \
 		echo "   API Docs: http://127.0.0.1:8001/docs"; \
-		cd apps/playground-console/backend && \
-		uv run uvicorn main:app --host 127.0.0.1 --port 8001 --reload; \
+		uv run uvicorn apps.playground-console.backend.main:app --host 127.0.0.1 --port 8001 --reload --reload-dir apps/playground-console/backend; \
 	'
 
 # Playground Console full stack (backend + frontend)

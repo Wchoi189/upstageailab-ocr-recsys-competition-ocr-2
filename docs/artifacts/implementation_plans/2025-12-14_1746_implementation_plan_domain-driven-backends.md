@@ -1,4 +1,5 @@
 ---
+ads_version: "1.0"
 type: "implementation_plan"
 category: "development"
 status: "active"

@@ -1,13 +1,15 @@
 ---
+ads_version: "1.0"
+title: "001 Inference Resize Misalignment"
+date: "2025-12-04 12:43 (KST)"
 type: "bug_report"
 category: "troubleshooting"
 status: "active"
-severity: "medium"
 version: "1.0"
-tags: ['bug', 'issue', 'troubleshooting']
-title: "Inference preview misalignment for resized images"
-date: "2025-12-03 00:03 (KST)"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
 
 # Bug Report: Inference preview misalignment for resized images
 

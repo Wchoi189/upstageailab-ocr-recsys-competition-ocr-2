@@ -1,0 +1,124 @@
+---
+# EDS v1.0 Core Principle: AI-Only Documentation Standard
+
+principle_id: "ai-only-documentation"
+version: "1.0"
+status: "active"
+enforcement: "mandatory"
+
+## Principle
+
+**All documentation MUST be designed exclusively for AI consumption.**
+
+User-facing documentation is **explicitly prohibited**. AI-facing documentation serves both AI agents and human developers.
+
+## Rationale
+
+| Problem | AI-Only Solution |
+|---------|------------------|
+| Documentation drift | Single source of truth |
+| Verbose tutorials confuse AI | Structured data only |
+| Maintenance overhead | One standard to maintain |
+| Inconsistent formats | Machine-readable specs |
+| Tutorial staleness | Specs are always current |
+
+## Prohibited Content
+
+**NEVER create**:
+- User tutorials ("How to...", "Getting started...")
+- Explanatory prose (multi-paragraph conceptual explanations)
+- Emoji and decorative formatting
+- Step-by-step walkthroughs with conversational tone
+- "Beginner-friendly" simplifications
+- Redundant examples with commentary
+
+## Required Format
+
+**ALWAYS use**:
+- YAML structured data
+- Tables (comparison, feature matrices)
+- Code blocks (executable examples)
+- Bullet lists (enumeration, requirements)
+- Command reference (with exact syntax)
+- JSON Schema (validation rules)
+
+## Implementation
+
+### Compliance Detection
+
+`compliance-checker.py` detects prohibited content:
+```python
+PROHIBITED_PATTERNS = [
+    r"ready to begin",
+    r"let's explore",
+    r"this guide will help you",
+    r"follow these steps",
+    r"as you can see",
+]
+```
+
+### Pre-Commit Enforcement
+
+Blocks commits containing user-oriented language.
+
+### Documentation Types
+
+| Type | AI-Optimized Format | Prohibited Format |
+|------|---------------------|-------------------|
+| Specification | YAML with schemas | Prose explanations |
+| Reference | Tables + code blocks | Tutorial walkthroughs |
+| Examples | Executable code only | Commented explanations |
+| API Docs | JSON Schema | Verbose descriptions |
+
+## Human Usage
+
+**Humans read AI-facing docs directly**:
+- YAML specs are clear and concise
+- Tables show structure instantly
+- Code blocks are executable
+- No narrative overhead
+
+**Benefits for humans**:
+- Faster comprehension (structured data)
+- Always accurate (AI consumes same docs)
+- No tutorial maintenance
+- Search-optimized (grep, semantic search)
+
+## Migration Strategy
+
+**Existing user docs**:
+- Mark as deprecated
+- Replace with AI-facing equivalents
+- Remove after validation period
+
+**New docs**:
+- Create AI-facing only
+- Validate with compliance checker
+- Block user-oriented submissions via pre-commit
+
+## Validation
+
+```bash
+# Check compliance
+python .ai-instructions/schema/compliance-checker.py docs/
+
+# Should detect:
+# ❌ "This guide will show you..."
+# ❌ "Let's get started! 🚀"
+# ❌ Multi-paragraph prose
+
+# Should allow:
+# ✅ YAML frontmatter + tables
+# ✅ Code blocks
+# ✅ Bullet lists
+```
+
+## Exceptions
+
+**None**. No exceptions to AI-only documentation standard.
+
+**Rationale**: Allowing exceptions creates confusion about which standard applies.
+
+---
+
+*AI-Only Documentation Standard - EDS v1.0 Core Principle*

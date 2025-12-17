@@ -65,6 +65,7 @@ python run_ui.py inference
 ✅ **Text Detection** - DBNet architecture with polygon outputs
 ✅ **Offline Preprocessing** - Pre-computed maps for 5-8x speedup
 ✅ **Modular Components** - Registry-based encoders, decoders, heads, losses
+✅ **Modular Inference Engine** - 8-component orchestrator pattern with 67% code reduction
 ✅ **Modern UIs** - Streamlit tools + React SPA + Next.js console
 ✅ **FastAPI Backend** - Inference API with job tracking
 

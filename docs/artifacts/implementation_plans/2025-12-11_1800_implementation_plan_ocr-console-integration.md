@@ -1,4 +1,5 @@
 ---
+ads_version: "1.0"
 type: "implementation_plan"
 category: "development"
 status: "archived"
@@ -7,6 +8,14 @@ tags: ['implementation', 'plan', 'ocr', 'integration']
 title: "Implementation Plan - OCR PIPELINE INTEGRATION"
 date: "2025-12-11 18:00 (KST)"
 branch: "feature/agentqms-dashboard-integration"
+created: "2025-12-11T18:00:00Z"
+updated: "2025-12-11T18:00:00Z"
+agent: "copilot"
+tier: 2
+priority: "high"
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: "unknown"
+memory_footprint: 400
 ---
 
 # Implementation Plan - OCR PIPELINE INTEGRATION

@@ -1,0 +1,92 @@
+---
+# Tier 1 - Critical Placement Rules
+# EDS v1.0 Artifact Location Enforcement
+
+specification_version: "1.0"
+source: "EDS v1.0 Section: placement_rules"
+enforcement: "critical"
+auto_block: true
+
+required_structure:
+  experiment_root: "experiments/{experiment_id}/"
+  metadata_directory: ".metadata/"
+  subdirectories:
+    assessments: "assessments/"
+    reports: "reports/"
+    guides: "guides/"
+    scripts: "scripts/"
+    artifacts: "artifacts/"
+
+metadata_directory_requirements:
+  presence: "mandatory"
+  location: "experiments/{experiment_id}/.metadata/"
+  contents:
+    - "At least one artifact (assessment/report/guide/script)"
+  validation: "pre_commit_check"
+  error_severity: "critical"
+
+artifact_placement_map:
+  assessment:
+    location: "experiments/{experiment_id}/.metadata/assessments/"
+    pattern: "YYYYMMDD_HHMM_assessment_{slug}.md"
+    example: "experiments/20251217_024343_image_enhancements/.metadata/assessments/20251217_1530_assessment_failure_analysis.md"
+  report:
+    location: "experiments/{experiment_id}/.metadata/reports/"
+    pattern: "YYYYMMDD_HHMM_report_{slug}.md"
+    example: "experiments/20251217_024343_image_enhancements/.metadata/reports/20251218_0900_report_metrics.md"
+  guide:
+    location: "experiments/{experiment_id}/.metadata/guides/"
+    pattern: "YYYYMMDD_HHMM_guide_{slug}.md"
+    example: "experiments/20251217_024343_image_enhancements/.metadata/guides/20251217_1600_guide_reproduction.md"
+  script:
+    location: "experiments/{experiment_id}/.metadata/scripts/"
+    pattern: "YYYYMMDD_HHMM_script_{slug}.md"
+    example: "experiments/20251217_024343_image_enhancements/.metadata/scripts/20251217_1700_script_evaluation.md"
+  manifest:
+    location: "experiments/{experiment_id}/state.json"
+    format: "JSON"
+    managed_by: "CLI tools only"
+
+root_level_exceptions:
+  allowed_files:
+    - "README.md"
+    - "state.json"
+  reasoning: "User-facing documentation and experiment state tracking"
+  all_other_artifacts: "MUST be in .metadata/ subdirectories"
+
+prohibited_locations:
+  experiment_root:
+    pattern: "experiments/{experiment_id}/*.md"
+    exceptions:
+      - "README.md"
+    severity: "critical"
+    action: "pre_commit_block"
+    error_message: "Artifacts MUST be in .metadata/ subdirectories"
+  wrong_subdirectory:
+    example: "experiments/{experiment_id}/.metadata/reports/20251217_1530_assessment_failure_analysis.md"
+    severity: "high"
+    action: "pre_commit_block"
+    error_message: "assessment artifacts MUST be in .metadata/assessments/"
+
+validation_command: "eds_placement_validate"
+error_message: |
+  ❌ CRITICAL: Invalid artifact placement
+
+  Your file: {filepath}
+  Expected location: {expected_location}
+
+  Violations:
+  {violations}
+
+  Required structure:
+  experiments/{experiment_id}/
+    .metadata/
+      assessments/
+      reports/
+      guides/
+      scripts/
+      artifacts/
+    README.md (optional)
+    state.json (CLI-managed)
+
+  Fix: Move artifact to correct .metadata/ subdirectory

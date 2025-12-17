@@ -1,0 +1,44 @@
+---
+ads_version: "1.0"
+type: quick_reference
+agent: claude
+tier: 3
+priority: critical
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: pass
+memory_footprint: 60
+date: "2025-12-16"
+status: active
+
+# Claude Quick Reference
+
+mandatory_rules:
+  - "NEVER: Manual file creation"
+  - "ALWAYS: Use make create-{TYPE}"
+  - "ALWAYS: Validate after operations"
+  - "NAMING: YYYY-MM-DD_HHMM_{TYPE}_slug.md"
+  - "PLACEMENT: docs/artifacts/{TYPE}/"
+
+common_commands:
+  create_artifact: "cd AgentQMS/interface && make create-{TYPE} NAME=slug TITLE='Title'"
+  validate: "cd AgentQMS/interface && make validate"
+  compliance: "cd AgentQMS/interface && make compliance"
+  discover: "cd AgentQMS/interface && make discover"
+
+when_uncertain:
+  - "STOP operations"
+  - "Consult tier1-sst/*.yaml"
+  - "Use make discover"
+  - "DO NOT improvise"
+
+validation_mandatory:
+  frequency: "After EVERY operation"
+  command: "make validate"
+  failure: "BLOCK until resolved"
+
+prohibited:
+  - "ALL-CAPS filenames"
+  - "Files at docs/ root"
+  - "Manual artifact creation"
+  - "sys.path manipulation"
+

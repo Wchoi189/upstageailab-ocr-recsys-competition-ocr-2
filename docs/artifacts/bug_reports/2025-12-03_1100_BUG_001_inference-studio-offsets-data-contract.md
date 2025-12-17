@@ -1,12 +1,15 @@
 ---
+ads_version: "1.0"
 title: "001 Inference Studio Offsets Data Contract"
-date: "2025-12-06 18:08 (KST)"
+date: "2025-12-06 18:09 (KST)"
 type: "bug_report"
 category: "troubleshooting"
 status: "active"
 version: "1.0"
 tags: ['bug_report', 'troubleshooting']
 ---
+
+
 
 # BUG-001 (Follow-up): Inference Studio Overlay Offsets & Data Contract Mismatch
 

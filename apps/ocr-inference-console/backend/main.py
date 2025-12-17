@@ -329,6 +329,8 @@ async def run_inference(request: InferenceRequest):
             box_thresh=request.nms_threshold,
             return_preview=True,  # Get 640x640 preview with metadata
             enable_perspective_correction=request.enable_perspective_correction,
+            perspective_display_mode=request.perspective_display_mode,
+            enable_grayscale=request.enable_grayscale,
         )
 
         if result is None:

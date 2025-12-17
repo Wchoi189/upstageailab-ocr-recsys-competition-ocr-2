@@ -8,6 +8,7 @@ function App() {
   const [selectedCheckpoint, setSelectedCheckpoint] = useState<string | null>(null);
   const [enablePerspectiveCorrection, setEnablePerspectiveCorrection] = useState(false);
   const [displayMode, setDisplayMode] = useState("corrected");
+  const [enableGrayscale, setEnableGrayscale] = useState(false);
 
   return (
     <div className="flex h-screen w-full bg-white font-sans text-gray-900 overflow-hidden">
@@ -19,6 +20,8 @@ function App() {
         onPerspectiveCorrectionChange={setEnablePerspectiveCorrection}
         displayMode={displayMode}
         onDisplayModeChange={setDisplayMode}
+        enableGrayscale={enableGrayscale}
+        onGrayscaleChange={setEnableGrayscale}
       />
 
       {/* Main Content Area */}
@@ -33,6 +36,7 @@ function App() {
             selectedCheckpoint={selectedCheckpoint}
             enablePerspectiveCorrection={enablePerspectiveCorrection}
             displayMode={displayMode}
+            enableGrayscale={enableGrayscale}
           />
         </div>
       </main>

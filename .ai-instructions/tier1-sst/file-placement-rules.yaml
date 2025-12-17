@@ -1,0 +1,59 @@
+---
+ads_version: "1.0"
+type: rule_set
+agent: all
+tier: 1
+priority: critical
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: pass
+memory_footprint: 70
+date: "2025-12-16"
+status: active
+depends_on: ["naming-conventions.yaml"]
+
+# Tier 1 - File Placement Rules (Extracted from SST)
+
+placement_rules:
+  artifacts_directory:
+    base: "docs/artifacts/"
+    rule: "ALL artifacts MUST be in type-specific subdirectories"
+    prohibited: "docs/*.md (except README.md)"
+    enforcement: "make validate + pre-commit hooks"
+
+  type_locations:
+    implementation_plan: "docs/artifacts/implementation_plans/"
+    assessment: "docs/artifacts/assessments/"
+    audit: "docs/artifacts/audits/"
+    design: "docs/artifacts/design_documents/"
+    research: "docs/artifacts/research/"
+    template: "docs/artifacts/templates/"
+    bug_report: "docs/artifacts/bug_reports/"
+    session_note: "docs/artifacts/completed_plans/completion_summaries/session_notes/"
+
+  root_exceptions:
+    allowed_at_root:
+      - "README.md"
+      - "CHANGELOG.md"
+      - "CONTRIBUTING.md"
+      - "LICENSE"
+    all_others: "PROHIBITED at docs/ root"
+
+  knowledge_base:
+    location: "AgentQMS/knowledge/"
+    purpose: "Long-form guidance (not for agents)"
+    structure:
+      - "agent/ - Agent instruction references"
+      - "protocols/ - Development protocols"
+      - "references/ - Technical references"
+      - "templates/ - Document templates"
+
+prohibited_actions:
+  - action: "Creating files at docs/ root"
+    severity: critical
+    instead: "Use docs/artifacts/{TYPE}/"
+
+  - action: "Manual artifact creation"
+    severity: critical
+    instead: "Use: cd AgentQMS/interface && make create-{TYPE}"
+
+validation_command: "make validate"

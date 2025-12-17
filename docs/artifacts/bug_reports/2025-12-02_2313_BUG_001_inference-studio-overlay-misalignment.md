@@ -1,13 +1,15 @@
 ---
+ads_version: "1.0"
+title: "001 Inference Studio Overlay Misalignment"
+date: "2025-12-04 12:43 (KST)"
 type: "bug_report"
 category: "troubleshooting"
 status: "active"
-severity: "medium"
 version: "1.0"
-tags: ['bug', 'issue', 'troubleshooting']
-title: "Inference Studio overlay misaligned with original image"
-date: "2025-12-02 23:13 (KST)"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
 
 # Bug Report: Inference Studio overlay misaligned with original image
 

@@ -1,8 +1,9 @@
 ---
 title: "Perspective Correction Phase 2 - Completion Guide"
-date: "2025-12-14"
-type: "implementation_guide"
-status: "in_progress"
+date: "2025-12-14 12:00 (KST)"
+type: "template"
+category: "planning"
+status: "active"
 version: "1.0"
 ---
 

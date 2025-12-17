@@ -1,0 +1,115 @@
+---
+# Tier 3 - GitHub Copilot Agent Configuration
+# EDS v1.0 Copilot-Specific Instructions
+
+agent: "GitHub Copilot"
+specification_version: "1.0"
+priority: "critical"
+enforcement: "mandatory"
+
+critical_rules:
+  manual_artifact_creation:
+    allowed: false
+    severity: "critical"
+    message: "NEVER create experiment artifacts manually. ALWAYS use CLI commands."
+    reasoning: "Prevents ALL-CAPS chaos, missing frontmatter, incorrect placement"
+
+  artifact_format:
+    prose: "prohibited"
+    allowed_formats: ["markdown tables", "code blocks", "bulleted lists"]
+    prohibited_formats: ["paragraphs", "conceptual explanations", "tutorials"]
+    message: "Use ONLY structured data: tables, code blocks, bullets. NO prose."
+
+  naming_convention:
+    pattern: "YYYYMMDD_HHMM_{TYPE}_{slug}.md"
+    prohibited_patterns: ["ALL-CAPS", "camelCase", "PascalCase", "spaces"]
+    message: "Use lowercase-hyphenated slugs. ALL-CAPS is CRITICAL violation."
+
+  placement_rule:
+    required: ".metadata/ subdirectory"
+    prohibited: "experiment root (except README.md, state.json)"
+    message: "Place ALL artifacts in .metadata/{subdirectory}/"
+
+workflow:
+  artifact_creation:
+    step_1: "Read .ai-instructions/tier2-framework/artifact-catalog.yaml for artifact types"
+    step_2: "Determine correct artifact type (assessment/report/guide/script)"
+    step_3: "Use CLI command: eds generate-{type} --experiment {id} --slug {slug}"
+    step_4: "NEVER create .md files manually"
+    step_5: "Validate: python .ai-instructions/schema/compliance-checker.py {file}"
+
+  artifact_modification:
+    step_1: "Read existing frontmatter to determine type and status"
+    step_2: "Update only body content (NOT frontmatter, except 'updated' timestamp)"
+    step_3: "Follow format_requirements from artifact-catalog.yaml"
+    step_4: "NO user-oriented prose, tutorials, or conceptual explanations"
+    step_5: "Validate changes: python .ai-instructions/schema/compliance-checker.py {file}"
+
+context_loading:
+  always_read_first:
+    - ".ai-instructions/schema/eds-v1.0-spec.yaml"
+    - ".ai-instructions/tier2-framework/artifact-catalog.yaml"
+  read_for_specific_tasks:
+    naming_issues: ".ai-instructions/tier1-sst/artifact-naming-rules.yaml"
+    placement_issues: ".ai-instructions/tier1-sst/artifact-placement-rules.yaml"
+    workflow_violations: ".ai-instructions/tier1-sst/artifact-workflow-rules.yaml"
+    lifecycle_questions: ".ai-instructions/tier1-sst/experiment-lifecycle-rules.yaml"
+    validation_errors: ".ai-instructions/tier1-sst/validation-protocols.yaml"
+
+prohibited_actions:
+  - action: "Create .md file manually in experiments/"
+    severity: "critical"
+    alternative: "Use eds generate-{type} CLI command"
+  - action: "Write user-oriented tutorial prose"
+    severity: "high"
+    alternative: "Use markdown tables, code blocks, bullets only"
+  - action: "Use ALL-CAPS filenames"
+    severity: "critical"
+    alternative: "Use YYYYMMDD_HHMM_{type}_{slug}.md pattern"
+  - action: "Place artifacts in experiment root"
+    severity: "critical"
+    alternative: "Place in .metadata/{subdirectory}/"
+  - action: "Include emoji in artifact body"
+    severity: "medium"
+    alternative: "Use plain text only (emoji allowed in error messages)"
+
+common_mistakes_to_avoid:
+  ALL_CAPS_filenames:
+    example: "MASTER_ROADMAP.md"
+    fix: "20251217_1530_guide_roadmap.md"
+    check: "Pre-commit hook will block ALL-CAPS"
+
+  verbose_prose:
+    example: "This section explains how to reproduce the experiment..."
+    fix: "Use command sequence in code block (no explanations)"
+    check: "Compliance checker detects prohibited phrases"
+
+  missing_metadata:
+    example: "experiments/20251217_024343_image_enhancements/assessment.md"
+    fix: "experiments/20251217_024343_image_enhancements/.metadata/assessments/20251217_1530_assessment_failure_analysis.md"
+    check: "Pre-commit hook requires .metadata/ structure"
+
+  manual_frontmatter:
+    example: "Manually typing YAML frontmatter"
+    fix: "Use CLI tools to auto-generate correct frontmatter"
+    check: "Pre-commit hook validates frontmatter"
+
+quick_reference:
+  generate_assessment: "eds generate-assessment --experiment {id} --slug {slug}"
+  generate_report: "eds generate-report --experiment {id} --slug {slug}"
+  generate_guide: "eds generate-guide --experiment {id} --slug {slug}"
+  generate_script: "eds generate-script --experiment {id} --slug {slug}"
+  validate_artifact: "python .ai-instructions/schema/compliance-checker.py {file}"
+  validate_experiment: "python .ai-instructions/schema/compliance-checker.py experiments/{id}"
+  check_compliance: "eds compliance-report"
+
+success_metrics:
+  target_compliance: "100%"
+  target_token_reduction: "90% (8,500 → 850 tokens)"
+  target_naming_violations: "0%"
+  target_format_violations: "0%"
+
+escalation:
+  unresolved_issues: "Read full specification: .ai-instructions/schema/eds-v1.0-spec.yaml"
+  complex_scenarios: "Read tier1-sst rules: .ai-instructions/tier1-sst/*.yaml"
+  validation_failures: "Run compliance-checker.py with --verbose flag"

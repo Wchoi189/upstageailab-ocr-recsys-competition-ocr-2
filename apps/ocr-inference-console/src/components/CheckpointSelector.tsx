@@ -10,86 +10,79 @@ interface CheckpointSelectorProps {
 export const CheckpointSelector = ({ selectedCheckpoint, onCheckpointChange }: CheckpointSelectorProps) => {
     const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
     const [loading, setLoading] = useState(true);
+    const [retryCount, setRetryCount] = useState(0);
 
     useEffect(() => {
-        const loadCheckpoints = async () => {
+        let retryAttempt = 0;
+        const maxRetries = 5;
+        const retryDelays = [1000, 2000, 5000, 10000, 20000]; // 1s, 2s, 5s, 10s, 20s
+        let timeoutId: number;
+
+        const loadCheckpointsWithRetry = async () => {
             setLoading(true);
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:15',message:'Starting checkpoint load',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-            // #endregion
-
-            // Test direct API access first with timeout
-            try {
-                const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
-                const probeUrl = `${apiUrl}/inference/checkpoints?limit=5`;
-                // #region agent log
-                const testStartTime = Date.now();
-                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:20',message:'Testing direct API fetch',data:{url:probeUrl},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-                // #endregion
-                const fetchPromise = fetch(probeUrl, {
-                    method: 'GET',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                });
-                const timeoutPromise = new Promise<never>((_, reject) => {
-                    setTimeout(() => reject(new Error('Fetch timeout after 10 seconds')), 10000);
-                });
-                const testResponse = await Promise.race([fetchPromise, timeoutPromise]);
-                // #region agent log
-                const testDuration = Date.now() - testStartTime;
-                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:30',message:'Direct API fetch result',data:{status:testResponse.status,statusText:testResponse.statusText,ok:testResponse.ok,durationMs:testDuration},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-                // #endregion
-            } catch (testError: any) {
-                // #region agent log
-                const testDuration = Date.now() - Date.now();
-                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:35',message:'Direct API fetch failed',data:{errorMessage:testError?.message,errorName:testError?.name,errorStack:testError?.stack},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-                // #endregion
-            }
+            setRetryCount(retryAttempt);
 
             try {
-                // Add timeout to prevent infinite hanging
-                const timeoutPromise = new Promise<never>((_, reject) => {
-                    setTimeout(() => reject(new Error('Checkpoint loading timeout after 60 seconds')), 60000);
-                });
+                const ckpts = await ocrClient.listCheckpoints();
 
-                const ckpts = await Promise.race([
-                    ocrClient.listCheckpoints(),
-                    timeoutPromise
-                ]);
-                // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:40',message:'Checkpoints loaded successfully',data:{checkpointsCount:ckpts.length,firstCheckpoint:ckpts[0]||null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-                // #endregion
-                setCheckpoints(ckpts);
-                setLoading(false);
+                if (ckpts.length > 0) {
+                    // Success!
+                    setCheckpoints(ckpts);
+                    setLoading(false);
+                    setRetryCount(0);
 
-                // Auto-select first checkpoint if none selected
-                if (!selectedCheckpoint && ckpts.length > 0) {
-                    // #region agent log
-                    fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:65',message:'Auto-selecting first checkpoint',data:{checkpointPath:ckpts[0].path,checkpointName:ckpts[0].name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})}).catch(()=>{});
-                    // #endregion
-                    onCheckpointChange(ckpts[0].path);
+                    // Auto-select first checkpoint if none selected
+                    if (!selectedCheckpoint) {
+                        onCheckpointChange(ckpts[0].path);
+                    }
+                } else if (retryAttempt < maxRetries) {
+                    // Empty response, retry
+                    const delay = retryDelays[retryAttempt];
+                    console.log(`No checkpoints found. Retrying in ${delay}ms... (${retryAttempt + 1}/${maxRetries})`);
+                    retryAttempt++;
+                    timeoutId = setTimeout(loadCheckpointsWithRetry, delay);
                 } else {
-                    // #region agent log
-                    fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:70',message:'Not auto-selecting checkpoint',data:{hasSelectedCheckpoint:!!selectedCheckpoint,checkpointsCount:ckpts.length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'H'})}).catch(()=>{});
-                    // #endregion
+                    // Max retries reached
+                    console.error('Failed to load checkpoints after', maxRetries, 'retries');
+                    setCheckpoints([]);
+                    setLoading(false);
                 }
             } catch (error: any) {
-                // #region agent log
-                fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'CheckpointSelector.tsx:50',message:'Checkpoint load error',data:{errorMessage:error?.message,errorStack:error?.stack,errorName:error?.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-                // #endregion
                 console.error('Failed to load checkpoints:', error);
-                setCheckpoints([]);
-                setLoading(false);
+
+                if (retryAttempt < maxRetries) {
+                    // Error occurred, retry
+                    const delay = retryDelays[retryAttempt];
+                    console.log(`Retrying in ${delay}ms... (${retryAttempt + 1}/${maxRetries})`);
+                    retryAttempt++;
+                    timeoutId = setTimeout(loadCheckpointsWithRetry, delay);
+                } else {
+                    // Max retries reached
+                    setCheckpoints([]);
+                    setLoading(false);
+                }
             }
         };
-        loadCheckpoints();
+
+        loadCheckpointsWithRetry();
+
+        // Cleanup: cancel pending retry on unmount
+        return () => {
+            if (timeoutId) {
+                clearTimeout(timeoutId);
+            }
+        };
     }, []);
 
     if (loading) {
         return (
             <div className="px-4 py-2 text-sm text-gray-500">
                 Loading checkpoints...
+                {retryCount > 0 && (
+                    <div className="text-xs mt-1 text-gray-400">
+                        Waiting for backend... (attempt {retryCount + 1}/6)
+                    </div>
+                )}
             </div>
         );
     }

@@ -1,0 +1,61 @@
+# API Signature Template
+# Use for documenting public method contracts
+
+api_signature:
+  component: string                       # Component name
+  method_name: string                     # Public method name
+
+  signature: string                       # Exact method signature from source
+
+  parameters:
+    - name: string
+      type: string
+      required: boolean
+      default: any
+      description: string                 # What the parameter does (one line)
+
+  returns:
+    type: string                          # Return type
+    description: string                   # What is returned (one line)
+
+  raises:
+    - exception_type: string
+      condition: string                   # When raised (one line)
+
+  backward_compatible: boolean            # True if signature unchanged from previous version
+
+  notes: string                           # Only if non-obvious behavior
+
+# Example:
+# api_signature:
+#   component: "InferenceEngine"
+#   method_name: "predict"
+#
+#   signature: "predict(image: Union[str, Path, np.ndarray, PIL.Image], settings: Optional[Dict]) -> InferenceResult"
+#
+#   parameters:
+#     - name: "image"
+#       type: "Union[str, Path, np.ndarray, PIL.Image]"
+#       required: true
+#       default: null
+#       description: "Input image (file path, numpy array, or PIL Image)"
+#
+#     - name: "settings"
+#       type: "Optional[Dict]"
+#       required: false
+#       default: "None"
+#       description: "Optional inference settings override"
+#
+#   returns:
+#     type: "InferenceResult"
+#     description: "Predictions with preview image and metadata"
+#
+#   raises:
+#     - exception_type: "FileNotFoundError"
+#       condition: "Image file path does not exist"
+#     - exception_type: "ValueError"
+#       condition: "Image format unsupported or corrupted"
+#
+#   backward_compatible: true
+#
+#   notes: "Settings override config defaults for single inference call"

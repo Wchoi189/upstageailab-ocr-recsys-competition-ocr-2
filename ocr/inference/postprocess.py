@@ -35,28 +35,16 @@ def compute_inverse_matrix(processed_tensor, original_shape: Sequence[int]):
     - scale = 640 / max(original_h, original_w)
 
     See: docs/bug_reports/BUG-20251116-001_DEBUGGING_HANDOVER.md
+
+    NOTE: This is a compatibility wrapper. New code should use coordinate_manager module.
     """
     if torch is None:
         return [np.eye(3, dtype=np.float32)]
 
-    original_height, original_width = original_shape[:2]
-    if original_height <= 0 or original_width <= 0:
-        return [np.eye(3, dtype=np.float32)]
+    # Use the new coordinate_manager for consistent transformation logic
+    from .coordinate_manager import compute_inverse_matrix as _compute_inverse_matrix
 
-    # Pre-pad resize scale used by LongestMaxSize
-    max_side = float(max(original_height, original_width))
-    if max_side == 0:
-        return [np.eye(3, dtype=np.float32)]
-    scale = 640.0 / max_side
-    inv_scale = 1.0 / scale
-
-    # BUG-20251116-001 FIX: For top_left padding, there is NO translation
-    # Padding is at bottom/right only, so content starts at (0, 0) in padded space
-    # Translation components must be (0, 0) - no offset needed
-    matrix = np.array(
-        [[inv_scale, 0.0, 0.0], [0.0, inv_scale, 0.0], [0.0, 0.0, 1.0]],
-        dtype=np.float32,
-    )
+    matrix = _compute_inverse_matrix(original_shape, target_size=640)
     return [matrix]
 
 

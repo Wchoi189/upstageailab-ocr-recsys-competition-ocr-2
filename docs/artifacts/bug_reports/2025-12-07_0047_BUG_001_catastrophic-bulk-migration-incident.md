@@ -1,14 +1,15 @@
 ---
+ads_version: "1.0"
+title: "001 Catastrophic Bulk Migration Incident"
+date: "2025-12-07 01:33 (KST)"
 type: "bug_report"
 category: "troubleshooting"
-status: "completed"
-severity: "critical"
+status: "active"
 version: "1.0"
-tags: ['bug', 'issue', 'bulk-operations', 'data-loss', 'post-mortem']
-title: "2025-12-06 Catastrophic Bulk Migration Incident"
-date: "2025-12-07 00:47 (KST)"
-branch: "feature/outputs-reorg"
+tags: ['bug_report', 'troubleshooting']
 ---
+
+
 
 # Bug Report: 2025-12-06 Catastrophic Bulk Migration Incident
 

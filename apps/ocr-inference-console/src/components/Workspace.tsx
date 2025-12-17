@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { RotateCw, ZoomIn, ZoomOut, Code, Eye } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Code, Eye, Upload } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '../utils';
 
 import { Light as SyntaxHighlighter } from 'react-syntax-highlighter';
 import jsonStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/github';
-import { ImageUploader } from './ImageUploader';
+import { UploadModal } from './UploadModal';
 import { PolygonOverlay } from './PolygonOverlay';
 import { ocrClient, type Prediction, type InferenceResponse, type PredictionMetadata } from '../api/ocrClient';
 
@@ -14,12 +14,14 @@ interface WorkspaceProps {
     selectedCheckpoint: string | null;
     enablePerspectiveCorrection: boolean;
     displayMode: string;
+    enableGrayscale: boolean;
 }
 
 export const Workspace: React.FC<WorkspaceProps> = ({
     selectedCheckpoint,
     enablePerspectiveCorrection,
-    displayMode
+    displayMode,
+    enableGrayscale
 }) => {
     const [viewMode, setViewMode] = useState<'preview' | 'json'>('preview');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -28,41 +30,25 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     const [previewImageBase64, setPreviewImageBase64] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
-    const handleImageSelected = async (file: File) => {
+    const handleImageSelected = async (file: File, checkpoint?: string) => {
         setIsLoading(true);
         setError(null);
-        setPredictions([]);
-
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Workspace.tsx:24',message:'Image selected - starting inference',data:{fileName:file.name,fileSize:file.size,fileType:file.type,hasCheckpoint:!!selectedCheckpoint,checkpoint:selectedCheckpoint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
-        // #endregion
-
-        // Create local URL for preview
+        setPredictions([]);        // Create local URL for preview
         const url = URL.createObjectURL(file);
         setImageUrl(url);
 
         try {
             const result: InferenceResponse = await ocrClient.predict(
                 file,
-                selectedCheckpoint || undefined,
+                checkpoint || selectedCheckpoint || undefined,
                 enablePerspectiveCorrection,
-                displayMode
-            );
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Workspace.tsx:37',message:'Inference response received - predictions data',data:{predictionsCount:result.predictions.length,filename:result.filename,hasMeta:!!result.meta,firstPrediction:result.predictions[0]?{points:result.predictions[0].points,confidence:result.predictions[0].confidence,label:result.predictions[0].label}:null},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B'})}).catch(()=>{});
-            // #endregion
-            setPredictions(result.predictions);
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Workspace.tsx:44',message:'Setting inference metadata',data:{hasMeta:!!result.meta,hasPreviewImage:!!result.preview_image_base64,meta:result.meta},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-            // #endregion
-            setInferenceMeta(result.meta);
+                displayMode,
+                enableGrayscale
+            );            setPredictions(result.predictions);            setInferenceMeta(result.meta);
             setPreviewImageBase64(result.preview_image_base64 || null);
-        } catch (e: any) {
-            // #region agent log
-            fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Workspace.tsx:40',message:'Inference error occurred',data:{errorMessage:e.message,errorStack:e.stack,errorName:e.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'E'})}).catch(()=>{});
-            // #endregion
-            console.error('Inference error:', e);
+        } catch (e: any) {            console.error('Inference error:', e);
             // Display detailed error message from backend if available
             setError(e.message || "Unknown error occurred during inference. Check backend logs.");
         } finally {
@@ -120,6 +106,14 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 <div className="h-10 border-b border-gray-200 flex items-center justify-between px-4 bg-gray-50/50 flex-shrink-0">
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xs text-blue-600 px-2 hover:bg-blue-50"
+                                onClick={() => setIsModalOpen(true)}
+                            >
+                                <Upload size={14} className="mr-1" /> Upload
+                            </Button>
                             <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500" onClick={handleReset} title="Reset"><RotateCw size={14} /></Button>
                             <Button variant="ghost" size="sm" className="h-7 text-xs text-gray-600 px-2" onClick={handleLoadDemo}>Demo</Button>
                             {/* Zoom buttons disabled for now as Viewer doesn't support zoom yet */}
@@ -164,21 +158,27 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                         <Panel defaultSize={55} minSize={30} className="relative bg-gray-100 flex flex-col">
                             <div className="flex-1 overflow-hidden relative flex items-center justify-center">
                                 {!imageUrl ? (
-                                    <ImageUploader onImageSelected={handleImageSelected} disabled={isLoading} />
+                                    <div className="flex flex-col items-center justify-center gap-4 text-center">
+                                        <div className="text-gray-400">
+                                            <Upload size={48} strokeWidth={1.5} />
+                                        </div>
+                                        <div>
+                                            <p className="text-sm text-gray-600 mb-2">No image loaded</p>
+                                            <button
+                                                onClick={() => setIsModalOpen(true)}
+                                                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
+                                            >
+                                                Upload Image
+                                            </button>
+                                        </div>
+                                    </div>
                                 ) : (
                                     <div className="relative w-full h-full">
                                         {isLoading && (
                                             <div className="absolute inset-0 z-10 bg-white/50 flex items-center justify-center">
                                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
                                             </div>
-                                        )}
-                                        {/* #region agent log */}
-                                        {(() => {
-                                            fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'Workspace.tsx:158',message:'Passing props to PolygonOverlay',data:{hasMeta:!!inferenceMeta,hasPredictions:predictions.length>0,meta:inferenceMeta},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A'})}).catch(()=>{});
-                                            return null;
-                                        })()}
-                                        {/* #endregion */}
-                                        <PolygonOverlay imageUrl={imageUrl} predictions={predictions} meta={inferenceMeta} previewImageBase64={previewImageBase64} />
+                                        )}                                        <PolygonOverlay imageUrl={imageUrl} predictions={predictions} meta={inferenceMeta} previewImageBase64={previewImageBase64} />
                                     </div>
                                 )}
                             </div>
@@ -246,6 +246,14 @@ export const Workspace: React.FC<WorkspaceProps> = ({
 
                     </PanelGroup>
                 </div>
+
+                {/* Upload Modal */}
+                <UploadModal
+                    isOpen={isModalOpen}
+                    onClose={() => setIsModalOpen(false)}
+                    onFileSelected={handleImageSelected}
+                    initialCheckpoint={selectedCheckpoint}
+                />
             </div>
         </div>
     );

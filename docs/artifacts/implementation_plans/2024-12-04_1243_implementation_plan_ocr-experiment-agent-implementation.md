@@ -1,4 +1,5 @@
 ---
+ads_version: "1.0"
 title: "2024 12 04 Ocr Experiment Agent Implementation"
 date: "2025-12-06 20:41 (KST)"
 type: "implementation_plan"
@@ -6,6 +7,14 @@ category: "planning"
 status: "archived"
 version: "1.0"
 tags: ['implementation_plan', 'planning', 'documentation']
+created: "2024-12-04T12:43:00Z"
+updated: "2025-12-06T20:41:00Z"
+agent: "copilot"
+tier: 2
+priority: "high"
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: "unknown"
+memory_footprint: 800
 ---
 
 

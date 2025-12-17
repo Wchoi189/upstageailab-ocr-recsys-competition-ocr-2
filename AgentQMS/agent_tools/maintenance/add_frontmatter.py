@@ -245,6 +245,7 @@ class FrontmatterGenerator:
         current_date = datetime.now().strftime("%Y-%m-%dT%H:%M:%SZ")
 
         frontmatter = "---\n"
+        frontmatter += 'ads_version: "1.0"\n'
         frontmatter += f'title: "{analysis["title"]}"\n'
         frontmatter += f'date: "{current_date}"\n'
         frontmatter += f'type: "{analysis["type"]}"\n'

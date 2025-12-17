@@ -22,6 +22,8 @@ interface SidebarProps {
     onPerspectiveCorrectionChange: (enabled: boolean) => void;
     displayMode: string;
     onDisplayModeChange: (mode: string) => void;
+    enableGrayscale: boolean;
+    onGrayscaleChange: (enabled: boolean) => void;
 }
 
 export const Sidebar = ({
@@ -30,7 +32,9 @@ export const Sidebar = ({
     enablePerspectiveCorrection,
     onPerspectiveCorrectionChange,
     displayMode,
-    onDisplayModeChange
+    onDisplayModeChange,
+    enableGrayscale,
+    onGrayscaleChange
 }: SidebarProps) => {
     return (
         <div className="w-64 border-r border-gray-200 h-full bg-white flex flex-col">
@@ -107,6 +111,23 @@ export const Sidebar = ({
                                 </label>
                             </div>
                         )}
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                    <h4 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        Preprocessing
+                    </h4>
+                    <div className="px-4 space-y-2">
+                        <label className="flex items-center gap-2 text-sm">
+                            <input
+                                type="checkbox"
+                                checked={enableGrayscale}
+                                onChange={(e) => onGrayscaleChange(e.target.checked)}
+                                className="rounded border-gray-300"
+                            />
+                            <span>Enable Grayscale</span>
+                        </label>
                     </div>
                 </div>
             </div>

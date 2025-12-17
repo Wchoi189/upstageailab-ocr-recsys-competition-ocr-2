@@ -1,0 +1,250 @@
+---
+ads_version: "1.0"
+type: tool_catalog
+agent: all
+tier: 2
+priority: critical
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: pass
+memory_footprint: 800
+date: "2025-12-16"
+status: active
+source: "Converted from .copilot/context/tool-catalog.md"
+
+# AgentQMS Tool Catalog (Tier 2 - Machine-Readable)
+
+## Artifact Creation Commands
+
+artifact_commands:
+  create_plan:
+    command: "cd AgentQMS/interface && make create-plan"
+    args:
+      NAME: "lowercase-slug"
+      TITLE: "quoted-string"
+    output: "docs/artifacts/implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_{NAME}.md"
+    template: "Blueprint Protocol Template (PROTO-GOV-003)"
+    auto_validation: true
+
+  create_assessment:
+    command: "cd AgentQMS/interface && make create-assessment"
+    args:
+      NAME: "lowercase-slug"
+      TITLE: "quoted-string"
+    output: "docs/artifacts/assessments/YYYY-MM-DD_HHMM_assessment-{NAME}.md"
+    auto_validation: true
+
+  create_design:
+    command: "cd AgentQMS/interface && make create-design"
+    args:
+      NAME: "lowercase-slug"
+      TITLE: "quoted-string"
+    output: "docs/artifacts/design_documents/YYYY-MM-DD_HHMM_design-{NAME}.md"
+    auto_validation: true
+
+  create_research:
+    command: "cd AgentQMS/interface && make create-research"
+    args:
+      NAME: "lowercase-slug"
+      TITLE: "quoted-string"
+    output: "docs/artifacts/research/YYYY-MM-DD_HHMM_research-{NAME}.md"
+    auto_validation: true
+
+  create_audit:
+    command: "cd AgentQMS/interface && make create-audit"
+    args:
+      NAME: "lowercase-slug"
+      TITLE: "quoted-string"
+    output: "docs/artifacts/audits/YYYY-MM-DD_HHMM_audit-{NAME}.md"
+    auto_validation: true
+
+  create_bug_report:
+    command: "cd AgentQMS/interface && make create-bug-report"
+    args:
+      NAME: "lowercase-slug"
+      TITLE: "quoted-string"
+    output: "docs/artifacts/bug_reports/YYYY-MM-DD_HHMM_BUG_{NAME}.md"
+    auto_validation: true
+
+## Validation Commands
+
+validation_commands:
+  validate:
+    command: "cd AgentQMS/interface && make validate"
+    purpose: "Validate all artifacts (naming, frontmatter, structure)"
+    frequency: "After every artifact operation"
+
+  validate_file:
+    command: "cd AgentQMS/interface && make validate-file FILE=path"
+    purpose: "Validate specific artifact"
+    args:
+      FILE: "path/to/artifact.md"
+
+  validate_naming:
+    command: "cd AgentQMS/interface && make validate-naming"
+    purpose: "Check naming conventions only"
+
+  compliance:
+    command: "cd AgentQMS/interface && make compliance"
+    purpose: "Check framework compliance"
+    frequency: "Before commits"
+
+  boundary:
+    command: "cd AgentQMS/interface && make boundary"
+    purpose: "Validate framework boundaries"
+    frequency: "Weekly or after major changes"
+
+## Discovery Commands
+
+discovery_commands:
+  help:
+    command: "cd AgentQMS/interface && make help"
+    purpose: "Show available make targets"
+
+  discover:
+    command: "cd AgentQMS/interface && make discover"
+    purpose: "Discover all AgentQMS tools"
+
+  status:
+    command: "cd AgentQMS/interface && make status"
+    purpose: "Check system status"
+
+## Context Loading Commands
+
+context_commands:
+  context_auto:
+    command: "cd AgentQMS/interface && make context TASK='description'"
+    purpose: "Auto-detect and load context bundle"
+    args:
+      TASK: "Task description"
+
+  context_development:
+    command: "cd AgentQMS/interface && make context-development"
+    purpose: "Load development context"
+
+  context_docs:
+    command: "cd AgentQMS/interface && make context-docs"
+    purpose: "Load documentation context"
+
+  context_debug:
+    command: "cd AgentQMS/interface && make context-debug"
+    purpose: "Load debugging context"
+
+  context_plan:
+    command: "cd AgentQMS/interface && make context-plan"
+    purpose: "Load planning context"
+
+  context_list:
+    command: "cd AgentQMS/interface && make context-list"
+    purpose: "List available context bundles"
+
+## Documentation Commands
+
+documentation_commands:
+  docs_generate:
+    command: "cd AgentQMS/interface && make docs-generate"
+    purpose: "Generate documentation index"
+
+  docs_update_indexes:
+    command: "cd AgentQMS/interface && make docs-update-indexes"
+    purpose: "Update artifact indexes"
+
+  docs_validate_links:
+    command: "cd AgentQMS/interface && make docs-validate-links"
+    purpose: "Validate documentation links"
+
+## Audit Commands
+
+audit_commands:
+  audit_init:
+    command: "cd AgentQMS/interface && make audit-init"
+    args:
+      FRAMEWORK: "Framework name"
+      DATE: "YYYY-MM-DD"
+      SCOPE: "Scope description"
+    purpose: "Initialize audit"
+
+  audit_validate:
+    command: "cd AgentQMS/interface && make audit-validate"
+    purpose: "Validate audit documents"
+
+  audit_checklist_generate:
+    command: "cd AgentQMS/interface && make audit-checklist-generate PHASE=phase"
+    args:
+      PHASE: "Audit phase"
+    purpose: "Generate checklist"
+
+  audit_checklist_report:
+    command: "cd AgentQMS/interface && make audit-checklist-report"
+    purpose: "Generate audit progress report"
+
+## Tracking CLI Commands
+
+tracking_commands:
+  plan_new:
+    command: "python AgentQMS/agent_tools/utilities/tracking/cli.py plan new"
+    args:
+      --title: "Plan title"
+      --owner: "Owner name"
+    purpose: "Create feature plan"
+
+  plan_status:
+    command: "python AgentQMS/agent_tools/utilities/tracking/cli.py plan status --concise"
+    purpose: "Check plan status"
+
+  exp_new:
+    command: "python AgentQMS/agent_tools/utilities/tracking/cli.py exp new"
+    args:
+      --title: "Experiment title"
+      --objective: "Objective description"
+    purpose: "Create experiment"
+
+  exp_run_add:
+    command: "python AgentQMS/agent_tools/utilities/tracking/cli.py exp run-add KEY RUN_NUM"
+    args:
+      KEY: "Experiment key"
+      RUN_NUM: "Run number"
+      --params: "JSON params"
+      --outcome: "pass|fail|inconclusive"
+    purpose: "Add experiment run"
+
+## Tool Categories
+
+tool_categories:
+  audit:
+    tools: ["audit_generator", "audit_validator", "checklist_tool"]
+    base_path: "AgentQMS/agent_tools/audit/"
+
+  compliance:
+    tools: ["monitor_artifacts", "validate_artifacts", "validate_boundaries"]
+    base_path: "AgentQMS/agent_tools/compliance/"
+
+  core:
+    tools: ["artifact_workflow", "context_bundle", "discover", "workflow_detector"]
+    base_path: "AgentQMS/agent_tools/core/"
+
+  documentation:
+    tools: ["auto_generate_index", "validate_links", "validate_manifest"]
+    base_path: "AgentQMS/agent_tools/documentation/"
+
+  utilities:
+    tools: ["adapt_project", "tracking_cli", "get_context"]
+    base_path: "AgentQMS/agent_tools/utilities/"
+
+## Workflow Triggers
+
+workflow_triggers:
+  artifact_creation:
+    keywords: ["create", "new", "artifact", "document", "plan", "assessment"]
+    action: "Suggest: make create-{TYPE}"
+
+  validation_needed:
+    keywords: ["validate", "check", "verify", "compliance"]
+    action: "Run: make validate"
+
+  discovery_needed:
+    keywords: ["what tools", "available commands", "help", "how do i"]
+    action: "Run: make discover or make help"
+
+  context_loading:
+    keywords: ["context", "background", "understand", "learn about"]
+    action: "Run: make context TASK='description'"

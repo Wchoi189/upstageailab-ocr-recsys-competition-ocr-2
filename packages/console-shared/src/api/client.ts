@@ -47,12 +47,7 @@ export async function apiRequest<T>(
     endpoint: string,
     options: RequestOptions = {},
 ): Promise<T> {
-    const url = `${API_BASE_URL}${endpoint}`;
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'client.ts:46',message:'API request starting',data:{url,method:options.method||'GET',apiBaseUrl:API_BASE_URL,endpoint},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-    // #endregion
-
-    let response: Response;
+    const url = `${API_BASE_URL}${endpoint}`;    let response: Response;
     try {
         response = await fetchWithRetry(url, {
             ...options,
@@ -60,15 +55,7 @@ export async function apiRequest<T>(
                 'Content-Type': 'application/json',
                 ...options.headers,
             },
-        });
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'client.ts:57',message:'API request response received',data:{url,status:response.status,statusText:response.statusText,ok:response.ok},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-        // #endregion
-    } catch (error: any) {
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'client.ts:61',message:'API request fetch failed',data:{url,errorMessage:error?.message,errorName:error?.name},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-        // #endregion
-        throw error;
+        });    } catch (error: any) {        throw error;
     }
 
     if (!response.ok) {
@@ -78,11 +65,7 @@ export async function apiRequest<T>(
             errorMessage = errorData.detail || errorData.message || errorMessage;
         } catch {
             // Ignore JSON parse error
-        }
-        // #region agent log
-        fetch('http://127.0.0.1:7242/ingest/842889c6-5ff1-47b5-bc88-99b58e395178',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'client.ts:72',message:'API request not OK',data:{url,status:response.status,statusText:response.statusText,errorMessage},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
-        // #endregion
-        throw new ApiError(response.status, errorMessage);
+        }        throw new ApiError(response.status, errorMessage);
     }
 
     return response.json();

@@ -1,17 +1,15 @@
 ---
-type: assessment
+ads_version: "1.0"
 title: "Upstage Document Parsing Playground Tech Stack"
-date: "2025-11-19 19:39 (KST)"
-category: architecture
-status: draft
+date: "2025-12-06 18:09 (KST)"
+type: "assessment"
+category: "evaluation"
+status: "active"
 version: "1.0"
-tags:
-  - architecture
-  - tech-stack
-  - document-parsing
-author: ai-agent
-branch: main
+tags: ['assessment', 'evaluation', 'documentation']
 ---
+
+
 
 ## Progress Tracker
 *(Required for iterative assessments, debugging sessions, or incremental work)*

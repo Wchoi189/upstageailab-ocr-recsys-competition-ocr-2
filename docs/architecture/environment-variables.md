@@ -1,23 +1,22 @@
-# Environment Variables for Path Configuration
+---
+type: architecture
+component: environment
+status: current
+version: "1.0"
+last_updated: "2025-12-15"
+---
 
-**Last Updated**: 2025-11-20
-**Status**: Active
+# Environment Variables
 
-## Overview
+**Purpose**: `OCR_*` prefixed environment variables for flexible path configuration; supports Docker, CI/CD, custom directory structures.
 
-The OCR project supports environment variable-based path configuration for flexible deployment scenarios. This is particularly useful for:
-- Docker containers
-- CI/CD pipelines
-- Multi-tenant deployments
-- Custom directory structures
+---
 
-## Available Environment Variables
+## Environment Variables
 
-All path-related environment variables use the `OCR_` prefix:
-
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `OCR_PROJECT_ROOT` | Auto-detected | Override project root directory |
+| Variable | Default | Scope |
+|----------|---------|-------|
+| `OCR_PROJECT_ROOT` | Auto-detected | Project root directory |
 | `OCR_CONFIG_DIR` | `{root}/configs` | Config directory |
 | `OCR_OUTPUT_DIR` | `{root}/outputs` | Output directory |
 | `OCR_DATA_DIR` | `{root}/data` | Data directory |
@@ -25,46 +24,37 @@ All path-related environment variables use the `OCR_` prefix:
 | `OCR_ANNOTATIONS_DIR` | `{root}/data/datasets/jsons` | Annotations directory |
 | `OCR_LOGS_DIR` | `{root}/outputs/logs` | Logs directory |
 | `OCR_CHECKPOINTS_DIR` | `{root}/outputs/experiments/train/ocr` | Checkpoints directory |
-| `OCR_CHECKPOINT_PATH` | **Auto-detected** (latest) | Specific checkpoint file (optional) |
+| `OCR_CHECKPOINT_PATH` | Auto-detected (latest) | Specific checkpoint file (optional) |
 | `OCR_SUBMISSIONS_DIR` | `{root}/outputs/submissions` | Submissions directory |
 
-## OCR_CHECKPOINT_PATH (Special Behavior)
+---
 
-**Purpose**: Specify which checkpoint file to use for OCR inference.
+## OCR_CHECKPOINT_PATH (Auto-Detection)
 
-**Auto-Detection** (Default):
-- If `OCR_CHECKPOINT_PATH` is **not set**, the system automatically detects the **latest checkpoint** from `outputs/experiments/train/ocr/`
-- Sorted by modification time (most recent first)
-- No manual configuration required!
-
-**Manual Override**:
-- Set `OCR_CHECKPOINT_PATH` to use a specific checkpoint file
-- Must be full path to `.ckpt` file (relative or absolute)
-- Example: `export OCR_CHECKPOINT_PATH=outputs/experiments/train/ocr/pan_resnet18/checkpoints/epoch-18.ckpt`
+| Behavior | Implementation |
+|----------|----------------|
+| **Auto-Detection** (default) | If not set, system detects latest checkpoint from `outputs/experiments/train/ocr/` (sorted by modification time) |
+| **Manual Override** | Set to specific `.ckpt` file (relative or absolute path) |
 
 **Examples**:
 ```bash
-# Auto-detection (recommended for development)
+# Auto-detection (recommended)
 unset OCR_CHECKPOINT_PATH
-make serve-ocr-console  # Uses latest checkpoint automatically
+make serve-ocr-console  # Uses latest checkpoint
 
-# Manual override (for testing specific checkpoints)
+# Manual override
 export OCR_CHECKPOINT_PATH=outputs/experiments/train/ocr/pan_resnet18/checkpoints/epoch-14.ckpt
 make serve-ocr-console  # Uses specified checkpoint
 ```
 
-## Usage
+---
+
+## Usage Patterns
 
 ### FastAPI Application
+**Initialization**: Environment variables loaded on FastAPI startup (`@app.on_event("startup")`)
 
-Environment variables are automatically loaded on FastAPI startup:
-
-```python
-# services/playground_api/app.py
-# Paths are initialized in @app.on_event("startup")
-```
-
-**Logging**: Path configuration is logged at startup:
+**Logging** (startup):
 ```
 INFO: === Path Configuration ===
 INFO: Project root: /workspaces/upstageailab-ocr-recsys-competition-ocr-2
@@ -74,129 +64,53 @@ INFO: Using environment variables: OCR_CONFIG_DIR, OCR_OUTPUT_DIR
 ```
 
 ### Streamlit Applications
+**Initialization**: Environment variables loaded on app start
 
-Environment variables are automatically loaded when the app starts:
-
-```python
-# ui/apps/inference/app.py
-# Paths are initialized at module level
-```
-
-**Logging**: Path configuration is logged to stderr on startup.
-
-### Manual Usage
-
-```python
-from ocr.utils.path_utils import setup_project_paths
-
-# Read from environment variables
-resolver = setup_project_paths()
-
-# Or use explicit config dict
-resolver = setup_project_paths({
-    "output_dir": "/custom/outputs",
-    "config_dir": "/custom/configs"
-})
-
-# Access paths
-output_dir = resolver.config.output_dir
-config_dir = resolver.config.config_dir
-```
-
-## Detection Order
-
-1. **Explicit Config** (if `setup_project_paths(config={...})` is called)
-2. **Environment Variables** (if `OCR_*` vars are set)
-3. **Auto-detection** (from `__file__` location or CWD walk-up)
-
-## Examples
-
-### Docker Container
-
-```dockerfile
-# Dockerfile
-ENV OCR_OUTPUT_DIR=/data/outputs
-ENV OCR_DATA_DIR=/data/datasets
-ENV OCR_PROJECT_ROOT=/app
-
-# Application will use these paths automatically
-```
-
-### CI/CD Pipeline
-
-```yaml
-# .github/workflows/test.yml
-env:
-  OCR_OUTPUT_DIR: ${{ runner.temp }}/outputs
-  OCR_DATA_DIR: ${{ runner.workspace }}/data
-
-# Tests will use these paths
-```
-
-### Development Override
-
+### Docker Containers
+**Example**:
 ```bash
-# .env file (loaded by your environment)
-export OCR_OUTPUT_DIR=/tmp/my_outputs
-export OCR_CHECKPOINTS_DIR=/tmp/my_checkpoints
-
-# Run application
-streamlit run ui/apps/inference/app.py
+docker run -e OCR_CONFIG_DIR=/app/configs -e OCR_OUTPUT_DIR=/app/outputs ocr-app
 ```
 
-## Logging
+---
 
-Both FastAPI and Streamlit apps log path configuration at startup:
+## Dependencies
 
-**Without Environment Variables**:
-```
-INFO: Using auto-detected paths (no environment variables set)
-INFO: Project root: /workspaces/upstageailab-ocr-recsys-competition-ocr-2
-INFO: Config directory: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/configs
-INFO: Output directory: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs
-```
+| Component | Environment Variable Usage |
+|-----------|----------------------------|
+| **FastAPI** | Startup event reads `OCR_*` vars |
+| **Streamlit** | App init reads `OCR_*` vars |
+| **InferenceEngine** | Uses `OCR_CHECKPOINT_PATH` for model loading |
 
-**With Environment Variables**:
-```
-INFO: Using environment variables: OCR_OUTPUT_DIR, OCR_CONFIG_DIR
-INFO: Project root: /workspaces/upstageailab-ocr-recsys-competition-ocr-2
-INFO: Config directory: /custom/configs
-INFO: Output directory: /custom/outputs
-```
+---
 
-## Best Practices
+## Constraints
 
-1. **Development**: Don't set environment variables - use auto-detection
-2. **Deployment**: Set `OCR_PROJECT_ROOT` if app runs from different directory
-3. **Docker**: Set paths in Dockerfile or docker-compose.yml
-4. **CI/CD**: Use temporary directories for outputs/logs
-5. **Multi-tenant**: Set per-tenant directories via environment variables
+- **Naming Convention**: All variables prefixed with `OCR_`
+- **Path Validation**: Invalid paths logged as warnings; fallback to defaults
+- **Auto-Detection**: `OCR_CHECKPOINT_PATH` requires valid `OCR_CHECKPOINTS_DIR` for auto-detection
 
-## Validation
+---
 
-The path resolver automatically:
-- Creates directories if they don't exist
-- Validates that project root exists (if `OCR_PROJECT_ROOT` is set)
-- Logs warnings if paths seem incorrect
+## Backward Compatibility
 
-## Troubleshooting
+**Status**: Maintained for all deployment scenarios
 
-**Problem**: Paths not using environment variables
+**Breaking Changes**: None
 
-**Solution**:
-- Check variable names start with `OCR_`
-- Verify variables are set before app startup
-- Check logs for "Using environment variables" message
+**Compatibility Matrix**:
 
-**Problem**: Paths resolving incorrectly
+| Deployment | Environment Variable Support | Status |
+|------------|------------------------------|--------|
+| Local Dev | ✅ Full | ✅ Supported |
+| Docker | ✅ Full | ✅ Supported |
+| CI/CD | ✅ Full | ✅ Supported |
+| Legacy Streamlit | ✅ Full | ✅ Supported |
 
-**Solution**:
-- Set `OCR_PROJECT_ROOT` explicitly
-- Check current working directory
-- Review startup logs for path resolution details
+---
 
-## Related Documentation
+## References
 
-- [Path Management Audit](../../planning/plans/2025-11/path-management-audit-and-solution.md)
-- [Path Management Implementation Progress](../../planning/plans/2025-11/path-management-implementation-progress.md)
-- `ocr/utils/path_utils.py` - Implementation
+- [System Architecture](system-architecture.md)
+- [Config Architecture](config-architecture.md)
+- [Backend Pipeline Contract](../backend/api/backend-pipeline-contract.md)

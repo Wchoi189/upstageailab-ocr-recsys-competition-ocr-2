@@ -65,6 +65,59 @@
 - Training stability (loss convergence)
 - Inference latency (< 50ms per batch)
 
+### 4. Inference Component Integration Tests
+
+**Purpose**: Validate modular inference components and orchestrator pattern.
+
+**Files**:
+- `tests/unit/test_orchestrator.py` - InferenceOrchestrator coordination
+- `tests/unit/test_model_manager.py` - Model lifecycle and caching
+- `tests/unit/test_preprocessing_pipeline.py` - Image preprocessing
+- `tests/unit/test_postprocessing_pipeline.py` - Prediction decoding
+- `tests/unit/test_preview_generator.py` - Preview encoding
+- `tests/unit/test_image_loader.py` - Image I/O and EXIF
+- `tests/unit/test_coordinate_manager.py` - Coordinate transformations
+- `tests/unit/test_preprocessing_metadata.py` - Metadata calculation
+
+**Coverage**:
+- ✅ Component initialization and configuration
+- ✅ Data contract compliance between components
+- ✅ Error handling and edge cases
+- ✅ Backward compatibility with InferenceEngine
+- ✅ Coordinate transformation accuracy (BUG-20251116-001 fix)
+
+**Test Execution**:
+```bash
+# Run all inference component tests
+python -m pytest tests/unit/test_orchestrator.py \
+                 tests/unit/test_model_manager.py \
+                 tests/unit/test_preprocessing_pipeline.py \
+                 tests/unit/test_postprocessing_pipeline.py \
+                 tests/unit/test_preview_generator.py \
+                 tests/unit/test_image_loader.py \
+                 tests/unit/test_coordinate_manager.py \
+                 tests/unit/test_preprocessing_metadata.py -v
+
+# Run orchestrator tests specifically
+python -m pytest tests/unit/test_orchestrator.py -v
+
+# Test backward compatibility
+python -c "from ocr.inference.engine import InferenceEngine; e = InferenceEngine(); print('✓ Import OK')"
+```
+
+**Component Test Matrix**:
+
+| Component | Unit Tests | Integration Tests | Contract Tests |
+|-----------|-----------|------------------|----------------|
+| InferenceOrchestrator | 10/10 ✅ | Delegates to components | ✅ Data flow |
+| ModelManager | ✅ Passing | Checkpoint loading | ✅ Config bundle |
+| PreprocessingPipeline | ✅ Passing | Transform + metadata | ✅ PreprocessingResult |
+| PostprocessingPipeline | ✅ Passing | Decode + format | ✅ PostprocessingResult |
+| PreviewGenerator | ✅ Passing | Encode + attach | ✅ Base64 output |
+| ImageLoader | ✅ Passing | EXIF normalization | ✅ LoadedImage |
+| CoordinateManager | ✅ Passing | Transform accuracy | ✅ Padding position |
+| PreprocessingMetadata | ✅ Passing | Metadata creation | ✅ Dictionary format |
+
 ---
 
 ## 🔄 CI/CD Integration
@@ -257,5 +310,5 @@ python -m pytest tests/ -k "contract" --cov=ocr/ --cov-report=term-missing
 
 ---
 
-**Last Updated**: October 11, 2025
-**Version**: 1.0
+**Last Updated**: December 15, 2025
+**Version**: 1.1 (Added inference component integration tests)

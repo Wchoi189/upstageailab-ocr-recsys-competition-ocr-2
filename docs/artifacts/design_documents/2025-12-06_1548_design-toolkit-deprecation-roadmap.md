@@ -1,12 +1,15 @@
 ---
-title: "2025 12 06 Design Toolkit Deprecation Roadmap"
-date: "2025-12-06 18:09 (KST)"
+ads_version: "1.0"
+title: "Toolkit Deprecation Roadmap"
+date: "2025-12-07 01:33 (KST)"
 type: "design"
 category: "architecture"
 status: "active"
 version: "1.0"
 tags: ['design', 'architecture', 'documentation']
 ---
+
+
 
 
 

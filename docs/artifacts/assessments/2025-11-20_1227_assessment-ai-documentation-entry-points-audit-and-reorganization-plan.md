@@ -1,18 +1,15 @@
 ---
-type: assessment
-title: "AI Documentation Entry Points Audit and Reorganization Plan"
-date: "2025-11-20 12:27 (KST)"
-category: evaluation
-status: draft
+ads_version: "1.0"
+title: "Ai Documentation Entry Points Audit And Reorganization Plan"
+date: "2025-12-06 18:09 (KST)"
+type: "assessment"
+category: "evaluation"
+status: "active"
 version: "1.0"
-tags:
-  - documentation
-  - audit
-  - ai-agents
-  - compliance
-author: ai-agent
-branch: main
+tags: ['assessment', 'evaluation', 'documentation']
 ---
+
+
 
 # AI Documentation Entry Points Audit
 

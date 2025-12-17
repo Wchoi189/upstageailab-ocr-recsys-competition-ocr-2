@@ -1,13 +1,15 @@
 ---
+ads_version: "1.0"
+title: "Dashboard Phase1 Phase2 Recovery"
+date: "2025-12-08 18:52 (KST)"
 type: "assessment"
 category: "evaluation"
 status: "active"
 version: "1.0"
-tags: ['assessment', 'evaluation', 'analysis']
-title: "AgentQMS Manager Dashboard Phase 1-2 Recovery Assessment"
-date: "2025-12-08 02:29 (KST)"
-branch: "main"
+tags: ['assessment', 'evaluation', 'documentation']
 ---
+
+
 
 # AgentQMS Manager Dashboard Phase 1-2 Recovery Assessment
 
