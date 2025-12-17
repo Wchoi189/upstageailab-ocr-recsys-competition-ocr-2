@@ -23,11 +23,11 @@ config-show-structure:  ## Show current config structure
 .PHONY: profile-imports
 profile-imports:  ## Profile import times to identify startup bottlenecks
 	@echo "⏱️  Profiling import times (this will take ~90s)..."
-	python scripts/profile_imports.py
+	python scripts/performance/profile_imports.py
 
 .PHONY: analyze-imports
 analyze-imports:  ## Analyze import structure to identify heavy dependencies
-	python scripts/analyze_imports.py
+	python scripts/performance/analyze_imports.py
 
 .PHONY: benchmark-startup
 benchmark-startup:  ## Benchmark startup times for training scripts

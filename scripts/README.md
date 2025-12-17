@@ -84,15 +84,17 @@ System monitoring and resource management tools.
 
 ### `performance/`
 All performance analysis, benchmarking, and reporting tools.
+- `analyze_imports.py` - Analyze import structure and dependencies
 - `benchmark.py` - Performance benchmarking
-- `generate_baseline_report.py` - Generate performance baseline reports
-- `compare_baseline_vs_optimized.py` - Compare baseline vs optimized runs
-- `compare_three_runs.py` - Compare three different runs
 - `benchmark_optimizations.py` - Benchmark data loading optimizations
 - `benchmark_validation.py` - Validate benchmarking results
+- `compare_baseline_vs_optimized.py` - Compare baseline vs optimized runs
+- `compare_three_runs.py` - Compare three different runs
 - `decoder_benchmark.py` - Benchmark decoder performance
+- `generate_baseline_report.py` - Generate performance baseline reports
 - `performance_measurement.py` - General performance measurements
 - `performance_test.py` - Performance testing utilities
+- `profile_imports.py` - Profile import times to identify startup bottlenecks
 - `quick_performance_validation.py` - Quick performance validation
 
 ### `seroost/`
@@ -168,8 +170,11 @@ python ./scripts/seroost/setup_seroost_indexing.py
 Scripts at the root level for backward compatibility and convenience:
 - `_bootstrap.py` - Ensures project modules resolve when scripts run directly
 - `preprocess_data.py` - Delegates to `scripts/data/preprocess.py`
-- `process_manager.py` - Streamlit process management (used by Makefile and documentation)
+- `validate_config.py` - Configuration validation utility
+- `download_hf_sample.py` - HuggingFace model/dataset download utility
 - `generate_diagrams.py` - Automated Mermaid diagram generation (used by Makefile and CI scripts)
+- `ci_update_diagrams.sh` - CI script for diagram updates
+- `manage_diagrams.sh` - Diagram management utility
 
 ## Contributing
 
