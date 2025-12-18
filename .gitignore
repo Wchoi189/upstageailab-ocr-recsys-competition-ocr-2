@@ -65,12 +65,8 @@ venv.bak/
 # Node
 node_modules/
 
-# Docs
-docs/_deprecated/
-!docs/next_job_log/
-!docs/next_job_log/**
 # IDE
-# .vscode/
+.vscode/
 .idea/
 *.swp
 *.swo
@@ -85,141 +81,76 @@ docs/_deprecated/
 ehthumbs.db
 Thumbs.db
 
-# Logs
-# *.log
-# logs/
-
-# Model checkpoints and outputs
+# Logs and Outputs
+logs/
+*.log
+lightning_logs/
 outputs/
 checkpoints/
 *.pth
 *.ckpt
+wandb/
+offline-*/
 
-# Large model files (use Git LFS or store externally)
+# Model files
 *.onnx
 frontend/public/models/*.onnx
-
-# WandB
-/wandb/
-
-# Temporary files
-*.tmp
-*.temp
-DEPRECATED/
-_deprecated/
-*refactor-plan.md
 
 # Data
 data/datasets/
 data/pseudo_label/
+datasets/
+filter_samples/
 
-lightning_logs/*
-
-multirun/*
-*.ipynb
-
-
-# Experiments
+# Experiments and Archives
+multirun/
+_archive/
+__OLD__/
+/archive/
 CamScanner-Web-App/
 OpenCV-Document-Scanner/
 
-_archive/docs
-# QWEN.md
-continuation-prompt-streamlit-ui.md
-sample_bounding_boxes.png
-_llm_code_gen_workflow_exp/
-!docs/assets/images/demo/*.png
-notepad.md
-*.jpg
-/LOW_PERFORMANCE_IMGS/*.jpg
-# .repomixignore
-# repomix.config.json
-repomix-output.xml
-*.xml
-data_gen_exp/
-root-cause.md
-# qwen_coder_integration.md
-image_rotation_mismatch.svg
-profiler_traces/
-results_threshold_0_4/
-results/
-# receipt-text-recognition-ocr-project/
-preprocessing_test_results/
-resource_logs/
-DEBUG_OUTPUT_WORKSPACE/
-docs/setup/mcp_setup/
-
-# W&B offline data (should be in outputs/)
-# receipt-text-recognition-ocr-project/
-wandb/
-offline-*/
+# Temporary files
+*.tmp
+*.temp
 *.bak
 *.pyc
+*.pid
+*.xml
+*.jpg
+*.png
+*.svg
+*.md
+*.csv
+*.json
+*.sqlite
+*.db
 
-# Lightning logs (should be in outputs/)
-
-# Common clutter
-# .claude/
-# .qwen/
-# .qwenignore
-# QWEN.md
-# prompts/
-# notepad.md
-# notepad-train-cli.md
-# submission_*.csv
-# demo_brightness_adjustment.py
-# demo_document_flattening.py
-# generate_demo_images.py
-demo_images/
+# Deprecated and Debug
+DEPRECATED/
+_deprecated/
+DEBUG_OUTPUT_WORKSPACE/
 debug_empty_predictions/
-
-real_dataset_demo.py
+demo_images/
+framework_export/
+phase1_validation_results/
+preprocessing_results/
+profiler_traces/
 real_demo_simple/
 real_noise_elimination_demo/
-test_cleaned.jpg
-test_original.jpg
-preprocessing-plan/
-debug_empty_predictions/eda_results/correlation_matrix.png
-preprocessing-plan/preprocessing_viewer_references.md
-
-phase1_validation_results/
-configs/train_debug.yaml
-data.tar.gz
-datasets/
-download_wandb_checkpoint.py
-filter_samples/
-output (13).csv
-powerpoimt_slide_notes.md
-shadow_removal_preprocessing.py
+reports/
+resource_logs/
+results/
+results_threshold_0_4/
 streamlit-preprocessing-plan/
-submissions_filtered/
-test_corrected/
-test_corrected_gray/
-test_gray/
-test_gray_new/
-test_shadow_removal/
-# /logs/
 submissions/
-demo_background_removal.py
-mermaid_diagram_brainstorm.md
-preprocess_sample_images.py
-preprocessing_results/
+submissions_filtered/
 submissions_test_catalog/
 submissions_test_catalog_filtered/
-test_ocr_on_bg_removed.py
-test_u2net.png
-test_u2netp.png
-test_zero_predictions_bg_removal.py
-zero_prediction_bg_removal_test/
-# Temporary system files
-*.pid
-logs/ui/*.err
-logs/ui/*.out
-reports/polygon_bounds_investigation.json
-framework_export/
+test_*/
+zero_prediction_*/
 
-# Agent Framework State Tracking (.agentqms/)
-# Exclude state files and session data, but keep config.yaml, schemas, and documentation
+# AgentQMS
 .agentqms/state.json
 .agentqms/sessions/
 .agentqms/backups/
@@ -227,10 +158,17 @@ framework_export/
 !.agentqms/config.yaml
 !.agentqms/schemas/
 !.agentqms/*.md
-# Project specific
-*.db
-*.sqlite
 .agentqms/state/agent_state.json
 .agentqms/state/*.sqlite
-__OLD__/
-/archive/
+
+# Project-specific files (review and remove if no longer needed)
+continuation-prompt-streamlit-ui.md
+image_rotation_mismatch.svg
+mermaid_diagram_brainstorm.md
+notepad.md
+powerpoimt_slide_notes.md
+root-cause.md
+_llm_code_gen_workflow_exp/
+data_gen_exp/
+preprocessing-plan/
+repomix-output.xml

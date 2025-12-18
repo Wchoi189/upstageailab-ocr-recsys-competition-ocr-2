@@ -2,6 +2,7 @@
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.backends.cli_qwen import CLIQwenBackend
+from AgentQMS.vlm.backends.dashscope import DashScopeBackend
 from AgentQMS.vlm.backends.openrouter import OpenRouterBackend
 from AgentQMS.vlm.backends.solar_pro2 import SolarPro2Backend
 
@@ -10,6 +11,7 @@ __all__ = [
     "OpenRouterBackend",
     "SolarPro2Backend",
     "CLIQwenBackend",
+    "DashScopeBackend",
     "create_backend",
 ]
 
@@ -44,5 +46,7 @@ def create_backend(backend_type: str, config: dict | None = None) -> BaseVLMBack
         return SolarPro2Backend(backend_config)
     elif backend_type == "cli":
         return CLIQwenBackend(backend_config)
+    elif backend_type == "dashscope":
+        return DashScopeBackend(backend_config)
     else:
         raise ValueError(f"Unknown backend type: {backend_type}")

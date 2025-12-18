@@ -47,6 +47,10 @@ class AnalysisMode(str, Enum):
     COMPARE = "compare"
     FULL = "full"
     BUG_001 = "bug_001"
+    # Image enhancement experiment modes
+    IMAGE_QUALITY = "image_quality"
+    ENHANCEMENT_VALIDATION = "enhancement_validation"
+    PREPROCESSING_DIAGNOSIS = "preprocessing_diagnosis"
 
 
 class ImageData(BaseModel):
@@ -164,7 +168,7 @@ class AnalysisRequest(BaseModel):
     auto_populate: bool = False
     experiment_id: str | None = None
     incident_report: Path | None = None
-    backend_preference: str | None = Field(default=None, pattern="^(openrouter|solar_pro2|cli)$")
+    backend_preference: str | None = Field(default=None, pattern="^(dashscope|openrouter|solar_pro2|cli)$")
     max_resolution: int = Field(default_factory=_default_analysis_max_resolution, gt=0, le=_IMAGE_MAX_DIMENSION)
 
     @field_validator("image_paths")
@@ -222,7 +226,7 @@ class AnalysisResult(BaseModel):
 class BackendConfig(BaseModel):
     """Backend configuration."""
 
-    backend_type: str = Field(..., pattern="^(openrouter|solar_pro2|cli)$")
+    backend_type: str = Field(..., pattern="^(openrouter|solar_pro2|cli|dashscope)$")
     api_key: str | None = None
     model: str | None = None
     endpoint: str | None = None
@@ -235,7 +239,7 @@ class BackendConfig(BaseModel):
     def validate_api_key(cls, v: str | None, info) -> str | None:
         """Validate API key is provided for API backends."""
         backend_type = info.data.get("backend_type")
-        if backend_type in ("openrouter", "solar_pro2") and not v:
+        if backend_type in ("openrouter", "solar_pro2", "dashscope") and not v:
             raise ValueError(f"API key is required for {backend_type} backend")
         return v
 

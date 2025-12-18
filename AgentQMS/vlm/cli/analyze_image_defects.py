@@ -38,7 +38,16 @@ def main():
     parser.add_argument(
         "--mode",
         type=str,
-        choices=["defect", "input", "compare", "full", "bug_001"],
+        choices=[
+            "defect",
+            "input",
+            "compare",
+            "full",
+            "bug_001",
+            "image_quality",
+            "enhancement_validation",
+            "preprocessing_diagnosis",
+        ],
         default="defect",
         help="Analysis mode (default: defect)",
     )
@@ -103,7 +112,7 @@ def main():
     parser.add_argument(
         "--backend",
         type=str,
-        choices=["openrouter", "solar_pro2", "cli"],
+        choices=["dashscope", "openrouter", "solar_pro2", "cli"],
         help="Preferred backend (default: auto-select)",
     )
     parser.add_argument(

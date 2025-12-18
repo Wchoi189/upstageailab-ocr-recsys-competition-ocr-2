@@ -21,7 +21,7 @@ class BaseVLMBackend(VLMBackend):
 
     def _validate_config(self) -> None:
         """Validate backend configuration."""
-        if self.config.backend_type not in ("openrouter", "solar_pro2", "cli"):
+        if self.config.backend_type not in ("openrouter", "solar_pro2", "cli", "dashscope"):
             raise ValueError(f"Invalid backend type: {self.config.backend_type}")
 
     @property

@@ -3,16 +3,29 @@
 backends:
   # Default to API backend; CLI backend is opt-in and requires a compatible
   # qwen-vl style binary configured via QWEN_VLM_COMMAND.
-  default: "openrouter"
+  default: "dashscope"
   priority:
+    - "dashscope"
     - "openrouter"
     - "solar_pro2"
     - "cli"
 
+  dashscope:
+    # Alibaba Cloud DashScope API (Qwen VL models)
+    endpoint: "https://dashscope.aliyuncs.com/api/v1"
+    default_model: "qwen3-vl-plus-2025-09-23"
+    # Available models (change default_model to switch):
+    #   qwen-vl-max              - Most capable, best quality (default)
+    #   qwen-vl-plus             - Balanced performance/quality
+    #   qwen3-vl-plus-2025-09-23 - Qwen3 VL Plus (dated release)
+    #   qwen3-vl-flash-2025-10-15 - Fastest inference, good quality
+    #   qwen-vl-ocr-2025-11-20   - Specialized for OCR tasks
+    api_key_env: "DASHSCOPE_API_KEY"
+
   openrouter:
     base_url: "https://openrouter.ai/api/v1"
-    default_model: "google/gemma-3-27b-it:free"
-    api_key_env: "GEMMA27B"
+    default_model: "qwen/qwen2.5-vl-32b-instruct"
+    api_key_env: "QWEN25"
 
   solar_pro2:
     endpoint: "https://api.upstage.ai/v1"

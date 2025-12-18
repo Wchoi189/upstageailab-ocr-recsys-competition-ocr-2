@@ -110,10 +110,17 @@ The module is organized into several components:
 
 ## Analysis Modes
 
+### General Modes
 - **defect**: Analyze output images for visual artifacts and defects
 - **input**: Analyze source images for unique properties
 - **compare**: Compare before/after image pairs
 - **full**: Comprehensive analysis combining all modes
+- **bug_001**: Specialized analysis for BUG-001 (inference overlay misalignment)
+
+### Image Enhancement Modes
+- **image_quality**: Assess document image quality for OCR preprocessing (background tint, text slant, shadows, contrast)
+- **enhancement_validation**: Compare before/after preprocessing to quantify enhancement effectiveness
+- **preprocessing_diagnosis**: Deep-dive failure analysis for debugging preprocessing issues
 
 ## Backends
 
@@ -147,6 +154,36 @@ VGG Image Annotator (VIA) integration allows manual annotations to be included i
 3. Use `--via-annotations` flag when analyzing
 
 ## Examples
+
+### Image Enhancement Experiment Usage
+
+```bash
+# Assess baseline image quality
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image data/zero_prediction_worst_performers/image_001.jpg \
+  --mode image_quality \
+  --backend openrouter \
+  --output-format markdown \
+  --output vlm_reports/baseline_image_001_quality.md
+
+# Validate preprocessing enhancements (before/after comparison)
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image outputs/comparison_image_001_before_after.jpg \
+  --mode enhancement_validation \
+  --backend openrouter \
+  --output-format markdown \
+  --output vlm_reports/validation_image_001.md
+
+# Diagnose preprocessing failures
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image outputs/failed_preprocessing_image_005.jpg \
+  --mode preprocessing_diagnosis \
+  --backend openrouter \
+  --output-format markdown \
+  --output vlm_reports/diagnosis_image_005.md
+```
+
+### Few-Shot Learning
 
 See `prompts/few_shot_examples.json` for example image-description pairs that can be used for few-shot learning.
 

@@ -18,4 +18,4 @@
 
 - **Created:** [Timestamp]
 - **Experiment ID:** [Optional experiment ID]
-- **Analysis Mode:** [defect|input|compare|full|bug_001]
+- **Analysis Mode:** [defect|input|compare|full|bug_001|image_quality|enhancement_validation|preprocessing_diagnosis]

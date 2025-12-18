@@ -264,7 +264,7 @@ python scripts/aggregate_vlm_validations.py \
 ```python
 # ocr/inference/preprocessing_pipeline.py
 class PreprocessingPipeline:
-    def process(image, 
+    def process(image,
                 enable_perspective=False,
                 enable_background_norm=False,  # NEW - Phase 1
                 enable_deskewing=False,        # NEW - Phase 1
@@ -302,8 +302,42 @@ preprocessing:
 - [ocr/inference/preprocess.py](../../../../ocr/inference/preprocess.py): Transform helpers (154 lines)
 
 ### VLM Infrastructure
-- [AgentQMS/vlm/prompts/markdown/](../../../../AgentQMS/vlm/prompts/markdown/): VLM prompts (3 modes)
-- [AgentQMS/vlm/cli.py](../../../../AgentQMS/vlm/cli.py): VLM CLI tool
+- [AgentQMS/vlm/prompts/markdown/](../../../../AgentQMS/vlm/prompts/markdown/): VLM prompts (8 modes total, 3 for image enhancements)
+- [AgentQMS/vlm/cli/analyze_image_defects.py](../../../../AgentQMS/vlm/cli/analyze_image_defects.py): VLM CLI tool
+- [AgentQMS/vlm/README.md](../../../../AgentQMS/vlm/README.md): VLM usage guide
+
+#### Image Enhancement VLM Modes
+1. **`image_quality`**: Baseline quality assessment (background tint, text slant, shadows, contrast)
+2. **`enhancement_validation`**: Before/after preprocessing comparison
+3. **`preprocessing_diagnosis`**: Failure root cause analysis
+
+#### Quick Usage Examples
+```bash
+# Assess baseline image quality
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image data/zero_prediction_worst_performers/image_001.jpg \
+  --mode image_quality \
+  --output vlm_reports/baseline_image_001.md
+
+# Validate enhancements (before/after comparison)
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image outputs/comparison_image_001.jpg \
+  --mode enhancement_validation \
+  --output vlm_reports/validation_image_001.md
+
+# Diagnose preprocessing failures
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image outputs/failed_image.jpg \
+  --mode preprocessing_diagnosis \
+  --initial-description "White-balance applied but tint persists" \
+  --output vlm_reports/diagnosis_image.md
+```
+
+#### Test VLM Integration
+```bash
+# Run VLM prompt functionality tests
+uv run python scripts/test_vlm_prompts.py
+```
 
 ### Standards
 - [.ai-instructions/](../../../../.ai-instructions/): AgentQMS documentation standards
