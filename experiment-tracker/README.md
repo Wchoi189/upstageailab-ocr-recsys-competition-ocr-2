@@ -20,6 +20,28 @@ Experiment Documentation Standard v1.0 with CLI tool and automated enforcement.
 - **Analytics Dashboard**: Experiment statistics and trends
 - **Auto-generation**: Frontmatter, timestamps, slugs
 - **Validation**: Automated compliance checking
+- **Safe State Management**: YAML-based state files with corruption prevention
+
+## Safe State Management
+
+State files (`state.yml`) use YAML format for better safety and readability:
+
+```bash
+# Validate state file
+python scripts/safe_state_manager.py experiments/exp_id/state.yml --validate
+
+# Safe editing (use instead of direct file edits)
+python scripts/safe_state_manager.py experiments/exp_id/state.yml --set status completed
+
+# Sync with metadata
+etk sync --all
+```
+
+**Important**: Never edit `state.yml` files directly. Use the safe state manager or ETK commands to prevent corruption.
+
+See [Safe State Management Documentation](docs/safe-state-management.md) for complete usage guide.
+
+See [Safe State Management Documentation](docs/safe-state-management.md) for complete usage guide.
 
 ## Quick Start
 

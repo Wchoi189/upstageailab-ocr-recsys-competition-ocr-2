@@ -259,5 +259,12 @@ class VLMClient:
                 config["api_key"] = api_key
             config["model"] = settings.default_model
             config["endpoint"] = settings.endpoint
+        elif backend_type == "dashscope":
+            settings = self._config.backends.dashscope
+            api_key = resolve_env_value(settings.api_key_env)
+            if api_key:
+                config["api_key"] = api_key
+            config["model"] = settings.default_model
+            config["endpoint"] = settings.endpoint
 
         return config

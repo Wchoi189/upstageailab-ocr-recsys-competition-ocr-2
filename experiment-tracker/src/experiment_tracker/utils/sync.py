@@ -17,11 +17,11 @@ class MetadataSync:
     def __init__(self, experiment_id: str, tracker_root: Path):
         self.experiment_id = experiment_id
         self.paths = ExperimentPaths(experiment_id, tracker_root)
-        self.state_file = self.paths.base_path / "state.json"
+        self.state_file = self.paths.base_path / "state.yml"  # Changed to YAML
 
     def sync_state_to_metadata(self) -> bool:
         """
-        Update .metadata/ files from state.json.
+        Update .metadata/ files from state.yml.
         This ensures .metadata/ reflects the current state.
         """
         if not self.state_file.exists():
@@ -29,7 +29,7 @@ class MetadataSync:
 
         try:
             with open(self.state_file) as f:
-                state = json.load(f)
+                state = yaml.safe_load(f) or {}
 
             # Sync to .metadata/state.yml
             self._sync_state_yml(state)
@@ -59,7 +59,7 @@ class MetadataSync:
 
             # Save updated state
             with open(self.state_file, "w") as f:
-                json.dump(state, f, indent=2)
+                yaml.dump(state, f, default_flow_style=False, allow_unicode=True)
 
             return True
         except Exception as e:
@@ -74,12 +74,12 @@ class MetadataSync:
         issues = []
 
         if not self.state_file.exists():
-            issues.append("state.json does not exist")
+            issues.append("state.yml does not exist")
             return issues
 
         try:
             with open(self.state_file) as f:
-                state = json.load(f)
+                state = yaml.safe_load(f) or {}
 
             # Check tasks consistency
             tasks_file = self.paths.get_context_file("tasks")

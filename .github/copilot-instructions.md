@@ -12,3 +12,13 @@ You are working in an AgentQMS-enabled project.
 - AI Documentation Standard: `.ai-instructions/schema/ads-v1.0-spec.yaml`
 - Tool Catalog: `.ai-instructions/tier2-framework/tool-catalog.yaml`
 - Critical Rules: `.ai-instructions/tier1-sst/*.yaml`
+
+## Safe State Management
+- **State Files**: Experiment state files are now in YAML format (`state.yml`) instead of JSON for better safety and readability.
+- **Safe Editing**: Use `experiment-tracker/scripts/safe_state_manager.py` for all state file operations to prevent corruption.
+- **Commands**:
+  - Validate: `python scripts/safe_state_manager.py <path>/state.yml --validate`
+  - Get section: `python scripts/safe_state_manager.py <path>/state.yml --get <section>`
+  - Set section: `python scripts/safe_state_manager.py <path>/state.yml --set <key> <value>`
+- **ETK Tool**: Use `etk sync --all` to keep state files and metadata in sync.
+- **Migration**: Existing JSON files have been migrated to YAML with backups.

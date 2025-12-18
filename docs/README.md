@@ -10,6 +10,7 @@ Use this guide as the single entry point for all project documentation. It group
 | **Performance logs** | Reviewing historical runs, regression investigations, or debugging diary notes. | `docs/performance/2025-10-08_convex_hull_debugging.md`, `docs/performance/baseline_2025-10-07*.md`, `docs/performance/baseline_2025-10-08_cache_optimized.md` | `ls docs/performance` |
 | **Pipeline contracts** | Understanding data shapes, debugging type errors, or preventing shape mismatches. | `docs/pipeline/data_contracts.md`, `docs/testing/pipeline_validation.md`, `docs/troubleshooting/shape_issues.md` | `python scripts/validate_pipeline_contracts.py` |
 | **AI agents** | Need agent operating procedures and concise instructions. | `AGENT_ENTRY.md` (root), `AgentQMS/knowledge/agent/system.md`, `AgentQMS/knowledge/protocols/`, `AgentQMS/knowledge/references/` | `rg --files AgentQMS/knowledge/agent` |
+| **Experiment tracking** | Managing experiments, artifacts, and state files safely. | `experiment-tracker/docs/`, `experiment-tracker/README.md` | `ls experiment-tracker/docs` |
 | **Maintainers** | Need detailed documentation, architecture, experiments. | `docs/maintainers/` | `rg --files docs/maintainers` |
 | **Setup** | Provisioning a new environment or sharing shell helpers. | `docs/setup/SETUP.md`, `docs/setup/setup-uv-env.sh`, `docs/setup/BASH_ALIASES_KO.md` | `ls docs/setup` |
 | **Deprecated ideas** | Searching for older proposals that were parked or replaced. | Historical docs removed - see current docs in `AgentQMS/knowledge/` and `docs/maintainers/` | N/A |

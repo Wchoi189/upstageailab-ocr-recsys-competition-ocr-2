@@ -1,17 +1,15 @@
 """Alibaba DashScope API Backend Implementation.
 
-Supports Qwen VL models via Alibaba Cloud DashScope API.
+Supports Qwen VL models via Alibaba Cloud DashScope API using OpenAPI-compatible interface.
 """
 
 import time
 from typing import Any
 
 try:
-    import dashscope
-    from dashscope import MultiModalConversation
+    from openai import OpenAI
 except ImportError:
-    dashscope = None
-    MultiModalConversation = None
+    OpenAI = None
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value
@@ -20,7 +18,7 @@ from AgentQMS.vlm.core.interfaces import BackendError
 
 
 class DashScopeBackend(BaseVLMBackend):
-    """Alibaba DashScope API backend for Qwen VLM analysis."""
+    """Alibaba DashScope API backend for Qwen VLM analysis using OpenAPI-compatible interface."""
 
     def __init__(self, config: BackendConfig):
         """Initialize DashScope backend.
@@ -29,10 +27,10 @@ class DashScopeBackend(BaseVLMBackend):
             config: Backend configuration with DashScope API key
         """
         super().__init__(config)
-        if dashscope is None:
+        if OpenAI is None:
             raise BackendError(
-                "dashscope package is required for DashScope backend. "
-                "Install with: pip install dashscope"
+                "openai package is required for DashScope backend. "
+                "Install with: pip install openai"
             )
 
         settings = get_config().backends.dashscope
@@ -43,8 +41,11 @@ class DashScopeBackend(BaseVLMBackend):
                 "Provide it via DASHSCOPE_API_KEY environment variable."
             )
 
-        # Set API key globally for dashscope SDK
-        dashscope.api_key = api_key
+        # Initialize OpenAI client for DashScope compatible-mode endpoint
+        self.client = OpenAI(
+            api_key=api_key,
+            base_url=config.endpoint or settings.endpoint,
+        )
         self.model = config.model or settings.default_model
 
     @property
@@ -59,7 +60,7 @@ class DashScopeBackend(BaseVLMBackend):
         mode: AnalysisMode,
         **kwargs: Any,
     ) -> str:
-        """Analyze an image using DashScope API.
+        """Analyze an image using DashScope OpenAPI-compatible endpoint.
 
         Args:
             image_data: Preprocessed image data
@@ -81,51 +82,34 @@ class DashScopeBackend(BaseVLMBackend):
 
         for attempt in range(max_retries + 1):
             try:
-                # Prepare messages for DashScope API
-                messages = [
-                    {
-                        "role": "user",
-                        "content": [
-                            {"image": f"data:image/jpeg;base64,{image_data.base64_encoded}"},
-                            {"text": prompt},
-                        ],
-                    }
-                ]
-
-                # Call DashScope API
-                response = MultiModalConversation.call(
+                # Prepare messages using OpenAI format
+                response = self.client.chat.completions.create(
                     model=self.model,
-                    messages=messages,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": [
+                                {
+                                    "type": "image_url",
+                                    "image_url": {
+                                        "url": f"data:image/jpeg;base64,{image_data.base64_encoded}"
+                                    },
+                                },
+                                {"type": "text", "text": prompt},
+                            ],
+                        }
+                    ],
                 )
 
-                # Check response status
-                if response.status_code == 200:
-                    # Extract text from response
-                    output = response.output
-                    if output and "choices" in output:
-                        choices = output["choices"]
-                        if choices and len(choices) > 0:
-                            message = choices[0].get("message", {})
-                            content = message.get("content", "")
-                            if isinstance(content, list):
-                                # Content is a list of parts, extract text parts
-                                text_parts = [
-                                    part.get("text", "")
-                                    for part in content
-                                    if isinstance(part, dict) and "text" in part
-                                ]
-                                return "\n".join(text_parts)
-                            elif isinstance(content, str):
-                                return content
-                            else:
-                                raise BackendError(f"Unexpected content format: {type(content)}")
-                        else:
-                            raise BackendError("No choices in response")
+                # Extract response text
+                if response.choices and len(response.choices) > 0:
+                    message_content = response.choices[0].message.content
+                    if message_content:
+                        return message_content
                     else:
-                        raise BackendError("No output in response")
+                        raise BackendError("Empty response from DashScope API")
                 else:
-                    error_msg = response.message or "Unknown error"
-                    raise BackendError(f"DashScope API error: {error_msg} (status: {response.status_code})")
+                    raise BackendError("No choices in DashScope API response")
 
             except BackendError:
                 raise
@@ -142,3 +126,13 @@ class DashScopeBackend(BaseVLMBackend):
             raise BackendError(f"Failed after {max_retries + 1} attempts") from last_error
 
         raise BackendError("Analysis failed without specific error")
+
+    def is_available(self) -> bool:
+        """Check if DashScope backend is available.
+
+        Returns:
+            True if openai package is installed and API key is configured
+        """
+        if OpenAI is None:
+            return False
+        return bool(self.client.api_key)

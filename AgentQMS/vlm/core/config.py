@@ -28,6 +28,12 @@ class SolarPro2Settings(BaseModel):
     api_key_env: str = "SOLAR_PRO2_API_KEY"
 
 
+class DashScopeSettings(BaseModel):
+    endpoint: str
+    default_model: str
+    api_key_env: str = "DASHSCOPE_API_KEY"
+
+
 class CLISettings(BaseModel):
     default_command: str = "qwen-vl"
     command_env: str = "QWEN_VLM_COMMAND"
@@ -38,6 +44,7 @@ class BackendSettings(BaseModel):
     priority: list[str] = Field(default_factory=lambda: ["openrouter", "solar_pro2", "cli"])
     openrouter: OpenRouterSettings
     solar_pro2: SolarPro2Settings
+    dashscope: DashScopeSettings
     cli: CLISettings
 
 

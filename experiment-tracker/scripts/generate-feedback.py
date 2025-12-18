@@ -2,9 +2,10 @@
 """Generate experiment feedback log from template."""
 
 import argparse
-import json
 from datetime import datetime
 from pathlib import Path
+
+import yaml
 
 
 def get_current_experiment():
@@ -24,13 +25,13 @@ def get_current_experiment():
 
 
 def load_experiment_state(exp_dir: Path):
-    """Load experiment state.json."""
-    state_file = exp_dir / "state.json"
+    """Load experiment state.yml."""
+    state_file = exp_dir / "state.yml"
     if not state_file.exists():
         return None
 
     with open(state_file) as f:
-        return json.load(f)
+        return yaml.safe_load(f)
 
 
 def generate_feedback_log(exp_dir: Path, agent_id: str = "github_copilot"):

@@ -52,10 +52,10 @@ class ExperimentTracker:
             self.current_experiment_file.unlink()
 
     def _load_state(self, experiment_id: str) -> dict:
-        state_path = self.experiments_dir / experiment_id / "state.json"
+        state_path = self.experiments_dir / experiment_id / "state.yml"
         if state_path.exists():
             with open(state_path) as f:
-                return json.load(f)
+                return yaml.safe_load(f) or {}
         raise FileNotFoundError(f"State file for experiment {experiment_id} not found.")
 
     def _save_state(self, experiment_id: str, state: dict):
