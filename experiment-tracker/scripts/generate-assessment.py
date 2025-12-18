@@ -16,8 +16,8 @@ def _slugify(text: str) -> str:
     """Convert text to URL-friendly slug for filename."""
     # Convert to lowercase and replace spaces/underscores with hyphens
     slug = text.lower().strip()
-    slug = re.sub(r'[^\w\s-]', '', slug)  # Remove special chars
-    slug = re.sub(r'[-\s]+', '-', slug)  # Replace spaces/underscores with hyphens
+    slug = re.sub(r"[^\w\s-]", "", slug)  # Remove special chars
+    slug = re.sub(r"[-\s]+", "-", slug)  # Replace spaces/underscores with hyphens
     return slug
 
 

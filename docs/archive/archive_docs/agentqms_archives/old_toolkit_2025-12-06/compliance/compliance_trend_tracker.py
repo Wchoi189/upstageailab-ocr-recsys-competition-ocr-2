@@ -93,39 +93,27 @@ class ComplianceTrendTracker:
         data_points = self._get_historical_data(days)
 
         if len(data_points) < self.trend_params["min_data_points"]:
-            raise ValueError(
-                f"Insufficient data points: {len(data_points)} (minimum: {self.trend_params['min_data_points']})"
-            )
+            raise ValueError(f"Insufficient data points: {len(data_points)} (minimum: {self.trend_params['min_data_points']})")
 
         # Calculate statistical metrics
         compliance_rates = [dp.compliance_rate for dp in data_points]
         avg_compliance_rate = statistics.mean(compliance_rates)
         min_compliance_rate = min(compliance_rates)
         max_compliance_rate = max(compliance_rates)
-        compliance_std_dev = (
-            statistics.stdev(compliance_rates) if len(compliance_rates) > 1 else 0.0
-        )
+        compliance_std_dev = statistics.stdev(compliance_rates) if len(compliance_rates) > 1 else 0.0
 
         # Calculate trend metrics
         overall_trend = self._calculate_linear_trend(data_points)
         trend_direction = self._determine_trend_direction(overall_trend)
-        trend_strength = self._determine_trend_strength(
-            overall_trend, compliance_std_dev
-        )
+        trend_strength = self._determine_trend_strength(overall_trend, compliance_std_dev)
 
         # Calculate performance metrics
         total_improvement = compliance_rates[-1] - compliance_rates[0]
-        improvement_rate = (
-            total_improvement / len(data_points) if len(data_points) > 0 else 0.0
-        )
-        volatility = (
-            compliance_std_dev / avg_compliance_rate if avg_compliance_rate > 0 else 0.0
-        )
+        improvement_rate = total_improvement / len(data_points) if len(data_points) > 0 else 0.0
+        volatility = compliance_std_dev / avg_compliance_rate if avg_compliance_rate > 0 else 0.0
 
         # Generate predictions
-        next_week_prediction, next_month_prediction, confidence_level = (
-            self._generate_predictions(data_points)
-        )
+        next_week_prediction, next_month_prediction, confidence_level = self._generate_predictions(data_points)
 
         # Create trend analysis
         analysis = TrendAnalysis(
@@ -235,9 +223,7 @@ class ComplianceTrendTracker:
         else:
             return "weak"
 
-    def _generate_predictions(
-        self, data_points: list[TrendDataPoint]
-    ) -> tuple[float, float, float]:
+    def _generate_predictions(self, data_points: list[TrendDataPoint]) -> tuple[float, float, float]:
         """Generate compliance predictions using trend analysis"""
         if len(data_points) < 3:
             return 0.0, 0.0, 0.0
@@ -248,21 +234,15 @@ class ComplianceTrendTracker:
 
         # Predict next week (7 days)
         next_week_prediction = last_rate + (trend * 7)
-        next_week_prediction = max(
-            0.0, min(1.0, next_week_prediction)
-        )  # Clamp to [0, 1]
+        next_week_prediction = max(0.0, min(1.0, next_week_prediction))  # Clamp to [0, 1]
 
         # Predict next month (30 days)
         next_month_prediction = last_rate + (trend * 30)
-        next_month_prediction = max(
-            0.0, min(1.0, next_month_prediction)
-        )  # Clamp to [0, 1]
+        next_month_prediction = max(0.0, min(1.0, next_month_prediction))  # Clamp to [0, 1]
 
         # Calculate confidence based on data consistency
         compliance_rates = [dp.compliance_rate for dp in data_points]
-        std_dev = (
-            statistics.stdev(compliance_rates) if len(compliance_rates) > 1 else 0.0
-        )
+        std_dev = statistics.stdev(compliance_rates) if len(compliance_rates) > 1 else 0.0
         avg_rate = statistics.mean(compliance_rates)
 
         # Confidence decreases with higher volatility
@@ -317,9 +297,7 @@ class ComplianceTrendTracker:
         report.append("📋 DETAILED DATA")
         report.append("-" * 30)
         for dp in analysis.data_points[-10:]:  # Show last 10 data points
-            report.append(
-                f"{dp.date}: {dp.compliance_rate:.1%} ({dp.total_files} files, {dp.total_issues} issues)"
-            )
+            report.append(f"{dp.date}: {dp.compliance_rate:.1%} ({dp.total_files} files, {dp.total_issues} issues)")
         report.append("")
 
         # Recommendations
@@ -339,50 +317,32 @@ class ComplianceTrendTracker:
 
         # Trend-based recommendations
         if analysis.trend_direction == "declining":
-            recommendations.append(
-                "🚨 Declining trend detected. Investigate recent changes and consider immediate action."
-            )
+            recommendations.append("🚨 Declining trend detected. Investigate recent changes and consider immediate action.")
         elif analysis.trend_direction == "improving":
-            recommendations.append(
-                "📈 Positive trend detected. Continue current practices to maintain improvement."
-            )
+            recommendations.append("📈 Positive trend detected. Continue current practices to maintain improvement.")
         elif analysis.trend_direction == "stable":
-            recommendations.append(
-                "📊 Stable trend detected. Consider optimization to accelerate improvement."
-            )
+            recommendations.append("📊 Stable trend detected. Consider optimization to accelerate improvement.")
 
         # Volatility recommendations
         if analysis.volatility > 0.1:  # 10% volatility
-            recommendations.append(
-                "📊 High volatility detected. Consider stabilizing processes and reducing variability."
-            )
+            recommendations.append("📊 High volatility detected. Consider stabilizing processes and reducing variability.")
 
         # Prediction recommendations
         if analysis.next_week_prediction < 0.9:
-            recommendations.append(
-                "⚠️  Predicted compliance below 90% next week. Plan proactive fixes."
-            )
+            recommendations.append("⚠️  Predicted compliance below 90% next week. Plan proactive fixes.")
 
         if analysis.next_month_prediction < 0.95:
-            recommendations.append(
-                "🎯 Predicted compliance below target next month. Implement improvement strategies."
-            )
+            recommendations.append("🎯 Predicted compliance below target next month. Implement improvement strategies.")
 
         # Confidence recommendations
         if analysis.confidence_level < 0.7:
-            recommendations.append(
-                "📊 Low prediction confidence. Collect more data points for better forecasting."
-            )
+            recommendations.append("📊 Low prediction confidence. Collect more data points for better forecasting.")
 
         # Performance recommendations
         if analysis.total_improvement < 0:
-            recommendations.append(
-                "📉 Overall decline detected. Review and address root causes."
-            )
+            recommendations.append("📉 Overall decline detected. Review and address root causes.")
         elif analysis.total_improvement > 0.05:  # 5% improvement
-            recommendations.append(
-                "🎉 Significant improvement achieved. Document successful practices."
-            )
+            recommendations.append("🎉 Significant improvement achieved. Document successful practices.")
 
         return recommendations
 
@@ -400,9 +360,7 @@ class ComplianceTrendTracker:
     def _export_csv(self, analysis: TrendAnalysis) -> str:
         """Export trend data as CSV"""
         csv_lines = []
-        csv_lines.append(
-            "date,compliance_rate,total_files,total_issues,auto_fixes_applied,manual_fixes_needed"
-        )
+        csv_lines.append("date,compliance_rate,total_files,total_issues,auto_fixes_applied,manual_fixes_needed")
 
         for dp in analysis.data_points:
             csv_lines.append(
@@ -495,24 +453,15 @@ class ComplianceTrendTracker:
         # Efficiency metrics
         total_auto_fixes = sum(dp.auto_fixes_applied for dp in data_points)
         total_manual_fixes = sum(dp.manual_fixes_needed for dp in data_points)
-        auto_fix_ratio = (
-            total_auto_fixes / (total_auto_fixes + total_manual_fixes)
-            if (total_auto_fixes + total_manual_fixes) > 0
-            else 0.0
-        )
+        auto_fix_ratio = total_auto_fixes / (total_auto_fixes + total_manual_fixes) if (total_auto_fixes + total_manual_fixes) > 0 else 0.0
 
         # Consistency metrics
         [dp.compliance_rate for dp in data_points]
-        consistency_score = (
-            1.0 - (analysis.compliance_std_dev / analysis.avg_compliance_rate)
-            if analysis.avg_compliance_rate > 0
-            else 0.0
-        )
+        consistency_score = 1.0 - (analysis.compliance_std_dev / analysis.avg_compliance_rate) if analysis.avg_compliance_rate > 0 else 0.0
 
         # Growth metrics
         file_growth_rate = (
-            (data_points[-1].total_files - data_points[0].total_files)
-            / data_points[0].total_files
+            (data_points[-1].total_files - data_points[0].total_files) / data_points[0].total_files
             if data_points[0].total_files > 0
             else 0.0
         )
@@ -556,12 +505,8 @@ class ComplianceTrendTracker:
 def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Compliance trend tracking system")
-    parser.add_argument(
-        "--analyze-trends", type=int, default=30, help="Analyze trends for N days"
-    )
-    parser.add_argument(
-        "--generate-report", type=int, help="Generate trend report for N days"
-    )
+    parser.add_argument("--analyze-trends", type=int, default=30, help="Analyze trends for N days")
+    parser.add_argument("--generate-report", type=int, help="Generate trend report for N days")
     parser.add_argument(
         "--forecast-compliance",
         type=int,
@@ -575,9 +520,7 @@ def main():
         default=30,
         help="Get performance metrics for N days",
     )
-    parser.add_argument(
-        "--db-path", default="compliance_monitoring.db", help="Database file path"
-    )
+    parser.add_argument("--db-path", default="compliance_monitoring.db", help="Database file path")
 
     args = parser.parse_args()
 
@@ -601,9 +544,7 @@ def main():
     elif args.forecast_compliance:
         try:
             analysis = tracker.analyze_trends(args.forecast_compliance)
-            print(
-                f"\n🔮 Compliance Forecast ({args.forecast_compliance} days analysis)"
-            )
+            print(f"\n🔮 Compliance Forecast ({args.forecast_compliance} days analysis)")
             print("-" * 50)
             print(f"Next Week Prediction: {analysis.next_week_prediction:.1%}")
             print(f"Next Month Prediction: {analysis.next_month_prediction:.1%}")

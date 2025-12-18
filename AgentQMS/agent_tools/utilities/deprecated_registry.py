@@ -135,10 +135,12 @@ class DeprecatedRegistry:
         """
         result = []
         for symbol, info in self._registry.items():
-            result.append({
-                "symbol": symbol,
-                **info,
-            })
+            result.append(
+                {
+                    "symbol": symbol,
+                    **info,
+                }
+            )
         return result
 
     def find_references(self, text: str) -> list[str]:
@@ -196,13 +198,15 @@ class DeprecatedRegistry:
         for symbol in found:
             info = self._registry[symbol]
             if info.get("block_modifications", False):
-                violations.append({
-                    "symbol": symbol,
-                    "file": info.get("file"),
-                    "replacement": info.get("replacement"),
-                    "removal_plan": info.get("removal_plan"),
-                    "message": f"Artifact references deprecated symbol: {symbol}",
-                })
+                violations.append(
+                    {
+                        "symbol": symbol,
+                        "file": info.get("file"),
+                        "replacement": info.get("replacement"),
+                        "removal_plan": info.get("removal_plan"),
+                        "message": f"Artifact references deprecated symbol: {symbol}",
+                    }
+                )
 
         return {
             "status": "fail" if violations else "pass",

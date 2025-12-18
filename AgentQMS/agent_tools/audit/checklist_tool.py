@@ -57,16 +57,13 @@ def extract_checklist_for_phase(phase: str) -> dict[str, list[str]]:
 
     if not phase_match:
         available_phases = ["discovery", "analysis", "design", "implementation", "automation"]
-        raise ValueError(
-            f"Phase '{phase}' not found in checklists.\n"
-            f"Available phases: {', '.join(available_phases)}"
-        )
+        raise ValueError(f"Phase '{phase}' not found in checklists.\nAvailable phases: {', '.join(available_phases)}")
 
     # Extract content from phase section to next phase or end
     start_pos = phase_match.end()
     next_phase_match = re.search(r"## Phase \d+:", content[start_pos:])
     if next_phase_match:
-        phase_content = content[start_pos:start_pos + next_phase_match.start()]
+        phase_content = content[start_pos : start_pos + next_phase_match.start()]
     else:
         phase_content = content[start_pos:]
 
@@ -218,16 +215,18 @@ def generate_progress_report(audit_dir: Path) -> str:
         report_lines.append("")
 
     overall_percentage = (completed_items / total_items * 100) if total_items > 0 else 0
-    report_lines.extend([
-        "---",
-        "",
-        "## Overall Progress",
-        f"- **Total Items**: {total_items}",
-        f"- **Completed**: {completed_items}",
-        f"- **Remaining**: {total_items - completed_items}",
-        f"- **Progress**: {overall_percentage:.1f}%",
-        "",
-    ])
+    report_lines.extend(
+        [
+            "---",
+            "",
+            "## Overall Progress",
+            f"- **Total Items**: {total_items}",
+            f"- **Completed**: {completed_items}",
+            f"- **Remaining**: {total_items - completed_items}",
+            f"- **Progress**: {overall_percentage:.1f}%",
+            "",
+        ]
+    )
 
     return "\n".join(report_lines)
 
@@ -248,7 +247,7 @@ Examples:
 
   # Generate progress report
   python checklist_tool.py report --audit-dir "docs/audit"
-        """
+        """,
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
@@ -256,51 +255,22 @@ Examples:
     # Generate command
     generate_parser = subparsers.add_parser("generate", help="Generate checklist for phase")
     generate_parser.add_argument(
-        "--phase",
-        required=True,
-        choices=["discovery", "analysis", "design", "implementation", "automation"],
-        help="Phase name"
+        "--phase", required=True, choices=["discovery", "analysis", "design", "implementation", "automation"], help="Phase name"
     )
-    generate_parser.add_argument(
-        "--output",
-        type=Path,
-        required=True,
-        help="Output file path"
-    )
+    generate_parser.add_argument("--output", type=Path, required=True, help="Output file path")
 
     # Track command
     track_parser = subparsers.add_parser("track", help="Update checklist item status")
-    track_parser.add_argument(
-        "--checklist",
-        type=Path,
-        required=True,
-        help="Path to checklist file"
-    )
-    track_parser.add_argument(
-        "--item",
-        required=True,
-        help="Text of checklist item to update"
-    )
-    track_parser.add_argument(
-        "--status",
-        required=True,
-        choices=["completed", "pending"],
-        help="New status"
-    )
+    track_parser.add_argument("--checklist", type=Path, required=True, help="Path to checklist file")
+    track_parser.add_argument("--item", required=True, help="Text of checklist item to update")
+    track_parser.add_argument("--status", required=True, choices=["completed", "pending"], help="New status")
 
     # Report command
     report_parser = subparsers.add_parser("report", help="Generate progress report")
     report_parser.add_argument(
-        "--audit-dir",
-        type=Path,
-        default=Path("docs/audit"),
-        help="Directory containing audit documents (default: docs/audit)"
+        "--audit-dir", type=Path, default=Path("docs/audit"), help="Directory containing audit documents (default: docs/audit)"
     )
-    report_parser.add_argument(
-        "--output",
-        type=Path,
-        help="Output file path (default: print to stdout)"
-    )
+    report_parser.add_argument("--output", type=Path, help="Output file path (default: print to stdout)")
 
     args = parser.parse_args()
 
@@ -329,4 +299,3 @@ Examples:
 
 if __name__ == "__main__":
     exit(main())
-

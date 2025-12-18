@@ -39,12 +39,7 @@ STATE_FILE = REPO_ROOT / ".agentqms" / "state" / "tracking_repair_state.json"
 class TrackingRepair:
     """Repair tool for tracking database artifact path synchronization."""
 
-    def __init__(
-        self,
-        db_path: Path = TRACKING_DB,
-        index_path: Path = MASTER_INDEX,
-        dry_run: bool = False
-    ):
+    def __init__(self, db_path: Path = TRACKING_DB, index_path: Path = MASTER_INDEX, dry_run: bool = False):
         self.db_path = db_path
         self.index_path = index_path
         self.dry_run = dry_run
@@ -101,7 +96,7 @@ class TrackingRepair:
         content = self.index_path.read_text(encoding="utf-8")
 
         # Parse markdown links: [title](path)
-        link_pattern = re.compile(r'\[([^\]]+)\]\(([^\)]+)\)')
+        link_pattern = re.compile(r"\[([^\]]+)\]\(([^\)]+)\)")
 
         for match in link_pattern.finditer(content):
             title, path_str = match.groups()
@@ -131,21 +126,18 @@ class TrackingRepair:
             2025-12-02_2313_BUG_001_overlay.md -> overlay
         """
         # Remove timestamp prefix (YYYY-MM-DD_HHMM_)
-        pattern = r'^\d{4}-\d{2}-\d{2}_\d{4}_'
-        cleaned = re.sub(pattern, '', filename)
+        pattern = r"^\d{4}-\d{2}-\d{2}_\d{4}_"
+        cleaned = re.sub(pattern, "", filename)
 
         # Remove artifact type prefix
-        type_prefixes = [
-            'implementation_plan_', 'assessment-', 'audit-',
-            'design-', 'research-', 'BUG_', 'SESSION_'
-        ]
+        type_prefixes = ["implementation_plan_", "assessment-", "audit-", "design-", "research-", "BUG_", "SESSION_"]
         for prefix in type_prefixes:
             if cleaned.startswith(prefix):
-                cleaned = cleaned[len(prefix):]
+                cleaned = cleaned[len(prefix) :]
                 break
 
         # Remove extension
-        cleaned = cleaned.rsplit('.', 1)[0]
+        cleaned = cleaned.rsplit(".", 1)[0]
 
         return cleaned if cleaned else None
 
@@ -154,9 +146,7 @@ class TrackingRepair:
         cursor = conn.cursor()
 
         # Check if table exists
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='feature_plans'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='feature_plans'")
         if not cursor.fetchone():
             print("⚠️  Table 'feature_plans' not found in database")
             return
@@ -164,7 +154,7 @@ class TrackingRepair:
         # Check if artifact_path column exists
         cursor.execute("PRAGMA table_info(feature_plans)")
         columns = [row[1] for row in cursor.fetchall()]
-        if 'artifact_path' not in columns:
+        if "artifact_path" not in columns:
             print("ℹ️  Column 'artifact_path' not present in feature_plans")
             return
 
@@ -173,22 +163,20 @@ class TrackingRepair:
 
         for row in cursor.fetchall():
             plan_id, key, artifact_path = row
-            self._check_path('feature_plans', plan_id, key, artifact_path)
+            self._check_path("feature_plans", plan_id, key, artifact_path)
 
     def _scan_experiments(self, conn: sqlite3.Connection) -> None:
         """Scan experiments table for artifact_path references."""
         cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='experiments'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='experiments'")
         if not cursor.fetchone():
             print("⚠️  Table 'experiments' not found in database")
             return
 
         cursor.execute("PRAGMA table_info(experiments)")
         columns = [row[1] for row in cursor.fetchall()]
-        if 'artifact_path' not in columns:
+        if "artifact_path" not in columns:
             print("ℹ️  Column 'artifact_path' not present in experiments")
             return
 
@@ -196,22 +184,20 @@ class TrackingRepair:
 
         for row in cursor.fetchall():
             exp_id, key, artifact_path = row
-            self._check_path('experiments', exp_id, key, artifact_path)
+            self._check_path("experiments", exp_id, key, artifact_path)
 
     def _scan_debug_sessions(self, conn: sqlite3.Connection) -> None:
         """Scan debug_sessions table for artifact_path references."""
         cursor = conn.cursor()
 
-        cursor.execute(
-            "SELECT name FROM sqlite_master WHERE type='table' AND name='debug_sessions'"
-        )
+        cursor.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='debug_sessions'")
         if not cursor.fetchone():
             print("⚠️  Table 'debug_sessions' not found in database")
             return
 
         cursor.execute("PRAGMA table_info(debug_sessions)")
         columns = [row[1] for row in cursor.fetchall()]
-        if 'artifact_path' not in columns:
+        if "artifact_path" not in columns:
             print("ℹ️  Column 'artifact_path' not present in debug_sessions")
             return
 
@@ -219,15 +205,9 @@ class TrackingRepair:
 
         for row in cursor.fetchall():
             session_id, key, artifact_path = row
-            self._check_path('debug_sessions', session_id, key, artifact_path)
+            self._check_path("debug_sessions", session_id, key, artifact_path)
 
-    def _check_path(
-        self,
-        table: str,
-        record_id: int,
-        key: str,
-        artifact_path: str
-    ) -> None:
+    def _check_path(self, table: str, record_id: int, key: str, artifact_path: str) -> None:
         """Check if artifact path is stale and needs repair."""
         path = Path(artifact_path)
 
@@ -296,10 +276,7 @@ class TrackingRepair:
 
                 for table, record_id, old_path, new_path in self.repairs:
                     print(f"🔧 Updating {table} id={record_id}")
-                    cursor.execute(
-                        f"UPDATE {table} SET artifact_path = ? WHERE id = ?",
-                        (new_path, record_id)
-                    )
+                    cursor.execute(f"UPDATE {table} SET artifact_path = ? WHERE id = ?", (new_path, record_id))
 
                 conn.commit()
                 print()
@@ -321,14 +298,9 @@ class TrackingRepair:
             "repairs_applied": len(self.repairs) if not self.dry_run else 0,
             "dry_run": self.dry_run,
             "repairs": [
-                {
-                    "table": table,
-                    "id": record_id,
-                    "old_path": old_path,
-                    "new_path": new_path
-                }
+                {"table": table, "id": record_id, "old_path": old_path, "new_path": new_path}
                 for table, record_id, old_path, new_path in self.repairs
-            ]
+            ],
         }
 
         STATE_FILE.write_text(json.dumps(state, indent=2), encoding="utf-8")
@@ -340,33 +312,15 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         description="Repair tracking database artifact path references",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__
+        epilog=__doc__,
     )
-    parser.add_argument(
-        "--dry-run",
-        action="store_true",
-        help="Preview changes without applying them"
-    )
-    parser.add_argument(
-        "--db",
-        type=Path,
-        default=TRACKING_DB,
-        help=f"Path to tracking database (default: {TRACKING_DB})"
-    )
-    parser.add_argument(
-        "--index",
-        type=Path,
-        default=MASTER_INDEX,
-        help=f"Path to master index (default: {MASTER_INDEX})"
-    )
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without applying them")
+    parser.add_argument("--db", type=Path, default=TRACKING_DB, help=f"Path to tracking database (default: {TRACKING_DB})")
+    parser.add_argument("--index", type=Path, default=MASTER_INDEX, help=f"Path to master index (default: {MASTER_INDEX})")
 
     args = parser.parse_args()
 
-    repair = TrackingRepair(
-        db_path=args.db,
-        index_path=args.index,
-        dry_run=args.dry_run
-    )
+    repair = TrackingRepair(db_path=args.db, index_path=args.index, dry_run=args.dry_run)
 
     return repair.run()
 

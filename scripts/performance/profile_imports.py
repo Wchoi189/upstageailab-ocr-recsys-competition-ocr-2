@@ -34,9 +34,9 @@ def profile_imports(module_name: str, max_depth: int = 3):
 
                 if level < max_depth and elapsed > 0.01:  # Only track imports > 10ms
                     self.import_times[name] = {
-                        'time': elapsed,
-                        'level': level,
-                        'parent': self.import_stack[-2] if len(self.import_stack) > 1 else None
+                        "time": elapsed,
+                        "level": level,
+                        "parent": self.import_stack[-2] if len(self.import_stack) > 1 else None,
                     }
 
                 return result
@@ -51,30 +51,26 @@ def profile_imports(module_name: str, max_depth: int = 3):
         total_time = time.perf_counter() - start_total
 
     # Sort by time (descending)
-    sorted_imports = sorted(
-        timer.import_times.items(),
-        key=lambda x: x[1]['time'],
-        reverse=True
-    )
+    sorted_imports = sorted(timer.import_times.items(), key=lambda x: x[1]["time"], reverse=True)
 
     print(f"Total import time: {total_time:.3f}s\n")
     print("Top 30 slowest imports:")
     print("-" * 90)
 
     for name, info in sorted_imports[:30]:
-        indent = "  " * info['level']
-        parent = f" (from {info['parent']})" if info['parent'] else ""
+        indent = "  " * info["level"]
+        parent = f" (from {info['parent']})" if info["parent"] else ""
         print(f"{indent}{name:60s} {info['time']:6.3f}s{parent}")
 
     # Categorize heavy imports
-    heavy_libs = ['torch', 'lightning', 'transformers', 'wandb', 'albumentations', 'cv2', 'PIL']
+    heavy_libs = ["torch", "lightning", "transformers", "wandb", "albumentations", "cv2", "PIL"]
     heavy_imports = {}
     for name, info in timer.import_times.items():
         for lib in heavy_libs:
             if lib in name:
                 if lib not in heavy_imports:
                     heavy_imports[lib] = []
-                heavy_imports[lib].append((name, info['time']))
+                heavy_imports[lib].append((name, info["time"]))
                 break
 
     if heavy_imports:
@@ -87,6 +83,7 @@ def profile_imports(module_name: str, max_depth: int = 3):
                 print(f"  - {name}: {t:.3f}s")
 
     return timer.import_times, total_time
+
 
 if __name__ == "__main__":
     # Add project root to path
@@ -108,13 +105,14 @@ if __name__ == "__main__":
 
         # Categorize slow imports
         slow_threshold = 0.5  # seconds
-        slow_imports = {k: v for k, v in import_times.items() if v['time'] > slow_threshold}
+        slow_imports = {k: v for k, v in import_times.items() if v["time"] > slow_threshold}
 
         if slow_imports:
             print(f"\n{len(slow_imports)} imports taking >{slow_threshold}s:")
-            for name, info in sorted(slow_imports.items(), key=lambda x: x[1]['time'], reverse=True):
+            for name, info in sorted(slow_imports.items(), key=lambda x: x[1]["time"], reverse=True):
                 print(f"  - {name}: {info['time']:.3f}s")
     except Exception as e:
         print(f"\nError profiling imports: {e}")
         import traceback
+
         traceback.print_exc()

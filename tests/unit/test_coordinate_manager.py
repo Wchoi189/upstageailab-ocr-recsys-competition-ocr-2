@@ -5,7 +5,6 @@ import pytest
 
 from ocr.inference.coordinate_manager import (
     CoordinateTransformationManager,
-    TransformMetadata,
     calculate_transform_metadata,
     compute_forward_scales,
     compute_inverse_matrix,

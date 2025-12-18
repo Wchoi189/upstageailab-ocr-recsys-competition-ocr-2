@@ -23,6 +23,7 @@ ensure_project_root_on_sys_path()
 @dataclass
 class ValidationError:
     """Represents a validation error."""
+
     document: str
     section: str
     message: str
@@ -32,6 +33,7 @@ class ValidationError:
 @dataclass
 class ValidationResult:
     """Result of document validation."""
+
     document_path: Path
     valid: bool
     errors: list[ValidationError]
@@ -98,12 +100,9 @@ def check_required_sections(content: str, document_name: str) -> list[Validation
         # Look for section headers (## or ###)
         pattern = rf"^#{{2,3}}\s+{re.escape(section)}"
         if not re.search(pattern, content, re.MULTILINE):
-            errors.append(ValidationError(
-                document=document_name,
-                section=section,
-                message=f"Missing required section: {section}",
-                severity="error"
-            ))
+            errors.append(
+                ValidationError(document=document_name, section=section, message=f"Missing required section: {section}", severity="error")
+            )
 
     return errors
 
@@ -120,15 +119,14 @@ def check_placeholders(content: str, document_name: str) -> list[ValidationError
         List of validation errors for unreplaced placeholders
     """
     errors = []
-    placeholders = re.findall(r'\{\{([A-Z_]+)\}\}', content)
+    placeholders = re.findall(r"\{\{([A-Z_]+)\}\}", content)
 
     for placeholder in placeholders:
-        errors.append(ValidationError(
-            document=document_name,
-            section="Placeholders",
-            message=f"Unreplaced placeholder: {{{{ {placeholder} }}}}",
-            severity="error"
-        ))
+        errors.append(
+            ValidationError(
+                document=document_name, section="Placeholders", message=f"Unreplaced placeholder: {{{{ {placeholder} }}}}", severity="error"
+            )
+        )
 
     return errors
 
@@ -151,23 +149,19 @@ def check_frontmatter(content: str, document_name: str) -> list[ValidationError]
 
     # Check for frontmatter block
     if not content.startswith("---"):
-        errors.append(ValidationError(
-            document=document_name,
-            section="Frontmatter",
-            message="Missing frontmatter block (should start with ---)",
-            severity="error"
-        ))
+        errors.append(
+            ValidationError(
+                document=document_name, section="Frontmatter", message="Missing frontmatter block (should start with ---)", severity="error"
+            )
+        )
         return errors
 
     # Extract frontmatter
-    frontmatter_match = re.match(r'^---\n(.*?)\n---', content, re.DOTALL)
+    frontmatter_match = re.match(r"^---\n(.*?)\n---", content, re.DOTALL)
     if not frontmatter_match:
-        errors.append(ValidationError(
-            document=document_name,
-            section="Frontmatter",
-            message="Invalid frontmatter format",
-            severity="error"
-        ))
+        errors.append(
+            ValidationError(document=document_name, section="Frontmatter", message="Invalid frontmatter format", severity="error")
+        )
         return errors
 
     frontmatter = frontmatter_match.group(1)
@@ -176,12 +170,11 @@ def check_frontmatter(content: str, document_name: str) -> list[ValidationError]
     required_fields = ["type", "category", "title", "date"]
     for field in required_fields:
         if f"{field}:" not in frontmatter:
-            errors.append(ValidationError(
-                document=document_name,
-                section="Frontmatter",
-                message=f"Missing required frontmatter field: {field}",
-                severity="error"
-            ))
+            errors.append(
+                ValidationError(
+                    document=document_name, section="Frontmatter", message=f"Missing required frontmatter field: {field}", severity="error"
+                )
+            )
 
     date_match = re.search(r'date:\s*["\']?([^\n"\']+)["\']?', frontmatter)
     if date_match:
@@ -189,12 +182,14 @@ def check_frontmatter(content: str, document_name: str) -> list[ValidationError]
         try:
             datetime.strptime(date_value, DATE_FORMAT)
         except ValueError:
-            errors.append(ValidationError(
-                document=document_name,
-                section="Frontmatter",
-                message="Date must use 'YYYY-MM-DD HH:MM (KST)' format.",
-                severity="error",
-            ))
+            errors.append(
+                ValidationError(
+                    document=document_name,
+                    section="Frontmatter",
+                    message="Date must use 'YYYY-MM-DD HH:MM (KST)' format.",
+                    severity="error",
+                )
+            )
 
     return errors
 
@@ -213,13 +208,12 @@ def validate_document(document_path: Path) -> ValidationResult:
         return ValidationResult(
             document_path=document_path,
             valid=False,
-            errors=[ValidationError(
-                document=document_path.name,
-                section="File",
-                message=f"Document not found: {document_path}",
-                severity="error"
-            )],
-            warnings=[]
+            errors=[
+                ValidationError(
+                    document=document_path.name, section="File", message=f"Document not found: {document_path}", severity="error"
+                )
+            ],
+            warnings=[],
         )
 
     content = document_path.read_text(encoding="utf-8")
@@ -240,12 +234,7 @@ def validate_document(document_path: Path) -> ValidationResult:
     error_list = [e for e in errors if e.severity == "error"]
     warning_list = [e for e in errors if e.severity == "warning"]
 
-    return ValidationResult(
-        document_path=document_path,
-        valid=len(error_list) == 0,
-        errors=error_list,
-        warnings=warning_list
-    )
+    return ValidationResult(document_path=document_path, valid=len(error_list) == 0, errors=error_list, warnings=warning_list)
 
 
 def validate_completeness(audit_dir: Path) -> dict:
@@ -356,23 +345,15 @@ Examples:
 
   # Validate single document
   python audit_validator.py validate --document "docs/audit/00_audit_summary.md"
-        """
+        """,
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
     # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate audit documents")
-    validate_parser.add_argument(
-        "--audit-dir",
-        type=Path,
-        help="Directory containing audit documents"
-    )
-    validate_parser.add_argument(
-        "--document",
-        type=Path,
-        help="Single document to validate"
-    )
+    validate_parser.add_argument("--audit-dir", type=Path, help="Directory containing audit documents")
+    validate_parser.add_argument("--document", type=Path, help="Single document to validate")
 
     args = parser.parse_args()
 
@@ -403,4 +384,3 @@ Examples:
 
 if __name__ == "__main__":
     exit(main())
-

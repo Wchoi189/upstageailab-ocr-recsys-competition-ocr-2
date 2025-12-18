@@ -27,21 +27,11 @@ class ProjectAdapter:
         return {
             "{{PROJECT_NAME}}": self.config.get("project", {}).get("name", ""),
             "{{PROJECT_PURPOSE}}": self.config.get("project", {}).get("purpose", ""),
-            "{{PROJECT_DESCRIPTION}}": self.config.get("project", {}).get(
-                "description", ""
-            ),
-            "{{PROJECT_ROOT}}": self.config.get("project", {})
-            .get("structure", {})
-            .get("root", "."),
-            "Korean Grammar Correction Project": self.config.get("project", {}).get(
-                "name", ""
-            ),
-            "Korean Grammar Error Correction": self.config.get("project", {}).get(
-                "purpose", ""
-            ),
-            "upstage-prompt-a-thon-project": self.config.get("project", {})
-            .get("structure", {})
-            .get("root", "."),
+            "{{PROJECT_DESCRIPTION}}": self.config.get("project", {}).get("description", ""),
+            "{{PROJECT_ROOT}}": self.config.get("project", {}).get("structure", {}).get("root", "."),
+            "Korean Grammar Correction Project": self.config.get("project", {}).get("name", ""),
+            "Korean Grammar Error Correction": self.config.get("project", {}).get("purpose", ""),
+            "upstage-prompt-a-thon-project": self.config.get("project", {}).get("structure", {}).get("root", "."),
         }
 
     def load_config(self, config_path: Path) -> dict:
@@ -88,10 +78,7 @@ class ProjectAdapter:
                     handbook_root / "index.md",
                     handbook_root / "01_onboarding" / "01_project_overview.md",
                     handbook_root / "01_onboarding" / "03_data_overview.md",
-                    handbook_root
-                    / "03_references"
-                    / "development"
-                    / "ai_agent_context.md",
+                    handbook_root / "03_references" / "development" / "ai_agent_context.md",
                 ]
             )
 
@@ -189,15 +176,11 @@ def interactive_setup():
         "project": {
             "name": input("Project Name: ").strip() or "My Project",
             "purpose": input("Project Purpose (brief): ").strip() or "Project purpose",
-            "description": input(
-                "Project Description (multi-line, end with empty line):\n"
-            ).strip()
-            or "Project description",
+            "description": input("Project Description (multi-line, end with empty line):\n").strip() or "Project description",
             "structure": {
                 "root": input("Project Root Directory [.]: ").strip() or ".",
                 "docs_path": input("Documentation Path [docs]: ").strip() or "docs",
-                "artifacts_path": input("Artifacts Path [docs/artifacts]: ").strip()
-                or "docs/artifacts",
+                "artifacts_path": input("Artifacts Path [docs/artifacts]: ").strip() or "docs/artifacts",
                 "scripts_path": input("Scripts Path [scripts]: ").strip() or "scripts",
             },
         }
@@ -234,9 +217,7 @@ Examples:
         """,
     )
 
-    parser.add_argument(
-        "--config", type=Path, help="Path to project configuration YAML file"
-    )
+    parser.add_argument("--config", type=Path, help="Path to project configuration YAML file")
     parser.add_argument(
         "--project-root",
         type=Path,
@@ -248,12 +229,8 @@ Examples:
         action="store_true",
         help="Show what would be changed without making changes",
     )
-    parser.add_argument(
-        "--interactive", action="store_true", help="Run interactive setup wizard"
-    )
-    parser.add_argument(
-        "--create-config", action="store_true", help="Create a config template file"
-    )
+    parser.add_argument("--interactive", action="store_true", help="Run interactive setup wizard")
+    parser.add_argument("--create-config", action="store_true", help="Create a config template file")
 
     args = parser.parse_args()
 

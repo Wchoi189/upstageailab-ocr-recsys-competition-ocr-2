@@ -66,15 +66,11 @@ class PluginDiscovery:
 
         # Framework plugins first (can be overridden by project)
         if self.framework_plugins_dir.exists():
-            plugins.extend(self._discover_from_directory(
-                self.framework_plugins_dir, source="framework"
-            ))
+            plugins.extend(self._discover_from_directory(self.framework_plugins_dir, source="framework"))
 
         # Project plugins second (override framework)
         if self.project_plugins_dir.exists():
-            plugins.extend(self._discover_from_directory(
-                self.project_plugins_dir, source="project"
-            ))
+            plugins.extend(self._discover_from_directory(self.project_plugins_dir, source="project"))
 
         return plugins
 
@@ -99,9 +95,7 @@ class PluginDiscovery:
 
         return grouped
 
-    def _discover_from_directory(
-        self, base_dir: Path, source: str
-    ) -> list[DiscoveredPlugin]:
+    def _discover_from_directory(self, base_dir: Path, source: str) -> list[DiscoveredPlugin]:
         """
         Discover plugins from a single base directory.
 
@@ -118,30 +112,36 @@ class PluginDiscovery:
         artifact_types_dir = base_dir / "artifact_types"
         if artifact_types_dir.exists():
             for yaml_file in sorted(artifact_types_dir.glob("*.yaml")):
-                plugins.append(DiscoveredPlugin(
-                    path=yaml_file,
-                    plugin_type="artifact_type",
-                    source=source,
-                ))
+                plugins.append(
+                    DiscoveredPlugin(
+                        path=yaml_file,
+                        plugin_type="artifact_type",
+                        source=source,
+                    )
+                )
 
         # Validators: base_dir/validators.yaml
         validators_file = base_dir / "validators.yaml"
         if validators_file.exists():
-            plugins.append(DiscoveredPlugin(
-                path=validators_file,
-                plugin_type="validators",
-                source=source,
-            ))
+            plugins.append(
+                DiscoveredPlugin(
+                    path=validators_file,
+                    plugin_type="validators",
+                    source=source,
+                )
+            )
 
         # Context bundles: base_dir/context_bundles/*.yaml
         context_bundles_dir = base_dir / "context_bundles"
         if context_bundles_dir.exists():
             for yaml_file in sorted(context_bundles_dir.glob("*.yaml")):
-                plugins.append(DiscoveredPlugin(
-                    path=yaml_file,
-                    plugin_type="context_bundle",
-                    source=source,
-                ))
+                plugins.append(
+                    DiscoveredPlugin(
+                        path=yaml_file,
+                        plugin_type="context_bundle",
+                        source=source,
+                    )
+                )
 
         return plugins
 
@@ -151,4 +151,3 @@ class PluginDiscovery:
             "framework": str(self.framework_plugins_dir),
             "project": str(self.project_plugins_dir),
         }
-

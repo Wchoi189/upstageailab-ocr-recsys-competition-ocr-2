@@ -85,9 +85,7 @@ def synthesize_speech(
             message = parsed.get("detail") or parsed.get("message") or message
         except json.JSONDecodeError:
             pass
-        raise ElevenLabsError(
-            f"ElevenLabs API returned status {exc.code}: {message.strip()}"
-        ) from exc
+        raise ElevenLabsError(f"ElevenLabs API returned status {exc.code}: {message.strip()}") from exc
     except URLError as exc:
         raise ElevenLabsError(f"Failed to reach ElevenLabs API: {exc.reason}") from exc
 
@@ -139,10 +137,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         "--output",
         type=Path,
         default=None,
-        help=(
-            "Where to save the synthesized audio. "
-            "Defaults to ./outputs/elevenlabs/<timestamp>.mp3"
-        ),
+        help=("Where to save the synthesized audio. Defaults to ./outputs/elevenlabs/<timestamp>.mp3"),
     )
     parser.add_argument(
         "--stability",

@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 import argparse
 import json
-import os
 import sys
 from pathlib import Path
-from typing import Dict, Any
+
 
 def validate_dataset(dataset_path: Path, json_filename: str = "input.json", sample_size: int = 0) -> bool:
     """
@@ -25,7 +24,7 @@ def validate_dataset(dataset_path: Path, json_filename: str = "input.json", samp
 
     print(f"Loading annotations from {json_path}...")
     try:
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
     except Exception as e:
         print(f"Error: Failed to parse JSON: {e}")
@@ -55,7 +54,7 @@ def validate_dataset(dataset_path: Path, json_filename: str = "input.json", samp
         # Check file existence
         img_path = dataset_path / "images" / img_name
         if not img_path.exists():
-             # Try root if images/ subdir doesn't exist
+            # Try root if images/ subdir doesn't exist
             img_path_root = dataset_path / img_name
             if not img_path_root.exists():
                 missing_files.append(img_name)
@@ -71,8 +70,8 @@ def validate_dataset(dataset_path: Path, json_filename: str = "input.json", samp
                     # Basic point validation (list of lists/tuples)
                     for p in points:
                         if not (isinstance(p, (list, tuple)) and len(p) == 2):
-                             invalid_polygons.append(f"{img_name}:{word_id} (invalid point format)")
-                             break
+                            invalid_polygons.append(f"{img_name}:{word_id} (invalid point format)")
+                            break
 
     print("\nValidation Report:")
     print(f"Checked: {checked_count}/{total_images}")
@@ -95,12 +94,13 @@ def validate_dataset(dataset_path: Path, json_filename: str = "input.json", samp
             for p in invalid_polygons:
                 print(f"  - {p}")
         else:
-             print(f"  (First 10): {invalid_polygons[:10]}")
+            print(f"  (First 10): {invalid_polygons[:10]}")
         status = False
     else:
         print("✅ Polygon structures appear valid.")
 
     return status
+
 
 def main():
     parser = argparse.ArgumentParser(description="Validate OCR Inference Console Dataset")
@@ -116,6 +116,7 @@ def main():
 
     success = validate_dataset(args.path, args.json, args.sample)
     sys.exit(0 if success else 1)
+
 
 if __name__ == "__main__":
     main()

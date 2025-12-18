@@ -8,19 +8,21 @@ This helps identify why samples fail _validate_edge_angles by showing:
 - Borrowed segments (when bins are empty)
 - Final fitted lines and their intersections
 """
+
+import logging
+import math
 import sys
+from pathlib import Path
+from typing import Any
+
 import cv2
 import numpy as np
-import math
-import logging
-from pathlib import Path
-from typing import Optional, Dict, List, Tuple, Any
 
 # Setup experiment paths - auto-detect tracker root and experiment context
 script_path = Path(__file__).resolve()
 tracker_root = script_path.parent.parent.parent.parent.parent / "src"
 sys.path.insert(0, str(tracker_root))
-from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+from experiment_tracker.utils.path_utils import setup_script_paths
 
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
@@ -34,7 +36,7 @@ OCR_RESOLVER = get_path_resolver()
 # Import from local script
 sys.path.insert(0, str(script_path.parent))
 
-from mask_only_edge_detector import _prepare_mask, _fit_quadrilateral_dominant_extension, _intersect_lines
+from mask_only_edge_detector import _intersect_lines, _prepare_mask
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -43,13 +45,13 @@ logger = logging.getLogger(__name__)
 def _fit_quadrilateral_dominant_extension_with_diagnostics(
     hull: np.ndarray,
     epsilon_px: float = 10.0,
-) -> tuple[Optional[np.ndarray], float, Dict[str, Any]]:
+) -> tuple[np.ndarray | None, float, dict[str, Any]]:
     """
     Same as _fit_quadrilateral_dominant_extension but returns diagnostic info.
 
     Returns: (quad, used_epsilon, diagnostics)
     """
-    diagnostics: Dict[str, Any] = {
+    diagnostics: dict[str, Any] = {
         "segments": [],
         "bins_initial": {},
         "bins_after_borrow": {},
@@ -72,7 +74,7 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
     cx, cy = float(centroid[0]), float(centroid[1])
     diagnostics["centroid"] = centroid.tolist()
 
-    segments: List[Dict[str, Any]] = []
+    segments: list[dict[str, Any]] = []
     for i in range(num_pts):
         p1 = pts[i]
         p2 = pts[(i + 1) % num_pts]
@@ -103,14 +105,14 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
     if not segments:
         return None, eps, diagnostics
 
-    bins: Dict[str, List[np.ndarray]] = {
+    bins: dict[str, list[np.ndarray]] = {
         "top": [],
         "right": [],
         "bottom": [],
         "left": [],
     }
 
-    def assign_bin(seg: Dict[str, Any]) -> str:
+    def assign_bin(seg: dict[str, Any]) -> str:
         """
         Classify segment as Top/Bottom/Left/Right based on dominant direction.
         - If |dx| > |dy|: Horizontal segment → Top or Bottom (based on y < cy)
@@ -152,14 +154,13 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
         "right": ["top", "bottom"],
     }
 
-    borrowed_info: Dict[str, List[int]] = {}
+    borrowed_info: dict[str, list[int]] = {}
     for bin_name, points in bins.items():
         if len(points) >= 2:
             continue
 
         # Try to borrow from adjacent bins first
         best_seg_idx = None
-        best_source_bin = None
 
         # First, try adjacent bins
         for adj_bin in adjacent_map.get(bin_name, []):
@@ -168,7 +169,6 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
                 for idx, seg in enumerate(segments):
                     if assign_bin(seg) == adj_bin:
                         best_seg_idx = idx
-                        best_source_bin = adj_bin
                         break
                 if best_seg_idx is not None:
                     break
@@ -180,7 +180,6 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
                     for idx, seg in enumerate(segments):
                         if assign_bin(seg) == other_bin:
                             best_seg_idx = idx
-                            best_source_bin = other_bin
                             break
                     if best_seg_idx is not None:
                         break
@@ -198,7 +197,7 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
     for bin_name in bins:
         diagnostics["bins_after_borrow"][bin_name] = len(bins[bin_name])
 
-    def fit_line(points: List[np.ndarray]) -> Optional[Tuple[float, float, float, float]]:
+    def fit_line(points: list[np.ndarray]) -> tuple[float, float, float, float] | None:
         if len(points) < 2:
             return None
         pts_array = np.array(points, dtype=np.float32)
@@ -267,8 +266,8 @@ def _fit_quadrilateral_dominant_extension_with_diagnostics(
 def visualize_bin_assignments(
     mask: np.ndarray,
     hull: np.ndarray,
-    diagnostics: Dict[str, Any],
-    fitted_quad: Optional[np.ndarray],
+    diagnostics: dict[str, Any],
+    fitted_quad: np.ndarray | None,
 ) -> np.ndarray:
     """
     Create a visualization showing:
@@ -285,10 +284,10 @@ def visualize_bin_assignments(
 
     # Color scheme for bins
     bin_colors = {
-        "top": (0, 0, 255),      # Red
-        "right": (0, 255, 0),    # Green
-        "bottom": (255, 0, 0),   # Blue
-        "left": (0, 255, 255),   # Yellow
+        "top": (0, 0, 255),  # Red
+        "right": (0, 255, 0),  # Green
+        "bottom": (255, 0, 0),  # Blue
+        "left": (0, 255, 255),  # Yellow
     }
 
     # Draw hull
@@ -380,7 +379,7 @@ def visualize_bin_assignments(
 def debug_angle_bucketing(
     worst_case_dir: str,
     output_dir: str,
-    target_ids: Optional[List[str]] = None,
+    target_ids: list[str] | None = None,
 ) -> None:
     """
     Debug angle bucketing for specific samples (focus on invalid-angle failures).
@@ -429,9 +428,7 @@ def debug_angle_bucketing(
         hull = cv2.convexHull(largest)
 
         # Run fitting with diagnostics
-        fitted_quad, used_eps, diagnostics = _fit_quadrilateral_dominant_extension_with_diagnostics(
-            hull, epsilon_px=10.0
-        )
+        fitted_quad, used_eps, diagnostics = _fit_quadrilateral_dominant_extension_with_diagnostics(hull, epsilon_px=10.0)
 
         # Create visualization
         vis = visualize_bin_assignments(mask, hull, diagnostics, fitted_quad)
@@ -454,4 +451,3 @@ if __name__ == "__main__":
     output_dir = str(EXPERIMENT_PATHS.get_artifacts_path() if EXPERIMENT_PATHS else Path.cwd() / "artifacts")
 
     debug_angle_bucketing(worst_case_dir, output_dir)
-

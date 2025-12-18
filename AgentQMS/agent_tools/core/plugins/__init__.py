@@ -118,6 +118,7 @@ def get_plugin_registry(force: bool = False) -> PluginRegistry:
     if not force:
         try:
             from AgentQMS.agent_tools.utils.paths import get_project_root
+
             state_dir = get_project_root() / ".agentqms" / "state"
             writer = SnapshotWriter(state_dir)
             writer.write(registry, loader.get_discovery_paths())
@@ -135,4 +136,3 @@ def reset_plugin_loader() -> None:
     """
     global _plugin_loader
     _plugin_loader = None
-

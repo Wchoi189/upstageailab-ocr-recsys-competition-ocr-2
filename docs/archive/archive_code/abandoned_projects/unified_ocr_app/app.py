@@ -31,7 +31,6 @@ from typing import Literal, cast
 from ocr.utils.path_utils import PROJECT_ROOT
 
 try:
-
     project_root = PROJECT_ROOT
 except ImportError:
     # Fallback: add project root to path first, then import
@@ -46,9 +45,9 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import streamlit as st
+from ui.apps.unified_ocr_app.shared_utils import get_app_config, get_app_state
 
 from ocr.utils.path_utils import setup_project_paths
-from ui.apps.unified_ocr_app.shared_utils import get_app_config, get_app_state
 
 # Initialize paths from environment variables (supports deployment configs)
 # This should be done early, before any imports that might use paths

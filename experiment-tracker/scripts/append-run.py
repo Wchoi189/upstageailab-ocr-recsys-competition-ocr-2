@@ -50,12 +50,12 @@ def append_run(metrics_file: Path, run_data: dict) -> bool:
         return False
 
     # Read current file
-    with open(metrics_file, encoding='utf-8') as f:
+    with open(metrics_file, encoding="utf-8") as f:
         content = f.read()
 
     # Find Run History table
     # Pattern: ## Run History header, followed by table header, followed by separator, followed by rows
-    table_pattern = r'(## Run History.*?\n\|[^\n]+\n\|[^\n]+\n)(.*?)(\n\n##|\Z)'
+    table_pattern = r"(## Run History.*?\n\|[^\n]+\n\|[^\n]+\n)(.*?)(\n\n##|\Z)"
     match = re.search(table_pattern, content, re.DOTALL)
 
     if not match:
@@ -68,7 +68,7 @@ def append_run(metrics_file: Path, run_data: dict) -> bool:
 
     # Build new row
     # Split metrics by comma and format with pipes
-    metrics_formatted = ' | '.join(run_data['metrics'].split(','))
+    metrics_formatted = " | ".join(run_data["metrics"].split(","))
 
     new_row = (
         f"| {run_data['run_id']} "
@@ -80,21 +80,17 @@ def append_run(metrics_file: Path, run_data: dict) -> bool:
     )
 
     # Insert new row at end of table (before next section or EOF)
-    table_start = match.start(2)
+    match.start(2)
     table_end = match.end(2)
 
     # Append to existing rows
     new_content = content[:table_end] + new_row + content[table_end:]
 
     # Update frontmatter timestamp
-    new_content = re.sub(
-        r'updated: "[^"]*"',
-        f'updated: "{datetime.utcnow().isoformat()}Z"',
-        new_content
-    )
+    new_content = re.sub(r'updated: "[^"]*"', f'updated: "{datetime.utcnow().isoformat()}Z"', new_content)
 
     # Write back
-    with open(metrics_file, 'w', encoding='utf-8') as f:
+    with open(metrics_file, "w", encoding="utf-8") as f:
         f.write(new_content)
 
     return True
@@ -114,49 +110,19 @@ Examples:
     --metrics "0.089,44,98.5" \\
     --status "✅" \\
     --notes "Kernel tuning"
-        """
+        """,
     )
 
+    parser.add_argument("--experiment", required=True, help="Experiment ID (e.g., 20251217_024343_image_enhancements_implementation)")
     parser.add_argument(
-        "--experiment",
-        required=True,
-        help="Experiment ID (e.g., 20251217_024343_image_enhancements_implementation)"
+        "--metrics-file", required=True, help="Metrics artifact filename (e.g., 20251217_1800_report_run-metrics-phase1.md)"
     )
-    parser.add_argument(
-        "--metrics-file",
-        required=True,
-        help="Metrics artifact filename (e.g., 20251217_1800_report_run-metrics-phase1.md)"
-    )
-    parser.add_argument(
-        "--run-id",
-        required=True,
-        help="Run ID (e.g., 004)"
-    )
-    parser.add_argument(
-        "--params",
-        required=True,
-        help="Parameters (comma-separated key=value pairs)"
-    )
-    parser.add_argument(
-        "--metrics",
-        required=True,
-        help="Metric values (comma-separated, e.g., '0.089,44,98.5')"
-    )
-    parser.add_argument(
-        "--status",
-        required=True,
-        help="Status indicator (✅/⚠️/❌/🔄/⏸️)"
-    )
-    parser.add_argument(
-        "--notes",
-        default="",
-        help="Notes (optional)"
-    )
-    parser.add_argument(
-        "--date",
-        default=None,
-        help="Date override (default: today, format: YYYY-MM-DD)"
-    )
+    parser.add_argument("--run-id", required=True, help="Run ID (e.g., 004)")
+    parser.add_argument("--params", required=True, help="Parameters (comma-separated key=value pairs)")
+    parser.add_argument("--metrics", required=True, help="Metric values (comma-separated, e.g., '0.089,44,98.5')")
+    parser.add_argument("--status", required=True, help="Status indicator (✅/⚠️/❌/🔄/⏸️)")
+    parser.add_argument("--notes", default="", help="Notes (optional)")
+    parser.add_argument("--date", default=None, help="Date override (default: today, format: YYYY-MM-DD)")
 
     args = parser.parse_args()
 
@@ -166,12 +132,12 @@ Examples:
 
         # Build run data
         run_data = {
-            'run_id': args.run_id,
-            'date': args.date or datetime.now().strftime('%Y-%m-%d'),
-            'params': args.params,
-            'metrics': args.metrics,
-            'status': args.status,
-            'notes': args.notes
+            "run_id": args.run_id,
+            "date": args.date or datetime.now().strftime("%Y-%m-%d"),
+            "params": args.params,
+            "metrics": args.metrics,
+            "status": args.status,
+            "notes": args.notes,
         }
 
         # Find metrics file

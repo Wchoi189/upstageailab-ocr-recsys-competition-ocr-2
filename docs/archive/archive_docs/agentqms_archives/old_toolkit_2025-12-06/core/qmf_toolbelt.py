@@ -23,9 +23,9 @@ class QualityManagementToolbelt:
 
     def list_artifact_types(self):
         """Returns a list of available artifact types."""
-        return [atype['name'] for atype in self.manifest['artifact_types']]
+        return [atype["name"] for atype in self.manifest["artifact_types"]]
 
-    def create_artifact(self, artifact_type: str, title: str, content: str, author: str = "ai-agent", tags: list = []):
+    def create_artifact(self, artifact_type: str, title: str, content: str, author: str = "ai-agent", tags: list = None):
         """
         Creates a new quality artifact.
 
@@ -39,9 +39,11 @@ class QualityManagementToolbelt:
         Returns:
             The path to the newly created artifact.
         """
+        if tags is None:
+            tags = []
         artifact_meta = None
-        for atype in self.manifest['artifact_types']:
-            if atype['name'] == artifact_type:
+        for atype in self.manifest["artifact_types"]:
+            if atype["name"] == artifact_type:
                 artifact_meta = atype
                 break
 
@@ -49,27 +51,21 @@ class QualityManagementToolbelt:
             raise ValueError(f"Unknown artifact type: {artifact_type}")
 
         # Generate filename
-        slug = title.lower().replace(' ', '-').replace('_', '-')
+        slug = title.lower().replace(" ", "-").replace("_", "-")
         filename = f"{slug}.md"
 
         # Define output path
-        output_dir = self.root_path.parent / artifact_meta['location']
+        output_dir = self.root_path.parent / artifact_meta["location"]
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / filename
 
         # Load template
-        template_path = self.root_path / artifact_meta['template']
-        with open(template_path, 'r') as f:
+        template_path = self.root_path / artifact_meta["template"]
+        with open(template_path) as f:
             template = Template(f.read())
 
         # Create frontmatter
-        frontmatter = {
-            "title": title,
-            "author": author,
-            "date": datetime.date.today().isoformat(),
-            "status": "draft",
-            "tags": tags
-        }
+        frontmatter = {"title": title, "author": author, "date": datetime.date.today().isoformat(), "status": "draft", "tags": tags}
 
         # Render the full document
         rendered_document = template.render(**frontmatter)
@@ -77,7 +73,7 @@ class QualityManagementToolbelt:
         # Combine with user content
         final_content = rendered_document + "\n" + content
 
-        with open(output_path, 'w') as f:
+        with open(output_path, "w") as f:
             f.write(final_content)
 
         return str(output_path)
@@ -92,11 +88,11 @@ class QualityManagementToolbelt:
         Returns:
             True if valid, raises an exception otherwise.
         """
-        with open(file_path, 'r') as f:
+        with open(file_path) as f:
             content = f.read()
 
         # Extract frontmatter
-        parts = content.split('---')
+        parts = content.split("---")
         if len(parts) < 3:
             raise ValueError("Invalid frontmatter format.")
 
@@ -107,8 +103,8 @@ class QualityManagementToolbelt:
         artifact_type_name = Path(file_path).parent.name
 
         artifact_meta = None
-        for atype in self.manifest['artifact_types']:
-            if atype['location'].strip('/').endswith(artifact_type_name):
+        for atype in self.manifest["artifact_types"]:
+            if atype["location"].strip("/").endswith(artifact_type_name):
                 artifact_meta = atype
                 break
 
@@ -116,12 +112,13 @@ class QualityManagementToolbelt:
             raise ValueError(f"Could not determine artifact type for {file_path}")
 
         # Load schema
-        schema_path = self.root_path / artifact_meta['schema']
-        with open(schema_path, 'r') as f:
+        schema_path = self.root_path / artifact_meta["schema"]
+        with open(schema_path) as f:
             schema = json.load(f)
 
         # Validate
         from jsonschema import validate
+
         validate(instance=frontmatter, schema=schema)
 
         return True

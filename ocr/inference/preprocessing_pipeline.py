@@ -13,8 +13,9 @@ results for both inference and preview generation.
 from __future__ import annotations
 
 import logging
+from collections.abc import Callable
 from dataclasses import dataclass
-from typing import Any, Callable
+from typing import Any
 
 import numpy as np
 
@@ -120,7 +121,7 @@ class PreprocessingPipeline:
                     enable_perspective_correction=True,
                     return_matrix=True,
                 )
-                LOGGER.debug(f"Perspective correction applied (matrix captured)")
+                LOGGER.debug("Perspective correction applied (matrix captured)")
             else:
                 # Correct and display corrected (default behavior)
                 image = apply_optional_perspective_correction(
@@ -132,6 +133,7 @@ class PreprocessingPipeline:
         # Stage 2: Optional grayscale conversion (after perspective correction)
         if enable_grayscale:
             import cv2
+
             # Convert BGR → GRAY
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             # Convert GRAY → BGR (maintain 3-channel input for model)
@@ -215,10 +217,7 @@ class PreprocessingPipeline:
                 target_size=self._target_size,
             )
 
-            LOGGER.debug(
-                f"Original preview created: {original_w}x{original_h} → "
-                f"{preview_image_bgr.shape[1]}x{preview_image_bgr.shape[0]}"
-            )
+            LOGGER.debug(f"Original preview created: {original_w}x{original_h} → {preview_image_bgr.shape[1]}x{preview_image_bgr.shape[0]}")
 
             return preview_image_bgr, metadata
 

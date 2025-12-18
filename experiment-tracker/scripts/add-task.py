@@ -18,11 +18,7 @@ def main():
     args = parser.parse_args()
 
     tracker = ExperimentTracker()
-    tracker.add_task(
-        args.description,
-        show_context=not args.no_context,
-        confirm=not args.no_confirm
-    )
+    tracker.add_task(args.description, show_context=not args.no_context, confirm=not args.no_confirm)
 
 
 if __name__ == "__main__":

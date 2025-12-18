@@ -57,6 +57,7 @@ __all__ = [
 def main() -> int:
     """CLI entry point - delegates to plugins.cli."""
     from AgentQMS.agent_tools.core.plugins.cli import main as cli_main
+
     return cli_main()
 
 

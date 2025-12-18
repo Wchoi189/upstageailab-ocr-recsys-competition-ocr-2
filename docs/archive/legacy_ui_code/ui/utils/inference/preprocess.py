@@ -42,10 +42,7 @@ def build_transform(settings: PreprocessSettings):
 
 
 def preprocess_image(
-    image: Any,
-    transform: Callable[[Any], Any],
-    target_size: int = 640,
-    return_processed_image: bool = False
+    image: Any, transform: Callable[[Any], Any], target_size: int = 640, return_processed_image: bool = False
 ) -> Any | tuple[Any, Any]:
     """Apply preprocessing transform to an image and return a batched tensor.
 
@@ -90,9 +87,12 @@ def preprocess_image(
     if pad_h > 0 or pad_w > 0:
         processed_image = cv2.copyMakeBorder(
             processed_image,
-            0, pad_h, 0, pad_w,  # top, bottom, left, right (top_left padding)
+            0,
+            pad_h,
+            0,
+            pad_w,  # top, bottom, left, right (top_left padding)
             cv2.BORDER_CONSTANT,
-            value=[0, 0, 0]  # Black padding
+            value=[0, 0, 0],  # Black padding
         )
 
     # BUG-001: Optionally return the processed image before RGB conversion for preview

@@ -172,9 +172,7 @@ def init_db() -> None:
 def upsert_feature_plan(key: str, title: str, owner: str | None = None) -> int:
     conn = get_connection()
     with conn:
-        row = conn.execute(
-            "SELECT id FROM feature_plans WHERE key=?", (key,)
-        ).fetchone()
+        row = conn.execute("SELECT id FROM feature_plans WHERE key=?", (key,)).fetchone()
         if row:
             conn.execute(
                 "UPDATE feature_plans SET title=?, owner=?, updated_at=? WHERE id=?",
@@ -194,9 +192,7 @@ def set_plan_status(key: str, status: str) -> None:
         raise ValueError(f"Invalid status: {status}")
     conn = get_connection()
     with conn:
-        plan = conn.execute(
-            "SELECT id FROM feature_plans WHERE key=?", (key,)
-        ).fetchone()
+        plan = conn.execute("SELECT id FROM feature_plans WHERE key=?", (key,)).fetchone()
         if not plan:
             raise KeyError(f"Plan not found: {key}")
         fields = ["updated_at = ?", _utc_now_iso()]
@@ -214,9 +210,7 @@ def set_plan_status(key: str, status: str) -> None:
 def add_plan_task(plan_key: str, title: str, notes: str | None = None) -> int:
     conn = get_connection()
     with conn:
-        plan = conn.execute(
-            "SELECT id FROM feature_plans WHERE key=?", (plan_key,)
-        ).fetchone()
+        plan = conn.execute("SELECT id FROM feature_plans WHERE key=?", (plan_key,)).fetchone()
         if not plan:
             raise KeyError(f"Plan not found: {plan_key}")
         conn.execute(
@@ -268,33 +262,25 @@ def set_refactor_status(key: str, status: str) -> None:
             params = (_utc_now_iso(), _utc_now_iso(), key)
         else:
             params = (_utc_now_iso(), key)
-        conn.execute(
-            f"UPDATE refactors SET status='{status}', {fields[0]} WHERE key=?", params
-        )
+        conn.execute(f"UPDATE refactors SET status='{status}', {fields[0]} WHERE key=?", params)
 
 
 # Debugging
-def create_debug_session(
-    key: str, title: str, hypothesis: str = "", scope: str = ""
-) -> int:
+def create_debug_session(key: str, title: str, hypothesis: str = "", scope: str = "") -> int:
     conn = get_connection()
     with conn:
         conn.execute(
             "INSERT OR IGNORE INTO debug_sessions(key,title,status,hypothesis,scope,started_at,updated_at) VALUES (?,?,?,?,?,?,?)",
             (key, title, "in_progress", hypothesis, scope, _utc_now_iso(), None),
         )
-        row = conn.execute(
-            "SELECT id FROM debug_sessions WHERE key=?", (key,)
-        ).fetchone()
+        row = conn.execute("SELECT id FROM debug_sessions WHERE key=?", (key,)).fetchone()
         return int(row[0])
 
 
 def add_debug_note(session_key: str, note: str) -> int:
     conn = get_connection()
     with conn:
-        session = conn.execute(
-            "SELECT id FROM debug_sessions WHERE key=?", (session_key,)
-        ).fetchone()
+        session = conn.execute("SELECT id FROM debug_sessions WHERE key=?", (session_key,)).fetchone()
         if not session:
             raise KeyError(f"Debug session not found: {session_key}")
         conn.execute(
@@ -317,9 +303,7 @@ def set_debug_status(key: str, status: str) -> None:
 
 
 # Experiments
-def upsert_experiment(
-    key: str, title: str, objective: str = "", owner: str | None = None
-) -> int:
+def upsert_experiment(key: str, title: str, objective: str = "", owner: str | None = None) -> int:
     conn = get_connection()
     with conn:
         row = conn.execute("SELECT id FROM experiments WHERE key=?", (key,)).fetchone()
@@ -347,9 +331,7 @@ def add_experiment_run(
         raise ValueError("Invalid outcome")
     conn = get_connection()
     with conn:
-        exp = conn.execute(
-            "SELECT id FROM experiments WHERE key=?", (experiment_key,)
-        ).fetchone()
+        exp = conn.execute("SELECT id FROM experiments WHERE key=?", (experiment_key,)).fetchone()
         if not exp:
             raise KeyError(f"Experiment not found: {experiment_key}")
         conn.execute(
@@ -366,14 +348,10 @@ def add_experiment_run(
         return int(conn.execute("SELECT last_insert_rowid()").fetchone()[0])
 
 
-def link_experiment_artifact(
-    experiment_key: str, type_: str, path: str, run_no: int | None = None
-) -> int:
+def link_experiment_artifact(experiment_key: str, type_: str, path: str, run_no: int | None = None) -> int:
     conn = get_connection()
     with conn:
-        exp = conn.execute(
-            "SELECT id FROM experiments WHERE key=?", (experiment_key,)
-        ).fetchone()
+        exp = conn.execute("SELECT id FROM experiments WHERE key=?", (experiment_key,)).fetchone()
         if not exp:
             raise KeyError(f"Experiment not found: {experiment_key}")
         run_id = None

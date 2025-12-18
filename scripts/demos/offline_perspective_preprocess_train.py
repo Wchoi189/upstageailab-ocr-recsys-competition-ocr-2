@@ -15,8 +15,8 @@ Usage (from project root):
 
 import argparse
 import logging
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable
 
 import cv2
 
@@ -114,5 +114,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-
-

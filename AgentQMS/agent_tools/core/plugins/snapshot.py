@@ -103,4 +103,3 @@ class SnapshotWriter:
                 return yaml.safe_load(f) or {}
         except Exception:
             return {}
-

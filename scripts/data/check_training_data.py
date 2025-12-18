@@ -30,7 +30,7 @@ for i, (key, value) in enumerate(list(data.items())[:10]):
 
     # Check image exists
     if not img_path.exists():
-        print(f"  {i+1}. {key}: ✗ IMAGE NOT FOUND")
+        print(f"  {i + 1}. {key}: ✗ IMAGE NOT FOUND")
         continue
 
     # Load image
@@ -38,13 +38,13 @@ for i, (key, value) in enumerate(list(data.items())[:10]):
         img = Image.open(img_path)
         img_array = np.array(img)
     except Exception as e:
-        print(f"  {i+1}. {key}: ✗ ERROR LOADING IMAGE: {e}")
+        print(f"  {i + 1}. {key}: ✗ ERROR LOADING IMAGE: {e}")
         continue
 
     # Check annotation
     words = value.get("words", [])
     if not words:
-        print(f"  {i+1}. {key}: ✗ NO WORDS (empty annotation)")
+        print(f"  {i + 1}. {key}: ✗ NO WORDS (empty annotation)")
         continue
 
     # Check polygons
@@ -65,11 +65,11 @@ for i, (key, value) in enumerate(list(data.items())[:10]):
                 valid_polygons += 1
 
     if valid_polygons == 0:
-        print(f"  {i+1}. {key}: ✗ NO VALID POLYGONS ({total_polygons} total, all invalid/out-of-bounds)")
+        print(f"  {i + 1}. {key}: ✗ NO VALID POLYGONS ({total_polygons} total, all invalid/out-of-bounds)")
     elif valid_polygons < total_polygons:
-        print(f"  {i+1}. {key}: ⚠  PARTIAL ({valid_polygons}/{total_polygons} valid polygons)")
+        print(f"  {i + 1}. {key}: ⚠  PARTIAL ({valid_polygons}/{total_polygons} valid polygons)")
     else:
-        print(f"  {i+1}. {key}: ✓ OK ({valid_polygons} valid polygons, image {img_array.shape})")
+        print(f"  {i + 1}. {key}: ✓ OK ({valid_polygons} valid polygons, image {img_array.shape})")
 
 # Overall statistics
 print("\n" + "=" * 80)
@@ -119,11 +119,11 @@ for key, value in data.items():
         samples_with_no_valid_polygons += 1
 
 print(f"Total samples: {total_samples}")
-print(f"Samples with NO words: {samples_with_no_words} ({100*samples_with_no_words/total_samples:.1f}%)")
-print(f"Samples with NO valid polygons: {samples_with_no_valid_polygons} ({100*samples_with_no_valid_polygons/total_samples:.1f}%)")
+print(f"Samples with NO words: {samples_with_no_words} ({100 * samples_with_no_words / total_samples:.1f}%)")
+print(f"Samples with NO valid polygons: {samples_with_no_valid_polygons} ({100 * samples_with_no_valid_polygons / total_samples:.1f}%)")
 print(f"Total words/polygons: {total_words}")
 print(f"Total VALID polygons: {total_valid_polygons}")
-print(f"Average valid polygons per sample: {total_valid_polygons/total_samples:.2f}")
+print(f"Average valid polygons per sample: {total_valid_polygons / total_samples:.2f}")
 
 print("\n" + "=" * 80)
 if samples_with_no_valid_polygons > total_samples * 0.1:  # More than 10% invalid

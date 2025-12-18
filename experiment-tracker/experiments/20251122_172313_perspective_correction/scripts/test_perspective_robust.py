@@ -23,6 +23,7 @@ sys.path.append(str(ROOT_DIR / "src"))
 
 try:
     from experiment_tracker.utils.path_utils import setup_script_paths
+
     TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
 except ImportError:
     # Fallback if path_utils not available
@@ -35,6 +36,7 @@ workspace_root = ROOT_DIR.parent
 sys.path.insert(0, str(workspace_root))
 try:
     from ocr.utils.path_utils import get_path_resolver
+
     OCR_RESOLVER = get_path_resolver()
 except ImportError:
     OCR_RESOLVER = None

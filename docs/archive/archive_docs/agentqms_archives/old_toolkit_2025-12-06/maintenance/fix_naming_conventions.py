@@ -115,12 +115,7 @@ class NamingConventionFixer:
         filename = file_path.name
 
         # Skip INDEX.md and registry files
-        skip_patterns = [
-            "INDEX.md",
-            "MASTER_INDEX.md",
-            "REGISTRY.md",
-            "README.md"
-        ]
+        skip_patterns = ["INDEX.md", "MASTER_INDEX.md", "REGISTRY.md", "README.md"]
         if any(filename.upper() == pattern.upper() for pattern in skip_patterns):
             return operations
 
@@ -132,10 +127,8 @@ class NamingConventionFixer:
                 operations.append(operation)
 
         # Check type prefix (after timestamp if present)
-        prefix_part = filename[len(timestamp_match.group(1)):] if timestamp_match else filename
-        has_valid_prefix = any(
-            prefix_part.startswith(prefix) for prefix in self.valid_prefixes
-        )
+        prefix_part = filename[len(timestamp_match.group(1)) :] if timestamp_match else filename
+        has_valid_prefix = any(prefix_part.startswith(prefix) for prefix in self.valid_prefixes)
         if not has_valid_prefix:
             operation = self._fix_type_prefix_issue(file_path, filename)
             if operation:
@@ -153,9 +146,7 @@ class NamingConventionFixer:
 
         return operations
 
-    def _fix_timestamp_issue(
-        self, file_path: Path, filename: str
-    ) -> RenameOperation | None:
+    def _fix_timestamp_issue(self, file_path: Path, filename: str) -> RenameOperation | None:
         """Fix missing or invalid timestamp"""
         # Try to extract timestamp from filename
         timestamp_match = re.search(r"(\d{4}-\d{2}-\d{2}_\d{4})", filename)
@@ -176,9 +167,7 @@ class NamingConventionFixer:
             confidence=0.9,
         )
 
-    def _fix_type_prefix_issue(
-        self, file_path: Path, filename: str
-    ) -> RenameOperation | None:
+    def _fix_type_prefix_issue(self, file_path: Path, filename: str) -> RenameOperation | None:
         """Fix missing type prefix by analyzing content and directory"""
         # Determine type from directory structure
         directory_type = self._detect_type_from_directory(file_path)
@@ -214,9 +203,7 @@ class NamingConventionFixer:
 
         return None
 
-    def _fix_descriptive_naming(
-        self, file_path: Path, filename: str
-    ) -> RenameOperation | None:
+    def _fix_descriptive_naming(self, file_path: Path, filename: str) -> RenameOperation | None:
         """Fix descriptive naming to use kebab-case"""
         # Extract descriptive part (after prefix and timestamp)
         descriptive_part = filename
@@ -237,10 +224,7 @@ class NamingConventionFixer:
             descriptive_part = descriptive_part[:-3]
 
         # Check if needs kebab-case conversion
-        if (
-            "_" in descriptive_part
-            and not descriptive_part.replace("-", "").replace("_", "").isalnum()
-        ):
+        if "_" in descriptive_part and not descriptive_part.replace("-", "").replace("_", "").isalnum():
             # Convert underscores to hyphens
             kebab_case = descriptive_part.replace("_", "-")
 
@@ -264,9 +248,7 @@ class NamingConventionFixer:
 
         return None
 
-    def _fix_directory_placement(
-        self, file_path: Path, filename: str
-    ) -> RenameOperation | None:
+    def _fix_directory_placement(self, file_path: Path, filename: str) -> RenameOperation | None:
         """Fix incorrect directory placement"""
         # Determine expected directory from filename prefix
         expected_dir = None
@@ -348,9 +330,7 @@ class NamingConventionFixer:
             print(f"Warning: Could not create backup for {file_path}: {e}")
             return False
 
-    def execute_rename_operation(
-        self, operation: RenameOperation, dry_run: bool = False
-    ) -> bool:
+    def execute_rename_operation(self, operation: RenameOperation, dry_run: bool = False) -> bool:
         """Execute a rename operation"""
         old_path = Path(operation.old_path)
         new_path = Path(operation.new_path)
@@ -397,30 +377,30 @@ class NamingConventionFixer:
 
     def validate_operations(self, operations: dict[str, list[RenameOperation]]) -> tuple[bool, list[str]]:
         """Validate all operations before execution
-        
+
         Returns:
             tuple: (all_valid, list_of_issues)
         """
         issues = []
         final_paths = {}
-        
+
         for old_path, ops in operations.items():
             # Trace through sequential operations to find final path
             current_path = old_path
             for op in ops:
                 current_path = op.new_path
-            
+
             # Check for duplicate final paths
             if current_path in final_paths:
                 issues.append(f"Conflict: {old_path} and {final_paths[current_path]} both rename to {current_path}")
             else:
                 final_paths[current_path] = old_path
-            
+
             # Check if any intermediate target exists
             for op in ops:
                 if Path(op.new_path).exists() and op.new_path != op.old_path:
                     issues.append(f"Target exists: {op.new_path}")
-        
+
         return len(issues) == 0, issues
 
     def fix_directory(
@@ -436,7 +416,7 @@ class NamingConventionFixer:
                 if operations:
                     results[str(file_path)] = operations
                     files_processed += 1
-                    
+
                     # Check limit
                     if limit is not None and files_processed >= limit:
                         print(f"✋ Reached file limit ({limit}). Stopping.")
@@ -451,7 +431,7 @@ class NamingConventionFixer:
                     print(f"   • {issue}")
                 print("\nℹ️  No changes will be made. Use --dry-run to preview.")
                 return {}
-        
+
         return results
 
     def generate_fix_report(self, results: dict[str, list[RenameOperation]]) -> str:
@@ -474,9 +454,7 @@ class NamingConventionFixer:
             for file_path, operations in results.items():
                 report.append(f"\n📁 {file_path}")
                 for operation in operations:
-                    report.append(
-                        f"   • {operation.reason} (confidence: {operation.confidence:.1f})"
-                    )
+                    report.append(f"   • {operation.reason} (confidence: {operation.confidence:.1f})")
                     report.append(f"     {operation.old_path} -> {operation.new_path}")
         else:
             report.append("✅ No naming issues found!")

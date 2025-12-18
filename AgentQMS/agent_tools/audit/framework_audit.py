@@ -62,12 +62,13 @@ class FrameworkAudit:
                 "total_checked": 0,
                 "invalid_count": 0,
                 "warning_count": 0,
-            }
+            },
         }
 
     def _get_project_root(self) -> Path:
         """Get project root directory."""
         from AgentQMS.agent_tools.utils.paths import get_project_root
+
         return get_project_root()
 
     def audit_plugins(self) -> list[dict[str, Any]]:
@@ -370,9 +371,7 @@ class FrameworkAudit:
             len(self.results[k]) for k in ["plugin_artifacts", "plugin_validators", "plugin_bundles", "templates"]
         )
         self.results["summary"]["invalid_count"] = len([i for i in all_issues if not i.get("valid", True)])
-        self.results["summary"]["warning_count"] = len(
-            [w for i in all_issues for w in i.get("warnings", [])]
-        )
+        self.results["summary"]["warning_count"] = len([w for i in all_issues for w in i.get("warnings", [])])
 
         return 1 if all_issues else 0
 

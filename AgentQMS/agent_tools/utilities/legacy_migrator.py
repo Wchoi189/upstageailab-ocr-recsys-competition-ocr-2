@@ -227,6 +227,7 @@ class LegacyArtifactMigrator:
             try:
                 # Use git mv if available for better history tracking
                 import subprocess
+
                 subprocess.run(
                     ["git", "mv", str(filepath), str(new_path)],
                     cwd=self.project_root,
@@ -368,13 +369,13 @@ class LegacyArtifactMigrator:
             # Sort by modification time (oldest first)
             paths_sorted = sorted(paths, key=lambda p: p.stat().st_mtime)
 
-            manual_moves.append({
-                "original": str(paths_sorted[0]),
-                "duplicates": [str(p) for p in paths_sorted[1:]],
-                "content_hash": list(hash_index.keys())[
-                    list(hash_index.values()).index(paths)
-                ],
-            })
+            manual_moves.append(
+                {
+                    "original": str(paths_sorted[0]),
+                    "duplicates": [str(p) for p in paths_sorted[1:]],
+                    "content_hash": list(hash_index.keys())[list(hash_index.values()).index(paths)],
+                }
+            )
 
         return manual_moves
 
@@ -625,7 +626,7 @@ Examples:
                 print(f"Duplicates removed:    {result['duplicates_removed']}")
                 print(f"Links updated:         {result['links_updated']}")
 
-                if result['dry_run']:
+                if result["dry_run"]:
                     print("\nℹ️  DRY RUN mode - no changes were applied")
             else:
                 manual_moves = migrator.detect_manual_moves(directory=args.directory)

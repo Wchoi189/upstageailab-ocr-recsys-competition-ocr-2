@@ -12,7 +12,7 @@ from experiment_tracker.core import ExperimentTracker
 def main():
     parser = argparse.ArgumentParser(description="Stash the current experiment")
 
-    args = parser.parse_args()
+    parser.parse_args()
 
     tracker = ExperimentTracker()
     experiment_id = tracker._get_current_experiment_id()

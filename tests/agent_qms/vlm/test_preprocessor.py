@@ -1,10 +1,7 @@
 """Tests for image preprocessor."""
 
-import pytest
-from pathlib import Path
-from PIL import Image
-
 from agent_qms.vlm.core.preprocessor import VLMImagePreprocessor
+from PIL import Image
 
 
 class TestVLMImagePreprocessor:

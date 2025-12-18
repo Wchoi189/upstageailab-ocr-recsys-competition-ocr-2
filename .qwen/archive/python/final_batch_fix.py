@@ -11,16 +11,26 @@ PROJECT_ROOT = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
 
 # Files that need renaming (add assessment- prefix)
 BATCH2_NEED_RENAME = [
-    ("docs/artifacts/assessments/2025-11-19_1939_upstage-document-parsing-playground-tech-stack.md",
-     "docs/artifacts/assessments/2025-11-19_1939_assessment-upstage-document-parsing-playground-tech-stack.md"),
-    ("docs/artifacts/assessments/2025-11-20_1227_ai-documentation-entry-points-audit-and-reorganization-plan.md",
-     "docs/artifacts/assessments/2025-11-20_1227_assessment-ai-documentation-entry-points-audit-and-reorganization-plan.md"),
-    ("docs/artifacts/assessments/2025-11-20_1333_chakra-ui-v3-remaining-build-errors-assessment.md",
-     "docs/artifacts/assessments/2025-11-20_1333_assessment-chakra-ui-v3-remaining-build-errors.md"),
-    ("docs/artifacts/assessments/2025-11-21_0231_text-recognition-implementation-feasibility-assessment.md",
-     "docs/artifacts/assessments/2025-11-21_0231_assessment-text-recognition-implementation-feasibility.md"),
-    ("docs/artifacts/assessments/2025-11-22_0000_project-composition-assessment.md",
-     "docs/artifacts/assessments/2025-11-22_0000_assessment-project-composition.md"),
+    (
+        "docs/artifacts/assessments/2025-11-19_1939_upstage-document-parsing-playground-tech-stack.md",
+        "docs/artifacts/assessments/2025-11-19_1939_assessment-upstage-document-parsing-playground-tech-stack.md",
+    ),
+    (
+        "docs/artifacts/assessments/2025-11-20_1227_ai-documentation-entry-points-audit-and-reorganization-plan.md",
+        "docs/artifacts/assessments/2025-11-20_1227_assessment-ai-documentation-entry-points-audit-and-reorganization-plan.md",
+    ),
+    (
+        "docs/artifacts/assessments/2025-11-20_1333_chakra-ui-v3-remaining-build-errors-assessment.md",
+        "docs/artifacts/assessments/2025-11-20_1333_assessment-chakra-ui-v3-remaining-build-errors.md",
+    ),
+    (
+        "docs/artifacts/assessments/2025-11-21_0231_text-recognition-implementation-feasibility-assessment.md",
+        "docs/artifacts/assessments/2025-11-21_0231_assessment-text-recognition-implementation-feasibility.md",
+    ),
+    (
+        "docs/artifacts/assessments/2025-11-22_0000_project-composition-assessment.md",
+        "docs/artifacts/assessments/2025-11-22_0000_assessment-project-composition.md",
+    ),
 ]
 
 # Bug reports that need frontmatter
@@ -68,7 +78,7 @@ def extract_title_from_frontmatter(content: str) -> str:
     for line in fm_text.split("\n"):
         line = line.strip()
         if line.startswith("title:"):
-            title = line.split(":", 1)[1].strip().strip('"\'')
+            title = line.split(":", 1)[1].strip().strip("\"'")
             return title
     return ""
 
@@ -116,7 +126,7 @@ def fix_bug_report_frontmatter(file_path: str) -> bool:
     if content.startswith("---"):
         end = content.find("---", 3)
         if end != -1:
-            body = content[end + 3:].lstrip("\n")
+            body = content[end + 3 :].lstrip("\n")
         else:
             body = content
     else:

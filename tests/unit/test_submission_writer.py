@@ -8,7 +8,6 @@ from tempfile import TemporaryDirectory
 
 import numpy as np
 import pytest
-
 from ui.apps.inference.models.data_contracts import InferenceResult, Predictions, PreprocessingInfo
 from ui.apps.inference.services.submission_writer import SubmissionEntry, SubmissionWriter
 

@@ -4,7 +4,6 @@ from typing import cast
 import cv2
 import numpy as np
 import pytest
-
 from ui.apps.inference.models.data_contracts import Predictions
 from ui.apps.inference.services import inference_runner
 

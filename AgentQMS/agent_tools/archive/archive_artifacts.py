@@ -87,9 +87,7 @@ def archive_file(file_path: Path, dry_run: bool = False) -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Archive artifacts marked with status='archived'"
-    )
+    parser = argparse.ArgumentParser(description="Archive artifacts marked with status='archived'")
     parser.add_argument(
         "--dry-run",
         action="store_true",

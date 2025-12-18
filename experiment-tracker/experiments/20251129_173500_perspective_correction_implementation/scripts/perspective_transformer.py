@@ -1,5 +1,6 @@
-import numpy as np
 import cv2
+import numpy as np
+
 
 def calculate_target_dimensions(pts: np.ndarray) -> tuple[int, int]:
     """
@@ -29,6 +30,7 @@ def calculate_target_dimensions(pts: np.ndarray) -> tuple[int, int]:
 
     return maxWidth, maxHeight
 
+
 def four_point_transform(image: np.ndarray, pts: np.ndarray) -> np.ndarray:
     """
     Apply perspective transform to the image using the provided corners.
@@ -51,11 +53,7 @@ def four_point_transform(image: np.ndarray, pts: np.ndarray) -> np.ndarray:
     # Construct the set of destination points to obtain a "birds eye view",
     # (i.e. top-down view) of the image, again specifying points
     # in the top-left, top-right, bottom-right, and bottom-left order
-    dst = np.array([
-        [0, 0],
-        [maxWidth - 1, 0],
-        [maxWidth - 1, maxHeight - 1],
-        [0, maxHeight - 1]], dtype="float32")
+    dst = np.array([[0, 0], [maxWidth - 1, 0], [maxWidth - 1, maxHeight - 1], [0, maxHeight - 1]], dtype="float32")
 
     # Compute the perspective transform matrix and then apply it
     M = cv2.getPerspectiveTransform(pts, dst)
@@ -64,4 +62,3 @@ def four_point_transform(image: np.ndarray, pts: np.ndarray) -> np.ndarray:
     warped = cv2.warpPerspective(image, M, (maxWidth, maxHeight), flags=cv2.INTER_LANCZOS4)
 
     return warped
-

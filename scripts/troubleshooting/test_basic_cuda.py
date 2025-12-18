@@ -69,11 +69,11 @@ try:
         optimizer.zero_grad()
         loss.backward()
         optimizer.step()
-        print(f"  Iteration {i+1}/10 ✓")
+        print(f"  Iteration {i + 1}/10 ✓")
 
     print("  ✓ All iterations passed")
 except Exception as e:
-    print(f"  ✗ Failed at iteration {i+1}: {e}")
+    print(f"  ✗ Failed at iteration {i + 1}: {e}")
     exit(1)
 
 print("\n" + "=" * 60)

@@ -34,6 +34,7 @@ class TransformMetadata(NamedTuple):
         pad_h: Bottom padding pixels
         pad_w: Right padding pixels
     """
+
     original_h: int
     original_w: int
     resized_h: int
@@ -225,8 +226,18 @@ def transform_polygons_string_to_processed_space(
     LOGGER.debug(
         "Coordinate mapping - original: %dx%d, resized content: %dx%d, "
         "forward_scales: x=%.6f, y=%.6f, processed_size=%dx%d, padding: top=%d bottom=%d left=%d right=%d",
-        metadata.original_w, metadata.original_h, metadata.resized_w, metadata.resized_h,
-        scale_x, scale_y, target_size, target_size, 0, metadata.pad_h, 0, metadata.pad_w
+        metadata.original_w,
+        metadata.original_h,
+        metadata.resized_w,
+        metadata.resized_h,
+        scale_x,
+        scale_y,
+        target_size,
+        target_size,
+        0,
+        metadata.pad_h,
+        0,
+        metadata.pad_w,
     )
 
     # Parse and transform polygons
@@ -240,10 +251,7 @@ def transform_polygons_string_to_processed_space(
 
         try:
             coord_floats = [float(c) for c in coords]
-            polygon = np.array(
-                [[coord_floats[i], coord_floats[i + 1]] for i in range(0, len(coord_floats), 2)],
-                dtype=np.float32
-            )
+            polygon = np.array([[coord_floats[i], coord_floats[i + 1]] for i in range(0, len(coord_floats), 2)], dtype=np.float32)
 
             # Apply forward transform to map coordinates from original space to processed space
             coords_2d = polygon.reshape(-1, 2)
@@ -256,20 +264,25 @@ def transform_polygons_string_to_processed_space(
                 max_x = max(c[0] for c in transformed_coords)
                 max_y = max(c[1] for c in transformed_coords)
 
-                if max_x > target_size + tolerance or max_y > target_size + tolerance or \
-                   min_x < -tolerance or min_y < -tolerance:
+                if max_x > target_size + tolerance or max_y > target_size + tolerance or min_x < -tolerance or min_y < -tolerance:
                     LOGGER.warning(
                         "Transformed polygon coordinates out of processed bounds: "
                         "min=(%.1f, %.1f), max=(%.1f, %.1f), processed_size=%dx%d, "
                         "content_area=[0-%d, 0-%d] (original: %dx%d)",
-                        min_x, min_y, max_x, max_y, target_size, target_size,
-                        metadata.resized_w, metadata.resized_h, metadata.original_w, metadata.original_h
+                        min_x,
+                        min_y,
+                        max_x,
+                        max_y,
+                        target_size,
+                        target_size,
+                        metadata.resized_w,
+                        metadata.resized_h,
+                        metadata.original_w,
+                        metadata.original_h,
                     )
 
             # Convert back to space-separated string (round to nearest integer)
-            transformed_polygons.append(
-                " ".join(str(int(round(c))) for row in transformed_coords for c in row)
-            )
+            transformed_polygons.append(" ".join(str(int(round(c))) for row in transformed_coords for c in row))
         except (ValueError, IndexError):
             LOGGER.warning("Failed to parse polygon: %s", polygon_str)
             continue
@@ -327,10 +340,7 @@ class CoordinateTransformationManager:
         if self._cached_metadata is None:
             raise ValueError("No original shape set. Call set_original_shape() first or provide original_shape.")
 
-        return compute_inverse_matrix(
-            (self._cached_metadata.original_h, self._cached_metadata.original_w),
-            self.target_size
-        )
+        return compute_inverse_matrix((self._cached_metadata.original_h, self._cached_metadata.original_w), self.target_size)
 
     def get_forward_scales(self, original_shape: Sequence[int] | None = None) -> tuple[float, float]:
         """Get forward transformation scales (original → processed).
@@ -347,16 +357,9 @@ class CoordinateTransformationManager:
         if self._cached_metadata is None:
             raise ValueError("No original shape set. Call set_original_shape() first or provide original_shape.")
 
-        return compute_forward_scales(
-            (self._cached_metadata.original_h, self._cached_metadata.original_w),
-            self.target_size
-        )
+        return compute_forward_scales((self._cached_metadata.original_h, self._cached_metadata.original_w), self.target_size)
 
-    def transform_polygon_forward(
-        self,
-        polygon: np.ndarray,
-        original_shape: Sequence[int] | None = None
-    ) -> np.ndarray:
+    def transform_polygon_forward(self, polygon: np.ndarray, original_shape: Sequence[int] | None = None) -> np.ndarray:
         """Transform polygon from original to processed space.
 
         Args:
@@ -373,16 +376,11 @@ class CoordinateTransformationManager:
             raise ValueError("No original shape set. Call set_original_shape() first or provide original_shape.")
 
         return transform_polygon_to_processed_space(
-            polygon,
-            (self._cached_metadata.original_h, self._cached_metadata.original_w),
-            self.target_size
+            polygon, (self._cached_metadata.original_h, self._cached_metadata.original_w), self.target_size
         )
 
     def transform_polygons_string_forward(
-        self,
-        polygons_str: str,
-        original_shape: Sequence[int] | None = None,
-        tolerance: float = 2.0
+        self, polygons_str: str, original_shape: Sequence[int] | None = None, tolerance: float = 2.0
     ) -> str:
         """Transform polygon string from original to processed space.
 
@@ -395,16 +393,11 @@ class CoordinateTransformationManager:
             Transformed polygon string
         """
         if original_shape is not None:
-            return transform_polygons_string_to_processed_space(
-                polygons_str, original_shape, self.target_size, tolerance
-            )
+            return transform_polygons_string_to_processed_space(polygons_str, original_shape, self.target_size, tolerance)
 
         if self._cached_metadata is None:
             raise ValueError("No original shape set. Call set_original_shape() first or provide original_shape.")
 
         return transform_polygons_string_to_processed_space(
-            polygons_str,
-            (self._cached_metadata.original_h, self._cached_metadata.original_w),
-            self.target_size,
-            tolerance
+            polygons_str, (self._cached_metadata.original_h, self._cached_metadata.original_w), self.target_size, tolerance
         )

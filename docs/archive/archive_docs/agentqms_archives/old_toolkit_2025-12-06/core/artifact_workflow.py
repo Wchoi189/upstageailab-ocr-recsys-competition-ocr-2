@@ -19,13 +19,13 @@ import sys
 from pathlib import Path
 from typing import cast
 
-from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator
 from AgentQMS.agent_tools.core.artifact_templates import (
     ArtifactTemplates,
     create_artifact,
 )
+from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
@@ -35,10 +35,7 @@ def _assert_clean_boundaries() -> None:
     errors = [v for v in violations if v.severity == "error"]
     if errors:
         formatted = "\n".join(f"- {v.path}: {v.message}" for v in errors)
-        raise RuntimeError(
-            "Boundary validation failed. Resolve the following issues before creating artifacts:\n"
-            f"{formatted}"
-        )
+        raise RuntimeError(f"Boundary validation failed. Resolve the following issues before creating artifacts:\n{formatted}")
 
 
 _assert_clean_boundaries()
@@ -73,9 +70,7 @@ class ArtifactWorkflow:
         self.templates = ArtifactTemplates()
         self.validator = ArtifactValidator(self.artifacts_root)
 
-    def create_artifact(
-        self, artifact_type: str, name: str, title: str, **kwargs
-    ) -> str:
+    def create_artifact(self, artifact_type: str, name: str, title: str, **kwargs) -> str:
         """Create a new artifact following project standards.
 
         Note: Implementation plans use Blueprint Protocol Template (PROTO-GOV-003).
@@ -85,9 +80,7 @@ class ArtifactWorkflow:
 
         try:
             # Create the artifact
-            file_path: str = create_artifact(
-                artifact_type, name, title, str(self.artifacts_root), **kwargs
-            )
+            file_path: str = create_artifact(artifact_type, name, title, str(self.artifacts_root), **kwargs)
 
             print(f"✅ Created artifact: {file_path}")
 
@@ -157,11 +150,7 @@ class ArtifactWorkflow:
             result = subprocess.run(
                 [
                     sys.executable,
-                    str(
-                        Path(__file__).parent.parent
-                        / "documentation"
-                        / "update_artifact_indexes.py"
-                    ),
+                    str(Path(__file__).parent.parent / "documentation" / "update_artifact_indexes.py"),
                     "--all",
                 ],
                 capture_output=True,
@@ -249,9 +238,7 @@ class ArtifactWorkflow:
                     bundle_files = validate_bundle_files(bundle_def)
 
                     # Check if artifact matches any bundle file pattern
-                    artifact_relative = artifact_path_obj.relative_to(
-                        self.artifacts_root.parent.parent
-                    )
+                    artifact_relative = artifact_path_obj.relative_to(self.artifacts_root.parent.parent)
                     if str(artifact_relative) in bundle_files:
                         # Artifact is already in a bundle - all good
                         return
@@ -353,16 +340,12 @@ def main():
     create_parser.add_argument("--title", required=True, help="Artifact title")
     create_parser.add_argument("--description", help="Artifact description")
     create_parser.add_argument("--tags", help="Comma-separated tags")
-    create_parser.add_argument(
-        "--interactive", action="store_true", help="Interactive mode"
-    )
+    create_parser.add_argument("--interactive", action="store_true", help="Interactive mode")
 
     # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate artifacts")
     validate_parser.add_argument("--file", help="Validate specific file")
-    validate_parser.add_argument(
-        "--all", action="store_true", help="Validate all artifacts"
-    )
+    validate_parser.add_argument("--all", action="store_true", help="Validate all artifacts")
 
     # Update indexes command
     subparsers.add_parser("update-indexes", help="Update artifact indexes")
@@ -374,9 +357,7 @@ def main():
     subparsers.add_parser("list-templates", help="List available templates")
 
     # Template info command
-    template_info_parser = subparsers.add_parser(
-        "template-info", help="Show template information"
-    )
+    template_info_parser = subparsers.add_parser("template-info", help="Show template information")
     template_info_parser.add_argument("--type", required=True, help="Template type")
 
     args = parser.parse_args()
@@ -399,9 +380,7 @@ def main():
                 if args.tags:
                     kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
 
-                file_path = workflow.create_artifact(
-                    args.type, args.name, args.title, **kwargs
-                )
+                file_path = workflow.create_artifact(args.type, args.name, args.title, **kwargs)
                 return 0 if file_path else 1
 
         elif args.command == "validate":

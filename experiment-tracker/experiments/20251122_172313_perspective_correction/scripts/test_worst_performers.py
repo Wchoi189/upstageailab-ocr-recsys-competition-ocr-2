@@ -81,13 +81,15 @@ def extract_worst_performers(results_path: Path, max_count: int = 50) -> list[di
             elif doctr_pre.get("reason"):
                 failure_reason = doctr_pre["reason"]
 
-            failures.append({
-                "input_path": result["input_path"],
-                "worst_metric": worst_metric or "unknown",
-                "metric_value": metric_value,
-                "failure_reason": failure_reason,
-                "result": result,
-            })
+            failures.append(
+                {
+                    "input_path": result["input_path"],
+                    "worst_metric": worst_metric or "unknown",
+                    "metric_value": metric_value,
+                    "failure_reason": failure_reason,
+                    "result": result,
+                }
+            )
 
     # Sort by worst metric value (descending - highest area loss first)
     failures.sort(key=lambda x: x["metric_value"], reverse=True)
@@ -114,11 +116,11 @@ def main():
         tracker_root = script_path.parent.parent.parent.parent
         sys.path.insert(0, str(tracker_root / "src"))
         from experiment_tracker.utils.path_utils import setup_script_paths
+
         TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
     except ImportError:
         # Fallback if path_utils not available
         TRACKER_ROOT = script_path.parent.parent.parent.parent
-        EXPERIMENT_ID = None
         EXPERIMENT_PATHS = None
 
     # Setup OCR project paths
@@ -126,6 +128,7 @@ def main():
     sys.path.insert(0, str(workspace_root))
     try:
         from ocr.utils.path_utils import get_path_resolver
+
         OCR_RESOLVER = get_path_resolver()
         workspace_root = OCR_RESOLVER.config.project_root
     except ImportError:
@@ -142,9 +145,7 @@ def main():
         default_input_dir = workspace_root / "data" / "datasets" / "images" / "train"
         default_output_dir = workspace_root / "outputs" / "worst_performers_test"
 
-    parser = argparse.ArgumentParser(
-        description="Extract worst performers and test rembg mask-based approach"
-    )
+    parser = argparse.ArgumentParser(description="Extract worst performers and test rembg mask-based approach")
     parser.add_argument(
         "--results-json",
         type=Path,
@@ -186,9 +187,9 @@ def main():
     logger.info(f"Extracting worst performers from: {args.results_json}")
     worst_performers = extract_worst_performers(args.results_json, args.max_count)
 
-    logger.info(f"\n{'='*80}")
+    logger.info(f"\n{'=' * 80}")
     logger.info(f"WORST {len(worst_performers)} PERFORMING IMAGES")
-    logger.info(f"{'='*80}\n")
+    logger.info(f"{'=' * 80}\n")
 
     # Display list
     for i, failure in enumerate(worst_performers, 1):
@@ -203,26 +204,30 @@ def main():
     args.output_dir.mkdir(parents=True, exist_ok=True)
     list_output = args.output_dir / "worst_performers_list.json"
     with open(list_output, "w") as f:
-        json.dump([
-            {
-                "rank": i + 1,
-                "input_path": w["input_path"],
-                "image_name": Path(w["input_path"]).name,
-                "worst_metric": w["worst_metric"],
-                "metric_value": w["metric_value"],
-                "failure_reason": w["failure_reason"],
-            }
-            for i, w in enumerate(worst_performers)
-        ], f, indent=2)
+        json.dump(
+            [
+                {
+                    "rank": i + 1,
+                    "input_path": w["input_path"],
+                    "image_name": Path(w["input_path"]).name,
+                    "worst_metric": w["worst_metric"],
+                    "metric_value": w["metric_value"],
+                    "failure_reason": w["failure_reason"],
+                }
+                for i, w in enumerate(worst_performers)
+            ],
+            f,
+            indent=2,
+        )
     logger.info(f"\nList saved to: {list_output}")
 
     if args.list_only:
         return 0
 
     # Run tests
-    logger.info(f"\n{'='*80}")
+    logger.info(f"\n{'=' * 80}")
     logger.info("TESTING REMBG MASK-BASED APPROACH")
-    logger.info(f"{'='*80}\n")
+    logger.info(f"{'=' * 80}\n")
 
     # Initialize remover
     remover = OptimizedBackgroundRemover(
@@ -272,19 +277,21 @@ def main():
         except Exception as e:
             failed += 1
             logger.error(f"  ✗ Error: {e}", exc_info=True)
-            test_results.append({
-                "input_path": str(image_path),
-                "success": False,
-                "error": str(e),
-            })
+            test_results.append(
+                {
+                    "input_path": str(image_path),
+                    "success": False,
+                    "error": str(e),
+                }
+            )
 
     # Summary
-    logger.info(f"\n{'='*80}")
+    logger.info(f"\n{'=' * 80}")
     logger.info("RESULTS SUMMARY")
-    logger.info(f"{'='*80}")
+    logger.info(f"{'=' * 80}")
     logger.info(f"Total tested: {len(test_results)}")
-    logger.info(f"Successful: {successful} ({100*successful/len(test_results):.1f}%)")
-    logger.info(f"Failed: {failed} ({100*failed/len(test_results):.1f}%)")
+    logger.info(f"Successful: {successful} ({100 * successful / len(test_results):.1f}%)")
+    logger.info(f"Failed: {failed} ({100 * failed / len(test_results):.1f}%)")
 
     # Save results
     results_output = args.output_dir / "test_results.json"
@@ -297,4 +304,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

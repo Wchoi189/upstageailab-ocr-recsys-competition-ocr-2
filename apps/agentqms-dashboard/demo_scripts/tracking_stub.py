@@ -1,11 +1,8 @@
 #!/usr/bin/env python3
-import sys
 import json
+import sys
 
-status = {
-    "plans": {"active": 1, "completed": 4},
-    "experiments": {"running": 0, "completed": 3}
-}
+status = {"plans": {"active": 1, "completed": 4}, "experiments": {"running": 0, "completed": 3}}
 
 print("=" * 60)
 print("TRACKING DATABASE STATUS")

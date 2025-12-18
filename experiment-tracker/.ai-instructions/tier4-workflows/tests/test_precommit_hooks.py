@@ -21,11 +21,12 @@ from pathlib import Path
 
 class Color:
     """ANSI color codes."""
-    GREEN = '\033[92m'
-    RED = '\033[91m'
-    YELLOW = '\033[93m'
-    BLUE = '\033[94m'
-    END = '\033[0m'
+
+    GREEN = "\033[92m"
+    RED = "\033[91m"
+    YELLOW = "\033[93m"
+    BLUE = "\033[94m"
+    END = "\033[0m"
 
 
 class PreCommitHookTester:
@@ -60,7 +61,7 @@ class PreCommitHookTester:
         with tempfile.TemporaryDirectory() as tmpdir:
             tmpdir_path = Path(tmpdir)
             test_file = tmpdir_path / "TEST_FILE.md"
-            test_file.write_text("# Test", encoding='utf-8')
+            test_file.write_text("# Test", encoding="utf-8")
 
             # Stage file (simulate git add)
             os.chdir(tmpdir_path)
@@ -90,7 +91,7 @@ class PreCommitHookTester:
             exp_dir.mkdir(parents=True)
 
             test_file = exp_dir / "20251217_1234_assessment_test-file.md"
-            test_file.write_text("# Test", encoding='utf-8')
+            test_file.write_text("# Test", encoding="utf-8")
 
             # Stage file
             os.chdir(tmpdir_path)
@@ -119,7 +120,7 @@ class PreCommitHookTester:
             exp_dir.mkdir(parents=True)
 
             test_file = exp_dir / "20251217_1234_assessment_test.md"
-            test_file.write_text("# Test", encoding='utf-8')
+            test_file.write_text("# Test", encoding="utf-8")
 
             # Stage file
             os.chdir(tmpdir_path)
@@ -150,7 +151,7 @@ class PreCommitHookTester:
             (exp_dir / ".metadata" / "assessments").mkdir()
 
             test_file = exp_dir / ".metadata" / "assessments" / "20251217_1234_assessment_test.md"
-            test_file.write_text("# Test", encoding='utf-8')
+            test_file.write_text("# Test", encoding="utf-8")
 
             # Stage file
             os.chdir(tmpdir_path)
@@ -180,7 +181,7 @@ class PreCommitHookTester:
             metadata_dir.mkdir(parents=True)
 
             test_file = metadata_dir / "20251217_1234_assessment_test.md"
-            test_file.write_text("# Test\n\nNo frontmatter here.", encoding='utf-8')
+            test_file.write_text("# Test\n\nNo frontmatter here.", encoding="utf-8")
 
             # Stage file
             os.chdir(tmpdir_path)
@@ -231,7 +232,7 @@ evidence_count: 0
 
 Content here.
 """
-            test_file.write_text(content, encoding='utf-8')
+            test_file.write_text(content, encoding="utf-8")
 
             # Stage file
             os.chdir(tmpdir_path)
@@ -287,7 +288,7 @@ This artifact should pass all validations.
 
 Evidence section.
 """
-            test_file.write_text(content, encoding='utf-8')
+            test_file.write_text(content, encoding="utf-8")
 
             # Stage file
             os.chdir(tmpdir_path)
@@ -325,9 +326,9 @@ Evidence section.
 
     def run_all_tests(self):
         """Run complete test suite."""
-        print(f"\n{Color.BLUE}{'='*60}{Color.END}")
+        print(f"\n{Color.BLUE}{'=' * 60}{Color.END}")
         print(f"{Color.BLUE}EDS v1.0 Pre-Commit Hook Integration Tests{Color.END}")
-        print(f"{Color.BLUE}{'='*60}{Color.END}\n")
+        print(f"{Color.BLUE}{'=' * 60}{Color.END}\n")
 
         tests = [
             self.test_naming_validation_blocks_all_caps,
@@ -342,10 +343,10 @@ Evidence section.
         for test in tests:
             test()
 
-        print(f"\n{Color.BLUE}{'='*60}{Color.END}")
+        print(f"\n{Color.BLUE}{'=' * 60}{Color.END}")
         print(f"{Color.GREEN}✅ Passed: {self.tests_passed}{Color.END}")
         print(f"{Color.RED}❌ Failed: {self.tests_failed}{Color.END}")
-        print(f"{Color.BLUE}{'='*60}{Color.END}\n")
+        print(f"{Color.BLUE}{'=' * 60}{Color.END}\n")
 
         return self.tests_failed == 0
 

@@ -42,10 +42,7 @@ def load_template(template_name: str) -> str:
 
     if not template_path.exists():
         available = [f.name for f in templates_dir.glob("*_template.md")]
-        raise FileNotFoundError(
-            f"Template not found: {template_name}\n"
-            f"Available templates: {', '.join(available)}"
-        )
+        raise FileNotFoundError(f"Template not found: {template_name}\nAvailable templates: {', '.join(available)}")
 
     return template_path.read_text(encoding="utf-8")
 
@@ -64,7 +61,7 @@ def replace_placeholders(content: str, values: dict[str, str]) -> str:
     result = content
 
     # Find all placeholders in the format {{PLACEHOLDER_NAME}}
-    placeholders = re.findall(r'\{\{([A-Z_]+)\}\}', content)
+    placeholders = re.findall(r"\{\{([A-Z_]+)\}\}", content)
 
     for placeholder in placeholders:
         if placeholder not in values:
@@ -78,12 +75,7 @@ def replace_placeholders(content: str, values: dict[str, str]) -> str:
     return result
 
 
-def generate_document(
-    template_name: str,
-    values: dict[str, str],
-    output_path: Path,
-    overwrite: bool = False
-) -> Path:
+def generate_document(template_name: str, values: dict[str, str], output_path: Path, overwrite: bool = False) -> Path:
     """
     Generate an audit document from a template.
 
@@ -97,10 +89,7 @@ def generate_document(
         Path to generated document
     """
     if output_path.exists() and not overwrite:
-        raise FileExistsError(
-            f"Output file already exists: {output_path}\n"
-            f"Use --overwrite to replace it"
-        )
+        raise FileExistsError(f"Output file already exists: {output_path}\nUse --overwrite to replace it")
 
     # Load template
     template_content = load_template(template_name)
@@ -119,12 +108,7 @@ def generate_document(
 
 
 def init_audit(
-    framework_name: str,
-    audit_date: str,
-    audit_scope: str,
-    output_dir: Path,
-    status: str = "Draft",
-    overwrite: bool = False
+    framework_name: str, audit_date: str, audit_scope: str, output_dir: Path, status: str = "Draft", overwrite: bool = False
 ) -> None:
     """
     Initialize a complete audit by generating all documents.
@@ -198,79 +182,34 @@ Examples:
       --framework-name "My Framework" \\
       --audit-date "2025-11-09" \\
       --output "docs/audit/00_audit_summary.md"
-        """
+        """,
     )
 
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
 
     # Init command
     init_parser = subparsers.add_parser("init", help="Initialize complete audit")
-    init_parser.add_argument(
-        "--framework-name",
-        required=True,
-        help="Name of the framework being audited"
-    )
-    init_parser.add_argument(
-        "--audit-date",
-        required=True,
-        help="Date of audit (YYYY-MM-DD)"
-    )
-    init_parser.add_argument(
-        "--audit-scope",
-        required=True,
-        help="Scope description of the audit"
-    )
+    init_parser.add_argument("--framework-name", required=True, help="Name of the framework being audited")
+    init_parser.add_argument("--audit-date", required=True, help="Date of audit (YYYY-MM-DD)")
+    init_parser.add_argument("--audit-scope", required=True, help="Scope description of the audit")
     init_parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("docs/audit"),
-        help="Directory where audit documents should be created (default: docs/audit)"
+        help="Directory where audit documents should be created (default: docs/audit)",
     )
-    init_parser.add_argument(
-        "--status",
-        default="Draft",
-        help="Initial status for documents (default: Draft)"
-    )
-    init_parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Overwrite existing files"
-    )
+    init_parser.add_argument("--status", default="Draft", help="Initial status for documents (default: Draft)")
+    init_parser.add_argument("--overwrite", action="store_true", help="Overwrite existing files")
 
     # Generate command
     generate_parser = subparsers.add_parser("generate", help="Generate single document")
-    generate_parser.add_argument(
-        "--template",
-        required=True,
-        help="Template file name (e.g., 00_audit_summary_template.md)"
-    )
-    generate_parser.add_argument(
-        "--output",
-        type=Path,
-        required=True,
-        help="Output file path"
-    )
-    generate_parser.add_argument(
-        "--framework-name",
-        help="Framework name (for {{FRAMEWORK_NAME}} placeholder)"
-    )
-    generate_parser.add_argument(
-        "--audit-date",
-        help="Audit date (for {{AUDIT_DATE}} placeholder)"
-    )
-    generate_parser.add_argument(
-        "--audit-scope",
-        help="Audit scope (for {{AUDIT_SCOPE}} placeholder)"
-    )
-    generate_parser.add_argument(
-        "--status",
-        help="Status (for {{STATUS}} placeholder)"
-    )
-    generate_parser.add_argument(
-        "--overwrite",
-        action="store_true",
-        help="Overwrite existing file"
-    )
+    generate_parser.add_argument("--template", required=True, help="Template file name (e.g., 00_audit_summary_template.md)")
+    generate_parser.add_argument("--output", type=Path, required=True, help="Output file path")
+    generate_parser.add_argument("--framework-name", help="Framework name (for {{FRAMEWORK_NAME}} placeholder)")
+    generate_parser.add_argument("--audit-date", help="Audit date (for {{AUDIT_DATE}} placeholder)")
+    generate_parser.add_argument("--audit-scope", help="Audit scope (for {{AUDIT_SCOPE}} placeholder)")
+    generate_parser.add_argument("--status", help="Status (for {{STATUS}} placeholder)")
+    generate_parser.add_argument("--overwrite", action="store_true", help="Overwrite existing file")
 
     args = parser.parse_args()
 
@@ -286,7 +225,7 @@ Examples:
                 audit_scope=args.audit_scope,
                 output_dir=args.output_dir,
                 status=args.status,
-                overwrite=args.overwrite
+                overwrite=args.overwrite,
             )
         elif args.command == "generate":
             values = {}
@@ -299,12 +238,7 @@ Examples:
             if args.status:
                 values["STATUS"] = args.status
 
-            generate_document(
-                template_name=args.template,
-                values=values,
-                output_path=args.output,
-                overwrite=args.overwrite
-            )
+            generate_document(template_name=args.template, values=values, output_path=args.output, overwrite=args.overwrite)
     except (FileNotFoundError, ValueError, FileExistsError, RuntimeError) as e:
         print(f"❌ Error: {e}")
         return 1
@@ -314,4 +248,3 @@ Examples:
 
 if __name__ == "__main__":
     exit(main())
-

@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
-import sys
-import cv2
-import numpy as np
-import logging
-from pathlib import Path
 import datetime
-import glob
-from typing import Optional
+import logging
+import sys
+from pathlib import Path
+
+import cv2
 
 # Setup experiment paths - auto-detect tracker root and experiment context
 script_path = Path(__file__).resolve()
 tracker_root = script_path.parent.parent.parent.parent.parent / "src"
 sys.path.insert(0, str(tracker_root))
-from experiment_tracker.utils.path_utils import setup_script_paths, ExperimentPaths
+from experiment_tracker.utils.path_utils import setup_script_paths
 
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
@@ -31,6 +29,7 @@ from mask_only_edge_detector import fit_mask_rectangle, visualize_mask_fit
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+
 def evaluate_worst_performers(
     worst_case_dir: str,
     output_base_dir: str,
@@ -38,7 +37,7 @@ def evaluate_worst_performers(
     use_regression: bool = False,
     regression_epsilon_px: float = 10.0,
     use_dominant_extension: bool = True,
-    id_list_file: Optional[str] = None,
+    id_list_file: str | None = None,
 ) -> Path:
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     output_dir = Path(output_base_dir) / f"{timestamp}_dominant_extension"
@@ -55,11 +54,7 @@ def evaluate_worst_performers(
 
     selected_files = mask_files[:25]
     if id_list_file:
-        requested_ids = [
-            line.strip()
-            for line in Path(id_list_file).read_text().splitlines()
-            if line.strip()
-        ]
+        requested_ids = [line.strip() for line in Path(id_list_file).read_text().splitlines() if line.strip()]
         normalized_ids = {rid.replace(".jpg", "") for rid in requested_ids}
         selected = []
         for mask_file in mask_files:
@@ -88,10 +83,7 @@ def evaluate_worst_performers(
 
         # Run fit with new parameters
         result = fit_mask_rectangle(
-            mask,
-            use_regression=use_regression,
-            regression_epsilon_px=regression_epsilon_px,
-            use_dominant_extension=use_dominant_extension
+            mask, use_regression=use_regression, regression_epsilon_px=regression_epsilon_px, use_dominant_extension=use_dominant_extension
         )
 
         # Visualize
@@ -113,17 +105,19 @@ def evaluate_worst_performers(
         cv2.imwrite(str(output_path), vis)
         logger.info(f"Processed {img_id}: {result.reason or 'Success'} (Eps: {result.used_epsilon})")
 
-        results.append({
-            "id": img_id,
-            "reason": result.reason,
-            "decision": result.line_quality.decision if result.line_quality else "N/A",
-            "used_epsilon": result.used_epsilon
-        })
+        results.append(
+            {
+                "id": img_id,
+                "reason": result.reason,
+                "decision": result.line_quality.decision if result.line_quality else "N/A",
+                "used_epsilon": result.used_epsilon,
+            }
+        )
 
     # Summary
     total = max(len(results), 1)
     success_count = sum(1 for r in results if r["reason"] is None)
-    logger.info(f"Success rate: {success_count}/{len(results)} ({success_count/total*100:.1f}%)")
+    logger.info(f"Success rate: {success_count}/{len(results)} ({success_count / total * 100:.1f}%)")
 
     # Write summary to file
     with open(output_dir / "summary.txt", "w") as f:
@@ -135,11 +129,14 @@ def evaluate_worst_performers(
 
     return output_dir
 
+
 if __name__ == "__main__":
     worst_case_dir = str(OCR_RESOLVER.config.output_dir / "improved_edge_approach" / "worst_force_improved")
     output_base_dir = str(EXPERIMENT_PATHS.get_artifacts_path() if EXPERIMENT_PATHS else Path.cwd() / "artifacts")
     dataset_root = str(OCR_RESOLVER.config.images_dir / "train")
-    id_list_file = str(EXPERIMENT_PATHS.base_path / "worst_performers_top25.txt" if EXPERIMENT_PATHS else Path.cwd() / "worst_performers_top25.txt")
+    id_list_file = str(
+        EXPERIMENT_PATHS.base_path / "worst_performers_top25.txt" if EXPERIMENT_PATHS else Path.cwd() / "worst_performers_top25.txt"
+    )
 
     evaluate_worst_performers(
         worst_case_dir,

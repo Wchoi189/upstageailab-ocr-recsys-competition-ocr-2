@@ -1,12 +1,14 @@
-import requests
 import json
-import shutil
 import os
+import shutil
+
+import requests
 
 API_URL = "http://localhost:8000/ocr/predict"
 IMAGE_PATH = "apps/ocr-inference-console/public/demo-hf.jpg"
 DEST_IMAGE = "apps/ocr-inference-console/public/demo.jpg"
 DEST_JSON = "apps/ocr-inference-console/public/demo.json"
+
 
 def update_demo():
     print(f"Uploading {IMAGE_PATH} to {API_URL}...")
@@ -26,8 +28,8 @@ def update_demo():
     for idx, pred in enumerate(predictions):
         demo_data[str(idx)] = {
             "points": pred["points"],
-            "transcription": "", # No text from detection model
-            "confidence": pred["confidence"]
+            "transcription": "",  # No text from detection model
+            "confidence": pred["confidence"],
         }
 
     # Save JSON
@@ -38,6 +40,7 @@ def update_demo():
     # Copy Image
     shutil.copy2(IMAGE_PATH, DEST_IMAGE)
     print(f"Copied image to {DEST_IMAGE}")
+
 
 if __name__ == "__main__":
     if not os.path.exists(IMAGE_PATH):

@@ -6,13 +6,13 @@ from pathlib import Path
 import numpy as np
 import pytest
 from PIL import Image
+from ui.utils.inference.engine import InferenceEngine
+from ui.visualization.helpers import parse_polygon_string
 
 from ocr.datasets import ValidatedOCRDataset
 from ocr.datasets.base import EXIF_ORIENTATION
 from ocr.datasets.schemas import DatasetConfig
 from ocr.utils.orientation import normalize_pil_image, remap_polygons
-from ui.utils.inference.engine import InferenceEngine
-from ui.visualization.helpers import parse_polygon_string
 
 RAW_POLYGON_POINTS = [
     [10, 20],

@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import json
 from pathlib import Path
-from typing import Any, Dict
+from typing import Any
 
 from AgentQMS.toolkit.utils.runtime import ensure_project_root_on_sys_path
 
@@ -24,7 +24,7 @@ class StateManager:
 
     def __init__(self) -> None:
         STATE_DIR.mkdir(parents=True, exist_ok=True)
-        self._state: Dict[str, Any] = {}
+        self._state: dict[str, Any] = {}
         self._load()
 
     # ------------------------------------------------------------------

@@ -57,9 +57,7 @@ def is_internal(fm: dict) -> bool:
     return "internal" in tags or "Internal" in tags
 
 
-def process_file(
-    md_path: Path, current_version: str, dry_run: bool
-) -> tuple[bool, str, dict]:
+def process_file(md_path: Path, current_version: str, dry_run: bool) -> tuple[bool, str, dict]:
     text = md_path.read_text(encoding="utf-8")
     fm, body = parse_frontmatter(text)
     if not fm:
@@ -148,9 +146,7 @@ def get_docs_health(current_version: str) -> dict:
 
 
 def main() -> int:
-    p = argparse.ArgumentParser(
-        description="Deprecate docs based on project_version.yaml and frontmatter policy"
-    )
+    p = argparse.ArgumentParser(description="Deprecate docs based on project_version.yaml and frontmatter policy")
     p.add_argument("--dry-run", action="store_true")
     p.add_argument("--health", action="store_true", help="Output health status as JSON")
     args = p.parse_args()

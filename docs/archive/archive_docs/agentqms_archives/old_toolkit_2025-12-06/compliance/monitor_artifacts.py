@@ -18,4 +18,5 @@ __all__ = ["ArtifactMonitor", "main"]
 
 if __name__ == "__main__":
     import sys
+
     sys.exit(main())

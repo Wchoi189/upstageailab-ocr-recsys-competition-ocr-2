@@ -18,8 +18,8 @@ import numpy as np
 from PIL import Image
 
 try:
-    from rembg import new_session, remove
     import onnxruntime as ort
+    from rembg import new_session, remove
 except ImportError as e:
     print(f"Error importing rembg: {e}")
     sys.exit(1)
@@ -150,4 +150,3 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-

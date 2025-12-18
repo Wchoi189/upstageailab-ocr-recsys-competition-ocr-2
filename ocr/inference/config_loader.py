@@ -104,6 +104,7 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
         config_name = path.stem
         try:
             from ocr.utils.config_utils import load_config as load_hydra_config
+
             cfg = load_hydra_config(config_name=config_name)
             return cfg
         except Exception as e:

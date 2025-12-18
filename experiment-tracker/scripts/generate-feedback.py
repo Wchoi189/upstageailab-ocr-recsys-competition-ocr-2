@@ -72,9 +72,7 @@ def generate_feedback_log(exp_dir: Path, agent_id: str = "github_copilot"):
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Generate experiment feedback log from template"
-    )
+    parser = argparse.ArgumentParser(description="Generate experiment feedback log from template")
     parser.add_argument(
         "--experiment-id",
         help="Experiment ID (default: current experiment from .current symlink)",

@@ -40,6 +40,7 @@ COPLOT_CONTEXT_DIR = PROJECT_ROOT / ".copilot" / "context"
 @dataclass
 class ToolMetadata:
     """Metadata for a single tool."""
+
     name: str
     category: str
     description: str
@@ -54,6 +55,7 @@ class ToolMetadata:
 @dataclass
 class WorkflowMetadata:
     """Metadata for a Makefile workflow."""
+
     name: str
     description: str
     usage: str | None = None
@@ -177,15 +179,17 @@ def gather_tools() -> list[ToolMetadata]:
 
         rel_path = str(f.relative_to(PROJECT_ROOT))
 
-        tools.append(ToolMetadata(
-            name=name,
-            category=cat,
-            description=doc,
-            path=rel_path,
-            is_cli=is_cli,
-            usage_hint=usage_hint,
-            tags=tags,
-        ))
+        tools.append(
+            ToolMetadata(
+                name=name,
+                category=cat,
+                description=doc,
+                path=rel_path,
+                is_cli=is_cli,
+                usage_hint=usage_hint,
+                tags=tags,
+            )
+        )
 
     tools.sort(key=lambda t: (t.category, t.name))
     return tools
@@ -234,12 +238,14 @@ def parse_makefile_targets() -> list[WorkflowMetadata]:
                         elif target_name.startswith("audit-"):
                             category = "audit"
 
-                        workflows.append(WorkflowMetadata(
-                            name=target_name,
-                            description=desc,
-                            usage=usage,
-                            category=category,
-                        ))
+                        workflows.append(
+                            WorkflowMetadata(
+                                name=target_name,
+                                description=desc,
+                                usage=usage,
+                                category=category,
+                            )
+                        )
     except Exception as e:
         print(f"Warning: Could not parse Makefile: {e}", file=sys.stderr)
 
@@ -271,10 +277,7 @@ def generate_json_registry(tools: list[ToolMetadata], workflows: list[WorkflowMe
         "tools": [asdict(t) for t in tools],
         "workflows": [asdict(w) for w in workflows],
         "capabilities": capabilities,
-        "categories": {
-            cat: [t.name for t in tools if t.category == cat]
-            for cat in CATEGORIES
-        },
+        "categories": {cat: [t.name for t in tools if t.category == cat] for cat in CATEGORIES},
     }
 
     return registry
@@ -363,4 +366,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     sys.exit(main())
-

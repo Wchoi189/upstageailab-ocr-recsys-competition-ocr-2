@@ -31,10 +31,11 @@ logger = logging.getLogger(__name__)
 # Import rembg
 try:
     import sys
+
     script_dir = Path(__file__).parent
     if str(script_dir) not in sys.path:
         sys.path.insert(0, str(script_dir))
-    from optimized_rembg import OptimizedBackgroundRemover, REMBG_AVAILABLE, GPU_AVAILABLE
+    from optimized_rembg import GPU_AVAILABLE, REMBG_AVAILABLE, OptimizedBackgroundRemover
 except ImportError as e:
     logger.error(f"Failed to import optimized_rembg: {e}")
     REMBG_AVAILABLE = False
@@ -47,6 +48,7 @@ try:
     tracker_root = script_path.parent.parent.parent.parent
     sys.path.insert(0, str(tracker_root / "src"))
     from experiment_tracker.utils.path_utils import setup_script_paths
+
     TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
 except ImportError:
     # Fallback if path_utils not available
@@ -59,6 +61,7 @@ workspace_root = tracker_root.parent
 sys.path.insert(0, str(workspace_root))
 try:
     from ocr.utils.path_utils import get_path_resolver
+
     OCR_RESOLVER = get_path_resolver()
 except ImportError:
     OCR_RESOLVER = None
@@ -67,6 +70,7 @@ except ImportError:
 # Import perspective correction
 try:
     from ocr.datasets.preprocessing.perspective import PerspectiveCorrector
+
     PERSPECTIVE_AVAILABLE = True
 except ImportError:
     PERSPECTIVE_AVAILABLE = False
@@ -105,6 +109,7 @@ def extract_rembg_mask(image: np.ndarray, remover: OptimizedBackgroundRemover) -
 
     # Remove background - this returns RGBA PIL Image
     from rembg import remove
+
     output = remove(
         pil_image_resized,
         session=remover.session,
@@ -201,21 +206,23 @@ def fit_quadrilateral_to_points(points: np.ndarray, image_shape: tuple[int, int]
         leftmost_idx = np.argmin(hull_points[:, 0])  # Smallest x
         rightmost_idx = np.argmax(hull_points[:, 0])  # Largest x
 
-        topmost = hull_points[topmost_idx]
-        bottommost = hull_points[bottommost_idx]
-        leftmost = hull_points[leftmost_idx]
-        rightmost = hull_points[rightmost_idx]
+        hull_points[topmost_idx]
+        hull_points[bottommost_idx]
+        hull_points[leftmost_idx]
+        hull_points[rightmost_idx]
 
         # If we have 4 or fewer unique extreme points, use them directly
         extreme_indices = {topmost_idx, bottommost_idx, leftmost_idx, rightmost_idx}
         if len(extreme_indices) == 4:
             # We have 4 distinct extreme points
-            extreme_points = np.array([
-                hull_points[topmost_idx],
-                hull_points[rightmost_idx],
-                hull_points[bottommost_idx],
-                hull_points[leftmost_idx],
-            ])
+            extreme_points = np.array(
+                [
+                    hull_points[topmost_idx],
+                    hull_points[rightmost_idx],
+                    hull_points[bottommost_idx],
+                    hull_points[leftmost_idx],
+                ]
+            )
 
             # Sort to ensure proper order: top-left, top-right, bottom-right, bottom-left
             corners = sort_corners(extreme_points)
@@ -433,8 +440,7 @@ def test_rembg_based_correction(
         for i, corner in enumerate(corners):
             pt = tuple(corner.astype(int))
             cv2.circle(vis_image, pt, 10, (0, 255, 0), -1)
-            cv2.putText(vis_image, str(i), (pt[0] + 15, pt[1]),
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
+            cv2.putText(vis_image, str(i), (pt[0] + 15, pt[1]), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (0, 255, 0), 2)
 
         # Draw quadrilateral
         pts = corners.astype(int).reshape((-1, 1, 2))
@@ -490,13 +496,13 @@ def test_rembg_based_correction(
         total_w = image_no_bg.shape[1] + corrected_image.shape[1] + 40
         comparison = np.zeros((max_h, total_w, 3), dtype=np.uint8)
 
-        comparison[:image_no_bg.shape[0], :image_no_bg.shape[1]] = image_no_bg
-        comparison[:corrected_image.shape[0],
-                   image_no_bg.shape[1] + 20:image_no_bg.shape[1] + 20 + corrected_image.shape[1]] = corrected_image
+        comparison[: image_no_bg.shape[0], : image_no_bg.shape[1]] = image_no_bg
+        comparison[: corrected_image.shape[0], image_no_bg.shape[1] + 20 : image_no_bg.shape[1] + 20 + corrected_image.shape[1]] = (
+            corrected_image
+        )
 
         cv2.putText(comparison, "rembg", (10, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
-        cv2.putText(comparison, "corrected", (image_no_bg.shape[1] + 30, 30),
-                   cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
+        cv2.putText(comparison, "corrected", (image_no_bg.shape[1] + 30, 30), cv2.FONT_HERSHEY_SIMPLEX, 0.7, (255, 255, 255), 2)
 
         comparison_output = output_dir / f"{image_path.stem}_comparison.jpg"
         cv2.imwrite(str(comparison_output), comparison)
@@ -509,9 +515,7 @@ def test_rembg_based_correction(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Analyze failures and test rembg mask-based approach"
-    )
+    parser = argparse.ArgumentParser(description="Analyze failures and test rembg mask-based approach")
     parser.add_argument(
         "--results-json",
         type=Path,
@@ -602,10 +606,11 @@ def main():
             failures_dir = args.output_dir / "failure_cases"
             failures_dir.mkdir(exist_ok=True)
 
-            for i, failure in enumerate(failures[:args.num_samples]):
+            for i, failure in enumerate(failures[: args.num_samples]):
                 input_path = Path(failure["input_path"])
                 if input_path.exists():
                     import shutil
+
                     shutil.copy(input_path, failures_dir / input_path.name)
                     logger.info(f"Copied {input_path.name} to failures directory")
 
@@ -627,7 +632,7 @@ def main():
 
             # Find failure images
             failure_paths = []
-            for failure in failures[:args.num_samples]:
+            for failure in failures[: args.num_samples]:
                 input_path = Path(failure["input_path"])
                 if input_path.exists():
                     failure_paths.append(input_path)
@@ -655,7 +660,7 @@ def main():
 
             # Summary
             successful = sum(1 for r in test_results if r.get("success"))
-            logger.info(f"\nResults: {successful}/{len(test_results)} successful ({100*successful/len(test_results):.1f}%)")
+            logger.info(f"\nResults: {successful}/{len(test_results)} successful ({100 * successful / len(test_results):.1f}%)")
 
             # Save test results
             results_output = args.output_dir / "test_results.json"
@@ -671,4 +676,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

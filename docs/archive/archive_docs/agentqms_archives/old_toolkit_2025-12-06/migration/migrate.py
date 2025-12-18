@@ -3,13 +3,11 @@
 
 from __future__ import annotations
 
-import sys
-from pathlib import Path
-
 import argparse
 import json
+import sys
 from dataclasses import dataclass
-from typing import List, Optional
+from pathlib import Path
 
 from AgentQMS.toolkit.utils.config import load_config
 from AgentQMS.toolkit.utils.migration import log_migration_event
@@ -89,9 +87,9 @@ paths:
 class Action:
     kind: str
     description: str
-    source: Optional[Path] = None
-    target: Optional[Path] = None
-    content: Optional[str] = None
+    source: Path | None = None
+    target: Path | None = None
+    content: str | None = None
 
     def to_dict(self) -> dict:
         data = {
@@ -117,32 +115,28 @@ class MigrationManager:
     # ------------------------------------------------------------------
     # Planning
     # ------------------------------------------------------------------
-    def plan_actions(self) -> List[Action]:
-        actions: List[Action] = []
+    def plan_actions(self) -> list[Action]:
+        actions: list[Action] = []
         actions.extend(self._plan_directory_renames())
         actions.extend(self._plan_config_defaults())
         actions.extend(self._plan_project_config())
         return actions
 
-    def _plan_directory_renames(self) -> List[Action]:
-        actions: List[Action] = []
+    def _plan_directory_renames(self) -> list[Action]:
+        actions: list[Action] = []
         replacements = [
             (self.framework_root / "agent", self.framework_root / "agent_interface", "Rename Agent interface directory"),
             (self.framework_root / "conventions", self.framework_root / "project_conventions", "Rename project conventions directory"),
         ]
         for source, target, description in replacements:
             if source.exists() and not target.exists():
-                actions.append(
-                    Action("rename", description, source=source, target=target)
-                )
+                actions.append(Action("rename", description, source=source, target=target))
         return actions
 
-    def _plan_config_defaults(self) -> List[Action]:
-        actions: List[Action] = []
+    def _plan_config_defaults(self) -> list[Action]:
+        actions: list[Action] = []
         if not self.config_defaults_dir.exists():
-            actions.append(
-                Action("mkdir", "Create config_defaults directory", target=self.config_defaults_dir)
-            )
+            actions.append(Action("mkdir", "Create config_defaults directory", target=self.config_defaults_dir))
 
         moves = [
             (
@@ -188,18 +182,14 @@ class MigrationManager:
 
         paths_yaml = self.config_defaults_dir / "paths.yaml"
         if not paths_yaml.exists():
-            actions.append(
-                Action("write", "Create config_defaults/paths.yaml", target=paths_yaml, content=DEFAULT_PROJECT_PATHS)
-            )
+            actions.append(Action("write", "Create config_defaults/paths.yaml", target=paths_yaml, content=DEFAULT_PROJECT_PATHS))
 
         return actions
 
-    def _plan_project_config(self) -> List[Action]:
-        actions: List[Action] = []
+    def _plan_project_config(self) -> list[Action]:
+        actions: list[Action] = []
         if not self.project_config_dir.exists():
-            actions.append(
-                Action("mkdir", "Create root config directory", target=self.project_config_dir)
-            )
+            actions.append(Action("mkdir", "Create root config directory", target=self.project_config_dir))
 
         for sub in ("environments", "overrides"):
             directory = self.project_config_dir / sub
@@ -223,7 +213,7 @@ class MigrationManager:
     # ------------------------------------------------------------------
     # Execution helpers
     # ------------------------------------------------------------------
-    def apply(self, actions: List[Action], dry_run: bool = False) -> None:
+    def apply(self, actions: list[Action], dry_run: bool = False) -> None:
         for action in actions:
             log_migration_event(f"{'[DRY RUN] ' if dry_run else ''}{action.description}")
 
@@ -246,11 +236,7 @@ class MigrationManager:
             log_migration_event("Regenerated .agentqms/effective.yaml via ConfigLoader")
 
     def discover_state(self) -> dict:
-        legacy_dirs = [
-            str(path)
-            for path in (self.framework_root / "agent", self.framework_root / "conventions")
-            if path.exists()
-        ]
+        legacy_dirs = [str(path) for path in (self.framework_root / "agent", self.framework_root / "conventions") if path.exists()]
         state = {
             "framework_root": str(self.framework_root),
             "project_root": str(self.project_root),
@@ -326,4 +312,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

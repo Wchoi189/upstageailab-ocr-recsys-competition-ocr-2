@@ -376,7 +376,7 @@ if __name__ == "__main__":
     # Set multiprocessing start method to prevent semaphore leaks
     # This must be called before any multiprocessing/threading operations
     try:
-        multiprocessing.set_start_method('spawn', force=True)
+        multiprocessing.set_start_method("spawn", force=True)
     except RuntimeError:
         # Already set, ignore
         pass

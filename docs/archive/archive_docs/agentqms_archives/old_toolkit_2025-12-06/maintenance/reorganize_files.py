@@ -203,16 +203,9 @@ class FileReorganizer:
         # Skip INDEX.md and registry files
         if filename == "INDEX.md":
             return None
-        
+
         # Skip common registry/index files that shouldn't be moved
-        skip_patterns = [
-            "MASTER_INDEX.md",
-            "REGISTRY.md", 
-            "README.md",
-            "CHANGELOG.md",
-            "_index.md",
-            "index.md"
-        ]
+        skip_patterns = ["MASTER_INDEX.md", "REGISTRY.md", "README.md", "CHANGELOG.md", "_index.md", "index.md"]
         if any(filename.upper() == pattern.upper() for pattern in skip_patterns):
             print(f"ℹ️  Skipping registry/index file: {filename}")
             return None
@@ -233,7 +226,7 @@ class FileReorganizer:
                 if current_dir == expected_dir:
                     print(f"✅ {file_path.relative_to(self.artifacts_root)} is already in correct directory")
                     return None
-                    
+
                 return MoveOperation(
                     old_path=str(file_path),
                     new_path=str(self.artifacts_root / expected_dir / filename),
@@ -259,7 +252,7 @@ class FileReorganizer:
 
     def _determine_directory_from_content(self, file_path: Path) -> tuple[str | None, float]:
         """Determine correct directory from file content analysis
-        
+
         Returns:
             tuple: (directory_name, confidence_score)
         """
@@ -285,7 +278,7 @@ class FileReorganizer:
         # Analyze content for type patterns - lower confidence
         content_lower = content.lower()
         match_count = {}
-        
+
         # Priority weights for different types (higher = more specific)
         type_priority = {
             "audit": 1.5,  # Highest - very specific
@@ -298,7 +291,7 @@ class FileReorganizer:
             "completion_summary": 1.0,
             "template": 0.7,  # Lowest priority for generic type
         }
-        
+
         for artifact_type, patterns in self.type_patterns.items():
             matches = 0
             for pattern in patterns:
@@ -308,14 +301,14 @@ class FileReorganizer:
                 # Apply priority weighting
                 weight = type_priority.get(artifact_type, 1.0)
                 match_count[artifact_type] = matches * weight
-        
+
         if match_count:
             # Get type with highest weighted score
             best_type = max(match_count, key=match_count.get)
             directory = self._get_directory_for_type(best_type)
-            
+
             # If current directory matches a valid type and has decent matches, prefer it
-            if current_dir and current_dir in [v for v in self.directory_structure.keys()]:
+            if current_dir and current_dir in list(self.directory_structure.keys()):
                 for atype, dirs in [(k, v.get("types", [])) for k, v in self.directory_structure.items()]:
                     if current_dir in self.directory_structure and atype in match_count:
                         if match_count.get(atype, 0) >= match_count[best_type] * 0.7:
@@ -323,14 +316,14 @@ class FileReorganizer:
                             best_type = atype
                             directory = current_dir
                             break
-            
+
             # Confidence based on match strength (capped at 0.85)
             base_confidence = min(0.5 + (match_count[best_type] * 0.05), 0.85)
-            
+
             # Reduce confidence if type is "template" (too generic)
             if best_type == "template":
                 base_confidence = min(base_confidence, 0.75)
-            
+
             if directory:
                 return directory, base_confidence
 
@@ -376,9 +369,7 @@ class FileReorganizer:
             print(f"Warning: Could not create backup for {file_path}: {e}")
             return False
 
-    def execute_move_operation(
-        self, operation: MoveOperation, dry_run: bool = False
-    ) -> bool:
+    def execute_move_operation(self, operation: MoveOperation, dry_run: bool = False) -> bool:
         """Execute a move operation"""
         old_path = Path(operation.old_path)
         new_path = Path(operation.new_path)
@@ -411,9 +402,7 @@ class FileReorganizer:
             print(f"❌ Failed to move {old_path}: {e}")
             return False
 
-    def reorganize_file(
-        self, file_path: Path, dry_run: bool = False
-    ) -> MoveOperation | None:
+    def reorganize_file(self, file_path: Path, dry_run: bool = False) -> MoveOperation | None:
         """Reorganize a single file"""
         operation = self.analyze_file_placement(file_path)
 
@@ -431,30 +420,30 @@ class FileReorganizer:
 
     def validate_operations(self, operations: dict[str, MoveOperation]) -> tuple[bool, list[str]]:
         """Validate all operations before execution
-        
+
         Returns:
             tuple: (all_valid, list_of_issues)
         """
         issues = []
         target_paths = set()
-        
+
         for old_path, operation in operations.items():
             new_path = operation.new_path
-            
+
             # Check for duplicate target paths (two files trying to move to same location)
             if new_path in target_paths:
                 issues.append(f"Conflict: Multiple files trying to move to {new_path}")
             else:
                 target_paths.add(new_path)
-            
+
             # Check if target already exists
             if Path(new_path).exists():
                 issues.append(f"Target exists: {new_path}")
-            
+
             # Check if source file still exists
             if not Path(old_path).exists():
                 issues.append(f"Source missing: {old_path}")
-        
+
         return len(issues) == 0, issues
 
     def reorganize_directory(
@@ -470,7 +459,7 @@ class FileReorganizer:
                 if operation:
                     results[str(file_path)] = operation
                     files_processed += 1
-                    
+
                     # Check limit
                     if limit is not None and files_processed >= limit:
                         print(f"✋ Reached file limit ({limit}). Stopping.")
@@ -485,7 +474,7 @@ class FileReorganizer:
                     print(f"   • {issue}")
                 print("\nℹ️  No changes will be made. Use --dry-run to preview.")
                 return {}
-        
+
         return results
 
     def generate_reorganization_report(self, results: dict[str, MoveOperation]) -> str:
@@ -536,9 +525,7 @@ class FileReorganizer:
                 # Check if file is in correct directory
                 operation = self.analyze_file_placement(file_path)
                 if operation:
-                    file_issues.append(
-                        f"Should be in {Path(operation.new_path).parent.name}/"
-                    )
+                    file_issues.append(f"Should be in {Path(operation.new_path).parent.name}/")
 
                 # Check if directory exists and is valid
                 current_dir = str(file_path.parent.relative_to(self.artifacts_root))
@@ -605,9 +592,7 @@ def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Reorganize misplaced artifact files")
     parser.add_argument("--file", help="Reorganize specific file")
-    parser.add_argument(
-        "--directory", default="docs/artifacts", help="Directory to process"
-    )
+    parser.add_argument("--directory", default="docs/artifacts", help="Directory to process")
     parser.add_argument(
         "--move-to-correct-dirs",
         action="store_true",
@@ -618,12 +603,8 @@ def main():
         action="store_true",
         help="Show what would be moved without making changes",
     )
-    parser.add_argument(
-        "--validate-only", action="store_true", help="Only validate, do not move files"
-    )
-    parser.add_argument(
-        "--create-dirs", action="store_true", help="Create missing directory structure"
-    )
+    parser.add_argument("--validate-only", action="store_true", help="Only validate, do not move files")
+    parser.add_argument("--create-dirs", action="store_true", help="Create missing directory structure")
     parser.add_argument(
         "--structure-report",
         action="store_true",

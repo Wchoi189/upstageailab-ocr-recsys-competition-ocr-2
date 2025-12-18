@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
-from typing import Any, Optional
+from typing import Any
 
 import cv2
 import numpy as np
@@ -17,15 +17,15 @@ import numpy as np
 
 @dataclass
 class MaskRectangleResult:
-    corners: Optional[np.ndarray]
-    raw_corners: Optional[np.ndarray]
+    corners: np.ndarray | None
+    raw_corners: np.ndarray | None
     contour_area: float
     hull_area: float
     mask_area: float
-    contour: Optional[np.ndarray]
-    hull: Optional[np.ndarray]
-    reason: Optional[str] = None
-    line_quality: Optional["LineQualityReport"] = None
+    contour: np.ndarray | None
+    hull: np.ndarray | None
+    reason: str | None = None
+    line_quality: LineQualityReport | None = None
 
 
 @dataclass
@@ -67,8 +67,10 @@ def _order_points(points: np.ndarray) -> np.ndarray:
     """Order quadrilateral corners as TL, TR, BR, BL."""
     pts = np.asarray(points, dtype=np.float32)
     centers = np.mean(pts, axis=0)
+
     def angle(pt):
         return math.atan2(pt[1] - centers[1], pt[0] - centers[0])
+
     sorted_pts = sorted(pts, key=angle)
     # Convert to consistent order by rotating so smallest y+x first
     arr = np.array(sorted_pts, dtype=np.float32)
@@ -247,7 +249,7 @@ def _fit_quadrilateral_from_hull(
     eps_start_ratio: float = 0.008,
     eps_growth: float = 1.5,
     eps_max_ratio: float = 0.08,
-) -> tuple[Optional[np.ndarray], float]:
+) -> tuple[np.ndarray | None, float]:
     """
     Fit a quadrilateral to the convex hull using adaptive approxPolyDP.
 
@@ -264,7 +266,7 @@ def _fit_quadrilateral_from_hull(
     eps = max(peri * eps_start_ratio, 1.0)
     eps_max = max(peri * eps_max_ratio, eps)
 
-    best_candidate: Optional[np.ndarray] = None
+    best_candidate: np.ndarray | None = None
     best_eps: float = 0.0
 
     while eps <= eps_max:
@@ -326,11 +328,7 @@ def _collect_edge_support_data(
         perp = rel - np.outer(proj, dir_vec)
         dist = np.linalg.norm(perp, axis=1)
 
-        mask = (
-            (proj >= -distance_threshold)
-            & (proj <= edge_len + distance_threshold)
-            & (dist <= distance_threshold)
-        )
+        mask = (proj >= -distance_threshold) & (proj <= edge_len + distance_threshold) & (dist <= distance_threshold)
 
         edge_data.append(
             {
@@ -454,7 +452,7 @@ def _compute_corner_sharpness_deviation(
     corners: np.ndarray,
     hull: np.ndarray,
     neighborhood: int = 6,
-) -> Optional[dict[str, float]]:
+) -> dict[str, float] | None:
     """Measure maximum and mean deviation from 90° using hull neighbors."""
     if corners is None or hull is None or len(hull) < 4:
         return None
@@ -494,7 +492,7 @@ def _compute_corner_sharpness_deviation(
     }
 
 
-def _compute_parallelism_misalignment(corners: np.ndarray) -> Optional[float]:
+def _compute_parallelism_misalignment(corners: np.ndarray) -> float | None:
     """Return maximum angular deviation between opposite edges."""
     if corners is None or len(corners) != 4:
         return None
@@ -503,7 +501,7 @@ def _compute_parallelism_misalignment(corners: np.ndarray) -> Optional[float]:
     if len(edges) != 4:
         return None
 
-    def _parallel_angle(v1: np.ndarray, v2: np.ndarray) -> Optional[float]:
+    def _parallel_angle(v1: np.ndarray, v2: np.ndarray) -> float | None:
         n1 = np.linalg.norm(v1)
         n2 = np.linalg.norm(v2)
         if n1 < 1e-6 or n2 < 1e-6:
@@ -744,13 +742,8 @@ def fit_mask_rectangle(
     line_quality_passes["corner_sharpness"] = bool(corner_ok)
 
     parallelism_misalignment = _compute_parallelism_misalignment(ordered)
-    line_quality_metrics["parallelism_misalignment_deg"] = (
-        float(parallelism_misalignment) if parallelism_misalignment is not None else None
-    )
-    parallel_ok = (
-        parallelism_misalignment is not None
-        and parallelism_misalignment <= parallelism_threshold
-    )
+    line_quality_metrics["parallelism_misalignment_deg"] = float(parallelism_misalignment) if parallelism_misalignment is not None else None
+    parallel_ok = parallelism_misalignment is not None and parallelism_misalignment <= parallelism_threshold
     line_quality_passes["parallelism"] = bool(parallel_ok)
 
     total_checks = max(len(line_quality_passes), 1)
@@ -817,7 +810,5 @@ def visualize_mask_fit(
         cv2.polylines(vis, [pts], True, (0, 255, 255), 2)
         for idx, corner in enumerate(corners):
             cv2.circle(vis, tuple(corner.astype(int)), 6, (0, 255, 255), -1)
-            cv2.putText(vis, str(idx), (int(corner[0]) + 8, int(corner[1]) - 8),
-                        cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
+            cv2.putText(vis, str(idx), (int(corner[0]) + 8, int(corner[1]) - 8), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 1)
     return vis
-

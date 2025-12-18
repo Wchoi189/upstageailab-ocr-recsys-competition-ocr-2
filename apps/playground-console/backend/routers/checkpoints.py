@@ -6,7 +6,6 @@ Handles checkpoint metadata retrieval and listing.
 from __future__ import annotations
 
 import logging
-import os
 from datetime import datetime
 from pathlib import Path
 
@@ -67,7 +66,7 @@ def discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
     for meta_path in metadata_files[:limit]:
         try:
             # Parse YAML metadata (fast - no state dict loading)
-            with open(meta_path, "r") as f:
+            with open(meta_path) as f:
                 meta = yaml.safe_load(f)
 
             # Reconstruct checkpoint path from metadata file path

@@ -242,9 +242,7 @@ class ComplianceAlertSystem:
 
         return alerts
 
-    def _evaluate_rule(
-        self, rule: AlertRule, data: dict[str, Any]
-    ) -> tuple[bool, float]:
+    def _evaluate_rule(self, rule: AlertRule, data: dict[str, Any]) -> tuple[bool, float]:
         """Evaluate if an alert rule should trigger"""
         current_value = 0.0
 
@@ -294,9 +292,7 @@ class ComplianceAlertSystem:
 
         return recent_count > 0
 
-    def _create_alert(
-        self, rule: AlertRule, current_value: float, data: dict[str, Any]
-    ) -> Alert:
+    def _create_alert(self, rule: AlertRule, current_value: float, data: dict[str, Any]) -> Alert:
         """Create alert instance"""
         alert_id = f"{rule.name}_{int(time.time())}"
 
@@ -314,9 +310,7 @@ class ComplianceAlertSystem:
             channels_sent=[],
         )
 
-    def _generate_alert_message(
-        self, rule: AlertRule, current_value: float, data: dict[str, Any]
-    ) -> str:
+    def _generate_alert_message(self, rule: AlertRule, current_value: float, data: dict[str, Any]) -> str:
         """Generate alert message based on rule and data"""
         severity_emoji = {"critical": "🚨", "high": "⚠️", "medium": "📊", "low": "ℹ️"}
 
@@ -331,15 +325,11 @@ class ComplianceAlertSystem:
 
         return f"{emoji} Alert: {rule.name} triggered"
 
-    def send_alert(
-        self, alert: Alert, channels: list[str] | None = None
-    ) -> dict[str, bool]:
+    def send_alert(self, alert: Alert, channels: list[str] | None = None) -> dict[str, bool]:
         """Send alert through specified channels"""
         if channels is None:
             # Find channels from rule
-            rule = next(
-                (r for r in self.alert_rules if r.name == alert.rule_name), None
-            )
+            rule = next((r for r in self.alert_rules if r.name == alert.rule_name), None)
             if rule:
                 channels = rule.channels
             else:
@@ -389,9 +379,7 @@ class ComplianceAlertSystem:
             msg = MIMEMultipart()
             msg["From"] = self.config["email"]["from_email"]
             msg["To"] = ", ".join(self.config["email"]["to_emails"])
-            msg["Subject"] = (
-                f"[{alert.severity.upper()}] Compliance Alert: {alert.rule_name}"
-            )
+            msg["Subject"] = f"[{alert.severity.upper()}] Compliance Alert: {alert.rule_name}"
 
             body = f"""
 Compliance Alert Details:
@@ -407,13 +395,9 @@ Please review the compliance status and take appropriate action.
 
             msg.attach(MIMEText(body, "plain"))
 
-            server = smtplib.SMTP(
-                self.config["email"]["smtp_server"], self.config["email"]["smtp_port"]
-            )
+            server = smtplib.SMTP(self.config["email"]["smtp_server"], self.config["email"]["smtp_port"])
             server.starttls()
-            server.login(
-                self.config["email"]["username"], self.config["email"]["password"]
-            )
+            server.login(self.config["email"]["username"], self.config["email"]["password"])
             server.send_message(msg)
             server.quit()
 
@@ -472,9 +456,7 @@ Please review the compliance status and take appropriate action.
                 ],
             }
 
-            response = requests.post(
-                self.config["slack"]["webhook_url"], json=payload, timeout=30
-            )
+            response = requests.post(self.config["slack"]["webhook_url"], json=payload, timeout=30)
 
             return response.status_code == 200
 
@@ -543,9 +525,7 @@ Please review the compliance status and take appropriate action.
             print(f"File write failed: {e}")
             return False
 
-    def _log_delivery(
-        self, alert_id: str, channel: str, success: bool, error: str | None = None
-    ):
+    def _log_delivery(self, alert_id: str, channel: str, success: bool, error: str | None = None):
         """Log alert delivery attempt"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -646,25 +626,19 @@ Please review the compliance status and take appropriate action.
         # Email setup
         if input("Configure email notifications? (y/n): ").lower() == "y":
             self.config["email"]["enabled"] = True
-            self.config["email"]["smtp_server"] = (
-                input("SMTP Server: ") or "smtp.gmail.com"
-            )
+            self.config["email"]["smtp_server"] = input("SMTP Server: ") or "smtp.gmail.com"
             self.config["email"]["smtp_port"] = int(input("SMTP Port: ") or "587")
             self.config["email"]["username"] = input("Username: ")
             self.config["email"]["password"] = input("Password: ")
             self.config["email"]["from_email"] = input("From Email: ")
-            self.config["email"]["to_emails"] = input(
-                "To Emails (comma-separated): "
-            ).split(",")
+            self.config["email"]["to_emails"] = input("To Emails (comma-separated): ").split(",")
 
         # Slack setup
         if input("Configure Slack notifications? (y/n): ").lower() == "y":
             self.config["slack"]["enabled"] = True
             self.config["slack"]["webhook_url"] = input("Webhook URL: ")
             self.config["slack"]["channel"] = input("Channel: ") or "#compliance-alerts"
-            self.config["slack"]["username"] = (
-                input("Bot Username: ") or "Compliance Bot"
-            )
+            self.config["slack"]["username"] = input("Bot Username: ") or "Compliance Bot"
 
         # Webhook setup
         if input("Configure webhook notifications? (y/n): ").lower() == "y":
@@ -717,20 +691,12 @@ def main():
     """Main execution function"""
     parser = argparse.ArgumentParser(description="Compliance alert system")
     parser.add_argument("--check-alerts", action="store_true", help="Check for alerts")
-    parser.add_argument(
-        "--send-test-alert", action="store_true", help="Send test alert"
-    )
-    parser.add_argument(
-        "--setup-notifications", action="store_true", help="Setup notification channels"
-    )
-    parser.add_argument(
-        "--alert-history", type=int, help="Show alert history for N days"
-    )
+    parser.add_argument("--send-test-alert", action="store_true", help="Send test alert")
+    parser.add_argument("--setup-notifications", action="store_true", help="Setup notification channels")
+    parser.add_argument("--alert-history", type=int, help="Show alert history for N days")
     parser.add_argument("--resolve-alert", help="Resolve alert by ID")
     parser.add_argument("--config", default="alert_config.json", help="Config file")
-    parser.add_argument(
-        "--db-path", default="compliance_monitoring.db", help="Database file path"
-    )
+    parser.add_argument("--db-path", default="compliance_monitoring.db", help="Database file path")
 
     args = parser.parse_args()
 

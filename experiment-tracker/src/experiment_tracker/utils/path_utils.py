@@ -1,7 +1,4 @@
 from pathlib import Path
-from typing import Optional, List
-import re
-import glob
 
 
 class ExperimentPaths:
@@ -43,7 +40,7 @@ class ExperimentPaths:
         """Get path to specific context file (state, tasks, decisions, components)"""
         return self.get_metadata_path() / f"{context_type}.yml"
 
-    def resolve_artifact_path(self, path: str, allow_placeholder: bool = True) -> Optional[Path]:
+    def resolve_artifact_path(self, path: str, allow_placeholder: bool = True) -> Path | None:
         """
         Resolve artifact path with {timestamp} placeholder support.
 
@@ -81,7 +78,7 @@ class ExperimentPaths:
 
         return None
 
-    def find_latest_artifact(self, pattern: str) -> Optional[Path]:
+    def find_latest_artifact(self, pattern: str) -> Path | None:
         """
         Find latest artifact matching pattern.
         Uses modification time to determine "latest".
@@ -105,7 +102,7 @@ class ExperimentPaths:
         matches.sort(key=lambda p: p.stat().st_mtime, reverse=True)
         return matches[0]
 
-    def interactive_select_artifact(self, candidates: List[Path]) -> Optional[Path]:
+    def interactive_select_artifact(self, candidates: list[Path]) -> Path | None:
         """
         Interactive selection if multiple artifact candidates found.
 
@@ -127,7 +124,7 @@ class ExperimentPaths:
             print(f"  {i}. {rel_path}")
 
         try:
-            choice = input("\nSelect artifact (1-{}): ".format(len(candidates)))
+            choice = input(f"\nSelect artifact (1-{len(candidates)}): ")
             idx = int(choice) - 1
             if 0 <= idx < len(candidates):
                 return candidates[idx]

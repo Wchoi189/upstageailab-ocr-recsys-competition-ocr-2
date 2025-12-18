@@ -162,9 +162,7 @@ def process_with_scantailor(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Test ScanTailor integration for perspective correction"
-    )
+    parser = argparse.ArgumentParser(description="Test ScanTailor integration for perspective correction")
     parser.add_argument(
         "--input-dir",
         type=Path,
@@ -260,4 +258,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

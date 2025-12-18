@@ -48,9 +48,7 @@ def agent_ast_analysis():
 
         if command == "analyze":
             cli_args = ["analyze"]
-            if (
-                len(args) > 1 and args[1] != "--path"
-            ):  # Handle case where PATH is passed
+            if len(args) > 1 and args[1] != "--path":  # Handle case where PATH is passed
                 cli_args.append(args[1])
             else:
                 cli_args.append(".")  # Default to current directory
@@ -66,9 +64,7 @@ def agent_ast_analysis():
             cli_args = ["extract-docs", args[1]]
         elif command == "check-quality":
             cli_args = ["check-quality"]
-            if (
-                len(args) > 1 and args[1] != "--path"
-            ):  # Handle case where PATH is passed
+            if len(args) > 1 and args[1] != "--path":  # Handle case where PATH is passed
                 cli_args.append(args[1])
             else:
                 cli_args.append(".")  # Default to current directory

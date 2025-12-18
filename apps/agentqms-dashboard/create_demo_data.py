@@ -3,9 +3,8 @@
 Create demo data for AgentQMS Dashboard deployment.
 Generates sample artifacts for isolated demo environment.
 """
-import os
+
 from pathlib import Path
-from datetime import datetime
 
 # Sample artifacts with frontmatter
 ARTIFACTS = {
@@ -81,7 +80,6 @@ Current OCR system achieves 89% accuracy on printed text but struggles with hand
 ---
 *Implementation plan follows Blueprint Protocol Template (PROTO-GOV-003)*
 """,
-
     "assessments/2025-12-01_1100_assessment-model-performance.md": """---
 title: "Assessment: Model Performance Analysis Q4 2025"
 type: assessment
@@ -175,7 +173,6 @@ Model demonstrates production-ready performance for printed text but requires ta
 ---
 *Assessment follows standardized evaluation format (v2.0)*
 """,
-
     "bug_reports/2025-12-01_0900_BUG_001_unicode-error.md": """---
 title: "BUG-001: Unicode Encoding Error in Korean Text Processing"
 type: bug_report
@@ -247,7 +244,7 @@ Added encoding detection with fallback logic:
 import chardet
 
 def read_file_with_encoding(file_path):
-    """Read file with automatic encoding detection."""
+    # Read file with automatic encoding detection.
     # Try UTF-8 first (most common)
     try:
         with open(file_path, 'r', encoding='utf-8') as f:
@@ -316,7 +313,6 @@ def read_file_with_encoding(file_path):
 **Resolution Time**: 5 hours (reported 09:00, fixed 14:00)
 **Fix Verified**: Production deployment successful
 """,
-
     "audits/2025-12-01_1200_audit-code-quality.md": """---
 title: "Audit: Code Quality Review Q4 2025"
 type: audit
@@ -368,7 +364,7 @@ def predict(
     images: torch.Tensor,
     threshold: float = 0.5
 ) -> tuple[list[np.ndarray], list[float]]:
-    """Type hints enable better IDE support and catch errors early."""
+    # Type hints enable better IDE support and catch errors early.
     ...
 ```
 
@@ -401,22 +397,20 @@ def normalize_polygon(points):
 
 # After (with docstring)
 def normalize_polygon(points: list[tuple[int, int]]) -> list[tuple[int, int]]:
-    """
-    Normalize polygon points to canonical order.
-
-    Sorts points top-to-bottom, left-to-right to ensure consistent
-    ordering regardless of input annotation order.
-
-    Args:
-        points: List of (x, y) coordinate tuples
-
-    Returns:
-        Sorted list of points in reading order
-
-    Example:
-        >>> normalize_polygon([(10, 20), (5, 15), (10, 15)])
-        [(5, 15), (10, 15), (10, 20)]
-    """
+    # Normalize polygon points to canonical order.
+    #
+    # Sorts points top-to-bottom, left-to-right to ensure consistent
+    # ordering regardless of input annotation order.
+    #
+    # Args:
+    #     points: List of (x, y) coordinate tuples
+    #
+    # Returns:
+    #     Sorted list of points in reading order
+    #
+    # Example:
+    #     >>> normalize_polygon([(10, 20), (5, 15), (10, 15)])
+    #     [(5, 15), (10, 15), (10, 20)]
     return sorted(points, key=lambda p: (p[1], p[0]))
 ```
 
@@ -442,7 +436,7 @@ def normalize_polygon(points: list[tuple[int, int]]) -> list[tuple[int, int]]:
 ```python
 @pytest.fixture
 def sample_korean_document():
-    """Fixture for Korean text processing tests."""
+    # Fixture for Korean text processing tests.
     return {
         "text": "㈜테스트컴퍼니",
         "encoding": "cp949",
@@ -531,7 +525,6 @@ Codebase demonstrates strong engineering practices with consistent improvement t
 **Auditor**: AI Agent (AgentQMS Framework)
 **Report Version**: 2.0
 """,
-
     "design_documents/2025-12-01_1300_design-api-architecture.md": """---
 title: "Design: AgentQMS Dashboard API Architecture"
 type: design
@@ -974,8 +967,9 @@ Authorization: Bearer <JWT_TOKEN>
 **API Version**: 1.0.0
 **Last Updated**: 2025-12-01
 **Owner**: AgentQMS Team
-"""
+""",
 }
+
 
 def create_demo_stubs():
     """Create demo stub scripts."""
@@ -1057,7 +1051,7 @@ def main():
 
 if __name__ == "__main__":
     sys.exit(main())
-'''
+''',
     }
 
     for filename, content in stubs.items():
@@ -1065,6 +1059,7 @@ if __name__ == "__main__":
         stub_path.write_text(content)
         stub_path.chmod(0o755)  # Make executable
         print(f"✅ Created: {stub_path}")
+
 
 def main():
     """Create demo data and stubs."""
@@ -1102,6 +1097,7 @@ def main():
     print()
     print("See DEMO_DEPLOYMENT_GUIDE.md for deployment instructions.")
     print()
+
 
 if __name__ == "__main__":
     main()

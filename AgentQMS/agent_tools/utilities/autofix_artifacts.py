@@ -9,6 +9,7 @@ Phase 4 enhancements:
 - Post-fix re-validation loop
 - Support for --update-links flag
 """
+
 import argparse
 import json
 import re
@@ -55,7 +56,7 @@ def find_links_to_file(search_dir: Path, old_path: Path, project_root: Path) -> 
 
             for i, line in enumerate(lines, 1):
                 # Check for markdown links
-                for match in re.finditer(r'\[([^\]]+)\]\(([^)]+)\)', line):
+                for match in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", line):
                     text, url = match.groups()
 
                     # Check if this link references the old file
@@ -81,13 +82,13 @@ def update_links_in_file(file_path: Path, old_url: str, new_url: str, dry_run: b
 
         # Match markdown links containing the old URL
         # Pattern: [any text](old_url) or [any text](old_url#anchor)
-        pattern = r'(\[[^\]]+\]\()' + escaped_old + r'([#)])'
+        pattern = r"(\[[^\]]+\]\()" + escaped_old + r"([#)])"
 
         if not re.search(pattern, content):
             return False
 
         # Replace only within markdown link context
-        new_content = re.sub(pattern, r'\g<1>' + new_url.replace('\\', '\\\\') + r'\2', content)
+        new_content = re.sub(pattern, r"\g<1>" + new_url.replace("\\", "\\\\") + r"\2", content)
 
         if dry_run:
             print(f"    [dry-run] Would update links in {file_path.name}")
@@ -127,12 +128,7 @@ def calculate_relative_path(from_file: Path, to_file: Path) -> str:
         return "/".join(path_parts)
 
 
-def rewrite_links_after_move(
-    old_path: Path,
-    new_path: Path,
-    project_root: Path,
-    dry_run: bool = False
-) -> int:
+def rewrite_links_after_move(old_path: Path, new_path: Path, project_root: Path, dry_run: bool = False) -> int:
     """Rewrite all links pointing to old_path to point to new_path.
 
     Returns number of files updated.
@@ -204,7 +200,7 @@ def extract_suggestions_from_violations(violations: list[dict[str, Any]]) -> lis
                     "type": "rename",
                     "source": str(file_path),
                     "target": None,  # To be computed based on rules
-                    "reason": error
+                    "reason": error,
                 }
                 suggestions.append(suggestion)
 
@@ -217,23 +213,14 @@ def extract_suggestions_from_violations(violations: list[dict[str, Any]]) -> lis
 
                 if match:
                     target_dir = match.group(1).rstrip("/")
-                    suggestion = {
-                        "type": "move",
-                        "source": str(file_path),
-                        "target_dir": target_dir,
-                        "reason": error
-                    }
+                    suggestion = {"type": "move", "source": str(file_path), "target_dir": target_dir, "reason": error}
                     suggestions.append(suggestion)
 
     return suggestions
 
 
 def apply_fixes(
-    suggestions: list[dict[str, Any]],
-    limit: int,
-    dry_run: bool,
-    project_root: Path,
-    update_links: bool = False
+    suggestions: list[dict[str, Any]], limit: int, dry_run: bool, project_root: Path, update_links: bool = False
 ) -> tuple[int, list[tuple[Path, Path]]]:
     """Apply fixes with limit.
 
@@ -250,10 +237,10 @@ def apply_fixes(
 
             # Check for duplicates/conflicts
             if not check_for_duplicates(target, source):
-                print(f"\n{i+1}. Skip (conflict): {source.name}")
+                print(f"\n{i + 1}. Skip (conflict): {source.name}")
                 continue
 
-            print(f"\n{i+1}. Move: {source.name}")
+            print(f"\n{i + 1}. Move: {source.name}")
             print(f"   From: {source.parent}")
             print(f"   To:   {target_dir}")
 
@@ -273,7 +260,7 @@ def apply_fixes(
 
         elif suggestion["type"] == "rename":
             # For now, just report (actual rename logic requires pattern detection)
-            print(f"\n{i+1}. Rename needed: {suggestion['source']}")
+            print(f"\n{i + 1}. Rename needed: {suggestion['source']}")
             print(f"   Reason: {suggestion['reason']}")
 
     return applied, moves
@@ -287,6 +274,7 @@ def run_reindex(project_root: Path, dry_run: bool = False) -> bool:
 
     try:
         from AgentQMS.agent_tools.documentation.reindex_artifacts import main as reindex_main
+
         result = reindex_main()
         return result == 0
     except Exception as e:
@@ -297,6 +285,7 @@ def run_reindex(project_root: Path, dry_run: bool = False) -> bool:
 def run_validation() -> list[dict[str, Any]]:
     """Run validation and return results."""
     from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
+
     validator = ArtifactValidator()
     return validator.validate_all()
 
@@ -308,16 +297,14 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="Preview only, no changes")
     parser.add_argument("--commit", action="store_true", help="Auto-commit changes")
     parser.add_argument("--validation-json", help="Path to validation JSON output")
-    parser.add_argument("--update-links", action="store_true",
-                        help="Rewrite links in other files after moves")
-    parser.add_argument("--revalidate", action="store_true",
-                        help="Run validation again after fixes to verify")
-    parser.add_argument("--force-large-batch", action="store_true",
-                        help="Allow batch operations >30 files (use with caution)")
+    parser.add_argument("--update-links", action="store_true", help="Rewrite links in other files after moves")
+    parser.add_argument("--revalidate", action="store_true", help="Run validation again after fixes to verify")
+    parser.add_argument("--force-large-batch", action="store_true", help="Allow batch operations >30 files (use with caution)")
 
     args = parser.parse_args()
 
     from AgentQMS.agent_tools.utils.paths import get_project_root
+
     project_root = get_project_root()
 
     # Run validation to get current state
@@ -361,9 +348,7 @@ def main():
         print("   🔗 Link rewriting enabled")
 
     # Apply fixes
-    applied, moves = apply_fixes(
-        suggestions, args.limit, args.dry_run, project_root, args.update_links
-    )
+    applied, moves = apply_fixes(suggestions, args.limit, args.dry_run, project_root, args.update_links)
 
     print(f"\n✨ Applied {applied} fixes")
 

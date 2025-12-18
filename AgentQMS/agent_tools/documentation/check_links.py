@@ -5,6 +5,7 @@ Scans docs/** and AgentQMS/** for [text](path) links and validates targets exist
 
 Phase 3: Includes inline artifact reference parsing for comprehensive link integrity.
 """
+
 import argparse
 import json
 import re
@@ -19,7 +20,7 @@ def extract_markdown_links(file_path: Path) -> list[tuple[int, str, str]]:
     try:
         content = file_path.read_text(encoding="utf-8")
         for i, line in enumerate(content.split("\n"), 1):
-            for match in re.finditer(r'\[([^\]]+)\]\(([^)]+)\)', line):
+            for match in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", line):
                 text, url = match.groups()
                 links.append((i, text, url))
     except Exception:
@@ -41,9 +42,9 @@ def extract_artifact_references(file_path: Path, artifacts_root: Path) -> list[t
         for i, line in enumerate(content.split("\n"), 1):
             # Pattern for artifact file references in text
             artifact_patterns = [
-                r'(?:Reference|See|See also|Ref|Related):\s*([^\s]+\.md)',
-                r'(?:\.\.\/)+[a-z_]+\/\d{4}-\d{2}-\d{2}_\d{4}_[a-zA-Z_-]+\.md',
-                r'docs/artifacts/[a-z_]+/\d{4}-\d{2}-\d{2}_\d{4}_[a-zA-Z_-]+\.md',
+                r"(?:Reference|See|See also|Ref|Related):\s*([^\s]+\.md)",
+                r"(?:\.\.\/)+[a-z_]+\/\d{4}-\d{2}-\d{2}_\d{4}_[a-zA-Z_-]+\.md",
+                r"docs/artifacts/[a-z_]+/\d{4}-\d{2}-\d{2}_\d{4}_[a-zA-Z_-]+\.md",
             ]
             for pattern in artifact_patterns:
                 for match in re.finditer(pattern, line, re.IGNORECASE):
@@ -77,9 +78,7 @@ def resolve_link(source_file: Path, link_url: str) -> Path | None:
 
 
 def check_links_in_directory(
-    directory: Path,
-    project_root: Path,
-    check_artifacts_only: bool = False
+    directory: Path, project_root: Path, check_artifacts_only: bool = False
 ) -> tuple[int, int, list[dict[str, Any]]]:
     """Check all links in a directory recursively.
 
@@ -126,13 +125,7 @@ def check_links_in_directory(
                 except ValueError:
                     resolved_str = str(target)
 
-                broken_links.append({
-                    "file": str(rel_source),
-                    "line": line_num,
-                    "text": text,
-                    "url": url,
-                    "resolved": resolved_str
-                })
+                broken_links.append({"file": str(rel_source), "line": line_num, "text": text, "url": url, "resolved": resolved_str})
 
     return checked_files, total_links, broken_links
 
@@ -141,10 +134,13 @@ def main():
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Check Markdown links in documentation")
     parser.add_argument("--json", action="store_true", help="Output results as JSON")
-    parser.add_argument("--artifacts-only", action="store_true",
-                        help="Only check links to artifact files")
-    parser.add_argument("--no-agentqms", action="store_false", dest="include_agentqms",
-                        help="Exclude AgentQMS directory from link checking (default: included)")
+    parser.add_argument("--artifacts-only", action="store_true", help="Only check links to artifact files")
+    parser.add_argument(
+        "--no-agentqms",
+        action="store_false",
+        dest="include_agentqms",
+        help="Exclude AgentQMS directory from link checking (default: included)",
+    )
     args = parser.parse_args()
 
     from AgentQMS.agent_tools.utils.paths import get_project_root
@@ -159,9 +155,7 @@ def main():
 
     # Check docs directory
     if docs_dir.exists():
-        checked, links, broken = check_links_in_directory(
-            docs_dir, project_root, args.artifacts_only
-        )
+        checked, links, broken = check_links_in_directory(docs_dir, project_root, args.artifacts_only)
         total_checked += checked
         total_links += links
         all_broken_links.extend(broken)
@@ -171,9 +165,7 @@ def main():
 
     # Check AgentQMS directory if requested
     if args.include_agentqms and agentqms_dir.exists():
-        checked, links, broken = check_links_in_directory(
-            agentqms_dir, project_root, args.artifacts_only
-        )
+        checked, links, broken = check_links_in_directory(agentqms_dir, project_root, args.artifacts_only)
         total_checked += checked
         total_links += links
         all_broken_links.extend(broken)
@@ -183,7 +175,7 @@ def main():
             "checked_files": total_checked,
             "total_links": total_links,
             "broken_links": all_broken_links,
-            "status": "fail" if all_broken_links else "pass"
+            "status": "fail" if all_broken_links else "pass",
         }
         print(json.dumps(result, indent=2))
     else:

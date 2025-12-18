@@ -1,7 +1,6 @@
 """Unit tests for inference orchestrator."""
 
 import numpy as np
-import pytest
 
 
 class TestInferenceOrchestratorInit:
@@ -41,10 +40,10 @@ class TestInferenceOrchestratorLoadModel:
 
     def test_load_model_fails_without_ocr_modules(self, monkeypatch):
         """Test that load_model fails gracefully without OCR modules."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
-
         # Mock OCR_MODULES_AVAILABLE
         import ocr.inference.model_manager as mm_module
+        from ocr.inference.orchestrator import InferenceOrchestrator
+
         monkeypatch.setattr(mm_module, "OCR_MODULES_AVAILABLE", False)
 
         orchestrator = InferenceOrchestrator()

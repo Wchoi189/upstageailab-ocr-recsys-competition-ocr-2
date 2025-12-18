@@ -22,7 +22,6 @@ from unittest.mock import Mock, patch
 import pytest
 import torch
 import yaml
-
 from ui.apps.inference.services.checkpoint.catalog import CheckpointCatalogBuilder, build_catalog
 from ui.apps.inference.services.checkpoint.metadata_loader import save_metadata
 from ui.apps.inference.services.checkpoint.types import (

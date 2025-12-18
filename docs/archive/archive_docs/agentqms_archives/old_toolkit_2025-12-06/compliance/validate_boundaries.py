@@ -13,7 +13,6 @@ import json
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List
 
 from AgentQMS.agent_tools.utils.paths import (
     get_artifacts_dir,
@@ -39,9 +38,9 @@ class BoundaryValidator:
     def __init__(self) -> None:
         self.project_root = get_project_root().resolve()
         self.framework_root = get_framework_root().resolve()
-        self.violations: List[BoundaryViolation] = []
+        self.violations: list[BoundaryViolation] = []
 
-    def validate(self) -> List[BoundaryViolation]:
+    def validate(self) -> list[BoundaryViolation]:
         self.violations.clear()
         self._check_framework_boundary()
         self._check_project_boundary()

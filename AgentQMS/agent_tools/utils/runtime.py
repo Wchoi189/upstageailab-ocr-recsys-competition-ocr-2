@@ -15,5 +15,3 @@ def ensure_project_root_on_sys_path() -> Path:
     if project_str not in sys.path:
         sys.path.insert(0, project_str)
     return project_root
-
-

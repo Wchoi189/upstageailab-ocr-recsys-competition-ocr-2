@@ -127,7 +127,7 @@ def extract_title_from_frontmatter(content: str) -> str:
         line = line.strip()
         if line.startswith("title:"):
             # Extract quoted title
-            title = line.split(":", 1)[1].strip().strip('"\'')
+            title = line.split(":", 1)[1].strip().strip("\"'")
             return title
     return ""
 
@@ -150,7 +150,7 @@ def fix_file(file_path: str, is_assessment: bool = True) -> bool:
     if content.startswith("---"):
         end = content.find("---", 3)
         if end != -1:
-            body = content[end + 3:].lstrip("\n")
+            body = content[end + 3 :].lstrip("\n")
         else:
             body = content
     else:

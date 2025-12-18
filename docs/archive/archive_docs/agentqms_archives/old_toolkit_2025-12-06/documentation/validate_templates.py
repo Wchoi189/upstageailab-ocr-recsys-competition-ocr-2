@@ -128,9 +128,7 @@ class TemplateValidator:
             if cue not in ai_cues:
                 self.errors.append(f"Missing AI cue '{cue}' in {file_path}")
             elif not ai_cues[cue] or ai_cues[cue] == "{{" + cue + "}}":
-                self.errors.append(
-                    f"Empty or placeholder AI cue '{cue}' in {file_path}"
-                )
+                self.errors.append(f"Empty or placeholder AI cue '{cue}' in {file_path}")
 
         # Check required sections
         if template_type in self.required_sections:
@@ -139,17 +137,13 @@ class TemplateValidator:
 
             for req_section in required:
                 if req_section not in sections:
-                    self.errors.append(
-                        f"Missing required section '{req_section}' in {file_path}"
-                    )
+                    self.errors.append(f"Missing required section '{req_section}' in {file_path}")
 
         # Check for template placeholders
         placeholders = re.findall(r"\{\{[^}]+\}\}", content)
         if placeholders:
             unique_placeholders = set(placeholders)
-            self.warnings.append(
-                f"Unresolved template placeholders in {file_path}: {', '.join(unique_placeholders)}"
-            )
+            self.warnings.append(f"Unresolved template placeholders in {file_path}: {', '.join(unique_placeholders)}")
 
         # Check filename header
         expected_filename = f"docs/ai_handbook/{file_path.relative_to(self.docs_dir)}"

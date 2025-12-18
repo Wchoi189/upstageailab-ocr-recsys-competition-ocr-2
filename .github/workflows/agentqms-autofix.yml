@@ -1,5 +1,9 @@
 name: AgentQMS Autofix (Limited)
 
+permissions:
+  pull-requests: write
+  contents: write
+
 on:
   workflow_dispatch:
     inputs:
@@ -23,9 +27,6 @@ jobs:
   autofix:
     name: Auto-fix Artifacts
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pull-requests: write
     env:
       LIMIT: ${{ github.event.inputs.limit || '10' }}
       DRY_RUN: ${{ github.event.inputs.dry_run || 'false' }}

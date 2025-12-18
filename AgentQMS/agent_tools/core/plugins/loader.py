@@ -47,6 +47,7 @@ class PluginLoader:
         """
         if project_root is None:
             from AgentQMS.agent_tools.utils.paths import get_project_root
+
             project_root = get_project_root()
 
         self.project_root = project_root
@@ -57,9 +58,7 @@ class PluginLoader:
             project_root=project_root,
             framework_root=self.framework_root,
         )
-        self.validator = PluginValidator(
-            schemas_dir=self.framework_root / "conventions" / "schemas"
-        )
+        self.validator = PluginValidator(schemas_dir=self.framework_root / "conventions" / "schemas")
 
         # Cached registry
         self._registry: PluginRegistry | None = None
@@ -77,9 +76,7 @@ class PluginLoader:
         if self._registry is not None and not force:
             return self._registry
 
-        registry = PluginRegistry(
-            loaded_at=datetime.now(UTC).isoformat()
-        )
+        registry = PluginRegistry(loaded_at=datetime.now(UTC).isoformat())
 
         # Discover all plugins
         discovered = self.discovery.discover_by_type()
@@ -100,9 +97,7 @@ class PluginLoader:
             raise ValueError(f"Invalid YAML format (expected dict): {path}")
         return data
 
-    def _load_artifact_types(
-        self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]
-    ) -> None:
+    def _load_artifact_types(self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]) -> None:
         """Load and merge artifact type plugins."""
         for plugin in plugins:
             try:
@@ -112,12 +107,14 @@ class PluginLoader:
                 errors = self.validator.validate(data, "artifact_type")
                 if errors:
                     for error in errors:
-                        registry.add_validation_error(PluginValidationError(
-                            plugin_path=str(plugin.path),
-                            plugin_type="artifact_type",
-                            error_message=error,
-                            schema_path=str(self.validator.get_schema_path("artifact_type")),
-                        ))
+                        registry.add_validation_error(
+                            PluginValidationError(
+                                plugin_path=str(plugin.path),
+                                plugin_type="artifact_type",
+                                error_message=error,
+                                schema_path=str(self.validator.get_schema_path("artifact_type")),
+                            )
+                        )
                     continue
 
                 # Extract name
@@ -140,15 +137,15 @@ class PluginLoader:
                     )
 
             except Exception as e:
-                registry.add_validation_error(PluginValidationError(
-                    plugin_path=str(plugin.path),
-                    plugin_type="artifact_type",
-                    error_message=str(e),
-                ))
+                registry.add_validation_error(
+                    PluginValidationError(
+                        plugin_path=str(plugin.path),
+                        plugin_type="artifact_type",
+                        error_message=str(e),
+                    )
+                )
 
-    def _load_validators(
-        self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]
-    ) -> None:
+    def _load_validators(self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]) -> None:
         """Load and merge validator plugins."""
         merged: dict[str, Any] = {
             "prefixes": {},
@@ -168,41 +165,45 @@ class PluginLoader:
                 errors = self.validator.validate(data, "validators")
                 if errors:
                     for error in errors:
-                        registry.add_validation_error(PluginValidationError(
-                            plugin_path=str(plugin.path),
-                            plugin_type="validators",
-                            error_message=error,
-                            schema_path=str(self.validator.get_schema_path("validators")),
-                        ))
+                        registry.add_validation_error(
+                            PluginValidationError(
+                                plugin_path=str(plugin.path),
+                                plugin_type="validators",
+                                error_message=error,
+                                schema_path=str(self.validator.get_schema_path("validators")),
+                            )
+                        )
                     continue
 
                 # Merge
                 self._merge_validators(merged, data)
 
                 # Track metadata
-                registry.metadata.append(PluginMetadata(
-                    name="validators",
-                    version=data.get("version", "1.0"),
-                    source=plugin.source,
-                    path=str(plugin.path),
-                    plugin_type="validator",
-                    description=data.get("description", ""),
-                ))
+                registry.metadata.append(
+                    PluginMetadata(
+                        name="validators",
+                        version=data.get("version", "1.0"),
+                        source=plugin.source,
+                        path=str(plugin.path),
+                        plugin_type="validator",
+                        description=data.get("description", ""),
+                    )
+                )
 
             except Exception as e:
-                registry.add_validation_error(PluginValidationError(
-                    plugin_path=str(plugin.path),
-                    plugin_type="validators",
-                    error_message=str(e),
-                ))
+                registry.add_validation_error(
+                    PluginValidationError(
+                        plugin_path=str(plugin.path),
+                        plugin_type="validators",
+                        error_message=str(e),
+                    )
+                )
 
         # Only add if we have meaningful data
         if any(merged[k] for k in ["prefixes", "types", "categories", "statuses"]):
             registry.validators = merged
 
-    def _load_context_bundles(
-        self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]
-    ) -> None:
+    def _load_context_bundles(self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]) -> None:
         """Load and merge context bundle plugins."""
         for plugin in plugins:
             try:
@@ -212,12 +213,14 @@ class PluginLoader:
                 errors = self.validator.validate(data, "context_bundle")
                 if errors:
                     for error in errors:
-                        registry.add_validation_error(PluginValidationError(
-                            plugin_path=str(plugin.path),
-                            plugin_type="context_bundle",
-                            error_message=error,
-                            schema_path=str(self.validator.get_schema_path("context_bundle")),
-                        ))
+                        registry.add_validation_error(
+                            PluginValidationError(
+                                plugin_path=str(plugin.path),
+                                plugin_type="context_bundle",
+                                error_message=error,
+                                schema_path=str(self.validator.get_schema_path("context_bundle")),
+                            )
+                        )
                     continue
 
                 # Extract name
@@ -240,11 +243,13 @@ class PluginLoader:
                     )
 
             except Exception as e:
-                registry.add_validation_error(PluginValidationError(
-                    plugin_path=str(plugin.path),
-                    plugin_type="context_bundle",
-                    error_message=str(e),
-                ))
+                registry.add_validation_error(
+                    PluginValidationError(
+                        plugin_path=str(plugin.path),
+                        plugin_type="context_bundle",
+                        error_message=str(e),
+                    )
+                )
 
     def _should_override(
         self,
@@ -274,9 +279,7 @@ class PluginLoader:
 
         return False  # Framework cannot override project
 
-    def _merge_validators(
-        self, base: dict[str, Any], override: dict[str, Any]
-    ) -> None:
+    def _merge_validators(self, base: dict[str, Any], override: dict[str, Any]) -> None:
         """Merge validator configurations (mutates base)."""
         # Merge prefixes (override wins)
         if "prefixes" in override:
@@ -295,9 +298,7 @@ class PluginLoader:
 
         # Append custom validators
         if "custom_validators" in override:
-            base.setdefault("custom_validators", []).extend(
-                override["custom_validators"]
-            )
+            base.setdefault("custom_validators", []).extend(override["custom_validators"])
 
         # Append disabled validators
         if "disabled_validators" in override:
@@ -308,4 +309,3 @@ class PluginLoader:
     def get_discovery_paths(self) -> dict[str, str]:
         """Get the discovery paths used by this loader."""
         return self.discovery.get_discovery_paths()
-

@@ -15,7 +15,6 @@ when to incur that cost.
 """
 
 from dataclasses import dataclass
-from typing import Any, Optional, Tuple
 
 import cv2
 import numpy as np
@@ -33,18 +32,18 @@ except Exception:  # pragma: no cover - optional
 class MaskRectangleResult:
     """Result of fitting a rectangle to a foreground mask."""
 
-    corners: Optional[np.ndarray]
-    raw_corners: Optional[np.ndarray]
+    corners: np.ndarray | None
+    raw_corners: np.ndarray | None
     contour_area: float
     hull_area: float
     mask_area: float
-    contour: Optional[np.ndarray]
-    hull: Optional[np.ndarray]
-    reason: Optional[str] = None
-    used_epsilon: Optional[float] = None
+    contour: np.ndarray | None
+    hull: np.ndarray | None
+    reason: str | None = None
+    used_epsilon: float | None = None
 
 
-def calculate_target_dimensions(pts: np.ndarray) -> Tuple[int, int]:
+def calculate_target_dimensions(pts: np.ndarray) -> tuple[int, int]:
     """
     Calculate the target width and height using the 'Max-Edge' aspect ratio rule.
 
@@ -225,7 +224,7 @@ def fit_mask_rectangle(mask: np.ndarray) -> MaskRectangleResult:
     eps = max(peri * 0.01, 1.0)
     max_eps = peri * 0.08
     used_eps = eps
-    quad: Optional[np.ndarray] = None
+    quad: np.ndarray | None = None
 
     while eps <= max_eps:
         approx = cv2.approxPolyDP(hull, eps, True)
@@ -435,9 +434,7 @@ def transform_polygons_inverse(
             transformed_points = transformed_points.reshape(-1, 2)
 
             # Convert back to string format
-            transformed_str = " ".join(
-                f"{float(pt[0]):.6f} {float(pt[1]):.6f}" for pt in transformed_points
-            )
+            transformed_str = " ".join(f"{float(pt[0]):.6f} {float(pt[1]):.6f}" for pt in transformed_points)
             transformed_groups.append(transformed_str)
 
         except (ValueError, IndexError):
@@ -456,5 +453,3 @@ __all__ = [
     "remove_background_and_mask",
     "transform_polygons_inverse",
 ]
-
-

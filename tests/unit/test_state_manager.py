@@ -16,7 +16,6 @@ from pathlib import Path
 
 import pytest
 import yaml
-
 from agent_qms.toolbelt.state import StateError, StateManager
 
 

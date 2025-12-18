@@ -101,8 +101,8 @@ def infer_artifact_date(file_path: Path) -> str:
 
         if result.returncode == 0 and result.stdout.strip():
             # Parse ISO 8601 date
-            git_date_str = result.stdout.strip().split('\n')[-1]  # First (creation) commit
-            git_date = datetime.fromisoformat(git_date_str.replace('Z', '+00:00'))
+            git_date_str = result.stdout.strip().split("\n")[-1]  # First (creation) commit
+            git_date = datetime.fromisoformat(git_date_str.replace("Z", "+00:00"))
             kst_date = git_date.astimezone(kst)
             return kst_date.strftime("%Y-%m-%d %H:%M (KST)")
     except Exception:
@@ -121,7 +121,7 @@ def infer_artifact_date(file_path: Path) -> str:
 
         if result.returncode == 0 and result.stdout.strip():
             git_date_str = result.stdout.strip()
-            git_date = datetime.fromisoformat(git_date_str.replace('Z', '+00:00'))
+            git_date = datetime.fromisoformat(git_date_str.replace("Z", "+00:00"))
             kst_date = git_date.astimezone(kst)
             return kst_date.strftime("%Y-%m-%d %H:%M (KST)")
     except Exception:
@@ -297,10 +297,7 @@ class ArtifactAudit:
         all_files = list(self.artifacts_dir.rglob("*.md"))
 
         if not self.include_excluded:
-            filtered_files = [
-                f for f in all_files
-                if not is_excluded_path(f, self.excluded_dirs)
-            ]
+            filtered_files = [f for f in all_files if not is_excluded_path(f, self.excluded_dirs)]
             excluded_count = len(all_files) - len(filtered_files)
             if excluded_count > 0:
                 print(f"ℹ️  Excluded {excluded_count} file(s) in: {', '.join(self.excluded_dirs)}")
@@ -458,10 +455,7 @@ class ArtifactAudit:
             # Apply exclusion filter for manually specified files
             if not self.include_excluded:
                 original_count = len(target_files)
-                target_files = [
-                    f for f in target_files
-                    if not is_excluded_path(f, self.excluded_dirs)
-                ]
+                target_files = [f for f in target_files if not is_excluded_path(f, self.excluded_dirs)]
                 excluded_count = original_count - len(target_files)
                 if excluded_count > 0:
                     print(f"⚠️  Excluded {excluded_count} file(s) in excluded directories")
@@ -493,7 +487,7 @@ class ArtifactAudit:
         if not dry_run and not report_only and not no_confirm:
             print("\n⚠️  This will modify the above files!")
             response = input("   Continue? [y/N]: ").strip().lower()
-            if response != 'y':
+            if response != "y":
                 print("❌ Aborted by user")
                 return 1
 
@@ -502,7 +496,7 @@ class ArtifactAudit:
                 print("\n💾 Creating automatic backup...")
                 if not create_git_stash_backup():
                     response = input("   Failed to create backup. Continue anyway? [y/N]: ").strip().lower()
-                    if response != 'y':
+                    if response != "y":
                         print("❌ Aborted by user")
                         return 1
 
@@ -562,35 +556,16 @@ Examples:
 
   # Fix without confirmation or backup (danger!)
   python artifact_audit.py --batch 1 --no-confirm --no-stash
-        """
+        """,
     )
-    parser.add_argument(
-        "--batch", type=int, help="Audit batch N artifacts (1, 2, etc.)"
-    )
-    parser.add_argument(
-        "--files", nargs="+", help="Specific files to audit"
-    )
-    parser.add_argument(
-        "--all", action="store_true", help="Audit all artifacts"
-    )
-    parser.add_argument(
-        "--dry-run", action="store_true", help="Preview changes without modifying"
-    )
-    parser.add_argument(
-        "--report", action="store_true", help="Report violations only (no fixes)"
-    )
-    parser.add_argument(
-        "--include-excluded", action="store_true",
-        help="Include archive/, deprecated/, and non-standard directories"
-    )
-    parser.add_argument(
-        "--no-confirm", action="store_true",
-        help="Skip confirmation prompt (use with caution)"
-    )
-    parser.add_argument(
-        "--no-stash", action="store_true",
-        help="Skip automatic git stash backup (use with caution)"
-    )
+    parser.add_argument("--batch", type=int, help="Audit batch N artifacts (1, 2, etc.)")
+    parser.add_argument("--files", nargs="+", help="Specific files to audit")
+    parser.add_argument("--all", action="store_true", help="Audit all artifacts")
+    parser.add_argument("--dry-run", action="store_true", help="Preview changes without modifying")
+    parser.add_argument("--report", action="store_true", help="Report violations only (no fixes)")
+    parser.add_argument("--include-excluded", action="store_true", help="Include archive/, deprecated/, and non-standard directories")
+    parser.add_argument("--no-confirm", action="store_true", help="Skip confirmation prompt (use with caution)")
+    parser.add_argument("--no-stash", action="store_true", help="Skip automatic git stash backup (use with caution)")
 
     args = parser.parse_args()
 

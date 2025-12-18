@@ -16,6 +16,7 @@ class ExperimentTracker:
             dt = datetime.datetime.now()
         format_str = self.config.get("timestamp_format", "%Y-%m-%d %H:%M (KST)")
         return dt.strftime(format_str)
+
     def __init__(self, root_dir: str = None):
         if root_dir is None:
             # Default to the parent of the src directory if not provided
@@ -121,7 +122,9 @@ class ExperimentTracker:
             print(f"Error stashing experiment {experiment_id}: {e}")
             return False
 
-    def record_artifact(self, artifact_path: str, metadata: dict = None, experiment_id: str = None, show_context: bool = True, confirm: bool = True) -> bool:
+    def record_artifact(
+        self, artifact_path: str, metadata: dict = None, experiment_id: str = None, show_context: bool = True, confirm: bool = True
+    ) -> bool:
         if experiment_id is None:
             experiment_id = self._get_current_experiment_id()
             if not experiment_id:
@@ -156,10 +159,11 @@ class ExperimentTracker:
             # Show context and confirm if requested
             if show_context:
                 artifacts_dir = paths.get_artifacts_path()
-                self._show_operation_context(experiment_id, "Record Artifact", [
-                    str(self.experiments_dir / experiment_id / "state.json"),
-                    str(artifacts_dir / src_path.name)
-                ])
+                self._show_operation_context(
+                    experiment_id,
+                    "Record Artifact",
+                    [str(self.experiments_dir / experiment_id / "state.json"), str(artifacts_dir / src_path.name)],
+                )
 
                 if warning:
                     print(f"⚠️  {warning}")
@@ -298,9 +302,9 @@ class ExperimentTracker:
         """
         try:
             state = self._load_state(experiment_id)
-            paths = self._get_paths(experiment_id)
+            self._get_paths(experiment_id)
 
-            print(f"\n{'='*60}")
+            print(f"\n{'=' * 60}")
             print(f"Operation: {operation}")
             print(f"Experiment: {experiment_id}")
             print(f"  Type: {state.get('type', 'unknown')}")
@@ -318,7 +322,7 @@ class ExperimentTracker:
                 recent = artifacts[-3:]  # Last 3 artifacts
                 print(f"\nRecent artifacts: {len(recent)} shown")
 
-            print(f"{'='*60}\n")
+            print(f"{'=' * 60}\n")
         except Exception as e:
             print(f"Could not load context: {e}")
 
@@ -358,8 +362,8 @@ class ExperimentTracker:
         # Convert ISO timestamp to readable format for metadata files
         try:
             # Handle both ISO format and already-formatted timestamps
-            if 'T' in state["timestamp"]:
-                created_dt = datetime.datetime.fromisoformat(state["timestamp"].replace('Z', '+00:00'))
+            if "T" in state["timestamp"]:
+                created_dt = datetime.datetime.fromisoformat(state["timestamp"].replace("Z", "+00:00"))
                 readable_timestamp = self._format_timestamp(created_dt)
             else:
                 # Already in readable format

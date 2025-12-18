@@ -170,9 +170,7 @@ class VLMClient:
             image_info.append(
                 {
                     "original_path": str(img.original_path.resolve()),
-                    "processed_path": str(img.processed_path.resolve())
-                    if img.processed_path
-                    else None,
+                    "processed_path": str(img.processed_path.resolve()) if img.processed_path else None,
                     "width": img.width,
                     "height": img.height,
                     "original_width": img.original_width,

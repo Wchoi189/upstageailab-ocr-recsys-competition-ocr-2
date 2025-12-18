@@ -3,6 +3,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from PIL import Image
+from ui.utils.inference.engine import InferenceEngine
 
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
@@ -13,7 +14,6 @@ from ocr.utils.orientation import (
     orientation_requires_rotation,
     remap_polygons,
 )
-from ui.utils.inference.engine import InferenceEngine
 
 
 def _image_with_orientation(size: tuple[int, int], orientation: int | None) -> Image.Image:

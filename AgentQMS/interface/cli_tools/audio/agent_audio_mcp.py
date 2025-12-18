@@ -129,9 +129,7 @@ class AudioMCPServer:
         method = request.get("method")
         params: dict[str, Any] = request.get("params") or {}
 
-        def make_response(
-            result: Any = None, error: dict[str, Any] | None = None
-        ) -> dict[str, Any]:
+        def make_response(result: Any = None, error: dict[str, Any] | None = None) -> dict[str, Any]:
             """Create JSON-RPC response."""
             response = {"jsonrpc": "2.0", "id": request_id}
             if error:
@@ -256,19 +254,13 @@ class AudioMCPServer:
                     )
 
                 else:
-                    return make_response(
-                        error={"code": -32601, "message": f"Unknown tool: {tool_name}"}
-                    )
+                    return make_response(error={"code": -32601, "message": f"Unknown tool: {tool_name}"})
 
             except Exception as e:
-                return make_response(
-                    error={"code": -32603, "message": f"Internal error: {e!s}"}
-                )
+                return make_response(error={"code": -32603, "message": f"Internal error: {e!s}"})
 
         else:
-            return make_response(
-                error={"code": -32601, "message": f"Unknown method: {method}"}
-            )
+            return make_response(error={"code": -32601, "message": f"Unknown method: {method}"})
 
 
 def main():

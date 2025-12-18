@@ -105,9 +105,7 @@ class ImageAnalysisTemplate:
                 initial_desc = initial_desc[:50] + "..." if len(initial_desc) > 50 else initial_desc
                 vlm_analysis = vlm_analysis[:50] + "..." if len(vlm_analysis) > 50 else vlm_analysis
 
-                lines.append(
-                    f"| {img['id']} | {img['path']} | {initial_desc} | {vlm_analysis} | {annotations} |"
-                )
+                lines.append(f"| {img['id']} | {img['path']} | {initial_desc} | {vlm_analysis} | {annotations} |")
             lines.append("")
 
         # Few-shot examples section

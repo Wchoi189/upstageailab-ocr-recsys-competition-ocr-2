@@ -36,7 +36,7 @@ try:
     if str(script_dir) not in sys.path:
         sys.path.insert(0, str(script_dir))
 
-    from optimized_rembg import OptimizedBackgroundRemover, REMBG_AVAILABLE, GPU_AVAILABLE
+    from optimized_rembg import GPU_AVAILABLE, REMBG_AVAILABLE, OptimizedBackgroundRemover
 except ImportError as e:
     logger.error(f"Failed to import optimized_rembg: {e}")
     REMBG_AVAILABLE = False
@@ -340,7 +340,7 @@ def process_image_comprehensive(
         if original_image is None:
             raise ValueError(f"Could not load image: {image_path}")
 
-        original_metrics = calculate_image_metrics(original_image)
+        calculate_image_metrics(original_image)
 
         # Step 1: Background removal
         rembg_start = time.perf_counter()
@@ -358,7 +358,7 @@ def process_image_comprehensive(
         rembg_time = time.perf_counter() - rembg_start
 
         results["rembg_time"] = rembg_time
-        rembg_metrics = calculate_image_metrics(image_no_bg)
+        calculate_image_metrics(image_no_bg)
 
         # Save rembg result (this is our fallback)
         rembg_output = output_dir / f"{image_path.stem}_00_rembg.jpg"
@@ -469,7 +469,7 @@ def process_image_comprehensive(
         comparison = np.zeros((max_h, total_w, 3), dtype=np.uint8)
 
         x_offset = 0
-        for img, label in zip(images_to_compare, labels):
+        for img, label in zip(images_to_compare, labels, strict=False):
             h, w = img.shape[:2]
             comparison[:h, x_offset : x_offset + w] = img
             # Add label text
@@ -495,9 +495,7 @@ def process_image_comprehensive(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Comprehensive perspective correction evaluation"
-    )
+    parser = argparse.ArgumentParser(description="Comprehensive perspective correction evaluation")
     parser.add_argument(
         "--input-dir",
         type=Path,
@@ -582,28 +580,26 @@ def main():
     regular_valid = [r for r in all_results if r.get("regular_method", {}).get("validation", {}).get("valid")]
     doctr_valid = [r for r in all_results if r.get("doctr_method", {}).get("validation", {}).get("valid")]
     fallback_used = [r for r in all_results if r.get("fallback_used")]
-    both_failed = [r for r in all_results if not r.get("regular_method", {}).get("validation", {}).get("valid") and
-                   not r.get("doctr_method", {}).get("validation", {}).get("valid")]
+    both_failed = [
+        r
+        for r in all_results
+        if not r.get("regular_method", {}).get("validation", {}).get("valid")
+        and not r.get("doctr_method", {}).get("validation", {}).get("valid")
+    ]
 
     logger.info(f"\nTotal images: {len(all_results)}")
-    logger.info(f"Regular method valid: {len(regular_valid)} ({100*len(regular_valid)/len(all_results):.1f}%)")
-    logger.info(f"DocTR method valid: {len(doctr_valid)} ({100*len(doctr_valid)/len(all_results):.1f}%)")
-    logger.info(f"Fallback used: {len(fallback_used)} ({100*len(fallback_used)/len(all_results):.1f}%)")
-    logger.info(f"Both methods failed: {len(both_failed)} ({100*len(both_failed)/len(all_results):.1f}%)")
+    logger.info(f"Regular method valid: {len(regular_valid)} ({100 * len(regular_valid) / len(all_results):.1f}%)")
+    logger.info(f"DocTR method valid: {len(doctr_valid)} ({100 * len(doctr_valid) / len(all_results):.1f}%)")
+    logger.info(f"Fallback used: {len(fallback_used)} ({100 * len(fallback_used) / len(all_results):.1f}%)")
+    logger.info(f"Both methods failed: {len(both_failed)} ({100 * len(both_failed) / len(all_results):.1f}%)")
 
     # Performance metrics
     if regular_valid:
-        avg_regular_time = np.mean([
-            r["regular_method"]["detection_time"] + r["regular_method"]["correction_time"]
-            for r in regular_valid
-        ])
+        avg_regular_time = np.mean([r["regular_method"]["detection_time"] + r["regular_method"]["correction_time"] for r in regular_valid])
         logger.info(f"\nAverage regular time (valid only): {avg_regular_time:.3f}s")
 
     if doctr_valid:
-        avg_doctr_time = np.mean([
-            r["doctr_method"]["detection_time"] + r["doctr_method"]["correction_time"]
-            for r in doctr_valid
-        ])
+        avg_doctr_time = np.mean([r["doctr_method"]["detection_time"] + r["doctr_method"]["correction_time"] for r in doctr_valid])
         logger.info(f"Average DocTR time (valid only): {avg_doctr_time:.3f}s")
 
         if regular_valid:
@@ -649,4 +645,3 @@ def main():
 
 if __name__ == "__main__":
     exit(main())
-

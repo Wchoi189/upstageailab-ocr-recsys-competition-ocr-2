@@ -33,6 +33,7 @@ def sample_predictions():
 @pytest.fixture
 def mock_model_with_head():
     """Create mock model with working head."""
+
     class MockHead:
         def get_polygons_from_maps(self, batch, predictions):
             # Return mock polygons
@@ -50,6 +51,7 @@ def mock_model_with_head():
 @pytest.fixture
 def mock_model_without_head():
     """Create mock model without head."""
+
     class MockModel:
         pass
 

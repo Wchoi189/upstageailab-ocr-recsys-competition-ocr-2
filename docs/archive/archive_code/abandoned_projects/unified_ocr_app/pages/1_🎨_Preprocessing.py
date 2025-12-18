@@ -17,8 +17,8 @@ from pathlib import Path
 
 # Import PROJECT_ROOT from central path utility (stable, works from any location)
 from ocr.utils.path_utils import PROJECT_ROOT
-try:
 
+try:
     project_root = PROJECT_ROOT
 except ImportError:
     # Fallback: add project root to path first, then import
@@ -33,7 +33,6 @@ if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
 
 import streamlit as st
-
 from ui.apps.unified_ocr_app.components.preprocessing import render_parameter_panel, render_stage_viewer
 from ui.apps.unified_ocr_app.components.preprocessing.parameter_panel import render_preset_management
 from ui.apps.unified_ocr_app.components.shared import render_image_upload

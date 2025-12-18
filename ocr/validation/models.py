@@ -496,7 +496,7 @@ class ValidatedTensorData(_ModelBase):
         # Shape validation
         if self.expected_shape is not None:
             if tuple(tensor.shape) != tuple(self.expected_shape):
-                raise ValueError(f"Tensor shape mismatch: expected {tuple(self.expected_shape)}, " f"got {tuple(tensor.shape)}")
+                raise ValueError(f"Tensor shape mismatch: expected {tuple(self.expected_shape)}, got {tuple(tensor.shape)}")
 
         # Device validation
         if self.expected_device is not None:
@@ -507,12 +507,12 @@ class ValidatedTensorData(_ModelBase):
             if expected_device_str == "cuda" and actual_device_str.startswith("cuda"):
                 pass  # Valid
             elif expected_device_str != actual_device_str:
-                raise ValueError(f"Tensor device mismatch: expected {expected_device_str}, " f"got {actual_device_str}")
+                raise ValueError(f"Tensor device mismatch: expected {expected_device_str}, got {actual_device_str}")
 
         # Dtype validation
         if self.expected_dtype is not None:
             if tensor.dtype != self.expected_dtype:
-                raise ValueError(f"Tensor dtype mismatch: expected {self.expected_dtype}, " f"got {tensor.dtype}")
+                raise ValueError(f"Tensor dtype mismatch: expected {self.expected_dtype}, got {tensor.dtype}")
 
         # Value validation (NaN/Inf and range)
         if not self.allow_nan and torch.isnan(tensor).any():
@@ -528,9 +528,7 @@ class ValidatedTensorData(_ModelBase):
             tensor_max = tensor.max().item()
 
             if tensor_min < min_val or tensor_max > max_val:
-                raise ValueError(
-                    f"Tensor values out of range [{min_val}, {max_val}]: " f"found values in [{tensor_min:.6f}, {tensor_max:.6f}]"
-                )
+                raise ValueError(f"Tensor values out of range [{min_val}, {max_val}]: found values in [{tensor_min:.6f}, {tensor_max:.6f}]")
 
         return self
 

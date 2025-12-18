@@ -15,18 +15,18 @@ def _slugify(text: str) -> str:
     """Convert text to URL-friendly slug for filename."""
     # Convert to lowercase and replace spaces/underscores with hyphens
     slug = text.lower().strip()
-    slug = re.sub(r'[^\w\s-]', '', slug)  # Remove special chars
-    slug = re.sub(r'[-\s]+', '-', slug)  # Replace spaces/underscores with hyphens
+    slug = re.sub(r"[^\w\s-]", "", slug)  # Remove special chars
+    slug = re.sub(r"[-\s]+", "-", slug)  # Replace spaces/underscores with hyphens
     return slug
 
 
 def main():
     parser = argparse.ArgumentParser(description="Generate an incident report for the current experiment")
     parser.add_argument("--title", required=True, help="Incident report title")
-    parser.add_argument("--severity", default="medium", choices=["low", "medium", "high", "critical"],
-                        help="Severity level (default: medium)")
-    parser.add_argument("--status", default="open", choices=["open", "investigating", "resolved", "closed"],
-                        help="Status (default: open)")
+    parser.add_argument(
+        "--severity", default="medium", choices=["low", "medium", "high", "critical"], help="Severity level (default: medium)"
+    )
+    parser.add_argument("--status", default="open", choices=["open", "investigating", "resolved", "closed"], help="Status (default: open)")
     parser.add_argument("--tags", help="Comma-separated tags (e.g., 'perspective,corner-detection')")
     parser.add_argument("--related-artifacts", help="Comma-separated artifact paths (e.g., 'artifacts/img1.jpg,artifacts/img2.jpg')")
     parser.add_argument("--related-assessments", help="Comma-separated assessment paths (e.g., 'assessments/20251123_1430-analysis.md')")
@@ -79,7 +79,7 @@ def main():
     # Load template
     template_path = tracker.root_dir / ".templates" / "incident_report.md"
     if template_path.exists():
-        with open(template_path, "r") as f:
+        with open(template_path) as f:
             template_content = f.read()
     else:
         # Fallback template if file doesn't exist
@@ -152,17 +152,19 @@ experiment_id: "{experiment_id}"
 severity: "{args.severity}"
 status: "{args.status}"
 tags: {format_yaml_array(tags)}
-author: "{tracker.config.get('default_author', 'AI Agent')}"
+author: "{tracker.config.get("default_author", "AI Agent")}"
 ---
 
 """
 
     # Replace the title in the template content
-    content = template_content.replace("## Defect Analysis: [Short Title, e.g., Perspective Overshoot]", f"## Defect Analysis: {args.title}")
+    content = template_content.replace(
+        "## Defect Analysis: [Short Title, e.g., Perspective Overshoot]", f"## Defect Analysis: {args.title}"
+    )
 
     # Replace frontmatter in template with actual frontmatter
     # Find the frontmatter section (between --- and ---)
-    frontmatter_pattern = r'^---\n.*?\n---\n'
+    frontmatter_pattern = r"^---\n.*?\n---\n"
     content = re.sub(frontmatter_pattern, frontmatter, content, flags=re.MULTILINE | re.DOTALL)
 
     # If no frontmatter was found, prepend it
@@ -185,7 +187,7 @@ author: "{tracker.config.get('default_author', 'AI Agent')}"
 
     # Replace the Related Resources section
     # Pattern matches from "---" separator through the end of Related Assessments
-    related_pattern = r'\n---\n\n## Related Resources\n\n### Related Artifacts\n\n.*?\n### Related Assessments\n\n.*?(\n|$)'
+    related_pattern = r"\n---\n\n## Related Resources\n\n### Related Artifacts\n\n.*?\n### Related Assessments\n\n.*?(\n|$)"
     if re.search(related_pattern, content, flags=re.DOTALL):
         content = re.sub(related_pattern, related_section, content, flags=re.DOTALL)
     else:
@@ -205,4 +207,3 @@ author: "{tracker.config.get('default_author', 'AI Agent')}"
 
 if __name__ == "__main__":
     main()
-

@@ -14,7 +14,6 @@ from __future__ import annotations
 from typing import Any
 
 import numpy as np
-
 from apps.backend.services.playground_api.routers import inference as inference_module
 
 
@@ -58,4 +57,3 @@ def test_run_inference_preview_passes_through_preview_image_base64(monkeypatch) 
     assert region.text == "foo"
     assert region.confidence == 0.9
     assert region.polygon == [[0.0, 0.0], [10.0, 0.0], [10.0, 10.0], [0.0, 10.0]]
-

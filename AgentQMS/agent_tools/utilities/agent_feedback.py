@@ -99,9 +99,7 @@ class AgentFeedbackCollector:
             agent_context=f"Impact: {impact}",
         )
 
-    def report_tool_issue(
-        self, tool_path: str, error_message: str, context: str
-    ) -> str:
+    def report_tool_issue(self, tool_path: str, error_message: str, context: str) -> str:
         """Report an issue with automation tools."""
 
         return self.collect_feedback(
@@ -113,9 +111,7 @@ class AgentFeedbackCollector:
             agent_context=f"Context: {context}",
         )
 
-    def suggest_documentation_improvement(
-        self, file_path: str, current_issue: str, improvement: str, rationale: str
-    ) -> str:
+    def suggest_documentation_improvement(self, file_path: str, current_issue: str, improvement: str, rationale: str) -> str:
         """Suggest improvements to documentation."""
 
         return self.suggest_improvement(
@@ -189,9 +185,7 @@ class AgentFeedbackCollector:
 
 def main():
     parser = argparse.ArgumentParser(description="Agent Feedback Collection System")
-    parser.add_argument(
-        "--report", action="store_true", help="Generate feedback report"
-    )
+    parser.add_argument("--report", action="store_true", help="Generate feedback report")
     parser.add_argument("--issue", help="Report a documentation issue")
     parser.add_argument("--file", help="File path for the issue")
     parser.add_argument("--description", help="Description of the issue")

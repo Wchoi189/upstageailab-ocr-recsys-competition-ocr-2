@@ -19,7 +19,6 @@ from PIL import Image
 warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:", category=UserWarning)
 warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has been renamed to 'validate_by_name'", category=UserWarning)
 
-from ocr.utils.geometry_utils import calculate_cropbox
 from ocr.utils.orientation import normalize_pil_image, orientation_requires_rotation, remap_polygons
 from ocr.utils.orientation_constants import ORIENTATION_INVERSE_INT
 from ocr.utils.path_utils import get_path_resolver
@@ -354,19 +353,19 @@ class InferenceEngine:
             # BUG-001: Get both the batch tensor and the exact processed image used for inference
             # This ensures the preview image matches exactly what the model sees, eliminating
             # any coordinate misalignment from reconstruction differences.
-            batch, preview_image_bgr = preprocess_image(
-                image,
-                self._transform,
-                target_size=target_size,
-                return_processed_image=True
-            )
+            batch, preview_image_bgr = preprocess_image(image, self._transform, target_size=target_size, return_processed_image=True)
 
             # BUG-001: Verify preview image dimensions match expected target_size
             preview_h, preview_w = preview_image_bgr.shape[:2]
             if preview_h != target_size or preview_w != target_size:
                 LOGGER.warning(
                     "BUG-001: Preview image size mismatch: expected %dx%d, got %dx%d. Original: %dx%d",
-                    target_size, target_size, preview_w, preview_h, original_w, original_h
+                    target_size,
+                    target_size,
+                    preview_w,
+                    preview_h,
+                    original_w,
+                    original_h,
                 )
             else:
                 # Calculate expected content area for debugging
@@ -376,7 +375,13 @@ class InferenceEngine:
                 resized_w = int(round(original_w * scale))
                 LOGGER.debug(
                     "BUG-001: Preview image verified: %dx%d (original: %dx%d, content area: %dx%d, scale: %.4f)",
-                    preview_w, preview_h, original_w, original_h, resized_w, resized_h, scale
+                    preview_w,
+                    preview_h,
+                    original_w,
+                    original_h,
+                    resized_w,
+                    resized_h,
+                    scale,
                 )
 
             # Calculate metadata for data contract (always calculate, even if preview size mismatch)
@@ -407,7 +412,10 @@ class InferenceEngine:
             }
             LOGGER.debug(
                 "BUG-001: Metadata created: original_size=%s, processed_size=%s, padding=%s, scale=%.4f",
-                meta["original_size"], meta["processed_size"], meta["padding"], meta["scale"]
+                meta["original_size"],
+                meta["processed_size"],
+                meta["padding"],
+                meta["scale"],
             )
         except Exception:  # noqa: BLE001
             LOGGER.exception("Failed to preprocess image")
@@ -480,8 +488,18 @@ class InferenceEngine:
             LOGGER.debug(
                 "BUG-001: Coordinate mapping - original: %dx%d, resized content: %dx%d, "
                 "forward_scales: x=%.6f, y=%.6f, processed_size=%dx%d, padding: top=%d bottom=%d left=%d right=%d",
-                original_w, original_h, resized_w, resized_h, forward_scale_x, forward_scale_y,
-                target_size, target_size, 0, pad_h, 0, pad_w
+                original_w,
+                original_h,
+                resized_w,
+                resized_h,
+                forward_scale_x,
+                forward_scale_y,
+                target_size,
+                target_size,
+                0,
+                pad_h,
+                0,
+                pad_w,
             )
 
             # Parse and transform polygons
@@ -519,8 +537,16 @@ class InferenceEngine:
                                 "BUG-001: Transformed polygon coordinates out of processed_size bounds: "
                                 "min=(%.1f, %.1f), max=(%.1f, %.1f), processed_size=%dx%d, "
                                 "content_area=[0-%d, 0-%d] (original: %dx%d)",
-                                min_x, min_y, max_x, max_y, target_size, target_size, resized_w, resized_h,
-                                original_w, original_h
+                                min_x,
+                                min_y,
+                                max_x,
+                                max_y,
+                                target_size,
+                                target_size,
+                                resized_w,
+                                resized_h,
+                                original_w,
+                                original_h,
                             )
 
                     # Convert back to space-separated string (round to nearest integer)
@@ -556,9 +582,10 @@ class InferenceEngine:
                 if meta is not None:
                     payload["meta"] = meta
                     LOGGER.debug(
-                        "BUG-001: Attached meta to preview response: original_size=%s, processed_size=%s, "
-                        "coordinate_system=%s",
-                        meta.get("original_size"), meta.get("processed_size"), meta.get("coordinate_system")
+                        "BUG-001: Attached meta to preview response: original_size=%s, processed_size=%s, coordinate_system=%s",
+                        meta.get("original_size"),
+                        meta.get("processed_size"),
+                        meta.get("coordinate_system"),
                     )
                 else:
                     LOGGER.warning(

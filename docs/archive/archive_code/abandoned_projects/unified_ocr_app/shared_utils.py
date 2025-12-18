@@ -19,7 +19,6 @@ import streamlit as st
 from ocr.utils.path_utils import PROJECT_ROOT
 
 try:
-
     project_root = PROJECT_ROOT
 except ImportError:
     # Fallback: add project root to path first, then import

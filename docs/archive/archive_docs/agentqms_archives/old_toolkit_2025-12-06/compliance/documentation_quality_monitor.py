@@ -229,10 +229,7 @@ class DocumentationQualityMonitor:
             content = Path(file_path).read_text()
 
             # Check for conflicting tool paths
-            if (
-                "scripts/agent_tools/artifact_workflow.py" in content
-                and "scripts/agent_tools/core/artifact_workflow.py" in content
-            ):
+            if "scripts/agent_tools/artifact_workflow.py" in content and "scripts/agent_tools/core/artifact_workflow.py" in content:
                 issues.append(
                     {
                         "type": "conflicting_paths",

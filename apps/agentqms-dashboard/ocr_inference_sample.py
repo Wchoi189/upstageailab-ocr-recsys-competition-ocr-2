@@ -433,7 +433,7 @@ with torch.no_grad():
 
 ```python
 def compute_metrics(predictions, ground_truth, iou_threshold=0.5):
-    """Compute F1, Precision, Recall."""
+    # Compute F1, Precision, Recall.
 
     tp = 0  # true positives
     fp = 0  # false positives
@@ -633,9 +633,7 @@ MIT License - See LICENSE file for details
 
 def main():
     """Main entry point."""
-    parser = argparse.ArgumentParser(
-        description="Create lightweight OCR inference sample dataset for Google AI Studio"
-    )
+    parser = argparse.ArgumentParser(description="Create lightweight OCR inference sample dataset for Google AI Studio")
     parser.add_argument(
         "--output",
         type=str,
@@ -661,7 +659,7 @@ def main():
     images_dir = output_dir / "images"
     images_dir.mkdir(parents=True, exist_ok=True)
 
-    print(f"📦 Creating OCR inference sample dataset...")
+    print("📦 Creating OCR inference sample dataset...")
     print(f"   Output: {output_dir}")
     print(f"   Images: {args.count}")
     print()
@@ -673,7 +671,7 @@ def main():
         # Receipt image
         img = create_synthetic_receipt(width=400, height=600)
         img.save(images_dir / "sample_001.jpg")
-        print(f"   ✅ Created: sample_001.jpg (receipt)")
+        print("   ✅ Created: sample_001.jpg (receipt)")
 
         # Document images
         for i in range(2, args.count + 1):
@@ -700,19 +698,19 @@ def main():
     config_path = output_dir / "config.yaml"
     with open(config_path, "w") as f:
         f.write(create_config())
-    print(f"   ✅ Created: config.yaml")
+    print("   ✅ Created: config.yaml")
 
     # Create requirements
     requirements_path = output_dir / "requirements.txt"
     with open(requirements_path, "w") as f:
         f.write(create_requirements())
-    print(f"   ✅ Created: requirements.txt")
+    print("   ✅ Created: requirements.txt")
 
     # Create README
     readme_path = output_dir / "README.md"
     with open(readme_path, "w") as f:
         f.write(create_readme())
-    print(f"   ✅ Created: README.md")
+    print("   ✅ Created: README.md")
     print()
 
     # Summary
@@ -723,25 +721,25 @@ def main():
     print("✅ OCR INFERENCE SAMPLE DATASET CREATED")
     print("=" * 60)
     print()
-    print(f"📊 Dataset Summary:")
+    print("📊 Dataset Summary:")
     print(f"   Location: {output_dir.absolute()}")
     print(f"   Total Size: {total_size_kb:.1f} KB")
     print(f"   Images: {args.count}")
     print(f"   Annotations: {len(annotations['annotations'])} text regions")
     print()
-    print(f"📁 Directory Structure:")
+    print("📁 Directory Structure:")
     print(f"   {output_dir}/")
     print(f"   ├── images/ ({args.count} JPEG files)")
-    print(f"   ├── annotations.json (COCO format)")
-    print(f"   ├── config.yaml")
-    print(f"   ├── requirements.txt")
-    print(f"   └── README.md")
+    print("   ├── annotations.json (COCO format)")
+    print("   ├── config.yaml")
+    print("   ├── requirements.txt")
+    print("   └── README.md")
     print()
-    print(f"🚀 Next Steps:")
-    print(f"   1. Review README.md for usage instructions")
+    print("🚀 Next Steps:")
+    print("   1. Review README.md for usage instructions")
     print(f"   2. Load data: python -c \"import json; print(json.load(open('{output_dir}/annotations.json')))\"")
-    print(f"   3. Run inference with your OCR model")
-    print(f"   4. Export to Google AI Studio or other platforms")
+    print("   3. Run inference with your OCR model")
+    print("   4. Export to Google AI Studio or other platforms")
     print()
 
 

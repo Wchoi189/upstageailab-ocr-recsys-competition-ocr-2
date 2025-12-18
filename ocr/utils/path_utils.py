@@ -18,7 +18,6 @@ Modern API:
 """
 
 import os
-import sys
 import warnings
 from collections.abc import Iterable
 from dataclasses import dataclass
@@ -153,7 +152,7 @@ def _detect_project_root() -> Path:
                 return root
             # Warn if marker not found but path exists
             warnings.warn(
-                f"OCR_PROJECT_ROOT={env_root} does not appear to be project root " "(missing pyproject.toml or .git). Using anyway.",
+                f"OCR_PROJECT_ROOT={env_root} does not appear to be project root (missing pyproject.toml or .git). Using anyway.",
                 UserWarning,
                 stacklevel=2,
             )
@@ -283,9 +282,6 @@ class OCRPathResolver:
             return cls(path_config)
         else:
             return cls()
-
-
-
 
 
 # Global path resolver instance

@@ -121,9 +121,7 @@ class PlanProgressTracker:
         count = 0
 
         # Pattern 1: Main task header (e.g., "- [x] **Task 2.1: Something**")
-        header_pattern = (
-            rf"(- )\[ \]([ ]+\*\*{re.escape(task_pattern)}[^\n]*\*\*)"
-        )
+        header_pattern = rf"(- )\[ \]([ ]+\*\*{re.escape(task_pattern)}[^\n]*\*\*)"
         if re.search(header_pattern, self.content):
             self.content = re.sub(header_pattern, r"\1[x]\2", self.content)
             count += 1
@@ -150,11 +148,7 @@ class PlanProgressTracker:
             count += len(re.findall(sub_pattern, section))
 
             # Replace the section in the full content
-            self.content = (
-                self.content[:start_pos]
-                + updated_section
-                + remaining_content[end_pos:]
-            )
+            self.content = self.content[:start_pos] + updated_section + remaining_content[end_pos:]
 
         return count
 
@@ -170,9 +164,7 @@ class PlanProgressTracker:
         count = 0
 
         # Pattern 1: Main task header
-        header_pattern = (
-            rf"(- )\[x\]([ ]+\*\*{re.escape(task_pattern)}[^\n]*\*\*)"
-        )
+        header_pattern = rf"(- )\[x\]([ ]+\*\*{re.escape(task_pattern)}[^\n]*\*\*)"
         if re.search(header_pattern, self.content):
             self.content = re.sub(header_pattern, r"\1[ ]\2", self.content)
             count += 1
@@ -202,9 +194,7 @@ class PlanProgressTracker:
         return {
             "status": status_match.group(1) if status_match else "Unknown",
             "current_step": step_match.group(1) if step_match else "Unknown",
-            "last_completed_task": completed_match.group(1)
-                if completed_match
-                else "Unknown",
+            "last_completed_task": completed_match.group(1) if completed_match else "Unknown",
             "next_task": next_match.group(1) if next_match else "Unknown",
         }
 
@@ -216,15 +206,18 @@ class PlanProgressTracker:
         """
         # Find all main task headers
         completed = len(re.findall(r"- \[x\]\s+\*\*Task \d+\.\d+:", self.content))
-        total = len(re.findall(r"- \[ \]\s+\*\*Task \d+\.\d+:|"
-                              r"- \[x\]\s+\*\*Task \d+\.\d+:", self.content))
+        total = len(
+            re.findall(
+                r"- \[ \]\s+\*\*Task \d+\.\d+:|"
+                r"- \[x\]\s+\*\*Task \d+\.\d+:",
+                self.content,
+            )
+        )
 
         return {
             "completed_tasks": completed,
             "total_tasks": total,
-            "completion_percentage": round(
-                (completed / total * 100) if total > 0 else 0
-            ),
+            "completion_percentage": round((completed / total * 100) if total > 0 else 0),
         }
 
     def save(self, dry_run: bool = False) -> bool:
@@ -261,8 +254,7 @@ class PlanProgressTracker:
         lines.append(f"Last Completed: {tracker['last_completed_task']}")
         lines.append(f"Next Task: {tracker['next_task']}")
         lines.append("")
-        lines.append(f"Tasks Completed: {counts['completed_tasks']}/{counts['total_tasks']} "
-                    f"({counts['completion_percentage']}%)")
+        lines.append(f"Tasks Completed: {counts['completed_tasks']}/{counts['total_tasks']} ({counts['completion_percentage']}%)")
 
         return "\n".join(lines)
 
@@ -295,37 +287,28 @@ Examples:
 
     # Show command
     show_parser = subparsers.add_parser("show", help="Show progress tracker")
-    show_parser.add_argument("--file", "-f", type=Path, required=True,
-                           help="Path to plan file")
+    show_parser.add_argument("--file", "-f", type=Path, required=True, help="Path to plan file")
 
     # Update status
-    status_parser = subparsers.add_parser("update-status",
-                                         help="Update STATUS field")
+    status_parser = subparsers.add_parser("update-status", help="Update STATUS field")
     status_parser.add_argument("--file", "-f", type=Path, required=True)
-    status_parser.add_argument("--status", "-s", required=True,
-                             help="New status value")
-    status_parser.add_argument("--dry-run", action="store_true",
-                             help="Show changes without writing")
+    status_parser.add_argument("--status", "-s", required=True, help="New status value")
+    status_parser.add_argument("--dry-run", action="store_true", help="Show changes without writing")
 
     # Update current step
-    step_parser = subparsers.add_parser("update-step",
-                                       help="Update CURRENT_STEP field")
+    step_parser = subparsers.add_parser("update-step", help="Update CURRENT_STEP field")
     step_parser.add_argument("--file", "-f", type=Path, required=True)
-    step_parser.add_argument("--step", "-s", required=True,
-                           help="New step value")
+    step_parser.add_argument("--step", "-s", required=True, help="New step value")
     step_parser.add_argument("--dry-run", action="store_true")
 
     # Mark complete
-    complete_parser = subparsers.add_parser("mark-complete",
-                                           help="Mark task as complete")
+    complete_parser = subparsers.add_parser("mark-complete", help="Mark task as complete")
     complete_parser.add_argument("--file", "-f", type=Path, required=True)
-    complete_parser.add_argument("--task", "-t", required=True,
-                               help="Task pattern (e.g., 'Task 2.1')")
+    complete_parser.add_argument("--task", "-t", required=True, help="Task pattern (e.g., 'Task 2.1')")
     complete_parser.add_argument("--dry-run", action="store_true")
 
     # Mark incomplete
-    incomplete_parser = subparsers.add_parser("mark-incomplete",
-                                             help="Mark task as incomplete")
+    incomplete_parser = subparsers.add_parser("mark-incomplete", help="Mark task as incomplete")
     incomplete_parser.add_argument("--file", "-f", type=Path, required=True)
     incomplete_parser.add_argument("--task", "-t", required=True)
     incomplete_parser.add_argument("--dry-run", action="store_true")

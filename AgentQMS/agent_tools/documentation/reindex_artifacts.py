@@ -3,6 +3,7 @@
 Reindex artifacts: regenerate INDEX.md files deterministically.
 Scans docs/artifacts/** by type and builds stable, sorted indexes.
 """
+
 import sys
 from datetime import datetime
 from pathlib import Path
@@ -27,6 +28,7 @@ def extract_frontmatter(file_path: Path) -> dict[str, str]:
         return fm
     except Exception:
         return {}
+
 
 def generate_index_content(directory: Path, artifact_type: str) -> str:
     """Generate INDEX.md content for a directory."""
@@ -74,7 +76,7 @@ def generate_index_content(directory: Path, artifact_type: str) -> str:
         "",
         f"**Last Updated**: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}",
         f"**Total Artifacts**: {len(files)}",
-        ""
+        "",
     ]
 
     if active:
@@ -111,6 +113,7 @@ def generate_index_content(directory: Path, artifact_type: str) -> str:
 
     return "\n".join(lines) + "\n"
 
+
 def main():
     """Main entry point."""
     from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
@@ -146,6 +149,7 @@ def main():
 
     print(f"\n✨ Regenerated {regenerated} index files")
     return 0
+
 
 if __name__ == "__main__":
     sys.exit(main())

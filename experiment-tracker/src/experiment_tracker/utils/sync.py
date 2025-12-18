@@ -1,9 +1,11 @@
 """
 Metadata synchronization utilities for keeping state.json and .metadata/ files in sync.
 """
+
 import json
 from pathlib import Path
-from typing import List, Dict, Any, Optional
+from typing import Any
+
 import yaml
 
 from experiment_tracker.utils.path_utils import ExperimentPaths
@@ -64,7 +66,7 @@ class MetadataSync:
             print(f"Error syncing metadata to state: {e}")
             return False
 
-    def validate_consistency(self) -> List[str]:
+    def validate_consistency(self) -> list[str]:
         """
         Check for inconsistencies between state.json and .metadata/ files.
         Returns list of issues found.
@@ -113,16 +115,13 @@ class MetadataSync:
             tasks_file = self.paths.get_context_file("tasks")
             decisions_file = self.paths.get_context_file("decisions")
 
-            tasks_data = {}
-            decisions_data = {}
-
             if tasks_file.exists():
                 with open(tasks_file) as f:
-                    tasks_data = yaml.safe_load(f) or {"tasks": []}
+                    yaml.safe_load(f) or {"tasks": []}
 
             if decisions_file.exists():
                 with open(decisions_file) as f:
-                    decisions_data = yaml.safe_load(f) or {"decisions": []}
+                    yaml.safe_load(f) or {"decisions": []}
 
             # Note: Cross-referencing logic would be more sophisticated
             # For now, this is a placeholder that can be extended
@@ -133,7 +132,7 @@ class MetadataSync:
             print(f"Error adding cross-references: {e}")
             return False
 
-    def _sync_state_yml(self, state: Dict[str, Any]):
+    def _sync_state_yml(self, state: dict[str, Any]):
         """Sync state.json to .metadata/state.yml"""
         state_yml_file = self.paths.get_context_file("state")
 
@@ -156,7 +155,7 @@ class MetadataSync:
         with open(state_yml_file, "w") as f:
             yaml.dump(state_yml, f, default_flow_style=False, sort_keys=False)
 
-    def _sync_tasks_to_state(self, state: Dict[str, Any]):
+    def _sync_tasks_to_state(self, state: dict[str, Any]):
         """Sync tasks from .metadata/tasks.yml to state.json"""
         tasks_file = self.paths.get_context_file("tasks")
         if not tasks_file.exists():
@@ -164,7 +163,7 @@ class MetadataSync:
 
         with open(tasks_file) as f:
             tasks_data = yaml.safe_load(f) or {}
-            tasks = tasks_data.get("tasks", [])
+            tasks_data.get("tasks", [])
 
         # Update state with task count/summary
         # Note: Full task details remain in .metadata/tasks.yml
@@ -173,7 +172,7 @@ class MetadataSync:
             state["tasks"] = []
         # Could add task summary here if needed
 
-    def _sync_decisions_to_state(self, state: Dict[str, Any]):
+    def _sync_decisions_to_state(self, state: dict[str, Any]):
         """Sync decisions from .metadata/decisions.yml to state.json"""
         decisions_file = self.paths.get_context_file("decisions")
         if not decisions_file.exists():
@@ -181,7 +180,7 @@ class MetadataSync:
 
         with open(decisions_file) as f:
             decisions_data = yaml.safe_load(f) or {}
-            decisions = decisions_data.get("decisions", [])
+            decisions_data.get("decisions", [])
 
         # Update state with decision count/summary
         if "decisions" not in state:

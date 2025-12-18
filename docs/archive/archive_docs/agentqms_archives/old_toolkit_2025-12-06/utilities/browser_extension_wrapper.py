@@ -58,9 +58,7 @@ class BrowserExtensionWrapper:
         self.log_failures = log_failures
         self.failure_log: list[dict[str, Any]] = []
 
-    def _retry_operation(
-        self, operation: Callable, operation_name: str, *args, **kwargs
-    ) -> Any:
+    def _retry_operation(self, operation: Callable, operation_name: str, *args, **kwargs) -> Any:
         """
         Execute operation with retry logic.
 
@@ -117,9 +115,7 @@ class BrowserExtensionWrapper:
                     continue
 
         # All retries failed
-        raise Exception(
-            f"{operation_name} failed after {self.max_retries} attempts: {last_error}"
-        )
+        raise Exception(f"{operation_name} failed after {self.max_retries} attempts: {last_error}")
 
     def navigate_pattern(
         self,
@@ -186,9 +182,7 @@ class BrowserExtensionWrapper:
             if browser_wait_for_func:
 
                 def _wait_streamlit():
-                    return browser_wait_for_func(
-                        text="Streamlit", time=streamlit_timeout
-                    )
+                    return browser_wait_for_func(text="Streamlit", time=streamlit_timeout)
 
                 self._retry_operation(_wait_streamlit, "wait_for_streamlit")
 
@@ -197,9 +191,7 @@ class BrowserExtensionWrapper:
                 try:
 
                     def _wait_loading_gone():
-                        return browser_wait_for_func(
-                            text="Loading", time=loading_timeout, textGone=True
-                        )
+                        return browser_wait_for_func(text="Loading", time=loading_timeout, textGone=True)
 
                     self._retry_operation(_wait_loading_gone, "wait_loading_gone")
                 except Exception:
@@ -259,9 +251,7 @@ class BrowserExtensionWrapper:
 
             return {"success": False, "error": str(e), "method": "browser_extension"}
 
-    def console_messages_pattern(
-        self, browser_console_messages_func: Callable
-    ) -> dict[str, Any]:
+    def console_messages_pattern(self, browser_console_messages_func: Callable) -> dict[str, Any]:
         """
         Get console messages (lightweight operation, no retry needed).
 
@@ -281,9 +271,7 @@ class BrowserExtensionWrapper:
         except Exception as e:
             return {"success": False, "error": str(e), "method": "browser_extension"}
 
-    def network_requests_pattern(
-        self, browser_network_requests_func: Callable
-    ) -> dict[str, Any]:
+    def network_requests_pattern(self, browser_network_requests_func: Callable) -> dict[str, Any]:
         """
         Get network requests (lightweight operation).
 
@@ -316,22 +304,14 @@ class BrowserExtensionWrapper:
         try:
             # Import Puppeteer wrapper
             sys_path = Path(__file__).parent.parent.parent
-            wrapper_path = (
-                sys_path
-                / "scripts"
-                / "agent_tools"
-                / "utilities"
-                / "puppeteer_wrapper.py"
-            )
+            wrapper_path = sys_path / "scripts" / "agent_tools" / "utilities" / "puppeteer_wrapper.py"
 
             if not wrapper_path.exists():
                 raise ImportError(f"Puppeteer wrapper not found: {wrapper_path}")
 
             import importlib.util
 
-            spec = importlib.util.spec_from_file_location(
-                "puppeteer_wrapper", wrapper_path
-            )
+            spec = importlib.util.spec_from_file_location("puppeteer_wrapper", wrapper_path)
             puppeteer_module = importlib.util.module_from_spec(spec)
             spec.loader.exec_module(puppeteer_module)
 
@@ -401,9 +381,7 @@ class BrowserExtensionWrapper:
 
         # Check console messages
         if check_console:
-            console_result = self.console_messages_pattern(
-                browser_console_messages_func
-            )
+            console_result = self.console_messages_pattern(browser_console_messages_func)
             if console_result.get("success"):
                 messages = console_result.get("messages", [])
                 errors = [msg for msg in messages if msg.get("type") == "error"]
@@ -461,9 +439,7 @@ class BrowserExtensionWrapper:
                 stats["operations"][op] = {"count": 0, "statuses": {}}
             stats["operations"][op]["count"] += 1
             status = failure.get("status", "unknown")
-            stats["operations"][op]["statuses"][status] = (
-                stats["operations"][op]["statuses"].get(status, 0) + 1
-            )
+            stats["operations"][op]["statuses"][status] = stats["operations"][op]["statuses"].get(status, 0) + 1
 
         return stats
 

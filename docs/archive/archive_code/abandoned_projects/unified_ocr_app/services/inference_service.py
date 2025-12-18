@@ -119,8 +119,7 @@ class InferenceService:
                         display_image = decoded_image
                         image_shape = decoded_image.shape
                         _self.logger.debug(
-                            f"BUG-001: Using preview image for alignment. "
-                            f"Shape: {image_shape}, Original shape: {image.shape}"
+                            f"BUG-001: Using preview image for alignment. Shape: {image_shape}, Original shape: {image.shape}"
                         )
                     else:
                         _self.logger.warning("BUG-001: Failed to decode preview_image_base64, using original image")
