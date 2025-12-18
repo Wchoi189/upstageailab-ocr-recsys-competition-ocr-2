@@ -604,7 +604,8 @@ set_task_done(task1)
 
 # Check status
 status = get_plan_status("2025-1106_feat_vector-cache")
-print(f"Plan: {status[0]['title']}, Open tasks: {status[0]['open_tasks']}")
+plan = status[0]
+print(f"Plan: {plan['title']}, Open tasks: {plan['open_tasks']}")
 ```
 
 ### Complete Workflow: Experiment
