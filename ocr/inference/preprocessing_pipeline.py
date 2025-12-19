@@ -65,15 +65,18 @@ class PreprocessingPipeline:
         self,
         transform: Callable[[Any], Any] | None = None,
         target_size: int = 640,
+        enable_background_normalization: bool = False,
     ):
         """Initialize preprocessing pipeline.
 
         Args:
             transform: Torchvision transform pipeline (ToTensor + Normalize)
             target_size: Target size for resize and padding (default: 640)
+            enable_background_normalization: Whether to apply gray-world normalization
         """
         self._transform = transform
         self._target_size = target_size
+        self._enable_background_normalization = enable_background_normalization
 
     def process(
         self,
@@ -152,6 +155,7 @@ class PreprocessingPipeline:
                 self._transform,
                 target_size=self._target_size,
                 return_processed_image=True,
+                enable_background_normalization=self._enable_background_normalization,
             )
 
             # Verify preview dimensions
@@ -208,6 +212,7 @@ class PreprocessingPipeline:
                 self._transform,
                 target_size=self._target_size,
                 return_processed_image=True,
+                enable_background_normalization=self._enable_background_normalization,
             )
 
             # Calculate metadata for original image dimensions
@@ -265,7 +270,11 @@ class PreprocessingPipeline:
         # Build transform pipeline
         transform = build_transform(settings)
 
-        return cls(transform=transform, target_size=target_size)
+        return cls(
+            transform=transform,
+            target_size=target_size,
+            enable_background_normalization=settings.enable_background_normalization,
+        )
 
 
 __all__ = [

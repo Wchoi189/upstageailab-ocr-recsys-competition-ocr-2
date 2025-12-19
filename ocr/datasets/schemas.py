@@ -74,6 +74,7 @@ class DatasetConfig(BaseModel):
     load_maps: bool = False
     preload_images: bool = False
     prenormalize_images: bool = False
+    enable_background_normalization: bool = False
     cache_config: CacheConfig = Field(default_factory=CacheConfig)
     image_loading_config: ImageLoadingConfig = Field(default_factory=ImageLoadingConfig)
 

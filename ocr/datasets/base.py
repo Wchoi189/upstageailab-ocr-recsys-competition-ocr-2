@@ -469,6 +469,11 @@ class ValidatedOCRDataset(Dataset):
         orientation = image_data.orientation
         cache_source = "disk"  # Default, can be updated if loaded from cache
 
+        # Apply gray-world background normalization if enabled (BEFORE transforms)
+        if self.config.enable_background_normalization:
+            from ocr.utils.background_normalization import normalize_gray_world
+            image_array = normalize_gray_world(image_array)
+
         # 3. Annotation Processing: Load raw polygons and process them
         raw_polygons = self.anns[image_filename]
         processed_polygons = None
