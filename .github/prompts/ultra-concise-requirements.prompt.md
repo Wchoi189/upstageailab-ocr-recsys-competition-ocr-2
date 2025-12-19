@@ -1,6 +1,3 @@
----
-agent: agent
----
 Requirements:
 - Generate artifacts using AgentQMS tools
 - Follow established project conventions
