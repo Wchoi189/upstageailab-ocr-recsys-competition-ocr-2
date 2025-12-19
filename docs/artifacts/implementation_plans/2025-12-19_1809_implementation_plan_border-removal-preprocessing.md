@@ -28,92 +28,134 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Border 
 # Living Implementation Blueprint: Border Removal Preprocessing Experiment (Option C)
 
 ## Progress Tracker
-- **STATUS:** Not Started
-- **CURRENT STEP:** Phase 1, Task 1.1 - [Initial Task Name]
+- **STATUS:** Phase 1 - Dataset Curation
+- **CURRENT STEP:** Phase 1, Task 1.1 - Border Case Collection
 - **LAST COMPLETED TASK:** None
-- **NEXT TASK:** [Description of the immediate next task]
+- **NEXT TASK:** Query experiment registry for images with abs(skew_deg) > 20 and zero predictions
 
 ### Implementation Outline (Checklist)
 
-#### **Phase 1: Foundation (Week 1-2)**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
+#### **Phase 1: Dataset Curation & Baseline (Days 1-3)**
+1. [ ] **Task 1.1: Collect Border Failure Cases**
+   - [ ] Query `ocr/experiment_registry.py` for samples: `abs(skew_deg) > 20` AND `predicted_text == ""`
+   - [ ] Extract 50 worst performers: sort by `skew_deg DESC`, filter for visible black borders (manual inspection)
+   - [ ] Validate with VLM `image_quality` mode: confirm border presence, measure severity (1-10 scale)
 
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
+2. [ ] **Task 1.2: Generate Synthetic Border Dataset**
+   - [ ] Create `scripts/generate_border_dataset.py`: add 10-50px black borders to 100 clean samples
+   - [ ] Vary border thickness, aspect ratios, and skew angles (-30° to +30°)
+   - [ ] Split: 70 train / 30 test (for boundary detection algorithm validation)
 
-#### **Phase 2: Core Implementation (Week 3-4)**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
+3. [ ] **Task 1.3: Record Baseline Metrics**
+   - [ ] Run deskew on border dataset WITHOUT border removal: record `skew_deg_before`, `skew_deg_after`
+   - [ ] Measure failure rate: count samples where `abs(skew_deg_after) > 15`
+   - [ ] Store in `outputs/experiments/20251218_1900_border_removal_preprocessing/baseline_metrics.json`
 
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
+#### **Phase 2: Border Removal Implementation (Days 4-7)**
+4. [ ] **Task 2.1: Implement Canny+Contours Method**
+   - [ ] Create `ocr/datasets/transforms/border_removal.py` with class `CannyBorderRemover`
+   - [ ] Algorithm: Canny edge detection → find largest rectangular contour → crop to inner bounds
+   - [ ] Expose params: `canny_low=50`, `canny_high=150`, `min_area_ratio=0.75`
 
-#### **Phase 3: Testing & Validation (Week 5-6)**
-5. [ ] **Task 3.1: [Task 3.1 Title]**
-   - [ ] [Sub-task 3.1.1 description]
-   - [ ] [Sub-task 3.1.2 description]
+5. [ ] **Task 2.2: Implement Morphological Method**
+   - [ ] Add class `MorphBorderRemover` to same module
+   - [ ] Algorithm: Otsu threshold → morphological closing (kernel=5x5) → find largest connected component
+   - [ ] Expose params: `morph_kernel_size=5`, `min_area_ratio=0.75`
 
-6. [ ] **Task 3.2: [Task 3.2 Title]**
-   - [ ] [Sub-task 3.2.1 description]
-   - [ ] [Sub-task 3.2.2 description]
+6. [ ] **Task 2.3: Implement Hough Lines Method (Optional)**
+   - [ ] Add class `HoughBorderRemover` to same module
+   - [ ] Algorithm: Canny edges → Hough line detection → find 4 dominant lines → compute intersection rectangle
+   - [ ] Expose params: `hough_threshold=100`, `min_line_length=100`, `max_line_gap=10`
+
+7. [ ] **Task 2.4: Unified Interface**
+   - [ ] Create factory function `create_border_remover(method: str, **kwargs) -> BorderRemoverBase`
+   - [ ] Define `BorderRemoverBase` abstract class: `remove_border(image: np.ndarray) -> Tuple[np.ndarray, dict]`
+   - [ ] Return metrics dict: `{cropped: bool, confidence: float, area_ratio: float, method: str}`
+
+#### **Phase 3: Validation & Performance Testing (Days 8-10)**
+8. [ ] **Task 3.1: Boundary Detection Accuracy**
+   - [ ] Run all 3 methods on synthetic border dataset (30 test samples)
+   - [ ] Compute IoU between detected crop region and ground truth
+   - [ ] Target: IoU > 0.95 for 90% of samples
+
+9. [ ] **Task 3.2: False Positive Testing**
+   - [ ] Run border removal on 100 clean samples (no borders)
+   - [ ] Measure false crop rate: count samples where `area_ratio < 0.98`
+   - [ ] Target: False crop rate < 0.05
+
+10. [ ] **Task 3.3: Performance Benchmarking** (Optional - not required)
+    - [ ] Profile each method on representative image set (if time permits)
+    - [ ] Measure: average processing time per image
+    - [ ] Note: No latency requirements for this experiment
+
+11. [ ] **Task 3.4: Skew Improvement Validation**
+    - [ ] Run Option C pipeline on image_000732: (1) border removal → (2) deskew
+    - [ ] Measure `skew_deg_after`: target < 15°
+    - [ ] Compare against baseline (no border removal): document improvement
+
+12. [ ] **Task 3.5: VLM Analysis Workflow**
+    - [ ] Phase 1: VLM baseline assessment (10 images, ~10 min)
+    - [ ] Phase 2: VLM validation analysis (30×3 images, ~1.5 hours)
+    - [ ] Phase 3: VLM quality assessment (30 images, ~45 min)
+    - [ ] Generate comprehensive VLM reports for all cases
+    - [ ] No latency constraints - prioritize quality over speed
 
 ---
 
 ## **Technical Requirements Checklist**
 
 ### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
+- [ ] Abstract base class: `BorderRemoverBase` with `remove_border()` interface
+- [ ] Factory pattern: `create_border_remover(method, **kwargs)` for strategy selection
+- [ ] Module location: `experiment-tracker/experiments/20251218_1900_border_removal_preprocessing/scripts/border_removal.py` (standalone experiment)
+- [ ] Metrics schema: `{cropped: bool, confidence: float, area_ratio: float, method: str, processing_time_ms: float}`
+- [ ] Fallback behavior: Return original image if `confidence < threshold` OR `area_ratio < min_area_ratio`
 
-### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
+### **Integration Points** (DEFERRED to Options A/B)
+- [ ] **NOT IN SCOPE**: Pipeline integration deferred to Options A/B
+- [ ] **EXPERIMENT ONLY**: Focus on validating methods and generating reports
+- [ ] Metrics export: Log border removal outcomes to `outputs/experiments/{exp_id}/border_metrics.jsonl`
+- [ ] VLM analysis: **EXTENSIVE USE** via `AgentQMS.vlm.cli.analyze_image_defects` (no latency constraints)
+- [ ] Option C conditional logic: Document findings for future integration
 
 ### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
+- [ ] Unit tests: 3 classes × 5 test cases = 15 tests in `tests/ocr/transforms/test_border_removal.py`
+- [ ] Integration test: End-to-end Option C pipeline on 30-sample border dataset
+- [ ] Performance test: Latency profiling on 1000 images (p50, p95, p99)
+- [ ] Regression test: False crop rate < 0.05 on 100 clean samples
 
 ---
 
 ## **Success Criteria Validation**
 
 ### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
+- [ ] Image_000732: `abs(skew_deg_after) < 15°` (baseline: 45°+)
+- [ ] Boundary detection: IoU > 0.95 on 90% of synthetic border dataset
+- [ ] No false crops: False crop rate < 0.05 on clean samples (n=100)
+- [ ] VLM validation: Comprehensive reports for baseline, validation, and quality assessment
 
 ### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
+- [ ] Config-driven: All parameters exposed in `configs/data/preprocessing.yaml`
+- [ ] Type safety: Full type hints, validated with `pyright --strict`
+- [ ] Modularity: 3 border removal algorithms share common interface (`BorderRemoverBase`)
+- [ ] Observability: Metrics logged to `outputs/experiments/{exp_id}/border_metrics.jsonl` with timestamps
+- [ ] Safe fallback: Original image returned if confidence/area checks fail
 
 ---
 
 ## **Risk Mitigation & Fallbacks**
 
-### **Current Risk Level**: LOW / MEDIUM / HIGH
+### **Current Risk Level**: MEDIUM
+
 ### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
+1. **Overfitting to synthetic borders**: Validate on real border failures (image_000732 + 50 worst performers)
+2. **False crops on textured images**: Enforce `min_area_ratio=0.75` threshold; log all rejected crops
+3. **Latency regression**: Profile each algorithm independently; disable Hough if p95 > 50ms
 
 ### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
+1. **If IoU < 0.95**: Revert to Canny-only method (simplest, fastest)
+2. **If false crop rate > 0.05**: Raise `confidence_threshold` to 0.8 or disable border removal
+3. **If image_000732 still fails**: Document as known limitation; escalate to manual annotation for ground truth validation
 
 ---
 
@@ -135,18 +177,18 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **Border 
 
 ## **Immediate Next Action**
 
-**TASK:** [Description of the immediate next task]
+**TASK:** Query experiment registry for border failure cases (abs(skew_deg) > 20, zero predictions)
 
-**OBJECTIVE:** [Clear, concise goal of the task]
+**OBJECTIVE:** Collect 50 real-world border failures for algorithm validation
 
 **APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
+1. Run query: `python -c "from ocr.experiment_registry import get_failures; print(get_failures(min_skew=20, pred_text=''))"`
+2. Sort results by `skew_deg DESC`, extract top 50 image paths
+3. Copy images to `data/border_failures/real_world_samples/`
 
 **SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
+- 50 images extracted with confirmed `abs(skew_deg) > 20`
+- Manifest file created: `data/border_failures/real_world_samples/manifest.json` with `{image_id, skew_deg, file_path}[]`
 
 ---
 

@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2025-12-19T10:53:35.595826+00:00'
+  generated_at: '2025-12-19T12:41:52.990250+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -7,16 +7,28 @@ discovery_paths:
   project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
 plugins_loaded:
   artifact_types:
+  - audit
   - change_request
+  - ocr_experiment_report
   validators: true
   context_bundles:
   - security-review
 plugin_metadata:
+- name: audit
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
 - name: change_request
   type: artifact_type
   version: '1.0'
   source: project
   path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+- name: ocr_experiment_report
+  type: artifact_type
+  version: '1.1'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
 - name: validators
   type: validator
   version: '1.0'
@@ -27,19 +39,89 @@ plugin_metadata:
   version: '1.0'
   source: project
   path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
-validation_errors:
-- path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
-  type: artifact_type
-  error: 'Additional properties are not allowed (''allowed_categories'' was unexpected)
-    (path: [''validation''])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
-- path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
-  type: artifact_type
-  error: 'Additional properties are not allowed (''instructions'', ''tools'' were
-    unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/schemas/plugin_artifact_type.json
+validation_errors: []
 resolved:
   artifact_types:
+    audit:
+      name: audit
+      version: '1.0'
+      description: 'Framework audits, compliance checks, and quality evaluations with
+
+        automated implementation plan generation via GitHub Actions.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_audit-{name}.md'
+        directory: audits/
+        frontmatter:
+          type: audit
+          category: compliance
+          status: draft
+          version: '1.0'
+          related_artifacts: []
+          generated_artifacts: []
+          tags:
+          - audit
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - category
+        - related_artifacts
+        - generated_artifacts
+        required_sections:
+        - '## Executive Summary'
+        - '## Findings'
+        - '## Recommendations'
+        - '## Compliance Status'
+        - '## Related Artifacts'
+        filename_prefix: audit-
+        allowed_categories:
+        - accessibility
+        - security
+        - compliance
+        - performance
+        - code_quality
+        - framework
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: "# Audit: {title}\n\n**Audit Date**: {date}\n**Category**: {category}\n\
+        **Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
+        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
+        \ Scope**: [Describe what was audited]\n**Compliance Status**: [Overall status]\n\
+        **Critical Issues**: [Number]\n**High Priority Issues**: [Number]\n\n---\n\
+        \n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
+        \ Critical\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
+        \ recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n**Severity**:\
+        \ High\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
+        \ recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\n**Severity**:\
+        \ Medium\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\n## Recommendations\n\
+        \n### Immediate Actions (Week 1)\n1. [Action item with priority and owner]\n\
+        2. [Action item with priority and owner]\n\n### Short-term (Weeks 2-4)\n3.\
+        \ [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action item]\n\n---\n\
+        \n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
+        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
+        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
+        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
+        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
+        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
+        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
+        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
+        \n---\n\n**Last Updated**: {date}\n**Auditor**: {auditor}\n"
+      template_variables:
+        date: '2025-11-29'
+        category: compliance
+        status: draft
+        auditor: AI Agent
     change_request:
       name: change_request
       version: '1.0'
@@ -206,6 +288,180 @@ resolved:
         requester: AI Agent
         approver: '[Pending Assignment]'
         priority: Medium
+    ocr_experiment_report:
+      name: ocr_experiment_report
+      version: '1.1'
+      description: 'OCR experiment workflow and analysis report with structured metadata
+
+        and artifact tracking for experiment-tracker integration.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_ocr-experiment_{name}.md'
+        directory: experiments/
+        frontmatter:
+          type: ocr_experiment_report
+          category: research
+          status: draft
+          version: '1.0'
+          tags:
+          - ocr
+          - experiment
+          - tracking
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - experiment_id
+        - intention
+        required_sections:
+        - '## Experiment Overview'
+        - '## Methodology'
+        - '## Results'
+        - '## Analysis'
+        filename_prefix: ocr_experiment_
+        allowed_categories:
+        - research
+        - evaluation
+        - development
+        allowed_statuses:
+        - active
+        - incomplete
+        - completed
+        - archived
+      template: '# OCR Experiment: {title}
+
+
+        ## Experiment Overview
+
+
+        **Experiment ID**: {experiment_id}
+
+        **Date**: {date}
+
+        **Status**: {status}
+
+        **Intention**: {intention}
+
+
+        ---
+
+
+        ## Methodology
+
+
+        ### Objective
+
+        [Describe the experiment objective]
+
+
+        ### Scope
+
+        [Define the scope of the experiment]
+
+
+        ### Setup
+
+        [Describe the experimental setup]
+
+
+        ---
+
+
+        ## Results
+
+
+        ### Key Findings
+
+        - Finding 1
+
+        - Finding 2
+
+        - Finding 3
+
+
+        ### Metrics
+
+        [Document relevant metrics]
+
+
+        ### Artifacts Generated
+
+        - [Artifact 1](path/to/artifact)
+
+        - [Artifact 2](path/to/artifact)
+
+
+        ---
+
+
+        ## Analysis
+
+
+        ### Observations
+
+        [Detailed analysis of observations]
+
+
+        ### Performance Impact
+
+        [Describe any performance improvements or regressions]
+
+
+        ### Recommendations
+
+        1. [Recommendation 1]
+
+        2. [Recommendation 2]
+
+
+        ### Related Assessments
+
+        - [Assessment](../assessments/YYYY-MM-DD_HHMM_assessment_name.md)
+
+
+        ---
+
+
+        ## Related Artifacts
+
+
+        **Implementation Plans**:
+
+        - [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)
+
+
+        **Incident Reports**:
+
+        - [Report](../incident_reports/YYYY-MM-DD_HHMM_incident_report_name.md)
+
+
+        ---
+
+
+        **Last Updated**: {date}
+
+        **Researcher**: AI Agent
+
+        '
+      template_variables:
+        experiment_id: EXP-001
+        date: '2025-12-06'
+        status: draft
+        intention: '[Experiment objective and goal]'
+      tools:
+        experiment_tracking:
+        - experiment-tracker/scripts/start-experiment.py
+        - experiment-tracker/scripts/record-artifact.py
+        - experiment-tracker/scripts/generate-assessment.py
+        vlm_analysis:
+        - AgentQMS/vlm/cli/analyze_image_defects.py
+      instructions:
+        quickstart: experiment-tracker/docs/quickstart.md
+        workflow: experiment-tracker/docs/experiment_workflow.md
   validators:
     prefixes:
       CR_: change_requests/
