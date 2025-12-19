@@ -39,6 +39,10 @@ import sys
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+# Import state file utilities
+sys.path.insert(0, str(Path(__file__).parent / "src"))
+from experiment_tracker.utils.state_file import create_state_file, read_state, update_state
+
 # Define KST timezone (UTC+9)
 KST = timezone(timedelta(hours=9))
 
@@ -111,13 +115,25 @@ class ExperimentTracker:
         (exp_path / ".metadata" / "guides").mkdir()
         (exp_path / ".metadata" / "plans").mkdir()
 
+        # NEW: Progress-tracker integration (status hierarchy)
+        (exp_path / ".metadata" / "00-status").mkdir()
+        (exp_path / ".metadata" / "01-work-logs").mkdir()
+        (exp_path / ".metadata" / "02-tasks").mkdir()
+
         # Create experiment manifest
         manifest = self._generate_manifest(experiment_id, name, description, tags or [])
         manifest_path = exp_path / "README.md"
         manifest_path.write_text(manifest, encoding="utf-8")
 
+        # NEW: Create .state file (100-byte core state)
+        create_state_file(exp_path, experiment_id)
+
+        # NEW: Populate experiment_state table in database
+        self._init_experiment_in_db(experiment_id, name, description, tags or [])
+
         print(f"✅ Initialized experiment: {experiment_id}")
         print(f"📂 Location: {exp_path}")
+        print(f"📊 State: .state file created ({Path(exp_path / '.state').stat().st_size} bytes)")
         print("\n📋 Next steps:")
         print(f"   cd {exp_path}")
         print('   etk create assessment "Initial baseline evaluation"')
@@ -860,8 +876,194 @@ Additional notes and considerations.
 
         return templates.get(artifact_type, "## Content\n\nAdd content here.\n")
 
+    # ==================== STATE MANAGEMENT METHODS (NEW) ====================
+
+    def _init_experiment_in_db(self, experiment_id: str, name: str, description: str, tags: list[str]):
+        """Initialize experiment_state entry in database."""
+        if not self.db_path.exists():
+            return  # Database not available
+
+        conn = sqlite3.connect(self.db_path)
+        try:
+            now = datetime.now(timezone.utc).isoformat()
+
+            # Insert into experiment_state table
+            conn.execute("""
+                INSERT INTO experiment_state (
+                    experiment_id, current_task_id, current_phase, status,
+                    created_at, updated_at
+                ) VALUES (?, NULL, 'planning', 'active', ?, ?)
+            """, (experiment_id, now, now))
+
+            conn.commit()
+        except sqlite3.IntegrityError:
+            # Experiment state already exists
+            pass
+        finally:
+            conn.close()
+
+    def get_current_state_from_db(self, experiment_id: str) -> dict | None:
+        """Query current state from database (O(1) indexed query)."""
+        if not self.db_path.exists():
+            return None
+
+        conn = sqlite3.connect(self.db_path)
+        conn.row_factory = sqlite3.Row
+
+        try:
+            cursor = conn.execute("""
+                SELECT
+                    s.current_task_id,
+                    s.current_phase,
+                    s.status,
+                    t.title as current_task_title,
+                    t.priority as current_task_priority
+                FROM experiment_state s
+                LEFT JOIN experiment_tasks t ON s.current_task_id = t.task_id
+                WHERE s.experiment_id = ?
+            """, (experiment_id,))
+
+            row = cursor.fetchone()
+            if row:
+                return dict(row)
+            return None
+        finally:
+            conn.close()
+
+    def create_task(self, experiment_id: str, title: str, description: str = "",
+                    priority: str = "medium") -> str:
+        """Create new task in database."""
+        import uuid
+
+        task_id = f"{title.lower().replace(' ', '_')}_{uuid.uuid4().hex[:8]}"
+        now = datetime.now(timezone.utc).isoformat()
+
+        if not self.db_path.exists():
+            raise RuntimeError("Database not available")
+
+        conn = sqlite3.connect(self.db_path)
+        try:
+            conn.execute("""
+                INSERT INTO experiment_tasks (
+                    task_id, experiment_id, title, description,
+                    status, priority, created_at
+                ) VALUES (?, ?, ?, ?, 'backlog', ?, ?)
+            """, (task_id, experiment_id, title, description, priority, now))
+
+            conn.commit()
+            return task_id
+        finally:
+            conn.close()
+
+    def set_current_task(self, experiment_id: str, task_id: str):
+        """Atomically update current task with state transition logging."""
+        if not self.db_path.exists():
+            raise RuntimeError("Database not available")
+
+        conn = sqlite3.connect(self.db_path)
+        try:
+            now = datetime.now(timezone.utc).isoformat()
+
+            # Get previous task
+            cursor = conn.execute(
+                "SELECT current_task_id FROM experiment_state WHERE experiment_id = ?",
+                (experiment_id,)
+            )
+            row = cursor.fetchone()
+            prev_task_id = row[0] if row else None
+
+            # Update state
+            conn.execute("""
+                UPDATE experiment_state
+                SET current_task_id = ?, updated_at = ?
+                WHERE experiment_id = ?
+            """, (task_id, now, experiment_id))
+
+            # Mark old task completed, new task in-progress
+            if prev_task_id:
+                conn.execute("""
+                    UPDATE experiment_tasks
+                    SET status = 'completed', completed_at = ?
+                    WHERE task_id = ?
+                """, (now, prev_task_id))
+
+            conn.execute("""
+                UPDATE experiment_tasks
+                SET status = 'in_progress', started_at = ?
+                WHERE task_id = ?
+            """, (now, task_id))
+
+            # Log transition
+            conn.execute("""
+                INSERT INTO state_transitions (
+                    experiment_id, from_state, to_state,
+                    transition_type, triggered_by, timestamp
+                ) VALUES (?, ?, ?, 'task', 'etk_cli', ?)
+            """, (experiment_id, prev_task_id or 'none', task_id, now))
+
+            conn.commit()
+
+            # Also update .state file
+            exp_path = self.experiments_dir / experiment_id
+            if exp_path.exists():
+                update_state(exp_path, current_task=task_id)
+
+        finally:
+            conn.close()
+
+    def record_decision(self, experiment_id: str, decision: str, rationale: str,
+                       impact: str = None) -> str:
+        """Log decision to database."""
+        import uuid
+
+        decision_id = f"dec_{uuid.uuid4().hex[:12]}"
+        now = datetime.now(timezone.utc)
+
+        if not self.db_path.exists():
+            raise RuntimeError("Database not available")
+
+        conn = sqlite3.connect(self.db_path)
+        try:
+            conn.execute("""
+                INSERT INTO experiment_decisions (
+                    decision_id, experiment_id, date, decision, rationale, impact, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (decision_id, experiment_id, now.date().isoformat(),
+                  decision, rationale, impact, now.isoformat()))
+
+            conn.commit()
+            return decision_id
+        finally:
+            conn.close()
+
+    def record_insight(self, experiment_id: str, insight: str, impact: str,
+                      category: str = "observation") -> str:
+        """Log insight to database."""
+        import uuid
+
+        insight_id = f"ins_{uuid.uuid4().hex[:12]}"
+        now = datetime.now(timezone.utc)
+
+        if not self.db_path.exists():
+            raise RuntimeError("Database not available")
+
+        conn = sqlite3.connect(self.db_path)
+        try:
+            conn.execute("""
+                INSERT INTO experiment_insights (
+                    insight_id, experiment_id, date, insight, impact, category, created_at
+                ) VALUES (?, ?, ?, ?, ?, ?, ?)
+            """, (insight_id, experiment_id, now.date().isoformat(),
+                  insight, impact, category, now.isoformat()))
+
+            conn.commit()
+            return insight_id
+        finally:
+            conn.close()
+
 
 def main():
+
     parser = argparse.ArgumentParser(
         description="ETK (Experiment Tracker Kit) - CLI for EDS v1.0",
         formatter_class=argparse.RawDescriptionHelpFormatter,

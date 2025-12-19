@@ -213,9 +213,12 @@ def collect_border_cases(
     print("SUMMARY")
     print(f"{'='*60}")
     print(f"Total border cases found: {len(border_cases)}")
-    print(f"Highest skew: {border_cases[0]['skew_abs']:.1f}° ({border_cases[0]['image_name']})")
-    print(f"Cases with detected borders: {sum(1 for c in border_cases if c['has_border_detected'])}")
-    print(f"Manifest saved to: {output_path}")
+    if border_cases:
+        print(f"Highest skew: {border_cases[0]['skew_abs']:.1f}° ({border_cases[0]['image_name']})")
+        print(f"Cases with detected borders: {sum(1 for c in border_cases if c['has_border_detected'])}")
+        print(f"Manifest saved to: {output_path}")
+    else:
+        print("No border cases found matching criteria.")
     print()
 
     return manifest

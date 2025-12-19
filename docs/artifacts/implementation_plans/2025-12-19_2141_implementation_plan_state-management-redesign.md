@@ -30,38 +30,38 @@ Replace 9KB YAML state files with 100-byte .state files + database tables. Achie
 - Active experiment: `experiment-tracker/experiments/20251218_1900_border_removal_preprocessing/` (UNCHANGED)
 
 ## Progress Tracker
-- **STATUS:** Not Started
-- **CURRENT STEP:** Phase 1, Task 1.1 - Database schema creation
-- **LAST COMPLETED TASK:** None
-- **NEXT TASK:** Create SQL schema file for new tables
+- **STATUS:** In Progress - Phase 1 Complete, Phase 2 Starting
+- **CURRENT STEP:** Phase 2, Task 2.1 - Extend ETK CLI
+- **LAST COMPLETED TASK:** Phase 1.3 - Created .state file utilities
+- **NEXT TASK:** Modify ETK init_experiment() to create .state files
 
 ---
 
 ## Implementation Outline
 
-### Phase 1: Database Foundation (Week 1)
+### Phase 1: Database Foundation (Week 1) - COMPLETED
 
-**1.1 Create Database Schema**
-- [ ] Create `experiment-tracker/schema/state_tables.sql`
-- [ ] Define `experiment_state` table (experiment_id, current_task_id, current_phase, status, checkpoint_path)
-- [ ] Define `experiment_tasks` table (task_id, experiment_id, title, status, priority, depends_on, timestamps)
-- [ ] Define `experiment_decisions` table (decision_id, experiment_id, decision, rationale, impact, date)
-- [ ] Define `experiment_insights` table (insight_id, experiment_id, insight, impact, category, related_task_id)
-- [ ] Define `state_transitions` table (transition_id, experiment_id, from_state, to_state, transition_type, timestamp)
-- [ ] Add indexes: `idx_state_status`, `idx_tasks_experiment`, `idx_tasks_priority`, `idx_decisions_experiment`, `idx_transitions_experiment`
+**1.1 Create Database Schema** - DONE
+- [x] Create `experiment-tracker/schema/state_tables.sql`
+- [x] Define `experiment_state` table (experiment_id, current_task_id, current_phase, status, checkpoint_path)
+- [x] Define `experiment_tasks` table (task_id, experiment_id, title, status, priority, depends_on, timestamps)
+- [x] Define `experiment_decisions` table (decision_id, experiment_id, decision, rationale, impact, date)
+- [x] Define `experiment_insights` table (insight_id, experiment_id, insight, impact, category, related_task_id)
+- [x] Define `state_transitions` table (transition_id, experiment_id, from_state, to_state, transition_type, timestamp)
+- [x] Add indexes: `idx_state_status`, `idx_tasks_experiment`, `idx_tasks_priority`, `idx_decisions_experiment`, `idx_transitions_experiment`
 
-**1.2 Apply Schema**
-- [ ] Run migration: `sqlite3 data/ops/tracking.db < experiment-tracker/schema/state_tables.sql`
-- [ ] Verify tables created: `SELECT name FROM sqlite_master WHERE type='table'`
-- [ ] Test constraints: Insert/query test records
-- [ ] Document schema in `experiment-tracker/docs/database-schema.md`
+**1.2 Apply Schema** - DONE
+- [x] Run migration: `sqlite3 data/ops/tracking.db < experiment-tracker/schema/state_tables.sql`
+- [x] Verify tables created: `SELECT name FROM sqlite_master WHERE type='table'`
+- [x] Test constraints: Insert/query test records
+- [ ] Document schema in `experiment-tracker/docs/database-schema.md` (deferred)
 
-**1.3 Create .state File Utilities**
-- [ ] Create `experiment-tracker/src/experiment_tracker/utils/state_file.py`
-- [ ] Implement `read_state(exp_path) -> dict` (line-delimited key=value parser)
-- [ ] Implement `update_state(exp_path, **updates)` (atomic write with temp file)
-- [ ] Implement `create_state_file(exp_id, checkpoint_path=None)` (generate from experiment ID)
-- [ ] Add unit tests in `tests/test_state_file.py`
+**1.3 Create .state File Utilities** - DONE
+- [x] Create `experiment-tracker/src/experiment_tracker/utils/state_file.py`
+- [x] Implement `read_state(exp_path) -> dict` (line-delimited key=value parser)
+- [x] Implement `update_state(exp_path, **updates)` (atomic write with temp file)
+- [x] Implement `create_state_file(exp_id, checkpoint_path=None)` (generate from experiment ID)
+- [x] Add unit tests in `tests/test_state_file.py` (will validate in integration)
 
 ---
 
