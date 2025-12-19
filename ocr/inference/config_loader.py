@@ -148,15 +148,19 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
     enable_background_normalization = False
 
     preprocessing = _get_attr(config, "preprocessing")
+    has_preprocessing_target_size = False
+    
     if preprocessing:
-        if target_size := _coerce_tuple(_get_attr(preprocessing, "target_size")):
+        target_size = _coerce_tuple(_get_attr(preprocessing, "target_size"))
+        if target_size:
             image_size = target_size
+            has_preprocessing_target_size = True
         # Read background normalization flag from config
         bg_norm_value = _get_attr(preprocessing, "enable_background_normalization")
         if bg_norm_value is not None:
             enable_background_normalization = bool(bg_norm_value)
     
-    if not preprocessing or not _coerce_tuple(_get_attr(preprocessing, "target_size")):
+    if not has_preprocessing_target_size:
         if transforms_section := _get_attr(config, "transforms"):
             transform_key = "predict_transform" if _has_attr(transforms_section, "predict_transform") else "test_transform"
             if transform_config := _get_attr(transforms_section, transform_key):
