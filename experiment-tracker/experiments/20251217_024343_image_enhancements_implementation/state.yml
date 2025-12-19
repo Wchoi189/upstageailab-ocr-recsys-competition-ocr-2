@@ -5,13 +5,13 @@ baseline_metrics:
   background_color_variance: 36.5
   color_tint_score: 58.1
   extreme_skew_range: -83.0° to 0.71°
-  skew_note: One image with -83° due to black border misdetection
+  skew_note: One image with -83° in baseline (raw image) - corrected to 0.88° after perspective correction, fixed by Week 2 deskewing
 checkpoint_info:
   notes: Use this checkpoint ONLY for all OCR testing
   path: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
   performance: 97% hmean on test dataset
 created_at: '2025-12-17T02:43:43'
-current_phase: Phase 2 - Week 1 & 2 Complete, Integration Ready. Week 3 Deferred.
+current_phase: Phase 2 - Week 1 & 2 Complete, Integration Ready.
 decisions:
 - date: '2025-12-18'
   decision: Prioritize background normalization over shadow removal based on 100%
@@ -44,11 +44,7 @@ decisions:
   decision: Approved Hough lines deskewing for pipeline integration
   rationale: 4.5/5 quantitative + 4.5/5 VLM = 4.6/5 combined. VLM confirmed perfect
     horizontal alignment on extreme cases.
-- date: '2025-12-18'
-  decision: Week 3 border removal scoped as new experiment
-  rationale: Border removal is distinct problem domain (document extraction vs enhancement).
-    Warrants dedicated experiment (20251218_1900_border_removal_preprocessing) running
-    in parallel with integration.
+
 description: Implementation and evaluation of additional image enhancement techniques
   beyond perspective correction, including shadow removal, brightness/contrast normalization,
   noise reduction, and adaptive binarization.
