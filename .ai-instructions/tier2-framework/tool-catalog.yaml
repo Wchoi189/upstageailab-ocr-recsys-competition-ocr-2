@@ -248,3 +248,42 @@ workflow_triggers:
   context_loading:
     keywords: ["context", "background", "understand", "learn about"]
     action: "Run: make context TASK='description'"
+  image_analysis:
+    keywords: ["analyze image", "vlm", "vision", "defect", "visual inspection", "image quality"]
+    action: "Use: VLM tools (see vlm_commands section)"
+
+## VLM Image Analysis Commands
+
+vlm_commands:
+  analyze_defects:
+    command: "uv run python -m AgentQMS.vlm.cli.analyze_image_defects"
+    args:
+      --image: "path/to/image.jpg"
+      --mode: "defect|input|compare|full|image_quality|enhancement_validation|preprocessing_diagnosis"
+      --backend: "openrouter|solar_pro2|cli_qwen"
+      --output-format: "markdown|json"
+      --output: "path/to/output.md"
+    purpose: "VLM-based image analysis for experiments"
+    modes:
+      defect: "Analyze output images for visual artifacts"
+      input: "Analyze source images for unique properties"
+      compare: "Compare before/after image pairs"
+      full: "Comprehensive analysis combining all modes"
+      image_quality: "Assess document image quality for OCR"
+      enhancement_validation: "Compare before/after preprocessing"
+      preprocessing_diagnosis: "Debug preprocessing failures"
+    note: "Each experiment may need specialized prompts - see AgentQMS/vlm/prompts/"
+
+  via_annotations:
+    feature: "VGG Image Annotator integration"
+    usage: "--via-annotations path/to/annotations.json"
+    purpose: "Include manual annotations in VLM analysis"
+
+vlm_integration:
+  location: "AgentQMS/vlm/"
+  config: "AgentQMS/vlm/config.yaml"
+  backends: ["OpenRouter (Qwen3 40b)", "Solar Pro 2", "CLI Qwen VLM"]
+  prompt_templates: "AgentQMS/vlm/prompts/"
+  prompt_types: ["markdown", "jinja2"]
+  customization: "Create experiment-specific prompts in prompts/ directory"
+  output_location: "{experiment_id}/vlm_reports/"

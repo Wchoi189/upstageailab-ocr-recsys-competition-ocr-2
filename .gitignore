@@ -85,7 +85,7 @@ Thumbs.db
 logs/
 *.log
 lightning_logs/
-outputs/
+/outputs/
 checkpoints/
 *.pth
 *.ckpt
@@ -120,11 +120,11 @@ OpenCV-Document-Scanner/
 *.jpg
 *.png
 *.svg
-*.md
+# *.md
 *.csv
 *.json
-*.sqlite
-*.db
+# *.sqlite
+# *.db
 
 # Deprecated and Debug
 DEPRECATED/
@@ -138,9 +138,9 @@ preprocessing_results/
 profiler_traces/
 real_demo_simple/
 real_noise_elimination_demo/
-reports/
+# reports/
 resource_logs/
-results/
+# results/
 results_threshold_0_4/
 streamlit-preprocessing-plan/
 submissions/

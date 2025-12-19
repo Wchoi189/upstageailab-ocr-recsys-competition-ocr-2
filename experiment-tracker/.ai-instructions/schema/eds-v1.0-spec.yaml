@@ -257,12 +257,14 @@ directory_structure:
   experiments:
     pattern: "experiments/{experiment_id}/"
     subdirectories:
-      - ".metadata/"       # REQUIRED - experiment metadata
-      - "assessments/"     # Failure analysis documents
-      - "reports/"         # Quantitative metrics documents
-      - "guides/"          # Command sequence documents
+      - ".metadata/"       # REQUIRED - EDS artifacts (validated)
+        - "assessments/"   # Failure analysis documents
+        - "reports/"       # Quantitative metrics documents
+        - "guides/"        # Command sequence documents
+        - "plans/"         # Experiment plan documents
       - "scripts/"         # Executable Python/Bash scripts
-      - "artifacts/"       # Generated outputs (images, data)
+      - "outputs/"         # Intermediate work (debug, validation, comparisons)
+      - "artifacts/"       # Final curated deliverables (published results)
 
     root_files:
       allowed: ["README.md", "state.json"]
