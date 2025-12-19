@@ -3,7 +3,6 @@
 Frontmatter Generation Tool
 
 Automatically adds frontmatter to files missing it based on file analysis and location.
-Migrated from deprecated AgentQMS.toolkit.maintenance.add_frontmatter (v0.3.2+)
 """
 
 import re

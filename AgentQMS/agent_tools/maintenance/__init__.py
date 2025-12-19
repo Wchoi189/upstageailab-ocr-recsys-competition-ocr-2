@@ -2,7 +2,7 @@
 AgentQMS Maintenance Tools
 
 Provides utilities for maintaining artifacts, including frontmatter generation.
-This replaces the deprecated AgentQMS.toolkit.maintenance module.
+Provides utilities for maintaining artifacts, including frontmatter generation.
 """
 
 from .add_frontmatter import FrontmatterGenerator

@@ -16,7 +16,6 @@ def show_tools():
     print()
     print("📁 Architecture:")
     print("   Implementation Layer: AgentQMS/agent_tools/ (canonical)")
-    print("   Legacy Shim Layer: AgentQMS/toolkit/ (compatibility only)")
     print("   Agent Interface: AgentQMS/interface/")
     print("   See AgentQMS/knowledge/meta/MAINTAINERS.md for details.")
     print()

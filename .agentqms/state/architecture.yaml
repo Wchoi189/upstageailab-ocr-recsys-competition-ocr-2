@@ -139,12 +139,6 @@ components:
       - qmf_manifest
       - audit_framework
 
-  # Legacy compatibility layer
-  - id: toolkit_legacy
-    path: AgentQMS/toolkit
-    canonical: false
-    status: deprecated
-    notes: "Shim layer that delegates to agent_tools. Do not add new code here."
 
 capabilities:
   - name: plan_generation

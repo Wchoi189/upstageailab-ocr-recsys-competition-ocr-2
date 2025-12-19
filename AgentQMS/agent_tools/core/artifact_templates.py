@@ -54,6 +54,7 @@ class ArtifactTemplates:
                 "filename_pattern": "YYYY-MM-DD_HHMM_implementation_plan_{name}.md",
                 "directory": "implementation_plans/",
                 "frontmatter": {
+                    "ads_version": "1.0",
                     "type": "implementation_plan",
                     "category": "development",
                     "status": "active",
@@ -206,6 +207,7 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **{title}
                 "filename_pattern": "YYYY-MM-DD_HHMM_assessment-{name}.md",
                 "directory": "assessments/",
                 "frontmatter": {
+                    "ads_version": "1.0",
                     "type": "assessment",
                     "category": "evaluation",
                     "status": "active",
@@ -294,6 +296,7 @@ Summary of assessment findings and next steps.
                 "filename_pattern": "YYYY-MM-DD_HHMM_design-{name}.md",
                 "directory": "design_documents/",
                 "frontmatter": {
+                    "ads_version": "1.0",
                     "type": "design",
                     "category": "architecture",
                     "status": "active",
@@ -415,6 +418,7 @@ What problem does this design solve?
                 "filename_pattern": "YYYY-MM-DD_HHMM_research-{name}.md",
                 "directory": "research/",
                 "frontmatter": {
+                    "ads_version": "1.0",
                     "type": "research",
                     "category": "research",
                     "status": "active",
@@ -521,6 +525,7 @@ What do we expect to find?
                 "filename_pattern": "YYYY-MM-DD_HHMM_template-{name}.md",
                 "directory": "templates/",
                 "frontmatter": {
+                    "ads_version": "1.0",
                     "type": "template",
                     "category": "reference",
                     "status": "active",
@@ -594,6 +599,7 @@ Another example here
                 "filename_pattern": "YYYY-MM-DD_HHMM_BUG_NNN_{name}.md",
                 "directory": "bug_reports/",
                 "frontmatter": {
+                    "ads_version": "1.0",
                     "type": "bug_report",
                     "category": "troubleshooting",
                     "status": "active",

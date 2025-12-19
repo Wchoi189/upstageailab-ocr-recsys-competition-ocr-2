@@ -1,29 +1,20 @@
----
-title: "Index"
-date: "2025-12-07 01:33 (KST)"
-type: "research"
-category: "research"
-status: "active"
-version: "1.0"
-tags: ['research', 'research', 'analysis']
----
-
 # Research
 
 Active research and development roadmaps.
 
-**Last Updated**: 2025-12-07 01:32:42
-**Total Artifacts**: 1
+**Last Updated**: 2025-12-19 18:10:19
+**Total Artifacts**: 2
 
-## Active (1)
+## Active (2)
 
-- [AgentQMS & Tracking Database Integration Instructions](2025-12-06_0201_research-tracking-db-agentqms-integration.md) (📅 2025-12-06 02:01 (KST), 📄 research) - The Tracking Database (`data/ops/tracking.db`) is a critical infrastructure component that AgentQMS 
+- [Tracking Db Agentqms Integration](2025-12-06_0201_research-tracking-db-agentqms-integration.md) (📅 2025-12-06 03:04 (KST), 📄 research) - The Tracking Database (`data/ops/tracking.db`) is a critical infrastructure component that AgentQMS 
+- [Inference Doc Audit Summary](2025-12-15_1200_research-inference-doc-audit-summary.md) (📅 2025-12-16 00:11 (KST), 📄 research) - - **Data Contracts**: Already excellent; minimal updates needed
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 1 |
+| Active | 2 |
 | Completed | 0 |
 
 ---

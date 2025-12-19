@@ -177,8 +177,7 @@ class ArtifactWorkflow:
             result = subprocess.run(
                 [
                     sys.executable,
-                    str(Path(__file__).parent.parent.parent / "toolkit" / "documentation" / "update_artifact_indexes.py"),
-                    "--all",
+                    str(Path(__file__).parent.parent.parent / "agent_tools" / "documentation" / "reindex_artifacts.py"),
                 ],
                 capture_output=True,
                 text=True,
