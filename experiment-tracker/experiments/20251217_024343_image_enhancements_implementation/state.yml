@@ -72,6 +72,7 @@ deskewing_results:
   selected_method: hough_lines
   selection_reason: 2.87° avg angle, 38.77ms processing (61% under target), handles
     extreme skews (±15° → ±0°)
+  integration_note: User testing shows deskewing does NOT improve OCR performance - EXCLUDE from pipeline integration
 enhancement_results:
   combined_final_score: 4.75
   edge_based:
@@ -94,6 +95,7 @@ enhancement_results:
     variance_reduction: 5.5
   quantitative_score: 4.65
   selected_method: gray-world
+  integration_note: User testing confirms gray-world normalization significantly improves zero prediction results - INCLUDE in pipeline integration
   selection_reason: 75% tint reduction, 100% target achievement, fastest processing
   vlm_model: qwen3-vl-plus-2025-09-23
   vlm_verdict: Significant improvement (8/10) on severe cases, Moderate (7/10) on

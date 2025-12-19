@@ -23,7 +23,29 @@ Weeks 1-2 of image enhancements experiment successfully completed with dual vali
 - **Model**: qwen3-vl-plus-2025-09-23
 - **Status**: Fully operational, 96-100% correlation with quantitative metrics
 
+### Mask Fitting Quality Analysis
+- **Visualizations**: `outputs/full_pipeline_correct/*_mask_fitting_debug.jpg`
+- **Corner detection**: Dominant extension strategy achieves precise mask boundary alignment
+- **Image 000732**: Corners fit exactly at mask bounds (no data loss detected)
+  - Bottom-left corner at (320, 1229), mask left edge at 320 (0px error)
+  - All 6 test images show accurate corner placement within mask boundaries
+- **Algorithm**: `mask_only_edge_detector.py` with `use_dominant_extension=True`
+
 ## Next Step: Pipeline Integration
+
+### What to Integrate
+
+**✅ INTEGRATE (Proven Effective):**
+- **Gray-world background normalization**: User testing confirms significant improvement in zero prediction results
+  - Reduces color tint by 75% (58.1 → 14.6 avg)
+  - Processing time: 62.6ms
+  - Implementation: `scripts/background_normalization.py`
+
+**❌ DO NOT INTEGRATE (No Performance Improvement):**
+- **Text deskewing**: User testing shows NO improvement in OCR performance despite good metrics
+  - While it achieves 2.87° avg residual angle, it doesn't help OCR accuracy
+  - May actually hurt performance in some cases
+  - EXCLUDE from pipeline integration
 **Start with**: "Integrate gray-world background normalization and Hough deskewing into preprocessing pipeline"
 
 **Reference documents**:
@@ -32,12 +54,12 @@ Weeks 1-2 of image enhancements experiment successfully completed with dual vali
 - `scripts/text_deskewing.py`
 
 **Key tasks**:
-1. Create unified preprocessing module
-2. Add YAML configuration support
+1. Create unified preprocessing module (background normalization ONLY)
+2. Add YAML configuration support (enable_background_norm flag)
 3. Run OCR validation with epoch-18_step-001957.ckpt
-4. Benchmark combined processing time (<150ms target)
+4. Benchmark processing time (<100ms target for just bg norm)
 
-**Timeline**: 7 days
+**Timeline**: 3-4 days (simplified without deskewing)
 
 ## Key Files
 
