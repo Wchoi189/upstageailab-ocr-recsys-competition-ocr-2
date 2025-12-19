@@ -23,6 +23,7 @@ def normalize_gray_world(img: np.ndarray) -> np.ndarray:
         Normalized BGR numpy array with same shape and dtype uint8
 
     Example:
+        >>> import cv2
         >>> img = cv2.imread("tinted_document.jpg")
         >>> normalized = normalize_gray_world(img)
         >>> cv2.imwrite("normalized.jpg", normalized)
