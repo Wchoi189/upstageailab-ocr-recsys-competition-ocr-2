@@ -42,7 +42,7 @@ for experiment_id in $experiment_ids; do
     fi
 
     # Check if .metadata/ has required subdirectories
-    required_subdirs=("assessments" "reports" "guides" "scripts" "artifacts")
+    required_subdirs=("assessments" "reports" "guides" "plans")
     missing_subdirs=()
 
     for subdir in "${required_subdirs[@]}"; do
@@ -60,8 +60,7 @@ for experiment_id in $experiment_ids; do
         echo -e "       assessments/"
         echo -e "       reports/"
         echo -e "       guides/"
-        echo -e "       scripts/"
-        echo -e "       artifacts/"
+        echo -e "       plans/"
         violations_found=true
         continue
     fi
@@ -91,7 +90,7 @@ if [ "$violations_found" = true ]; then
     echo "Fix options:"
     echo "  1. Create .metadata/ structure manually:"
     echo "     cd experiment-tracker/experiments/<experiment_id>"
-    echo "     mkdir -p .metadata/{assessments,reports,guides,scripts,artifacts}"
+    echo "     mkdir -p .metadata/{assessments,reports,guides,plans}"
     echo ""
     echo "  2. Use CLI to initialize experiment:"
     echo "     eds init-experiment --id <experiment_id>"

@@ -13,8 +13,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Get staged .md files in experiment-tracker/experiments/
-staged_files=$(git diff --cached --name-only --diff-filter=ACM | grep "^experiment-tracker/experiments/.*\.md$" || true)
+# Get staged .md files in experiment-tracker/experiments/.metadata/ directories only
+staged_files=$(git diff --cached --name-only --diff-filter=ACM | grep "^experiment-tracker/experiments/.*/.metadata/.*\.md$" || true)
 
 if [ -z "$staged_files" ]; then
     exit 0  # No experiment markdown files to validate
@@ -78,12 +78,12 @@ for file in $staged_files; do
     fi
 
     # Validate YYYYMMDD_HHMM_{TYPE}_{slug}.md pattern
-    if ! echo "$filename" | grep -qE '^[0-9]{8}_[0-9]{4}_(assessment|report|guide|script|manifest)_[a-z0-9]+(-[a-z0-9]+)*\.md$'; then
+    if ! echo "$filename" | grep -qE '^[0-9]{8}_[0-9]{4}_(assessment|report|guide|script|manifest|plan)_[a-z0-9]+(-[a-z0-9]+)*\.md$'; then
         echo -e "${RED}❌ CRITICAL: Invalid naming pattern${NC}"
         echo -e "   File: ${YELLOW}$file${NC}"
         echo -e "   Required: YYYYMMDD_HHMM_{TYPE}_{slug}.md"
         echo -e "   Example: 20251217_1530_assessment_failure_analysis.md"
-        echo -e "   Types: assessment, report, guide, script, manifest"
+        echo -e "   Types: assessment, report, guide, plan, script, manifest"
         echo -e "   Slug: lowercase-hyphenated (max 50 chars)"
         violations_found=true
         continue

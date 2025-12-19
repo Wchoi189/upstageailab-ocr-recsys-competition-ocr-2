@@ -36,8 +36,11 @@ import re
 import sqlite3
 import subprocess
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
+
+# Define KST timezone (UTC+9)
+KST = timezone(timedelta(hours=9))
 
 ETK_VERSION = "1.0.0"
 EDS_VERSION = "1.0"
@@ -106,8 +109,7 @@ class ExperimentTracker:
         (exp_path / ".metadata" / "assessments").mkdir()
         (exp_path / ".metadata" / "reports").mkdir()
         (exp_path / ".metadata" / "guides").mkdir()
-        (exp_path / ".metadata" / "scripts").mkdir()
-        (exp_path / ".metadata" / "artifacts").mkdir()
+        (exp_path / ".metadata" / "plans").mkdir()
 
         # Create experiment manifest
         manifest = self._generate_manifest(experiment_id, name, description, tags or [])
@@ -303,20 +305,22 @@ class ExperimentTracker:
             name = experiment_id
 
         try:
-            created_at = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S").isoformat()
+            # Parse timestamp and localize to KST
+            dt = datetime.strptime(timestamp_str, "%Y%m%d_%H%M%S")
+            created_at = dt.replace(tzinfo=KST).isoformat()
         except ValueError:
-            created_at = datetime.now(UTC).isoformat()
+            created_at = datetime.now(KST).isoformat()
 
         # Check if experiment exists
         cursor = conn.execute("SELECT experiment_id FROM experiments WHERE experiment_id = ?", (experiment_id,))
         exists = cursor.fetchone() is not None
 
         if exists:
-            conn.execute("UPDATE experiments SET updated_at = ? WHERE experiment_id = ?", (datetime.now(UTC).isoformat(), experiment_id))
+            conn.execute("UPDATE experiments SET updated_at = ? WHERE experiment_id = ?", (datetime.now(KST).isoformat(), experiment_id))
         else:
             conn.execute(
                 "INSERT INTO experiments (experiment_id, name, status, created_at, updated_at, ads_version) VALUES (?, ?, ?, ?, ?, ?)",
-                (experiment_id, name, "active", created_at, datetime.now(UTC).isoformat(), EDS_VERSION),
+                (experiment_id, name, "active", created_at, datetime.now(KST).isoformat(), EDS_VERSION),
             )
 
         # Find all markdown files matching EDS naming pattern (YYYYMMDD_HHMM_TYPE_slug.md)
@@ -363,8 +367,8 @@ class ExperimentTracker:
         artifact_id = artifact_path.stem
         title = frontmatter.get("title", artifact_id)
         status = frontmatter.get("status", "active")
-        created = frontmatter.get("created", datetime.now(UTC).isoformat())
-        updated = frontmatter.get("updated", datetime.now(UTC).isoformat())
+        created = frontmatter.get("created", datetime.now(KST).isoformat())
+        updated = frontmatter.get("updated", datetime.now(KST).isoformat())
 
         # Extract main content (after frontmatter)
         main_content = content[frontmatter_match.end() :]
@@ -611,7 +615,7 @@ class ExperimentTracker:
 
     def _generate_manifest(self, experiment_id: str, name: str, description: str, tags: list[str]) -> str:
         """Generate experiment manifest (README.md)."""
-        now = datetime.now(UTC).isoformat()
+        now = datetime.now(KST).isoformat()
 
         manifest = f"""---
 ads_version: "{EDS_VERSION}"
@@ -672,7 +676,7 @@ etk validate
 
     def _generate_artifact_content(self, artifact_type: str, title: str, experiment_id: str, **kwargs) -> str:
         """Generate artifact content with compliant frontmatter."""
-        now = datetime.now(UTC).isoformat()
+        now = datetime.now(KST).isoformat()
 
         # Universal frontmatter
         frontmatter = {

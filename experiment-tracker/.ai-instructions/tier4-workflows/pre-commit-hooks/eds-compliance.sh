@@ -14,8 +14,8 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m' # No Color
 
-# Get staged .md files in experiment-tracker/experiments/
-staged_files=$(git diff --cached --name-only --diff-filter=ACM | grep "^experiment-tracker/experiments/.*\.md$" || true)
+# Get staged .md files in experiment-tracker/experiments/.metadata/ directories only
+staged_files=$(git diff --cached --name-only --diff-filter=ACM | grep "^experiment-tracker/experiments/.*/.metadata/.*\.md$" || true)
 
 if [ -z "$staged_files" ]; then
     exit 0  # No experiment markdown files to validate
