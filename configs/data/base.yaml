@@ -16,6 +16,7 @@ datasets:
       _target_: ${dataset_config_path}.DatasetConfig
       image_path: ${dataset_base_path}images/train
       annotation_path: ${dataset_base_path}jsons/train.json
+      enable_background_normalization: false  # Disabled for training to avoid augmentation conflicts
     transform: ${transforms.train_transform}
   val_dataset:
     _target_: ${dataset_path}.ValidatedOCRDataset
@@ -26,6 +27,7 @@ datasets:
       # Required for reproducible benchmarks and cache consistency
       image_path: ${dataset_base_path}images_val_canonical
       annotation_path: ${dataset_base_path}jsons/val.json
+      enable_background_normalization: false  # Disabled for validation to match training
 
       # PERFORMANCE PRESET SYSTEM (2025-10-14)
       # Use performance presets to easily toggle optimization features
@@ -66,6 +68,7 @@ datasets:
       _target_: ${dataset_config_path}.DatasetConfig
       image_path: ${dataset_base_path}images/val
       annotation_path: ${dataset_base_path}jsons/val.json
+      enable_background_normalization: false  # Disabled for test to match training
     transform: ${transforms.test_transform}
   predict_dataset:
     _target_: ${dataset_path}.ValidatedOCRDataset
@@ -73,6 +76,7 @@ datasets:
       _target_: ${dataset_config_path}.DatasetConfig
       image_path: ${dataset_base_path}images/test
       annotation_path: null
+      enable_background_normalization: false  # Disabled by default for prediction
     transform: ${transforms.test_transform}
 
 collate_fn:

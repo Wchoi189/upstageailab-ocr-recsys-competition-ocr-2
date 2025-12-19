@@ -8,6 +8,7 @@ from typing import Any
 
 import cv2
 
+from ocr.utils.background_normalization import normalize_gray_world
 from ocr.utils.perspective_correction import (
     correct_perspective_from_mask,
     remove_background_and_mask,
@@ -42,7 +43,11 @@ def build_transform(settings: PreprocessSettings):
 
 
 def preprocess_image(
-    image: Any, transform: Callable[[Any], Any], target_size: int = 640, return_processed_image: bool = False
+    image: Any,
+    transform: Callable[[Any], Any],
+    target_size: int = 640,
+    return_processed_image: bool = False,
+    enable_background_normalization: bool = False,
 ) -> Any | tuple[Any, Any]:
     """Apply preprocessing transform to an image and return a batched tensor.
 
@@ -55,6 +60,7 @@ def preprocess_image(
         transform: Torchvision transform pipeline (should not include Resize)
         target_size: Target size for LongestMaxSize and PadIfNeeded (default: 640)
         return_processed_image: If True, also return the processed BGR image before tensor conversion
+        enable_background_normalization: If True, apply gray-world normalization before resizing
 
     Returns:
         Batched tensor ready for model inference, or tuple of (tensor, processed_image_bgr) if return_processed_image=True
@@ -64,6 +70,11 @@ def preprocess_image(
     # padding position, matching what decode_polygons_with_head and fallback_postprocess expect.
     # Work on a copy to avoid modifying the input image in place.
     processed_image = image.copy()
+
+    # Apply gray-world normalization BEFORE resizing if enabled
+    if enable_background_normalization:
+        processed_image = normalize_gray_world(processed_image)
+
     original_h, original_w = processed_image.shape[:2]
 
     # LongestMaxSize: scale longest side to target_size, preserving aspect ratio
