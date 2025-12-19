@@ -65,7 +65,7 @@ ads_version:
 
 type:
   type: enum
-  values: [assessment, report, guide, script, manifest]
+  values: [assessment, report, guide, script, manifest, plan]
   required: true
 
 experiment_id:

@@ -45,7 +45,7 @@ TYPE_SPECIFIC_REQUIRED = {
 }
 
 # Valid enum values
-VALID_TYPES = ["assessment", "report", "guide", "script", "manifest"]
+VALID_TYPES = ["assessment", "report", "guide", "script", "manifest", "plan"]
 VALID_STATUSES = ["draft", "active", "complete", "deprecated"]
 VALID_PHASES = ["phase_0", "phase_1", "phase_2", "phase_3", "phase_4"]
 VALID_PRIORITIES = ["critical", "high", "medium", "low"]
