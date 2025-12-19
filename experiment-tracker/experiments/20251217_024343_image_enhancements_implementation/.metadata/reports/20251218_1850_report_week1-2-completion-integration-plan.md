@@ -27,7 +27,7 @@ checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20
 
 ## Executive Summary
 
-**Status**: Weeks 1-2 complete with dual validation (quantitative + VLM visual) 
+**Status**: Weeks 1-2 complete with dual validation (quantitative + VLM visual)
 
 **Approved for Integration**:
 1. **Gray-world background normalization**: 4.75/5 combined score
@@ -67,7 +67,7 @@ checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20
 - Minor issues: Over-sharpening halos, slight beige residual
 - **Score**: 4.5/5
 
-**Combined Final**: **4.75/5** (95%) - APPROVED 
+**Combined Final**: **4.75/5** (95%) - APPROVED
 
 ### Key Insights
 1. VLM detected **Korean text legibility improvement** (critical for bilingual OCR)
@@ -106,7 +106,7 @@ checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20
 - Combined effects: Background norm + deskewing compound benefits
 - **Score**: 4.5/5
 
-**Combined Final**: **4.6/5** (92%) - APPROVED 
+**Combined Final**: **4.6/5** (92%) - APPROVED
 
 ### Key Insights
 1. VLM confirmed **perfect horizontal alignment** (±15° → ±0°) that quantitative underestimated
@@ -220,7 +220,7 @@ VLM provides **human-perceived quality assessment** that:
 
 ## Experiment State Summary
 
-### Completed 
+### Completed
 - Baseline establishment (6 images analyzed)
 - EDS v1.0 compliance restructuring
 - Background normalization (3 methods, gray-world selected)
@@ -228,7 +228,7 @@ VLM provides **human-perceived quality assessment** that:
 - Dual validation (quantitative + VLM) for both weeks
 - Integration decisions made (both methods approved)
 
-### Pending 
+### Pending
 - Pipeline integration (gray-world + Hough lines)
 - OCR end-to-end validation (checkpoint testing)
 - Border removal implementation (Week 3)
@@ -255,7 +255,7 @@ VLM provides **human-perceived quality assessment** that:
 
 ## Risk Assessment
 
-### Integration Risks: LOW 
+### Integration Risks: LOW
 
 **Confidence**: Both methods validated independently with high scores (4.75, 4.6)
 
@@ -267,7 +267,7 @@ VLM provides **human-perceived quality assessment** that:
 3. **Image-dependent variability**: Some images benefit more than others
  - Mitigation: Make preprocessing configurable (enable/disable per image type)
 
-### OCR Validation Risks: MEDIUM 
+### OCR Validation Risks: MEDIUM
 
 **Uncertainty**: Preprocessing impact on OCR accuracy unknown until tested
 
