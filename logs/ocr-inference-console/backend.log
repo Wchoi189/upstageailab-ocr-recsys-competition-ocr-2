@@ -521,3 +521,5 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-20 02:11:30,458 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
 2025-12-20 02:11:38,694 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
 2025-12-20 02:11:38,718 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 02:29:25,688 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 02:29:25,760 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete

@@ -228,5 +228,45 @@
       "directory": 0,
       "frontmatter": 20
     }
+  },
+  {
+    "timestamp": "2025-12-20T02:29:28.845103",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-12-20T02:39:01.330329",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-12-20T02:47:48.291328",
+    "compliance_rate": 98.21428571428571,
+    "invalid_files": 1,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 1
+    }
+  },
+  {
+    "timestamp": "2025-12-20T02:48:10.759423",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
   }
 ]
