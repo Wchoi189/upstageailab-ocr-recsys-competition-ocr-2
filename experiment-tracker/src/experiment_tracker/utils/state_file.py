@@ -14,12 +14,11 @@ Design goals:
 Ref: /home/vscode/.gemini/antigravity/brain/.../state_management_recommendations.md
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from pathlib import Path
-from typing import Dict
 
 
-def read_state(exp_path: Path) -> Dict[str, str]:
+def read_state(exp_path: Path) -> dict[str, str]:
     """
     Read experiment state from .state file.
 
@@ -44,14 +43,14 @@ def read_state(exp_path: Path) -> Dict[str, str]:
         return {}
 
     state = {}
-    content = state_file.read_text(encoding='utf-8').strip()
+    content = state_file.read_text(encoding="utf-8").strip()
 
-    for line in content.split('\n'):
+    for line in content.split("\n"):
         line = line.strip()
-        if not line or '=' not in line:
+        if not line or "=" not in line:
             continue
 
-        key, value = line.split('=', 1)
+        key, value = line.split("=", 1)
         state[key.strip()] = value.strip()
 
     return state
@@ -83,7 +82,7 @@ def update_state(exp_path: Path, **updates) -> None:
     state.update(updates)
 
     # Always update timestamp
-    state['last_updated'] = datetime.now(timezone.utc).isoformat()
+    state["last_updated"] = datetime.now(UTC).isoformat()
 
     # Atomic write via temp file
     state_file = exp_path / ".state"
@@ -91,7 +90,7 @@ def update_state(exp_path: Path, **updates) -> None:
 
     # Write to temp file
     lines = [f"{k}={v}" for k, v in state.items()]
-    temp_file.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    temp_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
     # Atomic rename (POSIX guarantees atomicity)
     temp_file.replace(state_file)
@@ -117,24 +116,24 @@ def create_state_file(exp_path: Path, experiment_id: str, checkpoint_path: str =
     if state_file.exists():
         raise FileExistsError(f"State file already exists: {state_file}")
 
-    now = datetime.now(timezone.utc).isoformat()
+    now = datetime.now(UTC).isoformat()
 
     # Define 5 required fields (target: ~100 bytes)
     initial_state = {
-        'experiment_id': experiment_id,
-        'status': 'active',
-        'current_task': '',  # Empty until first task assigned
-        'current_phase': 'planning',
-        'last_updated': now,
+        "experiment_id": experiment_id,
+        "status": "active",
+        "current_task": "",  # Empty until first task assigned
+        "current_phase": "planning",
+        "last_updated": now,
     }
 
     # Optional: add checkpoint if provided
     if checkpoint_path:
-        initial_state['checkpoint_path'] = checkpoint_path
+        initial_state["checkpoint_path"] = checkpoint_path
 
     # Write initial state
     lines = [f"{k}={v}" for k, v in initial_state.items()]
-    state_file.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+    state_file.write_text("\n".join(lines) + "\n", encoding="utf-8")
 
 
 def get_state_size(exp_path: Path) -> int:
@@ -154,7 +153,7 @@ def get_state_size(exp_path: Path) -> int:
     return state_file.stat().st_size
 
 
-def validate_state(state: Dict[str, str]) -> bool:
+def validate_state(state: dict[str, str]) -> bool:
     """
     Validate that state dict has required fields.
 
@@ -168,19 +167,19 @@ def validate_state(state: Dict[str, str]) -> bool:
     Returns:
         True if valid, False otherwise
     """
-    required_fields = ['experiment_id', 'status', 'current_task', 'current_phase', 'last_updated']
+    required_fields = ["experiment_id", "status", "current_task", "current_phase", "last_updated"]
 
     # Check all required fields exist
     if not all(field in state for field in required_fields):
         return False
 
     # Validate status enum
-    valid_statuses = {'active', 'completed', 'failed', 'paused', 'deprecated'}
-    if state['status'] not in valid_statuses:
+    valid_statuses = {"active", "completed", "failed", "paused", "deprecated"}
+    if state["status"] not in valid_statuses:
         return False
 
     # Validate experiment_id format (YYYYMMDD_HHMMSS_name)
-    exp_id = state['experiment_id']
+    exp_id = state["experiment_id"]
     if not exp_id or len(exp_id) < 17:  # Minimum: YYYYMMDD_HHMMSS_x
         return False
 

@@ -134,18 +134,18 @@ def test_enhancement_validation_mode():
     if not comparisons:
         print(f"⚠️  No comparison images found in: {comparison_dir}")
         print("   Creating synthetic comparison for testing...")
-        
+
         # Use a test image (pretend it's a before/after comparison)
         test_image = project_root / "data" / "zero_prediction_worst_performers"
         if not test_image.exists():
             print("❌ Cannot create test comparison - no test images available")
             return False
-            
+
         images = list(test_image.glob("*.jpg"))
         if not images:
             print("❌ No test images found")
             return False
-            
+
         test_img = images[0]
         print(f"📷 Using test image (simulated comparison): {test_img.name}")
     else:

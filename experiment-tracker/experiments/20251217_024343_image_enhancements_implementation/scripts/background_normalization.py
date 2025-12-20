@@ -185,9 +185,7 @@ class BackgroundNormalizer:
 
         return result
 
-    def _calculate_metrics(
-        self, original: np.ndarray, normalized: np.ndarray, processing_time: float
-    ) -> dict:
+    def _calculate_metrics(self, original: np.ndarray, normalized: np.ndarray, processing_time: float) -> dict:
         """
         Calculate improvement metrics.
 
@@ -217,12 +215,8 @@ class BackgroundNormalizer:
             "improvements": {
                 "variance_reduction": round(variance_reduction, 2),
                 "tint_reduction": round(tint_reduction, 2),
-                "variance_reduction_pct": round(
-                    100 * variance_reduction / max(orig_bg_metrics["color_variance"], 0.001), 1
-                ),
-                "tint_reduction_pct": round(
-                    100 * tint_reduction / max(orig_bg_metrics["color_tint_score"], 0.001), 1
-                ),
+                "variance_reduction_pct": round(100 * variance_reduction / max(orig_bg_metrics["color_variance"], 0.001), 1),
+                "tint_reduction_pct": round(100 * tint_reduction / max(orig_bg_metrics["color_tint_score"], 0.001), 1),
             },
         }
 
@@ -261,9 +255,7 @@ class BackgroundNormalizer:
         }
 
 
-def process_directory(
-    input_dir: Path, output_dir: Path, method: str, save_comparison: bool = False
-) -> dict:
+def process_directory(input_dir: Path, output_dir: Path, method: str, save_comparison: bool = False) -> dict:
     """
     Process all images in directory.
 
@@ -317,19 +309,21 @@ def process_directory(
         results.append({"file": img_path.name, "metrics": metrics})
 
         print(f"✓ ({metrics['processing_time_ms']:.1f}ms)")
-        print(f"  Variance: {metrics['original']['color_variance']:.1f} → "
-              f"{metrics['normalized']['color_variance']:.1f} "
-              f"({metrics['improvements']['variance_reduction']:+.1f})")
-        print(f"  Tint: {metrics['original']['color_tint_score']:.1f} → "
-              f"{metrics['normalized']['color_tint_score']:.1f} "
-              f"({metrics['improvements']['tint_reduction']:+.1f})")
+        print(
+            f"  Variance: {metrics['original']['color_variance']:.1f} → "
+            f"{metrics['normalized']['color_variance']:.1f} "
+            f"({metrics['improvements']['variance_reduction']:+.1f})"
+        )
+        print(
+            f"  Tint: {metrics['original']['color_tint_score']:.1f} → "
+            f"{metrics['normalized']['color_tint_score']:.1f} "
+            f"({metrics['improvements']['tint_reduction']:+.1f})"
+        )
 
     # Calculate aggregate statistics
     if results:
         avg_processing_time = np.mean([r["metrics"]["processing_time_ms"] for r in results])
-        avg_variance_reduction = np.mean(
-            [r["metrics"]["improvements"]["variance_reduction"] for r in results]
-        )
+        avg_variance_reduction = np.mean([r["metrics"]["improvements"]["variance_reduction"] for r in results])
         avg_tint_reduction = np.mean([r["metrics"]["improvements"]["tint_reduction"] for r in results])
 
         aggregate = {

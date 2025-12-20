@@ -49,11 +49,11 @@ def analyze_image_quality(image_path: Path) -> dict[str, Any]:
 
     # Convert to different color spaces for analysis
     gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+    cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
     # Background estimation using edge detection
     edges = cv2.Canny(gray, 50, 150)
-    bg_mask = cv2.dilate(edges, np.ones((5,5)), iterations=2) == 0
+    bg_mask = cv2.dilate(edges, np.ones((5, 5)), iterations=2) == 0
 
     # Calculate background color metrics
     if bg_mask.sum() > 0:
@@ -72,7 +72,7 @@ def analyze_image_quality(image_path: Path) -> dict[str, Any]:
 
     # Detect potential skew using Hough lines
     edges_binary = cv2.Canny(gray, 50, 150)
-    lines = cv2.HoughLinesP(edges_binary, 1, np.pi/180, threshold=100, minLineLength=100, maxLineGap=10)
+    lines = cv2.HoughLinesP(edges_binary, 1, np.pi / 180, threshold=100, minLineLength=100, maxLineGap=10)
 
     angles = []
     if lines is not None:
@@ -100,12 +100,12 @@ def analyze_image_quality(image_path: Path) -> dict[str, Any]:
             "mean_bgr": [float(x) for x in bg_mean],
             "std_bgr": [float(x) for x in bg_std],
             "color_variance": bg_color_variance,
-            "color_cast_score": color_cast_score
+            "color_cast_score": color_cast_score,
         },
         "brightness": brightness,
         "contrast": contrast,
         "estimated_skew_degrees": estimated_skew,
-        "edge_density": float(edges.sum() / (width * height))
+        "edge_density": float(edges.sum() / (width * height)),
     }
 
     # Quality assessment flags
@@ -157,7 +157,7 @@ def create_baseline_report(test_dir: Path, output_dir: Path):
             "avg_contrast": np.mean([r["contrast"] for r in results]),
             "avg_estimated_skew": np.mean([abs(r["estimated_skew_degrees"]) for r in results]),
         },
-        "common_issues": {}
+        "common_issues": {},
     }
 
     # Count common issues
@@ -170,7 +170,7 @@ def create_baseline_report(test_dir: Path, output_dir: Path):
     timestamp = datetime.now().strftime("%Y%m%d_%H%M")
     output_file = output_dir / f"{timestamp}_baseline-quality-metrics.json"
 
-    with open(output_file, 'w') as f:
+    with open(output_file, "w") as f:
         json.dump(summary, f, indent=2)
 
     print()
@@ -182,12 +182,12 @@ def create_baseline_report(test_dir: Path, output_dir: Path):
     print(f"Total images analyzed: {summary['total_images']}")
     print()
     print("Aggregate Statistics:")
-    for key, value in summary['aggregate_stats'].items():
+    for key, value in summary["aggregate_stats"].items():
         print(f"  {key}: {value:.2f}")
     print()
     print("Common Issues:")
-    for issue, count in sorted(summary['common_issues'].items(), key=lambda x: x[1], reverse=True):
-        print(f"  {issue}: {count}/{summary['total_images']} images ({100*count/summary['total_images']:.1f}%)")
+    for issue, count in sorted(summary["common_issues"].items(), key=lambda x: x[1], reverse=True):
+        print(f"  {issue}: {count}/{summary['total_images']} images ({100 * count / summary['total_images']:.1f}%)")
     print()
 
     # Print per-image details

@@ -2,19 +2,23 @@
 """
 Generate corrected image using the ACTUAL dominant extension algorithm from experiments.
 """
+
 import sys
 
 import cv2
 import numpy as np
 
 # Use experiment implementation, not production
-sys.path.insert(0, 'experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/scripts')
+sys.path.insert(0, "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/scripts")
 from mask_only_edge_detector import fit_mask_rectangle
 from perspective_transformer import four_point_transform
 
 # Read original and mask
-original = cv2.imread('data/datasets/images/test/drp.en_ko.in_house.selectstar_000732.jpg')
-mask = cv2.imread('experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000732_step1_mask.jpg', cv2.IMREAD_GRAYSCALE)
+original = cv2.imread("data/datasets/images/test/drp.en_ko.in_house.selectstar_000732.jpg")
+mask = cv2.imread(
+    "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000732_step1_mask.jpg",
+    cv2.IMREAD_GRAYSCALE,
+)
 
 print("Generating corrected image using EXPERIMENT dominant extension...")
 
@@ -31,7 +35,7 @@ print(f"✓ Fitted corners: {result.corners.tolist()}")
 corrected = four_point_transform(original, result.corners)
 
 # Save
-output_path = 'experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/000732_corrected_DOMINANT_EXTENSION.jpg'
+output_path = "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/000732_corrected_DOMINANT_EXTENSION.jpg"
 cv2.imwrite(output_path, corrected)
 
 print(f"✓ Saved corrected image: {output_path}")
@@ -41,7 +45,7 @@ print(f"  Output shape: {corrected.shape}")
 result_std = fit_mask_rectangle(mask, use_regression=False, use_dominant_extension=False)
 if result_std.corners is not None:
     corrected_std = four_point_transform(original, result_std.corners)
-    output_std = 'experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/000732_corrected_STANDARD.jpg'
+    output_std = "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/000732_corrected_STANDARD.jpg"
     cv2.imwrite(output_std, corrected_std)
     print(f"✓ Saved standard strategy: {output_std}")
     print(f"  Output shape: {corrected_std.shape}")

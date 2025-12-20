@@ -4,6 +4,7 @@ Create side-by-side comparison showing full enhancement pipeline.
 
 Shows: Original → After Background Norm → After Deskewing
 """
+
 from pathlib import Path
 
 import cv2
@@ -39,20 +40,14 @@ def create_comparison(original_path: Path, bg_norm_path: Path, deskew_path: Path
     max_w = max(img.shape[1] for img in resized)
     padded = []
 
-    for img, label in zip(resized, labels):
+    for img, label in zip(resized, labels, strict=False):
         # Pad width
         pad_left = (max_w - img.shape[1]) // 2
         pad_right = max_w - img.shape[1] - pad_left
-        padded_img = cv2.copyMakeBorder(
-            img, 80, 20, pad_left, pad_right,
-            cv2.BORDER_CONSTANT, value=(255, 255, 255)
-        )
+        padded_img = cv2.copyMakeBorder(img, 80, 20, pad_left, pad_right, cv2.BORDER_CONSTANT, value=(255, 255, 255))
 
         # Add label at top
-        cv2.putText(
-            padded_img, label,
-            (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 0), 2
-        )
+        cv2.putText(padded_img, label, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 0), 2)
 
         padded.append(padded_img)
 

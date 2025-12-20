@@ -19,7 +19,7 @@ class SafeStateManager:
 
     def __init__(self, state_file: Path):
         self.state_file = state_file
-        self.backup_file = state_file.with_suffix('.backup.json')
+        self.backup_file = state_file.with_suffix(".backup.json")
 
     def load_state(self) -> dict[str, Any]:
         """Load state with validation."""
@@ -28,7 +28,7 @@ class SafeStateManager:
 
         try:
             with open(self.state_file) as f:
-                if self.state_file.suffix == '.json':
+                if self.state_file.suffix == ".json":
                     data = json.load(f)
                 else:  # Assume YAML
                     data = yaml.safe_load(f) or {}
@@ -50,9 +50,8 @@ class SafeStateManager:
                 self.state_file.replace(self.backup_file)
 
             # Write to temp file first
-            with tempfile.NamedTemporaryFile(mode='w', suffix=self.state_file.suffix,
-                                          dir=self.state_file.parent, delete=False) as temp:
-                if self.state_file.suffix == '.json':
+            with tempfile.NamedTemporaryFile(mode="w", suffix=self.state_file.suffix, dir=self.state_file.parent, delete=False) as temp:
+                if self.state_file.suffix == ".json":
                     json.dump(data, temp, indent=2, ensure_ascii=False)
                 else:
                     yaml.dump(data, temp, default_flow_style=False, allow_unicode=True)
@@ -86,7 +85,7 @@ class SafeStateManager:
         issues = []
         state = self.load_state()
 
-        required_keys = ['id', 'status', 'created_at']
+        required_keys = ["id", "status", "created_at"]
         for key in required_keys:
             if key not in state:
                 issues.append(f"Missing required key: {key}")
@@ -96,23 +95,22 @@ class SafeStateManager:
 
 
 # CLI interface
-if __name__ == '__main__':
+if __name__ == "__main__":
     import argparse
     import sys
 
-    parser = argparse.ArgumentParser(description='Safe State Manager')
-    parser.add_argument('state_file', help='Path to state file')
-    parser.add_argument('--format', choices=['json', 'yaml'], default='json',
-                       help='File format')
-    parser.add_argument('--validate', action='store_true', help='Validate state')
-    parser.add_argument('--get', help='Get section')
-    parser.add_argument('--set', nargs=2, help='Set section (key value)')
+    parser = argparse.ArgumentParser(description="Safe State Manager")
+    parser.add_argument("state_file", help="Path to state file")
+    parser.add_argument("--format", choices=["json", "yaml"], default="json", help="File format")
+    parser.add_argument("--validate", action="store_true", help="Validate state")
+    parser.add_argument("--get", help="Get section")
+    parser.add_argument("--set", nargs=2, help="Set section (key value)")
 
     args = parser.parse_args()
 
     state_file = Path(args.state_file)
-    if args.format == 'yaml':
-        state_file = state_file.with_suffix('.yml')
+    if args.format == "yaml":
+        state_file = state_file.with_suffix(".yml")
 
     manager = SafeStateManager(state_file)
 

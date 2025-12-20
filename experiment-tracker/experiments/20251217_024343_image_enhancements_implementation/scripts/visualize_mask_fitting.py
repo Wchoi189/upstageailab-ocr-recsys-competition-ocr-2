@@ -5,6 +5,7 @@ Visualize mask fitting with bounding boxes and corners for debugging data loss i
 Usage:
     python visualize_mask_fitting.py --mask path/to/mask.jpg --original path/to/original.jpg --output path/to/output.jpg
 """
+
 import argparse
 import sys
 from pathlib import Path
@@ -139,10 +140,7 @@ def create_detailed_visualization(
     def pad_image(img, target_w):
         pad_left = (target_w - img.shape[1]) // 2
         pad_right = target_w - img.shape[1] - pad_left
-        return cv2.copyMakeBorder(
-            img, 80, 20, pad_left, pad_right,
-            cv2.BORDER_CONSTANT, value=(255, 255, 255)
-        )
+        return cv2.copyMakeBorder(img, 80, 20, pad_left, pad_right, cv2.BORDER_CONSTANT, value=(255, 255, 255))
 
     vis_original_padded = pad_image(vis_original_resized, max_w)
     vis_mask_padded = pad_image(vis_mask_resized, max_w)
@@ -177,9 +175,7 @@ def create_detailed_visualization(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Visualize mask fitting with bounding boxes and corners"
-    )
+    parser = argparse.ArgumentParser(description="Visualize mask fitting with bounding boxes and corners")
     parser.add_argument("--mask", type=Path, required=True, help="Path to mask image")
     parser.add_argument("--original", type=Path, required=True, help="Path to original image")
     parser.add_argument("--output", type=Path, required=True, help="Path to output visualization")

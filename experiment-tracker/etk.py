@@ -36,12 +36,12 @@ import re
 import sqlite3
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 # Import state file utilities
 sys.path.insert(0, str(Path(__file__).parent / "src"))
-from experiment_tracker.utils.state_file import create_state_file, read_state, update_state
+from experiment_tracker.utils.state_file import create_state_file, update_state
 
 # Define KST timezone (UTC+9)
 KST = timezone(timedelta(hours=9))
@@ -885,15 +885,18 @@ Additional notes and considerations.
 
         conn = sqlite3.connect(self.db_path)
         try:
-            now = datetime.now(timezone.utc).isoformat()
+            now = datetime.now(UTC).isoformat()
 
             # Insert into experiment_state table
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO experiment_state (
                     experiment_id, current_task_id, current_phase, status,
                     created_at, updated_at
                 ) VALUES (?, NULL, 'planning', 'active', ?, ?)
-            """, (experiment_id, now, now))
+            """,
+                (experiment_id, now, now),
+            )
 
             conn.commit()
         except sqlite3.IntegrityError:
@@ -911,7 +914,8 @@ Additional notes and considerations.
         conn.row_factory = sqlite3.Row
 
         try:
-            cursor = conn.execute("""
+            cursor = conn.execute(
+                """
                 SELECT
                     s.current_task_id,
                     s.current_phase,
@@ -921,7 +925,9 @@ Additional notes and considerations.
                 FROM experiment_state s
                 LEFT JOIN experiment_tasks t ON s.current_task_id = t.task_id
                 WHERE s.experiment_id = ?
-            """, (experiment_id,))
+            """,
+                (experiment_id,),
+            )
 
             row = cursor.fetchone()
             if row:
@@ -930,25 +936,27 @@ Additional notes and considerations.
         finally:
             conn.close()
 
-    def create_task(self, experiment_id: str, title: str, description: str = "",
-                    priority: str = "medium") -> str:
+    def create_task(self, experiment_id: str, title: str, description: str = "", priority: str = "medium") -> str:
         """Create new task in database."""
         import uuid
 
         task_id = f"{title.lower().replace(' ', '_')}_{uuid.uuid4().hex[:8]}"
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         if not self.db_path.exists():
             raise RuntimeError("Database not available")
 
         conn = sqlite3.connect(self.db_path)
         try:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO experiment_tasks (
                     task_id, experiment_id, title, description,
                     status, priority, created_at
                 ) VALUES (?, ?, ?, ?, 'backlog', ?, ?)
-            """, (task_id, experiment_id, title, description, priority, now))
+            """,
+                (task_id, experiment_id, title, description, priority, now),
+            )
 
             conn.commit()
             return task_id
@@ -962,44 +970,53 @@ Additional notes and considerations.
 
         conn = sqlite3.connect(self.db_path)
         try:
-            now = datetime.now(timezone.utc).isoformat()
+            now = datetime.now(UTC).isoformat()
 
             # Get previous task
-            cursor = conn.execute(
-                "SELECT current_task_id FROM experiment_state WHERE experiment_id = ?",
-                (experiment_id,)
-            )
+            cursor = conn.execute("SELECT current_task_id FROM experiment_state WHERE experiment_id = ?", (experiment_id,))
             row = cursor.fetchone()
             prev_task_id = row[0] if row else None
 
             # Update state
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE experiment_state
                 SET current_task_id = ?, updated_at = ?
                 WHERE experiment_id = ?
-            """, (task_id, now, experiment_id))
+            """,
+                (task_id, now, experiment_id),
+            )
 
             # Mark old task completed, new task in-progress
             if prev_task_id:
-                conn.execute("""
+                conn.execute(
+                    """
                     UPDATE experiment_tasks
                     SET status = 'completed', completed_at = ?
                     WHERE task_id = ?
-                """, (now, prev_task_id))
+                """,
+                    (now, prev_task_id),
+                )
 
-            conn.execute("""
+            conn.execute(
+                """
                 UPDATE experiment_tasks
                 SET status = 'in_progress', started_at = ?
                 WHERE task_id = ?
-            """, (now, task_id))
+            """,
+                (now, task_id),
+            )
 
             # Log transition
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO state_transitions (
                     experiment_id, from_state, to_state,
                     transition_type, triggered_by, timestamp
                 ) VALUES (?, ?, ?, 'task', 'etk_cli', ?)
-            """, (experiment_id, prev_task_id or 'none', task_id, now))
+            """,
+                (experiment_id, prev_task_id or "none", task_id, now),
+            )
 
             conn.commit()
 
@@ -1011,50 +1028,52 @@ Additional notes and considerations.
         finally:
             conn.close()
 
-    def record_decision(self, experiment_id: str, decision: str, rationale: str,
-                       impact: str = None) -> str:
+    def record_decision(self, experiment_id: str, decision: str, rationale: str, impact: str = None) -> str:
         """Log decision to database."""
         import uuid
 
         decision_id = f"dec_{uuid.uuid4().hex[:12]}"
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         if not self.db_path.exists():
             raise RuntimeError("Database not available")
 
         conn = sqlite3.connect(self.db_path)
         try:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO experiment_decisions (
                     decision_id, experiment_id, date, decision, rationale, impact, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (decision_id, experiment_id, now.date().isoformat(),
-                  decision, rationale, impact, now.isoformat()))
+            """,
+                (decision_id, experiment_id, now.date().isoformat(), decision, rationale, impact, now.isoformat()),
+            )
 
             conn.commit()
             return decision_id
         finally:
             conn.close()
 
-    def record_insight(self, experiment_id: str, insight: str, impact: str,
-                      category: str = "observation") -> str:
+    def record_insight(self, experiment_id: str, insight: str, impact: str, category: str = "observation") -> str:
         """Log insight to database."""
         import uuid
 
         insight_id = f"ins_{uuid.uuid4().hex[:12]}"
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         if not self.db_path.exists():
             raise RuntimeError("Database not available")
 
         conn = sqlite3.connect(self.db_path)
         try:
-            conn.execute("""
+            conn.execute(
+                """
                 INSERT INTO experiment_insights (
                     insight_id, experiment_id, date, insight, impact, category, created_at
                 ) VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (insight_id, experiment_id, now.date().isoformat(),
-                  insight, impact, category, now.isoformat()))
+            """,
+                (insight_id, experiment_id, now.date().isoformat(), insight, impact, category, now.isoformat()),
+            )
 
             conn.commit()
             return insight_id
@@ -1063,7 +1082,6 @@ Additional notes and considerations.
 
 
 def main():
-
     parser = argparse.ArgumentParser(
         description="ETK (Experiment Tracker Kit) - CLI for EDS v1.0",
         formatter_class=argparse.RawDescriptionHelpFormatter,
