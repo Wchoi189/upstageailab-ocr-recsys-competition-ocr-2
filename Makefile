@@ -4,7 +4,7 @@
 
 .PHONY: config-validate
 config-validate:  ## Validate configuration system for errors
-	python scripts/validate_config.py
+	@unset PYENV_VERSION && python scripts/validate_config.py
 
 .PHONY: config-archive
 config-archive:   ## Archive legacy configs to .deprecated/
