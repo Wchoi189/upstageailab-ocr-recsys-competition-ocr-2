@@ -4,6 +4,8 @@
 **Tech Stack**: Vite + React + TypeScript + TailwindCSS
 **Status**: 🟢 Production Ready (Refactored Dec 21, 2025)
 
+> **AI Agents**: See [`.ai-instructions/INDEX.yaml`](.ai-instructions/INDEX.yaml) for machine-parseable documentation
+
 ---
 
 ## Purpose
@@ -109,7 +111,7 @@ make ocr-console-dev
 - `TextRegion` - Detected text polygon with confidence
 - `InferenceMetadata` - Coordinate system and padding info
 
-**Data Contract**: See [docs/data-contracts.md](docs/data-contracts.md)
+**Data Contract**: See [`.ai-instructions/contracts/pydantic-models.yaml`](.ai-instructions/contracts/pydantic-models.yaml)
 
 ---
 
@@ -175,9 +177,10 @@ make kill-ports
 
 ## Related Documentation
 
+- [AI Documentation Index](.ai-instructions/INDEX.yaml) - Machine-parseable contracts for AI agents
 - [Shared Backend Contract](../../docs/artifacts/specs/shared-backend-contract.md)
-- [Data Contracts](docs/data-contracts.md)
 - [System Architecture](../../docs/architecture/system-architecture.md)
+- [Legacy Docs](DEPRECATED/docs/) - Archived human-oriented documentation
 
 ---
 

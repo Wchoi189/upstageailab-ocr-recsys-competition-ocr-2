@@ -1,0 +1,46 @@
+---
+# Adding Features to OCR Console - Decision Tree
+
+feature_type:
+  new_preprocessing_option:
+    backend:
+      - "Add parameter to InferenceRequest (pydantic-models.yaml)"
+      - "Pass to InferenceService.predict() (backend-services.yaml)"
+      - "Pass to InferenceEngine.predict_array() (shared backend)"
+    frontend:
+      - "Add field to InferenceOptions (typescript-types.yaml)"
+      - "Add UI control in Sidebar component"
+      - "Pass to API request via ocrClient"
+
+  new_api_endpoint:
+    backend:
+      - "Add service method if needed (backend-services.yaml)"
+      - "Add @app route in main.py (api-endpoints.yaml)"
+      - "Add error cases (error-handling.yaml)"
+    frontend:
+      - "Add method to ocrClient.ts"
+      - "Call from component or context"
+
+  new_service:
+    backend:
+      - "Create services/new_service.py"
+      - "Document in backend-services.yaml"
+      - "Initialize in main.py lifespan"
+      - "Cleanup in shutdown"
+
+  ui_component:
+    frontend:
+      - "Create src/components/NewComponent.tsx"
+      - "Import in parent (Workspace, Sidebar, TopRibbon)"
+      - "Access context via useInference() if needed"
+
+module_boundaries:
+  services: "Business logic, stateful operations"
+  main_py: "FastAPI routes, exception handlers, lifespan"
+  preprocessing_service: "Image decoding only (static methods)"
+  inference_service: "Engine lifecycle only (lazy init, checkpoint reuse)"
+  checkpoint_service: "Discovery + TTL caching only"
+
+dont_modify:
+  - "apps/shared/backend_shared/* (shared across apps)"
+  - "InferenceEngine internals (use predict_array interface)"

@@ -1,0 +1,46 @@
+---
+# API Endpoints Contract
+# Base URL: http://localhost:8002/api
+
+endpoints:
+  health:
+    method: GET
+    path: "/api/health"
+    response:
+      status: "ok"
+      checkpoint_root: "str"
+      engine_loaded: "bool"
+    status_codes: [200]
+
+  list_checkpoints:
+    method: GET
+    path: "/api/inference/checkpoints"
+    query_params:
+      limit: "int = 100"
+    response: "list[Checkpoint]"
+    status_codes: [200, 500]
+    errors:
+      500: "ServiceNotInitializedError (CheckpointService)"
+
+  run_inference:
+    method: POST
+    path: "/api/inference/preview"
+    request_body: "InferenceRequest"
+    response: "InferenceResponse"
+    status_codes: [200, 400, 404, 500]
+    errors:
+      400: "ImageDecodingError (invalid base64)"
+      404: "CheckpointNotFoundError (checkpoint missing)"
+      500: "InferenceError | ServiceNotInitializedError"
+
+# Data contracts (see contracts/pydantic-models.yaml for schemas)
+request_models:
+  - "InferenceRequest"
+
+response_models:
+  - "InferenceResponse"
+  - "Checkpoint"
+  - "ErrorResponse"
+
+# Error handling (see architecture/error-handling.yaml)
+error_handler: "OCRBackendError -> ErrorResponse"

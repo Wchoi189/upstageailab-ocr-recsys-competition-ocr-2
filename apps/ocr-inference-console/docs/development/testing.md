@@ -1,3 +1,0 @@
-# Testing Guide
-
-*Documentation pending...*

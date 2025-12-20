@@ -1,0 +1,75 @@
+---
+# Pydantic Models Contract
+# Source: apps/shared/backend_shared/models/inference.py
+
+Checkpoint:
+  module: "backend.services.checkpoint_service"
+  fields:
+    checkpoint_path: "str"
+    display_name: "str"
+    size_mb: "float"
+    modified_at: "str"
+    epoch: "int | None"
+    global_step: "int | None"
+    precision: "float | None"
+    recall: "float | None"
+    hmean: "float | None"
+
+InferenceRequest:
+  module: "apps.shared.backend_shared.models.inference"
+  fields:
+    checkpoint_path: "str"
+    image_base64: "str | None"
+    image_path: "str | None"
+    confidence_threshold: "float = 0.3"
+    nms_threshold: "float = 0.5"
+    enable_perspective_correction: "bool = False"
+    perspective_display_mode: "str = 'corrected'"
+    enable_grayscale: "bool = False"
+    enable_background_normalization: "bool = False"
+    enable_sepia_enhancement: "bool = False"
+
+InferenceResponse:
+  module: "apps.shared.backend_shared.models.inference"
+  fields:
+    status: "str = 'success'"
+    regions: "list[TextRegion]"
+    processing_time_ms: "float = 0.0"
+    notes: "list[str]"
+    preview_image_base64: "str | None"
+    meta: "InferenceMetadata | None"
+
+TextRegion:
+  module: "apps.shared.backend_shared.models.inference"
+  fields:
+    polygon: "list[list[float]]"
+    text: "str | None"
+    confidence: "float (0.0-1.0)"
+
+InferenceMetadata:
+  module: "apps.shared.backend_shared.models.inference"
+  purpose: "Coordinate system info for frontend polygon rendering"
+  fields:
+    original_size: "tuple[int, int]"
+    processed_size: "tuple[int, int]"
+    padding: "Padding"
+    padding_position: "str = 'top_left'"
+    content_area: "tuple[int, int]"
+    scale: "float"
+    coordinate_system: "str = 'pixel'"
+
+Padding:
+  module: "apps.shared.backend_shared.models.inference"
+  fields:
+    top: "int = 0"
+    bottom: "int = 0"
+    left: "int = 0"
+    right: "int = 0"
+
+ErrorResponse:
+  module: "backend.models.errors"
+  fields:
+    error_code: "str"
+    message: "str"
+    details: "dict"
+    request_id: "str | None"

@@ -1,0 +1,40 @@
+---
+# OCR Console Quickstart - Startup Commands & Health Checks
+# Ultra-concise reference for AI agents
+
+startup:
+  full_stack:
+    command: "make ocr-console-stack"
+    ports: [8002, 5173]
+    wait_for_backend: true
+
+  backend_only:
+    command: "make ocr-console-backend"
+    port: 8002
+    module: "apps.ocr-inference-console.backend.main:app"
+    working_dir: "apps/ocr-inference-console"
+
+  frontend_only:
+    command: "make ocr-console-dev"
+    port: 5173
+
+health_checks:
+  backend:
+    url: "http://localhost:8002/api/health"
+    response: {"status": "ok", "checkpoint_root": "...", "engine_loaded": false}
+
+  api_docs:
+    url: "http://localhost:8002/docs"
+
+  frontend:
+    url: "http://localhost:5173"
+
+dependencies:
+  checkpoint_root: "outputs/experiments/train/ocr"
+  checkpoint_metadata: "*.ckpt.metadata.yaml"
+  python_env: "requires cv2, numpy, torch, lightning"
+
+troubleshooting:
+  port_in_use: "make kill-ports"
+  backend_wont_start: "find outputs/experiments/train/ocr -name '*.ckpt' | head -5"
+  frontend_cors: "Check backend CORS middleware (allows all origins)"

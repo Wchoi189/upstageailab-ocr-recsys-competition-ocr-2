@@ -1,0 +1,52 @@
+---
+# Debugging Common OCR Console Errors
+
+backend_wont_start:
+  symptoms: ["Port 8002 already in use", "Module import errors"]
+  checks:
+    - "lsof -i:8002 (check port)"
+    - "make kill-ports (force cleanup)"
+    - "Check backend/main.py for syntax errors"
+    - "Verify checkpoint_root exists: outputs/experiments/train/ocr"
+
+checkpoint_not_found:
+  symptoms: ["404 error", "No checkpoints available"]
+  checks:
+    - "find outputs/experiments/train/ocr -name '*.ckpt' | head -5"
+    - "Run 'make checkpoint-metadata' to generate .ckpt.metadata.yaml files"
+    - "Check CheckpointService._discover_sync() logs"
+    - "Verify DEFAULT_CHECKPOINT_ROOT path in main.py"
+
+frontend_cors_error:
+  symptoms: ["Network error", "CORS policy blocked"]
+  checks:
+    - "Verify backend is running: curl http://localhost:8002/api/health"
+    - "Check CORS middleware in main.py (should allow all origins)"
+    - "Verify frontend is using http://localhost:8002 (not 8000)"
+
+inference_fails:
+  symptoms: ["500 error", "InferenceError"]
+  checks:
+    - "Check backend logs: logs/ocr-inference-console/backend.log"
+    - "Verify checkpoint path exists and is valid .ckpt file"
+    - "Check image_base64 format (valid base64, proper encoding)"
+    - "Verify InferenceEngine.predict_array() behavior"
+
+polygon_overlay_misaligned:
+  symptoms: ["Polygons not matching text"]
+  checks:
+    - "Verify InferenceMetadata.coordinate_system = 'pixel'"
+    - "Check polygon coordinates are in processed_size frame"
+    - "Verify frontend coordinate transform logic"
+    - "Check padding values match processed image"
+
+error_codes:
+  CHECKPOINT_NOT_FOUND: "404 - Checkpoint path invalid"
+  IMAGE_DECODING_ERROR: "400 - Invalid base64 or corrupt image"
+  INFERENCE_ERROR: "500 - Model prediction failed"
+  SERVICE_NOT_INITIALIZED: "500 - Service not loaded in lifespan"
+
+logs:
+  backend: "logs/ocr-inference-console/backend.log"
+  console: "Browser DevTools console (frontend errors)"
+  network: "Browser DevTools Network tab (API requests)"
