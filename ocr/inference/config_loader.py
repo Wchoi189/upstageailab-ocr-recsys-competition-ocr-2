@@ -33,6 +33,7 @@ class NormalizationSettings:
 class PreprocessSettings:
     image_size: tuple[int, int]
     normalization: NormalizationSettings
+    enable_background_normalization: bool = False
 
 
 @dataclass(slots=True)
@@ -144,35 +145,51 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
     image_size = DEFAULT_IMAGE_SIZE
     mean = DEFAULT_NORMALIZE_MEAN.copy()
     std = DEFAULT_NORMALIZE_STD.copy()
+    enable_background_normalization = False
 
     preprocessing = _get_attr(config, "preprocessing")
-    if preprocessing and (target_size := _coerce_tuple(_get_attr(preprocessing, "target_size"))):
-        image_size = target_size
-    elif transforms_section := _get_attr(config, "transforms"):
-        transform_key = "predict_transform" if _has_attr(transforms_section, "predict_transform") else "test_transform"
-        if transform_config := _get_attr(transforms_section, transform_key):
-            transforms_list = _get_attr(transform_config, "transforms") or []
-            for transform in transforms_list:
-                max_size = _get_attr(transform, "max_size")
-                min_width = _get_attr(transform, "min_width")
-                min_height = _get_attr(transform, "min_height")
-                if max_size:
-                    image_size = (int(max_size), int(max_size))
-                    break
-                if min_width and min_height:
-                    image_size = (int(min_width), int(min_height))
-                    break
+    has_preprocessing_target_size = False
+    
+    if preprocessing:
+        target_size = _coerce_tuple(_get_attr(preprocessing, "target_size"))
+        if target_size:
+            image_size = target_size
+            has_preprocessing_target_size = True
+        # Read background normalization flag from config
+        bg_norm_value = _get_attr(preprocessing, "enable_background_normalization")
+        if bg_norm_value is not None:
+            enable_background_normalization = bool(bg_norm_value)
+    
+    if not has_preprocessing_target_size:
+        if transforms_section := _get_attr(config, "transforms"):
+            transform_key = "predict_transform" if _has_attr(transforms_section, "predict_transform") else "test_transform"
+            if transform_config := _get_attr(transforms_section, transform_key):
+                transforms_list = _get_attr(transform_config, "transforms") or []
+                for transform in transforms_list:
+                    max_size = _get_attr(transform, "max_size")
+                    min_width = _get_attr(transform, "min_width")
+                    min_height = _get_attr(transform, "min_height")
+                    if max_size:
+                        image_size = (int(max_size), int(max_size))
+                        break
+                    if min_width and min_height:
+                        image_size = (int(min_width), int(min_height))
+                        break
 
-            for transform in transforms_list:
-                mean_candidate = _get_attr(transform, "mean")
-                std_candidate = _get_attr(transform, "std")
-                if mean_candidate and std_candidate:
-                    mean = [float(value) for value in _as_sequence(mean_candidate)]
-                    std = [float(value) for value in _as_sequence(std_candidate)]
-                    break
+                for transform in transforms_list:
+                    mean_candidate = _get_attr(transform, "mean")
+                    std_candidate = _get_attr(transform, "std")
+                    if mean_candidate and std_candidate:
+                        mean = [float(value) for value in _as_sequence(mean_candidate)]
+                        std = [float(value) for value in _as_sequence(std_candidate)]
+                        break
 
     normalization = NormalizationSettings(mean=mean, std=std)
-    return PreprocessSettings(image_size=image_size, normalization=normalization)
+    return PreprocessSettings(
+        image_size=image_size,
+        normalization=normalization,
+        enable_background_normalization=enable_background_normalization,
+    )
 
 
 def _extract_postprocess_settings(config: Any) -> PostprocessSettings:

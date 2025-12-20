@@ -64,6 +64,7 @@ from torch.utils.data import Dataset
 _logged_warnings: set[str] = set()
 
 from ocr.datasets.schemas import DatasetConfig, ImageData, ImageMetadata, TransformInput, ValidatedPolygonData
+from ocr.utils.background_normalization import normalize_gray_world
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
     normalize_pil_image,
@@ -468,6 +469,10 @@ class ValidatedOCRDataset(Dataset):
         raw_height = image_data.raw_height
         orientation = image_data.orientation
         cache_source = "disk"  # Default, can be updated if loaded from cache
+
+        # Apply gray-world background normalization if enabled (BEFORE transforms)
+        if self.config.enable_background_normalization:
+            image_array = normalize_gray_world(image_array)
 
         # 3. Annotation Processing: Load raw polygons and process them
         raw_polygons = self.anns[image_filename]
