@@ -138,6 +138,7 @@ class InferenceEngine:
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
         enable_background_normalization: bool = False,
+        enable_sepia_enhancement: bool = False,
     ) -> dict[str, Any] | None:
         """Predict on an image array (numpy) directly.
 
@@ -180,6 +181,7 @@ class InferenceEngine:
             perspective_display_mode=perspective_display_mode,
             enable_grayscale=enable_grayscale,
             enable_background_normalization=enable_background_normalization,
+            enable_sepia_enhancement=enable_sepia_enhancement,
         )
 
     def predict_image(
@@ -194,6 +196,7 @@ class InferenceEngine:
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
         enable_background_normalization: bool = False,
+        enable_sepia_enhancement: bool = False,
     ) -> dict[str, Any] | None:
         """Predict on an image file (legacy file path-based API).
 
@@ -244,6 +247,7 @@ class InferenceEngine:
             perspective_display_mode=perspective_display_mode,
             enable_grayscale=enable_grayscale,
             enable_background_normalization=enable_background_normalization,
+            enable_sepia_enhancement=enable_sepia_enhancement,
         )
 
 

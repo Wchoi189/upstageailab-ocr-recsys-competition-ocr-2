@@ -9,36 +9,35 @@ import jsonStyle from 'react-syntax-highlighter/dist/esm/styles/hljs/github';
 import { UploadModal } from './UploadModal';
 import { PolygonOverlay } from './PolygonOverlay';
 import { ocrClient, type Prediction, type InferenceResponse, type PredictionMetadata } from '../api/ocrClient';
+import { useInference } from '../contexts/InferenceContext';
 
 interface WorkspaceProps {
-    checkpoints: any[];
-    loadingCheckpoints: boolean;
-    selectedCheckpoint: string | null;
-    enablePerspectiveCorrection: boolean;
-    displayMode: string;
-    enableGrayscale: boolean;
-    enableBackgroundNormalization: boolean;
-    confidenceThreshold: number;  // NEW
-    nmsThreshold: number;  // NEW
     showUploadModal?: boolean;
     onOpenUploadModal?: () => void;
     onCloseUploadModal?: () => void;
 }
 
 export const Workspace: React.FC<WorkspaceProps> = ({
-    checkpoints,
-    loadingCheckpoints,
-    selectedCheckpoint,
-    enablePerspectiveCorrection,
-    displayMode,
-    enableGrayscale,
-    enableBackgroundNormalization,
-    confidenceThreshold,  // NEW
-    nmsThreshold,  // NEW
     showUploadModal = false,
     onOpenUploadModal,
     onCloseUploadModal
 }) => {
+    const {
+        checkpoints,
+        loadingCheckpoints,
+        selectedCheckpoint,
+        inferenceOptions,
+    } = useInference();
+
+    const {
+        enablePerspectiveCorrection,
+        displayMode,
+        enableGrayscale,
+        enableBackgroundNormalization,
+        enableSepiaEnhancement,
+        confidenceThreshold,
+        nmsThreshold,
+    } = inferenceOptions;
     const [viewMode, setViewMode] = useState<'preview' | 'json'>('preview');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
     const [predictions, setPredictions] = useState<Prediction[]>([]);
@@ -70,6 +69,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 displayMode,
                 enableGrayscale,
                 enableBackgroundNormalization,
+                enableSepiaEnhancement,
                 confidenceThreshold,  // NEW
                 nmsThreshold  // NEW
             ); setPredictions(result.predictions); setInferenceMeta(result.meta);
@@ -99,6 +99,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 displayMode,
                 enableGrayscale,
                 enableBackgroundNormalization,
+                enableSepiaEnhancement,
                 confidenceThreshold,  // NEW
                 nmsThreshold  // NEW
             );

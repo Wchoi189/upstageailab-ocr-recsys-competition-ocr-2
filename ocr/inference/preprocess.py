@@ -13,6 +13,7 @@ from ocr.utils.perspective_correction import (
     correct_perspective_from_mask,
     remove_background_and_mask,
 )
+from ocr.utils.sepia_enhancement import enhance_sepia_clahe
 
 from .config_loader import PreprocessSettings
 from .dependencies import torch, transforms
@@ -48,6 +49,7 @@ def preprocess_image(
     target_size: int = 640,
     return_processed_image: bool = False,
     enable_background_normalization: bool = False,
+    enable_sepia_enhancement: bool = False,
 ) -> Any | tuple[Any, Any]:
     """Apply preprocessing transform to an image and return a batched tensor.
 
@@ -61,6 +63,7 @@ def preprocess_image(
         target_size: Target size for LongestMaxSize and PadIfNeeded (default: 640)
         return_processed_image: If True, also return the processed BGR image before tensor conversion
         enable_background_normalization: If True, apply gray-world normalization before resizing
+        enable_sepia_enhancement: If True, apply sepia+CLAHE enhancement (after gray-world if both enabled)
 
     Returns:
         Batched tensor ready for model inference, or tuple of (tensor, processed_image_bgr) if return_processed_image=True
@@ -74,6 +77,10 @@ def preprocess_image(
     # Apply gray-world normalization BEFORE resizing if enabled
     if enable_background_normalization:
         processed_image = normalize_gray_world(processed_image)
+
+    # Apply sepia enhancement AFTER gray-world (if both enabled, sepia last)
+    if enable_sepia_enhancement:
+        processed_image = enhance_sepia_clahe(processed_image)
 
     original_h, original_w = processed_image.shape[:2]
 

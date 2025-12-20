@@ -34,6 +34,7 @@ class PreprocessSettings:
     image_size: tuple[int, int]
     normalization: NormalizationSettings
     enable_background_normalization: bool = False
+    enable_sepia_enhancement: bool = False
 
 
 @dataclass(slots=True)
@@ -146,10 +147,11 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
     mean = DEFAULT_NORMALIZE_MEAN.copy()
     std = DEFAULT_NORMALIZE_STD.copy()
     enable_background_normalization = False
+    enable_sepia_enhancement = False
 
     preprocessing = _get_attr(config, "preprocessing")
     has_preprocessing_target_size = False
-    
+
     if preprocessing:
         target_size = _coerce_tuple(_get_attr(preprocessing, "target_size"))
         if target_size:
@@ -159,7 +161,11 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
         bg_norm_value = _get_attr(preprocessing, "enable_background_normalization")
         if bg_norm_value is not None:
             enable_background_normalization = bool(bg_norm_value)
-    
+        # Read sepia enhancement flag from config
+        sepia_value = _get_attr(preprocessing, "enable_sepia_enhancement")
+        if sepia_value is not None:
+            enable_sepia_enhancement = bool(sepia_value)
+
     if not has_preprocessing_target_size:
         if transforms_section := _get_attr(config, "transforms"):
             transform_key = "predict_transform" if _has_attr(transforms_section, "predict_transform") else "test_transform"
@@ -189,6 +195,7 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
         image_size=image_size,
         normalization=normalization,
         enable_background_normalization=enable_background_normalization,
+        enable_sepia_enhancement=enable_sepia_enhancement,
     )
 
 

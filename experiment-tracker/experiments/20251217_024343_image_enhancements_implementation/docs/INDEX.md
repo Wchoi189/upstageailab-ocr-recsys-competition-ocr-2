@@ -8,10 +8,10 @@
 
 ## 📋 Quick Navigation
 
-### 🚀 Start Here
-- **[Quick Start Commands](../SEPIA_QUICK_START.md)** - Copy/paste commands to get started
-- **[Implementation Summary](SEPIA_IMPLEMENTATION_SUMMARY.md)** - What was built and why
-- **[Full Testing Guide](SEPIA_TESTING_GUIDE.md)** - Comprehensive testing workflow
+### 🚀 Official AgentQMS Artifacts
+- **[Design Document](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md)** - Architecture and design decisions
+- **[Implementation Plan](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md)** - Testing workflow and checklist
+- **[Readiness Assessment](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md)** - Implementation review (9.5/10 score)
 
 ### 📜 Scripts
 | Script | Purpose | Size |
@@ -80,10 +80,39 @@ graph TD
 
 ```
 docs/
-├── INDEX.md                          ← You are here
-├── SEPIA_IMPLEMENTATION_SUMMARY.md   ← What was built
-├── SEPIA_TESTING_GUIDE.md            ← How to test
+├── INDEX.md                                    ← You are here
 └── (other experiment docs...)
+
+AgentQMS Artifacts (Official Documentation):
+├── design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md
+├── implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md
+└── assessments/2025-12-21_0208_assessment-sepia-implementation-review.md
+```
+
+---
+
+## 🚀 Quick Start Commands
+
+### Isolated Testing
+```bash
+cd scripts/
+python sepia_enhancement.py --input <image> --method all --output ../outputs/sepia_tests/
+```
+
+### Comparison Analysis
+```bash
+python compare_sepia_methods.py --input <image> --output ../outputs/sepia_comparison/ --save-metrics
+```
+
+### Full Pipeline
+```bash
+python sepia_perspective_pipeline.py --input <image> --sepia-method warm --output ../outputs/sepia_pipeline/
+```
+
+### VLM Validation
+```bash
+export DASHSCOPE_API_KEY='your_key'
+./vlm_validate_sepia.sh ../outputs/sepia_comparison/
 ```
 
 ---
@@ -191,9 +220,9 @@ export DASHSCOPE_API_KEY='your_key'
 
 ### Documentation
 
-- Quick commands: [SEPIA_QUICK_START.md](../SEPIA_QUICK_START.md)
-- Full guide: [SEPIA_TESTING_GUIDE.md](SEPIA_TESTING_GUIDE.md)
-- Implementation: [SEPIA_IMPLEMENTATION_SUMMARY.md](SEPIA_IMPLEMENTATION_SUMMARY.md)
+- Design Document: [/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md)
+- Implementation Plan: [/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md)
+- Assessment: [/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md)
 
 ---
 
@@ -205,13 +234,13 @@ cd experiment-tracker/experiments/20251217_024343_image_enhancements_implementat
 
 # 2. Test sepia methods
 python sepia_enhancement.py \
-  --input /path/to/drp.en_ko.in_house.selectstar_000732.jpg \
+  --input ../artifacts/sepia/drp.en_ko.in_house.selectstar_000732_REMBG.jpg \
   --method all \
   --output ../outputs/sepia_tests/
 
 # 3. Generate comparison
 python compare_sepia_methods.py \
-  --input /path/to/drp.en_ko.in_house.selectstar_000732.jpg \
+  --input ../artifacts/sepia/drp.en_ko.in_house.selectstar_000732_REMBG.jpg \
   --output ../outputs/sepia_comparison/ \
   --save-metrics
 

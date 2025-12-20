@@ -122,6 +122,10 @@ class InferenceRequest(BaseModel):
         default=False,
         description="Enable gray-world background normalization before inference (reduces tinted backgrounds)",
     )
+    enable_sepia_enhancement: bool = Field(
+        default=False,
+        description="Enable sepia+CLAHE enhancement for improved contrast on aged/low-contrast documents",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -135,6 +139,7 @@ class InferenceRequest(BaseModel):
                     "perspective_display_mode": "corrected",
                     "enable_grayscale": False,
                     "enable_background_normalization": False,
+                    "enable_sepia_enhancement": False,
                 }
             ]
         }

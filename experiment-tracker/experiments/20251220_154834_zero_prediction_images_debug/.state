@@ -1,5 +1,5 @@
 experiment_id=20251220_154834_zero_prediction_images_debug
-status=active
+status=completed
 current_task=
-current_phase=planning
-last_updated=2025-12-20T06:48:34.946129+00:00
+current_phase=complete
+last_updated=2025-12-21T03:30:13+09:00

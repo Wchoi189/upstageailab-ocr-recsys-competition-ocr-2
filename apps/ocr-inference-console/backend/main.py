@@ -10,18 +10,14 @@ See: docs/guides/setting-up-app-backends.md
 from __future__ import annotations
 
 # Lightweight imports only at top level for instant startup
-import base64
 import logging
 import os
-import time
 from contextlib import asynccontextmanager
-from datetime import datetime
 from pathlib import Path
 
 # Heavy imports (cv2, numpy, torch, lightning) moved to local scopes inside functions
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
 
 # Import shared models (lightweight pure-Pydantic models)
 from apps.shared.backend_shared.models.inference import (
@@ -31,6 +27,21 @@ from apps.shared.backend_shared.models.inference import (
     Padding,
     TextRegion,
 )
+
+# Import services
+from .services.checkpoint_service import Checkpoint, CheckpointService
+from .services.inference_service import InferenceService
+from .services.preprocessing_service import PreprocessingService
+
+# Import exceptions and models
+from .exceptions import (
+    CheckpointNotFoundError,
+    ImageDecodingError,
+    InferenceError,
+    OCRBackendError,
+    ServiceNotInitializedError,
+)
+from .models.errors import ErrorResponse
 
 logger = logging.getLogger(__name__)
 
@@ -66,16 +77,24 @@ API_PREFIX = "/api"
 
 DEFAULT_CHECKPOINT_ROOT = PROJECT_ROOT / "outputs/experiments/train/ocr"
 
-# Global inference engine (lazy loaded)
-_inference_engine: InferenceEngine | None = None
-
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """Lifespan context manager for app startup/shutdown."""
-    global _inference_engine
+    import asyncio
+    global _checkpoint_service, _inference_service
 
     logger.info("🚀 Starting OCR Inference Console Backend (Port 8002)")
+
+    # Initialize services
+    _checkpoint_service = CheckpointService(
+        checkpoint_root=DEFAULT_CHECKPOINT_ROOT,
+        cache_ttl=5.0
+    )
+    _inference_service = InferenceService()
+
+    # Background preload checkpoint cache (non-blocking)
+    asyncio.create_task(_checkpoint_service.preload_checkpoints())
 
     # Note: InferenceEngine initialization is now lazy-loaded on first inference request
     # to ensure the server starts responding to health/discovery requests immediately.
@@ -84,14 +103,15 @@ async def lifespan(app: FastAPI):
 
     logger.info("🛑 Shutting down OCR Inference Console Backend")
 
-    # Clean up engine resources to prevent memory/semaphore leaks
-    if _inference_engine is not None:
+    # Clean up service resources to prevent memory/semaphore leaks
+    if _inference_service is not None:
         try:
-            _inference_engine.cleanup()
+            _inference_service.cleanup()
         except Exception as e:
-            logger.error(f"Error during engine cleanup: {e}")
+            logger.error(f"Error during inference service cleanup: {e}")
 
-    _inference_engine = None
+    _checkpoint_service = None
+    _inference_service = None
     logger.info("✅ Shutdown complete")
 
 
@@ -112,103 +132,40 @@ app.add_middleware(
 )
 
 
-class Checkpoint(BaseModel):
-    """Checkpoint metadata for UI selection."""
+# Exception handlers for structured errors
+@app.exception_handler(OCRBackendError)
+async def ocr_backend_error_handler(request, exc: OCRBackendError):
+    """Handle structured OCR backend errors."""
+    from fastapi.responses import JSONResponse
 
-    checkpoint_path: str
-    display_name: str
-    size_mb: float
-    modified_at: str
-    epoch: int | None = None
-    global_step: int | None = None
-    precision: float | None = None
-    recall: float | None = None
-    hmean: float | None = None
+    status_code = 500  # Default to internal server error
 
+    # Map specific error codes to HTTP status codes
+    status_map = {
+        "CHECKPOINT_NOT_FOUND": 404,
+        "IMAGE_DECODING_ERROR": 400,
+        "INFERENCE_ERROR": 500,
+        "MODEL_LOAD_ERROR": 500,
+        "SERVICE_NOT_INITIALIZED": 500,
+    }
 
-# Simple cache for checkpoint discovery
-_checkpoint_cache: list[Checkpoint] | None = None
-_last_discovery_time: datetime | None = None
-CACHE_TTL_SECONDS = 5.0
+    status_code = status_map.get(exc.error_code, 500)
 
-def _discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
-    """Discover available checkpoints using pregenerated metadata YAML files.
-
-    Includes 5-second TTL cache to prevent redundant disk I/O from rapid frontend updates.
-    """
-    global _checkpoint_cache, _last_discovery_time
-    import yaml # Lazy import
-
-    current_time = datetime.utcnow()
-    if (_checkpoint_cache is not None and
-        _last_discovery_time is not None and
-        (current_time - _last_discovery_time).total_seconds() < CACHE_TTL_SECONDS):
-        return _checkpoint_cache[:limit]
-
-    if not DEFAULT_CHECKPOINT_ROOT.exists():
-        logger.warning("Checkpoint root missing: %s", DEFAULT_CHECKPOINT_ROOT)
-        return []
-
-    # Find all pregenerated metadata files
-    metadata_files = sorted(
-        DEFAULT_CHECKPOINT_ROOT.rglob("*.ckpt.metadata.yaml"),
-        key=lambda p: p.stat().st_mtime,
-        reverse=True,
+    error_response = ErrorResponse(
+        error_code=exc.error_code,
+        message=exc.message,
+        details=exc.details,
     )
 
-    start_time = datetime.utcnow()
-    metadata_count = len(metadata_files)
-    results: list[Checkpoint] = []
-    for meta_path in metadata_files[:limit]:
-        try:
-            # Parse YAML metadata (fast - no state dict loading)
-            with open(meta_path) as f:
-                meta = yaml.safe_load(f)
-
-            # Reconstruct checkpoint path from metadata file path
-            ckpt_path = meta_path.with_suffix("").with_suffix("")  # Remove .metadata.yaml
-
-            # Get file stats
-            stat = meta_path.stat()
-            ckpt_stat = ckpt_path.stat() if ckpt_path.exists() else stat
-
-            display_name = str(ckpt_path.relative_to(DEFAULT_CHECKPOINT_ROOT))
-
-            results.append(
-                Checkpoint(
-                    checkpoint_path=str(ckpt_path),
-                    display_name=display_name,
-                    size_mb=round(ckpt_stat.st_size / (1024 * 1024), 2) if ckpt_path.exists() else 0.0,
-                    modified_at=meta.get("created_at", datetime.fromtimestamp(stat.st_mtime).isoformat()),
-                    epoch=meta.get("training", {}).get("epoch"),
-                    global_step=meta.get("training", {}).get("global_step"),
-                    precision=meta.get("metrics", {}).get("precision"),
-                    recall=meta.get("metrics", {}).get("recall"),
-                    hmean=meta.get("metrics", {}).get("hmean"),
-                )
-            )
-        except Exception as e:
-            logger.warning("Failed to parse metadata file %s: %s", meta_path, e)
-            continue
-
-    elapsed = (datetime.utcnow() - start_time).total_seconds()
-    logger.debug(
-        "Checkpoint discovery complete | metadata_found=%d | metadata_files_scanned=%d | limit=%d | elapsed=%.3fs | root=%s",
-        len(results),
-        metadata_count,
-        limit,
-        elapsed,
-        DEFAULT_CHECKPOINT_ROOT,
+    return JSONResponse(
+        status_code=status_code,
+        content=error_response.model_dump(),
     )
 
-    if not metadata_files:
-        logger.warning(
-            "No checkpoint metadata files were found. Run 'make checkpoint-metadata' to generate .ckpt.metadata.yaml files for fast discovery."
-        )
 
-    _checkpoint_cache = results
-    _last_discovery_time = current_time
-    return results
+# Initialize services
+_checkpoint_service: CheckpointService | None = None
+_inference_service: InferenceService | None = None
 
 
 def _parse_inference_result(result: dict) -> list[TextRegion]:
@@ -262,14 +219,16 @@ async def health():
     return {
         "status": "ok",
         "checkpoint_root": str(DEFAULT_CHECKPOINT_ROOT),
-        "engine_loaded": _inference_engine is not None,
+        "engine_loaded": _inference_service is not None and _inference_service._engine is not None,
     }
 
 
 @app.get(f"{API_PREFIX}/inference/checkpoints", response_model=list[Checkpoint])
 async def list_checkpoints(limit: int = 100):
     """List available OCR checkpoints."""
-    checkpoints = _discover_checkpoints(limit=limit)
+    if _checkpoint_service is None:
+        raise ServiceNotInitializedError("CheckpointService")
+    checkpoints = await _checkpoint_service.list_checkpoints(limit=limit)
     return checkpoints
 
 
@@ -280,79 +239,46 @@ async def run_inference(request: InferenceRequest):
     Accepts base64-encoded images and returns detected text regions with
     coordinate metadata for frontend overlay rendering.
     """
-    global _inference_engine
-    import cv2
-    import numpy as np
-    from apps.shared.backend_shared.inference import InferenceEngine
-
-    if _inference_engine is None:
-        logger.info("🔄 First inference request: Initializing InferenceEngine...")
-        start_init = time.perf_counter()
-        _inference_engine = InferenceEngine()
-        logger.info("✅ InferenceEngine initialized in %.2fs", time.perf_counter() - start_init)
+    # Validate services initialized
+    if _checkpoint_service is None:
+        raise ServiceNotInitializedError("CheckpointService")
+    if _inference_service is None:
+        raise ServiceNotInitializedError("InferenceService")
 
     # Resolve checkpoint path
     checkpoint_path = request.checkpoint_path
     if not checkpoint_path:
         # Use latest checkpoint if not specified
-        checkpoints = _discover_checkpoints(limit=1)
-        if not checkpoints:
-            raise HTTPException(status_code=404, detail="No checkpoints available")
-        checkpoint_path = checkpoints[0].checkpoint_path
+        latest = _checkpoint_service.get_latest()
+        if latest is None:
+            raise CheckpointNotFoundError("No checkpoints available")
+        checkpoint_path = latest.checkpoint_path
 
     # Validate checkpoint exists
     ckpt_path = Path(checkpoint_path)
     if not ckpt_path.exists():
-        raise HTTPException(status_code=400, detail=f"Checkpoint not found: {checkpoint_path}")
+        raise CheckpointNotFoundError(checkpoint_path)
 
-    # Decode base64 image
-    if not request.image_base64:
-        raise HTTPException(status_code=400, detail="image_base64 required")
-
+    # Decode base64 image using preprocessing service
     try:
-        # Handle data URL prefix
-        image_b64 = request.image_base64
-        if "base64," in image_b64:
-            image_b64 = image_b64.split("base64,", 1)[1]
+        image = PreprocessingService.decode_base64_image(request.image_base64 or "")
+    except ValueError as e:
+        raise ImageDecodingError(str(e))
 
-        # Decode to numpy array
-        image_bytes = base64.b64decode(image_b64)
-        nparr = np.frombuffer(image_bytes, np.uint8)
-        image = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
-
-        if image is None:
-            raise ValueError("Failed to decode image")
-
-    except Exception as e:
-        raise HTTPException(status_code=400, detail=f"Image decoding failed: {str(e)}")
-
-    # Load model if needed
-    logger.info("🔄 Attempting to load checkpoint: %s", checkpoint_path)
-    load_start_time = datetime.utcnow()
-    if not _inference_engine.load_model(str(ckpt_path)):
-        raise HTTPException(status_code=500, detail="Failed to load model checkpoint")
-    load_elapsed = (datetime.utcnow() - load_start_time).total_seconds()
-    logger.info("✅ Model load complete | elapsed=%.2fs", load_elapsed)
-
-    # Run inference
+    # Run inference using inference service
     try:
-        result = _inference_engine.predict_array(
-            image_array=image,
-            binarization_thresh=request.confidence_threshold,
-            box_thresh=request.nms_threshold,
-            return_preview=True,  # Get 640x640 preview with metadata
+        result = await _inference_service.predict(
+            image=image,
+            checkpoint_path=str(ckpt_path),
+            confidence_threshold=request.confidence_threshold,
+            nms_threshold=request.nms_threshold,
             enable_perspective_correction=request.enable_perspective_correction,
             perspective_display_mode=request.perspective_display_mode,
             enable_grayscale=request.enable_grayscale,
             enable_background_normalization=request.enable_background_normalization,
         )
-
-        if result is None:
-            raise RuntimeError("Inference returned None")
-
-    except Exception as e:
-        logger.exception(f"Inference failed: {e}")
-        raise HTTPException(status_code=500, detail=f"Inference failed: {str(e)}")
+    except RuntimeError as e:
+        raise InferenceError(str(e))
 
     # Parse to response model
     regions = _parse_inference_result(result)

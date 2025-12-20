@@ -2,7 +2,7 @@
 
 **Type**: Modern Web Application
 **Tech Stack**: Vite + React + TypeScript + TailwindCSS
-**Status**: 🟡 70% Complete (Core features working, needs polish)
+**Status**: 🟢 Production Ready (Refactored Dec 21, 2025)
 
 ---
 
@@ -12,155 +12,173 @@ Lightweight, inference-focused web console for running OCR text detection on ima
 
 ---
 
+## Quick Start
+
+### Start Backend + Frontend
+
+```bash
+# From project root
+make ocr-console-stack
+```
+
+**Backend**: `http://localhost:8002` (port 8002)
+**Frontend**: `http://localhost:5173` (port 5173)
+
+### Start Backend Only
+
+```bash
+make ocr-console-backend
+```
+
+**Health Check**: `http://localhost:8002/api/health`
+**API Docs**: `http://localhost:8002/docs`
+
+### Start Frontend Only
+
+```bash
+make ocr-console-dev
+```
+
+---
+
+## Architecture
+
+### Backend (Port 8002)
+
+**Module**: `apps/ocr-inference-console/backend/main.py`
+**Framework**: FastAPI + Pydantic
+**Services**:
+- `CheckpointService` - Checkpoint discovery with TTL caching
+- `InferenceService` - InferenceEngine lifecycle management
+- `PreprocessingService` - Image decoding and validation
+
+**API Endpoints**:
+- `GET /api/health` - Health check
+- `GET /api/inference/checkpoints` - List available checkpoints
+- `POST /api/inference/preview` - Run OCR inference
+
+**Error Handling**: Structured exceptions with `OCRBackendError` hierarchy
+
+### Frontend (Port 5173)
+
+**Framework**: React 18 + TypeScript + Vite
+**State Management**: InferenceContext (React Context API)
+**Components**:
+- `Workspace` - Main inference UI
+- `PolygonOverlay` - Renders detected text regions
+- `Sidebar` - Checkpoint selection and inference controls
+- `TopRibbon` - Navigation and upload
+
+**Features**:
+- Real-time inference with polygon overlay
+- Demo mode with sample data
+- Adjustable confidence/NMS thresholds
+- Perspective correction toggle
+- Grayscale and background normalization
+
+---
+
 ## Features
 
 ### Implemented ✅
 - Image upload and inference
 - Polygon overlay rendering on detected text regions
 - Demo mode with sample data
-- Checkpoint selection
+- Checkpoint selection with auto-discovery
 - Real-time prediction visualization
+- Confidence/NMS threshold adjustment
+- Perspective correction toggle
+- Preprocessing options (grayscale, background normalization)
 - Data contract validation
-
-### In Progress 🟡
-- Batch image processing
-- Confidence threshold adjustment
-- Export results
+- Structured error handling
 
 ### Planned ⚪
-- Preprocessing options
-- Model comparison
-
----
-
-## Tech Stack
-
-- **Frontend**: Vite + React 18 + TypeScript
-- **Styling**: TailwindCSS
-- **State**: React Hooks
-- **Backend**: FastAPI (`apps/backend/services/ocr_bridge.py`)
-
----
-
-## How to Run
-
-### 1. Start Backend
-
-```bash
-# From project root
-cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2
-
-# Set checkpoint path (or let it auto-detect latest)
-export OCR_CHECKPOINT_PATH="outputs/experiments/train/ocr/.../epoch-14.ckpt"
-
-# Start backend
-python -m uvicorn apps.backend.main:app --port 8000
-```
-
-### 2. Start Frontend
-
-```bash
-# From project root
-cd apps/ocr-inference-console
-
-# Install dependencies (first time only)
-npm install
-
-# Start dev server
-npm run dev
-
-# Open http://localhost:5173
-```
+- Batch image processing
+- Export results to JSON/CSV
+- Model comparison view
 
 ---
 
 ## API Integration
 
-This console depends on the FastAPI backend at `apps/backend/`.
+**Backend Contract**: See `apps/ocr-inference-console/backend/` for service layer
 
-**Endpoints Used**:
-- `GET /ocr/health` - Health check
-- `POST /ocr/predict` - Run OCR inference
-- `GET /ocr/checkpoints` - List available checkpoints
+**Shared Models** (from `apps/shared/backend_shared/models/inference.py`):
+- `InferenceRequest` - Input schema
+- `InferenceResponse` - Output schema with regions and metadata
+- `TextRegion` - Detected text polygon with confidence
+- `InferenceMetadata` - Coordinate system and padding info
 
-**Data Contract**: See [docs/data-contracts.md](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/ocr-inference-console/docs/data-contracts.md)
-
----
-
-## Architecture
-
-```
-apps/ocr-inference-console/
-├── src/
-│   ├── components/
-│   │   ├── Workspace.tsx          # Main inference UI
-│   │   ├── PolygonOverlay.tsx      # Renders detected polygons
-│   │   ├── Sidebar.tsx            # Checkpoint selection
-│   │   └── TopRibbon.tsx          # Navigation
-│   ├── api/
-│   │   └── ocrClient.ts           # Backend API client
-│   └── App.tsx                    # Root component
-├── public/
-│   ├── demo.jpg                   # Demo image
-│   └── demo.json                  # Demo predictions
-└── docs/
-    └── data-contracts.md          # API contracts
-```
+**Data Contract**: See [docs/data-contracts.md](docs/data-contracts.md)
 
 ---
 
-## Development Guidelines
+## Development
 
 ### Code Quality
 - TypeScript strict mode enabled
 - ESLint + Prettier configured
 - Component-based architecture
+- Backend service layer pattern
+- React Context for state management
 
-### Testing Your Changes
+### Testing
 1. Test with demo mode (click "Demo" button)
 2. Test with real image upload
 3. Verify polygon overlays render correctly
 4. Check browser console for errors
+5. Verify backend health endpoint
 
 ---
 
-## Backend Dependency
+## Recent Changes
 
-This app uses `apps/backend/services/ocr_bridge.py`, which wraps the proven `ui.utils.inference.InferenceEngine`.
+**Dec 21, 2025 - Backend/Frontend Refactoring**:
+- Extracted service layer (CheckpointService, InferenceService, PreprocessingService)
+- Implemented structured error handling with `OCRBackendError` hierarchy
+- Migrated frontend to InferenceContext (eliminated 41 props from prop drilling)
+- Added async checkpoint cache preloading on startup
+- Reduced main.py from 400 to ~250 lines
 
-**Key Point**: The backend automatically handles:
-- Model loading (lazy, on first request)
-- Image preprocessing
-- Coordinate transformation
-- Polygon extraction
+**Related Documentation**:
+- Implementation Plan: `docs/artifacts/implementation_plans/2025-12-21_0210_implementation_plan_ocr-console-refactor.md`
+- Changelog Entry: See `CHANGELOG.md` (2025-12-21 03:30)
 
-See [OCR Bridge Refactoring Walkthrough](file:///home/vscode/.gemini/antigravity/brain/e233fabb-0950-4377-903d-e30dbc71cd13/walkthrough.md) for technical details.
+---
+
+## Troubleshooting
+
+### Backend Won't Start
+```bash
+# Check if checkpoint exists
+find outputs/experiments/train/ocr -name "*.ckpt" | head -5
+
+# Kill any hanging processes
+make kill-ports
+```
+
+### Port Already in Use
+```bash
+# Check what's using port 8002
+lsof -i:8002
+
+# Force kill
+make kill-ports
+```
+
+### Frontend Can't Connect to Backend
+1. Verify backend is running: `curl http://localhost:8002/api/health`
+2. Check browser console for CORS errors
+3. Ensure ports match (backend: 8002, frontend: 5173)
 
 ---
 
 ## Related Documentation
 
-- [System Overview](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/architecture/00_system_overview.md)
-- [Data Contracts](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/ocr-inference-console/docs/data-contracts.md)
-- [Backend README](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/apps/backend/README.md)
-- [Project Roadmap](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/roadmap.md)
+- [Shared Backend Contract](../../docs/artifacts/specs/shared-backend-contract.md)
+- [Data Contracts](docs/data-contracts.md)
+- [System Architecture](../../docs/architecture/system-architecture.md)
 
 ---
 
-## Status: 70% Complete
-
-**What Works**:
-- ✅ Core inference flow
-- ✅ Polygon rendering
-- ✅ Demo mode
-- ✅ Checkpoint selection
-
-**What Needs Work**:
-- 🟡 Batch processing
-- 🟡 Advanced controls (thresholds, etc.)
-- 🟡 Export/download results
-- 🟡 Error handling improvements
-
----
-
-**For Questions**: See [System Overview](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/architecture/00_system_overview.md) or contact project maintainers.
+**Status**: Production Ready (Refactored 2025-12-21)

@@ -66,6 +66,7 @@ class PreprocessingPipeline:
         transform: Callable[[Any], Any] | None = None,
         target_size: int = 640,
         enable_background_normalization: bool = False,
+        enable_sepia_enhancement: bool = False,
     ):
         """Initialize preprocessing pipeline.
 
@@ -73,10 +74,12 @@ class PreprocessingPipeline:
             transform: Torchvision transform pipeline (ToTensor + Normalize)
             target_size: Target size for resize and padding (default: 640)
             enable_background_normalization: Whether to apply gray-world normalization
+            enable_sepia_enhancement: Whether to apply sepia+CLAHE enhancement
         """
         self._transform = transform
         self._target_size = target_size
         self._enable_background_normalization = enable_background_normalization
+        self._enable_sepia_enhancement = enable_sepia_enhancement
 
     def process(
         self,
@@ -85,6 +88,7 @@ class PreprocessingPipeline:
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
         enable_background_normalization: bool | None = None,
+        enable_sepia_enhancement: bool | None = None,
     ) -> PreprocessingResult | None:
         """Run preprocessing pipeline on an image.
 
@@ -96,6 +100,7 @@ class PreprocessingPipeline:
                 - "original": Display original image with inverse-transformed polygons
             enable_grayscale: Whether to apply grayscale preprocessing
             enable_background_normalization: Override instance background normalization setting
+            enable_sepia_enhancement: Override instance sepia enhancement setting
 
         Returns:
             PreprocessingResult with batch tensor, preview image, and metadata,
@@ -154,12 +159,14 @@ class PreprocessingPipeline:
             # Get both model input tensor and processed preview image
             # Use parameter override if provided, else fall back to instance variable
             use_background_norm = enable_background_normalization if enable_background_normalization is not None else self._enable_background_normalization
+            use_sepia = enable_sepia_enhancement if enable_sepia_enhancement is not None else self._enable_sepia_enhancement
             batch, preview_image_bgr = preprocess_image(
                 image,
                 self._transform,
                 target_size=self._target_size,
                 return_processed_image=True,
                 enable_background_normalization=use_background_norm,
+                enable_sepia_enhancement=use_sepia,
             )
 
             # Verify preview dimensions
@@ -278,6 +285,7 @@ class PreprocessingPipeline:
             transform=transform,
             target_size=target_size,
             enable_background_normalization=settings.enable_background_normalization,
+            enable_sepia_enhancement=settings.enable_sepia_enhancement,
         )
 
 

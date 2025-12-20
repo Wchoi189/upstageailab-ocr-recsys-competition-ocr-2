@@ -1,7 +1,7 @@
 import { Home, FileText, Settings, Database, UploadCloud } from 'lucide-react';
 import { cn } from '../utils';
-import { type Checkpoint } from '../api/ocrClient';
 import { CheckpointSelector } from './CheckpointSelector';
+import { useInference } from '../contexts/InferenceContext';
 
 const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: string, isActive?: boolean }) => (
     <button className={cn(
@@ -15,45 +15,27 @@ const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: st
     </button>
 );
 
-interface SidebarProps {
-    checkpoints: Checkpoint[];
-    loadingCheckpoints: boolean;
-    retryCount: number;
-    selectedCheckpoint: string | null;
-    onCheckpointChange: (checkpoint: string) => void;
-    enablePerspectiveCorrection: boolean;
-    onPerspectiveCorrectionChange: (enabled: boolean) => void;
-    displayMode: string;
-    onDisplayModeChange: (mode: string) => void;
-    enableGrayscale: boolean;
-    onGrayscaleChange: (enabled: boolean) => void;
-    enableBackgroundNormalization: boolean;
-    onBackgroundNormalizationChange: (enabled: boolean) => void;
-    confidenceThreshold: number;
-    onConfidenceThresholdChange: (value: number) => void;
-    nmsThreshold: number;
-    onNmsThresholdChange: (value: number) => void;
-}
+export const Sidebar = () => {
+    const {
+        checkpoints,
+        loadingCheckpoints,
+        retryCount,
+        selectedCheckpoint,
+        inferenceOptions,
+        setSelectedCheckpoint,
+        updateInferenceOptions,
+    } = useInference();
 
-export const Sidebar = ({
-    checkpoints,
-    loadingCheckpoints,
-    retryCount,
-    selectedCheckpoint,
-    onCheckpointChange,
-    enablePerspectiveCorrection,
-    onPerspectiveCorrectionChange,
-    displayMode,
-    onDisplayModeChange,
-    enableGrayscale,
-    onGrayscaleChange,
-    enableBackgroundNormalization,
-    onBackgroundNormalizationChange,
-    confidenceThreshold,
-    onConfidenceThresholdChange,
-    nmsThreshold,
-    onNmsThresholdChange
-}: SidebarProps) => {
+    const {
+        enablePerspectiveCorrection,
+        displayMode,
+        enableGrayscale,
+        enableBackgroundNormalization,
+        enableSepiaEnhancement,
+        confidenceThreshold,
+        nmsThreshold,
+    } = inferenceOptions;
+
     return (
         <div className="w-60 h-full bg-white flex flex-col">
             <div className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
@@ -85,7 +67,7 @@ export const Sidebar = ({
                         loading={loadingCheckpoints}
                         retryCount={retryCount}
                         selectedCheckpoint={selectedCheckpoint}
-                        onCheckpointChange={onCheckpointChange}
+                        onCheckpointChange={setSelectedCheckpoint}
                     />
                 </div>
 
@@ -98,7 +80,7 @@ export const Sidebar = ({
                             <input
                                 type="checkbox"
                                 checked={enablePerspectiveCorrection}
-                                onChange={(e) => onPerspectiveCorrectionChange(e.target.checked)}
+                                onChange={(e) => updateInferenceOptions({ enablePerspectiveCorrection: e.target.checked })}
                                 className="rounded border-gray-300"
                             />
                             <span>Enable Correction</span>
@@ -111,7 +93,7 @@ export const Sidebar = ({
                                         name="displayMode"
                                         value="corrected"
                                         checked={displayMode === "corrected"}
-                                        onChange={(e) => onDisplayModeChange(e.target.value)}
+                                        onChange={(e) => updateInferenceOptions({ displayMode: e.target.value })}
                                     />
                                     <span>Show Corrected</span>
                                 </label>
@@ -121,7 +103,7 @@ export const Sidebar = ({
                                         name="displayMode"
                                         value="original"
                                         checked={displayMode === "original"}
-                                        onChange={(e) => onDisplayModeChange(e.target.value)}
+                                        onChange={(e) => updateInferenceOptions({ displayMode: e.target.value })}
                                     />
                                     <span>Show Original</span>
                                 </label>
@@ -139,7 +121,7 @@ export const Sidebar = ({
                             <input
                                 type="checkbox"
                                 checked={enableGrayscale}
-                                onChange={(e) => onGrayscaleChange(e.target.checked)}
+                                onChange={(e) => updateInferenceOptions({ enableGrayscale: e.target.checked })}
                                 className="rounded border-gray-300"
                             />
                             <span>Enable Grayscale</span>
@@ -148,10 +130,19 @@ export const Sidebar = ({
                             <input
                                 type="checkbox"
                                 checked={enableBackgroundNormalization}
-                                onChange={(e) => onBackgroundNormalizationChange(e.target.checked)}
+                                onChange={(e) => updateInferenceOptions({ enableBackgroundNormalization: e.target.checked })}
                                 className="rounded border-gray-300"
                             />
                             <span>Background Normalization</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm">
+                            <input
+                                type="checkbox"
+                                checked={enableSepiaEnhancement}
+                                onChange={(e) => updateInferenceOptions({ enableSepiaEnhancement: e.target.checked })}
+                                className="rounded border-gray-300"
+                            />
+                            <span>Sepia Enhancement</span>
                         </label>
                     </div>
                 </div>
@@ -172,7 +163,7 @@ export const Sidebar = ({
                                 max="0.5"
                                 step="0.01"
                                 value={confidenceThreshold}
-                                onChange={(e) => onConfidenceThresholdChange(parseFloat(e.target.value))}
+                                onChange={(e) => updateInferenceOptions({ confidenceThreshold: parseFloat(e.target.value) })}
                                 className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                             />
                         </div>
@@ -187,7 +178,7 @@ export const Sidebar = ({
                                 max="0.9"
                                 step="0.05"
                                 value={nmsThreshold}
-                                onChange={(e) => onNmsThresholdChange(parseFloat(e.target.value))}
+                                onChange={(e) => updateInferenceOptions({ nmsThreshold: parseFloat(e.target.value) })}
                                 className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
                             />
                         </div>
