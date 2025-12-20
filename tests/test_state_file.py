@@ -9,17 +9,17 @@ Tests:
 - Performance benchmarks
 """
 
-import pytest
-from pathlib import Path
-from datetime import datetime, timezone
 import tempfile
 import time
+from datetime import UTC, datetime
+from pathlib import Path
 
+import pytest
 from experiment_tracker.utils.state_file import (
-    read_state,
-    update_state,
     create_state_file,
     get_state_size,
+    read_state,
+    update_state,
     validate_state,
 )
 
@@ -44,11 +44,11 @@ def test_create_state_file(temp_exp_dir):
 
     # Verify content
     state = read_state(temp_exp_dir)
-    assert state['experiment_id'] == experiment_id
-    assert state['status'] == 'active'
-    assert state['current_task'] == ''
-    assert state['current_phase'] == 'planning'
-    assert 'last_updated' in state
+    assert state["experiment_id"] == experiment_id
+    assert state["status"] == "active"
+    assert state["current_task"] == ""
+    assert state["current_phase"] == "planning"
+    assert "last_updated" in state
 
 
 def test_read_empty_state(temp_exp_dir):
@@ -67,9 +67,9 @@ def test_update_state(temp_exp_dir):
 
     # Verify updates
     state = read_state(temp_exp_dir)
-    assert state['current_task'] == "task_123"
-    assert state['current_phase'] == "execution"
-    assert state['experiment_id'] == experiment_id  # Unchanged
+    assert state["current_task"] == "task_123"
+    assert state["current_phase"] == "execution"
+    assert state["experiment_id"] == experiment_id  # Unchanged
 
 
 def test_state_file_size(temp_exp_dir):
@@ -87,11 +87,11 @@ def test_state_file_size(temp_exp_dir):
 def test_validate_state_valid():
     """Test state validation with valid state."""
     state = {
-        'experiment_id': '20251219_2100_test',
-        'status': 'active',
-        'current_task': 'task_1',
-        'current_phase': 'planning',
-        'last_updated': datetime.now(timezone.utc).isoformat(),
+        "experiment_id": "20251219_2100_test",
+        "status": "active",
+        "current_task": "task_1",
+        "current_phase": "planning",
+        "last_updated": datetime.now(UTC).isoformat(),
     }
 
     assert validate_state(state) is True
@@ -100,11 +100,11 @@ def test_validate_state_valid():
 def test_validate_state_invalid_status():
     """Test state validation rejects invalid status."""
     state = {
-        'experiment_id': '20251219_2100_test',
-        'status': 'invalid_status',  # Invalid
-        'current_task': 'task_1',
-        'current_phase': 'planning',
-        'last_updated': datetime.now(timezone.utc).isoformat(),
+        "experiment_id": "20251219_2100_test",
+        "status": "invalid_status",  # Invalid
+        "current_task": "task_1",
+        "current_phase": "planning",
+        "last_updated": datetime.now(UTC).isoformat(),
     }
 
     assert validate_state(state) is False
@@ -113,8 +113,8 @@ def test_validate_state_invalid_status():
 def test_validate_state_missing_fields():
     """Test state validation rejects missing fields."""
     state = {
-        'experiment_id': '20251219_2100_test',
-        'status': 'active',
+        "experiment_id": "20251219_2100_test",
+        "status": "active",
         # Missing current_task, current_phase, last_updated
     }
 
@@ -147,7 +147,7 @@ def test_read_performance(temp_exp_dir):
 
     # Performance target: <1ms
     assert duration_ms < 1.0, f"Read too slow: {duration_ms:.2f}ms (target: <1ms)"
-    assert state['experiment_id'] == experiment_id
+    assert state["experiment_id"] == experiment_id
 
 
 def test_create_with_checkpoint(temp_exp_dir):
@@ -158,7 +158,7 @@ def test_create_with_checkpoint(temp_exp_dir):
     create_state_file(temp_exp_dir, experiment_id, checkpoint_path=checkpoint)
 
     state = read_state(temp_exp_dir)
-    assert state['checkpoint_path'] == checkpoint
+    assert state["checkpoint_path"] == checkpoint
 
 
 def test_concurrent_updates_safety(temp_exp_dir):
@@ -173,4 +173,4 @@ def test_concurrent_updates_safety(temp_exp_dir):
     # Verify final state is valid
     state = read_state(temp_exp_dir)
     assert validate_state(state)
-    assert state['current_task'] == "task_99"
+    assert state["current_task"] == "task_99"

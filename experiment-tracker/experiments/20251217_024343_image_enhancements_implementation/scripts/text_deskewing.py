@@ -183,9 +183,7 @@ class TextDeskewer:
         # Return median angle (robust to outliers)
         return float(np.median(angles))
 
-    def rotate_image(
-        self, img: np.ndarray, angle: float
-    ) -> tuple[np.ndarray, np.ndarray]:
+    def rotate_image(self, img: np.ndarray, angle: float) -> tuple[np.ndarray, np.ndarray]:
         """
         Rotate image by specified angle.
 
@@ -230,9 +228,7 @@ class TextDeskewer:
         return rotated, rotation_matrix
 
 
-def process_directory(
-    input_dir: Path, output_dir: Path, method: str, save_comparison: bool = False
-) -> dict:
+def process_directory(input_dir: Path, output_dir: Path, method: str, save_comparison: bool = False) -> dict:
     """
     Process all images in directory.
 
@@ -296,9 +292,7 @@ def process_directory(
             max_w = max(w1, w2)
             if w1 < max_w:
                 pad = (max_w - w1) // 2
-                img_resized = cv2.copyMakeBorder(
-                    img_resized, 0, 0, pad, max_w - w1 - pad, cv2.BORDER_CONSTANT, value=(255, 255, 255)
-                )
+                img_resized = cv2.copyMakeBorder(img_resized, 0, 0, pad, max_w - w1 - pad, cv2.BORDER_CONSTANT, value=(255, 255, 255))
             if w2 < max_w:
                 pad = (max_w - w2) // 2
                 deskewed_resized = cv2.copyMakeBorder(

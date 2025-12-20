@@ -2,6 +2,7 @@
 """
 Compare different fitting strategies side-by-side to show data loss.
 """
+
 import sys
 from pathlib import Path
 
@@ -44,7 +45,7 @@ def compare_strategies(mask_path: str, original_path: str, output_path: str):
             # Draw corners
             for i, (x, y) in enumerate(corners_int):
                 cv2.circle(vis, (x, y), 8, (0, 0, 255), -1)
-                cv2.putText(vis, f"C{i}", (x+12, y+12), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
+                cv2.putText(vis, f"C{i}", (x + 12, y + 12), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (255, 255, 255), 2)
 
             # Calculate data loss
             fitted_min_x = corners[:, 0].min()
@@ -62,7 +63,9 @@ def compare_strategies(mask_path: str, original_path: str, output_path: str):
             # Add label with data loss
             cv2.putText(vis, label, (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (255, 255, 255), 2)
             cv2.putText(vis, f"Data Loss: {total_loss}px total", (20, 75), cv2.FONT_HERSHEY_SIMPLEX, 0.8, (0, 0, 255), 2)
-            cv2.putText(vis, f"L:{loss_left} R:{loss_right} T:{loss_top} B:{loss_bottom}", (20, 105), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2)
+            cv2.putText(
+                vis, f"L:{loss_left} R:{loss_right} T:{loss_top} B:{loss_bottom}", (20, 105), cv2.FONT_HERSHEY_SIMPLEX, 0.6, (0, 0, 255), 2
+            )
 
         return vis
 
@@ -81,9 +84,9 @@ def compare_strategies(mask_path: str, original_path: str, output_path: str):
     cv2.imwrite(output_path, comparison)
     print(f"✓ Strategy comparison saved: {output_path}")
 
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print("COMPARISON RESULTS:")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
     print("Standard Strategy:")
     print(f"  Corners: {result_standard.corners.tolist() if result_standard.corners is not None else 'FAILED'}")
     if result_standard.reason:
@@ -103,7 +106,7 @@ def compare_strategies(mask_path: str, original_path: str, output_path: str):
 
 if __name__ == "__main__":
     compare_strategies(
-        mask_path='experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000732_step1_mask.jpg',
-        original_path='data/datasets/images/test/drp.en_ko.in_house.selectstar_000732.jpg',
-        output_path='experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/000732_STRATEGY_COMPARISON.jpg',
+        mask_path="experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000732_step1_mask.jpg",
+        original_path="data/datasets/images/test/drp.en_ko.in_house.selectstar_000732.jpg",
+        output_path="experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/000732_STRATEGY_COMPARISON.jpg",
     )

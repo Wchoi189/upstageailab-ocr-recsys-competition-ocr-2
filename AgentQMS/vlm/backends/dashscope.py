@@ -28,18 +28,12 @@ class DashScopeBackend(BaseVLMBackend):
         """
         super().__init__(config)
         if OpenAI is None:
-            raise BackendError(
-                "openai package is required for DashScope backend. "
-                "Install with: pip install openai"
-            )
+            raise BackendError("openai package is required for DashScope backend. Install with: pip install openai")
 
         settings = get_config().backends.dashscope
         api_key = config.api_key or resolve_env_value(settings.api_key_env)
         if not api_key:
-            raise BackendError(
-                "DashScope API key is required. "
-                "Provide it via DASHSCOPE_API_KEY environment variable."
-            )
+            raise BackendError("DashScope API key is required. Provide it via DASHSCOPE_API_KEY environment variable.")
 
         # Initialize OpenAI client for DashScope compatible-mode endpoint
         self.client = OpenAI(
@@ -91,9 +85,7 @@ class DashScopeBackend(BaseVLMBackend):
                             "content": [
                                 {
                                     "type": "image_url",
-                                    "image_url": {
-                                        "url": f"data:image/jpeg;base64,{image_data.base64_encoded}"
-                                    },
+                                    "image_url": {"url": f"data:image/jpeg;base64,{image_data.base64_encoded}"},
                                 },
                                 {"type": "text", "text": prompt},
                             ],

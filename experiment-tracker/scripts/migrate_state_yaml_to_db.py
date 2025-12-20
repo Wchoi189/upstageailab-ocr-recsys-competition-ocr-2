@@ -9,14 +9,14 @@ Example:
     python migrate_state_yaml_to_db.py 20251217_024343_image_enhancements_implementation
 """
 
-import sys
-import sqlite3
-import yaml
-import json
 import shutil
-from pathlib import Path
-from datetime import datetime, timezone
+import sqlite3
+import sys
 import uuid
+from datetime import UTC, datetime
+from pathlib import Path
+
+import yaml
 
 # Add parent to path
 sys.path.insert(0, str(Path(__file__).parent.parent / "src"))
@@ -40,18 +40,18 @@ def migrate_experiment(experiment_id: str, tracker_root: Path):
     print(f"Migrating: {experiment_id}")
 
     # Load YAML state
-    with open(state_yml, 'r') as f:
+    with open(state_yml) as f:
         state_data = yaml.safe_load(f)
 
     if not state_data:
-        print(f"  Warning: Empty state.yml, skipping")
+        print("  Warning: Empty state.yml, skipping")
         return False
 
     # Extract core state fields
-    experiment_id_from_yaml = state_data.get('experiment_id', experiment_id)
-    status = state_data.get('status', 'active')
-    current_phase = state_data.get('phase', 'planning')
-    checkpoint_path = state_data.get('checkpoint', {}).get('path') if isinstance(state_data.get('checkpoint'), dict) else None
+    experiment_id_from_yaml = state_data.get("experiment_id", experiment_id)
+    status = state_data.get("status", "active")
+    current_phase = state_data.get("phase", "planning")
+    checkpoint_path = state_data.get("checkpoint", {}).get("path") if isinstance(state_data.get("checkpoint"), dict) else None
 
     # Create .state file
     create_state_file(exp_path, experiment_id_from_yaml, checkpoint_path=checkpoint_path)
@@ -60,82 +60,93 @@ def migrate_experiment(experiment_id: str, tracker_root: Path):
     # Get database connection
     db_path = tracker_root.parent / "data" / "ops" / "tracking.db"
     if not db_path.exists():
-        print(f"  Warning: Database not found, skipping DB migration")
+        print("  Warning: Database not found, skipping DB migration")
         return True
 
     conn = sqlite3.connect(db_path)
     try:
-        now = datetime.now(timezone.utc).isoformat()
+        now = datetime.now(UTC).isoformat()
 
         # Populate experiment_state table
-        conn.execute("""
+        conn.execute(
+            """
             INSERT OR REPLACE INTO experiment_state (
                 experiment_id, current_task_id, current_phase, status,
                 created_at, updated_at, checkpoint_path
             ) VALUES (?, NULL, ?, ?, ?, ?, ?)
-        """, (experiment_id, current_phase, status, now, now, checkpoint_path))
+        """,
+            (experiment_id, current_phase, status, now, now, checkpoint_path),
+        )
 
         # Migrate tasks array
-        tasks = state_data.get('tasks', [])
+        tasks = state_data.get("tasks", [])
         tasks_migrated = 0
         for task in tasks:
             if isinstance(task, dict):
-                task_id = f"{task.get('id', task.get('title', 'task').lower().replace(' ','_'))}_{uuid.uuid4().hex[:8]}"
-                title = task.get('title', task.get('name', 'Untitled'))
-                description = task.get('notes', task.get('description', ''))
-                status_field = task.get('status', 'backlog')
-                priority = task.get('priority', 'medium')
-                completed_at = task.get('completed_at')
+                task_id = f"{task.get('id', task.get('title', 'task').lower().replace(' ', '_'))}_{uuid.uuid4().hex[:8]}"
+                title = task.get("title", task.get("name", "Untitled"))
+                description = task.get("notes", task.get("description", ""))
+                status_field = task.get("status", "backlog")
+                priority = task.get("priority", "medium")
+                completed_at = task.get("completed_at")
 
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT INTO experiment_tasks (
                         task_id, experiment_id, title, description,
                         status, priority, created_at, completed_at
                     ) VALUES (?, ?, ?, ?, ?, ?, ?, ?)
-                """, (task_id, experiment_id, title, description,
-                      status_field, priority, now, completed_at))
+                """,
+                    (task_id, experiment_id, title, description, status_field, priority, now, completed_at),
+                )
                 tasks_migrated += 1
 
         if tasks_migrated > 0:
             print(f"  Migrated {tasks_migrated} tasks to database")
 
         # Migrate decisions array
-        decisions = state_data.get('decisions', [])
+        decisions = state_data.get("decisions", [])
         decisions_migrated = 0
         for decision in decisions:
             if isinstance(decision, dict):
                 decision_id = f"dec_{uuid.uuid4().hex[:12]}"
-                date = decision.get('date', datetime.now().date().isoformat())
-                decision_text = decision.get('decision', decision.get('text', 'N/A'))
-                rationale = decision.get('rationale', decision.get('reasoning', 'N/A'))
-                impact = decision.get('impact', '')
+                date = decision.get("date", datetime.now().date().isoformat())
+                decision_text = decision.get("decision", decision.get("text", "N/A"))
+                rationale = decision.get("rationale", decision.get("reasoning", "N/A"))
+                impact = decision.get("impact", "")
 
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT INTO experiment_decisions (
                         decision_id, experiment_id, date, decision, rationale, impact, created_at
                     ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (decision_id, experiment_id, date, decision_text, rationale, impact, now))
+                """,
+                    (decision_id, experiment_id, date, decision_text, rationale, impact, now),
+                )
                 decisions_migrated += 1
 
         if decisions_migrated > 0:
             print(f"  Migrated {decisions_migrated} decisions to database")
 
         # Migrate insights array
-        insights = state_data.get('insights', [])
+        insights = state_data.get("insights", [])
         insights_migrated = 0
         for insight in insights:
             if isinstance(insight, dict):
                 insight_id = f"ins_{uuid.uuid4().hex[:12]}"
-                date = insight.get('date', datetime.now().date().isoformat())
-                insight_text = insight.get('insight', insight.get('text', 'N/A'))
-                impact = insight.get('impact', 'N/A')
-                category = insight.get('category', 'observation')
+                date = insight.get("date", datetime.now().date().isoformat())
+                insight_text = insight.get("insight", insight.get("text", "N/A"))
+                impact = insight.get("impact", "N/A")
+                category = insight.get("category", "observation")
 
-                conn.execute("""
+                conn.execute(
+                    """
                     INSERT INTO experiment_insights (
                         insight_id, experiment_id, date, insight, impact, category, created_at
                     ) VALUES (?, ?, ?, ?, ?, ?, ?)
-                """, (insight_id, experiment_id, date, insight_text, impact, category, now))
+                """,
+                    (insight_id, experiment_id, date, insight_text, impact, category, now),
+                )
                 insights_migrated += 1
 
         if insights_migrated > 0:

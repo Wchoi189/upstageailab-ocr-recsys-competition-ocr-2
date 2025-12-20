@@ -11,6 +11,7 @@ Pipeline:
 Usage:
     python full_pipeline_demo.py --input data/test_images --output outputs/full_demo
 """
+
 import argparse
 import json
 import sys
@@ -38,9 +39,9 @@ def process_image(input_path: Path, output_dir: Path, save_intermediates: bool =
     """Process single image through full pipeline."""
 
     img_name = input_path.stem
-    print(f"\n{'='*60}")
+    print(f"\n{'=' * 60}")
     print(f"Processing: {input_path.name}")
-    print(f"{'='*60}")
+    print(f"{'=' * 60}")
 
     # Read original
     original = cv2.imread(str(input_path))
@@ -170,19 +171,13 @@ def create_comparison(original, step2_corrected, step3_normalized, step4_deskewe
     max_w = max(img.shape[1] for img in resized)
     padded = []
 
-    for img, label in zip(resized, labels):
+    for img, label in zip(resized, labels, strict=False):
         pad_left = (max_w - img.shape[1]) // 2
         pad_right = max_w - img.shape[1] - pad_left
-        padded_img = cv2.copyMakeBorder(
-            img, 80, 20, pad_left, pad_right,
-            cv2.BORDER_CONSTANT, value=(255, 255, 255)
-        )
+        padded_img = cv2.copyMakeBorder(img, 80, 20, pad_left, pad_right, cv2.BORDER_CONSTANT, value=(255, 255, 255))
 
         # Add label
-        cv2.putText(
-            padded_img, label,
-            (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2
-        )
+        cv2.putText(padded_img, label, (20, 50), cv2.FONT_HERSHEY_SIMPLEX, 1.0, (0, 0, 0), 2)
 
         padded.append(padded_img)
 
@@ -221,16 +216,20 @@ def main():
         # Save aggregate results
         results_file = args.output / "pipeline_results.json"
         with open(results_file, "w") as f:
-            json.dump({
-                "total_images": len(all_results),
-                "avg_total_time_ms": round(sum(r["total_time_ms"] for r in all_results) / len(all_results), 2),
-                "results": all_results,
-            }, f, indent=2)
+            json.dump(
+                {
+                    "total_images": len(all_results),
+                    "avg_total_time_ms": round(sum(r["total_time_ms"] for r in all_results) / len(all_results), 2),
+                    "results": all_results,
+                },
+                f,
+                indent=2,
+            )
 
-        print(f"\n{'='*60}")
+        print(f"\n{'=' * 60}")
         print(f"✅ Processed {len(all_results)} images")
         print(f"📄 Results saved to: {results_file}")
-        print(f"{'='*60}")
+        print(f"{'=' * 60}")
 
     else:
         # Single image

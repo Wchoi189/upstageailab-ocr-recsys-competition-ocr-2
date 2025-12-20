@@ -9,10 +9,10 @@ Options:
     --dry-run: Show what would be migrated without making changes
 """
 
-import sys
 import subprocess
-from pathlib import Path
+import sys
 from datetime import datetime
+from pathlib import Path
 
 
 def find_experiments_to_migrate(tracker_root: Path):
@@ -67,7 +67,7 @@ def main():
     # Find experiments
     to_migrate, skipped = find_experiments_to_migrate(tracker_root)
 
-    print(f"Found experiments:")
+    print("Found experiments:")
     print(f"  To migrate: {len(to_migrate)}")
     print(f"  Already migrated (skipped): {len(skipped)}")
     print()
@@ -97,7 +97,7 @@ def main():
     # Confirm migration
     print(f"About to migrate {len(to_migrate)} experiments.")
     response = input("Continue? [y/N]: ")
-    if response.lower() != 'y':
+    if response.lower() != "y":
         print("Cancelled")
         return
 
@@ -114,18 +114,14 @@ def main():
         print(f"\n[{i}/{len(to_migrate)}] Migrating: {exp_id}")
         try:
             result = subprocess.run(
-                [sys.executable, str(migration_script), exp_id],
-                cwd=tracker_root,
-                capture_output=True,
-                text=True,
-                timeout=30
+                [sys.executable, str(migration_script), exp_id], cwd=tracker_root, capture_output=True, text=True, timeout=30
             )
 
             if result.returncode == 0:
                 print(result.stdout)
                 succeeded.append(exp_id)
             else:
-                print(f"  ❌ FAILED:")
+                print("  ❌ FAILED:")
                 print(result.stderr)
                 failed.append(exp_id)
         except Exception as e:
@@ -134,7 +130,7 @@ def main():
 
     # Generate report
     report_path = tracker_root / "experiments_migrated.txt"
-    with open(report_path, 'w') as f:
+    with open(report_path, "w") as f:
         f.write(f"Migration Report - {datetime.now().isoformat()}\n")
         f.write("=" * 60 + "\n\n")
         f.write(f"Total experiments: {len(to_migrate)}\n")
