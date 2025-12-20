@@ -83,6 +83,7 @@ class InferenceOrchestrator:
         enable_perspective_correction: bool = False,
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
+        enable_background_normalization: bool = False,
     ) -> dict[str, Any] | None:
         """Run inference on image array.
 
@@ -98,6 +99,7 @@ class InferenceOrchestrator:
             enable_perspective_correction: Whether to apply perspective correction
             perspective_display_mode: "corrected" or "original" display mode
             enable_grayscale: Whether to apply grayscale preprocessing
+            enable_background_normalization: Whether to apply gray-world background normalization
 
         Returns:
             Predictions dict with polygons, texts, confidences, and optional preview
@@ -123,6 +125,7 @@ class InferenceOrchestrator:
             enable_perspective_correction=enable_perspective_correction,
             perspective_display_mode=perspective_display_mode,
             enable_grayscale=enable_grayscale,
+            enable_background_normalization=enable_background_normalization,
         )
 
         if preprocess_result is None:

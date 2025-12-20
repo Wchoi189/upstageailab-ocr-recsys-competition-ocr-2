@@ -137,6 +137,7 @@ class InferenceEngine:
         enable_perspective_correction: bool | None = None,
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
+        enable_background_normalization: bool = False,
     ) -> dict[str, Any] | None:
         """Predict on an image array (numpy) directly.
 
@@ -178,6 +179,7 @@ class InferenceEngine:
             enable_perspective_correction=enable_perspective_correction or False,
             perspective_display_mode=perspective_display_mode,
             enable_grayscale=enable_grayscale,
+            enable_background_normalization=enable_background_normalization,
         )
 
     def predict_image(
@@ -191,6 +193,7 @@ class InferenceEngine:
         enable_perspective_correction: bool | None = None,
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
+        enable_background_normalization: bool = False,
     ) -> dict[str, Any] | None:
         """Predict on an image file (legacy file path-based API).
 
@@ -240,6 +243,7 @@ class InferenceEngine:
             enable_perspective_correction=enable_perspective_correction or False,
             perspective_display_mode=perspective_display_mode,
             enable_grayscale=enable_grayscale,
+            enable_background_normalization=enable_background_normalization,
         )
 
 

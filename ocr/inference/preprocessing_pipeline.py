@@ -84,6 +84,7 @@ class PreprocessingPipeline:
         enable_perspective_correction: bool = False,
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
+        enable_background_normalization: bool | None = None,
     ) -> PreprocessingResult | None:
         """Run preprocessing pipeline on an image.
 
@@ -94,6 +95,7 @@ class PreprocessingPipeline:
                 - "corrected": Display corrected image with corrected polygons
                 - "original": Display original image with inverse-transformed polygons
             enable_grayscale: Whether to apply grayscale preprocessing
+            enable_background_normalization: Override instance background normalization setting
 
         Returns:
             PreprocessingResult with batch tensor, preview image, and metadata,
@@ -150,12 +152,14 @@ class PreprocessingPipeline:
         # Stage 4: Resize, pad, and normalize
         try:
             # Get both model input tensor and processed preview image
+            # Use parameter override if provided, else fall back to instance variable
+            use_background_norm = enable_background_normalization if enable_background_normalization is not None else self._enable_background_normalization
             batch, preview_image_bgr = preprocess_image(
                 image,
                 self._transform,
                 target_size=self._target_size,
                 return_processed_image=True,
-                enable_background_normalization=self._enable_background_normalization,
+                enable_background_normalization=use_background_norm,
             )
 
             # Verify preview dimensions

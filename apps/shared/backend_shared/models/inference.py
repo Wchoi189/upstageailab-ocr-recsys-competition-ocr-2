@@ -118,6 +118,10 @@ class InferenceRequest(BaseModel):
         default=False,
         description="Enable grayscale preprocessing (converts image to grayscale before inference)",
     )
+    enable_background_normalization: bool = Field(
+        default=False,
+        description="Enable gray-world background normalization before inference (reduces tinted backgrounds)",
+    )
 
     model_config = {
         "json_schema_extra": {
@@ -130,6 +134,7 @@ class InferenceRequest(BaseModel):
                     "enable_perspective_correction": False,
                     "perspective_display_mode": "corrected",
                     "enable_grayscale": False,
+                    "enable_background_normalization": False,
                 }
             ]
         }

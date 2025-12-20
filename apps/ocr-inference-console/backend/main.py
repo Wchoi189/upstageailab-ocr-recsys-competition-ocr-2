@@ -331,6 +331,7 @@ async def run_inference(request: InferenceRequest):
             enable_perspective_correction=request.enable_perspective_correction,
             perspective_display_mode=request.perspective_display_mode,
             enable_grayscale=request.enable_grayscale,
+            enable_background_normalization=request.enable_background_normalization,
         )
 
         if result is None:
