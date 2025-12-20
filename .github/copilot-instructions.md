@@ -2,6 +2,19 @@
 
 You are working in an AgentQMS-enabled project.
 
+**Requirements:**
+- Generate artifacts using AgentQMS tools
+- Follow project conventions
+- Reference existing documentation
+- AI-only documentation: ultra-concise, machine-parseable, no tutorials
+- Flag project pain points (standardization gaps, inconsistencies, unclear processes)
+
+**Execution Mode:**
+- Direct answers only
+- Assume domain expertise
+- Execute instructions without conversation
+- Provide solutions, not explanations
+
 ## Critical Rules
 1. **Discovery**: Read `.ai-instructions/tier3-agents/copilot/config.yaml` and `.ai-instructions/tier2-framework/tool-catalog.yaml`.
 2. **Artifacts**: NEVER create `docs/artifacts/*` files manually.

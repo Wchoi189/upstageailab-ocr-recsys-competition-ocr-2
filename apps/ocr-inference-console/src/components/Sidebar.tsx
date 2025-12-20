@@ -1,6 +1,6 @@
-
 import { Home, FileText, Settings, Database, UploadCloud } from 'lucide-react';
 import { cn } from '../utils';
+import { type Checkpoint } from '../api/ocrClient';
 import { CheckpointSelector } from './CheckpointSelector';
 
 const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: string, isActive?: boolean }) => (
@@ -16,6 +16,9 @@ const NavItem = ({ icon: Icon, label, isActive = false }: { icon: any, label: st
 );
 
 interface SidebarProps {
+    checkpoints: Checkpoint[];
+    loadingCheckpoints: boolean;
+    retryCount: number;
     selectedCheckpoint: string | null;
     onCheckpointChange: (checkpoint: string) => void;
     enablePerspectiveCorrection: boolean;
@@ -24,9 +27,18 @@ interface SidebarProps {
     onDisplayModeChange: (mode: string) => void;
     enableGrayscale: boolean;
     onGrayscaleChange: (enabled: boolean) => void;
+    enableBackgroundNormalization: boolean;
+    onBackgroundNormalizationChange: (enabled: boolean) => void;
+    confidenceThreshold: number;
+    onConfidenceThresholdChange: (value: number) => void;
+    nmsThreshold: number;
+    onNmsThresholdChange: (value: number) => void;
 }
 
 export const Sidebar = ({
+    checkpoints,
+    loadingCheckpoints,
+    retryCount,
     selectedCheckpoint,
     onCheckpointChange,
     enablePerspectiveCorrection,
@@ -34,15 +46,16 @@ export const Sidebar = ({
     displayMode,
     onDisplayModeChange,
     enableGrayscale,
-    onGrayscaleChange
+    onGrayscaleChange,
+    enableBackgroundNormalization,
+    onBackgroundNormalizationChange,
+    confidenceThreshold,
+    onConfidenceThresholdChange,
+    nmsThreshold,
+    onNmsThresholdChange
 }: SidebarProps) => {
     return (
-        <div className="w-64 border-r border-gray-200 h-full bg-white flex flex-col">
-            <div className="p-4 border-b border-gray-100 flex items-center gap-2">
-                <div className="h-6 w-6 bg-blue-600 rounded-md flex items-center justify-center text-white font-bold">U</div>
-                <span className="font-semibold text-gray-900 tracking-tight">Inference Console</span>
-            </div>
-
+        <div className="w-60 h-full bg-white flex flex-col">
             <div className="flex-1 overflow-y-auto py-4 px-2 space-y-6">
                 <div>
                     <h4 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">Generate</h4>
@@ -68,6 +81,9 @@ export const Sidebar = ({
 
                 <div className="pt-4 border-t border-gray-100">
                     <CheckpointSelector
+                        checkpoints={checkpoints}
+                        loading={loadingCheckpoints}
+                        retryCount={retryCount}
                         selectedCheckpoint={selectedCheckpoint}
                         onCheckpointChange={onCheckpointChange}
                     />
@@ -128,6 +144,53 @@ export const Sidebar = ({
                             />
                             <span>Enable Grayscale</span>
                         </label>
+                        <label className="flex items-center gap-2 text-sm">
+                            <input
+                                type="checkbox"
+                                checked={enableBackgroundNormalization}
+                                onChange={(e) => onBackgroundNormalizationChange(e.target.checked)}
+                                className="rounded border-gray-300"
+                            />
+                            <span>Background Normalization</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div className="pt-4 border-t border-gray-100">
+                    <h4 className="px-4 text-xs font-semibold text-gray-400 uppercase tracking-wider mb-2">
+                        Inference Controls
+                    </h4>
+                    <div className="px-4 space-y-3">
+                        <div>
+                            <label className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-gray-600">Confidence Threshold</span>
+                                <span className="text-gray-900 font-mono">{confidenceThreshold.toFixed(2)}</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="0.01"
+                                max="0.5"
+                                step="0.01"
+                                value={confidenceThreshold}
+                                onChange={(e) => onConfidenceThresholdChange(parseFloat(e.target.value))}
+                                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                        </div>
+                        <div>
+                            <label className="flex items-center justify-between text-xs mb-1">
+                                <span className="text-gray-600">NMS Threshold</span>
+                                <span className="text-gray-900 font-mono">{nmsThreshold.toFixed(2)}</span>
+                            </label>
+                            <input
+                                type="range"
+                                min="0.1"
+                                max="0.9"
+                                step="0.05"
+                                value={nmsThreshold}
+                                onChange={(e) => onNmsThresholdChange(parseFloat(e.target.value))}
+                                className="w-full h-1.5 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>

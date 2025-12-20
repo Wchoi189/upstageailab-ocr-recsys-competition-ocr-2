@@ -64,41 +64,31 @@ export const ocrClient = {
     },
 
     listCheckpoints: async (): Promise<Checkpoint[]> => {
-        try {
-            // WORKAROUND: Direct fetch since shared package fetch is hanging
-            // This bypasses the shared package API client which seems to have issues
-            // Try 127.0.0.1 instead of localhost to avoid DNS resolution issues
-            const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
-            const url = `${apiUrl}/inference/checkpoints?limit=100`;
+        // WORKAROUND: Use absolute URL to bypass Vite proxy logs during startup
+        // The dev server logs every ECONNREFUSED error with a full stack trace if using relative paths
+        const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
+        const url = `${apiUrl}/inference/checkpoints?limit=100`;
 
-            // Log locally if needed; removed external ingest calls
+        const response = await fetch(url, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
 
-            const response = await fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-            });
-
-            // Optional: console.debug('Checkpoints response', response.status)
-
-            if (!response.ok) {
-                throw new Error(`API request failed: ${response.status} ${response.statusText}`);
-            }
-
-            const data = await response.json();
-
-            const mapped = data.map((ckpt: any) => ({
-                path: ckpt.checkpoint_path,
-                name: ckpt.display_name,
-                size_mb: ckpt.size_mb,
-                modified: new Date(ckpt.modified_at).getTime()
-            }));
-            return mapped;
-        } catch (e: any) {
-            console.error('Failed to list checkpoints', e);
-            return [];
+        if (!response.ok) {
+            throw new Error(`API request failed: ${response.status} ${response.statusText}`);
         }
+
+        const data = await response.json();
+
+        const mapped = data.map((ckpt: any) => ({
+            path: ckpt.checkpoint_path,
+            name: ckpt.display_name,
+            size_mb: ckpt.size_mb,
+            modified: new Date(ckpt.modified_at).getTime()
+        }));
+        return mapped;
     },
 
     predict: async (
@@ -106,7 +96,10 @@ export const ocrClient = {
         checkpointPath?: string,
         enablePerspectiveCorrection?: boolean,
         perspectiveDisplayMode?: string,
-        enableGrayscale?: boolean
+        enableGrayscale?: boolean,
+        enableBackgroundNormalization?: boolean,
+        confidenceThreshold?: number,  // NEW
+        nmsThreshold?: number  // NEW
     ): Promise<InferenceResponse> => {
         // Convert file to base64
         const toBase64 = (file: File) => new Promise<string>((resolve, reject) => {
@@ -120,19 +113,19 @@ export const ocrClient = {
         const base64Image = await toBase64(file);
         // Base64 conversion complete
 
-        // WORKAROUND: Direct fetch since shared package fetch is hanging
-        // This bypasses the shared package API client which has issues
+        // WORKAROUND: Use absolute URL to bypass Vite proxy logs
         const apiUrl = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8002/api';
         const url = `${apiUrl}/inference/preview`;
 
         const requestBody = {
             checkpoint_path: checkpointPath || "",
             image_base64: base64Image,
-            confidence_threshold: 0.1,
-            nms_threshold: 0.4,
+            confidence_threshold: confidenceThreshold ?? 0.1,  // Use parameter or default
+            nms_threshold: nmsThreshold ?? 0.4,  // Use parameter or default
             enable_perspective_correction: enablePerspectiveCorrection || false,
             perspective_display_mode: perspectiveDisplayMode || "corrected",
-            enable_grayscale: enableGrayscale || false
+            enable_grayscale: enableGrayscale || false,
+            enable_background_normalization: enableBackgroundNormalization || false
         };
 
         const response = await fetch(url, {

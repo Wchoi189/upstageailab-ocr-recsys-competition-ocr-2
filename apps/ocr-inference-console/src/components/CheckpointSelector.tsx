@@ -1,78 +1,20 @@
-import { useEffect, useState } from 'react';
-// import { Database } from 'lucide-react';
-import { ocrClient, type Checkpoint } from '../api/ocrClient';
+import { type Checkpoint } from '../api/ocrClient';
 
 interface CheckpointSelectorProps {
+    checkpoints: Checkpoint[];
+    loading: boolean;
+    retryCount: number;
     selectedCheckpoint: string | null;
     onCheckpointChange: (checkpoint: string) => void;
 }
 
-export const CheckpointSelector = ({ selectedCheckpoint, onCheckpointChange }: CheckpointSelectorProps) => {
-    const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
-    const [loading, setLoading] = useState(true);
-    const [retryCount, setRetryCount] = useState(0);
-
-    useEffect(() => {
-        let retryAttempt = 0;
-        const maxRetries = 5;
-        const retryDelays = [1000, 2000, 5000, 10000, 20000]; // 1s, 2s, 5s, 10s, 20s
-        let timeoutId: number;
-
-        const loadCheckpointsWithRetry = async () => {
-            setLoading(true);
-            setRetryCount(retryAttempt);
-
-            try {
-                const ckpts = await ocrClient.listCheckpoints();
-
-                if (ckpts.length > 0) {
-                    // Success!
-                    setCheckpoints(ckpts);
-                    setLoading(false);
-                    setRetryCount(0);
-
-                    // Auto-select first checkpoint if none selected
-                    if (!selectedCheckpoint) {
-                        onCheckpointChange(ckpts[0].path);
-                    }
-                } else if (retryAttempt < maxRetries) {
-                    // Empty response, retry
-                    const delay = retryDelays[retryAttempt];
-                    console.log(`No checkpoints found. Retrying in ${delay}ms... (${retryAttempt + 1}/${maxRetries})`);
-                    retryAttempt++;
-                    timeoutId = setTimeout(loadCheckpointsWithRetry, delay);
-                } else {
-                    // Max retries reached
-                    console.error('Failed to load checkpoints after', maxRetries, 'retries');
-                    setCheckpoints([]);
-                    setLoading(false);
-                }
-            } catch (error: any) {
-                console.error('Failed to load checkpoints:', error);
-
-                if (retryAttempt < maxRetries) {
-                    // Error occurred, retry
-                    const delay = retryDelays[retryAttempt];
-                    console.log(`Retrying in ${delay}ms... (${retryAttempt + 1}/${maxRetries})`);
-                    retryAttempt++;
-                    timeoutId = setTimeout(loadCheckpointsWithRetry, delay);
-                } else {
-                    // Max retries reached
-                    setCheckpoints([]);
-                    setLoading(false);
-                }
-            }
-        };
-
-        loadCheckpointsWithRetry();
-
-        // Cleanup: cancel pending retry on unmount
-        return () => {
-            if (timeoutId) {
-                clearTimeout(timeoutId);
-            }
-        };
-    }, []);
+export const CheckpointSelector = ({
+    checkpoints,
+    loading,
+    retryCount,
+    selectedCheckpoint,
+    onCheckpointChange
+}: CheckpointSelectorProps) => {
 
     if (loading) {
         return (

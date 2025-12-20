@@ -268,5 +268,15 @@
       "directory": 0,
       "frontmatter": 0
     }
+  },
+  {
+    "timestamp": "2025-12-21T02:12:39.764647",
+    "compliance_rate": 96.72131147540983,
+    "invalid_files": 2,
+    "violation_counts": {
+      "naming": 1,
+      "directory": 0,
+      "frontmatter": 2
+    }
   }
 ]

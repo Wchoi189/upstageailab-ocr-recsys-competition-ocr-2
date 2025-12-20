@@ -17,10 +17,10 @@ Usage:
 See: docs/artifacts/specs/shared-backend-contract.md
 """
 
-from .inference import InferenceEngine
-
-__all__ = [
-    "InferenceEngine",
-]
+# from .inference import InferenceEngine
+#
+# __all__ = [
+#     "InferenceEngine",
+# ]
 
 __version__ = "1.0.0"

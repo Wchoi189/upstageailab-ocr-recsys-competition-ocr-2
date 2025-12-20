@@ -9,22 +9,21 @@ See: docs/guides/setting-up-app-backends.md
 
 from __future__ import annotations
 
+# Lightweight imports only at top level for instant startup
 import base64
 import logging
 import os
+import time
 from contextlib import asynccontextmanager
 from datetime import datetime
 from pathlib import Path
 
-import cv2
-import numpy as np
-import yaml
+# Heavy imports (cv2, numpy, torch, lightning) moved to local scopes inside functions
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-# Import shared backend components
-from apps.shared.backend_shared.inference import InferenceEngine
+# Import shared models (lightweight pure-Pydantic models)
 from apps.shared.backend_shared.models.inference import (
     InferenceMetadata,
     InferenceRequest,
@@ -78,9 +77,8 @@ async def lifespan(app: FastAPI):
 
     logger.info("🚀 Starting OCR Inference Console Backend (Port 8002)")
 
-    # Initialize engine (model loads on first inference request)
-    _inference_engine = InferenceEngine()
-    logger.info("✅ InferenceEngine initialized (lazy loading enabled)")
+    # Note: InferenceEngine initialization is now lazy-loaded on first inference request
+    # to ensure the server starts responding to health/discovery requests immediately.
 
     yield
 
@@ -128,20 +126,25 @@ class Checkpoint(BaseModel):
     hmean: float | None = None
 
 
+# Simple cache for checkpoint discovery
+_checkpoint_cache: list[Checkpoint] | None = None
+_last_discovery_time: datetime | None = None
+CACHE_TTL_SECONDS = 5.0
+
 def _discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
     """Discover available checkpoints using pregenerated metadata YAML files.
 
-    Fast loading strategy:
-    - Searches for .ckpt.metadata.yaml files instead of .ckpt files
-    - Parses YAML metadata without loading checkpoint state dict
-    - Provides near-instant checkpoint discovery
-
-    Args:
-        limit: Maximum number of checkpoints to return
-
-    Returns:
-        List of Checkpoint objects sorted by modification time (newest first)
+    Includes 5-second TTL cache to prevent redundant disk I/O from rapid frontend updates.
     """
+    global _checkpoint_cache, _last_discovery_time
+    import yaml # Lazy import
+
+    current_time = datetime.utcnow()
+    if (_checkpoint_cache is not None and
+        _last_discovery_time is not None and
+        (current_time - _last_discovery_time).total_seconds() < CACHE_TTL_SECONDS):
+        return _checkpoint_cache[:limit]
+
     if not DEFAULT_CHECKPOINT_ROOT.exists():
         logger.warning("Checkpoint root missing: %s", DEFAULT_CHECKPOINT_ROOT)
         return []
@@ -189,7 +192,7 @@ def _discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
             continue
 
     elapsed = (datetime.utcnow() - start_time).total_seconds()
-    logger.info(
+    logger.debug(
         "Checkpoint discovery complete | metadata_found=%d | metadata_files_scanned=%d | limit=%d | elapsed=%.3fs | root=%s",
         len(results),
         metadata_count,
@@ -203,6 +206,8 @@ def _discover_checkpoints(limit: int = 100) -> list[Checkpoint]:
             "No checkpoint metadata files were found. Run 'make checkpoint-metadata' to generate .ckpt.metadata.yaml files for fast discovery."
         )
 
+    _checkpoint_cache = results
+    _last_discovery_time = current_time
     return results
 
 
@@ -275,8 +280,16 @@ async def run_inference(request: InferenceRequest):
     Accepts base64-encoded images and returns detected text regions with
     coordinate metadata for frontend overlay rendering.
     """
+    global _inference_engine
+    import cv2
+    import numpy as np
+    from apps.shared.backend_shared.inference import InferenceEngine
+
     if _inference_engine is None:
-        raise HTTPException(status_code=503, detail="InferenceEngine not initialized")
+        logger.info("🔄 First inference request: Initializing InferenceEngine...")
+        start_init = time.perf_counter()
+        _inference_engine = InferenceEngine()
+        logger.info("✅ InferenceEngine initialized in %.2fs", time.perf_counter() - start_init)
 
     # Resolve checkpoint path
     checkpoint_path = request.checkpoint_path

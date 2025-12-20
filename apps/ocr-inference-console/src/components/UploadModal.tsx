@@ -1,52 +1,40 @@
-import React, { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { X, Upload } from 'lucide-react';
-import { ocrClient, type Checkpoint } from '../api/ocrClient';
+import { type Checkpoint } from '../api/ocrClient';
 
 interface UploadModalProps {
     isOpen: boolean;
     onClose: () => void;
     onFileSelected: (file: File, checkpoint: string) => void;
     initialCheckpoint: string | null;
+    checkpoints: Checkpoint[];
+    loading: boolean;
 }
 
 export const UploadModal: React.FC<UploadModalProps> = ({
     isOpen,
     onClose,
     onFileSelected,
-    initialCheckpoint
+    initialCheckpoint,
+    checkpoints,
+    loading
 }) => {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [selectedFile, setSelectedFile] = useState<File | null>(null);
-    const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
+    // const [checkpoints, setCheckpoints] = useState<Checkpoint[]>([]);
     const [selectedCheckpoint, setSelectedCheckpoint] = useState<string>(initialCheckpoint || '');
-    const [loading, setLoading] = useState(true);
     const [isDragging, setIsDragging] = useState(false);
 
-    // Load checkpoints on mount
+    // Set initial checkpoint or first available from props
     useEffect(() => {
-        const loadCheckpoints = async () => {
-            setLoading(true);
-            try {
-                const ckpts = await ocrClient.listCheckpoints();
-                setCheckpoints(ckpts);
-
-                // Set initial checkpoint or first available
-                if (initialCheckpoint) {
-                    setSelectedCheckpoint(initialCheckpoint);
-                } else if (ckpts.length > 0) {
-                    setSelectedCheckpoint(ckpts[0].path);
-                }
-            } catch (error) {
-                console.error('Failed to load checkpoints:', error);
-            } finally {
-                setLoading(false);
+        if (isOpen && checkpoints.length > 0 && !selectedCheckpoint) {
+            if (initialCheckpoint) {
+                setSelectedCheckpoint(initialCheckpoint);
+            } else {
+                setSelectedCheckpoint(checkpoints[0].path);
             }
-        };
-
-        if (isOpen) {
-            loadCheckpoints();
         }
-    }, [isOpen, initialCheckpoint]);
+    }, [isOpen, checkpoints, initialCheckpoint, selectedCheckpoint]);
 
     // Reset file selection when modal opens/closes
     useEffect(() => {
@@ -137,11 +125,10 @@ export const UploadModal: React.FC<UploadModalProps> = ({
                             File
                         </label>
                         <div
-                            className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors cursor-pointer ${
-                                isDragging
-                                    ? 'border-blue-500 bg-blue-50'
-                                    : 'border-gray-300 hover:border-gray-400'
-                            }`}
+                            className={`border-2 border-dashed rounded-lg p-12 text-center transition-colors cursor-pointer ${isDragging
+                                ? 'border-blue-500 bg-blue-50'
+                                : 'border-gray-300 hover:border-gray-400'
+                                }`}
                             onClick={() => fileInputRef.current?.click()}
                             onDragOver={handleDragOver}
                             onDragLeave={handleDragLeave}

@@ -523,3 +523,426 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-20 02:11:38,718 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
 2025-12-20 02:29:25,688 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
 2025-12-20 02:29:25,760 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 15:13:19,314 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 15:13:19,384 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 15:14:23,184 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.069s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:14:23,340 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.077s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:14:30,040 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.069s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:14:35,900 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:14:39,335 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.43s
+2025-12-20 15:15:01,588 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:15:06,189 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:15:06,209 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:15:31,826 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:15:36,738 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:15:36,761 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:15:42,901 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.086s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:15:56,233 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:15:56,257 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:16:33,022 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.074s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:16:39,890 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:16:39,918 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-20 15:16:49,090 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:18:19,230 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.100s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:18:22,804 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:18:22,825 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:18:35,329 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.079s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:18:40,114 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.071s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:18:47,056 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:18:47,082 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:19:07,875 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.061s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:19:16,230 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:19:16,250 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:19:24,192 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.082s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:19:37,044 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:19:37,067 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:20:01,141 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.051s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:20:05,128 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:20:05,148 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:20:21,635 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.047s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:20:29,161 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:20:29,181 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:20:59,903 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.074s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:21:03,632 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:21:03,656 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:21:12,894 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.054s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:21:43,164 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:21:49,860 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:21:49,886 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-20 15:27:08,980 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:27:12,715 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 15:27:12,736 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 15:28:24,269 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.070s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 15:46:59,639 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 15:46:59,699 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 15:48:20,815 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 15:48:20,844 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 16:56:27,948 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 16:56:27,949 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 16:58:06,906 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 16:58:06,945 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 17:03:55,692 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.066s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:03:55,829 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.062s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:09:04,008 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.064s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:09:04,152 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:09:11,180 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:09:17,366 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:09:20,640 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.27s
+2025-12-20 17:16:58,547 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 17:16:58,613 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 17:18:40,592 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 17:18:40,637 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 17:23:18,467 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.064s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:23:18,621 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.066s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:24:19,523 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.100s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:24:19,737 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.106s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:24:22,947 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.069s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:24:46,441 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:25:26,933 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:25:29,868 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=2.93s
+2025-12-20 17:25:38,774 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:25:38,801 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-20 17:25:47,566 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:25:47,595 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-20 17:26:25,061 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:26:33,845 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:26:33,866 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:26:39,464 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:26:39,489 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:26:44,656 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:26:44,679 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:26:53,571 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:26:53,591 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:27:06,271 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.056s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:27:10,303 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:27:10,324 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:27:15,171 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:27:15,193 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:27:23,426 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:27:23,452 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-20 17:31:12,347 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:31:12,365 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:31:37,855 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.061s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:31:41,449 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.057s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:31:41,575 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.057s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:31:52,103 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 17:31:52,154 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 17:33:19,416 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 17:33:19,446 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 17:35:23,612 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.074s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:35:59,758 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:02,766 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.01s
+2025-12-20 17:36:10,142 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.022s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:10,146 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:10,169 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:22,207 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.016s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:22,210 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:22,234 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:25,469 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.016s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:25,473 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:25,491 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:26,980 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.019s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:26,988 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:27,011 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:27,929 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.021s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:27,934 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:27,956 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:36,767 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:36,783 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:44,646 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.026s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:44,650 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:36:44,667 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:36:52,112 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.055s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:54,591 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:54,729 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.068s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:36:57,294 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:37:01,364 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:37:01,393 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-20 17:37:07,864 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:37:07,886 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:53:12,191 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.058s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:53:17,998 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:53:18,018 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:53:23,927 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:53:23,949 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 17:57:28,218 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.063s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 17:57:32,927 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 17:57:32,948 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:00:46,857 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.061s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:01:07,455 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:01:07,470 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:01:12,228 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:01:12,247 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:01:17,078 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:01:17,102 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:03:30,296 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.062s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:03:43,616 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:03:43,638 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:03:48,662 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:03:48,679 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:03:54,383 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.066s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:04:00,864 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:04:00,885 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:04:12,340 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:04:12,362 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:04:18,642 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.113s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:04:22,051 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-20 18:04:22,072 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-20 18:05:28,774 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.059s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:05:28,906 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.055s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:13:56,416 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 18:13:56,467 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 18:15:27,903 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 18:15:27,953 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 18:19:44,366 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 18:19:44,367 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 18:21:07,654 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 18:21:07,683 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 18:29:05,232 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.074s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:29:05,417 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.085s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 18:32:28,810 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 18:32:28,811 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 18:33:54,984 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 18:33:55,023 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 18:39:58,391 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 18:39:58,391 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 18:41:38,150 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 18:41:38,193 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 18:56:59,669 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.071s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 19:03:03,091 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 19:03:03,092 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 19:04:52,045 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 19:04:52,083 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 19:05:19,277 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.111s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 19:08:30,276 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 19:08:30,277 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 19:10:21,543 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 19:10:21,576 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 19:21:12,661 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.082s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 19:22:26,056 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.071s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 19:24:11,052 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.131s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-20 19:32:25,070 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 19:32:25,071 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 19:33:59,746 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 19:33:59,780 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 19:37:18,010 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 19:37:18,038 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 20:05:45,819 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 20:05:45,820 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 20:10:14,578 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 20:10:14,637 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 20:19:09,764 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 20:19:09,765 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 20:20:46,303 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 20:20:46,346 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 20:52:17,450 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 20:52:17,452 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 20:59:52,020 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 20:59:52,078 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 21:23:35,009 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 21:23:35,010 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 23:26:41,088 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 23:26:41,148 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 23:33:08,230 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 23:33:08,230 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 23:35:24,548 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 23:35:24,619 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 23:46:07,952 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 23:46:07,953 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 23:48:01,851 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 23:48:01,889 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 23:51:35,561 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 23:51:35,561 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 23:53:33,080 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 23:53:33,113 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-20 23:56:35,928 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-20 23:56:35,928 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-20 23:58:10,740 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-20 23:58:10,768 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:00:37,716 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:00:37,717 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:02:07,364 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:02:07,394 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:06:32,625 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:06:32,626 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:08:06,420 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:08:06,459 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:09:39,380 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:09:39,407 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:11:32,251 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:11:32,284 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:13:18,519 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:13:18,554 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:15:05,062 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:15:05,090 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:16:05,719 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.076s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:16:05,882 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.069s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:18:52,861 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.066s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:19:00,095 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:19:03,319 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.22s
+2025-12-21 00:19:07,160 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.078s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:19:12,922 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:19:12,943 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:19:20,158 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:19:20,181 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:19:25,806 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:19:25,831 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:19:32,627 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.071s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:19:51,113 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:19:51,142 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-21 00:19:57,381 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:19:57,402 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:20:05,701 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:20:05,722 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:20:20,187 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:20:20,211 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:20:37,863 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:20:37,884 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:20:44,735 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:20:44,755 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:20:49,294 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.063s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:20:52,678 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.062s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:22:58,915 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:22:58,940 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:23:04,426 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:23:04,443 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:23:12,548 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.069s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:23:24,991 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:23:25,012 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:23:30,297 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:23:30,322 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:23:38,223 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:23:38,260 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.04s
+2025-12-21 00:23:47,239 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:23:47,260 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:24:13,058 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:24:13,108 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:25:45,516 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:25:45,547 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:25:49,021 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.072s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:25:49,183 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.064s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:26:23,444 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.062s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:26:28,777 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:26:32,357 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.58s
+2025-12-21 00:26:37,475 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:26:37,497 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:26:39,505 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:26:39,531 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-21 00:26:52,394 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:26:52,417 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:27:05,586 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:27:05,607 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:27:10,881 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:27:10,904 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:27:17,252 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:27:17,284 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-21 00:29:19,554 | INFO | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.070s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:29:30,457 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:29:30,478 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:29:43,588 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:29:43,609 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:30:18,116 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:30:18,138 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:30:23,970 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:30:23,992 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:31:25,036 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:31:25,090 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:32:44,496 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:32:44,527 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:32:44,687 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.077s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:32:44,719 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:32:47,871 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.15s
+2025-12-21 00:33:00,091 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:33:00,113 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:33:26,097 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 00:33:26,119 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 00:33:39,392 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:33:39,439 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:35:22,594 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:35:22,621 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:35:24,828 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:35:24,829 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:41:13,703 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:41:13,731 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:41:58,474 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.077s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:42:41,199 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.102s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:42:51,766 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.072s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:42:59,029 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.058s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 00:43:10,558 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:43:10,558 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:44:34,924 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:44:34,953 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 00:44:56,104 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 00:44:56,105 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 00:54:39,409 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 00:54:39,443 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized (lazy loading enabled)
+2025-12-21 01:01:16,421 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:01:16,423 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:01:30,488 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:01:57,050 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:01:57,051 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:01:57,051 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:01:57,051 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:02:00,431 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:02:38,814 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:02:38,814 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:02:53,313 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:04:52,280 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:04:52,280 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:06:35,362 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:06:39,809 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.054s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:06:41,009 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.067s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:06:43,235 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.061s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:06:48,481 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.067s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:06:58,713 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:07:18,948 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.070s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:08:23,711 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:08:23,711 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:08:27,195 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:08:39,927 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:08:39,927 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:10:05,758 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:10:05,852 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.020s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:10:20,875 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:10:31,136 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=1 | metadata_files_scanned=3 | limit=1 | elapsed=0.020s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:10:36,750 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:10:36,750 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:13:52,071 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:13:52,071 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:14:07,132 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:14:09,391 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.059s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:14:22,027 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.057s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:15:51,404 | INFO | apps.ocr-inference-console.backend.main | 🔄 First inference request: Initializing InferenceEngine...
+2025-12-21 01:15:51,435 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized in 0.03s
+2025-12-21 01:15:51,461 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:15:54,569 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.11s
+2025-12-21 01:15:55,638 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.052s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:16:02,381 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:02,405 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:16:11,125 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:11,149 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:16:16,699 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:16,733 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.03s
+2025-12-21 01:16:23,847 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:23,869 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:16:34,747 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:34,769 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:16:40,039 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:40,059 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:16:43,291 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:16:43,311 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:16:49,693 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.064s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:16:54,206 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 01:16:54,247 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 01:18:02,944 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 01:18:03,543 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.065s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:19:25,100 | INFO | apps.ocr-inference-console.backend.main | 🔄 First inference request: Initializing InferenceEngine...
+2025-12-21 01:19:25,128 | INFO | apps.ocr-inference-console.backend.main | ✅ InferenceEngine initialized in 0.03s
+2025-12-21 01:19:25,151 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:19:28,168 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=3.02s
+2025-12-21 01:19:29,258 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.060s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:20:37,925 | DEBUG | apps.ocr-inference-console.backend.main | Checkpoint discovery complete | metadata_found=3 | metadata_files_scanned=3 | limit=100 | elapsed=0.057s | root=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr
+2025-12-21 01:20:43,674 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:20:43,698 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s
+2025-12-21 01:20:46,707 | INFO | apps.ocr-inference-console.backend.main | 🔄 Attempting to load checkpoint: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-21 01:20:46,729 | INFO | apps.ocr-inference-console.backend.main | ✅ Model load complete | elapsed=0.02s

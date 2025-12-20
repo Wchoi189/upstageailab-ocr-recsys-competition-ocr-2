@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2025-12-20 02:44:52
-**Total Artifacts**: 12
+**Last Updated**: 2025-12-21 02:08:36
+**Total Artifacts**: 14
 
-## Active (9)
+## Active (10)
 
 - [Complete domain-driven backend reconstruction](2025-12-14_1746_implementation_plan_domain-driven-backends.md) (📅 2025-12-14 17:46 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Complete domain-driven back
 - [Inference Module Consolidation - Implementation Plan](2025-12-15_1149_implementation_plan_inference-module-consolidation.md) (📅 2025-12-15 11:49 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Inference Module Consolidat
@@ -15,7 +15,8 @@ Active implementation plans and development roadmaps.
 - [Safe State Management Implementation](2025-12-18_1929_implementation_plan_safe-state-management.md) (📅 2025-12-18 19:29 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Safe State Management Imple
 - [State Management Redesign: Ultra-Concise Database-First Architecture](2025-12-19_2141_implementation_plan_state-management-redesign.md) (📅 2025-12-19 21:41 (KST), 📄 implementation_plan) - You are implementing ultra-concise state management redesign based on architecture analysis (ref: br
 - [Gray-World Background Normalization Integration](2025-12-20_0226_implementation_plan_gray-world-normalization.md) (📅 2025-12-20 02:26 (KST), 📄 implementation_plan) - Production OCR pipeline loses predictions on tinted-background documents. Gray-world normalization v
-- [Perspective Correction Module Modularization](2025-12-20_0244_implementation_plan_perspective-correction-modularization.md) (📅 2025-12-20 02:44 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Perspective Correction Modu
+- [Perspective Correction Module Modularization](2025-12-20_0244_implementation_plan_perspective-correction-modularization.md) (📅 2025-12-20 02:44 (KST), 📄 implementation_plan) - Refactor monolithic `ocr/utils/perspective_correction.py` (1551 lines) into modular package structur
+- [Sepia Enhancement Testing and Validation Workflow](2025-12-21_0208_implementation_plan_sepia-testing-workflow.md) (📅 2025-12-21 02:08 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Sepia Enhancement Testing a
 
 ## Completed (3)
 
@@ -23,12 +24,17 @@ Active implementation plans and development roadmaps.
 - [Implementation Plan - OCR PIPELINE INTEGRATION](2025-12-11_1800_implementation_plan_ocr-console-integration.md) (📅 2025-12-11 18:00 (KST), 📄 implementation_plan) - **Goal**: Integrate the existing OCR pipeline (`ocr/`) into the `ocr-inference-console` application,
 - [Domain-Driven Separation: Backend/Frontend Architecture Refactoring](2025-12-14_0220_implementation_plan_domain-driven-separation.md) (📅 2025-12-14 02:20 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Domain-Driven Separation: B
 
+## Other (1)
+
+- [OCR Console Refactoring Implementation](2025-12-21_0210_implementation_plan_ocr-console-refactor.md) (📅 2025-12-21 02:10, 📄 implementation_plan) - Refactor OCR inference console to improve:
+
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 9 |
+| Active | 10 |
 | Completed | 3 |
+| Other | 1 |
 
 ---
 

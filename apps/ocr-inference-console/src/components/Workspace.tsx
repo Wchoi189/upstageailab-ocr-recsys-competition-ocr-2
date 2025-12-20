@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
-import { RotateCw, ZoomIn, ZoomOut, Code, Eye, Upload } from 'lucide-react';
+import { RotateCw, ZoomIn, ZoomOut, Code, Eye, Upload, ChevronLeft, ChevronRight, Maximize, Minus, Plus, Box } from 'lucide-react';
 import { Button } from './ui/button';
 import { cn } from '../utils';
 
@@ -11,17 +11,33 @@ import { PolygonOverlay } from './PolygonOverlay';
 import { ocrClient, type Prediction, type InferenceResponse, type PredictionMetadata } from '../api/ocrClient';
 
 interface WorkspaceProps {
+    checkpoints: any[];
+    loadingCheckpoints: boolean;
     selectedCheckpoint: string | null;
     enablePerspectiveCorrection: boolean;
     displayMode: string;
     enableGrayscale: boolean;
+    enableBackgroundNormalization: boolean;
+    confidenceThreshold: number;  // NEW
+    nmsThreshold: number;  // NEW
+    showUploadModal?: boolean;
+    onOpenUploadModal?: () => void;
+    onCloseUploadModal?: () => void;
 }
 
 export const Workspace: React.FC<WorkspaceProps> = ({
+    checkpoints,
+    loadingCheckpoints,
     selectedCheckpoint,
     enablePerspectiveCorrection,
     displayMode,
-    enableGrayscale
+    enableGrayscale,
+    enableBackgroundNormalization,
+    confidenceThreshold,  // NEW
+    nmsThreshold,  // NEW
+    showUploadModal = false,
+    onOpenUploadModal,
+    onCloseUploadModal
 }) => {
     const [viewMode, setViewMode] = useState<'preview' | 'json'>('preview');
     const [imageUrl, setImageUrl] = useState<string | null>(null);
@@ -30,12 +46,19 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     const [previewImageBase64, setPreviewImageBase64] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [currentFile, setCurrentFile] = useState<File | null>(null); // Track current file for re-running
+
+    const averageConfidence = predictions.length > 0
+        ? Math.round(predictions.reduce((acc, curr) => acc + curr.confidence, 0) / predictions.length * 100)
+        : 0;
 
     const handleImageSelected = async (file: File, checkpoint?: string) => {
         setIsLoading(true);
         setError(null);
-        setPredictions([]);        // Create local URL for preview
+        setPredictions([]);        // Store file for re-running
+        setCurrentFile(file);
+
+        // Create local URL for preview
         const url = URL.createObjectURL(file);
         setImageUrl(url);
 
@@ -45,11 +68,45 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 checkpoint || selectedCheckpoint || undefined,
                 enablePerspectiveCorrection,
                 displayMode,
-                enableGrayscale
-            );            setPredictions(result.predictions);            setInferenceMeta(result.meta);
+                enableGrayscale,
+                enableBackgroundNormalization,
+                confidenceThreshold,  // NEW
+                nmsThreshold  // NEW
+            ); setPredictions(result.predictions); setInferenceMeta(result.meta);
             setPreviewImageBase64(result.preview_image_base64 || null);
-        } catch (e: any) {            console.error('Inference error:', e);
+        } catch (e: any) {
+            console.error('Inference error:', e);
             // Display detailed error message from backend if available
+            setError(e.message || "Unknown error occurred during inference. Check backend logs.");
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // New function to re-run inference on current image
+    const handleRerunInference = async () => {
+        if (!currentFile) return;
+
+        setIsLoading(true);
+        setError(null);
+        setPredictions([]);
+
+        try {
+            const result: InferenceResponse = await ocrClient.predict(
+                currentFile,
+                selectedCheckpoint || undefined,
+                enablePerspectiveCorrection,
+                displayMode,
+                enableGrayscale,
+                enableBackgroundNormalization,
+                confidenceThreshold,  // NEW
+                nmsThreshold  // NEW
+            );
+            setPredictions(result.predictions);
+            setInferenceMeta(result.meta);
+            setPreviewImageBase64(result.preview_image_base64 || null);
+        } catch (e: any) {
+            console.error('Inference error:', e);
             setError(e.message || "Unknown error occurred during inference. Check backend logs.");
         } finally {
             setIsLoading(false);
@@ -62,6 +119,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         setInferenceMeta(undefined);
         setPreviewImageBase64(null);
         setError(null);
+        setCurrentFile(null); // Clear current file
     };
 
     const handleLoadDemo = async () => {
@@ -99,22 +157,26 @@ export const Workspace: React.FC<WorkspaceProps> = ({
     };
 
     return (
-        <div className="h-full w-full bg-gray-50 p-4">
-            <div className="h-full w-full bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden flex flex-col">
+        <div className="h-full w-full bg-white">
+            <div className="h-full w-full bg-white overflow-hidden flex flex-col">
 
                 {/* Toolbar */}
-                <div className="h-10 border-b border-gray-200 flex items-center justify-between px-4 bg-gray-50/50 flex-shrink-0">
+                <div className="flex items-center justify-between px-4 bg-gray-50/50 flex-shrink-0">
                     <div className="flex items-center gap-2">
                         <div className="flex items-center gap-1">
+                            {/* Run Inference Button - replaces Upload */}
                             <Button
                                 variant="ghost"
                                 size="sm"
-                                className="h-7 text-xs text-blue-600 px-2 hover:bg-blue-50"
-                                onClick={() => setIsModalOpen(true)}
+                                className="h-7 text-xs font-medium text-white bg-blue-600 hover:bg-blue-700 px-3 disabled:opacity-50 disabled:cursor-not-allowed"
+                                onClick={handleRerunInference}
+                                disabled={!currentFile || isLoading}
+                                title={!currentFile ? "Upload an image first" : "Run inference with current settings"}
                             >
-                                <Upload size={14} className="mr-1" /> Upload
+                                <RotateCw size={14} className={cn("mr-1", isLoading && "animate-spin")} />
+                                {isLoading ? "Running..." : "Run Inference"}
                             </Button>
-                            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500" onClick={handleReset} title="Reset"><RotateCw size={14} /></Button>
+                            <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-500" onClick={handleReset} title="Reset" disabled={!imageUrl}><RotateCw size={14} /></Button>
                             <Button variant="ghost" size="sm" className="h-7 text-xs text-gray-600 px-2" onClick={handleLoadDemo}>Demo</Button>
                             {/* Zoom buttons disabled for now as Viewer doesn't support zoom yet */}
                             <Button variant="ghost" size="icon" className="h-7 w-7 text-gray-300 cursor-not-allowed"><ZoomIn size={14} /></Button>
@@ -165,7 +227,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                         <div>
                                             <p className="text-sm text-gray-600 mb-2">No image loaded</p>
                                             <button
-                                                onClick={() => setIsModalOpen(true)}
+                                                onClick={onOpenUploadModal}
                                                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 transition-colors"
                                             >
                                                 Upload Image
@@ -182,6 +244,40 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                     </div>
                                 )}
                             </div>
+                            {/* Left Panel Footer: Viewer Controls */}
+                            <div className="h-12 bg-white border-t border-gray-200 flex items-center justify-between px-4 shrink-0">
+                                <div className="flex items-center gap-2">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-blue-600 hover:bg-blue-50" title="Rotate">
+                                        <RotateCw size={16} />
+                                    </Button>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-500 hover:text-blue-600 hover:bg-blue-50" title="Full Screen">
+                                        <Maximize size={16} />
+                                    </Button>
+                                </div>
+                                <div className="flex items-center gap-4">
+                                    <div className="flex items-center gap-2 bg-gray-100 rounded-md p-1">
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-500 hover:bg-white rounded-sm">
+                                            <Minus size={14} />
+                                        </Button>
+                                        <div className="w-16 h-1 bg-gray-300 rounded-full overflow-hidden">
+                                            <div className="w-1/2 h-full bg-blue-500" />
+                                        </div>
+                                        <div className="h-2 w-2 bg-white border-2 border-primary rounded-full shadow-sm -ml-10 z-10 hidden" /> {/* Slider handle mock */}
+                                        <Button variant="ghost" size="icon" className="h-6 w-6 text-gray-500 hover:bg-white rounded-sm">
+                                            <Plus size={14} />
+                                        </Button>
+                                    </div>
+                                </div>
+                                <div className="flex items-center gap-2 text-gray-500 font-mono text-sm">
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 cursor-not-allowed">
+                                        <ChevronLeft size={16} />
+                                    </Button>
+                                    <span>1 / 1</span>
+                                    <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 cursor-not-allowed">
+                                        <ChevronRight size={16} />
+                                    </Button>
+                                </div>
+                            </div>
                         </Panel>
 
                         <PanelResizeHandle className="w-1 bg-gray-200 hover:bg-primary transition-colors flex items-center justify-center group cursor-col-resize z-10">
@@ -191,6 +287,18 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                         {/* Right Panel: Results View */}
                         <Panel defaultSize={45} minSize={30} className="bg-white flex flex-col">
                             <div className="flex-1 p-0 overflow-y-auto">
+                                {/* New Header Section */}
+                                <div className="px-6 py-5 bg-blue-50/20 border-b border-blue-100">
+                                    <h2 className="text-xl font-semibold text-gray-900 mb-3">Document OCR</h2>
+                                    <div className="flex items-center gap-3 bg-blue-50 border border-blue-100 rounded-md p-2 w-full">
+                                        <Box size={18} className="text-blue-600" />
+                                        <div className="flex items-center gap-2">
+                                            <span className="text-sm text-gray-500 font-medium">Model</span>
+                                            <span className="text-sm font-semibold text-gray-900">ocr-2.2.1</span>
+                                        </div>
+                                    </div>
+                                </div>
+
                                 <div className="p-4 border-b border-gray-100 flex items-center justify-between">
                                     <h3 className="text-sm font-semibold text-gray-900">Extracted Data</h3>
                                     <span className="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
@@ -242,6 +350,17 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                                     )}
                                 </div>
                             </div>
+                            {/* Right Panel Footer: Confidence Score */}
+                            <div className="h-12 bg-blue-50/50 border-t border-blue-100 flex items-center px-6 shrink-0">
+                                <span className="text-sm text-gray-600 font-medium mr-2">Confidence score</span>
+                                <span className={cn(
+                                    "text-lg font-bold",
+                                    averageConfidence >= 80 ? "text-blue-600" :
+                                        averageConfidence >= 50 ? "text-yellow-600" : "text-red-600"
+                                )}>
+                                    {averageConfidence}
+                                </span>
+                            </div>
                         </Panel>
 
                     </PanelGroup>
@@ -249,10 +368,12 @@ export const Workspace: React.FC<WorkspaceProps> = ({
 
                 {/* Upload Modal */}
                 <UploadModal
-                    isOpen={isModalOpen}
-                    onClose={() => setIsModalOpen(false)}
+                    isOpen={showUploadModal}
+                    onClose={onCloseUploadModal || (() => { })}
                     onFileSelected={handleImageSelected}
                     initialCheckpoint={selectedCheckpoint}
+                    checkpoints={checkpoints}
+                    loading={loadingCheckpoints}
                 />
             </div>
         </div>

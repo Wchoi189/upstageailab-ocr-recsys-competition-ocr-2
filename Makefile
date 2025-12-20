@@ -304,9 +304,9 @@ ocr-console-backend:
 			exit 1; \
 		fi; \
 		echo "✅ Using checkpoint: $$OCR_CHECKPOINT_PATH"; \
-		echo "🚀 Starting OCR Console backend on http://127.0.0.1:8002"; \
-		echo "   API Docs: http://127.0.0.1:8002/docs"; \
-		uv run uvicorn apps.ocr-inference-console.backend.main:app --host 127.0.0.1 --port 8002 --reload --reload-dir apps/ocr-inference-console/backend; \
+		echo "🚀 Starting OCR Console backend on http://0.0.0.0:8002"; \
+		echo "   API Docs: http://0.0.0.0:8002/docs"; \
+		uv run uvicorn apps.ocr-inference-console.backend.main:app --host 0.0.0.0 --port 8002 --reload --reload-dir apps/ocr-inference-console/backend; \
 	'
 
 # OCR Console full stack (backend + frontend)
