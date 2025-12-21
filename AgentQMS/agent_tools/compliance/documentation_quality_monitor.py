@@ -5,6 +5,7 @@ Automatically detects and reports documentation issues that agents encounter
 """
 
 import re
+import json
 from datetime import datetime
 from pathlib import Path
 
@@ -166,6 +167,58 @@ class DocumentationQualityMonitor:
 
         return issues
 
+    def check_staleness(self, file_path: Path) -> list[dict]:
+        """Detect references to non-existent modules, wrong ports, old commands."""
+        violations = []
+        try:
+            content = file_path.read_text()
+
+            # 1. Deprecated module references
+            if "apps/backend/" in content:
+                violations.append({
+                    "type": "stale_reference",
+                    "issue": "References deprecated apps/backend/ module",
+                    "severity": "high",
+                    "suggested_fix": "Update to use current app paths (e.g. apps/ocr-inference-console/backend/)"
+                })
+
+            # 2. Wrong port numbers
+            # Check for port 8000 when context suggests OCR
+            if "8000" in content and ("ocr" in content.lower() or "inference" in content.lower()):
+                violations.append({
+                    "type": "wrong_port",
+                    "issue": "References port 8000 (should likely be 8002 for OCR backend)",
+                    "severity": "high",
+                    "suggested_fix": "Update port 8000 to 8002"
+                })
+
+            # 3. Deprecated Makefile commands
+            if "make backend-ocr" in content:
+                violations.append({
+                    "type": "deprecated_command",
+                    "issue": "References deprecated 'make backend-ocr' command",
+                    "severity": "medium",
+                    "suggested_fix": "Use 'make ocr-console-backend' or 'make ocr-console-stack'"
+                })
+
+            # 4. Old paths from previous audits
+            if "scripts/agent_tools/" in content:
+                violations.append({
+                    "type": "outdated_path",
+                    "issue": "References old scripts/agent_tools/ path",
+                    "severity": "high",
+                    "suggested_fix": "Update to AgentQMS/agent_tools/"
+                })
+
+        except Exception as e:
+            violations.append({
+                "type": "file_error",
+                "issue": f"Error checking staleness: {e!s}",
+                "severity": "medium"
+            })
+
+        return violations
+
     def generate_quality_report(self) -> str:
         """Generate a comprehensive quality report."""
         all_issues = []
@@ -282,8 +335,27 @@ def main():
         report = monitor.generate_quality_report()
 
         if args.output:
-            Path(args.output).write_text(report)
-            print(f"Quality report saved to {args.output}")
+            if args.output.endswith(".json"):
+                # Special JSON output for Phase 1 staleness report
+                docs_dir = Path("docs")
+                all_markdown_files = list(docs_dir.rglob("*.md"))
+
+                staleness_results = []
+                for file_path in all_markdown_files:
+                    violations = monitor.check_staleness(file_path)
+                    if violations:
+                        staleness_results.append({
+                            "file": str(file_path),
+                            "staleness_score": len(violations),
+                            "violations": violations,
+                            "last_modified": datetime.fromtimestamp(file_path.stat().st_mtime).isoformat()
+                        })
+
+                Path(args.output).write_text(json.dumps(staleness_results, indent=2))
+                print(f"Staleness JSON report saved to {args.output}")
+            else:
+                Path(args.output).write_text(report)
+                print(f"Quality report saved to {args.output}")
         else:
             print(report)
     else:

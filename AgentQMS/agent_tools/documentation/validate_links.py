@@ -11,7 +11,11 @@ import re
 import sys
 from pathlib import Path
 
-import requests
+import urllib.request
+import urllib.error
+import json
+import xml.etree.ElementTree as ET
+from datetime import datetime
 
 
 class LinkValidator:
@@ -102,8 +106,9 @@ class LinkValidator:
             if not url.startswith(("http://", "https://")):
                 return True
 
-            response = requests.head(url, timeout=10, allow_redirects=True)
-            return response.status_code < 400
+            req = urllib.request.Request(url, method="HEAD")
+            with urllib.request.urlopen(req, timeout=10) as response:
+                return response.status < 400
         except Exception:
             return False
 
@@ -143,20 +148,98 @@ class LinkValidator:
             print("\n✅ All links are valid!")
             return True
 
+    def build_reference_graph(self) -> dict[str, list[str]]:
+        """Build a reference graph of documentation files."""
+        doc_files = self.find_doc_files()
+        graph = {}
+
+        for file_path in doc_files:
+            rel_file = str(file_path.relative_to(self.docs_root.parent))
+            graph[rel_file] = []
+            links = self.extract_links(file_path)
+
+            for url, _ in links:
+                if url.startswith(("http", "mailto", "tel")):
+                    continue
+                if url.startswith("#"):
+                    continue
+
+                try:
+                    # Resolve internal link
+                    target_path = (file_path.parent / url).resolve()
+                    if not target_path.exists():
+                        if not target_path.suffix and "." not in target_path.name:
+                            target_path = target_path.with_suffix(".md")
+
+                    if target_path.exists():
+                        rel_target = str(target_path.relative_to(self.docs_root.parent))
+                        if rel_target not in graph[rel_file]:
+                            graph[rel_file].append(rel_target)
+                except Exception:
+                    pass
+
+        return graph
+
+    def export_graphml(self, graph: dict[str, list[str]], output_path: Path):
+        """Export the reference graph in GraphML format."""
+        # Create the root element
+        graphml = ET.Element("graphml", {
+            "xmlns": "http://graphml.graphdrawing.org/xmlns",
+            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+            "xsi:schemaLocation": "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
+        })
+
+        # Add graph definition
+        graph_elem = ET.SubElement(graphml, "graph", {
+            "id": "G",
+            "edgedefault": "directed"
+        })
+
+        # Add nodes
+        nodes = set(graph.keys())
+        for targets in graph.values():
+            nodes.update(targets)
+
+        for node_id in sorted(nodes):
+            ET.SubElement(graph_elem, "node", {"id": node_id})
+
+        # Add edges
+        edge_id_counter = 0
+        for source, targets in graph.items():
+            for target in targets:
+                ET.SubElement(graph_elem, "edge", {
+                    "id": f"e{edge_id_counter}",
+                    "source": source,
+                    "target": target
+                })
+                edge_id_counter += 1
+
+        # Write to file
+        tree = ET.ElementTree(graphml)
+        with open(output_path, "wb") as f:
+            tree.write(f, encoding="utf-8", xml_declaration=True)
+
 
 def main() -> None:
-    """Main entry point."""
-    if len(sys.argv) != 2:
-        print("Usage: python validate_links.py <docs_root>")
+    import argparse
+    parser = argparse.ArgumentParser(description="Documentation Link Validator")
+    parser.add_argument("docs_root", help="Root directory of documentation")
+    parser.add_argument("--export-graph", help="Export reference graph to GraphML file")
+
+    args = parser.parse_args()
+
+    if not os.path.exists(args.docs_root):
+        print(f"Error: Documentation root '{args.docs_root}' does not exist")
         sys.exit(1)
 
-    docs_root = sys.argv[1]
+    validator = LinkValidator(args.docs_root)
 
-    if not os.path.exists(docs_root):
-        print(f"Error: Documentation root '{docs_root}' does not exist")
-        sys.exit(1)
+    if args.export_graph:
+        graph = validator.build_reference_graph()
+        validator.export_graphml(graph, Path(args.export_graph))
+        print(f"Reference graph exported to {args.export_graph}")
+        sys.exit(0)
 
-    validator = LinkValidator(docs_root)
     success = validator.validate_all()
 
     if validator.warnings:
