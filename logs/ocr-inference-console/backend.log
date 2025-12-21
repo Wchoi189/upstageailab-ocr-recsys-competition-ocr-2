@@ -967,3 +967,4 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-21 03:42:25,464 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
 2025-12-21 04:08:07,361 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
 2025-12-21 04:08:07,435 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 12:26:01,763 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)

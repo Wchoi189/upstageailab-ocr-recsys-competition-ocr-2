@@ -99,9 +99,9 @@ frontend/public/models/*.onnx
 # Data
 data/datasets/
 data/pseudo_label/
-datasets/
-filter_samples/
-
+data/filter_samples/
+/data/
+/data/ops
 # Experiments and Archives
 multirun/
 _archive/
@@ -130,23 +130,13 @@ OpenCV-Document-Scanner/
 DEPRECATED/
 _deprecated/
 DEBUG_OUTPUT_WORKSPACE/
-debug_empty_predictions/
-demo_images/
 framework_export/
-phase1_validation_results/
 preprocessing_results/
 profiler_traces/
 real_demo_simple/
 real_noise_elimination_demo/
 # reports/
 resource_logs/
-# results/
-results_threshold_0_4/
-streamlit-preprocessing-plan/
-submissions/
-submissions_filtered/
-submissions_test_catalog/
-submissions_test_catalog_filtered/
 test_*/
 zero_prediction_*/
 
@@ -162,13 +152,7 @@ zero_prediction_*/
 .agentqms/state/*.sqlite
 
 # Project-specific files (review and remove if no longer needed)
-continuation-prompt-streamlit-ui.md
-image_rotation_mismatch.svg
-mermaid_diagram_brainstorm.md
 notepad.md
-powerpoimt_slide_notes.md
 root-cause.md
-_llm_code_gen_workflow_exp/
 data_gen_exp/
-preprocessing-plan/
 repomix-output.xml
