@@ -1,0 +1,203 @@
+{
+  "timestamp": "2025-12-18T14:14:29.785897",
+  "test_directory": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/zero_prediction_worst_performers",
+  "total_images": 6,
+  "images_analyzed": [
+    {
+      "file": "drp.en_ko.in_house.selectstar_000699.jpg",
+      "size": {
+        "width": 1280,
+        "height": 1280
+      },
+      "background": {
+        "mean_bgr": [
+          81.88075222357602,
+          116.99672804437854,
+          139.71467845614583
+        ],
+        "std_bgr": [
+          54.62453415674881,
+          34.632137857070354,
+          26.28842417900302
+        ],
+        "color_variance": 38.51503206427406,
+        "color_cast_score": 57.83392623256981
+      },
+      "brightness": 127.7560986328125,
+      "contrast": 41.102775602987805,
+      "estimated_skew_degrees": 1.0185044557265688,
+      "edge_density": 14.016439819335938,
+      "issues": [
+        "high_background_color_variation",
+        "significant_color_tint"
+      ],
+      "issue_count": 2
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_000712.jpg",
+      "size": {
+        "width": 1280,
+        "height": 1280
+      },
+      "background": {
+        "mean_bgr": [
+          71.07503785108815,
+          119.99975354490707,
+          150.0736312178413
+        ],
+        "std_bgr": [
+          51.03065126955658,
+          31.912189636911034,
+          23.955627343783192
+        ],
+        "color_variance": 35.6328227500836,
+        "color_cast_score": 78.99859336675314
+      },
+      "brightness": 128.3802752685547,
+      "contrast": 35.72491335607726,
+      "estimated_skew_degrees": -4.5056766688238685,
+      "edge_density": 8.530142211914063,
+      "issues": [
+        "high_background_color_variation",
+        "significant_color_tint",
+        "text_skew_detected"
+      ],
+      "issue_count": 3
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_000732.jpg",
+      "size": {
+        "width": 1280,
+        "height": 1280
+      },
+      "background": {
+        "mean_bgr": [
+          95.35460231416593,
+          119.46393713409391,
+          143.30426477148762
+        ],
+        "std_bgr": [
+          42.455411387549276,
+          27.57962085927221,
+          19.646424941260417
+        ],
+        "color_variance": 29.893819062693968,
+        "color_cast_score": 47.94966245732169
+      },
+      "brightness": 125.01107055664062,
+      "contrast": 27.02143182426499,
+      "estimated_skew_degrees": -83.13572708603479,
+      "edge_density": 5.453146362304688,
+      "issues": [
+        "high_background_color_variation",
+        "significant_color_tint",
+        "text_skew_detected",
+        "low_contrast"
+      ],
+      "issue_count": 4
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001007.jpg",
+      "size": {
+        "width": 1280,
+        "height": 1280
+      },
+      "background": {
+        "mean_bgr": [
+          86.01252106276979,
+          118.305624901768,
+          144.865873744001
+        ],
+        "std_bgr": [
+          46.602417391305195,
+          30.33244702519359,
+          22.014242329658625
+        ],
+        "color_variance": 32.98303558205247,
+        "color_cast_score": 58.8533526812312
+      },
+      "brightness": 124.02645263671874,
+      "contrast": 30.81044813566512,
+      "estimated_skew_degrees": 0.2580821148824183,
+      "edge_density": 8.160031127929688,
+      "issues": [
+        "high_background_color_variation",
+        "significant_color_tint"
+      ],
+      "issue_count": 2
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001012.jpg",
+      "size": {
+        "width": 1280,
+        "height": 1280
+      },
+      "background": {
+        "mean_bgr": [
+          84.593302990407,
+          114.99174618111952,
+          141.2500886007417
+        ],
+        "std_bgr": [
+          48.8781358215589,
+          25.99854846840687,
+          14.579494852751491
+        ],
+        "color_variance": 29.818726380905755,
+        "color_cast_score": 56.656785610334694
+      },
+      "brightness": 121.30717529296875,
+      "contrast": 31.65900611967903,
+      "estimated_skew_degrees": -0.9878337754222064,
+      "edge_density": 9.28421630859375,
+      "issues": [
+        "high_background_color_variation",
+        "significant_color_tint"
+      ],
+      "issue_count": 2
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001161.jpg",
+      "size": {
+        "width": 1280,
+        "height": 1280
+      },
+      "background": {
+        "mean_bgr": [
+          82.96695373700766,
+          108.16908489946866,
+          131.04320113890884
+        ],
+        "std_bgr": [
+          72.5263223331268,
+          48.70432875205184,
+          35.783081793712434
+        ],
+        "color_variance": 52.337910959630356,
+        "color_cast_score": 48.076247401901185
+      },
+      "brightness": 116.8413299560547,
+      "contrast": 50.060808813543716,
+      "estimated_skew_degrees": 0.0,
+      "edge_density": 8.94305419921875,
+      "issues": [
+        "high_background_color_variation",
+        "significant_color_tint"
+      ],
+      "issue_count": 2
+    }
+  ],
+  "aggregate_stats": {
+    "avg_background_color_variance": 36.530224466606704,
+    "avg_color_cast_score": 58.06142795835195,
+    "avg_brightness": 123.88706705729165,
+    "avg_contrast": 36.063230642036324,
+    "avg_estimated_skew": 14.984304016814974
+  },
+  "common_issues": {
+    "significant_color_tint": 6,
+    "low_contrast": 1,
+    "text_skew_detected": 2,
+    "high_background_color_variation": 6
+  }
+}

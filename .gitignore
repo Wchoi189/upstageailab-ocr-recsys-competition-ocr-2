@@ -82,8 +82,8 @@ ehthumbs.db
 Thumbs.db
 
 # Logs and Outputs
-logs/
-*.log
+# logs/
+# *.log
 lightning_logs/
 /outputs/
 checkpoints/
@@ -122,7 +122,7 @@ OpenCV-Document-Scanner/
 *.svg
 # *.md
 *.csv
-*.json
+# *.json
 # *.sqlite
 # *.db
 
@@ -141,15 +141,15 @@ test_*/
 zero_prediction_*/
 
 # AgentQMS
-.agentqms/state.json
-.agentqms/sessions/
-.agentqms/backups/
-.agentqms/*.bak
-!.agentqms/config.yaml
-!.agentqms/schemas/
-!.agentqms/*.md
-.agentqms/state/agent_state.json
-.agentqms/state/*.sqlite
+# .agentqms/state.json
+# .agentqms/sessions/
+# .agentqms/backups/
+# .agentqms/*.bak
+# !.agentqms/config.yaml
+# !.agentqms/schemas/
+# !.agentqms/*.md
+# .agentqms/state/agent_state.json
+# .agentqms/state/*.sqlite
 
 # Project-specific files (review and remove if no longer needed)
 notepad.md

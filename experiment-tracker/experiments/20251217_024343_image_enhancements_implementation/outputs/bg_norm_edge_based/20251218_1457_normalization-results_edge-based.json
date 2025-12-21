@@ -1,0 +1,195 @@
+{
+  "method": "edge-based",
+  "total_images": 6,
+  "avg_processing_time_ms": 90.28,
+  "avg_variance_reduction": -6.16,
+  "avg_tint_reduction": 15.86,
+  "results": [
+    {
+      "file": "drp.en_ko.in_house.selectstar_000699.jpg",
+      "metrics": {
+        "method": "edge-based",
+        "processing_time_ms": 167.08,
+        "original": {
+          "mean_bgr": [
+            81.88075222357602,
+            116.99672804437854,
+            139.71467845614583
+          ],
+          "color_variance": 38.52,
+          "color_tint_score": 57.83
+        },
+        "normalized": {
+          "mean_bgr": [
+            197.45306532328493,
+            231.1425502836125,
+            240.7996270323051
+          ],
+          "color_variance": 48.91,
+          "color_tint_score": 43.35
+        },
+        "improvements": {
+          "variance_reduction": -10.39,
+          "tint_reduction": 14.48,
+          "variance_reduction_pct": -27.0,
+          "tint_reduction_pct": 25.0
+        }
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_000712.jpg",
+      "metrics": {
+        "method": "edge-based",
+        "processing_time_ms": 76.39,
+        "original": {
+          "mean_bgr": [
+            71.07503785108815,
+            119.99975354490707,
+            150.0736312178413
+          ],
+          "color_variance": 35.63,
+          "color_tint_score": 79.0
+        },
+        "normalized": {
+          "mean_bgr": [
+            192.34812893709767,
+            234.2577584349814,
+            243.10003994115388
+          ],
+          "color_variance": 44.9,
+          "color_tint_score": 50.75
+        },
+        "improvements": {
+          "variance_reduction": -9.27,
+          "tint_reduction": 28.25,
+          "variance_reduction_pct": -26.0,
+          "tint_reduction_pct": 35.8
+        }
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_000732.jpg",
+      "metrics": {
+        "method": "edge-based",
+        "processing_time_ms": 71.22,
+        "original": {
+          "mean_bgr": [
+            95.35460231416593,
+            119.46393713409391,
+            143.30426477148762
+          ],
+          "color_variance": 29.89,
+          "color_tint_score": 47.95
+        },
+        "normalized": {
+          "mean_bgr": [
+            209.99511711747397,
+            229.0875060353111,
+            240.38407797860955
+          ],
+          "color_variance": 32.66,
+          "color_tint_score": 30.39
+        },
+        "improvements": {
+          "variance_reduction": -2.77,
+          "tint_reduction": 17.56,
+          "variance_reduction_pct": -9.3,
+          "tint_reduction_pct": 36.6
+        }
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001007.jpg",
+      "metrics": {
+        "method": "edge-based",
+        "processing_time_ms": 87.36,
+        "original": {
+          "mean_bgr": [
+            86.01252106276979,
+            118.305624901768,
+            144.865873744001
+          ],
+          "color_variance": 32.98,
+          "color_tint_score": 58.85
+        },
+        "normalized": {
+          "mean_bgr": [
+            205.86903916265538,
+            227.92757504496595,
+            239.6986215345337
+          ],
+          "color_variance": 38.02,
+          "color_tint_score": 33.83
+        },
+        "improvements": {
+          "variance_reduction": -5.04,
+          "tint_reduction": 25.02,
+          "variance_reduction_pct": -15.3,
+          "tint_reduction_pct": 42.5
+        }
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001012.jpg",
+      "metrics": {
+        "method": "edge-based",
+        "processing_time_ms": 73.95,
+        "original": {
+          "mean_bgr": [
+            84.593302990407,
+            114.99174618111952,
+            141.2500886007417
+          ],
+          "color_variance": 29.82,
+          "color_tint_score": 56.66
+        },
+        "normalized": {
+          "mean_bgr": [
+            194.69257922346827,
+            232.32649647838664,
+            245.07897274234142
+          ],
+          "color_variance": 29.25,
+          "color_tint_score": 50.39
+        },
+        "improvements": {
+          "variance_reduction": 0.57,
+          "tint_reduction": 6.27,
+          "variance_reduction_pct": 1.9,
+          "tint_reduction_pct": 11.1
+        }
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001161.jpg",
+      "metrics": {
+        "method": "edge-based",
+        "processing_time_ms": 65.68,
+        "original": {
+          "mean_bgr": [
+            82.96695373700766,
+            108.16908489946866,
+            131.04320113890884
+          ],
+          "color_variance": 52.34,
+          "color_tint_score": 48.08
+        },
+        "normalized": {
+          "mean_bgr": [
+            186.72586617976245,
+            217.52792353792037,
+            231.22545609991698
+          ],
+          "color_variance": 62.41,
+          "color_tint_score": 44.5
+        },
+        "improvements": {
+          "variance_reduction": -10.07,
+          "tint_reduction": 3.58,
+          "variance_reduction_pct": -19.2,
+          "tint_reduction_pct": 7.4
+        }
+      }
+    }
+  ]
+}

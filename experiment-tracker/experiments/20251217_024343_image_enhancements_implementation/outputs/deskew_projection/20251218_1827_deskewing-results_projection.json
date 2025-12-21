@@ -1,0 +1,129 @@
+{
+  "method": "projection",
+  "total_images": 6,
+  "avg_abs_angle": 44.92,
+  "max_abs_angle": 45.0,
+  "avg_processing_time_ms": 774.79,
+  "results": [
+    {
+      "file": "drp.en_ko.in_house.selectstar_000699.jpg",
+      "metrics": {
+        "method": "projection",
+        "detected_angle_degrees": -45.0,
+        "processing_time_ms": 892.81,
+        "rotation_matrix": [
+          [
+            0.7071067811865476,
+            -0.7071067811865475,
+            905.0
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865476,
+            -0.09667991878080784
+          ]
+        ]
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_000712.jpg",
+      "metrics": {
+        "method": "projection",
+        "detected_angle_degrees": -45.0,
+        "processing_time_ms": 709.54,
+        "rotation_matrix": [
+          [
+            0.7071067811865476,
+            -0.7071067811865475,
+            905.0
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865476,
+            -0.09667991878080784
+          ]
+        ]
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_000732.jpg",
+      "metrics": {
+        "method": "projection",
+        "detected_angle_degrees": -45.0,
+        "processing_time_ms": 763.12,
+        "rotation_matrix": [
+          [
+            0.7071067811865476,
+            -0.7071067811865475,
+            905.0
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865476,
+            -0.09667991878080784
+          ]
+        ]
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001007.jpg",
+      "metrics": {
+        "method": "projection",
+        "detected_angle_degrees": -45.0,
+        "processing_time_ms": 812.25,
+        "rotation_matrix": [
+          [
+            0.7071067811865476,
+            -0.7071067811865475,
+            905.0
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865476,
+            -0.09667991878080784
+          ]
+        ]
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001012.jpg",
+      "metrics": {
+        "method": "projection",
+        "detected_angle_degrees": -45.0,
+        "processing_time_ms": 685.48,
+        "rotation_matrix": [
+          [
+            0.7071067811865476,
+            -0.7071067811865475,
+            905.0
+          ],
+          [
+            0.7071067811865475,
+            0.7071067811865476,
+            -0.09667991878080784
+          ]
+        ]
+      }
+    },
+    {
+      "file": "drp.en_ko.in_house.selectstar_001161.jpg",
+      "metrics": {
+        "method": "projection",
+        "detected_angle_degrees": 44.5,
+        "processing_time_ms": 785.54,
+        "rotation_matrix": [
+          [
+            0.7132504491541816,
+            0.7009092642998509,
+            -0.06221661058077643
+          ],
+          [
+            -0.7009092642998509,
+            0.7132504491541816,
+            897.1016416932283
+          ]
+        ]
+      }
+    }
+  ]
+}

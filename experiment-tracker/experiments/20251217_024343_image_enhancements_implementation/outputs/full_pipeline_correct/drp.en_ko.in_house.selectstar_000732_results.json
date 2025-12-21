@@ -1,0 +1,61 @@
+{
+  "image": "data/datasets/images/test/drp.en_ko.in_house.selectstar_000732.jpg",
+  "original_shape": [
+    1280,
+    1280,
+    3
+  ],
+  "steps": {
+    "1_rembg": {
+      "time_ms": 1668.22,
+      "mask_shape": [
+        1280,
+        1280
+      ]
+    },
+    "2_perspective": {
+      "time_ms": 13.07,
+      "output_shape": [
+        1107,
+        453,
+        3
+      ]
+    },
+    "3_background_norm": {
+      "time_ms": 15.82,
+      "metrics": {
+        "method": "gray-world",
+        "processing_time_ms": 15.82,
+        "original": {
+          "mean_bgr": [
+            168.35147731550305,
+            146.1868576022254,
+            146.59304120915928
+          ],
+          "color_variance": 20.28,
+          "color_tint_score": 22.16
+        },
+        "normalized": {
+          "mean_bgr": [
+            153.4906806068323,
+            153.175411262613,
+            152.9148681592199
+          ],
+          "color_variance": 20.1,
+          "color_tint_score": 0.58
+        },
+        "improvements": {
+          "variance_reduction": 0.18,
+          "tint_reduction": 21.58,
+          "variance_reduction_pct": 0.9,
+          "tint_reduction_pct": 97.4
+        }
+      }
+    },
+    "4_deskew": {
+      "time_ms": 14.19,
+      "angle_degrees": 2.65
+    }
+  },
+  "total_time_ms": 1711.3
+}
