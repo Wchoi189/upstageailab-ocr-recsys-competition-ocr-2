@@ -5,7 +5,9 @@ type: "template"
 category: "planning"
 status: "active"
 version: "1.0"
+ads_version: "1.0"
 ---
+
 
 # Perspective Correction Phase 2 - Completion Guide
 
@@ -356,7 +358,7 @@ Please complete the remaining implementation following the guide.
 - [apps/ocr-inference-console/src/api/ocrClient.ts](apps/ocr-inference-console/src/api/ocrClient.ts)
 
 ### Documentation
-- [docs/artifacts/features/perspective-correction-api-integration.md](docs/artifacts/features/perspective-correction-api-integration.md) - Feature documentation
+- [docs/artifacts/features/perspective-correction-api-integration.md](../design_documents/2025-12-15_2100_design-perspective-correction-api-integration.md) - Feature documentation
 - [docs/archive/archive_docs/docs/completed_plans/2025-11/2025-11-29_1728_implementation_plan_perspective-correction.md](docs/archive/archive_docs/docs/completed_plans/2025-11/2025-11-29_1728_implementation_plan_perspective-correction.md) - Original implementation
 
 ---

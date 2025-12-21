@@ -354,7 +354,7 @@
     - [setup/mcp_setup/MCP_SHARING_GUIDE.md](setup/mcp_setup/MCP_SHARING_GUIDE.md)
   - [testing/data-pipeline-testing-plan.md](testing/data-pipeline-testing-plan.md)
   - [testing/pipeline_validation.md](testing/pipeline_validation.md)
-  - [troubleshooting/CONTINUATION_PROMPT.md](troubleshooting/CONTINUATION_PROMPT.md)
+  - [troubleshooting/CONTINUATION_PROMPT.md](../../../../artifacts/assessments/2025-12-21_1242_artifact_artifact_continuation_prompt.md)
   - [troubleshooting/CUDA_DEBUGGING.md](troubleshooting/CUDA_DEBUGGING.md)
   - [troubleshooting/CUDA_QUICK_REFERENCE.md](troubleshooting/CUDA_QUICK_REFERENCE.md)
   - [troubleshooting/shape_issues.md](troubleshooting/shape_issues.md)

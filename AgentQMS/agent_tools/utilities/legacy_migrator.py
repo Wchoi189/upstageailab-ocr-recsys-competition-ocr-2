@@ -156,26 +156,70 @@ class LegacyArtifactMigrator:
         if artifact_type is None:
             artifact_type = metadata.get("type", "artifact")
 
-        # Use date from metadata or current time
-        date_str = metadata.get("date", "")
-        if date_str:
-            # Try to parse the date string
-            try:
-                date_obj = datetime.fromisoformat(date_str.split()[0])
-                timestamp = date_obj.strftime("%Y-%m-%d_%H%M")
-            except Exception:
-                timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
-        else:
-            timestamp = datetime.now().strftime("%Y-%m-%d_%H%M")
+        # Try to extract date from filename first to preserve existing (partial) convention
+        # Matches YYYY-MM-DD or YYYY-MM-DD_HHMM
+        date_match = re.search(r"(\d{4}-\d{2}-\d{2})(_\d{4})?", filepath.name)
+        timestamp = None
+        if date_match:
+            date_part = date_match.group(1)
+            time_part = date_match.group(2) if date_match.group(2) else "_1200"
+            timestamp = f"{date_part}{time_part}"
+
+        # If no date in filename, use inferred timestamp from file history/metadata
+        if not timestamp:
+            from AgentQMS.agent_tools.utils.timestamps import infer_artifact_filename_timestamp
+            timestamp = infer_artifact_filename_timestamp(filepath)
+
+        # Standardize artifact type (force-mapping generic types)
+        type_overrides = {
+            "design_documents": "design",
+            "assessments": "assessment",
+            "implementation_plans": "implementation_plan",
+            "research": "research",
+            "bug_reports": "bug_report",
+            "templates": "template",
+            "session_notes": "session_note",
+            "completion_summaries": "completion_summary",
+            "vlm_reports": "vlm_report"
+        }
+
+        artifact_type = str(artifact_type).lower()
+        if artifact_type in ["artifact", "specification", "reference", "doc", "documentation"]:
+            parent_dir = filepath.parent.name
+            if parent_dir in type_overrides:
+                artifact_type = type_overrides[parent_dir]
+            else:
+                artifact_type = "artifact"
 
         # Generate name from filename (remove extensions, spaces, etc.)
         base_name = filepath.stem
-        # Remove common prefixes and suffixes
-        base_name = re.sub(r"^\d{4}-\d{2}-\d{2}[_\-]", "", base_name)
+        # Remove full timestamp pattern (YYYY-MM-DD_HHMM_) or just date (YYYY-MM-DD_)
+        base_name = re.sub(r"^\d{4}-\d{2}-\d{2}(_\d{4})?[_\-]", "", base_name)
+
+        # Remove common artifact type prefixes (e.g., assessment_, implementation_plan_, BUG_, etc.)
+        # This handles cases where the type prefix might be duplicated after renaming
+        type_prefixes = [
+            "implementation_plan", "assessment", "audit", "design", "research",
+            "template", "bug_report", "session_note", "completion_summary", "completion_report", "vlm_report",
+            "BUG", "SESSION", "resolution", "artifact", "specification"
+        ]
+        for prefix in type_prefixes:
+            base_name = re.sub(f"^{prefix}[_\\-]", "", base_name, flags=re.IGNORECASE)
+
+        # Determine separator based on type (matching artifact_rules.yaml)
+        # implementation_plan, bug_report, session_note, completion_summary, vlm_report -> "_"
+        # assessment, audit, design, research, template -> "-"
+        hyphen_types = ["assessment", "audit", "design", "research", "template"]
+        sep = "-" if artifact_type.lower() in hyphen_types else "_"
+
         base_name = re.sub(r"[^\w\-]+", "_", base_name.lower())
         base_name = re.sub(r"_+", "_", base_name).strip("_")
 
-        return f"{timestamp}_{artifact_type}_{base_name}.md"
+        # Replace internal underscores with hyphens for hyphen-types to be more consistent
+        if sep == "-":
+            base_name = base_name.replace("_", "-")
+
+        return f"{timestamp}_{artifact_type}{sep}{base_name}.md"
 
     def migrate_artifact(
         self,
@@ -202,9 +246,9 @@ class LegacyArtifactMigrator:
 
         # Extract metadata to get artifact type
         metadata = self.extract_metadata(filepath)
-        artifact_type = metadata.get("type", "artifact")
+        artifact_type = metadata.get("type")
 
-        # Generate new filename
+        # Generate new filename (type normalization is handled inside generate_new_filename)
         new_filename = self.generate_new_filename(filepath, artifact_type)
         new_path = filepath.parent / new_filename
 

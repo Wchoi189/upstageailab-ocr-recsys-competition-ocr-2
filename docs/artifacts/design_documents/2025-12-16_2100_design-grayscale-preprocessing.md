@@ -1,12 +1,16 @@
 ---
 title: "Grayscale Preprocessing API Integration"
-date: "2025-12-16 (KST)"
-type: "specification"
+date: "2025-12-16 00:00 (KST)"
+type: "design"
 category: "architecture"
 status: "completed"
 version: "1.0"
+ads_version: "1.0"
 component: "grayscale_preprocessing"
 ---
+
+
+
 
 # Grayscale Preprocessing API Integration
 
@@ -212,6 +216,6 @@ This feature enables users to leverage grayscale preprocessing for improved OCR 
 
 ## References
 
-- [Perspective Correction API Integration](./perspective-correction-api-integration.md)
+- [Perspective Correction API Integration](2025-12-15_2100_design-perspective-correction-api-integration.md)
 - [Inference Data Contracts](../../pipeline/inference-data-contracts.md)
 - [Backend Pipeline Contract](../../backend/api/backend-pipeline-contract.md)

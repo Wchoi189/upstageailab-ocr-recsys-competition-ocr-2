@@ -15,7 +15,9 @@ Usage:
 from __future__ import annotations
 
 import os
-from datetime import UTC, datetime, timedelta, timezone
+import re
+from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from AgentQMS.agent_tools.utils.config import load_config
 
@@ -52,19 +54,6 @@ def get_configured_timezone() -> str:
 def get_timezone_abbr(timezone_str: str) -> str:
     """
     Get timezone abbreviation from IANA timezone name.
-
-    Common mappings:
-    - Asia/Seoul → KST
-    - Asia/Tokyo → JST
-    - UTC → UTC
-    - America/New_York → EST/EDT
-    - Europe/London → GMT/BST
-
-    Args:
-        timezone_str: IANA timezone name
-
-    Returns:
-        Timezone abbreviation or original string if not found
     """
     timezone_abbrs = {
         "Asia/Seoul": "KST",
@@ -92,64 +81,34 @@ def get_timezone_abbr(timezone_str: str) -> str:
 def get_kst_timestamp(dt: datetime | None = None) -> str:
     """
     Get current or provided datetime formatted as KST timestamp.
-
-    Format: "YYYY-MM-DD HH:MM (KST)"
-
-    Args:
-        dt: Optional datetime object (defaults to now)
-
-    Returns:
-        Formatted timestamp string
     """
     tz_name = get_configured_timezone()
     tz_abbr = get_timezone_abbr(tz_name)
 
     if dt is None:
-        # Use current time in configured timezone
         if tz_name.lower() == "utc":
-            dt = datetime.now(UTC)
+            dt = datetime.now(timezone.utc)
         else:
-            # Try to create timezone from IANA name
             try:
                 import zoneinfo
-
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = datetime.now(tz)
             except (ImportError, Exception):
-                # Fallback: use KST offset (UTC+9)
                 kst_offset = timezone(timedelta(hours=9))
                 dt = datetime.now(kst_offset)
     else:
-        # Ensure datetime has timezone info
         if dt.tzinfo is None:
-            # Assume UTC if no timezone
-            dt = dt.replace(tzinfo=UTC)
+            dt = dt.replace(tzinfo=timezone.utc)
 
     return dt.strftime(f"%Y-%m-%d %H:%M ({tz_abbr})")
 
 
 def parse_timestamp(timestamp_str: str) -> datetime | None:
-    """
-    Parse timestamp string back to datetime object.
-
-    Supports formats:
-    - "2025-12-06 12:00 (KST)"
-    - "2025-12-06 12:00"
-    - "2025-12-06T12:00:00"
-    - "2025-12-06"
-
-    Args:
-        timestamp_str: Timestamp string to parse
-
-    Returns:
-        datetime object or None if parsing fails
-    """
+    """Parse timestamp string back to datetime object."""
     if not timestamp_str:
         return None
 
-    # Try formats with timezone abbr
     try:
-        # Format: "2025-12-06 12:00 (KST)"
         if "(" in timestamp_str and ")" in timestamp_str:
             dt_part = timestamp_str.split("(")[0].strip()
             timestamp_str = dt_part
@@ -173,48 +132,28 @@ def parse_timestamp(timestamp_str: str) -> datetime | None:
 
 
 def get_age_in_days(timestamp_str: str) -> int | None:
-    """
-    Get age of artifact in days based on timestamp.
-
-    Args:
-        timestamp_str: Timestamp string
-
-    Returns:
-        Age in days or None if parsing fails
-    """
+    """Get age of artifact in days based on timestamp."""
     dt = parse_timestamp(timestamp_str)
     if dt is None:
         return None
 
-    # Make dt aware if it's naive
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=UTC)
+        dt = dt.replace(tzinfo=timezone.utc)
 
-    now = datetime.now(UTC)
+    now = datetime.now(timezone.utc)
     age = now - dt
     return age.days
 
 
 def format_timestamp_for_filename(dt: datetime | None = None) -> str:
-    """
-    Get timestamp formatted for artifact filename.
-
-    Format: "YYYY-MM-DD_HHMM" (e.g., "2025-12-06_1200")
-
-    Args:
-        dt: Optional datetime object (defaults to now)
-
-    Returns:
-        Formatted timestamp string for filename
-    """
+    """Get timestamp formatted for artifact filename."""
     if dt is None:
         tz_name = get_configured_timezone()
         if tz_name.lower() == "utc":
-            dt = datetime.now(UTC)
+            dt = datetime.now(timezone.utc)
         else:
             try:
                 import zoneinfo
-
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = datetime.now(tz)
             except (ImportError, Exception):
@@ -222,3 +161,104 @@ def format_timestamp_for_filename(dt: datetime | None = None) -> str:
                 dt = datetime.now(kst_offset)
 
     return dt.strftime("%Y-%m-%d_%H%M")
+
+
+def infer_artifact_filename_timestamp(file_path: str | Path) -> str:
+    """
+    Infer artifact timestamp for filename using intelligent fallback.
+    """
+    import subprocess
+    from pathlib import Path
+
+    file_path = Path(file_path)
+    # Project root is 4 levels up from this file
+    project_root = Path(__file__).resolve().parent.parent.parent.parent
+
+    # Get configured timezone
+    tz_name = get_configured_timezone()
+    kst = timezone(timedelta(hours=9))
+
+    def get_dt_filename(dt: datetime) -> str:
+        # Ensure aware
+        if dt.tzinfo is None:
+            dt = dt.replace(tzinfo=timezone.utc)
+
+        # Convert to configured timezone
+        if tz_name.lower() != "utc":
+            try:
+                import zoneinfo
+                tz = zoneinfo.ZoneInfo(tz_name)
+                dt = dt.astimezone(tz)
+            except (ImportError, Exception):
+                dt = dt.astimezone(kst)
+
+        return dt.strftime("%Y-%m-%d_%H%M")
+
+    try:
+        # 1. Try frontmatter date
+        if file_path.exists():
+            content = file_path.read_text(encoding="utf-8")
+            if content.startswith("---"):
+                for line in content.splitlines():
+                    if line.strip().startswith("date:"):
+                        date_str = line.split(":", 1)[1].strip().strip("\"'")
+                        fm_date = None
+                        try:
+                            # Try standard format
+                            fm_date = datetime.strptime(date_str, "%Y-%m-%d %H:%M (KST)")
+                        except ValueError:
+                            try:
+                                if "(KST)" in date_str:
+                                    fm_date = datetime.strptime(date_str.replace("(KST)", "").strip(), "%Y-%m-%d")
+                                    fm_date = fm_date.replace(hour=12, minute=0)
+                                else:
+                                    fm_date = datetime.strptime(date_str[:10], "%Y-%m-%d")
+                                    fm_date = fm_date.replace(hour=12, minute=0)
+                            except ValueError:
+                                pass
+
+                        if fm_date:
+                            return get_dt_filename(fm_date)
+                        break
+    except Exception:
+        pass
+
+    try:
+        # 2. Try git creation date
+        result = subprocess.run(
+            ["git", "log", "--follow", "--format=%aI", "--diff-filter=A", "--", str(file_path)],
+            cwd=project_root,
+            capture_output=True,
+            text=True,
+            timeout=5,
+            check=False,
+        )
+
+        if result.returncode == 0 and result.stdout.strip():
+            git_date_str = result.stdout.strip().split("\n")[-1]
+            git_date = datetime.fromisoformat(git_date_str.replace("Z", "+00:00"))
+            return get_dt_filename(git_date)
+    except Exception:
+        pass
+
+    try:
+        # 3. Try filesystem modification time
+        mtime = file_path.stat().st_mtime
+        fs_date = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        return get_dt_filename(fs_date)
+    except Exception:
+        pass
+
+    # 4. Fallback to current time
+    return format_timestamp_for_filename()
+
+
+def infer_artifact_date(file_path: str | Path) -> str:
+    """Infer artifact date for frontmatter."""
+    timestamp = infer_artifact_filename_timestamp(file_path)
+    # Convert YYYY-MM-DD_HHMM to YYYY-MM-DD HH:MM (KST)
+    try:
+        dt = datetime.strptime(timestamp, "%Y-%m-%d_%H%M")
+        return dt.strftime("%Y-%m-%d %H:%M (KST)")
+    except Exception:
+        return datetime.now(timezone(timedelta(hours=9))).strftime("%Y-%m-%d %H:%M (KST)")

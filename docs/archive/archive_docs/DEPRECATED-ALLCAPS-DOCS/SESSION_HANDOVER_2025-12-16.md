@@ -53,7 +53,7 @@ tags: ['session_note', 'reference']
   - Documentation: Updated with Phase 2 implementation details, API examples, coordinate behavior
 - **Files:**
   - [apps/ocr-inference-console/backend/main.py](../apps/ocr-inference-console/backend/main.py) (line 332)
-  - [docs/artifacts/features/perspective-correction-api-integration.md](../docs/artifacts/features/perspective-correction-api-integration.md)
+  - [docs/artifacts/features/perspective-correction-api-integration.md](../../../artifacts/design_documents/2025-12-15_2100_design-perspective-correction-api-integration.md)
 - **Lines Changed:** 1 line backend, ~80 lines documentation
 
 #### 4. Port 7242 Connection Errors (MEDIUM) ✅

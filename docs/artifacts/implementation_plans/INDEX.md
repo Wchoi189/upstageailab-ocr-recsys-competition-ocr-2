@@ -2,39 +2,25 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2025-12-21 02:08:36
-**Total Artifacts**: 14
+**Last Updated**: 2025-12-22 01:27:17
+**Total Artifacts**: 4
 
-## Active (10)
+## Active (3)
 
-- [Complete domain-driven backend reconstruction](2025-12-14_1746_implementation_plan_domain-driven-backends.md) (📅 2025-12-14 17:46 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Complete domain-driven back
-- [Inference Module Consolidation - Implementation Plan](2025-12-15_1149_implementation_plan_inference-module-consolidation.md) (📅 2025-12-15 11:49 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Inference Module Consolidat
-- [Documentation Update - Execution Plan & Checklist](2025-12-15_1200_implementation_plan_documentation-updates.md) (📅 2025-12-15 12:00 (KST), 📄 implementation_plan) - **Objective**: Update documentation after completing inference module refactoring (Phase 3.2)
-- [AI Documentation Standardization - Full Implementation](2025-12-16_1915_implementation_plan_ai-docs-standardization-implementation.md) (📅 2025-12-16 19:15 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **AI Documentation Standardiz
-- [Experiment Documentation Standard (EDS v1.0) Implementation](2025-12-17_1705_implementation_plan_experiment-tracker-eds-v1-implementation.md) (📅 2025-12-17 17:05 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Experiment Documentation St
-- [Safe State Management Implementation](2025-12-18_1929_implementation_plan_safe-state-management.md) (📅 2025-12-18 19:29 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Safe State Management Imple
-- [State Management Redesign: Ultra-Concise Database-First Architecture](2025-12-19_2141_implementation_plan_state-management-redesign.md) (📅 2025-12-19 21:41 (KST), 📄 implementation_plan) - You are implementing ultra-concise state management redesign based on architecture analysis (ref: br
-- [Gray-World Background Normalization Integration](2025-12-20_0226_implementation_plan_gray-world-normalization.md) (📅 2025-12-20 02:26 (KST), 📄 implementation_plan) - Production OCR pipeline loses predictions on tinted-background documents. Gray-world normalization v
-- [Perspective Correction Module Modularization](2025-12-20_0244_implementation_plan_perspective-correction-modularization.md) (📅 2025-12-20 02:44 (KST), 📄 implementation_plan) - Refactor monolithic `ocr/utils/perspective_correction.py` (1551 lines) into modular package structur
 - [Sepia Enhancement Testing and Validation Workflow](2025-12-21_0208_implementation_plan_sepia-testing-workflow.md) (📅 2025-12-21 02:08 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Sepia Enhancement Testing a
+- [Sepia Enhancement (CLAHE) Integration for OCR Pipeline](2025-12-21_0410_implementation_plan_sepia-enhancement-integration.md) (📅 2025-12-21 04:10 (KST), 📄 implementation_plan) - Zero-prediction failures on low-contrast/aged document images (e.g., `000712`, `000732`) persist des
+- [Main Docs Audit and ADS v1.0 Migration](2025-12-21_1250_implementation_plan_main-docs-audit.md) (📅 2025-12-21 12:50 (KST), 📄 implementation_plan) - Migrate 841 scattered markdown files in `docs/` to a unified, AI-optimized documentation system that
 
-## Completed (3)
+## Completed (1)
 
-- [2024 12 04 Ocr Experiment Agent Implementation](2024-12-04_1243_implementation_plan_ocr-experiment-agent-implementation.md) (📅 2025-12-06 20:41 (KST), 📄 implementation_plan) - **Date**: 2024-12-04
-- [Implementation Plan - OCR PIPELINE INTEGRATION](2025-12-11_1800_implementation_plan_ocr-console-integration.md) (📅 2025-12-11 18:00 (KST), 📄 implementation_plan) - **Goal**: Integrate the existing OCR pipeline (`ocr/`) into the `ocr-inference-console` application,
-- [Domain-Driven Separation: Backend/Frontend Architecture Refactoring](2025-12-14_0220_implementation_plan_domain-driven-separation.md) (📅 2025-12-14 02:20 (KST), 📄 implementation_plan) - You are an autonomous AI agent, my Chief of Staff for implementing the **Domain-Driven Separation: B
-
-## Other (1)
-
-- [OCR Console Refactoring Implementation](2025-12-21_0210_implementation_plan_ocr-console-refactor.md) (📅 2025-12-21 02:10, 📄 implementation_plan) - Refactor OCR inference console to improve:
+- [OCR Console Refactoring Implementation](2025-12-21_0210_implementation_plan_ocr-console-refactor.md) (📅 2025-12-21 02:10 (KST), 📄 implementation_plan) - Refactor OCR inference console to improve:
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 10 |
-| Completed | 3 |
-| Other | 1 |
+| Active | 3 |
+| Completed | 1 |
 
 ---
 

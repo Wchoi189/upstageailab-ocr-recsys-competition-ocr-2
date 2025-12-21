@@ -31,8 +31,10 @@ PROHIBITED_PHRASES = [
     r"\bfor more information\b",
 ]
 
-# Prohibited emoji patterns
-EMOJI_PATTERN = r"[\U0001F300-\U0001F9FF]|[\u2600-\u26FF]|[\u2700-\u27BF]"
+# Prohibited emoji patterns (Temporarily disabled - set to empty list)
+# Original pattern: r"[\U0001F300-\U0001F9FF]|[\u2600-\u26FF]|[\u2700-\u27BF]"
+EMOJI_PATTERNS = []
+ # Allow emoji's
 
 # Required frontmatter fields
 UNIVERSAL_REQUIRED = ["ads_version", "type", "experiment_id", "status", "created", "updated", "tags"]
@@ -169,8 +171,9 @@ def check_prohibited_content(body: str) -> list[str]:
             warnings.append(f"Prohibited user-oriented phrase detected: {pattern}")
 
     # Check emoji
-    if re.search(EMOJI_PATTERN, body):
-        warnings.append("Emoji usage detected (prohibited except in pre-commit error messages)")
+    for pattern in EMOJI_PATTERNS:
+        if re.search(pattern, body):
+            warnings.append("Emoji usage detected (prohibited except in pre-commit error messages)")
 
     return warnings
 

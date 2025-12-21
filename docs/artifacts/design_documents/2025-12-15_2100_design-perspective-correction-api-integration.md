@@ -1,12 +1,15 @@
 ---
 title: "Perspective Correction API Integration"
 date: "2025-12-15 12:00 (KST)"
-type: "specification"
+type: "design"
 category: "architecture"
 status: "completed"
 version: "1.0"
+ads_version: "1.0"
 component: "perspective_correction"
 ---
+
+
 
 # Perspective Correction API Integration
 

@@ -249,13 +249,17 @@ class FrontmatterGenerator:
         return frontmatter
 
     def add_frontmatter_to_file(self, file_path: str, dry_run: bool = False) -> bool:
-        """Add frontmatter to a file"""
+        """Add frontmatter to a file, or update if already present but incomplete."""
         try:
             # Read current content
             with open(file_path, encoding="utf-8") as f:
                 content = f.read()
 
-            # Generate frontmatter
+            if content.startswith("---"):
+                # Handle existing frontmatter update (reconciliation)
+                return self.reconcile_frontmatter(file_path, dry_run)
+
+            # Generate new frontmatter
             frontmatter = self.generate_frontmatter(file_path)
 
             # Combine frontmatter with content
@@ -270,6 +274,100 @@ class FrontmatterGenerator:
 
         except Exception as e:
             print(f"Error processing {file_path}: {e}")
+            return False
+
+    def reconcile_frontmatter(self, file_path: str, dry_run: bool = False) -> bool:
+        """Update existing frontmatter with missing fields or fix invalid values."""
+        try:
+            with open(file_path, encoding="utf-8") as f:
+                content = f.read()
+
+            if not content.startswith("---"):
+                return False
+
+            end_fm = content.find("---", 3)
+            if end_fm == -1:
+                return False
+
+            fm_text = content[3:end_fm]
+            remainder = content[end_fm + 3 :]
+
+            # Parse existing fields
+            fm_dict = {}
+            for line in fm_text.splitlines():
+                if ":" in line and not line.strip().startswith("#"):
+                    parts = line.split(":", 1)
+                    if len(parts) == 2:
+                        k, v = parts
+                        fm_dict[k.strip()] = v.strip().strip("\"'")
+
+            # Analyze for missing values
+            analysis = self.analyze_file(file_path)
+
+            # Define standard fields and order
+            # Normalize type first to avoid using legacy/generic types
+            current_type = fm_dict.get("type") or analysis["type"]
+            generic_types = ["artifact", "specification", "reference", "doc", "documentation", "resolution", "completion_report"]
+            if str(current_type).lower() in generic_types:
+                current_type = analysis["type"]
+
+            # Normalize date to ensure standard format
+            current_date = fm_dict.get("date")
+            from AgentQMS.agent_tools.utils.timestamps import infer_artifact_date, parse_timestamp
+
+            # If date exists but doesn't match standard format (regex check), re-infer or parse/format
+            standard_date_regex = r"^\d{4}-\d{2}-\d{2} \d{2}:\d{2} \(KST\)$"
+            if not current_date or not re.match(standard_date_regex, str(current_date)):
+                # Try to parse existing date if it's at least partially valid
+                parsed = parse_timestamp(str(current_date)) if current_date else None
+                if parsed:
+                    # Re-format correctly
+                    current_date = parsed.strftime("%Y-%m-%d %H:%M (KST)")
+                else:
+                    current_date = infer_artifact_date(file_path)
+
+            # Normalize status
+            current_status = fm_dict.get("status") or analysis["status"]
+            valid_statuses = ["active", "draft", "completed", "archived", "deprecated"]
+            if str(current_status).lower() not in valid_statuses:
+                current_status = "active" # Default fallback for invalid status
+
+            updates = {
+                "ads_version": "1.0",
+                "title": fm_dict.get("title") or analysis["title"],
+                "date": current_date,
+                "type": current_type,
+                "category": fm_dict.get("category") or analysis["category"],
+                "status": current_status,
+                "version": fm_dict.get("version") or "1.0",
+            }
+
+            # Preserve other fields
+            for k, v in fm_dict.items():
+                if k not in updates:
+                    updates[k] = v
+
+            # Generate new frontmatter block
+            new_fm = "---\n"
+            # Sort keys to have standard fields first
+            standard_order = ["title", "date", "type", "category", "status", "version", "ads_version"]
+            for field in standard_order:
+                if field in updates:
+                    new_fm += f'{field}: "{updates[field]}"\n'
+
+            for k, v in updates.items():
+                if k not in standard_order:
+                    new_fm += f'{k}: "{v}"\n'
+            new_fm += "---\n"
+
+            if not dry_run:
+                with open(file_path, "w", encoding="utf-8") as f:
+                    f.write(new_fm + remainder)
+
+            return True
+
+        except Exception as e:
+            print(f"Error updating frontmatter in {file_path}: {e}")
             return False
 
     def process_files(self, file_paths: list[str], dry_run: bool = False, limit: int | None = None) -> dict[str, bool]:

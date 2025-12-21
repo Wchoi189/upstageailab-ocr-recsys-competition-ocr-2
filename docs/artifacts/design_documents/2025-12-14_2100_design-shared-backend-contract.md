@@ -1,13 +1,16 @@
 ---
 title: "Shared Backend Package Contract"
 date: "2025-12-14 12:00 (KST)"
-type: "specification"
+type: "design"
 category: "architecture"
 status: "draft"
 version: "1.0"
-tags: ['shared-backend', 'api-contract', 'inference-engine']
+ads_version: "1.0"
+tags: "['shared-backend', 'api-contract', 'inference-engine']"
 related_plan: "docs/artifacts/implementation_plans/2025-12-14_1746_implementation_plan_domain-driven-backends.md"
 ---
+
+
 
 # Shared Backend Package Contract
 

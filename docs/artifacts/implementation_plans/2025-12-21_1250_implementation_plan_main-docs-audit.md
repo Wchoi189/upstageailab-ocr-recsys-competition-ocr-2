@@ -1,16 +1,22 @@
 ---
 title: "Main Docs Audit and ADS v1.0 Migration"
-date: "2025-12-21 12:50"
+date: "2025-12-21 12:50 (KST)"
 type: "implementation_plan"
-status: "planned"
+category: "planning"
+status: "active"
+version: "1.0"
+ads_version: "1.0"
 scope: "docs/ (841 files) → .ai-instructions/ (ADS v1.0 compliant)"
 estimated_effort: "28-44 hours"
 priority: "high"
-related_assessments:
-  - "2025-12-21_0445_assessment_main-docs-strategic-audit.md"
-  - "2025-12-21_0500_assessment_agentqms-integration-strategy.md"
-tags: ["documentation", "agentqms", "ads-v1.0", "automation"]
+related_assessments: ""
+tags: "["documentation", "agentqms", "ads-v1.0", "automation"]"
 ---
+
+
+
+
+
 
 # Main Docs Audit and ADS v1.0 Migration
 

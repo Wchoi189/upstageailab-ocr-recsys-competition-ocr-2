@@ -1,0 +1,124 @@
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 41
+Valid files: 33
+Invalid files: 8
+Compliance rate: 80.5%
+
+VIOLATION SUMMARY:
+----------------------------------------
+Rule                 |  Count
+----------------------------------------
+Frontmatter          |      8
+E002                 |      2
+----------------------------------------
+
+VIOLATIONS FOUND:
+----------------------------------------
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0335_assessment-ocr-console-docs-audit.md
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0335_resolution_ocr-console-docs-audit_resolved.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).; Invalid type 'resolution'. Valid types: implementation_plan, assessment, audit, design, research, template, bug_report, session_note, completion_summary, vlm_report
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0445_assessment-main-docs-strategic-audit.md
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).; Invalid status 'proposal'. Valid statuses: active, draft, completed, archived, deprecated
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0500_assessment-agentqms-integration-strategy.md
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).; Invalid status 'proposal'. Valid statuses: active, draft, completed, archived, deprecated
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/2025-12-19_1200_completion_report_completion_report_perspective-correction-modularization.md
+   • Naming: [E002] Missing artifact type prefix after timestamp | Expected: Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_ | Hint: Add the appropriate artifact type prefix after the timestamp
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).; Invalid type 'completion_report'. Valid types: implementation_plan, assessment, audit, design, research, template, bug_report, session_note, completion_summary, vlm_report
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-16_2100_design-grayscale-preprocessing.md
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0210_implementation_plan_ocr-console-refactor.md
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).
+
+❌ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_1250_implementation_plan_main-docs-audit.md
+   • Frontmatter: Date must use 'YYYY-MM-DD HH:MM (KST)' format (24-hour clock).; Invalid status 'planned'. Valid statuses: active, draft, completed, archived, deprecated
+
+SUGGESTED NEXT COMMAND:
+----------------------------------------
+  cd AgentQMS/interface && make fix ARGS="--limit 8 --dry-run"
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_1242_assessment-continuation-prompt.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/audits/2025-12-15_1200_audit-perspective-correction-consolidation.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/audits/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-11-28_0000_BUG_001_dominant-edge-extension-failure.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-02_2313_BUG_001_inference-studio-overlay-misalignment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-02_2335_BUG_001_bootstrap-bug.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_0003_BUG_001_inference-resize-misalignment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_1100_BUG_001_inference-studio-offsets-data-contract.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_2300_BUG_002_inference-studio-visual-padding-mismatch.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-07_0047_BUG_001_catastrophic-bulk-migration-incident.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/completion_summaries/2025-12-21_1200_completion_summary_phase1_completion_report.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/completion_summaries/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-12-03_1243_SESSION_bug-001-inference-overlay-misalignment-handover.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/completion_summaries/session_notes/2025-12-08_1530_SESSION_dashboard-phase3-complete.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/completion_summaries/session_notes/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-01-20_1000_design-artifact-versioning-lifecycle.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-06_1548_design-toolkit-deprecation-roadmap.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-14_2100_design-shared-backend-contract.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-15_2100_design-perspective-correction-api-integration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0410_implementation_plan_sepia-enhancement-integration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/2025-12-06_0201_research-tracking-db-agentqms-integration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/2025-12-15_1200_research-inference-doc-audit-summary.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/templates/2025-12-18_0339_template-perspective-correction-phase2-completion-guide.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/templates/INDEX.md
+
+FIX SUGGESTIONS:
+========================================
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0335_assessment-ocr-console-docs-audit.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0335_resolution_ocr-console-docs-audit_resolved.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0445_assessment-main-docs-strategic-audit.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0500_assessment-agentqms-integration-strategy.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/2025-12-19_1200_completion_report_completion_report_perspective-correction-modularization.md
+   🔧 Rename file to follow convention:
+      Format: YYYY-MM-DD_HHMM_{ARTIFACT_TYPE}_descriptive-name.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-16_2100_design-grayscale-preprocessing.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0210_implementation_plan_ocr-console-refactor.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version
+
+📁 /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_1250_implementation_plan_main-docs-audit.md
+   🔧 Add or fix frontmatter:
+      Required fields: title, date, type, category, status, version

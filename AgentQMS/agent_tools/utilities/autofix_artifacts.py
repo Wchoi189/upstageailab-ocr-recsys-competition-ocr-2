@@ -19,6 +19,10 @@ from pathlib import Path
 from typing import Any
 
 
+from AgentQMS.agent_tools.utils.paths import get_project_root
+from AgentQMS.agent_tools.utils.timestamps import infer_artifact_filename_timestamp
+
+
 def run_git_command(cmd: list[str], dry_run: bool = False) -> bool:
     """Execute git command, optionally in dry-run mode."""
     if dry_run:
@@ -32,8 +36,8 @@ def run_git_command(cmd: list[str], dry_run: bool = False) -> bool:
         return False
 
 
-def find_links_to_file(search_dir: Path, old_path: Path, project_root: Path) -> list[tuple[Path, int, str, str]]:
-    """Find all markdown links that reference a specific file.
+def find_links_to_file(search_dirs: list[Path], old_path: Path, project_root: Path) -> list[tuple[Path, int, str, str]]:
+    """Find all markdown links that reference a specific file across multiple directories.
 
     Returns list of (file_path, line_num, link_text, link_url) tuples.
     """
@@ -46,24 +50,30 @@ def find_links_to_file(search_dir: Path, old_path: Path, project_root: Path) -> 
     except ValueError:
         old_rel = str(old_path)
 
-    for md_file in search_dir.rglob("*.md"):
-        if ".git" in str(md_file):
+    for search_dir in search_dirs:
+        if not search_dir.exists():
             continue
 
-        try:
-            content = md_file.read_text(encoding="utf-8")
-            lines = content.split("\n")
+        for md_file in search_dir.rglob("*.md"):
+            if ".git" in str(md_file) or "node_modules" in str(md_file):
+                continue
 
-            for i, line in enumerate(lines, 1):
-                # Check for markdown links
-                for match in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", line):
-                    text, url = match.groups()
+            try:
+                content = md_file.read_text(encoding="utf-8")
+                lines = content.split("\n")
 
-                    # Check if this link references the old file
-                    if old_name in url or old_rel in url:
-                        links_found.append((md_file, i, text, url))
-        except Exception:
-            continue
+                for i, line in enumerate(lines, 1):
+                    # Check for markdown links: [text](url)
+                    # Broadened pattern to handle anchors and various formats
+                    for match in re.finditer(r"\[([^\]]+)\]\(([^)]+)\)", line):
+                        text, url = match.groups()
+
+                        # Check if this link references the old file
+                        # Match by filename or by relative/absolute path match
+                        if old_name in url or old_rel in url:
+                            links_found.append((md_file, i, text, url))
+            except Exception:
+                continue
 
     return links_found
 
@@ -133,11 +143,12 @@ def rewrite_links_after_move(old_path: Path, new_path: Path, project_root: Path,
 
     Returns number of files updated.
     """
-    docs_dir = project_root / "docs"
-    if not docs_dir.exists():
-        return 0
+    search_dirs = [
+        project_root / "docs",
+        project_root / "AgentQMS" / "knowledge",
+    ]
 
-    links = find_links_to_file(docs_dir, old_path, project_root)
+    links = find_links_to_file(search_dirs, old_path, project_root)
 
     if not links:
         return 0
@@ -193,16 +204,25 @@ def extract_suggestions_from_violations(violations: list[dict[str, Any]]) -> lis
         errors = item.get("errors", [])
 
         for error in errors:
-            # Parse naming violations for renames
-            if "Missing or invalid timestamp" in error or "Missing valid artifact type" in error:
-                # Suggest rename based on pattern
-                suggestion = {
-                    "type": "rename",
-                    "source": str(file_path),
-                    "target": None,  # To be computed based on rules
-                    "reason": error,
-                }
-                suggestions.append(suggestion)
+            # Parse naming violations for renames (COMMENTED OUT: HIGH RISK)
+            # if "[E001]" in error or "[E002]" in error or "[E003]" in error:
+            #     # Suggest rename using Migrator logic
+            #     try:
+            #         from AgentQMS.agent_tools.utilities.legacy_migrator import LegacyArtifactMigrator
+            #         migrator = LegacyArtifactMigrator()
+            #         new_name = migrator.generate_new_filename(file_path)
+            #
+            #         if new_name and new_name != file_path.name:
+            #             suggestion = {
+            #                 "type": "rename",
+            #                 "source": str(file_path),
+            #                 "target": new_name,
+            #                 "reason": error,
+            #             }
+            #             suggestions.append(suggestion)
+            #     except Exception:
+            #         # Fallback if migrator fails
+            #         pass
 
             # Parse directory violations for moves (use new error format)
             elif "Directory:" in error or "[E004]" in error:
@@ -215,6 +235,12 @@ def extract_suggestions_from_violations(violations: list[dict[str, Any]]) -> lis
                     target_dir = match.group(1).rstrip("/")
                     suggestion = {"type": "move", "source": str(file_path), "target_dir": target_dir, "reason": error}
                     suggestions.append(suggestion)
+
+            # Parse frontmatter violations
+            elif "Frontmatter:" in error or "[E006]" in error or "[E007]" in error:
+                # Suggest frontmatter reconciliation
+                suggestion = {"type": "frontmatter", "source": str(file_path), "reason": error}
+                suggestions.append(suggestion)
 
     return suggestions
 
@@ -259,9 +285,45 @@ def apply_fixes(
                         print(f"   ✅ Updated {updated} files with new links")
 
         elif suggestion["type"] == "rename":
-            # For now, just report (actual rename logic requires pattern detection)
-            print(f"\n{i + 1}. Rename needed: {suggestion['source']}")
+            source = Path(suggestion["source"])
+            target = source.parent / suggestion["target"]
+
+            # Check for duplicates/conflicts
+            if not check_for_duplicates(target, source):
+                print(f"\n{i + 1}. Skip (conflict): {source.name}")
+                continue
+
+            print(f"\n{i + 1}. Rename: {source.name}")
+            print(f"   To:   {target.name}")
+
+            if run_git_command(["mv", str(source), str(target)], dry_run):
+                applied += 1
+                moves.append((source, target))
+
+                # Update links if requested
+                if update_links:
+                    print("   🔗 Updating links...")
+                    updated = rewrite_links_after_move(source, target, project_root, dry_run)
+                    if updated > 0:
+                        print(f"   ✅ Updated {updated} files with new links")
+
+        elif suggestion["type"] == "frontmatter":
+            source = Path(suggestion["source"])
+            print(f"\n{i + 1}. Update Frontmatter: {source.name}")
             print(f"   Reason: {suggestion['reason']}")
+
+            if not dry_run:
+                try:
+                    from AgentQMS.agent_tools.maintenance.add_frontmatter import FrontmatterGenerator
+                    generator = FrontmatterGenerator()
+                    if generator.add_frontmatter_to_file(str(source)):
+                        print("   ✅ Frontmatter updated")
+                        applied += 1
+                except Exception as e:
+                    print(f"   ❌ Failed to update frontmatter: {e}")
+            else:
+                print("   [dry-run] Would update frontmatter")
+                applied += 1
 
     return applied, moves
 

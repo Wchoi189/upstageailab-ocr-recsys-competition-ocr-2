@@ -30,7 +30,7 @@ Usage:
 import argparse
 import subprocess
 import sys
-from datetime import UTC, datetime, timedelta, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 # Add AgentQMS to path for imports
@@ -41,6 +41,7 @@ try:
     from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
     from AgentQMS.agent_tools.maintenance.add_frontmatter import FrontmatterGenerator
     from AgentQMS.agent_tools.utils.config import load_config
+    from AgentQMS.agent_tools.utils.timestamps import infer_artifact_date
 except ImportError as e:
     print(f"❌ Error importing AgentQMS tools: {e}")
     print("   Make sure you're running from project root")
@@ -69,76 +70,6 @@ def get_excluded_directories() -> list[str]:
     # Default exclusions
     return ["archive", "deprecated"]
 
-
-def infer_artifact_date(file_path: Path) -> str:
-    """
-    Infer artifact creation date using intelligent fallback strategy.
-
-    Priority:
-    1. Git creation date (initial commit adding file)
-    2. Git last modified date (most recent commit)
-    3. Filesystem modification time (stat().st_mtime)
-    4. Present date (last resort)
-
-    Args:
-        file_path: Path to artifact file
-
-    Returns:
-        Date string in "YYYY-MM-DD HH:MM (KST)" format
-    """
-    kst = timezone(timedelta(hours=9))
-
-    try:
-        # Try git creation date (initial commit)
-        result = subprocess.run(
-            ["git", "log", "--follow", "--format=%aI", "--diff-filter=A", "--", str(file_path)],
-            cwd=PROJECT_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-
-        if result.returncode == 0 and result.stdout.strip():
-            # Parse ISO 8601 date
-            git_date_str = result.stdout.strip().split("\n")[-1]  # First (creation) commit
-            git_date = datetime.fromisoformat(git_date_str.replace("Z", "+00:00"))
-            kst_date = git_date.astimezone(kst)
-            return kst_date.strftime("%Y-%m-%d %H:%M (KST)")
-    except Exception:
-        pass
-
-    try:
-        # Try git last modified date
-        result = subprocess.run(
-            ["git", "log", "-1", "--format=%aI", "--", str(file_path)],
-            cwd=PROJECT_ROOT,
-            capture_output=True,
-            text=True,
-            timeout=5,
-            check=False,
-        )
-
-        if result.returncode == 0 and result.stdout.strip():
-            git_date_str = result.stdout.strip()
-            git_date = datetime.fromisoformat(git_date_str.replace("Z", "+00:00"))
-            kst_date = git_date.astimezone(kst)
-            return kst_date.strftime("%Y-%m-%d %H:%M (KST)")
-    except Exception:
-        pass
-
-    try:
-        # Fallback to filesystem modification time
-        mtime = file_path.stat().st_mtime
-        fs_date = datetime.fromtimestamp(mtime, tz=UTC)
-        kst_date = fs_date.astimezone(kst)
-        return kst_date.strftime("%Y-%m-%d %H:%M (KST)")
-    except Exception:
-        pass
-
-    # Last resort: present date
-    current_date = datetime.now(kst)
-    return current_date.strftime("%Y-%m-%d %H:%M (KST)")
 
 
 def fix_date_format(content: str, file_path: Path) -> str:

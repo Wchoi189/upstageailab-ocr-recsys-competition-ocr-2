@@ -1,13 +1,22 @@
 ---
 title: "AgentQMS Integration Strategy for Main Docs Audit"
-date: "2025-12-21 05:00"
+date: "2025-12-21 05:00 (KST)"
 type: "assessment"
-status: "proposal"
+category: "evaluation"
+status: "active"
+version: "1.0"
+ads_version: "1.0"
 scope: "Integration of docs/ audit with existing AgentQMS framework"
 audience: "ai_agents_only"
-related_assessments: ["2025-12-21_0445_assessment_main-docs-strategic-audit.md"]
-tags: ["agentqms", "integration", "framework", "automation"]
+related_assessments: "["2025-12-21_0445_assessment_main-docs-strategic-audit.md"]"
+tags: "["agentqms", "integration", "framework", "automation"]"
 ---
+
+
+
+
+
+
 
 # AgentQMS Integration Strategy for Main Docs Audit
 

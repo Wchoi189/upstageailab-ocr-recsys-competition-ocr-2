@@ -139,8 +139,8 @@ cd apps/ocr-inference-console && npm run dev
 
 ## 📖 Documentation
 
-- **Feature Docs**: [docs/artifacts/features/perspective-correction-api-integration.md](docs/artifacts/features/perspective-correction-api-integration.md)
-- **Completion Guide**: [docs/artifacts/implementation_guides/perspective-correction-phase2-completion-guide.md](docs/artifacts/implementation_guides/perspective-correction-phase2-completion-guide.md)
+- **Feature Docs**: [docs/artifacts/features/perspective-correction-api-integration.md](../../../../artifacts/design_documents/2025-12-15_2100_design-perspective-correction-api-integration.md)
+- **Completion Guide**: [docs/artifacts/implementation_guides/perspective-correction-phase2-completion-guide.md](../../../../artifacts/templates/2025-12-18_0339_template-perspective-correction-phase2-completion-guide.md)
 - **Original Plan**: [docs/archive/archive_docs/docs/completed_plans/2025-11/2025-11-29_1728_implementation_plan_perspective-correction.md](docs/archive/archive_docs/docs/completed_plans/2025-11/2025-11-29_1728_implementation_plan_perspective-correction.md)
 - **Implementation Plan**: [docs/artifacts/implementation_plans/2025-12-14_1746_implementation_plan_domain-driven-backends.md](docs/artifacts/implementation_plans/2025-12-14_1746_implementation_plan_domain-driven-backends.md)
 

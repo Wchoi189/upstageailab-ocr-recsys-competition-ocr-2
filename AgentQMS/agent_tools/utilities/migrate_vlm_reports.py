@@ -42,9 +42,13 @@ def migrate_vlm_report(file_path: Path, dry_run: bool = False) -> bool:
         print(f"⏭️  SKIP: {file_path.name} (doesn't match BUG pattern)")
         return False
 
-    date, bug_num, rest = match.groups()
-    # Use 1200 as default time if none exists
-    new_name = f"{date}_1200_vlm_report_{rest}.md"
+    # Infer timestamp from file history instead of hardcoded 1200
+    from AgentQMS.agent_tools.utils.timestamps import infer_artifact_filename_timestamp
+    timestamp = infer_artifact_filename_timestamp(file_path)
+    new_name = f"vlm_report_{rest}.md"
+    if not new_name.startswith(timestamp):
+        new_name = f"{timestamp}_vlm_report_{rest}.md"
+
     new_path = file_path.parent / new_name
 
     if new_path.exists():

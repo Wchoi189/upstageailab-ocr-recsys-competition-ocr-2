@@ -644,12 +644,26 @@ class ArtifactValidator:
             file_path: Path to the artifact file
             strict_mode: Override instance strict_mode setting. If None, uses self.strict_mode
         """
+        # Ensure path is absolute for comparison
+        file_path = Path(file_path).resolve()
+
+        # Mandatory scope check: ONLY validate files under the artifacts_root
+        try:
+            file_path.relative_to(self.artifacts_root)
+        except ValueError:
+            # File is outside the artifacts root - skip it silently or with info
+            # Returning a special "skipped" result
+            return {
+                "file": str(file_path),
+                "valid": True,  # Technically not invalid if it's out of scope
+                "skipped": True,
+                "reason": f"File is outside configured artifacts root: {self.artifacts_root}"
+            }
+
         # Use instance strict_mode if not explicitly overridden
         if strict_mode is None:
             strict_mode = self.strict_mode
 
-        # Resolve relative paths to absolute
-        if not file_path.is_absolute():
             file_path = file_path.resolve()
 
         result = {"file": str(file_path), "valid": True, "errors": []}

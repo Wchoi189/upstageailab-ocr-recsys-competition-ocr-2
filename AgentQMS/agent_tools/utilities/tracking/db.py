@@ -15,7 +15,7 @@ DB_PATH = get_project_root() / "data/ops/tracking.db"
 
 
 def _utc_now_iso() -> str:
-    return datetime.now(UTC).isoformat(timespec="seconds")
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
 
 
 def _ensure_parent_dir(path: Path) -> None:
