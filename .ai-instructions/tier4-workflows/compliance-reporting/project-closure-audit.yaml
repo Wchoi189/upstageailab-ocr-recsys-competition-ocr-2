@@ -2,12 +2,11 @@
 ads_version: "1.0"
 type: audit
 agent: claude
-tier: tier4
+tier: 4
 priority: high
 validates_with: ".ai-instructions/schema/compliance-checker.py"
 compliance_status: pass
-memory_footprint: 476_tokens
----
+memory_footprint: 476
 
 # AI Documentation Standardization - Project Closure Audit
 

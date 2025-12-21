@@ -5,11 +5,13 @@ on:
     paths:
       - "AgentQMS/**"
       - ".agentqms/**"
+      - ".ai-instructions/**"
       - ".github/workflows/agentqms-validation.yml"
   pull_request:
     paths:
       - "AgentQMS/**"
       - ".agentqms/**"
+      - ".ai-instructions/**"
 
 jobs:
   validate:
@@ -44,3 +46,9 @@ jobs:
         run: |
           PYTHONPATH=. python AgentQMS/agent_tools/documentation/validate_links.py AgentQMS/knowledge
 
+      - name: Validate ADS v1.0 compliance
+        run: |
+          pip install pyyaml
+          python .ai-instructions/schema/compliance-checker.py \
+            .ai-instructions/tier1-sst/*.yaml \
+            .ai-instructions/tier2-framework/*.yaml

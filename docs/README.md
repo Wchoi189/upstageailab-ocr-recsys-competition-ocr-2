@@ -42,4 +42,16 @@ Use this guide as the single entry point for all project documentation. It group
 - Keep living references short and topic-focused (`project-overview.md`, `SETUP.md`).
 - Archive experiments or abandoned concepts under `_deprecated/`.
 
+## Archive & Deprecated Content
+
+| Location | Status | Contents |
+|----------|--------|----------|
+| `docs/archive/` | ⚠️ DEPRECATED | 1,040 files - historical code/docs, do not update |
+| `.ai-instructions/DEPRECATED/` | ⚠️ DEPRECATED | Legacy agent configs, superseded by ADS v1.0 |
+| `.ai-instructions/tier1-sst/` | ✅ ACTIVE | System source of truth (ADS v1.0) |
+| `.ai-instructions/tier2-framework/` | ✅ ACTIVE | Framework guidance (ADS v1.0) |
+
+> **Note**: Stale references (port 8000, old paths) in archived files are NOT corrected.
+> See [archive/README.md](archive/README.md) for migration pointers.
+
 Keeping this guide up to date lets every agent skip the guesswork and land on the right documentation in a few keystrokes.

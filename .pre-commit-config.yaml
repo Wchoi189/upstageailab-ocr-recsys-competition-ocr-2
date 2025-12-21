@@ -70,3 +70,12 @@ repos:
         language: system
         pass_filenames: false
         files: ^artifacts/
+
+      - id: ads-compliance-check
+        name: ADS v1.0 Compliance Check
+        entry: uv run python .ai-instructions/schema/compliance-checker.py
+        language: system
+        # Validate tier1-sst and tier2-framework only (pure YAML)
+        # Exclude: DEPRECATED/, tier3-agents/*.yaml (hybrid), tier4-workflows/ (hybrid docs)
+        files: ^\.ai-instructions/(tier1-sst|tier2-framework)/.*\.yaml$
+        pass_filenames: true
