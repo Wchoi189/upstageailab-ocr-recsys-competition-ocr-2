@@ -32,6 +32,7 @@ export const Sidebar = () => {
         enableGrayscale,
         enableBackgroundNormalization,
         enableSepiaEnhancement,
+        enableClahe,
         confidenceThreshold,
         nmsThreshold,
     } = inferenceOptions;
@@ -143,6 +144,15 @@ export const Sidebar = () => {
                                 className="rounded border-gray-300"
                             />
                             <span>Sepia Enhancement</span>
+                        </label>
+                        <label className="flex items-center gap-2 text-sm">
+                            <input
+                                type="checkbox"
+                                checked={enableClahe}
+                                onChange={(e) => updateInferenceOptions({ enableClahe: e.target.checked })}
+                                className="rounded border-gray-300"
+                            />
+                            <span>CLAHE Enhancement</span>
                         </label>
                     </div>
                 </div>

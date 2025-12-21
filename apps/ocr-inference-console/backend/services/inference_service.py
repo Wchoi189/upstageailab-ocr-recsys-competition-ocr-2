@@ -36,6 +36,7 @@ class InferenceService:
         enable_grayscale: bool = False,
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
+        enable_clahe: bool = False,
     ) -> dict:
         """Run inference on an image with specified parameters.
 
@@ -48,7 +49,8 @@ class InferenceService:
             perspective_display_mode: Display mode for perspective correction
             enable_grayscale: Whether to convert to grayscale
             enable_background_normalization: Whether to normalize background
-            enable_sepia_enhancement: Whether to apply sepia+CLAHE enhancement
+            enable_sepia_enhancement: Whether to apply sepia tone transformation
+            enable_clahe: Whether to apply CLAHE contrast enhancement
 
         Returns:
             Inference result dictionary with polygons, texts, confidences, and preview image
@@ -82,6 +84,15 @@ class InferenceService:
 
         # Run inference
         try:
+            # Debug: Log preprocessing parameters
+            logger.info(
+                "🔍 Preprocessing options: perspective=%s, grayscale=%s, bg_norm=%s, sepia=%s, clahe=%s",
+                enable_perspective_correction,
+                enable_grayscale,
+                enable_background_normalization,
+                enable_sepia_enhancement,
+                enable_clahe,
+            )
             result = self._engine.predict_array(
                 image_array=image,
                 binarization_thresh=confidence_threshold,
@@ -92,6 +103,7 @@ class InferenceService:
                 enable_grayscale=enable_grayscale,
                 enable_background_normalization=enable_background_normalization,
                 enable_sepia_enhancement=enable_sepia_enhancement,
+                enable_clahe=enable_clahe,
             )
 
             if result is None:

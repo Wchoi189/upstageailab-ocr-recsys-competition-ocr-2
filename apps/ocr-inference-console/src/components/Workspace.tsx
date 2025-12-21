@@ -35,6 +35,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         enableGrayscale,
         enableBackgroundNormalization,
         enableSepiaEnhancement,
+        enableClahe,
         confidenceThreshold,
         nmsThreshold,
     } = inferenceOptions;
@@ -70,6 +71,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 enableGrayscale,
                 enableBackgroundNormalization,
                 enableSepiaEnhancement,
+                enableClahe,
                 confidenceThreshold,  // NEW
                 nmsThreshold  // NEW
             ); setPredictions(result.predictions); setInferenceMeta(result.meta);
@@ -100,6 +102,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 enableGrayscale,
                 enableBackgroundNormalization,
                 enableSepiaEnhancement,
+                enableClahe,
                 confidenceThreshold,  // NEW
                 nmsThreshold  // NEW
             );

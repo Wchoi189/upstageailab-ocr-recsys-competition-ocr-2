@@ -35,6 +35,7 @@ class PreprocessSettings:
     normalization: NormalizationSettings
     enable_background_normalization: bool = False
     enable_sepia_enhancement: bool = False
+    enable_clahe: bool = False
 
 
 @dataclass(slots=True)
@@ -148,6 +149,7 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
     std = DEFAULT_NORMALIZE_STD.copy()
     enable_background_normalization = False
     enable_sepia_enhancement = False
+    enable_clahe = False
 
     preprocessing = _get_attr(config, "preprocessing")
     has_preprocessing_target_size = False
@@ -165,6 +167,10 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
         sepia_value = _get_attr(preprocessing, "enable_sepia_enhancement")
         if sepia_value is not None:
             enable_sepia_enhancement = bool(sepia_value)
+        # Read CLAHE flag from config
+        clahe_value = _get_attr(preprocessing, "enable_clahe")
+        if clahe_value is not None:
+            enable_clahe = bool(clahe_value)
 
     if not has_preprocessing_target_size:
         if transforms_section := _get_attr(config, "transforms"):
@@ -196,6 +202,7 @@ def _extract_preprocess_settings(config: Any) -> PreprocessSettings:
         normalization=normalization,
         enable_background_normalization=enable_background_normalization,
         enable_sepia_enhancement=enable_sepia_enhancement,
+        enable_clahe=enable_clahe,
     )
 
 

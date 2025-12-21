@@ -139,6 +139,7 @@ class InferenceEngine:
         enable_grayscale: bool = False,
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
+        enable_clahe: bool = False,
     ) -> dict[str, Any] | None:
         """Predict on an image array (numpy) directly.
 
@@ -154,6 +155,8 @@ class InferenceEngine:
             enable_perspective_correction: Enable perspective correction before inference
             perspective_display_mode: "corrected" or "original" display mode
             enable_grayscale: Enable grayscale preprocessing
+            enable_sepia_enhancement: Enable sepia tone transformation
+            enable_clahe: Enable CLAHE contrast enhancement
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -182,6 +185,7 @@ class InferenceEngine:
             enable_grayscale=enable_grayscale,
             enable_background_normalization=enable_background_normalization,
             enable_sepia_enhancement=enable_sepia_enhancement,
+            enable_clahe=enable_clahe,
         )
 
     def predict_image(
@@ -197,6 +201,7 @@ class InferenceEngine:
         enable_grayscale: bool = False,
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
+        enable_clahe: bool = False,
     ) -> dict[str, Any] | None:
         """Predict on an image file (legacy file path-based API).
 
@@ -212,6 +217,8 @@ class InferenceEngine:
             enable_perspective_correction: Enable perspective correction before inference
             perspective_display_mode: "corrected" or "original" display mode
             enable_grayscale: Enable grayscale preprocessing
+            enable_sepia_enhancement: Enable sepia tone transformation
+            enable_clahe: Enable CLAHE contrast enhancement
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -248,6 +255,7 @@ class InferenceEngine:
             enable_grayscale=enable_grayscale,
             enable_background_normalization=enable_background_normalization,
             enable_sepia_enhancement=enable_sepia_enhancement,
+            enable_clahe=enable_clahe,
         )
 
 

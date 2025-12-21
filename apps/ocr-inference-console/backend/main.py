@@ -267,6 +267,14 @@ async def run_inference(request: InferenceRequest):
 
     # Run inference using inference service
     try:
+        logger.info(
+            "📥 Inference request: perspective=%s, grayscale=%s, bg_norm=%s, sepia=%s, clahe=%s",
+            request.enable_perspective_correction,
+            request.enable_grayscale,
+            request.enable_background_normalization,
+            request.enable_sepia_enhancement,
+            request.enable_clahe,
+        )
         result = await _inference_service.predict(
             image=image,
             checkpoint_path=str(ckpt_path),
@@ -276,6 +284,8 @@ async def run_inference(request: InferenceRequest):
             perspective_display_mode=request.perspective_display_mode,
             enable_grayscale=request.enable_grayscale,
             enable_background_normalization=request.enable_background_normalization,
+            enable_sepia_enhancement=request.enable_sepia_enhancement,
+            enable_clahe=request.enable_clahe,
         )
     except RuntimeError as e:
         raise InferenceError(str(e))

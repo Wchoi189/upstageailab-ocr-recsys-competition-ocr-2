@@ -99,6 +99,7 @@ export const ocrClient = {
         enableGrayscale?: boolean,
         enableBackgroundNormalization?: boolean,
         enableSepiaEnhancement?: boolean,
+        enableClahe?: boolean,
         confidenceThreshold?: number,  // NEW
         nmsThreshold?: number  // NEW
     ): Promise<InferenceResponse> => {
@@ -127,7 +128,8 @@ export const ocrClient = {
             perspective_display_mode: perspectiveDisplayMode || "corrected",
             enable_grayscale: enableGrayscale || false,
             enable_background_normalization: enableBackgroundNormalization || false,
-            enable_sepia_enhancement: enableSepiaEnhancement || false
+            enable_sepia_enhancement: enableSepiaEnhancement || false,
+            enable_clahe: enableClahe || false
         };
 
         const response = await fetch(url, {

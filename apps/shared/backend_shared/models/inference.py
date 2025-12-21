@@ -124,7 +124,11 @@ class InferenceRequest(BaseModel):
     )
     enable_sepia_enhancement: bool = Field(
         default=False,
-        description="Enable sepia+CLAHE enhancement for improved contrast on aged/low-contrast documents",
+        description="Enable sepia tone transformation for aged/low-contrast documents",
+    )
+    enable_clahe: bool = Field(
+        default=False,
+        description="Enable CLAHE (Contrast Limited Adaptive Histogram Equalization) for contrast enhancement",
     )
 
     model_config = {
@@ -140,6 +144,7 @@ class InferenceRequest(BaseModel):
                     "enable_grayscale": False,
                     "enable_background_normalization": False,
                     "enable_sepia_enhancement": False,
+                    "enable_clahe": False,
                 }
             ]
         }

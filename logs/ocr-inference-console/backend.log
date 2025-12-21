@@ -968,3 +968,139 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-21 04:08:07,361 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
 2025-12-21 04:08:07,435 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
 2025-12-21 12:26:01,763 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:13:31,941 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 13:13:31,992 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 13:13:35,460 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:14:25,638 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 13:14:25,638 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 13:14:42,784 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:30:04,599 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 13:30:04,662 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 13:30:48,065 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:35:51,168 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 13:35:51,241 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 13:35:55,884 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:36:28,572 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 13:36:28,573 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 13:36:31,703 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:37:11,659 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:40:53,677 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 13:40:53,745 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 13:40:56,901 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 13:43:47,736 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:45:34,900 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:45:40,861 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:45:44,929 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:45:51,742 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 13:45:57,764 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:46:03,337 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:47:00,221 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:47:12,553 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 13:47:19,364 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:47:24,221 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:47:57,453 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:48:12,190 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 13:48:17,767 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:48:25,184 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:48:31,925 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 13:48:37,793 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:48:43,081 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:49:16,499 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:49:20,239 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:49:28,799 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:49:36,264 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:49:42,202 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 13:49:48,358 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:49:56,119 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:50:20,927 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:50:30,627 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 13:52:01,571 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 13:52:14,535 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=True
+2025-12-21 13:52:23,244 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 13:52:56,407 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:56:49,349 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:59:25,715 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 13:59:32,207 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:06:52,000 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:06:56,217 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:07:22,385 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:07:42,823 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:09:00,365 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:12:57,084 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:13:08,275 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:13:14,711 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 14:13:18,782 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:16:30,409 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:18:41,108 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:19:02,969 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:24:58,428 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:25:02,841 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:25:12,772 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:25:24,753 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 14:25:33,769 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:26:00,849 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:26:11,722 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:26:13,769 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:26:17,406 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:27:36,396 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:27:47,452 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 14:27:47,492 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 14:28:07,163 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 14:28:15,533 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:34:56,686 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:35:08,269 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:35:11,127 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:35:16,081 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:35:33,230 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:36:58,945 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:37:12,279 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:37:18,516 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:37:28,946 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:38:03,094 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:39:36,946 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:39:49,754 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:40:04,567 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:40:07,490 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:40:13,066 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:45:48,725 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:45:52,655 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:45:55,572 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False
+2025-12-21 14:46:01,423 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True
+2025-12-21 14:46:05,498 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False
+2025-12-21 14:46:13,110 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False
+2025-12-21 14:46:32,258 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 14:46:32,311 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 14:46:35,568 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 14:46:38,720 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 14:50:56,688 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 14:50:56,689 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 14:51:12,732 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 14:52:14,588 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:02:29,828 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 15:02:29,898 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-21 15:02:58,929 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-21 15:03:17,226 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:06:10,232 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=True
+2025-12-21 15:06:18,341 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:06:25,122 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=True
+2025-12-21 15:06:29,604 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:06:33,007 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:06:41,259 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:06:48,471 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:07:14,031 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=True
+2025-12-21 15:07:21,896 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:07:27,995 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False, clahe=True
+2025-12-21 15:07:38,071 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:07:46,175 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False, clahe=False
+2025-12-21 15:07:51,447 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False, clahe=True
+2025-12-21 15:17:34,133 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:17:42,461 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:18:01,904 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:18:02,956 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:18:05,817 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:18:22,625 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:18:33,348 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:18:35,008 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-21 15:18:39,166 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-21 15:40:09,702 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-21 15:40:09,753 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete

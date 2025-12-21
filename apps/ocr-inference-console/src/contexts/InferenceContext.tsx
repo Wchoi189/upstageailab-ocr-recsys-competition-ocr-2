@@ -7,6 +7,7 @@ interface InferenceOptions {
   enableGrayscale: boolean;
   enableBackgroundNormalization: boolean;
   enableSepiaEnhancement: boolean;
+  enableClahe: boolean;
   confidenceThreshold: number;
   nmsThreshold: number;
 }
@@ -55,6 +56,7 @@ export function InferenceProvider({ children }: InferenceProviderProps): React.R
     enableGrayscale: false,
     enableBackgroundNormalization: false,
     enableSepiaEnhancement: false,
+    enableClahe: false,
     confidenceThreshold: 0.1,
     nmsThreshold: 0.4,
   });
