@@ -475,6 +475,10 @@ qms-plan:
 qms-bug:
 	@cd AgentQMS/interface && make create-bug-report NAME=$(if $(NAME),$(NAME),my-bug) TITLE="$(if $(TITLE),$(TITLE),Bug Report)"
 
+debug-session:
+	@uv run python AgentQMS/agent_tools/utilities/init_debug_session.py \
+		--id $(BUG_ID) --title "$(TITLE)" $(if $(SEVERITY),--severity $(SEVERITY),)
+
 qms-validate:
 	@cd AgentQMS/interface && make validate
 
