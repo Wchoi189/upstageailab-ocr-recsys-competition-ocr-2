@@ -5,11 +5,11 @@
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.8+-red.svg)](https://pytorch.org)
 [![License](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 
-# OCR Text Detection & Recognition System
+# OCR Text Recognition & Layout Analysis System
 
-**Modular, production-ready OCR for receipt text detection and recognition**
+**AI-optimized text-recognition system with layout analysis for accurate information extraction**
 
-[Quick Start](#-quick-start) • [Features](#-features) • [Documentation](#-documentation) • [Progress](#-project-progress)
+[Features](#-features) • [Progress](#-project-progress) • [Documentation](#-documentation)
 
 </div>
 
@@ -17,89 +17,82 @@
 
 ## 📖 About
 
-A comprehensive OCR system for detecting and recognizing text in receipt images. Built with PyTorch Lightning and Hydra for modularity and production readiness.
-
-**Key Features:**
-- 🎯 DBNet-based text detection with 97.8% H-Mean
-- ⚡ 5-8x faster training with offline preprocessing
-- 🧩 Modular architecture (plug-and-play components)
-- 🎨 Interactive UI tools (Streamlit + React + Next.js)
-- 📊 W&B integration for experiment tracking
-
----
-
-## 🚀 Quick Start
-
-```bash
-# Clone and setup
-git clone <your-repo-url>
-cd upstageailab-ocr-recsys-competition-ocr-2
-./scripts/setup/00_setup-environment.sh
-
-# Train a model
-uv run python runners/train.py model/presets=model_example trainer.max_epochs=10
-
-# Run inference UI
-python run_ui.py inference
-```
-
-**Prerequisites:** Python 3.11+, UV package manager, CUDA GPU (recommended)
-
-📘 **Detailed guides:** [Installation](docs/guides/installation.md) • [Training](docs/guides/training.md) • [Configuration](docs/architecture/CONFIG_ARCHITECTURE.md)
+A continuation project building an end-to-end text-recognition system featuring layout recognition capabilities. Currently undergoing final preparation and safety checks before major architectural upgrades.
 
 ---
 
 ## ✨ Features
 
-<div align="center">
-
-| **Command Builder** | **Real-time Inference** | **Evaluation Viewer** |
-|:---:|:---:|:---:|
-| ![Command Builder](docs/assets/images/demo/command-builder-predict-command-generate.png) | ![Inference](docs/assets/images/demo/real-time-ocr-inference-select-img.png.jpg) | ![Evaluation](docs/assets/images/demo/ocr-eval-results-viewer-gallery.png) |
-| Build training commands | Test models interactively | Analyze results visually |
-
-</div>
-
-### Current Capabilities
-
-✅ **Text Detection** - DBNet architecture with polygon outputs
-✅ **Offline Preprocessing** - Pre-computed maps for 5-8x speedup
-✅ **Modular Components** - Registry-based encoders, decoders, heads, losses
-✅ **Modular Inference Engine** - 8-component orchestrator pattern with 67% code reduction
-✅ **Modern UIs** - Streamlit tools + React SPA + Next.js console
-✅ **FastAPI Backend** - Inference API with job tracking
-
-### Planned Features
-
-🔜 **Text Recognition** - End-to-end OCR pipeline
-🔜 **Layout Analysis** - Document structure understanding
-🔜 **Multi-language Support** - Beyond English receipts
+- 🤖 **AI-Optimized Documentation Framework**: Standardizes documentations and protocols to reduce ambiguity and clutter in AI collaboration.
+- 📋 **Data Contracts & Validation**: Enforces structured data handling and validation.
+- 🧪 **Comprehensive Test Suite**: Detects unexpected performance regressions during feature implementations.
+- 🔍 **Custom VLM Tools**: Analyze images and generate technical reports describing defects and subtle changes.
 
 ---
 
-## 📊 Project Progress
+## � Experiment Tracker: Organized AI-Driven Research
+
+**Problem Solved**: Rapid AI-driven experimentation generates massive amounts of artifacts, scripts, and documentation that become unmanageable without systematic organization. Traditional project structures fail when experiments iterate daily and debugging requires instant access to reliable documentation.
+
+**Solution**: `experiment-tracker/` - A structured system for organizing experimental artifacts optimized for both human readability and AI consumption.
+
+### Technical Reports & Documentation
+
+**Baseline Analysis**
+- [📊 Baseline Metrics Summary](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md) - Comprehensive baseline metrics establishing performance benchmarks
+
+**Incident Resolution**
+- [🚨 Data Loss Incident Report](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md) - Critical data loss incident analysis and resolution strategy
+
+**Comparative Analysis**
+- [⚖️ Background Normalization Comparison](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1458_report_background-normalization-comparison.md) - Background normalization strategy comparison with quantitative results
+
+### Visual Results & Demos
+
+<div align="center">
+
+| Mask image | Fitted corners image | Corrected image |
+|:---:|:---:|:---:|
+| ![Mask Image](docs/assets/images/demo/mask-fitting-visualization.png) | ![Fitted Corners](docs/assets/images/demo/original-with-fitted-corners.png) | ![Corrected Image](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg) |
+| Innovative use of rembg output as input for robust edge detection, eliminating brittle traditional methods and achieving zero-failure perspective correction | Corner detection and fitting for precise geometric transformation | Final perspective-corrected output with normalized geometry |
+
+</div>
+
+### Key Benefits
+
+- **🤖 AI-Optimized**: Documentation structure designed for efficient AI consumption
+- **⚡ Standardized protocols**: Reduces manual prompting and produces high quality results
+- **🔧 Traceability**: Easier to reproduce the exact steps taken to produce the results
+- **📈 Scalable Organization**: Isolates experiment specific artifacts to reduce clutter and context chaos
+
+---
+## 🎯 Low Prediction Resolution
+
+<div align="center">
+
+| Before: Persistent Low Predictions | After: Successful Detection |
+|:---:|:---:|
+| ![Before](docs/assets/images/demo/inference-persistent-empties-before.png) | ![After](docs/assets/images/demo/inference-persistent-empties-after.png) |
+| Perspective Correction + Normalization = Although this enhancement combination greatly improved detection results, it contains empty patches and is unacceptable. | Perspective Correction + Experimental color filter produces excellent detection results. |
+
+</div>
+
+---
+## �📊 Project Progress
 
 <div align="center">
 
 | Phase | Status | Progress |
 |-------|--------|----------|
-| **Phase 1-3: Core Features** | ✅ Complete | 100% |
-| **Phase 4: Testing & QA** | 🟡 In Progress | 40% |
-| **Phase 5: Next.js Migration** | 🟡 In Progress | 75% |
-| **Phase 6-7: Future Work** | ⚪ Planned | 0% |
+| **Phase 1-4: Core Development** | ✅ Complete | 100% |
+| **Phase 5: Pre-Upgrade Preparation** | 🟡 In Progress | 80% |
+| **Phase 6: Architectural Upgrades** | ⚪ Planned | 0% |
 
-**Overall: 55% Complete**
+**Overall: 80% Complete**
 
 </div>
 
-### Recent Highlights
-
-- ✅ Config architecture consolidation (43% cognitive load reduction)
-- ✅ Client-side background removal with ONNX.js
-- ✅ FastAPI backend with real inference API
-- ✅ Next.js console with Chakra UI
-
-**Current Focus:** E2E testing, Next.js API routes, analytics integration
+**Current Focus:** Final safety checks, system validation, and preparation for major architectural enhancements.
 
 📋 **Detailed roadmap:** [docs/roadmap.md](docs/roadmap.md)
 
@@ -118,34 +111,27 @@ python run_ui.py inference
 
 ## 📚 Documentation
 
-**Getting Started**
-- [Installation Guide](docs/guides/installation.md)
-- [Training Guide](docs/guides/training.md)
-- [Configuration Guide](docs/architecture/CONFIG_ARCHITECTURE.md)
-
-**Development**
+**AI-Facing Resources**
 - [Architecture Overview](docs/architecture/architecture.md)
-- [Contributing Guidelines](CONTRIBUTING.md)
 - [AgentQMS Workflows](AgentQMS/knowledge/agent/system.md)
 
 **Reference**
 - [API Documentation](docs/api-reference.md)
 - [Changelog](CHANGELOG.md)
-- [Troubleshooting](docs/guides/troubleshooting.md)
 
 ---
 
 ## 🏗️ Project Structure
 
 ```
+├── AgentQMS/          # AI documentation and quality management
 ├── apps/              # Frontend & backend applications
 ├── configs/           # Hydra configuration (89 YAML files)
-├── docs/              # Documentation & artifacts
+├── docs/              # AI-optimized documentation & artifacts
 ├── ocr/               # Core OCR Python package
 ├── runners/           # Training/testing/prediction scripts
 ├── scripts/           # Utility scripts
 ├── tests/             # Unit & integration tests
-└── ui/                # Streamlit UI applications
 ```
 
 📖 **Detailed structure:** [docs/architecture/project-structure.md](docs/architecture/project-structure.md)
@@ -156,12 +142,6 @@ python run_ui.py inference
 
 Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
-**Quick checklist:**
-- Fork & create feature branch
-- Add tests for new features
-- Update documentation
-- Submit pull request
-
 ---
 
 ## 📄 License
@@ -170,19 +150,10 @@ MIT License - see [LICENSE](LICENSE) for details.
 
 ---
 
-## 🙏 Acknowledgments
-
-- [DBNet](https://github.com/MhLiao/DB) - Text detection architecture
-- [CLEval](https://github.com/clovaai/CLEval) - Evaluation metrics
-- [PyTorch Lightning](https://lightning.ai) - Training framework
-- [Hydra](https://hydra.cc) - Configuration management
-
----
-
 <div align="center">
 
-**Built with ❤️ for OCR research and development**
+<!-- **Built with ❤️ for OCR research and development** -->
 
-[⬆ Back to Top](#ocr-text-detection--recognition-system)
+[⬆ Back to Top](#ocr-text-recognition--layout-analysis-system)
 
 </div>

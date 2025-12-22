@@ -1,49 +1,60 @@
-import tempfile
-from pathlib import Path
-
-import numpy as np
 import pytest
-import torch
+# Heavy imports (torch, numpy) moved into fixtures to speed up collection
+
+
 
 
 @pytest.fixture
 def temp_path():
     """Create a temporary path for testing."""
+    import tempfile
+    from pathlib import Path
     with tempfile.TemporaryDirectory() as tmpdir:
         yield Path(tmpdir)
+
 
 
 @pytest.fixture
 def sample_image_tensor():
     """Create a sample image tensor for testing."""
+    import torch
     return torch.randn(1, 3, 224, 224)
+
 
 
 @pytest.fixture
 def sample_batch_images():
     """Create a batch of sample images."""
+    import torch
     return torch.randn(4, 3, 224, 224)
+
 
 
 @pytest.fixture
 def sample_prediction_maps():
     """Create sample prediction maps."""
+    import torch
     return torch.sigmoid(torch.randn(4, 1, 224, 224))
+
 
 
 @pytest.fixture
 def sample_target_maps():
     """Create sample target maps."""
+    import torch
     return torch.randint(0, 2, (4, 1, 224, 224)).float()
+
 
 
 @pytest.fixture
 def sample_polygons():
     """Create sample polygon data."""
+    import numpy as np
     return [
         np.array([[10, 10], [50, 10], [50, 30], [10, 30]], dtype=np.float32),
         np.array([[60, 10], [100, 10], [100, 30], [60, 30]], dtype=np.float32),
     ]
+
 
 
 @pytest.fixture
@@ -63,31 +74,33 @@ def mock_config():
     return config
 
 
-# Enhanced fixtures for comprehensive testing
 @pytest.fixture(scope="session")
 def test_data_dir():
     """Root directory for test data."""
+    from pathlib import Path
     return Path(__file__).parent / "fixtures"
+
 
 
 @pytest.fixture
 def sample_image():
     """Sample image tensor for testing (enhanced version)."""
+    import torch
     return torch.randn(3, 512, 512)
+
 
 
 @pytest.fixture
 def sample_config():
     """Sample configuration for testing."""
+    from pathlib import Path
+    from omegaconf import OmegaConf
+
     config_path = Path(__file__).parent / "fixtures" / "sample_config.yaml"
     if config_path.exists():
-        from omegaconf import OmegaConf
-
         return OmegaConf.load(config_path)
     else:
         # Return comprehensive config if fixture file doesn't exist
-        from omegaconf import OmegaConf
-
         return OmegaConf.create(
             {
                 "model": {
@@ -102,9 +115,11 @@ def sample_config():
         )
 
 
+
 @pytest.fixture
 def mock_dataset():
     """Mock dataset for testing."""
+    import torch
 
     class MockDataset(torch.utils.data.Dataset):
         def __init__(self, size=10):
@@ -123,9 +138,11 @@ def mock_dataset():
     return MockDataset()
 
 
+
 @pytest.fixture
 def sample_batch():
     """Sample batch for testing."""
+    import torch
     return {
         "images": torch.randn(2, 3, 256, 256),
         "polygons": [
@@ -136,39 +153,51 @@ def sample_batch():
     }
 
 
+
 @pytest.fixture
 def sample_predictions():
     """Sample model predictions for testing."""
+    import torch
     return {
         "prob_maps": torch.sigmoid(torch.randn(2, 1, 256, 256)),
         "threshold_maps": torch.sigmoid(torch.randn(2, 1, 256, 256)),
     }
 
 
+
 @pytest.fixture
 def sample_targets():
     """Sample ground truth targets for testing."""
+    import torch
     return torch.randint(0, 2, (2, 1, 256, 256)).float()
+
 
 
 @pytest.fixture(autouse=True)
 def set_random_seed():
     """Set random seed for reproducible tests."""
+    import numpy as np
+    import torch
     torch.manual_seed(42)
     np.random.seed(42)
+
 
 
 # GPU fixtures (only if CUDA is available)
 @pytest.fixture
 def gpu_available():
     """Check if GPU is available."""
+    import torch
     return torch.cuda.is_available()
+
 
 
 @pytest.fixture
 def device(gpu_available):
     """Get appropriate device for testing."""
+    import torch
     return torch.device("cuda" if gpu_available else "cpu")
+
 
 
 # Configuration fixtures for different architectures
@@ -208,10 +237,10 @@ def east_config():
     )
 
 
-# Mock components for testing
 @pytest.fixture
 def mock_encoder():
     """Mock encoder for testing."""
+    import torch
 
     class MockEncoder(torch.nn.Module):
         def __init__(self):
@@ -231,9 +260,11 @@ def mock_encoder():
     return MockEncoder()
 
 
+
 @pytest.fixture
 def mock_decoder():
     """Mock decoder for testing."""
+    import torch
 
     class MockDecoder(torch.nn.Module):
         def __init__(self):
@@ -245,9 +276,11 @@ def mock_decoder():
     return MockDecoder()
 
 
+
 @pytest.fixture
 def mock_head():
     """Mock head for testing."""
+    import torch
 
     class MockHead(torch.nn.Module):
         def __init__(self):
@@ -262,9 +295,11 @@ def mock_head():
     return MockHead()
 
 
+
 @pytest.fixture
 def mock_loss():
     """Mock loss for testing."""
+    import torch
 
     class MockLoss(torch.nn.Module):
         def __init__(self):
@@ -277,3 +312,4 @@ def mock_loss():
             return {"total": torch.tensor(0.5)}
 
     return MockLoss()
+

@@ -1,5 +1,5 @@
 {
-  "image": "data/datasets/images/test/drp.en_ko.in_house.selectstar_000732.jpg",
+  "image": "outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_000732.jpg",
   "original_shape": [
     1280,
     1280,
@@ -7,55 +7,74 @@
   ],
   "steps": {
     "1_rembg": {
-      "time_ms": 1668.22,
+      "time_ms": 2612.86,
       "mask_shape": [
         1280,
         1280
       ]
     },
     "2_perspective": {
-      "time_ms": 13.07,
+      "time_ms": 40.95,
       "output_shape": [
-        1107,
-        453,
+        1128,
+        475,
         3
+      ],
+      "algorithm": "dominant_extension",
+      "corners": [
+        [
+          418.0,
+          107.0
+        ],
+        [
+          815.0,
+          104.0
+        ],
+        [
+          802.0,
+          1232.0
+        ],
+        [
+          327.0,
+          1226.0
+        ]
       ]
     },
     "3_background_norm": {
-      "time_ms": 15.82,
+      "time_ms": 17.17,
       "metrics": {
         "method": "gray-world",
-        "processing_time_ms": 15.82,
+        "processing_time_ms": 17.17,
         "original": {
           "mean_bgr": [
-            168.35147731550305,
-            146.1868576022254,
-            146.59304120915928
+            162.69197781646997,
+            143.6126031059287,
+            145.79790358606377
           ],
-          "color_variance": 20.28,
-          "color_tint_score": 22.16
+          "color_variance": 24.16,
+          "color_tint_score": 19.08
         },
         "normalized": {
           "mean_bgr": [
-            153.4906806068323,
-            153.175411262613,
-            152.9148681592199
+            149.86242844620153,
+            150.2835207116257,
+            150.50561546562182
           ],
-          "color_variance": 20.1,
-          "color_tint_score": 0.58
+          "color_variance": 23.83,
+          "color_tint_score": 0.64
         },
         "improvements": {
-          "variance_reduction": 0.18,
-          "tint_reduction": 21.58,
-          "variance_reduction_pct": 0.9,
-          "tint_reduction_pct": 97.4
+          "variance_reduction": 0.33,
+          "tint_reduction": 18.44,
+          "variance_reduction_pct": 1.4,
+          "tint_reduction_pct": 96.6
         }
       }
     },
     "4_deskew": {
-      "time_ms": 14.19,
-      "angle_degrees": 2.65
+      "time_ms": 16.48,
+      "angle_degrees": 0.88
     }
   },
-  "total_time_ms": 1711.3
+  "total_time_ms": 2687.46
 }

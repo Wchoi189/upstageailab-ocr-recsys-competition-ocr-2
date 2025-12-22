@@ -8,6 +8,13 @@ echo ""
 
 FILE="ui/apps/inference/components/results.py"
 
+# Check if file exists
+if [ ! -f "$FILE" ]; then
+    echo "   ⚠️  SKIP: $FILE does not exist (ui/ directory removed)"
+    echo "   The pandas import fix verification is skipped."
+    exit 0
+fi
+
 # Check if pandas is imported at global scope
 echo "1. Checking for pandas import at global scope..."
 if grep -q "^import pandas as pd" "$FILE"; then

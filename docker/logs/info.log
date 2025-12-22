@@ -2343,3 +2343,31 @@ Caused by: java.io.IOException: Unable to read image from file: Part 3. RAG with
 2025-12-22 14:39:19,008 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
 2025-12-22 14:39:19,009 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
 2025-12-22 14:39:19,009 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 15:09:18,931 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 15:09:18,932 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 15:09:18,932 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 15:10:21,337 WARN s.s.p.s.s.JwtService [qtp1501688518-651] The token has expired: JWT expired 47337 milliseconds ago at 2025-12-22T15:09:34.000Z. Current time: 2025-12-22T15:10:21.337Z. Allowed clock skew: 0 milliseconds.
+2025-12-22 15:39:18,850 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 15:39:18,851 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 15:39:18,852 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 16:09:18,762 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 16:09:18,763 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 16:09:18,764 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 16:39:18,680 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 16:39:18,681 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 16:39:18,682 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 17:09:18,603 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 17:09:18,604 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 17:09:18,604 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 17:39:18,528 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 17:39:18,529 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 17:39:18,529 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 18:09:18,447 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 18:09:18,448 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 18:09:18,449 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 18:39:18,359 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 18:39:18,359 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 18:39:18,360 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files
+2025-12-22 19:09:18,289 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Running scheduled temporary file cleanup
+2025-12-22 19:09:18,291 INFO s.s.c.u.TempFileManager [scheduling-1] Cleaned up 0 old temporary files
+2025-12-22 19:09:18,291 INFO s.s.c.s.TempFileCleanupService [scheduling-1] Cleaned up 0 registered temporary files

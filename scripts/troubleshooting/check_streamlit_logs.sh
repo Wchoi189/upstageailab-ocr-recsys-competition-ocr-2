@@ -2,6 +2,7 @@
 # Script to check logs and find freeze point
 #
 # NOTE: The Streamlit freeze issue was resolved in October 2025 (see docs/sessions/2025-10-21/issue-resolved.md).
+# NOTE: ui/ directory has been removed from the project, so logs/ui/ may not exist.
 # This script is kept for future debugging purposes.
 
 echo "=================================="

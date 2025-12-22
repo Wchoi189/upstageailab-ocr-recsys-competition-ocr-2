@@ -6,6 +6,13 @@
 
 set -e
 
+# Check if ui/ directory exists
+if [ ! -d "ui" ]; then
+    echo "   ⚠️  SKIP: ui/ directory does not exist (removed from project)"
+    echo "   This script is obsolete and will exit."
+    exit 0
+fi
+
 echo "=========================================="
 echo "STREAMLIT FREEZE DEBUG - SCENARIO TESTER"
 echo "=========================================="

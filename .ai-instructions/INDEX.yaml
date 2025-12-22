@@ -36,6 +36,8 @@ tier2_framework:
   tools: ".ai-instructions/tier2-framework/tool-catalog.yaml"
   quickstart: ".ai-instructions/tier2-framework/quickstart.yaml"
   debugging: ".ai-instructions/tier2-framework/debugging-sessions.yaml"
+  coding_standards: ".ai-instructions/tier2-framework/coding-standards.yaml"
+  git_conventions: ".ai-instructions/tier2-framework/git-conventions.yaml"
 
 tier3_agents:
   claude: ".ai-instructions/tier3-agents/claude/config.yaml"

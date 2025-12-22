@@ -2,7 +2,7 @@
 ads_version: "1.0"
 type: "incident_report"
 experiment_id: "20251217_024343_image_enhancements_implementation"
-status: "active"
+status: "resolved"
 severity: "high"
 created: "2025-12-20T01:30:00Z"
 updated: "2025-12-20T01:30:00Z"
@@ -14,7 +14,7 @@ priority: "high"
 
 **Date**: 2025-12-20
 **Severity**: HIGH
-**Status**: Active - Requires Fix
+**Status**: Resolved - Fixed
 **Impact**: Production inference pipeline losing document content
 
 ---
@@ -293,5 +293,5 @@ Replace production `fit_mask_rectangle()` with experiment's implementation from 
 
 ---
 
-**Status**: Active
+**Status**: resolved
 **Next Review**: 2025-12-21 (escalate if no action by this date)

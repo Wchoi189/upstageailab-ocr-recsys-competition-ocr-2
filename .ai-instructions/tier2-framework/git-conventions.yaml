@@ -1,0 +1,100 @@
+---
+ads_version: "1.0"
+type: rule_set
+agent: all
+tier: 2
+priority: high
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 100
+date: "2025-12-23"
+status: active
+depends_on: []
+
+# Tier 2 - Coding Standards: Git Conventions
+
+commit_message_format:
+  style: "conventional commits"
+  pattern: "<type>(<scope>): <description>"
+
+  types:
+    feat: "New feature"
+    fix: "Bug fix"
+    docs: "Documentation only"
+    style: "Formatting, no logic change"
+    refactor: "Code restructure, no behavior change"
+    perf: "Performance improvement"
+    test: "Adding/fixing tests"
+    chore: "Build, CI, dependencies"
+
+  scopes:
+    - ocr
+    - datasets
+    - models
+    - ui
+    - api
+    - ci
+    - docs
+
+  rules:
+    - "Subject line max 72 characters"
+    - "Use imperative mood: 'add' not 'added'"
+    - "No period at end of subject"
+    - "Body wraps at 72 characters"
+
+  examples:
+    valid:
+      - "feat(ocr): add perspective correction pipeline"
+      - "fix(datasets): handle empty polygon annotations"
+      - "docs(api): update inference endpoint schema"
+    invalid:
+      - "Fixed bug"
+      - "WIP"
+      - "updates"
+
+branch_naming:
+  pattern: "<type>/<issue-id>-<description>"
+
+  types:
+    feature: "New functionality"
+    fix: "Bug fixes"
+    hotfix: "Urgent production fixes"
+    docs: "Documentation"
+    refactor: "Code restructuring"
+    experiment: "Experimental work"
+
+  examples:
+    valid:
+      - "feature/123-add-perspective-correction"
+      - "fix/456-handle-empty-polygons"
+      - "experiment/sepia-enhancement"
+    invalid:
+      - "my-branch"
+      - "test"
+      - "wip"
+
+  protected_branches:
+    - main
+    - develop
+
+pull_request_rules:
+  template: ".github/PULL_REQUEST_TEMPLATE.md"
+
+  required_sections:
+    - "Description"
+    - "Type of change"
+    - "Testing"
+
+  merge_strategy:
+    default: "squash"
+    feature_branches: "squash"
+    hotfix: "merge"
+
+  review_requirements:
+    min_approvals: 1
+    auto_merge: false
+
+  ci_checks:
+    - "Tests pass"
+    - "Linting passes"
+    - "Type checking passes"

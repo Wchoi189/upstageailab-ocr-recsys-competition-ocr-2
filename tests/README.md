@@ -21,7 +21,6 @@ tests/
 ├── performance/            # Performance regression tests
 ├── regression/             # Bug fix validation tests
 ├── debug/                  # Debugging utilities and data analysis
-├── ui/                     # UI component tests
 ├── ocr/                    # OCR-specific test organization
 │   ├── callbacks/          # Lightning callback tests
 │   ├── datasets/           # Dataset implementation tests
@@ -124,14 +123,6 @@ tests/
 - `generate_offline_samples.py` - Test data generation
 
 **Usage:** Not part of CI pipeline, used for development debugging.
-
-### 🎨 UI Tests (`tests/ui/`)
-
-**Purpose:** Test Streamlit UI components and visualization.
-
-**Key Test Files:**
-- `test_visualization_helpers.py` - UI helper functions
-- `test_visualize_annotations.py` - Annotation visualization
 
 ## Test Configuration
 

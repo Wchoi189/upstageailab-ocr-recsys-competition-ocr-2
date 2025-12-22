@@ -31,7 +31,7 @@ This setup provides comprehensive indexing for the OCR project with appropriate 
 
 The indexing configuration includes:
 
-- **Source Code**: Python files (`*.py`), with specific inclusion of key directories like `ocr/`, `ui/`, `runners/`, etc.
+- **Source Code**: Python files (`*.py`), with specific inclusion of key directories like `ocr/`, `runners/`, etc.
 - **Configuration**: YAML, TOML, JSON files including the entire `configs/` directory
 - **Documentation**: Markdown files and the entire `docs/` directory
 - **Scripts**: Shell scripts, Python scripts in the `scripts/` directory

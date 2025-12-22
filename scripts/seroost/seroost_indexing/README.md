@@ -16,7 +16,6 @@ The configuration includes:
 - **Documentation**: Markdown files, documentation files in the docs/ directory
 - **Configuration**: YAML, TOML, JSON, configuration files in the configs/ directory
 - **Tests**: Test files in the tests/ directory
-- **UI Components**: Files in the ui/ directory
 - **Scripts**: Shell and Python scripts in the scripts/ directory
 
 ## Excluded File Types
