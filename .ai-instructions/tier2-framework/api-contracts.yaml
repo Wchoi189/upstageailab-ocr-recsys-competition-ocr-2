@@ -1,0 +1,64 @@
+---
+ads_version: "1.0"
+type: quick_reference
+agent: all
+tier: 2
+priority: high
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 200
+date: "2025-12-22"
+status: active
+
+# API Contract: OCR Inference Console Backend
+
+service:
+  name: "OCR Inference Console Backend"
+  port: 8002
+  protocol: "HTTP/REST"
+  base_url: "http://localhost:8002"
+
+endpoints:
+  health:
+    path: "/api/health"
+    method: "GET"
+    description: "Service health check"
+    response:
+      status: "ok"
+      checkpoint_root: "string"
+      engine_loaded: "boolean"
+
+  list_checkpoints:
+    path: "/api/inference/checkpoints"
+    method: "GET"
+    description: "List available OCR checkpoints"
+    params:
+      limit: "int (default: 100)"
+    response: "List[Checkpoint]"
+
+  run_inference:
+    path: "/api/inference/preview"
+    method: "POST"
+    description: "Run OCR inference on an image"
+    request: "InferenceRequest"
+    response: "InferenceResponse"
+
+models:
+  InferenceRequest:
+    fields:
+      image_base64: "string (required)"
+      checkpoint_path: "string (optional)"
+      confidence_threshold: "float"
+      nms_threshold: "float"
+      enable_perspective_correction: "boolean"
+      enable_grayscale: "boolean"
+      enable_background_normalization: "boolean"
+      enable_sepia_enhancement: "boolean"
+      enable_clahe: "boolean"
+
+  InferenceResponse:
+    fields:
+      status: "string"
+      regions: "List[TextRegion]"
+      meta: "InferenceMetadata"
+      preview_image_base64: "string"

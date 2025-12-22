@@ -25,6 +25,10 @@ applications:
     location: "apps/ocr-inference-console/"
     status: active
     type: vite_react
+  agentqms_dashboard:
+    location: "apps/agentqms-dashboard/"
+    status: active
+    type: containerized
   backend_api:
     location: "apps/ocr-inference-console/backend/"
     port: 8002
