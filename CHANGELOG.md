@@ -8,6 +8,8 @@
 
 ## [Unreleased]
 
+- **[2025-12-22 12:00] Removed Stale Test Files**: Cleaned up 41 stale test files that became obsolete due to major architectural changes. Removed deprecated archive tests (6), experiment-specific tests (19), debug scripts (3), and archived unit/integration tests (13) importing non-existent modules. **41 files removed**, pytest collection errors reduced from 24 to 6.
+
 - **[2025-12-21 03:30] OCR Console Backend/Frontend Refactoring COMPLETE**: Modularized OCR inference console through service extraction and context migration. **150 LOC reduced, 41 props eliminated**. Implementation deliverables (100% complete):
   - **Backend Services**: Created CheckpointService (TTL caching), InferenceService (engine lifecycle), PreprocessingService (image decode). Extracted from 400-line main.py to focused modules (~100 lines each)
   - **Error Handling**: Structured exception hierarchy (OCRBackendError base, 5 specialized types), ErrorResponse Pydantic model, exception handler mapping HTTP status codes

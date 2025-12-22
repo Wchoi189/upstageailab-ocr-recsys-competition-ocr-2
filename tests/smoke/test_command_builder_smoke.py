@@ -5,8 +5,8 @@ These tests provide a quick verification that the core functionality works
 without running the full test suite. Useful for pre-deployment checks.
 """
 
-from ui.utils.command import CommandBuilder, CommandExecutor, CommandValidator
-from ui.utils.command.models import PredictCommandParams, TestCommandParams, TrainCommandParams
+from ocr.utils.command import CommandBuilder, CommandExecutor, CommandValidator
+from ocr.utils.command.models import PredictCommandParams, TestCommandParams, TrainCommandParams
 
 
 def command_builder_health_check():
@@ -91,7 +91,7 @@ class TestCommandBuilderSmokeTests:
 
     def test_quoting_functionality_smoke(self):
         """Test that quoting functionality works."""
-        from ui.utils.command.quoting import quote_override
+        from ocr.utils.command.quoting import quote_override
 
         # Test basic quoting
         result = quote_override("exp_name=test")
@@ -106,9 +106,9 @@ class TestCommandBuilderSmokeTests:
     def test_module_imports_smoke(self):
         """Test that all modules can be imported without errors."""
         # This is already implicitly tested by importing above, but let's be explicit
-        from ui.utils.command import CommandBuilder, CommandExecutor, CommandValidator
-        from ui.utils.command.models import TrainCommandParams
-        from ui.utils.command.quoting import quote_override
+        from ocr.utils.command import CommandBuilder, CommandExecutor, CommandValidator
+        from ocr.utils.command.models import TrainCommandParams
+        from ocr.utils.command.quoting import quote_override
 
         # Verify classes exist
         assert CommandBuilder is not None

@@ -1,12 +1,9 @@
-# This workflow unifies linting, formatting, testing, and auto-fixing into a single job.
-# It runs on pushes and pull requests to ensure consistent code quality.
-name: CI & Auto-format
-
+name: "CI & Auto-format"
 on:
   push:
     branches:
-        - '*'
-    paths: &ci_paths
+      - '*'
+    paths:
       - 'ocr/**'
       - 'runners/**'
       - 'ui/**'
@@ -22,35 +19,43 @@ on:
       - 'Makefile'
   pull_request:
     branches:
-        - '*'
-    paths: *ci_paths
+      - '*'
+    paths:
+      - 'ocr/**'
+      - 'runners/**'
+      - 'ui/**'
+      - 'tests/**'
+      - 'docs/**'
+      - 'scripts/**'
+      - 'agent_qms/**'
+      - 'pyproject.toml'
+      - 'setup.cfg'
+      - 'pytest.ini'
+      - 'mkdocs.yml'
+      - '.github/workflows/ci.yml'
+      - 'Makefile'
 
-# Grant permissions for the workflow to write commit statuses and push code.
 permissions:
   contents: write
+  issues: write
 
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
     steps:
-      # Step 1: Check out the repository code
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          # On pull requests, check out the head of the PR branch
           ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
 
-      # Step 2: Set up the Python environment
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      # Step 3: Install and configure uv, the package manager
       - name: Install uv
         uses: astral-sh/setup-uv@v1
 
-      # Step 4: Cache dependencies to speed up subsequent runs
       - name: Cache uv dependencies
         uses: actions/cache@v4
         with:
@@ -59,15 +64,12 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-uv-
 
-      # Step 5: Install project dependencies
       - name: Install dependencies
         run: uv sync
 
-      # Step 5.5: Ensure ruff is installed
       - name: Install ruff
         run: uv run pip install ruff
 
-      # Step 6: Run Ruff to automatically fix linting and formatting issues
       - name: Auto-fix with Ruff
         id: ruff_fix
         run: |
@@ -75,7 +77,6 @@ jobs:
           uv run ruff check . --fix --unsafe-fixes
           uv run ruff format .
 
-          # Check if any files were changed by the auto-fix process
           if git diff --quiet; then
             echo "No linting changes were applied."
             echo "changes=false" >> $GITHUB_OUTPUT
@@ -84,9 +85,6 @@ jobs:
             echo "changes=true" >> $GITHUB_OUTPUT
           fi
 
-      # Step 7: Verify that all issues are resolved after auto-fixing.
-      # If this step fails, it means there are errors that Ruff cannot fix automatically,
-      # and they require manual intervention.
       - name: Verify code quality after auto-fix
         run: |
           echo "Verifying all linting issues are resolved..."
@@ -95,7 +93,6 @@ jobs:
           uv run ruff format . --check
           echo "✅ All quality checks passed."
 
-      # Step 8: Commit the automated fixes back to the pull request branch
       - name: Commit and Push Fixes
         if: ${{ steps.ruff_fix.outputs.changes == 'true' && github.event_name == 'pull_request' }}
         run: |
@@ -103,13 +100,32 @@ jobs:
           git config --global user.email 'github-actions[bot]@users.noreply.github.com'
           git add .
           git commit -m "🤖 [CI] Auto-fix code style with Ruff"
-          # Push the changes to the head branch of the pull request
           git push origin ${{ github.head_ref }}
 
-      # # Step 9: Run Mypy for static type checking
-      # - name: Run Mypy Static Type Checking
-      #   run: uv run mypy .
+      - name: Run Mypy Static Type Checking
+        run: uv run mypy .
 
-      # # Step 10: Run the test suite with pytest
-      # - name: Run tests with pytest
-      #   run: uv run pytest tests/ -v
+      - name: Run tests with pytest
+        run: uv run pytest tests/ -v -m "not slow"
+
+      - name: Report Failure to Cloud Workers
+        if: failure() && github.event_name == 'push'
+        run: |
+          gh issue create \
+            --title "🔴 CI Failure: Code Quality Checks Failed" \
+            --body "## CI Failure Report
+
+          The CI job [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) failed on branch \`${{ github.ref_name }}\`.
+
+          Ruff auto-fix was unable to resolve all issues automatically. This requires manual intervention from a Cloud Worker.
+
+          **Failure Details:**
+          - **Commit:** ${{ github.sha }}
+          - **Author:** ${{ github.actor }}
+          - **Run Link:** [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
+
+          ---
+          *This issue was generated automatically by the CI pipeline.*" \
+            --label "bug,cloud-worker,help-wanted"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

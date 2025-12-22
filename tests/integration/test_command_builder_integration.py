@@ -2,8 +2,8 @@
 Integration tests for Command Builder UI components to ensure they work with the refactored modules.
 """
 
-from ui.utils.command import CommandBuilder, CommandExecutor, CommandValidator
-from ui.utils.command.models import PredictCommandParams, TestCommandParams, TrainCommandParams
+from ocr.utils.command import CommandBuilder, CommandExecutor, CommandValidator
+from ocr.utils.command.models import PredictCommandParams, TestCommandParams, TrainCommandParams
 
 
 class TestCommandGenerationIntegration:

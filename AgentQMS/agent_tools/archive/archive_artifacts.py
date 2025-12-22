@@ -2,7 +2,7 @@
 """
 Archive Artifacts Script
 
-Moves artifacts marked with status="archived" from docs/artifacts/ to docs/archive/artifacts/
+Moves artifacts marked with status="archived" from docs/artifacts/ to archive/artifacts/
 while preserving the directory structure.
 
 Usage:
@@ -19,7 +19,7 @@ import yaml
 # Project root
 PROJECT_ROOT = Path(__file__).parent.parent.parent.parent
 ARTIFACTS_DIR = PROJECT_ROOT / "docs" / "artifacts"
-ARCHIVE_DIR = PROJECT_ROOT / "docs" / "archive" / "artifacts"
+ARCHIVE_DIR = PROJECT_ROOT / "archive" / "artifacts"
 
 
 def extract_frontmatter(file_path: Path) -> dict | None:

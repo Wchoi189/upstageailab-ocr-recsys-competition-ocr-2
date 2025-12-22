@@ -223,7 +223,7 @@ archive-artifacts-dry: ## Preview artifacts marked for archival (status='archive
 	@echo ""
 	@echo "💡 To move files to archive, run: make archive-artifacts"
 
-archive-artifacts: ## Move archived artifacts to docs/archive/artifacts/
+archive-artifacts: ## Move archived artifacts to archive/artifacts/
 	uv run python ../agent_tools/archive/archive_artifacts.py
 
 audit-vlm-migrate: ## Migrate VLM reports from BUG prefix to vlm_report_ prefix

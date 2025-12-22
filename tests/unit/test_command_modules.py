@@ -2,11 +2,11 @@
 Unit tests for the command modules to ensure each component works correctly in isolation.
 """
 
-from ui.utils.command.builder import CommandBuilder
-from ui.utils.command.executor import CommandExecutor
-from ui.utils.command.models import PredictCommandParams, TestCommandParams, TrainCommandParams
-from ui.utils.command.quoting import quote_override
-from ui.utils.command.validator import CommandValidator
+from ocr.utils.command.builder import CommandBuilder
+from ocr.utils.command.executor import CommandExecutor
+from ocr.utils.command.models import PredictCommandParams, TestCommandParams, TrainCommandParams
+from ocr.utils.command.quoting import quote_override
+from ocr.utils.command.validator import CommandValidator
 
 
 class TestCommandModels:

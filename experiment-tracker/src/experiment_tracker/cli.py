@@ -127,8 +127,10 @@ Examples:
             stats = tracker.sync_to_database(args.experiment_id, args.all)
             print("\n✅ Sync complete:")
             print(f"   ✓ Synced: {stats['synced']}")
-            if stats["skipped"] > 0: print(f"   ⊘ Skipped: {stats['skipped']}")
-            if stats["failed"] > 0: print(f"   ✗ Failed: {stats['failed']}")
+            if stats["skipped"] > 0:
+                print(f"   ⊘ Skipped: {stats['skipped']}")
+            if stats["failed"] > 0:
+                print(f"   ✗ Failed: {stats['failed']}")
 
         elif args.command == "query":
             results = tracker.query_artifacts(args.query)

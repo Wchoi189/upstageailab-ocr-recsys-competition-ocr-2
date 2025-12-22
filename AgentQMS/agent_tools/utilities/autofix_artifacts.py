@@ -225,7 +225,7 @@ def extract_suggestions_from_violations(violations: list[dict[str, Any]]) -> lis
             #         pass
 
             # Parse directory violations for moves (use new error format)
-            elif "Directory:" in error or "[E004]" in error:
+            if "Directory:" in error or "[E004]" in error:
                 # Try both old and new error formats
                 match = re.search(r"should be in '([^']+)' directory", error)
                 if not match:

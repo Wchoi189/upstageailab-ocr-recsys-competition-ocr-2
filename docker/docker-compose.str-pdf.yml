@@ -1,0 +1,26 @@
+name: str-pdf
+
+services:
+  str-pdf:
+    image: stirlingtools/stirling-pdf:latest
+    container_name: str-pdf
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../:/workspaces:rw
+      - ./data:/usr/share/tessdata:rw
+      - ./config:/configs:rw
+      - ./logs:/logs:rw
+    environment:
+      - DISABLE_ADDITIONAL_FEATURES=false
+      - SECURITY_ENABLELOGIN=true
+      - PUID=1000
+      - PGID=1000
+      - UMASK=022
+      - SYSTEM_DEFAULTLOCALE=en-US
+      - UI_APPNAME=Stirling-PDF
+      - UI_HOMEDESCRIPTION=Local Stirling-PDF instance
+      - UI_APPNAMENAVBAR=Stirling-PDF
+      - SYSTEM_MAXFILESIZE=100
+    restart: unless-stopped
+

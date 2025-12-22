@@ -34,30 +34,38 @@ class TestValidatedPolygonData:
         assert polygon.image_height == 100
 
     def test_valid_polygon_at_boundaries(self):
-        """Test that polygons with coordinates at exact boundaries are valid."""
-        points = np.array([[0.0, 0.0], [99.0, 99.0], [50.0, 50.0]], dtype=np.float32)
+        """Test that polygons with coordinates at exact boundaries are valid (BUG-20251116-001)."""
+        # x=100.0 is now allowed for width=100
+        points = np.array([[0.0, 0.0], [100.0, 100.0], [50.0, 50.0]], dtype=np.float32)
         polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
         assert polygon.points.shape == (3, 2)
+        # Verify clamping: coordinates exactly at width should stay exactly as provided
+        # or be clipped if they were slightly above.
+        assert np.all(polygon.points >= 0.0)
+        assert np.all(polygon.points[:, 0] <= 100.0)
+        assert np.all(polygon.points[:, 1] <= 100.0)
 
     def test_invalid_x_coordinate_exceeds_width(self):
-        """Test that polygons with x-coordinates exceeding image width raise ValidationError."""
+        """Test that polygons with x-coordinates significantly exceeding image width raise ValidationError."""
+        # 150.0 is significantly above 100 + 3.0 tolerance
         points = np.array([[10.0, 20.0], [150.0, 40.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
             ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds x-coordinates" in error_msg
         assert "150" in error_msg or "150.0" in error_msg
-        assert "[0, 100)" in error_msg
+        assert "[-3.0, 103.0]" in error_msg or "[-3, 103]" in error_msg
 
     def test_invalid_y_coordinate_exceeds_height(self):
-        """Test that polygons with y-coordinates exceeding image height raise ValidationError."""
+        """Test that polygons with y-coordinates significantly exceeding image height raise ValidationError."""
+        # 150.0 is significantly above 100 + 3.0 tolerance
         points = np.array([[10.0, 20.0], [30.0, 150.0], [50.0, 60.0]], dtype=np.float32)
         with pytest.raises(ValidationError) as exc_info:
             ValidatedPolygonData(points=points, image_width=100, image_height=100)
         error_msg = str(exc_info.value)
         assert "out-of-bounds y-coordinates" in error_msg
         assert "150" in error_msg or "150.0" in error_msg
-        assert "[0, 100)" in error_msg
+        assert "[-3.0, 103.0]" in error_msg or "[-3, 103]" in error_msg
 
     def test_invalid_negative_x_coordinate(self):
         """Test that polygons with negative x-coordinates raise ValidationError."""
@@ -88,21 +96,31 @@ class TestValidatedPolygonData:
         assert polygon.confidence == 0.95
         assert polygon.label == "text"
 
-    def test_coordinate_at_exact_width_boundary_is_invalid(self):
-        """Test that coordinates at exactly image_width are invalid (exclusive upper bound)."""
+    def test_coordinate_at_exact_width_boundary_is_valid(self):
+        """Test that coordinates at exactly image_width are now valid (BUG-20251116-001)."""
         points = np.array([[10.0, 20.0], [100.0, 40.0], [50.0, 60.0]], dtype=np.float32)
-        with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(points=points, image_width=100, image_height=100)
-        error_msg = str(exc_info.value)
-        assert "out-of-bounds x-coordinates" in error_msg
+        # Should not raise ValidationError
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
+        assert polygon.points[1, 0] <= 100.0
 
-    def test_coordinate_at_exact_height_boundary_is_invalid(self):
-        """Test that coordinates at exactly image_height are invalid (exclusive upper bound)."""
+    def test_coordinate_at_exact_height_boundary_is_valid(self):
+        """Test that coordinates at exactly image_height are now valid (BUG-20251116-001)."""
         points = np.array([[10.0, 20.0], [30.0, 100.0], [50.0, 60.0]], dtype=np.float32)
-        with pytest.raises(ValidationError) as exc_info:
-            ValidatedPolygonData(points=points, image_width=100, image_height=100)
-        error_msg = str(exc_info.value)
-        assert "out-of-bounds y-coordinates" in error_msg
+        # Should not raise ValidationError
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
+        assert polygon.points[1, 1] <= 100.0
+
+    def test_clamping_within_tolerance(self):
+        """Test that coordinates within tolerance are clamped to valid range."""
+        # 102.5 is within 100 + 3.0 tolerance
+        points = np.array([[0.0, 0.0], [102.5, 40.0], [50.0, 50.0]], dtype=np.float32)
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
+        assert polygon.points[1, 0] == 100.0  # Clamped
+
+        # -2.5 is within -3.0 tolerance
+        points = np.array([[-2.5, 0.0], [50.0, 40.0], [50.0, 50.0]], dtype=np.float32)
+        polygon = ValidatedPolygonData(points=points, image_width=100, image_height=100)
+        assert polygon.points[0, 0] == 0.0  # Clamped
 
     def test_error_message_indicates_which_coordinates_are_invalid(self):
         """Test that error messages clearly indicate which coordinates are out of bounds."""

@@ -1,0 +1,1 @@
+# Technical Archive\n\n> **Note**: The full technical archive has been moved to the repository root to improve documentation performance.\n\nYou can browse the [Archive](../../archive/) directly on GitHub.\n\n## Contents\n\n- **User Docs**: Legacy user documentation.\n- **Legacy Code**: Archived source code and experiments.\n

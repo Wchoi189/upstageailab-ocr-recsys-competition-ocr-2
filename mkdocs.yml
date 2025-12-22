@@ -1,13 +1,13 @@
-site_name: "OCR Receipt Text Detection"
+site_name: "OCR Receipt Text Detection - Continuation"
 site_description: "AI Competition: Receipt Text Detection with DBNet baseline"
-site_author: "Upstage AI Labs Team 2"
-site_url: "https://aibootcamp13.github.io/upstageailab-ocr-recsys-competition-ocr-2/"
+site_author: "Wchoi189"
+site_url: "https://wchoi189.github.io/upstageailab-ocr-recsys-competition-ocr-2/"
 
-repo_name: "AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2"
-repo_url: "https://github.com/AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2"
-edit_uri: "edit/010_refactor/system_performance/docs/"
+repo_name: "Wchoi189/upstageailab-ocr-recsys-competition-ocr-2"
+repo_url: "https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2"
+edit_uri: "edit/main/docs/"
 
-copyright: "© 2025 Upstage AI Labs Team 2. All rights reserved."
+copyright: "© 2025 Woong Choi. All rights reserved."
 
 # Theme configuration
 theme:
@@ -74,12 +74,14 @@ plugins:
   - search
   - minify:
       minify_html: true
-  - git-revision-date-localized:
-      enable_creation_date: true
-      type: timeago
-  - git-committers:
-      repository: AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2
-      branch: main
+#  - git-revision-date-localized:
+#      enable_creation_date: true
+#      type: timeago
+#      exclude:
+#        - archive/**
+#  - git-committers:
+#      repository: Wchoi189/upstageailab-ocr-recsys-competition-ocr-2
+#      branch: main
 
 # Extensions
 markdown_extensions:
@@ -112,7 +114,7 @@ markdown_extensions:
   - pymdownx.magiclink:
       normalize_issue_symbols: true
       repo_url_shorthand: true
-      user: AIBootcamp13
+      user: Wchoi189
       repo: upstageailab-ocr-recsys-competition-ocr-2
   - pymdownx.mark
   - pymdownx.smartsymbols
@@ -136,41 +138,21 @@ markdown_extensions:
 # Navigation structure
 nav:
   - Home: index.md
-  - Documentation Guide: README.md
-  - Project:
-    - project/project-overview.md
-    - project/architecture.md
-    - project/requirements.md
-  - Setup:
-    - setup/SETUP.md
-    - setup/setup-uv-env.sh
-    - setup/BASH_ALIASES_KO.md
-  - Pipeline:
-    - pipeline/data_contracts.md
-    - pipeline/preprocessing.md
-    - pipeline/model_training.md
-    - pipeline/inference.md
-  - Performance:
-    - performance/BENCHMARK_COMMANDS.md
-    - performance/baseline_2025-10-07.md
-    - performance/baseline_2025-10-08_cache_optimized.md
-    - performance/2025-10-08_convex_hull_debugging.md
-  - Testing:
-    - testing/pipeline_validation.md
-    - testing/unit_tests.md
-    - testing/integration_tests.md
-  - Troubleshooting:
-    - troubleshooting/shape_issues.md
-    - troubleshooting/common_errors.md
-    - troubleshooting/debugging_guide.md
-  - AI Handbook:
-    - ai_handbook/index.md
-    - ai_handbook/post_debugging_session_framework.md
-    - ai_handbook/debugging_artifacts_organization.md
-  - Bug Reports:
-    - bug_reports/template.md
-    - bug_reports/recent_issues.md
-  - Deprecated: _deprecated/
+  - Artifacts:
+    - Assessments: artifacts/assessments/
+    - Audits: artifacts/audits/
+    - Bug Reports: artifacts/bug_reports/
+    - Completed Plans: artifacts/completed_plans/
+    - Design Documents: artifacts/design_documents/
+    - Implementation Plans: artifacts/implementation_plans/
+    - Research: artifacts/research/
+    - VLM Reports: artifacts/vlm_reports/
+  - System Documentation:
+    - Changelog: changelog/
+    - Schemas: schemas/
+    - VLM Raw Reports: vlm_reports/
+  - Archive:
+    - Archive Index: archive/index.md
 
 # Extra CSS and JS
 extra_css:
@@ -187,7 +169,7 @@ extra:
 
   social:
     - icon: fontawesome/brands/github
-      link: https://github.com/AIBootcamp13/upstageailab-ocr-recsys-competition-ocr-2
+      link: https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2
     - icon: fontawesome/brands/python
       link: https://python.org
 
@@ -195,5 +177,15 @@ extra:
 
 # Exclude files
 exclude_docs: |
+  archive/**
   **/_deprecated/**
   **/.*
+  **/*.py
+  **/*.js
+  **/*.pyc
+  **/__pycache__/**
+  **/*.sh
+  **/*.json
+  **/*.yml
+  **/*.yaml
+  !mkdocs.yml

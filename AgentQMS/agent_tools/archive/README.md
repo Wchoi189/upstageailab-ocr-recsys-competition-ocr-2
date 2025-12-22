@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Artifact Archive System allows you to automatically move completed artifacts marked with `status: "archived"` from `docs/artifacts/` to `docs/archive/artifacts/` while preserving the directory structure.
+The Artifact Archive System allows you to automatically move completed artifacts marked with `status: "archived"` from `docs/artifacts/` to `archive/artifacts/` while preserving the directory structure.
 
 ## How It Works
 
@@ -50,10 +50,10 @@ Files are moved while preserving structure:
 
 ```
 docs/artifacts/implementation_plans/2024-12-04_plan.md
-  → docs/archive/artifacts/implementation_plans/2024-12-04_plan.md
+  → archive/artifacts/implementation_plans/2024-12-04_plan.md
 
 docs/artifacts/assessments/2025-01-15_assessment.md
-  → docs/archive/artifacts/assessments/2025-01-15_assessment.md
+  → archive/artifacts/assessments/2025-01-15_assessment.md
 ```
 
 ## Benefits
@@ -66,7 +66,7 @@ docs/artifacts/assessments/2025-01-15_assessment.md
 
 ## Validation
 
-The `docs/archive/` directory is automatically excluded from AgentQMS validation, so archived files won't clutter validation reports.
+The `archive/` directory is automatically excluded from AgentQMS validation, so archived files won't clutter validation reports.
 
 After archiving, run validation to confirm:
 
@@ -78,12 +78,12 @@ make validate
 
 To restore an archived file:
 
-1. Move it back from `docs/archive/artifacts/` to `docs/artifacts/`
+1. Move it back from `archive/artifacts/` to `docs/artifacts/`
 2. Update its status from `"archived"` to `"active"` or `"completed"`
 
 ```bash
 # Example
-mv docs/archive/artifacts/implementation_plans/2024-12-04_plan.md \
+mv archive/artifacts/implementation_plans/2024-12-04_plan.md \
    docs/artifacts/implementation_plans/
 
 # Then edit frontmatter:
@@ -130,7 +130,7 @@ cd AgentQMS/interface && make archive-artifacts-dry
 make archive-artifacts
 
 # 4. Verify
-ls docs/archive/artifacts/implementation_plans/
+ls archive/artifacts/implementation_plans/
 # 2025-12-14_plan.md ✅
 
 # 5. Validate (archived files won't appear)
