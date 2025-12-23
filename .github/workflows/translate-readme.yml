@@ -19,21 +19,17 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
-
-      - name: Install translator dependency
-        run: |
-          python -m pip install --upgrade pip
-          pip install deep-translator
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v5
 
       - name: Translate README
         run: |
-          python scripts/translate_readme.py \
-            --input README.md \
-            --target-lang "${{ github.event.inputs.target_language }}"
+          uv run \
+            --python 3.11 \
+            --with deep-translator \
+            python scripts/translate_readme.py \
+              --input README.md \
+              --target-lang "${{ github.event.inputs.target_language }}"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
