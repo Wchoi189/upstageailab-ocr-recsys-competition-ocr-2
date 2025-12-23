@@ -18,6 +18,9 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.TRANSLATE_README_TOKEN || github.token }}
+          persist-credentials: false
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v5
