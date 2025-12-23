@@ -19,7 +19,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          token: ${{ secrets.TRANSLATE_README_TOKEN || github.token }}
+          token: ${{ secrets.TRANSLATE_README_TOKEN || secrets.GITHUB_TOKEN }}
           persist-credentials: false
 
       - name: Setup uv
@@ -42,7 +42,7 @@ jobs:
         with:
           # If your repo disables PR creation for GITHUB_TOKEN,
           # set a PAT with repo scope as secret TRANSLATE_README_TOKEN.
-          token: ${{ secrets.TRANSLATE_README_TOKEN || github.token }}
+          token: ${{ secrets.TRANSLATE_README_TOKEN || secrets.GITHUB_TOKEN }}
           title: "🌐 Translate README (${{ github.event.inputs.target_language }})"
           body: |
             Automated translation of README.md.
