@@ -18,9 +18,7 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-        with:
-          token: ${{ secrets.TRANSLATE_README_TOKEN || secrets.GITHUB_TOKEN }}
-          persist-credentials: false
+
 
       - name: Setup uv
         uses: astral-sh/setup-uv@v5
@@ -36,6 +34,13 @@ jobs:
             python scripts/translate_readme.py \
               --input README.md \
               --target-lang "${{ github.event.inputs.target_language }}"
+
+      - name: Validate PAT (optional)
+        if: ${{ secrets.TRANSLATE_README_TOKEN != '' }}
+        env:
+          GH_TOKEN: ${{ secrets.TRANSLATE_README_TOKEN }}
+        run: |
+          gh api /user > /dev/null
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
