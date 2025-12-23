@@ -30,7 +30,7 @@ Usage:
 import argparse
 import subprocess
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import datetime
 from pathlib import Path
 
 # Add AgentQMS to path for imports
@@ -69,7 +69,6 @@ def get_excluded_directories() -> list[str]:
 
     # Default exclusions
     return ["archive", "deprecated"]
-
 
 
 def fix_date_format(content: str, file_path: Path) -> str:

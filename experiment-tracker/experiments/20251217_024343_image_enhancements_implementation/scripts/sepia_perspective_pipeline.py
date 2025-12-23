@@ -178,12 +178,7 @@ class SepiaPerspectivePipeline:
         maxHeight = max(int(heightA), int(heightB))
 
         # Destination points for perspective transform
-        dst = np.array([
-            [0, 0],
-            [maxWidth - 1, 0],
-            [maxWidth - 1, maxHeight - 1],
-            [0, maxHeight - 1]
-        ], dtype="float32")
+        dst = np.array([[0, 0], [maxWidth - 1, 0], [maxWidth - 1, maxHeight - 1], [0, maxHeight - 1]], dtype="float32")
 
         # Compute perspective transform matrix
         M = cv2.getPerspectiveTransform(rect.astype("float32"), dst)
@@ -427,7 +422,7 @@ def main():
 
         if args.save_metrics:
             metrics_path = args.output / f"{args.input.stem}_pipeline_metrics.json"
-            with open(metrics_path, 'w') as f:
+            with open(metrics_path, "w") as f:
                 json.dump(metrics, f, indent=2)
             if not args.quiet:
                 print(f"\n✓ Saved metrics: {metrics_path}")
@@ -435,10 +430,7 @@ def main():
     elif args.input.is_dir():
         # Process directory
         image_extensions = {".jpg", ".jpeg", ".png", ".bmp"}
-        image_files = [
-            f for f in args.input.iterdir()
-            if f.suffix.lower() in image_extensions
-        ]
+        image_files = [f for f in args.input.iterdir() if f.suffix.lower() in image_extensions]
 
         if not image_files:
             raise ValueError(f"No images found in {args.input}")
@@ -460,7 +452,7 @@ def main():
 
         if args.save_metrics:
             metrics_path = args.output / "pipeline_metrics_all.json"
-            with open(metrics_path, 'w') as f:
+            with open(metrics_path, "w") as f:
                 json.dump(all_metrics, f, indent=2)
             if not args.quiet:
                 print(f"\n✓ Saved combined metrics: {metrics_path}")

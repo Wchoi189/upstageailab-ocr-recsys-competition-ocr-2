@@ -1,12 +1,11 @@
 import sqlite3
-import re
-import sys
-from datetime import datetime, timedelta, timezone, UTC
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 # Define KST timezone (UTC+9)
 KST = timezone(timedelta(hours=9))
 EDS_VERSION = "1.0"
+
 
 class DatabaseManager:
     """Handles SQLite database operations for experiment tracking."""
@@ -17,7 +16,7 @@ class DatabaseManager:
     def _get_connection(self):
         """Get a database connection."""
         if not self.db_path.exists():
-             self.db_path.parent.mkdir(parents=True, exist_ok=True)
+            self.db_path.parent.mkdir(parents=True, exist_ok=True)
 
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
@@ -70,6 +69,7 @@ class DatabaseManager:
     def create_task(self, experiment_id: str, title: str, description: str = "", priority: str = "medium") -> str:
         """Create new task in database."""
         import uuid
+
         task_id = f"{title.lower().replace(' ', '_')}_{uuid.uuid4().hex[:8]}"
         now = datetime.now(UTC).isoformat()
         conn = self._get_connection()
@@ -129,6 +129,7 @@ class DatabaseManager:
     def record_decision(self, experiment_id: str, decision: str, rationale: str, impact: str = None) -> str:
         """Log decision to database."""
         import uuid
+
         decision_id = f"dec_{uuid.uuid4().hex[:12]}"
         now = datetime.now(UTC)
         conn = self._get_connection()
@@ -149,6 +150,7 @@ class DatabaseManager:
     def record_insight(self, experiment_id: str, insight: str, impact: str, category: str = "observation") -> str:
         """Log insight to database."""
         import uuid
+
         insight_id = f"ins_{uuid.uuid4().hex[:12]}"
         now = datetime.now(UTC)
         conn = self._get_connection()

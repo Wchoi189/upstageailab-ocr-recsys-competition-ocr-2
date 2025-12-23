@@ -1,10 +1,11 @@
 import argparse
 import sys
-from pathlib import Path
+
 from experiment_tracker.core import ExperimentTracker
 
 ETK_VERSION = "1.0.0"
 EDS_VERSION = "1.0"
+
 
 def main():
     parser = argparse.ArgumentParser(
@@ -81,11 +82,15 @@ Examples:
         elif args.command == "create":
             kwargs = {"tags": [t.strip() for t in args.tags.split(",")] if args.tags else []}
             if args.type == "assessment":
-                if args.phase: kwargs["phase"] = args.phase
-                if args.priority: kwargs["priority"] = args.priority
+                if args.phase:
+                    kwargs["phase"] = args.phase
+                if args.priority:
+                    kwargs["priority"] = args.priority
             elif args.type == "report":
-                if args.metrics: kwargs["metrics"] = [m.strip() for m in args.metrics.split(",")]
-                if args.baseline: kwargs["baseline"] = args.baseline
+                if args.metrics:
+                    kwargs["metrics"] = [m.strip() for m in args.metrics.split(",")]
+                if args.baseline:
+                    kwargs["baseline"] = args.baseline
             tracker.create_artifact(artifact_type=args.type, title=args.title, experiment_id=args.experiment, **kwargs)
 
         elif args.command == "status":
@@ -101,7 +106,8 @@ Examples:
         elif args.command == "validate":
             is_valid, output = tracker.validate(args.experiment_id, args.all)
             for line in output:
-                if line.strip(): print(line)
+                if line.strip():
+                    print(line)
             if is_valid:
                 print("\n✅ Validation passed")
                 sys.exit(0)
@@ -119,7 +125,9 @@ Examples:
                 total = exp["total_artifacts"]
                 icon = "📦" if total > 0 else "📭"
                 print(f"{icon} {exp['experiment_id']}")
-                print(f"   Artifacts: {total} (A:{exp['artifacts']['assessments']} R:{exp['artifacts']['reports']} G:{exp['artifacts']['guides']} S:{exp['artifacts']['scripts']})")
+                print(
+                    f"   Artifacts: {total} (A:{exp['artifacts']['assessments']} R:{exp['artifacts']['reports']} G:{exp['artifacts']['guides']} S:{exp['artifacts']['scripts']})"
+                )
                 print()
 
         elif args.command == "sync":
@@ -166,6 +174,7 @@ Examples:
     except Exception as e:
         print(f"❌ ERROR: {str(e)}", file=sys.stderr)
         sys.exit(1)
+
 
 if __name__ == "__main__":
     main()

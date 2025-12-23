@@ -17,6 +17,7 @@ def convert_png_to_webp(root_directory):
                 except Exception as e:
                     print(f"Failed to convert {png_path}: {e}")
 
+
 if __name__ == "__main__":
     assets_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/assets/images/"
     convert_png_to_webp(assets_dir)

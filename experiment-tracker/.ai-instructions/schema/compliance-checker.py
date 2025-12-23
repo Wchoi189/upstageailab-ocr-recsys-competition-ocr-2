@@ -34,7 +34,7 @@ PROHIBITED_PHRASES = [
 # Prohibited emoji patterns (Temporarily disabled - set to empty list)
 # Original pattern: r"[\U0001F300-\U0001F9FF]|[\u2600-\u26FF]|[\u2700-\u27BF]"
 EMOJI_PATTERNS = []
- # Allow emoji's
+# Allow emoji's
 
 # Required frontmatter fields
 UNIVERSAL_REQUIRED = ["ads_version", "type", "experiment_id", "status", "created", "updated", "tags"]

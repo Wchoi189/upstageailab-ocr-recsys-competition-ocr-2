@@ -6,8 +6,8 @@ from __future__ import annotations
 import argparse
 import json
 import random
+from collections.abc import Sequence
 from pathlib import Path
-from typing import Sequence
 
 SUPPORTED_EXTS = (".jpg", ".jpeg", ".png", ".bmp", ".tiff")
 DEFAULT_OUTPUT = Path("outputs") / "playground" / "samples"
@@ -72,5 +72,3 @@ def main() -> None:
 
 if __name__ == "__main__":
     main()
-
-

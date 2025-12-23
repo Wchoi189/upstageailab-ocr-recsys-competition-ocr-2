@@ -3,8 +3,8 @@ from __future__ import annotations
 import numpy as np
 import pytest
 from PIL import Image
-from ocr.inference.engine import InferenceEngine
 
+from ocr.inference.engine import InferenceEngine
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
     apply_affine_transform_to_polygons,

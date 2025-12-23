@@ -52,6 +52,29 @@ def _restore_placeholders(text: str, replacements: dict[str, str]) -> str:
     return text
 
 
+_DIV_TABLE_ADJACENT_RE = re.compile(r'(<div[^>]*align="center"[^>]*>)\s*\|', re.IGNORECASE)
+_HEADING_FENCE_ADJACENT_RE = re.compile(r"(#{1,6}[^\n`]+?)```+")
+_SPLIT_MARKDOWN_LINK_RE = re.compile(r"\]\s*\n\s*\(")
+
+
+def _normalize_markdown_structure(text: str) -> str:
+    """Fix common markdown structure breakages introduced by translation.
+
+    This intentionally targets a small set of high-impact formatting issues:
+    - HTML <div align="center"> tag glued to a markdown table row.
+    - Heading line glued to a code fence opener.
+    - Markdown link token split across a newline: "]\n(" -> "](".
+    """
+    text = _DIV_TABLE_ADJACENT_RE.sub(r"\1\n\n|", text)
+    text = _HEADING_FENCE_ADJACENT_RE.sub(lambda m: f"{m.group(1).rstrip()}\n\n```", text)
+    text = _SPLIT_MARKDOWN_LINK_RE.sub("](", text)
+
+    # Keep closing </div> on its own line (defensive).
+    text = re.sub(r"([^\n])\s*</div>", r"\1\n\n</div>", text, flags=re.IGNORECASE)
+    text = re.sub(r"</div>\s*([^\n])", r"</div>\n\n\1", text, flags=re.IGNORECASE)
+    return text
+
+
 _FENCE_START_RE = re.compile(r"^(?P<fence>`{3,}|~{3,})(?P<lang>[^`]*)$", re.IGNORECASE)
 
 
@@ -125,9 +148,7 @@ def translate_markdown(readme_text: str, target_lang: str, max_chunk_chars: int 
     try:
         from deep_translator import GoogleTranslator
     except Exception as e:  # pragma: no cover
-        raise RuntimeError(
-            "Missing dependency: deep-translator. Install with: pip install deep-translator"
-        ) from e
+        raise RuntimeError("Missing dependency: deep-translator. Install with: pip install deep-translator") from e
 
     translator = GoogleTranslator(source="auto", target=target_lang)
 
@@ -138,7 +159,7 @@ def translate_markdown(readme_text: str, target_lang: str, max_chunk_chars: int 
     patterns: list[re.Pattern[str]] = [
         re.compile(r"`[^`\n]+`"),  # inline code
         re.compile(r"<[^>]+>"),  # HTML tags / autolinks
-        re.compile(r"\]\(([^)\s]+)\)"),  # markdown link target (includes images)
+        re.compile(r"\]\(\s*[^)]+?\s*\)"),  # markdown link target (includes images)
         re.compile(r"\((https?://[^)\s]+)\)"),  # raw URL in parens
         re.compile(r"https?://\S+"),  # bare URLs
     ]
@@ -151,7 +172,19 @@ def translate_markdown(readme_text: str, target_lang: str, max_chunk_chars: int 
             out_parts.append(block_text)
             continue
 
-        protected = _protect_patterns(block_text, patterns)
+        # Preserve leading/trailing whitespace exactly so adjacent blocks
+        # (e.g., headings next to code fences) don't get glued together.
+        m_lead = re.match(r"^\s*", block_text)
+        m_tail = re.search(r"\s*$", block_text)
+        lead_ws = m_lead.group(0) if m_lead else ""
+        tail_ws = m_tail.group(0) if m_tail else ""
+        core = block_text[len(lead_ws) : len(block_text) - len(tail_ws)] if len(block_text) >= len(lead_ws) + len(tail_ws) else ""
+
+        if core.strip() == "":
+            out_parts.append(block_text)
+            continue
+
+        protected = _protect_patterns(core, patterns)
 
         translated_chunks: list[str] = []
         for chunk in _chunk_text(protected.text, max_chunk_chars):
@@ -162,7 +195,8 @@ def translate_markdown(readme_text: str, target_lang: str, max_chunk_chars: int 
 
         translated = "".join(translated_chunks)
         restored = _restore_placeholders(translated, protected.replacements)
-        out_parts.append(restored)
+        restored = _normalize_markdown_structure(restored)
+        out_parts.append(f"{lead_ws}{restored}{tail_ws}")
 
     return "".join(out_parts)
 

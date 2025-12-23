@@ -13,9 +13,10 @@ from ocr.utils.perspective_correction import (
     correct_perspective_from_mask,
     remove_background_and_mask,
 )
-from ocr.utils.sepia_enhancement import enhance_sepia, enhance_clahe
+from ocr.utils.sepia_enhancement import enhance_clahe, enhance_sepia
 
 from .config_loader import PreprocessSettings
+
 # from .dependencies import torch, transforms
 
 LOGGER = logging.getLogger(__name__)
@@ -29,6 +30,7 @@ def build_transform(settings: PreprocessSettings):
     in preprocess_image() using OpenCV before converting to tensor.
     """
     import torchvision.transforms as transforms
+
     if transforms is None:
         raise RuntimeError("Torchvision transforms are not available. Install the vision extras.")
 
@@ -84,6 +86,7 @@ def preprocess_image(
     # Apply sepia enhancement AFTER gray-world (if enabled)
     if enable_sepia_enhancement:
         import logging
+
         logger = logging.getLogger(__name__)
         logger.info("🎨 Applying sepia tone")
         processed_image = enhance_sepia(processed_image)
@@ -91,6 +94,7 @@ def preprocess_image(
     # Apply CLAHE AFTER sepia (if enabled)
     if enable_clahe:
         import logging
+
         logger = logging.getLogger(__name__)
         logger.info("✨ Applying CLAHE contrast enhancement")
         processed_image = enhance_clahe(processed_image)
@@ -134,6 +138,7 @@ def preprocess_image(
 
     tensor = transform(image_rgb)
     import torch
+
     if torch is None:
         raise RuntimeError("Torch is not available to create inference batches.")
 

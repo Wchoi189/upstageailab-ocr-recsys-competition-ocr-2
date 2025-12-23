@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import numpy as np
+
     from apps.shared.backend_shared.inference import InferenceEngine
 
 logger = logging.getLogger(__name__)
@@ -98,6 +99,7 @@ class InferenceService:
 
             # Offload CPU-bound inference to threadpool to avoid blocking event loop
             import asyncio
+
             loop = asyncio.get_running_loop()
 
             result = await loop.run_in_executor(
@@ -114,7 +116,7 @@ class InferenceService:
                     enable_sepia_enhancement=enable_sepia_enhancement,
                     enable_clahe=enable_clahe,
                     sepia_display_mode=sepia_display_mode,
-                )
+                ),
             )
 
             if result is None:
@@ -142,8 +144,9 @@ class InferenceService:
         logger.info("🔥 Starting background model warm-up: %s", checkpoint_path)
 
         # Lazy import heavy dependencies
-        from apps.shared.backend_shared.inference import InferenceEngine
         import asyncio
+
+        from apps.shared.backend_shared.inference import InferenceEngine
 
         # Initialize engine if needed
         if self._engine is None:
@@ -156,10 +159,7 @@ class InferenceService:
         loop = asyncio.get_running_loop()
 
         try:
-            success = await loop.run_in_executor(
-                None,
-                lambda: self._engine.load_model(checkpoint_path)
-            )
+            success = await loop.run_in_executor(None, lambda: self._engine.load_model(checkpoint_path))
 
             if success:
                 self._current_checkpoint = checkpoint_path

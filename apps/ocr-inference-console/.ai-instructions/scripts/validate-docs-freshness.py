@@ -7,7 +7,6 @@ Checks that YAML contracts match actual code:
 - API endpoint paths match FastAPI decorators
 """
 
-import re
 import sys
 from pathlib import Path
 

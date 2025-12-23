@@ -196,7 +196,7 @@ def scan_directory(handbook_dir: Path) -> dict[str, Any]:
                 "tags": tags,
                 "priority": priority,
                 "summary": f"Documentation for {title.lower()}",
-                "last_reviewed": datetime.now(timezone.utc).strftime("%Y-%m-%d"),
+                "last_reviewed": datetime.now(UTC).strftime("%Y-%m-%d"),
                 "owner": owner,
                 "bundles": [],
             }

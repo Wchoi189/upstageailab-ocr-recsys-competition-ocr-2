@@ -103,11 +103,13 @@ class SepiaEnhancer:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # Classic sepia transformation matrix (transposed for OpenCV)
-        sepia_matrix = np.array([
-            [0.393, 0.769, 0.189],  # Red channel
-            [0.349, 0.686, 0.168],  # Green channel
-            [0.272, 0.534, 0.131],  # Blue channel
-        ])
+        sepia_matrix = np.array(
+            [
+                [0.393, 0.769, 0.189],  # Red channel
+                [0.349, 0.686, 0.168],  # Green channel
+                [0.272, 0.534, 0.131],  # Blue channel
+            ]
+        )
 
         # Apply transformation
         sepia = cv2.transform(img_rgb, sepia_matrix)
@@ -143,8 +145,7 @@ class SepiaEnhancer:
         blend_weight = np.stack([blend_weight] * 3, axis=-1)
 
         # Blend original and sepia based on intensity
-        result = (sepia.astype(np.float32) * blend_weight +
-                  img.astype(np.float32) * (1 - blend_weight))
+        result = sepia.astype(np.float32) * blend_weight + img.astype(np.float32) * (1 - blend_weight)
         result = np.clip(result, 0, 255).astype(np.uint8)
 
         return result
@@ -166,11 +167,13 @@ class SepiaEnhancer:
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
         # Enhanced warm sepia matrix (stronger red/yellow channels)
-        warm_matrix = np.array([
-            [0.450, 0.850, 0.200],  # Red channel (strong boost)
-            [0.350, 0.750, 0.150],  # Green channel (boosted)
-            [0.200, 0.450, 0.100],  # Blue channel (reduced)
-        ])
+        warm_matrix = np.array(
+            [
+                [0.450, 0.850, 0.200],  # Red channel (strong boost)
+                [0.350, 0.750, 0.150],  # Green channel (boosted)
+                [0.200, 0.450, 0.100],  # Blue channel (reduced)
+            ]
+        )
 
         # Apply transformation
         sepia = cv2.transform(img_rgb, warm_matrix)
@@ -233,9 +236,7 @@ class SepiaEnhancer:
 
         return result
 
-    def _calculate_metrics(
-        self, original: np.ndarray, enhanced: np.ndarray, processing_time: float
-    ) -> dict:
+    def _calculate_metrics(self, original: np.ndarray, enhanced: np.ndarray, processing_time: float) -> dict:
         """
         Calculate enhancement metrics.
 
@@ -286,9 +287,7 @@ class SepiaEnhancer:
         }
 
 
-def process_single_image(
-    input_path: Path, method: str, output_dir: Path, verbose: bool = True
-) -> dict[str, dict]:
+def process_single_image(input_path: Path, method: str, output_dir: Path, verbose: bool = True) -> dict[str, dict]:
     """
     Process a single image with sepia enhancement.
 
@@ -331,16 +330,16 @@ def process_single_image(
             print(f"    Processing time: {metrics['processing_time_ms']:.2f}ms")
             print(f"    Tint: {metrics['color_tint_before']:.1f} → {metrics['color_tint_after']:.1f} ({metrics['tint_change']:+.1f})")
             print(f"    Contrast: {metrics['contrast_before']:.1f} → {metrics['contrast_after']:.1f} ({metrics['contrast_change']:+.1f})")
-            print(f"    Brightness: {metrics['brightness_before']:.1f} → {metrics['brightness_after']:.1f} ({metrics['brightness_change']:+.1f})")
+            print(
+                f"    Brightness: {metrics['brightness_before']:.1f} → {metrics['brightness_after']:.1f} ({metrics['brightness_change']:+.1f})"
+            )
 
         all_metrics[method_name] = metrics
 
     return all_metrics
 
 
-def process_directory(
-    input_dir: Path, method: str, output_dir: Path, verbose: bool = True
-) -> dict[str, dict[str, dict]]:
+def process_directory(input_dir: Path, method: str, output_dir: Path, verbose: bool = True) -> dict[str, dict[str, dict]]:
     """
     Process all images in directory.
 
@@ -355,10 +354,7 @@ def process_directory(
     """
     # Find all image files
     image_extensions = {".jpg", ".jpeg", ".png", ".bmp"}
-    image_files = [
-        f for f in input_dir.iterdir()
-        if f.suffix.lower() in image_extensions
-    ]
+    image_files = [f for f in input_dir.iterdir() if f.suffix.lower() in image_extensions]
 
     if not image_files:
         raise ValueError(f"No images found in {input_dir}")

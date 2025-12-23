@@ -15,8 +15,7 @@ Usage:
 from __future__ import annotations
 
 import os
-import re
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 
 from AgentQMS.agent_tools.utils.config import load_config
@@ -87,10 +86,11 @@ def get_kst_timestamp(dt: datetime | None = None) -> str:
 
     if dt is None:
         if tz_name.lower() == "utc":
-            dt = datetime.now(timezone.utc)
+            dt = datetime.now(UTC)
         else:
             try:
                 import zoneinfo
+
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = datetime.now(tz)
             except (ImportError, Exception):
@@ -98,7 +98,7 @@ def get_kst_timestamp(dt: datetime | None = None) -> str:
                 dt = datetime.now(kst_offset)
     else:
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
+            dt = dt.replace(tzinfo=UTC)
 
     return dt.strftime(f"%Y-%m-%d %H:%M ({tz_abbr})")
 
@@ -138,9 +138,9 @@ def get_age_in_days(timestamp_str: str) -> int | None:
         return None
 
     if dt.tzinfo is None:
-        dt = dt.replace(tzinfo=timezone.utc)
+        dt = dt.replace(tzinfo=UTC)
 
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
     age = now - dt
     return age.days
 
@@ -150,10 +150,11 @@ def format_timestamp_for_filename(dt: datetime | None = None) -> str:
     if dt is None:
         tz_name = get_configured_timezone()
         if tz_name.lower() == "utc":
-            dt = datetime.now(timezone.utc)
+            dt = datetime.now(UTC)
         else:
             try:
                 import zoneinfo
+
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = datetime.now(tz)
             except (ImportError, Exception):
@@ -181,12 +182,13 @@ def infer_artifact_filename_timestamp(file_path: str | Path) -> str:
     def get_dt_filename(dt: datetime) -> str:
         # Ensure aware
         if dt.tzinfo is None:
-            dt = dt.replace(tzinfo=timezone.utc)
+            dt = dt.replace(tzinfo=UTC)
 
         # Convert to configured timezone
         if tz_name.lower() != "utc":
             try:
                 import zoneinfo
+
                 tz = zoneinfo.ZoneInfo(tz_name)
                 dt = dt.astimezone(tz)
             except (ImportError, Exception):
@@ -244,7 +246,7 @@ def infer_artifact_filename_timestamp(file_path: str | Path) -> str:
     try:
         # 3. Try filesystem modification time
         mtime = file_path.stat().st_mtime
-        fs_date = datetime.fromtimestamp(mtime, tz=timezone.utc)
+        fs_date = datetime.fromtimestamp(mtime, tz=UTC)
         return get_dt_filename(fs_date)
     except Exception:
         pass

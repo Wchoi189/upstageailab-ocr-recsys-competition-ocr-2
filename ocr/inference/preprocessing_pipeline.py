@@ -164,7 +164,9 @@ class PreprocessingPipeline:
         try:
             # Get both model input tensor and processed preview image
             # Use parameter override if provided, else fall back to instance variable
-            use_background_norm = enable_background_normalization if enable_background_normalization is not None else self._enable_background_normalization
+            use_background_norm = (
+                enable_background_normalization if enable_background_normalization is not None else self._enable_background_normalization
+            )
             use_sepia = enable_sepia_enhancement if enable_sepia_enhancement is not None else self._enable_sepia_enhancement
             use_clahe = enable_clahe if enable_clahe is not None else self._enable_clahe
 

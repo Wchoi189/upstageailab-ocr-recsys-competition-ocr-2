@@ -18,9 +18,7 @@ import sys
 from pathlib import Path
 from typing import Any
 
-
 from AgentQMS.agent_tools.utils.paths import get_project_root
-from AgentQMS.agent_tools.utils.timestamps import infer_artifact_filename_timestamp
 
 
 def run_git_command(cmd: list[str], dry_run: bool = False) -> bool:
@@ -315,6 +313,7 @@ def apply_fixes(
             if not dry_run:
                 try:
                     from AgentQMS.agent_tools.maintenance.add_frontmatter import FrontmatterGenerator
+
                     generator = FrontmatterGenerator()
                     if generator.add_frontmatter_to_file(str(source)):
                         print("   ✅ Frontmatter updated")
@@ -364,8 +363,6 @@ def main():
     parser.add_argument("--force-large-batch", action="store_true", help="Allow batch operations >30 files (use with caution)")
 
     args = parser.parse_args()
-
-    from AgentQMS.agent_tools.utils.paths import get_project_root
 
     project_root = get_project_root()
 

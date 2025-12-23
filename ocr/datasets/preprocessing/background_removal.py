@@ -6,13 +6,12 @@ backgrounds from images using the rembg library with ONNX models.
 
 from __future__ import annotations
 
-from typing import Any
-
 import numpy as np
 from albumentations import ImageOnlyTransform
 
 try:
     from rembg import remove
+
     REMBG_AVAILABLE = True
 except ImportError:
     REMBG_AVAILABLE = False
@@ -71,9 +70,7 @@ class BackgroundRemoval(ImageOnlyTransform):
         super().__init__(always_apply=always_apply, p=p)
 
         if not REMBG_AVAILABLE:
-            raise ImportError(
-                "rembg is not installed. Install it with: pip install rembg onnxruntime"
-            )
+            raise ImportError("rembg is not installed. Install it with: pip install rembg onnxruntime")
 
         self.model = model
         self.alpha_matting = alpha_matting

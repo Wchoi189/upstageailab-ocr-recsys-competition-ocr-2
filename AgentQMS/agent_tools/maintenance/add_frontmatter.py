@@ -330,7 +330,7 @@ class FrontmatterGenerator:
             current_status = fm_dict.get("status") or analysis["status"]
             valid_statuses = ["active", "draft", "completed", "archived", "deprecated"]
             if str(current_status).lower() not in valid_statuses:
-                current_status = "active" # Default fallback for invalid status
+                current_status = "active"  # Default fallback for invalid status
 
             updates = {
                 "ads_version": "1.0",

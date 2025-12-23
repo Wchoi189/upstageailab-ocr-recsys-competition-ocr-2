@@ -44,7 +44,9 @@ def migrate_vlm_report(file_path: Path, dry_run: bool = False) -> bool:
 
     # Infer timestamp from file history instead of hardcoded 1200
     from AgentQMS.agent_tools.utils.timestamps import infer_artifact_filename_timestamp
+
     timestamp = infer_artifact_filename_timestamp(file_path)
+    rest = match.group(3)
     new_name = f"vlm_report_{rest}.md"
     if not new_name.startswith(timestamp):
         new_name = f"{timestamp}_vlm_report_{rest}.md"

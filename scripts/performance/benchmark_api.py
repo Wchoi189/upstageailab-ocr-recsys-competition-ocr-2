@@ -1,15 +1,14 @@
-
-import time
 import base64
-import urllib.request
-import urllib.error
 import json
 import sys
-import sys
+import time
+import urllib.error
+import urllib.request
 
 API_URL = "http://localhost:8002/api/inference/preview"
 HEALTH_URL = "http://localhost:8002/api/health"
 IMAGE_PATH = "tests/e2e/fixtures/sample-image.jpg"
+
 
 def main():
     # 1. Wait for health
@@ -41,14 +40,14 @@ def main():
         img_b64 = base64.b64encode(f.read()).decode()
 
     payload = {
-        "checkpoint_path": "", # Use latest
+        "checkpoint_path": "",  # Use latest
         "image_base64": img_b64,
         "confidence_threshold": 0.5,
-        "nms_threshold": 0.5
+        "nms_threshold": 0.5,
     }
 
-    data_bytes = json.dumps(payload).encode('utf-8')
-    headers = {'Content-Type': 'application/json'}
+    data_bytes = json.dumps(payload).encode("utf-8")
+    headers = {"Content-Type": "application/json"}
 
     # 3. Warmup
     print("Warming up (5 requests)...")
@@ -80,9 +79,9 @@ def main():
 
                 latencies.append(elapsed)
                 processing_times.append(server_time)
-                print(f"Req {i+1}: Total={elapsed:.2f}ms, Server={server_time:.2f}ms")
+                print(f"Req {i + 1}: Total={elapsed:.2f}ms, Server={server_time:.2f}ms")
         except urllib.error.HTTPError as e:
-             print(f"HTTP Error: {e.code} - {e.read()}")
+            print(f"HTTP Error: {e.code} - {e.read()}")
         except Exception as e:
             print(f"Request error: {e}")
 
@@ -96,7 +95,8 @@ def main():
     processing_times.sort()
 
     def get_p(data, p):
-        if not data: return 0
+        if not data:
+            return 0
         return data[int(len(data) * p)]
 
     p50_total = get_p(latencies, 0.50)
@@ -106,12 +106,12 @@ def main():
     p50_server = get_p(processing_times, 0.50)
     p90_server = get_p(processing_times, 0.90)
 
-    print(f"\nResults (Total Latency):")
+    print("\nResults (Total Latency):")
     print(f"P50: {p50_total:.2f}ms")
     print(f"P90: {p90_total:.2f}ms")
     print(f"P99: {p99_total:.2f}ms")
 
-    print(f"\nResults (Server Processing Time):")
+    print("\nResults (Server Processing Time):")
     print(f"P50: {p50_server:.2f}ms")
     print(f"P90: {p90_server:.2f}ms")
 
@@ -120,13 +120,13 @@ def main():
         "p90_latency": p90_total,
         "p99_latency": p99_total,
         "p50_processing": p50_server,
-        "throughput_est": 1000 / p50_total
+        "throughput_est": 1000 / p50_total,
     }
 
     with open("benchmark_results.json", "w") as f:
         json.dump(results, f, indent=2)
     print("\nSaved benchmark_results.json")
 
+
 if __name__ == "__main__":
     main()
-

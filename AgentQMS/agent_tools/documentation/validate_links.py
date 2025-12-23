@@ -9,13 +9,10 @@ Checks for broken internal references and unreachable external URLs.
 import os
 import re
 import sys
-from pathlib import Path
-
-import urllib.request
 import urllib.error
-import json
+import urllib.request
 import xml.etree.ElementTree as ET
-from datetime import datetime
+from pathlib import Path
 
 
 class LinkValidator:
@@ -183,17 +180,17 @@ class LinkValidator:
     def export_graphml(self, graph: dict[str, list[str]], output_path: Path):
         """Export the reference graph in GraphML format."""
         # Create the root element
-        graphml = ET.Element("graphml", {
-            "xmlns": "http://graphml.graphdrawing.org/xmlns",
-            "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
-            "xsi:schemaLocation": "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd"
-        })
+        graphml = ET.Element(
+            "graphml",
+            {
+                "xmlns": "http://graphml.graphdrawing.org/xmlns",
+                "xmlns:xsi": "http://www.w3.org/2001/XMLSchema-instance",
+                "xsi:schemaLocation": "http://graphml.graphdrawing.org/xmlns http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd",
+            },
+        )
 
         # Add graph definition
-        graph_elem = ET.SubElement(graphml, "graph", {
-            "id": "G",
-            "edgedefault": "directed"
-        })
+        graph_elem = ET.SubElement(graphml, "graph", {"id": "G", "edgedefault": "directed"})
 
         # Add nodes
         nodes = set(graph.keys())
@@ -207,11 +204,7 @@ class LinkValidator:
         edge_id_counter = 0
         for source, targets in graph.items():
             for target in targets:
-                ET.SubElement(graph_elem, "edge", {
-                    "id": f"e{edge_id_counter}",
-                    "source": source,
-                    "target": target
-                })
+                ET.SubElement(graph_elem, "edge", {"id": f"e{edge_id_counter}", "source": source, "target": target})
                 edge_id_counter += 1
 
         # Write to file
@@ -222,6 +215,7 @@ class LinkValidator:
 
 def main() -> None:
     import argparse
+
     parser = argparse.ArgumentParser(description="Documentation Link Validator")
     parser.add_argument("docs_root", help="Root directory of documentation")
     parser.add_argument("--export-graph", help="Export reference graph to GraphML file")

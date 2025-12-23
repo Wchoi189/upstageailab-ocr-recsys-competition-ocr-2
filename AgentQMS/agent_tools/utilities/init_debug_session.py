@@ -17,7 +17,7 @@ from pathlib import Path
 
 BASE_PATH = Path("docs/artifacts/bug_reports")
 
-INTAKE_TEMPLATE = '''---
+INTAKE_TEMPLATE = """---
 schema: debugging-session-v1
 schema_version: "1.0"
 session_id: {session_id}
@@ -48,9 +48,9 @@ tags: []
 
 ## Initial Observations
 <!-- First impressions, quick investigation results -->
-'''
+"""
 
-INVESTIGATION_TEMPLATE = '''---
+INVESTIGATION_TEMPLATE = """---
 schema: debugging-session-v1
 schema_version: "1.0"
 session_id: {session_id}
@@ -80,9 +80,9 @@ tags: []
 
 ## Next Steps
 - [ ]
-'''
+"""
 
-README_TEMPLATE = '''# {session_id}: {title}
+README_TEMPLATE = """# {session_id}: {title}
 
 **Status**: 🟡 Active
 **Severity**: {severity}
@@ -113,7 +113,7 @@ cp /path/to/screenshot.png docs/artifacts/bug_reports/{session_id}/artifacts/ima
 # Add log excerpt
 cp /path/to/debug.log docs/artifacts/bug_reports/{session_id}/artifacts/logs/
 ```
-'''
+"""
 
 
 def create_session(bug_id: str, title: str, severity: str = "medium") -> Path:
@@ -156,9 +156,9 @@ def create_session(bug_id: str, title: str, severity: str = "medium") -> Path:
     (session_path / "artifacts" / "scripts" / ".gitkeep").touch()
 
     print(f"✅ Created debugging session: {session_path}")
-    print(f"   📄 01_intake.md - Fill in problem statement")
-    print(f"   📄 02_investigation.md - Document hypotheses and tests")
-    print(f"   📁 artifacts/ - Store screenshots, logs, scripts")
+    print("   📄 01_intake.md - Fill in problem statement")
+    print("   📄 02_investigation.md - Document hypotheses and tests")
+    print("   📁 artifacts/ - Store screenshots, logs, scripts")
 
     return session_path
 
@@ -167,9 +167,9 @@ def main():
     parser = argparse.ArgumentParser(description="Initialize debugging session")
     parser.add_argument("--id", required=True, help="Bug ID (e.g., 001)")
     parser.add_argument("--title", required=True, help="Short title (e.g., overlay-misalignment)")
-    parser.add_argument("--severity", default="medium",
-                        choices=["critical", "high", "medium", "low"],
-                        help="Bug severity (default: medium)")
+    parser.add_argument(
+        "--severity", default="medium", choices=["critical", "high", "medium", "low"], help="Bug severity (default: medium)"
+    )
 
     args = parser.parse_args()
     create_session(args.id, args.title, args.severity)

@@ -55,13 +55,16 @@ class CheckpointService:
         current_time = datetime.utcnow()
 
         # Check cache validity
-        if (self._cache is not None and
-            self._last_update is not None and
-            (current_time - self._last_update).total_seconds() < self.cache_ttl):
+        if (
+            self._cache is not None
+            and self._last_update is not None
+            and (current_time - self._last_update).total_seconds() < self.cache_ttl
+        ):
             return self._cache[:limit]
 
         # Cache miss - rediscover
         import asyncio
+
         loop = asyncio.get_running_loop()
         checkpoints = await loop.run_in_executor(None, self._discover_sync, limit)
         self._cache = checkpoints
@@ -90,13 +93,14 @@ class CheckpointService:
         Returns:
             Latest checkpoint or None
         """
-        import asyncio
         import datetime
 
         # Check cache first (fast path)
-        if (self._cache is not None and
-            self._last_update is not None and
-            (datetime.datetime.utcnow() - self._last_update).total_seconds() < self.cache_ttl):
+        if (
+            self._cache is not None
+            and self._last_update is not None
+            and (datetime.datetime.utcnow() - self._last_update).total_seconds() < self.cache_ttl
+        ):
             return self._cache[0] if self._cache else None
 
         # Refill cache if empty/stale
@@ -114,6 +118,7 @@ class CheckpointService:
         """
         logger.info("🔄 Preloading checkpoint metadata cache...")
         import asyncio
+
         loop = asyncio.get_running_loop()
         checkpoints = await loop.run_in_executor(None, self._discover_sync, limit)
         self._cache = checkpoints

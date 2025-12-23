@@ -177,7 +177,7 @@ def create_comparison(original, step2_corrected, step3_normalized, step4_deskewe
     max_w = max(img.shape[1] for img in resized)
     padded = []
 
-    for img, label in zip(resized, labels):
+    for img, label in zip(resized, labels, strict=False):
         # Pad width
         pad_left = (max_w - img.shape[1]) // 2
         pad_right = max_w - img.shape[1] - pad_left

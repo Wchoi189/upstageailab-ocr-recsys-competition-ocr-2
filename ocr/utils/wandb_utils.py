@@ -12,9 +12,10 @@ from typing import Any
 import cv2
 import numpy as np
 import torch
-import wandb
 from omegaconf import DictConfig
 from PIL import Image as PILImage
+
+import wandb
 
 
 def load_env_variables():

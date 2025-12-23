@@ -1,5 +1,6 @@
-import time
 import sys
+import time
+
 
 def profile_import(module_name):
     start = time.time()
@@ -9,10 +10,12 @@ def profile_import(module_name):
         print(f"Import {module_name:<30}: {elapsed:.4f}s")
     except ImportError:
         import traceback
+
         traceback.print_exc()
         print(f"Import {module_name:<30}: FAILED")
     except Exception as e:
         print(f"Import {module_name:<30}: ERROR {e}")
+
 
 # print("Profiling key imports...")
 # profile_import("torch")
@@ -22,6 +25,7 @@ def profile_import(module_name):
 
 print("\nProfiling application modules...")
 import os
+
 backend_path = os.path.join(os.getcwd(), "apps/ocr-inference-console/backend")
 sys.path.insert(0, backend_path)
 # We also need project root for apps.shared to work

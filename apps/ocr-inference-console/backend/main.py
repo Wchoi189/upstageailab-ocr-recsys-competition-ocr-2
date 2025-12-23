@@ -12,9 +12,9 @@ from __future__ import annotations
 # Lightweight imports only at top level for instant startup
 import logging
 import os
+import sys
 from contextlib import asynccontextmanager
 from pathlib import Path
-import sys
 
 # Ensure backend directory is in python path to handle imports correctly
 # when running via uvicorn with various configurations or reloads
@@ -23,8 +23,22 @@ if backend_dir not in sys.path:
     sys.path.append(backend_dir)
 
 # Heavy imports (cv2, numpy, torch, lightning) moved to local scopes inside functions
-from fastapi import FastAPI, HTTPException
+# Import exceptions and models
+from exceptions import (
+    CheckpointNotFoundError,
+    ImageDecodingError,
+    InferenceError,
+    OCRBackendError,
+    ServiceNotInitializedError,
+)
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from models.errors import ErrorResponse
+
+# Import services
+from services.checkpoint_service import Checkpoint, CheckpointService
+from services.inference_service import InferenceService
+from services.preprocessing_service import PreprocessingService
 
 # Import shared models (lightweight pure-Pydantic models)
 from apps.shared.backend_shared.models.inference import (
@@ -34,22 +48,6 @@ from apps.shared.backend_shared.models.inference import (
     Padding,
     TextRegion,
 )
-
-# Import services
-from services.checkpoint_service import Checkpoint, CheckpointService
-from services.inference_service import InferenceService
-from services.preprocessing_service import PreprocessingService
-
-# Import exceptions and models
-from exceptions import (
-    CheckpointNotFoundError,
-    ImageDecodingError,
-    InferenceError,
-    ModelLoadError,
-    OCRBackendError,
-    ServiceNotInitializedError,
-)
-from models.errors import ErrorResponse
 
 logger = logging.getLogger(__name__)
 
@@ -90,15 +88,13 @@ DEFAULT_CHECKPOINT_ROOT = PROJECT_ROOT / "outputs/experiments/train/ocr"
 async def lifespan(app: FastAPI):
     """Lifespan context manager for app startup/shutdown."""
     import asyncio
+
     global _checkpoint_service, _inference_service
 
     logger.info("🚀 Starting OCR Inference Console Backend (Port 8002)")
 
     # Initialize services
-    _checkpoint_service = CheckpointService(
-        checkpoint_root=DEFAULT_CHECKPOINT_ROOT,
-        cache_ttl=5.0
-    )
+    _checkpoint_service = CheckpointService(checkpoint_root=DEFAULT_CHECKPOINT_ROOT, cache_ttl=5.0)
     _inference_service = InferenceService()
 
     async def _startup_task():
@@ -119,7 +115,7 @@ async def lifespan(app: FastAPI):
             logger.error("❌ Startup task failed: %s", e)
 
     # Background preload checkpoint cache (non-blocking)
-    preload_task = asyncio.create_task(_checkpoint_service.preload_checkpoints())
+    asyncio.create_task(_checkpoint_service.preload_checkpoints())
 
     # Fire-and-forget background warm-up task
     # We don't await this because we want the server to start immediately
@@ -285,19 +281,15 @@ async def run_inference(request: InferenceRequest):
     if not ckpt_path.exists():
         raise CheckpointNotFoundError(checkpoint_path)
 
-    import time
     import asyncio
+    import time
 
     start_time = time.perf_counter()
     loop = asyncio.get_running_loop()
 
     # Decode base64 image using preprocessing service (offloaded to threadpool)
     try:
-        image = await loop.run_in_executor(
-            None,
-            PreprocessingService.decode_base64_image,
-            request.image_base64 or ""
-        )
+        image = await loop.run_in_executor(None, PreprocessingService.decode_base64_image, request.image_base64 or "")
     except ValueError as e:
         raise ImageDecodingError(str(e))
 
@@ -323,7 +315,7 @@ async def run_inference(request: InferenceRequest):
             enable_sepia_enhancement=request.enable_sepia_enhancement,
             enable_clahe=request.enable_clahe,
             sepia_display_mode=request.sepia_display_mode,
-            )
+        )
     except RuntimeError as e:
         raise InferenceError(str(e))
 

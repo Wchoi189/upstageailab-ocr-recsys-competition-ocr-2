@@ -39,11 +39,13 @@ def enhance_sepia(img: np.ndarray) -> np.ndarray:
     # Formula: R' = 0.393*R + 0.769*G + 0.189*B
     #          G' = 0.349*R + 0.686*G + 0.168*B
     #          B' = 0.272*R + 0.534*G + 0.131*B
-    sepia_matrix = np.array([
-        [0.393, 0.769, 0.189],  # Red channel
-        [0.349, 0.686, 0.168],  # Green channel
-        [0.272, 0.534, 0.131],  # Blue channel
-    ])
+    sepia_matrix = np.array(
+        [
+            [0.393, 0.769, 0.189],  # Red channel
+            [0.349, 0.686, 0.168],  # Green channel
+            [0.272, 0.534, 0.131],  # Blue channel
+        ]
+    )
 
     sepia = cv2.transform(img_rgb, sepia_matrix)
     sepia = np.clip(sepia, 0, 255).astype(np.uint8)

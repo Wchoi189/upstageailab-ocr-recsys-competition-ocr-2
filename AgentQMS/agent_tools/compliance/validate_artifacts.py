@@ -657,7 +657,7 @@ class ArtifactValidator:
                 "file": str(file_path),
                 "valid": True,  # Technically not invalid if it's out of scope
                 "skipped": True,
-                "reason": f"File is outside configured artifacts root: {self.artifacts_root}"
+                "reason": f"File is outside configured artifacts root: {self.artifacts_root}",
             }
 
         # Use instance strict_mode if not explicitly overridden

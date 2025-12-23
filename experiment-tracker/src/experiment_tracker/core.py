@@ -1,19 +1,18 @@
 import re
-import subprocess
-import yaml
 import sqlite3
+import subprocess
+from datetime import datetime
 from pathlib import Path
-from datetime import datetime, UTC
-from typing import Optional, List, Tuple, Dict
 
-from experiment_tracker.database import DatabaseManager, KST, EDS_VERSION
-from experiment_tracker.utils.state_file import create_state_file, update_state
+from experiment_tracker.database import EDS_VERSION, KST, DatabaseManager
 from experiment_tracker.utils.path_utils import ExperimentPaths
+from experiment_tracker.utils.state_file import create_state_file
+
 
 class ExperimentTracker:
     """Main experiment tracker interface, implementing EDS v1.0 standards."""
 
-    def __init__(self, tracker_root: Optional[Path] = None):
+    def __init__(self, tracker_root: Path | None = None):
         if tracker_root:
             self.tracker_root = tracker_root
         else:
@@ -40,7 +39,7 @@ class ExperimentTracker:
         # Templates
         self.templates_path = self.tracker_root / ".ai-instructions" / "tier2-framework" / "artifact-catalog.yaml"
 
-    def get_current_experiment(self) -> Optional[str]:
+    def get_current_experiment(self) -> str | None:
         """Detect current experiment ID from CWD."""
         cwd = Path.cwd()
         if "experiments" in cwd.parts:
@@ -55,7 +54,7 @@ class ExperimentTracker:
 
         return None
 
-    def init_experiment(self, name: str, description: str = "", tags: List[str] = None) -> str:
+    def init_experiment(self, name: str, description: str = "", tags: list[str] = None) -> str:
         """Initialize new experiment with proper EDS v1.0 structure."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         slug = name.lower().replace(" ", "_").replace("-", "_")
@@ -91,7 +90,7 @@ class ExperimentTracker:
         print(f"✅ Initialized experiment: {experiment_id}")
         return experiment_id
 
-    def create_artifact(self, artifact_type: str, title: str, experiment_id: Optional[str] = None, **kwargs) -> Path:
+    def create_artifact(self, artifact_type: str, title: str, experiment_id: str | None = None, **kwargs) -> Path:
         """Create new EDS v1.0 compliant artifact."""
         experiment_id = experiment_id or self.get_current_experiment()
         if not experiment_id:
@@ -110,7 +109,7 @@ class ExperimentTracker:
         print(f"✅ Created {artifact_type}: {filename}")
         return artifact_path
 
-    def get_status(self, experiment_id: Optional[str] = None) -> Dict:
+    def get_status(self, experiment_id: str | None = None) -> dict:
         """Summarize experiment status."""
         experiment_id = experiment_id or self.get_current_experiment()
         if not experiment_id:
@@ -124,14 +123,9 @@ class ExperimentTracker:
             dir_path = meta_path / f"{t}s"
             counts[f"{t}s"] = len(list(dir_path.glob("*.md"))) if dir_path.exists() else 0
 
-        return {
-            "experiment_id": experiment_id,
-            "path": str(exp_path),
-            "artifacts": counts,
-            "total_artifacts": sum(counts.values())
-        }
+        return {"experiment_id": experiment_id, "path": str(exp_path), "artifacts": counts, "total_artifacts": sum(counts.values())}
 
-    def validate(self, experiment_id: Optional[str] = None, all_experiments: bool = False) -> Tuple[bool, List[str]]:
+    def validate(self, experiment_id: str | None = None, all_experiments: bool = False) -> tuple[bool, list[str]]:
         """Validate compliance via external checker."""
         checker_path = self.tracker_root / ".ai-instructions" / "schema" / "compliance-checker.py"
         if not checker_path.exists():
@@ -149,7 +143,7 @@ class ExperimentTracker:
         result = subprocess.run(cmd, capture_output=True, text=True, cwd=self.tracker_root)
         return result.returncode == 0, result.stdout.split("\n")
 
-    def list_experiments(self) -> List[Dict]:
+    def list_experiments(self) -> list[dict]:
         """List and summarize all experiments."""
         experiments = []
         for exp_dir in sorted(self.experiments_dir.iterdir()):
@@ -160,7 +154,7 @@ class ExperimentTracker:
                     continue
         return experiments
 
-    def sync_to_database(self, experiment_id: Optional[str] = None, sync_all: bool = False) -> Dict:
+    def sync_to_database(self, experiment_id: str | None = None, sync_all: bool = False) -> dict:
         """Sync artifacts from filesystem to SQLite database."""
         stats = {"synced": 0, "failed": 0, "skipped": 0}
 
@@ -172,7 +166,8 @@ class ExperimentTracker:
                 experiments = [exp["experiment_id"] for exp in self.list_experiments()]
             else:
                 eid = experiment_id or self.get_current_experiment()
-                if not eid: raise ValueError("No experiment target")
+                if not eid:
+                    raise ValueError("No experiment target")
                 experiments = [eid]
 
             for eid in experiments:
@@ -183,16 +178,16 @@ class ExperimentTracker:
             conn.close()
         return stats
 
-    def query_artifacts(self, query: str) -> List[Dict]:
+    def query_artifacts(self, query: str) -> list[dict]:
         return self.db.query_artifacts(query)
 
-    def get_analytics(self) -> Dict:
+    def get_analytics(self) -> dict:
         return self.db.get_analytics()
 
     def _generate_slug(self, title: str) -> str:
-        return re.sub(r'[^a-z0-9]+', '_', title.lower()).strip('_')
+        return re.sub(r"[^a-z0-9]+", "_", title.lower()).strip("_")
 
-    def _generate_manifest(self, experiment_id: str, name: str, description: str, tags: List[str]) -> str:
+    def _generate_manifest(self, experiment_id: str, name: str, description: str, tags: list[str]) -> str:
         tags_str = f"tags: {json.dumps(tags)}" if tags else "tags: []"
         return f"""---
 ads_version: "{EDS_VERSION}"
@@ -235,9 +230,9 @@ updated: "{now}"
 {tags_line}"""
 
         if artifact_type == "assessment":
-            header += f"\nphase: \"{kwargs.get('phase', 'planning')}\"\npriority: \"{kwargs.get('priority', 'medium')}\""
+            header += f'\nphase: "{kwargs.get("phase", "planning")}"\npriority: "{kwargs.get("priority", "medium")}"'
         elif artifact_type == "report":
-            header += f"\nmetrics: {json.dumps(kwargs.get('metrics', []))}\nbaseline: \"{kwargs.get('baseline', '')}\""
+            header += f'\nmetrics: {json.dumps(kwargs.get("metrics", []))}\nbaseline: "{kwargs.get("baseline", "")}"'
 
         header += "\n---\n"
 
@@ -249,19 +244,20 @@ updated: "{now}"
             "assessment": "\n# Assessment: Title\n\n## Objective\n\n## Observations\n\n## Conclusion\n",
             "report": "\n# Report: Title\n\n## Summary\n\n## Metrics Analysis\n\n## Visual Proof\n",
             "guide": "\n# Guide: Title\n\n## Overview\n\n## Steps\n",
-            "script": "\n# Script: Title\n\n## Usage\n\n## Logic Flow\n"
+            "script": "\n# Script: Title\n\n## Usage\n\n## Logic Flow\n",
         }
         return templates.get(artifact_type, "\n# New Artifact\n")
 
-    def _sync_experiment(self, conn: sqlite3.Connection, experiment_id: str, stats: Dict):
+    def _sync_experiment(self, conn: sqlite3.Connection, experiment_id: str, stats: dict):
         exp_path = self.experiments_dir / experiment_id
-        if not exp_path.exists(): return
+        if not exp_path.exists():
+            return
 
         # Sync experiment entry
         now = datetime.now(KST).isoformat()
         conn.execute(
             "INSERT OR IGNORE INTO experiments (experiment_id, name, status, created_at, updated_at, ads_version) VALUES (?, ?, ?, ?, ?, ?)",
-            (experiment_id, experiment_id, "active", now, now, EDS_VERSION)
+            (experiment_id, experiment_id, "active", now, now, EDS_VERSION),
         )
 
         artifact_pattern = re.compile(r"^\d{8}_\d{4}_(assessment|report|guide|script)_.*\.md$")
@@ -269,14 +265,15 @@ updated: "{now}"
             if artifact_pattern.match(p.name):
                 self._sync_artifact(conn, experiment_id, p, p.name.split("_")[2], stats)
 
-    def _sync_artifact(self, conn: sqlite3.Connection, experiment_id: str, artifact_path: Path, artifact_type: str, stats: Dict):
+    def _sync_artifact(self, conn: sqlite3.Connection, experiment_id: str, artifact_path: Path, artifact_type: str, stats: dict):
         # Implementation similar to etk.py (moved logic)
         # For brevity, I'll assume DatabaseManager handles the bulk or I repeat the parsing logic here
         # Since DatabaseManager was designed for DB ops, let's keep the file parsing here.
         try:
             content = artifact_path.read_text(encoding="utf-8")
             fm_match = re.match(r"^---\s*\n(.*?)\n---\s*\n", content, re.DOTALL)
-            if not fm_match: return
+            if not fm_match:
+                return
 
             # Simple frontmatter parse
             fm = {}
@@ -292,15 +289,28 @@ updated: "{now}"
 
             conn.execute(
                 "INSERT OR REPLACE INTO artifacts (artifact_id, experiment_id, type, title, file_path, status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
-                (aid, experiment_id, artifact_type, title, str(artifact_path.relative_to(self.tracker_root)), status, created, datetime.now(KST).isoformat())
+                (
+                    aid,
+                    experiment_id,
+                    artifact_type,
+                    title,
+                    str(artifact_path.relative_to(self.tracker_root)),
+                    status,
+                    created,
+                    datetime.now(KST).isoformat(),
+                ),
             )
 
             # Sync FTS
-            main = content[fm_match.end():]
-            conn.execute("INSERT OR REPLACE INTO artifacts_fts (artifact_id, experiment_id, title, content) VALUES (?, ?, ?, ?)", (aid, experiment_id, title, main))
+            main = content[fm_match.end() :]
+            conn.execute(
+                "INSERT OR REPLACE INTO artifacts_fts (artifact_id, experiment_id, title, content) VALUES (?, ?, ?, ?)",
+                (aid, experiment_id, title, main),
+            )
 
             stats["synced"] += 1
         except Exception:
             stats["failed"] += 1
+
 
 import json

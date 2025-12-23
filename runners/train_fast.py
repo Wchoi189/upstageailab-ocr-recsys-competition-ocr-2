@@ -38,11 +38,11 @@ def _lazy_import_training_deps():
 
     # Import heavy libraries only when actually training
     import torch  # noqa: F401 - imported for side effects
-    import wandb  # noqa: F401
     from lightning.pytorch import Trainer
     from lightning.pytorch.callbacks import LearningRateMonitor
     from lightning.pytorch.loggers import Logger, TensorBoardLogger, WandbLogger
 
+    import wandb  # noqa: F401
     from ocr.lightning_modules import get_pl_modules_by_cfg
     from ocr.utils.wandb_utils import (
         finalize_run,

@@ -2,6 +2,7 @@
 
 import pydantic
 import pytest
+
 from AgentQMS.vlm.core.contracts import (
     AnalysisMode,
     AnalysisRequest,

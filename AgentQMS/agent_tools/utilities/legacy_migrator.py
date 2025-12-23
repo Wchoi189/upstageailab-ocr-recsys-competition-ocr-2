@@ -21,7 +21,6 @@ import argparse
 import json
 import re
 import sys
-from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -168,6 +167,7 @@ class LegacyArtifactMigrator:
         # If no date in filename, use inferred timestamp from file history/metadata
         if not timestamp:
             from AgentQMS.agent_tools.utils.timestamps import infer_artifact_filename_timestamp
+
             timestamp = infer_artifact_filename_timestamp(filepath)
 
         # Standardize artifact type (force-mapping generic types)
@@ -180,7 +180,7 @@ class LegacyArtifactMigrator:
             "templates": "template",
             "session_notes": "session_note",
             "completion_summaries": "completion_summary",
-            "vlm_reports": "vlm_report"
+            "vlm_reports": "vlm_report",
         }
 
         artifact_type = str(artifact_type).lower()
@@ -199,9 +199,22 @@ class LegacyArtifactMigrator:
         # Remove common artifact type prefixes (e.g., assessment_, implementation_plan_, BUG_, etc.)
         # This handles cases where the type prefix might be duplicated after renaming
         type_prefixes = [
-            "implementation_plan", "assessment", "audit", "design", "research",
-            "template", "bug_report", "session_note", "completion_summary", "completion_report", "vlm_report",
-            "BUG", "SESSION", "resolution", "artifact", "specification"
+            "implementation_plan",
+            "assessment",
+            "audit",
+            "design",
+            "research",
+            "template",
+            "bug_report",
+            "session_note",
+            "completion_summary",
+            "completion_report",
+            "vlm_report",
+            "BUG",
+            "SESSION",
+            "resolution",
+            "artifact",
+            "specification",
         ]
         for prefix in type_prefixes:
             base_name = re.sub(f"^{prefix}[_\\-]", "", base_name, flags=re.IGNORECASE)

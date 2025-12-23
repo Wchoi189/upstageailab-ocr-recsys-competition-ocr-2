@@ -11,6 +11,7 @@ from pathlib import Path
 from typing import Any
 
 from .dependencies import OCR_MODULES_AVAILABLE, PROJECT_ROOT
+
 # from .dependencies import DictConfig, yaml
 
 LOGGER = logging.getLogger(__name__)
@@ -122,6 +123,7 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
         with path.open("r", encoding="utf-8") as handle:
             config_dict = json.load(handle)
         from omegaconf import DictConfig
+
         config_container = DictConfig(config_dict)
     elif OCR_MODULES_AVAILABLE:
         config_container = load_config_from_path(path)
@@ -129,12 +131,14 @@ def load_model_config(config_path: str | Path) -> ModelConfigBundle:
         with path.open("r", encoding="utf-8") as handle:
             if path.suffix in {".yaml", ".yml"}:
                 import yaml
+
                 if yaml is None:
                     raise RuntimeError("PyYAML is not available to parse configuration files.")
                 config_dict = yaml.safe_load(handle)
             else:
                 config_dict = json.load(handle)
         from omegaconf import DictConfig
+
         config_container = DictConfig(config_dict)
 
     preprocess_settings = _extract_preprocess_settings(config_container)

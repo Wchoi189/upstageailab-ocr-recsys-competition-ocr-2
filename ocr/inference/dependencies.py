@@ -16,6 +16,7 @@ if str(PROJECT_ROOT) not in sys.path:
 
 # Lazy check for availability
 import importlib.util
+
 _torch_spec = importlib.util.find_spec("torch")
 OCR_MODULES_AVAILABLE = _torch_spec is not None
 

@@ -51,6 +51,7 @@ class ModelManager:
         """
         if device is None:
             import torch
+
             self.device = "cuda" if torch is not None and torch.cuda.is_available() else "cpu"
         else:
             self.device = device
@@ -182,6 +183,7 @@ class ModelManager:
         LOGGER.info("Cleaning up ModelManager resources...")
 
         import torch
+
         if self.model is not None and torch is not None:
             # Move model to CPU before deletion to free GPU memory
             self.model = self.model.cpu()
@@ -190,6 +192,7 @@ class ModelManager:
 
             # Clear CUDA cache if available
             import torch
+
             if torch.cuda.is_available():
                 torch.cuda.empty_cache()
 

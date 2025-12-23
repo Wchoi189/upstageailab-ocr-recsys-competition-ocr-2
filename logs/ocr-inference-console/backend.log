@@ -1197,3 +1197,13 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-23 21:22:56,644 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
 2025-12-23 21:38:25,996 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
 2025-12-23 21:38:49,574 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-24 01:06:58,347 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-24 01:06:58,491 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-24 01:07:05,533 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-24 01:07:05,535 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-24 01:07:06,036 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-24 01:09:00,877 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-24 01:09:00,949 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-24 01:09:04,958 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-24 01:09:04,960 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-24 01:09:05,461 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt

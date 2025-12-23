@@ -121,9 +121,7 @@ class ImageEnhancementComparator:
         results = enhancer.enhance(img)
         return results["linear_contrast"][0]
 
-    def _calculate_metrics(
-        self, original: np.ndarray, enhanced: np.ndarray, processing_time: float
-    ) -> dict:
+    def _calculate_metrics(self, original: np.ndarray, enhanced: np.ndarray, processing_time: float) -> dict:
         """
         Calculate comprehensive enhancement metrics.
 
@@ -179,10 +177,7 @@ class ImageEnhancementComparator:
         }
 
 
-def create_comparison_grid(
-    results: dict[str, tuple[np.ndarray, dict]],
-    title: str = "Image Enhancement Comparison"
-) -> np.ndarray:
+def create_comparison_grid(results: dict[str, tuple[np.ndarray, dict]], title: str = "Image Enhancement Comparison") -> np.ndarray:
     """
     Create a grid visualization of all enhancement methods.
 
@@ -243,10 +238,7 @@ def create_comparison_grid(
         pad_left = (target_width - new_w) // 2
         pad_right = target_width - new_w - pad_left
 
-        padded = cv2.copyMakeBorder(
-            resized_img, pad_top, pad_bottom, pad_left, pad_right,
-            cv2.BORDER_CONSTANT, value=(255, 255, 255)
-        )
+        padded = cv2.copyMakeBorder(resized_img, pad_top, pad_bottom, pad_left, pad_right, cv2.BORDER_CONSTANT, value=(255, 255, 255))
         resized.append(padded)
 
     # Create grid
@@ -257,13 +249,10 @@ def create_comparison_grid(
     grid = np.ones((n_rows * cell_height + 50, n_cols * cell_width, 3), dtype=np.uint8) * 255
 
     # Add title
-    cv2.putText(
-        grid, title, (20, 35),
-        cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 0), 2
-    )
+    cv2.putText(grid, title, (20, 35), cv2.FONT_HERSHEY_SIMPLEX, 1.2, (0, 0, 0), 2)
 
     # Place images in grid
-    for idx, (img, label) in enumerate(zip(resized, labels)):
+    for idx, (img, label) in enumerate(zip(resized, labels, strict=False)):
         row = idx // n_cols
         col = idx % n_cols
 
@@ -271,16 +260,12 @@ def create_comparison_grid(
         x_offset = col * cell_width
 
         # Place image
-        grid[y_offset:y_offset+target_height, x_offset:x_offset+target_width] = img
+        grid[y_offset : y_offset + target_height, x_offset : x_offset + target_width] = img
 
         # Add label below image
-        label_lines = label.split('\n')
+        label_lines = label.split("\n")
         for i, line in enumerate(label_lines):
-            cv2.putText(
-                grid, line,
-                (x_offset + 5, y_offset + target_height + 20 + i * 20),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1
-            )
+            cv2.putText(grid, line, (x_offset + 5, y_offset + target_height + 20 + i * 20), cv2.FONT_HERSHEY_SIMPLEX, 0.4, (0, 0, 0), 1)
 
     return grid
 
@@ -387,13 +372,10 @@ def main():
 
     # Save metrics if requested
     if args.save_metrics:
-        metrics_only = {
-            method: metrics
-            for method, (_, metrics) in results.items()
-        }
+        metrics_only = {method: metrics for method, (_, metrics) in results.items()}
 
         metrics_path = args.output / f"{args.input.stem}_metrics.json"
-        with open(metrics_path, 'w') as f:
+        with open(metrics_path, "w") as f:
             json.dump(metrics_only, f, indent=2)
 
         print(f"✓ Saved metrics: {metrics_path}")

@@ -76,7 +76,7 @@ class PluginLoader:
         if self._registry is not None and not force:
             return self._registry
 
-        registry = PluginRegistry(loaded_at=datetime.now(timezone.utc).isoformat())
+        registry = PluginRegistry(loaded_at=datetime.now(UTC).isoformat())
 
         # Discover all plugins
         discovered = self.discovery.discover_by_type()
