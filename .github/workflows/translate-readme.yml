@@ -23,9 +23,12 @@ jobs:
         uses: astral-sh/setup-uv@v5
 
       - name: Translate README
+        env:
+          # Keep this job lightweight: use the runner's Python, don't download CPython.
+          UV_PYTHON_DOWNLOADS: never
         run: |
           uv run \
-            --python 3.11 \
+            --no-project \
             --with deep-translator \
             python scripts/translate_readme.py \
               --input README.md \
