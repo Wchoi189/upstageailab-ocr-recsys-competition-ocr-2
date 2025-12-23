@@ -36,11 +36,12 @@ jobs:
               --target-lang "${{ github.event.inputs.target_language }}"
 
       - name: Validate PAT (optional)
-        if: ${{ secrets.TRANSLATE_README_TOKEN != '' }}
         env:
-          GH_TOKEN: ${{ secrets.TRANSLATE_README_TOKEN }}
+          TRANSLATE_README_TOKEN: ${{ secrets.TRANSLATE_README_TOKEN }}
         run: |
-          gh api /user > /dev/null
+          if [ -n "$TRANSLATE_README_TOKEN" ]; then
+            GH_TOKEN="$TRANSLATE_README_TOKEN" gh api /user > /dev/null
+          fi
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
