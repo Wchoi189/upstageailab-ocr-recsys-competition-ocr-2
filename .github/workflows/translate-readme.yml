@@ -35,20 +35,30 @@ jobs:
               --input README.md \
               --target-lang "${{ github.event.inputs.target_language }}"
 
-      - name: Validate PAT (optional)
+      - name: Select PR token
+        id: select_pr_token
         env:
           TRANSLATE_README_TOKEN: ${{ secrets.TRANSLATE_README_TOKEN }}
+          GITHUB_TOKEN_FALLBACK: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          pr_token="$GITHUB_TOKEN_FALLBACK"
+
           if [ -n "$TRANSLATE_README_TOKEN" ]; then
-            GH_TOKEN="$TRANSLATE_README_TOKEN" gh api /user > /dev/null
+            if GH_TOKEN="$TRANSLATE_README_TOKEN" gh api /user > /dev/null 2>&1; then
+              pr_token="$TRANSLATE_README_TOKEN"
+            else
+              echo "TRANSLATE_README_TOKEN is set but invalid (HTTP 401). Falling back to GITHUB_TOKEN." >&2
+            fi
           fi
+
+          echo "token=$pr_token" >> "$GITHUB_OUTPUT"
 
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
           # If your repo disables PR creation for GITHUB_TOKEN,
           # set a PAT with repo scope as secret TRANSLATE_README_TOKEN.
-          token: ${{ secrets.TRANSLATE_README_TOKEN || secrets.GITHUB_TOKEN }}
+          token: ${{ steps.select_pr_token.outputs.token }}
           title: "🌐 Translate README (${{ github.event.inputs.target_language }})"
           body: |
             Automated translation of README.md.
