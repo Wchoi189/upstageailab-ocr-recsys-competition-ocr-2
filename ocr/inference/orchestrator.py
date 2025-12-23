@@ -86,6 +86,7 @@ class InferenceOrchestrator:
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
         enable_clahe: bool = False,
+        sepia_display_mode: str = "enhanced",
     ) -> dict[str, Any] | None:
         """Run inference on image array.
 
@@ -104,6 +105,7 @@ class InferenceOrchestrator:
             enable_background_normalization: Whether to apply gray-world background normalization
             enable_sepia_enhancement: Whether to apply sepia tone transformation
             enable_clahe: Whether to apply CLAHE contrast enhancement
+            sepia_display_mode: Display mode for sepia ("enhanced" or "original")
 
         Returns:
             Predictions dict with polygons, texts, confidences, and optional preview
@@ -132,6 +134,7 @@ class InferenceOrchestrator:
             enable_background_normalization=enable_background_normalization,
             enable_sepia_enhancement=enable_sepia_enhancement,
             enable_clahe=enable_clahe,
+            sepia_display_mode=sepia_display_mode,
         )
 
         if preprocess_result is None:

@@ -140,6 +140,7 @@ class InferenceEngine:
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
         enable_clahe: bool = False,
+        sepia_display_mode: str = "enhanced",
     ) -> dict[str, Any] | None:
         """Predict on an image array (numpy) directly.
 
@@ -157,6 +158,7 @@ class InferenceEngine:
             enable_grayscale: Enable grayscale preprocessing
             enable_sepia_enhancement: Enable sepia tone transformation
             enable_clahe: Enable CLAHE contrast enhancement
+            sepia_display_mode: Display mode for sepia ("enhanced" or "original")
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -186,6 +188,7 @@ class InferenceEngine:
             enable_background_normalization=enable_background_normalization,
             enable_sepia_enhancement=enable_sepia_enhancement,
             enable_clahe=enable_clahe,
+            sepia_display_mode=sepia_display_mode,
         )
 
     def predict_image(
@@ -202,6 +205,7 @@ class InferenceEngine:
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
         enable_clahe: bool = False,
+        sepia_display_mode: str = "enhanced",
     ) -> dict[str, Any] | None:
         """Predict on an image file (legacy file path-based API).
 
@@ -219,6 +223,7 @@ class InferenceEngine:
             enable_grayscale: Enable grayscale preprocessing
             enable_sepia_enhancement: Enable sepia tone transformation
             enable_clahe: Enable CLAHE contrast enhancement
+            sepia_display_mode: Display mode for sepia ("enhanced" or "original")
 
         Returns:
             Predictions dict with 'polygons', 'texts', 'confidences' keys
@@ -256,6 +261,7 @@ class InferenceEngine:
             enable_background_normalization=enable_background_normalization,
             enable_sepia_enhancement=enable_sepia_enhancement,
             enable_clahe=enable_clahe,
+            sepia_display_mode=sepia_display_mode,
         )
 
 

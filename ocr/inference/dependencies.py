@@ -14,36 +14,19 @@ LOGGER = logging.getLogger(__name__)
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.append(str(PROJECT_ROOT))
 
-try:
-    import lightning.pytorch as pl  # type: ignore
-    import torch
-    import torchvision.transforms as transforms  # type: ignore
-    import yaml  # type: ignore
-    from omegaconf import DictConfig, ListConfig  # type: ignore
+# Lazy check for availability
+import importlib.util
+_torch_spec = importlib.util.find_spec("torch")
+OCR_MODULES_AVAILABLE = _torch_spec is not None
 
-    from ocr.models import get_model_by_cfg  # type: ignore
+if not OCR_MODULES_AVAILABLE:
+    LOGGER.warning("Could not find 'torch' module. Falling back to mock predictions.")
 
-    OCR_MODULES_AVAILABLE = True
-except ImportError as exc:  # pragma: no cover - optional dependency guard
-    LOGGER.warning("Could not import OCR modules: %s. Falling back to mock predictions.", exc)
-    OCR_MODULES_AVAILABLE = False
-    torch = None  # type: ignore
-    transforms = None  # type: ignore
-    yaml = None  # type: ignore
-    pl = None  # type: ignore
-    DictConfig = dict  # type: ignore
-    ListConfig = None  # type: ignore
-    get_model_by_cfg = None  # type: ignore
+# NOTE: Removed eager imports of torch, torchvision, lightning, etc.
+# Consumers must import these locally inside methods/functions.
 
 __all__ = [
     "LOGGER",
     "PROJECT_ROOT",
     "OCR_MODULES_AVAILABLE",
-    "torch",
-    "transforms",
-    "yaml",
-    "pl",
-    "DictConfig",
-    "ListConfig",
-    "get_model_by_cfg",
 ]

@@ -10,7 +10,7 @@ scope: "docs/ (841 files) → .ai-instructions/ (ADS v1.0 compliant)"
 estimated_effort: "28-44 hours"
 priority: "high"
 related_assessments: ""
-tags: "["documentation", "agentqms", "ads-v1.0", "automation"]"
+tags: ["documentation", "agentqms", "ads-v1.0", "automation"]
 ---
 
 

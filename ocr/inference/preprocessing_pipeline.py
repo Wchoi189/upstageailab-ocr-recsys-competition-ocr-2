@@ -93,6 +93,7 @@ class PreprocessingPipeline:
         enable_background_normalization: bool | None = None,
         enable_sepia_enhancement: bool | None = None,
         enable_clahe: bool | None = None,
+        sepia_display_mode: str = "enhanced",
     ) -> PreprocessingResult | None:
         """Run preprocessing pipeline on an image.
 
@@ -166,15 +167,41 @@ class PreprocessingPipeline:
             use_background_norm = enable_background_normalization if enable_background_normalization is not None else self._enable_background_normalization
             use_sepia = enable_sepia_enhancement if enable_sepia_enhancement is not None else self._enable_sepia_enhancement
             use_clahe = enable_clahe if enable_clahe is not None else self._enable_clahe
-            batch, preview_image_bgr = preprocess_image(
-                image,
-                self._transform,
-                target_size=self._target_size,
-                return_processed_image=True,
-                enable_background_normalization=use_background_norm,
-                enable_sepia_enhancement=use_sepia,
-                enable_clahe=use_clahe,
-            )
+
+            # If sepia is enabled but display mode is "original", we need separate passes
+            if use_sepia and sepia_display_mode == "original":
+                # Pass 1: With sepia for inference input
+                batch, _ = preprocess_image(
+                    image,
+                    self._transform,
+                    target_size=self._target_size,
+                    return_processed_image=True,
+                    enable_background_normalization=use_background_norm,
+                    enable_sepia_enhancement=True,
+                    enable_clahe=use_clahe,
+                )
+
+                # Pass 2: Without sepia for preview output
+                _, preview_image_bgr = preprocess_image(
+                    image,
+                    self._transform,
+                    target_size=self._target_size,
+                    return_processed_image=True,
+                    enable_background_normalization=use_background_norm,
+                    enable_sepia_enhancement=False,
+                    enable_clahe=use_clahe,
+                )
+            else:
+                # Standard single pass
+                batch, preview_image_bgr = preprocess_image(
+                    image,
+                    self._transform,
+                    target_size=self._target_size,
+                    return_processed_image=True,
+                    enable_background_normalization=use_background_norm,
+                    enable_sepia_enhancement=use_sepia,
+                    enable_clahe=use_clahe,
+                )
 
             # Verify preview dimensions
             preview_h, preview_w = preview_image_bgr.shape[:2]

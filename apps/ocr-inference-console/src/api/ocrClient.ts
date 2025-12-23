@@ -101,7 +101,8 @@ export const ocrClient = {
         enableSepiaEnhancement?: boolean,
         enableClahe?: boolean,
         confidenceThreshold?: number,  // NEW
-        nmsThreshold?: number  // NEW
+        nmsThreshold?: number,  // NEW
+        sepiaDisplayMode?: string  // NEW
     ): Promise<InferenceResponse> => {
         // Convert file to base64
         const toBase64 = (file: File) => new Promise<string>((resolve, reject) => {
@@ -129,7 +130,8 @@ export const ocrClient = {
             enable_grayscale: enableGrayscale || false,
             enable_background_normalization: enableBackgroundNormalization || false,
             enable_sepia_enhancement: enableSepiaEnhancement || false,
-            enable_clahe: enableClahe || false
+            enable_clahe: enableClahe || false,
+            sepia_display_mode: sepiaDisplayMode || "enhanced"
         };
 
         const response = await fetch(url, {

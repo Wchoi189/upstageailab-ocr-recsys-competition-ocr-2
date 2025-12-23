@@ -36,6 +36,7 @@ export const Workspace: React.FC<WorkspaceProps> = ({
         enableBackgroundNormalization,
         enableSepiaEnhancement,
         enableClahe,
+        sepiaDisplayMode,
         confidenceThreshold,
         nmsThreshold,
     } = inferenceOptions;
@@ -72,8 +73,9 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 enableBackgroundNormalization,
                 enableSepiaEnhancement,
                 enableClahe,
-                confidenceThreshold,  // NEW
-                nmsThreshold  // NEW
+                confidenceThreshold,
+                nmsThreshold,
+                sepiaDisplayMode
             ); setPredictions(result.predictions); setInferenceMeta(result.meta);
             setPreviewImageBase64(result.preview_image_base64 || null);
         } catch (e: any) {
@@ -103,8 +105,9 @@ export const Workspace: React.FC<WorkspaceProps> = ({
                 enableBackgroundNormalization,
                 enableSepiaEnhancement,
                 enableClahe,
-                confidenceThreshold,  // NEW
-                nmsThreshold  // NEW
+                confidenceThreshold,
+                nmsThreshold,
+                sepiaDisplayMode
             );
             setPredictions(result.predictions);
             setInferenceMeta(result.meta);

@@ -8,6 +8,7 @@ interface InferenceOptions {
   enableBackgroundNormalization: boolean;
   enableSepiaEnhancement: boolean;
   enableClahe: boolean;
+  sepiaDisplayMode: string;
   confidenceThreshold: number;
   nmsThreshold: number;
 }
@@ -57,6 +58,7 @@ export function InferenceProvider({ children }: InferenceProviderProps): React.R
     enableBackgroundNormalization: false,
     enableSepiaEnhancement: false,
     enableClahe: false,
+    sepiaDisplayMode: 'enhanced',
     confidenceThreshold: 0.1,
     nmsThreshold: 0.4,
   });

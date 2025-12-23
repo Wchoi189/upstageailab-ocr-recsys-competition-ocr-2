@@ -6,15 +6,21 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from .dependencies import OCR_MODULES_AVAILABLE, ListConfig, get_model_by_cfg, torch
+from .dependencies import OCR_MODULES_AVAILABLE
+# from .dependencies import ListConfig, get_model_by_cfg, torch
 
 LOGGER = logging.getLogger(__name__)
 
 
 def instantiate_model(model_config: Any):
     """Instantiate the OCR model from configuration."""
-    if not OCR_MODULES_AVAILABLE or get_model_by_cfg is None:
+    if not OCR_MODULES_AVAILABLE:
         raise RuntimeError("OCR model modules are not available. Did you install training dependencies?")
+
+    from ocr.models import get_model_by_cfg
+    if get_model_by_cfg is None:
+         raise RuntimeError("get_model_by_cfg not found!")
+
     architecture_name = "custom"
     if hasattr(model_config, "get") and callable(model_config.get):
         architecture_name = model_config.get("architecture_name", architecture_name)
@@ -27,6 +33,7 @@ def instantiate_model(model_config: Any):
 
 def load_checkpoint(checkpoint_path: str | Path, device: str) -> dict[str, Any] | None:
     """Load a checkpoint file into memory."""
+    import torch
     if torch is None:
         return None
 
@@ -48,6 +55,7 @@ def load_checkpoint(checkpoint_path: str | Path, device: str) -> dict[str, Any] 
 
 def load_state_dict(model, checkpoint: dict[str, Any]) -> bool:  # type: ignore[override]
     """Load a model state dict from checkpoint data."""
+    import torch
     if torch is None:
         return False
 
@@ -88,6 +96,8 @@ def load_state_dict(model, checkpoint: dict[str, Any]) -> bool:  # type: ignore[
 
 
 def register_safe_globals() -> None:
+    import torch
+    from omegaconf import ListConfig
     if torch is None or ListConfig is None:
         return
 

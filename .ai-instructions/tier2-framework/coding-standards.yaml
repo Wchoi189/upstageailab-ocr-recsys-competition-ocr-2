@@ -256,3 +256,90 @@ type_annotation_rules:
   enforcement:
     tool: "mypy --strict"
     config: "pyproject.toml"
+
+# Tier 2 - Coding Standards: Asynchronous Patterns
+
+async_patterns_rules:
+  fastapi_routes:
+    blocking_operations:
+      description: "CPU-bound tasks (inference, heavy image proc) in async def block the event loop"
+      rule: "Use 'def' (threadpool) OR 'await loop.run_in_executor' for blocking calls"
+
+      patterns:
+        prohibited:
+          description: "Blocking call in async def"
+          example: |
+            @app.post("/predict")
+            async def predict(image):
+                # BLOCKS the event loop! No other requests processed.
+                return model.forward(image)
+
+        recommended:
+          description: "Starlette ThreadPool (Simplest)"
+          example: |
+            @app.post("/predict")
+            def predict(image):
+                # FastAPI runs this in a threadpool automatically
+                return model.forward(image)
+
+        advanced:
+          description: "Explicit Executor (Best for mixed workloads)"
+          example: |
+            @app.post("/predict")
+            async def predict(image):
+                # Non-blocking preload
+                await check_cache()
+                # Run blocking inference in specific executor
+                loop = asyncio.get_running_loop()
+                return await loop.run_in_executor(model_executor, model.forward, image)
+
+  io_operations:
+    network_calls: "MUST use async clients (httpx, aiohttp) instead of sync (requests)"
+    file_io: "Prefer aiofiles for large files, or run_in_executor for pathlib ops"
+    database: "Use async drivers (asyncpg, motor) where possible"
+
+# Tier 2 - Coding Standards: Deprecation Protocol
+
+deprecation_rules:
+  lifecycle_phases:
+    phase_1_soft:
+      action: "Add @deprecated decorator or DeprecationWarning"
+      timeline: "Immediate upon decision"
+      behavior: "Code works, logs warning once per session"
+
+    phase_2_hard:
+      action: "Make warning loud (stack trace) or soft-fail"
+      timeline: "Next minor version (e.g. v1.1 -> v1.2)"
+      behavior: "Code works but spams warnings or requires flag to enable"
+
+    phase_3_removal:
+      action: "Delete code"
+      timeline: "Next major version (e.g. v1.x -> v2.0)"
+      behavior: "ImportError or AttributeError"
+
+  required_patterns:
+    python_code:
+      description: "Use the warnings library"
+      example: |
+        import warnings
+
+        def old_function():
+            warnings.warn(
+                "old_function is deprecated and will be removed in v2.0. Use new_function instead.",
+                DeprecationWarning,
+                stacklevel=2
+            )
+            return new_function()
+
+    api_endpoints:
+      description: "Mark in FastAPI/OpenAPI"
+      example: |
+        @app.get("/old-route", deprecated=True)
+        def old_route(): ...
+
+    config_flags:
+      description: "Mark deprecated config fields"
+      example: "Add (Deprecated) prefix to help text or log warning in validator"
+
+  documentation:
+    requirement: "Must update changelog and migration guide immediately"

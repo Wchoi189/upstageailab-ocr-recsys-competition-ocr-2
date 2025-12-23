@@ -66,7 +66,7 @@ venv.bak/
 node_modules/
 
 # IDE
-.vscode/
+# .vscode/
 .idea/
 *.swp
 *.swo
@@ -85,7 +85,7 @@ Thumbs.db
 # logs/
 # *.log
 lightning_logs/
-/outputs/
+# /outputs/
 checkpoints/
 *.pth
 *.ckpt
@@ -104,7 +104,7 @@ data/filter_samples/
 /data/ops
 # Experiments and Archives
 multirun/
-_archive/
+# _archive/
 __OLD__/
 /archive/
 CamScanner-Web-App/
@@ -139,7 +139,7 @@ real_noise_elimination_demo/
 resource_logs/
 test_*/
 zero_prediction_*/
-
+/outputs/
 # AgentQMS
 # .agentqms/state.json
 # .agentqms/sessions/
@@ -152,7 +152,7 @@ zero_prediction_*/
 # .agentqms/state/*.sqlite
 
 # Project-specific files (review and remove if no longer needed)
-notepad.md
-root-cause.md
+# notepad.md
+# root-cause.md
 data_gen_exp/
 repomix-output.xml

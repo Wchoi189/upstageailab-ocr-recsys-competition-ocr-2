@@ -32,6 +32,7 @@ export const Sidebar = () => {
         enableGrayscale,
         enableBackgroundNormalization,
         enableSepiaEnhancement,
+        sepiaDisplayMode,
         enableClahe,
         confidenceThreshold,
         nmsThreshold,
@@ -145,6 +146,30 @@ export const Sidebar = () => {
                             />
                             <span>Sepia Enhancement</span>
                         </label>
+                        {enableSepiaEnhancement && (
+                            <div className="ml-6 space-y-1">
+                                <label className="flex items-center gap-2 text-xs">
+                                    <input
+                                        type="radio"
+                                        name="sepiaDisplayMode"
+                                        value="enhanced"
+                                        checked={sepiaDisplayMode === "enhanced"}
+                                        onChange={(e) => updateInferenceOptions({ sepiaDisplayMode: e.target.value })}
+                                    />
+                                    <span>Show Enhanced</span>
+                                </label>
+                                <label className="flex items-center gap-2 text-xs">
+                                    <input
+                                        type="radio"
+                                        name="sepiaDisplayMode"
+                                        value="original"
+                                        checked={sepiaDisplayMode === "original"}
+                                        onChange={(e) => updateInferenceOptions({ sepiaDisplayMode: e.target.value })}
+                                    />
+                                    <span>Show Original</span>
+                                </label>
+                            </div>
+                        )}
                         <label className="flex items-center gap-2 text-sm">
                             <input
                                 type="checkbox"

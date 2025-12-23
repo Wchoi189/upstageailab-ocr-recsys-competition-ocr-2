@@ -130,6 +130,11 @@ class InferenceRequest(BaseModel):
         default=False,
         description="Enable CLAHE (Contrast Limited Adaptive Histogram Equalization) for contrast enhancement",
     )
+    sepia_display_mode: str = Field(
+        default="enhanced",
+        description="Display mode: 'enhanced' shows sepia image, 'original' shows original (pre-sepia) image",
+        pattern="^(enhanced|original)$",
+    )
 
     model_config = {
         "json_schema_extra": {

@@ -37,6 +37,7 @@ class InferenceService:
         enable_background_normalization: bool = False,
         enable_sepia_enhancement: bool = False,
         enable_clahe: bool = False,
+        sepia_display_mode: str = "enhanced",
     ) -> dict:
         """Run inference on an image with specified parameters.
 
@@ -51,6 +52,7 @@ class InferenceService:
             enable_background_normalization: Whether to normalize background
             enable_sepia_enhancement: Whether to apply sepia tone transformation
             enable_clahe: Whether to apply CLAHE contrast enhancement
+            sepia_display_mode: Display mode for sepia ("enhanced" or "original")
 
         Returns:
             Inference result dictionary with polygons, texts, confidences, and preview image
@@ -93,17 +95,26 @@ class InferenceService:
                 enable_sepia_enhancement,
                 enable_clahe,
             )
-            result = self._engine.predict_array(
-                image_array=image,
-                binarization_thresh=confidence_threshold,
-                box_thresh=nms_threshold,
-                return_preview=True,
-                enable_perspective_correction=enable_perspective_correction,
-                perspective_display_mode=perspective_display_mode,
-                enable_grayscale=enable_grayscale,
-                enable_background_normalization=enable_background_normalization,
-                enable_sepia_enhancement=enable_sepia_enhancement,
-                enable_clahe=enable_clahe,
+
+            # Offload CPU-bound inference to threadpool to avoid blocking event loop
+            import asyncio
+            loop = asyncio.get_running_loop()
+
+            result = await loop.run_in_executor(
+                None,  # Use default executor
+                lambda: self._engine.predict_array(
+                    image_array=image,
+                    binarization_thresh=confidence_threshold,
+                    box_thresh=nms_threshold,
+                    return_preview=True,
+                    enable_perspective_correction=enable_perspective_correction,
+                    perspective_display_mode=perspective_display_mode,
+                    enable_grayscale=enable_grayscale,
+                    enable_background_normalization=enable_background_normalization,
+                    enable_sepia_enhancement=enable_sepia_enhancement,
+                    enable_clahe=enable_clahe,
+                    sepia_display_mode=sepia_display_mode,
+                )
             )
 
             if result is None:
@@ -114,6 +125,50 @@ class InferenceService:
         except Exception as e:
             logger.exception("Inference failed: %s", e)
             raise RuntimeError(f"Inference failed: {str(e)}")
+
+    async def warm_up(self, checkpoint_path: str) -> None:
+        """Warm up the engine by loading the model in the background.
+
+        This method is designed to be called during startup to pre-load the model
+        so that the first inference request is fast ("eliminated cold start").
+
+        Args:
+            checkpoint_path: Path to model checkpoint to pre-load
+        """
+        if self._engine is not None and self._current_checkpoint == checkpoint_path:
+            logger.info("🔥 Engine already warmed up with checkpoint: %s", checkpoint_path)
+            return
+
+        logger.info("🔥 Starting background model warm-up: %s", checkpoint_path)
+
+        # Lazy import heavy dependencies
+        from apps.shared.backend_shared.inference import InferenceEngine
+        import asyncio
+
+        # Initialize engine if needed
+        if self._engine is None:
+            logger.info("🔄 Initializing InferenceEngine for warm-up...")
+            start_init = time.perf_counter()
+            self._engine = InferenceEngine()
+            logger.info("✅ InferenceEngine initialized in %.2fs", time.perf_counter() - start_init)
+
+        # Offload blocking model load to threadpool
+        loop = asyncio.get_running_loop()
+
+        try:
+            success = await loop.run_in_executor(
+                None,
+                lambda: self._engine.load_model(checkpoint_path)
+            )
+
+            if success:
+                self._current_checkpoint = checkpoint_path
+                logger.info("✅ Background model warm-up complete!")
+            else:
+                logger.error("❌ Background model warm-up failed during load_model")
+
+        except Exception as e:
+            logger.exception("❌ Background model warm-up failed with error: %s", e)
 
     def cleanup(self) -> None:
         """Clean up engine resources."""

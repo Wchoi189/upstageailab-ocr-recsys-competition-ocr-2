@@ -1104,3 +1104,96 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-21 15:18:39,166 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
 2025-12-21 15:40:09,702 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
 2025-12-21 15:40:09,753 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-23 15:50:05,584 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 15:51:10,548 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 15:51:10,554 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 15:51:10,555 | INFO | main | ✅ Shutdown complete
+2025-12-23 16:02:15,458 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 16:08:17,755 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 16:08:17,756 | INFO | main | ✅ Shutdown complete
+2025-12-23 16:12:15,871 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 16:12:15,872 | INFO | main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 16:12:16,373 | INFO | main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 16:12:17,224 | ERROR | main | ❌ Startup task failed: cannot import name 'DictConfig' from 'ocr.inference.dependencies' (/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/inference/dependencies.py)
+2025-12-23 16:13:30,659 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 16:13:30,661 | INFO | main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 16:13:31,161 | INFO | main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 17:12:51,618 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:13:03,415 | INFO | main | 📥 Inference request: perspective=False, grayscale=True, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:13:08,641 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=True, sepia=False, clahe=False
+2025-12-23 17:13:16,802 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:13:27,068 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 17:13:31,985 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:13:39,318 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 17:13:40,860 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 17:13:43,681 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:13:50,114 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:14:00,490 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:14:05,093 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:14:35,816 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:14:45,418 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:15:00,704 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:15:08,682 | INFO | main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:15:16,094 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=True, sepia=False, clahe=False
+2025-12-23 17:15:21,789 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=True
+2025-12-23 17:15:26,530 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 17:15:33,355 | INFO | main | 📥 Inference request: perspective=True, grayscale=True, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:15:38,704 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:16:02,347 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:16:18,603 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 17:16:52,375 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 19:15:29,622 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 19:15:29,737 | INFO | main | ✅ Shutdown complete
+2025-12-23 19:15:34,414 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 19:15:34,417 | INFO | main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 19:15:34,918 | INFO | main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 19:20:50,235 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 19:20:50,315 | INFO | main | ✅ Shutdown complete
+2025-12-23 19:20:54,418 | INFO | main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 19:20:54,421 | INFO | main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 19:20:54,923 | INFO | main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 20:14:00,332 | INFO | main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 20:14:11,518 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 20:14:16,831 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 20:14:33,217 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 20:14:41,217 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 20:14:45,861 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 20:14:50,157 | INFO | main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 20:25:50,609 | INFO | main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 20:25:50,691 | INFO | main | ✅ Shutdown complete
+2025-12-23 20:58:46,739 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 20:58:46,741 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 20:58:47,242 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 20:58:49,437 | ERROR | apps.ocr-inference-console.backend.main | ❌ Startup task failed: keyword argument repeated: enable_sepia_enhancement (orchestrator.py, line 136)
+2025-12-23 21:00:18,408 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 21:00:18,409 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-23 21:00:28,305 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 21:00:28,306 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 21:00:28,808 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 21:00:30,652 | ERROR | apps.ocr-inference-console.backend.main | ❌ Startup task failed: keyword argument repeated: enable_sepia_enhancement (orchestrator.py, line 136)
+2025-12-23 21:09:14,313 | INFO | apps.ocr-inference-console.backend.main | 🛑 Shutting down OCR Inference Console Backend
+2025-12-23 21:09:14,314 | INFO | apps.ocr-inference-console.backend.main | ✅ Shutdown complete
+2025-12-23 21:10:05,654 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-23 21:10:05,655 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-23 21:10:06,156 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-23 21:11:26,567 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:11:31,322 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:11:35,078 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:11:41,391 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:11:54,551 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:12:01,727 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:14:41,175 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:14:46,283 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:20:26,948 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:20:30,350 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:20:32,916 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:21:08,900 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:21:10,607 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:21:14,838 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:21:18,407 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:22:45,351 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:22:50,177 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:22:53,205 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=False, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:22:56,644 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False
+2025-12-23 21:38:25,996 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=False, clahe=False
+2025-12-23 21:38:49,574 | INFO | apps.ocr-inference-console.backend.main | 📥 Inference request: perspective=True, grayscale=False, bg_norm=False, sepia=True, clahe=False

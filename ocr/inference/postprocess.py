@@ -10,7 +10,7 @@ import cv2
 import numpy as np
 
 from .config_loader import PostprocessSettings
-from .dependencies import torch
+# from .dependencies import torch
 
 LOGGER = logging.getLogger(__name__)
 
@@ -38,6 +38,7 @@ def compute_inverse_matrix(processed_tensor, original_shape: Sequence[int]):
 
     NOTE: This is a compatibility wrapper. New code should use coordinate_manager module.
     """
+    import torch
     if torch is None:
         return [np.eye(3, dtype=np.float32)]
 
@@ -104,6 +105,7 @@ def fallback_postprocess(predictions: Any, original_shape: Sequence[int], settin
     if prob_map is None:
         raise ValueError("'prob_maps' key not found in model predictions.")
 
+    import torch
     if torch is not None and isinstance(prob_map, torch.Tensor):
         prob_map = prob_map.detach().cpu().numpy()
 

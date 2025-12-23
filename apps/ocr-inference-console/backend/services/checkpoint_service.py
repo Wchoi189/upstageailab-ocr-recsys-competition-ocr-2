@@ -61,7 +61,9 @@ class CheckpointService:
             return self._cache[:limit]
 
         # Cache miss - rediscover
-        checkpoints = self._discover_sync(limit=limit)
+        import asyncio
+        loop = asyncio.get_running_loop()
+        checkpoints = await loop.run_in_executor(None, self._discover_sync, limit)
         self._cache = checkpoints
         self._last_update = current_time
 
@@ -80,6 +82,27 @@ class CheckpointService:
         checkpoints = self._discover_sync(limit=1)
         return checkpoints[0] if checkpoints else None
 
+    async def get_latest_async(self) -> Checkpoint | None:
+        """Get the most recent checkpoint asynchronously.
+
+        Ensures cache is valid or refreshes it without blocking.
+
+        Returns:
+            Latest checkpoint or None
+        """
+        import asyncio
+        import datetime
+
+        # Check cache first (fast path)
+        if (self._cache is not None and
+            self._last_update is not None and
+            (datetime.datetime.utcnow() - self._last_update).total_seconds() < self.cache_ttl):
+            return self._cache[0] if self._cache else None
+
+        # Refill cache if empty/stale
+        await self.preload_checkpoints(limit=100)
+        return self.get_latest()
+
     async def preload_checkpoints(self, limit: int = 100) -> None:
         """Preload checkpoint metadata cache in the background.
 
@@ -90,7 +113,9 @@ class CheckpointService:
             limit: Maximum number of checkpoints to discover
         """
         logger.info("🔄 Preloading checkpoint metadata cache...")
-        checkpoints = self._discover_sync(limit=limit)
+        import asyncio
+        loop = asyncio.get_running_loop()
+        checkpoints = await loop.run_in_executor(None, self._discover_sync, limit)
         self._cache = checkpoints
         self._last_update = datetime.utcnow()
         logger.info("✅ Checkpoint cache preloaded | count=%d", len(checkpoints))

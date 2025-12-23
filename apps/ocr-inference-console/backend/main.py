@@ -14,6 +14,13 @@ import logging
 import os
 from contextlib import asynccontextmanager
 from pathlib import Path
+import sys
+
+# Ensure backend directory is in python path to handle imports correctly
+# when running via uvicorn with various configurations or reloads
+backend_dir = str(Path(__file__).parent.resolve())
+if backend_dir not in sys.path:
+    sys.path.append(backend_dir)
 
 # Heavy imports (cv2, numpy, torch, lightning) moved to local scopes inside functions
 from fastapi import FastAPI, HTTPException
@@ -29,19 +36,20 @@ from apps.shared.backend_shared.models.inference import (
 )
 
 # Import services
-from .services.checkpoint_service import Checkpoint, CheckpointService
-from .services.inference_service import InferenceService
-from .services.preprocessing_service import PreprocessingService
+from services.checkpoint_service import Checkpoint, CheckpointService
+from services.inference_service import InferenceService
+from services.preprocessing_service import PreprocessingService
 
 # Import exceptions and models
-from .exceptions import (
+from exceptions import (
     CheckpointNotFoundError,
     ImageDecodingError,
     InferenceError,
+    ModelLoadError,
     OCRBackendError,
     ServiceNotInitializedError,
 )
-from .models.errors import ErrorResponse
+from models.errors import ErrorResponse
 
 logger = logging.getLogger(__name__)
 
@@ -93,11 +101,29 @@ async def lifespan(app: FastAPI):
     )
     _inference_service = InferenceService()
 
-    # Background preload checkpoint cache (non-blocking)
-    asyncio.create_task(_checkpoint_service.preload_checkpoints())
+    async def _startup_task():
+        """Background task to warm up the model."""
+        try:
+            logger.info("⏳ Waiting for checkpoint service to initialize...")
+            # Wait for checkpoint preload to complete (it's already started above)
+            # We can just poll or trust the service - let's wait a moment for FS ops
+            await asyncio.sleep(0.5)
 
-    # Note: InferenceEngine initialization is now lazy-loaded on first inference request
-    # to ensure the server starts responding to health/discovery requests immediately.
+            latest = await _checkpoint_service.get_latest_async()
+            if latest:
+                logger.info("🚀 Triggering background warm-up for: %s", latest.checkpoint_path)
+                await _inference_service.warm_up(latest.checkpoint_path)
+            else:
+                logger.warning("⚠️ No checkpoints found. Skipping warm-up.")
+        except Exception as e:
+            logger.error("❌ Startup task failed: %s", e)
+
+    # Background preload checkpoint cache (non-blocking)
+    preload_task = asyncio.create_task(_checkpoint_service.preload_checkpoints())
+
+    # Fire-and-forget background warm-up task
+    # We don't await this because we want the server to start immediately
+    asyncio.create_task(_startup_task())
 
     yield
 
@@ -259,9 +285,19 @@ async def run_inference(request: InferenceRequest):
     if not ckpt_path.exists():
         raise CheckpointNotFoundError(checkpoint_path)
 
-    # Decode base64 image using preprocessing service
+    import time
+    import asyncio
+
+    start_time = time.perf_counter()
+    loop = asyncio.get_running_loop()
+
+    # Decode base64 image using preprocessing service (offloaded to threadpool)
     try:
-        image = PreprocessingService.decode_base64_image(request.image_base64 or "")
+        image = await loop.run_in_executor(
+            None,
+            PreprocessingService.decode_base64_image,
+            request.image_base64 or ""
+        )
     except ValueError as e:
         raise ImageDecodingError(str(e))
 
@@ -286,7 +322,8 @@ async def run_inference(request: InferenceRequest):
             enable_background_normalization=request.enable_background_normalization,
             enable_sepia_enhancement=request.enable_sepia_enhancement,
             enable_clahe=request.enable_clahe,
-        )
+            sepia_display_mode=request.sepia_display_mode,
+            )
     except RuntimeError as e:
         raise InferenceError(str(e))
 
@@ -310,11 +347,15 @@ async def run_inference(request: InferenceRequest):
         except (KeyError, TypeError, ValueError) as e:
             logger.warning(f"Failed to parse metadata: {e}")
 
+    processing_time_ms = (time.perf_counter() - start_time) * 1000
+
     return InferenceResponse(
         status="success",
         regions=regions,
         meta=meta,
         preview_image_base64=result.get("preview_image_base64"),
+        processing_time_ms=processing_time_ms,
+        notes=[],  # Placeholder for future warnings/info
     )
 
 

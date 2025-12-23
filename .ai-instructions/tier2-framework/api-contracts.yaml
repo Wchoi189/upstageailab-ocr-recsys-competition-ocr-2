@@ -3,11 +3,11 @@ ads_version: "1.0"
 type: quick_reference
 agent: all
 tier: 2
-priority: high
+priority: critical
 validates_with: ".ai-instructions/schema/compliance-checker.py"
-compliance_status: unknown
-memory_footprint: 200
-date: "2025-12-22"
+compliance_status: compliant
+memory_footprint: 450
+date: "2025-12-23"
 status: active
 
 # API Contract: OCR Inference Console Backend
@@ -44,21 +44,51 @@ endpoints:
     response: "InferenceResponse"
 
 models:
+  # helper types
+  Padding:
+    fields:
+      top: "int (default: 0)"
+      bottom: "int (default: 0)"
+      left: "int (default: 0)"
+      right: "int (default: 0)"
+
+  TextRegion:
+    fields:
+      polygon: "List[List[float]] (required, min_length=3)"
+      text: "str (optional)"
+      confidence: "float (0.0 - 1.0)"
+
+  InferenceMetadata:
+    description: "Critical for frontend coordinate handling and overlay alignment"
+    fields:
+      original_size: "Tuple[int, int] (required)"
+      processed_size: "Tuple[int, int] (required)"
+      padding: "Padding (required)"
+      padding_position: "str (default: 'top_left')"
+      content_area: "Tuple[int, int] (required)"
+      scale: "float (gt=0)"
+      coordinate_system: "str (default: 'pixel')"
+
+  # main payloads
   InferenceRequest:
     fields:
-      image_base64: "string (required)"
-      checkpoint_path: "string (optional)"
-      confidence_threshold: "float"
-      nms_threshold: "float"
-      enable_perspective_correction: "boolean"
-      enable_grayscale: "boolean"
-      enable_background_normalization: "boolean"
-      enable_sepia_enhancement: "boolean"
-      enable_clahe: "boolean"
+      checkpoint_path: "str (required)"
+      image_base64: "str (optional)"
+      image_path: "str (optional)"
+      confidence_threshold: "float (default: 0.3)"
+      nms_threshold: "float (default: 0.5)"
+      enable_perspective_correction: "bool (default: False)"
+      perspective_display_mode: "str ('corrected'|'original', default: 'corrected')"
+      enable_grayscale: "bool (default: False)"
+      enable_background_normalization: "bool (default: False)"
+      enable_sepia_enhancement: "bool (default: False)"
+      enable_clahe: "bool (default: False)"
 
   InferenceResponse:
     fields:
-      status: "string"
+      status: "str (default: 'success')"
       regions: "List[TextRegion]"
-      meta: "InferenceMetadata"
-      preview_image_base64: "string"
+      processing_time_ms: "float"
+      notes: "List[str]"
+      preview_image_base64: "str (optional)"
+      meta: "InferenceMetadata (optional)"

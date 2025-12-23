@@ -1,0 +1,58 @@
+---
+ads_version: "1.0"
+type: standard
+agent: all
+tier: 2
+priority: medium
+validates_with: "scripts/performance/benchmark_api.py"
+compliance_status: unknown
+memory_footprint: 10
+date: "2025-12-23"
+status: active
+
+# Tier 2 - Performance Service Level Agreements (SLAs)
+#
+# These standards define the acceptable performance boundaries for OCR services.
+# Compliance is measured using standard inputs in a controlled environment.
+
+slas:
+  api_response_time:
+    description: "End-to-end latency for single image inference (1080p)"
+    metrics:
+      p50: "200ms"
+      p90: "500ms"
+      p99: "1000ms"
+    conditions:
+      - "Cold start excluded (first 5 requests)"
+      - "Standard hardware (T4 GPU or equivalent w/ 4 vCPU)"
+      - "Image size: <= 1920x1080"
+
+  throughput:
+    description: "Request handling capacity per instance"
+    metrics:
+      min_rps_per_instance: 5
+    conditions:
+      - "Concurrent users: 5"
+      - "Queue depth: < 10"
+
+  resource_utilization:
+    gpu_memory:
+      limit: "4GB"
+      rationale: "Fit within T4 (16GB) widely, allow sharing"
+
+    cpu_usage:
+      idle: "< 5%"
+      load: "< 80% ( sustained)"
+
+    startup_time:
+      limit: "10s"
+      description: "Time from process start to healthy status"
+
+  batch_processing:
+    max_batch_size: 32
+    latency_per_item: "< 50ms"
+
+enforcement:
+  benchmark_script: "scripts/performance/benchmark_api.py"
+  frequency: "On release"
+  failure_protocol: "Block deployment if P90 > Threshold + 10%"

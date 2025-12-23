@@ -16,7 +16,7 @@ from ocr.utils.perspective_correction import (
 from ocr.utils.sepia_enhancement import enhance_sepia, enhance_clahe
 
 from .config_loader import PreprocessSettings
-from .dependencies import torch, transforms
+# from .dependencies import torch, transforms
 
 LOGGER = logging.getLogger(__name__)
 
@@ -28,6 +28,7 @@ def build_transform(settings: PreprocessSettings):
     assumptions) instead of transforms.Resize. The actual resize/padding is applied
     in preprocess_image() using OpenCV before converting to tensor.
     """
+    import torchvision.transforms as transforms
     if transforms is None:
         raise RuntimeError("Torchvision transforms are not available. Install the vision extras.")
 
@@ -132,6 +133,7 @@ def preprocess_image(
     image_rgb = cv2.cvtColor(processed_image, cv2.COLOR_BGR2RGB)
 
     tensor = transform(image_rgb)
+    import torch
     if torch is None:
         raise RuntimeError("Torch is not available to create inference batches.")
 
