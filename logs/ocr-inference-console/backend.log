@@ -1207,3 +1207,6 @@ NameError: name 'perspective_display_mode' is not defined
 2025-12-24 01:09:04,958 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
 2025-12-24 01:09:04,960 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
 2025-12-24 01:09:05,461 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
+2025-12-24 01:10:43,738 | INFO | apps.ocr-inference-console.backend.main | 🚀 Starting OCR Inference Console Backend (Port 8002)
+2025-12-24 01:10:43,740 | INFO | apps.ocr-inference-console.backend.main | ⏳ Waiting for checkpoint service to initialize...
+2025-12-24 01:10:44,240 | INFO | apps.ocr-inference-console.backend.main | 🚀 Triggering background warm-up for: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
