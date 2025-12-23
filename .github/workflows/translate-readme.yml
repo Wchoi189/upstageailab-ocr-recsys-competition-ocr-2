@@ -38,7 +38,9 @@ jobs:
       - name: Create PR
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          # If your repo disables PR creation for GITHUB_TOKEN,
+          # set a PAT with repo scope as secret TRANSLATE_README_TOKEN.
+          token: ${{ secrets.TRANSLATE_README_TOKEN || github.token }}
           title: "🌐 Translate README (${{ github.event.inputs.target_language }})"
           body: |
             Automated translation of README.md.
