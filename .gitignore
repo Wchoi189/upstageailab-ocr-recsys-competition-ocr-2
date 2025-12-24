@@ -106,7 +106,7 @@ data/filter_samples/
 multirun/
 # _archive/
 __OLD__/
-/archive/
+# /archive/
 CamScanner-Web-App/
 OpenCV-Document-Scanner/
 

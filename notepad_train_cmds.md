@@ -50,6 +50,29 @@ UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
   dataloaders.val_dataloader.num_workers=8
 ```
 
+## Batch size 8
+```
+UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
+  data=canonical \
+  batch_size=8 \
+  trainer.max_epochs=1 \
+  dataloaders.train_dataloader.num_workers=4 \
+  dataloaders.val_dataloader.num_workers=4
+```
+
+## 2025-12-24 Ultra quick training test
+```
+UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
+  batch_size=8 \
+  trainer.max_epochs=2 \
+  trainer.limit_train_batches=500 \
+  trainer.limit_val_batches=50 \
+  logger.wandb.enabled=false \
+  +skip_test=true \
+  dataloaders.train_dataloader.num_workers=8 \
+  dataloaders.val_dataloader.num_workers=8
+```
+
 
 UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
 

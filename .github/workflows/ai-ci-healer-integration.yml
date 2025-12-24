@@ -1,0 +1,61 @@
+# AI CI Healer Integration for OCR Project
+# This workflow integrates AI CI Healer with your existing CI
+
+name: AI CI Healer Integration
+
+on:
+  workflow_run:
+    workflows: ["CI & Auto-format"]
+    types:
+      - completed
+
+jobs:
+  ai-ci-healer:
+    if: failure() && github.event.workflow_run.conclusion == 'failure'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      actions: read
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.workflow_run.head_branch }}
+
+      # 🚑 AI CI Healer - OCR Customized Version
+      - name: AI CI Healer (OCR Custom)
+        uses: Wchoi189/ai-ci-healer-fork@ocr-customizations
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          llm-provider: openai
+          openai-api-key: ${{ secrets.OPENAI_API_KEY }}
+          confidence-threshold: 60
+          max-log-lines: 1000
+          custom-context: |
+            OCR Project Standards:
+            
+            ## AgentQMS Rules
+            - Never create docs/artifacts/* manually
+            - Use: cd AgentQMS/interface && make create-plan NAME=slug
+            - Artifacts: docs/artifacts/{TYPE}/YYYY-MM-DD_HHMM_{TYPE}_name.md
+            - Validation: cd AgentQMS/interface && make validate
+            
+            ## ADS v1.0 Standards
+            - Read .ai-instructions/INDEX.yaml first
+            - Naming: lowercase-with-hyphens (no ALL_CAPS)
+            - File placement: Follow .ai-instructions/tier1-sst/file-placement-rules.yaml
+            
+            ## OCR-Specific
+            - Preprocessing: ocr/preprocessing/ (see .ai-instructions/tier3-agents/ocr-components/preprocessing_logic.md)
+            - Postprocessing: ocr/postprocessing/ (see .ai-instructions/tier3-agents/ocr-components/postprocessing_logic.md)
+            - Hydra Configs: configs/_base/ is the foundation for all configurations
+            - Model Configs: configs/model/ (architectures, encoder, decoder, head, loss, presets)
+            - Two architectures exist: old and new (new uses configs/_base as foundation)
+            - Common issues: Image format (RGB vs grayscale), tensor shapes, CUDA, coordinate transforms
+            
+            ## Python Standards
+            - Use type hints
+            - pytest for testing
+            - async/await for async operations

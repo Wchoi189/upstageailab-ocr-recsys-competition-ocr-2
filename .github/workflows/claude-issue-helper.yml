@@ -1,0 +1,66 @@
+# Claude Code Issue Helper for OCR Project
+# Trigger Claude by tagging @claude in issues
+
+name: Claude Issue Helper
+
+on:
+  issues:
+    types: [opened, labeled]
+  issue_comment:
+    types: [created]
+
+jobs:
+  claude:
+    if: |
+      (github.event_name == 'issue_comment' && contains(github.event.comment.body, '@claude')) ||
+      (github.event_name == 'issues' && (
+        contains(github.event.issue.body, '@claude') ||
+        contains(github.event.issue.labels.*.name, 'claude-help')
+      ))
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+      pull-requests: write
+      id-token: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Claude Code Analysis
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            OCR Project Context:
+            
+            ## AgentQMS Rules
+            - Never create docs/artifacts/* manually
+            - Use: cd AgentQMS/interface && make create-plan NAME=slug
+            - Artifacts: docs/artifacts/{TYPE}/YYYY-MM-DD_HHMM_{TYPE}_name.md
+            - Validation: cd AgentQMS/interface && make validate
+            - See: AgentQMS/knowledge/agent/system.md
+            
+            ## ADS v1.0 Standards
+            - Read .ai-instructions/INDEX.yaml first
+            - Naming: lowercase-with-hyphens (no ALL_CAPS)
+            - File placement: Follow .ai-instructions/tier1-sst/file-placement-rules.yaml
+            - See: .ai-instructions/tier1-sst/naming-conventions.yaml
+            
+            ## OCR-Specific
+            - Preprocessing: ocr/preprocessing/ (see .ai-instructions/tier3-agents/ocr-components/preprocessing_logic.md)
+            - Postprocessing: ocr/postprocessing/ (see .ai-instructions/tier3-agents/ocr-components/postprocessing_logic.md)
+            - Hydra Configs: configs/_base/ is the foundation for all configurations
+            - Model Configs: configs/model/ (architectures, encoder, decoder, head, loss, presets)
+            - Two architectures exist: old and new (new uses configs/_base as foundation)
+            - Common issues: Image format (RGB vs grayscale), tensor shapes, CUDA, coordinate transforms
+            
+            ## Issue Analysis Request
+            Issue Title: ${{ github.event.issue.title }}
+            Issue Body: ${{ github.event.issue.body }}
+            
+            Please analyze this issue and provide:
+            1. Root cause analysis
+            2. Suggested fix
+            3. Code changes if needed
+            4. References to relevant documentation (.ai-instructions/ or AgentQMS/)
