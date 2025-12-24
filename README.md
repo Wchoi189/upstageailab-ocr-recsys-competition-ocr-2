@@ -50,7 +50,10 @@ The OCR Inference Console is a proof-of-concept frontend for the OCR web service
 ### UX Attribution
 The user interface design is inspired by the **Upstage Document OCR Console**. The layout patterns, including the three-panel console with document preview and structured output, follow the interaction models established by Upstage's product suite.
 
-All code and implementations in this repository are based on the Upstage OCR RecSys competition baseline. Key contributions include modernizing configurations, improve performance, and enhancing the development workflow.
+All code and implementations in this repository are based on the Upstage# OCR & RecSys Competition - OCR Track
+
+> **Start Here for AI Agents**: [`AGENTS.md`](./AGENTS.md)
+seline. Key contributions include modernizing configurations, improve performance, and enhancing the development workflow.
 
 Original: https://console.upstage.ai/playground/document-ocr
 
