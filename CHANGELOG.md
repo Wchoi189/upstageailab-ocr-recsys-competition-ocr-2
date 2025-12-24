@@ -8,6 +8,15 @@
 
 ## [Unreleased]
 
+- **[2025-12-24 16:00] Phase 3: Validation Module Consolidation COMPLETE**: Merged `ocr.validation.models` + `ocr.datasets.schemas` into `ocr.core.validation` with zero breaking changes. **-3,632 LOC removed, 1 circular import eliminated, 104/104 tests passing**. Implementation complete:
+  - **Core Module**: Created `ocr/core/validation.py` (1,177 LOC) merging validation models + dataset schemas into single source of truth. Eliminated circular dependency (validation ↔ schemas)
+  - **Backward Compatibility**: Replaced original files with deprecation shims (631→45 LOC, 542→45 LOC). All imports work via shims with `DeprecationWarning`
+  - **Production Updates**: Updated 9 production files to import from `ocr.core.validation`: dice_loss, bce_loss, ocr_pl, evaluator, config_utils, base, transforms, cache_manager, image_utils
+  - **Test Fixes**: Updated 2 test files for new API (TransformInput positional args, lazy validation behavior). Replaced Mock configs with real classes
+  - **Preprocessing Cleanup**: Resolved factory function conflict, deprecated `AdvancedDocumentPreprocessor`, archived 6 Phase 1 modules to `/archive/`
+  - **Metrics**: 24 files modified, 7 archived, 3 created. Code reduction: 67% (validation modules), net -3,632 LOC
+  - **Commits**: 9f9ec08 (Phase 3), 07d5989 (plan update), 22726ad (test fixes)
+
 - **[2025-12-22 12:00] Removed Stale Test Files**: Cleaned up 41 stale test files that became obsolete due to major architectural changes. Removed deprecated archive tests (6), experiment-specific tests (19), debug scripts (3), and archived unit/integration tests (13) importing non-existent modules. **41 files removed**, pytest collection errors reduced from 24 to 6.
 
 - **[2025-12-21 03:30] OCR Console Backend/Frontend Refactoring COMPLETE**: Modularized OCR inference console through service extraction and context migration. **150 LOC reduced, 41 props eliminated**. Implementation deliverables (100% complete):
