@@ -306,38 +306,35 @@ def _fit_quadrilateral_dominant_extension(
         "right": ["top", "bottom"],
     }
 
-    for bin_name, points in bins.items():
-        if len(points) >= 2:
-            continue
+    def find_segment_from_bins(target_bins: list[str]) -> dict | None:
+        """Find a segment from the specified bins."""
+        for target_bin in target_bins:
+            if len(bins[target_bin]) >= 4:  # Has at least 2 points (1 segment)
+                for seg in segments:
+                    if assign_bin(seg) == target_bin:
+                        return seg
+        return None
+
+    def borrow_segment_for_bin(bin_name: str) -> None:
+        """Try to borrow a segment for the given bin if it's empty."""
+        if len(bins[bin_name]) >= 2:
+            return
 
         # Try to borrow from adjacent bins first
-        best_seg = None
-
-        # First, try adjacent bins
-        for adj_bin in adjacent_map.get(bin_name, []):
-            if len(bins[adj_bin]) >= 4:  # Has at least 2 points (1 segment)
-                # Find a segment from this adjacent bin
-                for seg in segments:
-                    if assign_bin(seg) == adj_bin:
-                        best_seg = seg
-                        break
-                if best_seg is not None:
-                    break
+        adjacent_bins = adjacent_map.get(bin_name, [])
+        best_seg = find_segment_from_bins(adjacent_bins)
 
         # If no adjacent bin available, borrow from any bin with points
         if best_seg is None:
-            for other_bin, other_points in bins.items():
-                if other_bin != bin_name and len(other_points) >= 2:
-                    for seg in segments:
-                        if assign_bin(seg) == other_bin:
-                            best_seg = seg
-                            break
-                    if best_seg is not None:
-                        break
+            other_bins = [b for b in bins.keys() if b != bin_name and len(bins[b]) >= 2]
+            best_seg = find_segment_from_bins(other_bins)
 
         if best_seg is not None:
             bins[bin_name].append(best_seg["p1"])
             bins[bin_name].append(best_seg["p2"])
+
+    for bin_name in bins:
+        borrow_segment_for_bin(bin_name)
 
     def fit_line(points: list[np.ndarray]) -> tuple[float, float, float, float] | None:
         if len(points) < 2:

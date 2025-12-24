@@ -218,22 +218,24 @@ class CornerSelectionUtility:
     def _select_best_four_from_hull(self, hull_points: np.ndarray, all_corners: np.ndarray) -> np.ndarray | None:
         """Select the best 4 points from convex hull."""
         try:
+            from itertools import combinations
+
             # Simple approach: select points that maximize area
             max_area = 0.0
             best_quad = None
 
-            # Try different combinations of 4 points
-            for i in range(len(hull_points) - 3):
-                for j in range(i + 1, len(hull_points) - 2):
-                    for k in range(j + 1, len(hull_points) - 1):
-                        for m in range(k + 1, len(hull_points)):
-                            candidate_points = np.array([hull_points[i], hull_points[j], hull_points[k], hull_points[m]])
-                            ordered_quad = self._order_quadrilateral_points(candidate_points)
-                            if ordered_quad is not None:
-                                area = self._calculate_quadrilateral_area(ordered_quad)
-                                if area > max_area:
-                                    max_area = area
-                                    best_quad = ordered_quad
+            # Generate all combinations of 4 points from hull
+            for indices in combinations(range(len(hull_points)), 4):
+                candidate_points = hull_points[list(indices)]
+                ordered_quad = self._order_quadrilateral_points(candidate_points)
+
+                if ordered_quad is None:
+                    continue
+
+                area = self._calculate_quadrilateral_area(ordered_quad)
+                if area > max_area:
+                    max_area = area
+                    best_quad = ordered_quad
 
             return best_quad
 

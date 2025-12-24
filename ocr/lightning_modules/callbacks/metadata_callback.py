@@ -21,7 +21,7 @@ import torch
 from lightning.pytorch.callbacks import Callback
 
 if TYPE_CHECKING:
-    from ui.apps.inference.services.checkpoint.types import (
+    from ocr.utils.checkpoints.types import (
         CheckpointingConfig,
         MetricsInfo,
         ModelInfo,
@@ -190,8 +190,8 @@ class MetadataCallback(Callback):
         """
         try:
             # Import metadata types and save function
-            from ui.apps.inference.services.checkpoint.metadata_loader import save_metadata
-            from ui.apps.inference.services.checkpoint.types import (
+            from ocr.utils.checkpoints.metadata_loader import save_metadata
+            from ocr.utils.checkpoints.types import (
                 CheckpointMetadataV1,
                 TrainingInfo,
             )
@@ -280,7 +280,7 @@ class MetadataCallback(Callback):
         Returns:
             ModelInfo instance with architecture details
         """
-        from ui.apps.inference.services.checkpoint.types import (
+        from ocr.utils.checkpoints.types import (
             DecoderInfo,
             EncoderInfo,
             HeadInfo,
@@ -388,7 +388,7 @@ class MetadataCallback(Callback):
         Returns:
             MetricsInfo instance
         """
-        from ui.apps.inference.services.checkpoint.types import MetricsInfo
+        from ocr.utils.checkpoints.types import MetricsInfo
 
         def _to_float(value: Any) -> float | None:
             """Convert value to float."""
@@ -461,7 +461,7 @@ class MetadataCallback(Callback):
         Returns:
             CheckpointingConfig instance
         """
-        from ui.apps.inference.services.checkpoint.types import CheckpointingConfig
+        from ocr.utils.checkpoints.types import CheckpointingConfig
 
         # Find ModelCheckpoint callback
         for callback in trainer.callbacks:

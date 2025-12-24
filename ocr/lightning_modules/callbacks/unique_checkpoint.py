@@ -246,14 +246,19 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                 return value
 
             # Get model information
-            model_info = self._get_model_info()
+            model_info_extracted = self._get_model_info()
 
             # Build metadata using schema
-            from ui.apps.inference.models.checkpoint import (
-                CheckpointConfigInfo,
-                CheckpointMetadataSchema,
-                CheckpointModelInfo,
-                CheckpointTrainingInfo,
+            from ocr.utils.checkpoints.types import (
+                CheckpointingConfig,
+                CheckpointMetadataV1,
+                ModelInfo,
+                TrainingInfo,
+                MetricsInfo,
+                EncoderInfo,
+                DecoderInfo,
+                HeadInfo,
+                LossInfo
             )
 
             # Get model component details if available
@@ -272,23 +277,31 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             if not isinstance(safe_components, dict):
                 safe_components = {}
 
-            metadata = CheckpointMetadataSchema(
+            # Construct V1 models for the newer schema
+            metadata = CheckpointMetadataV1(
                 checkpoint_path=checkpoint_path,
+                exp_name=getattr(trainer.datamodule, "exp_name", "unknown"),
                 created_at=datetime.now().isoformat(),
-                training=CheckpointTrainingInfo(
+                training=TrainingInfo(
                     epoch=trainer.current_epoch,
                     global_step=trainer.global_step,
                     training_phase=self.training_phase,
                 ),
-                model=CheckpointModelInfo(
-                    architecture=model_info.get("architecture"),
-                    encoder=model_info.get("encoder"),
-                    components=safe_components,
+                model=ModelInfo(
+                    architecture=model_info_extracted.get("architecture") or "unknown",
+                    encoder=EncoderInfo(
+                        model_name=model_info_extracted.get("encoder") or "unknown",
+                    ),
+                    decoder=DecoderInfo(name="unknown"),
+                    head=HeadInfo(name="unknown"),
+                    loss=LossInfo(name="unknown"),
                 ),
-                metrics=safe_metrics,
-                config=CheckpointConfigInfo(
-                    monitor=self.monitor,
-                    mode=self.mode,
+                metrics=MetricsInfo(
+                    additional_metrics=safe_metrics
+                ),
+                checkpointing=CheckpointingConfig(
+                    monitor=self.monitor or "unknown",
+                    mode=self.mode or "max",
                     save_top_k=self.save_top_k,
                 ),
             )

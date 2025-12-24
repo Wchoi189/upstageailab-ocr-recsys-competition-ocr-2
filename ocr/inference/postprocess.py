@@ -115,21 +115,20 @@ def fallback_postprocess(predictions: Any, original_shape: Sequence[int], settin
     prob_map = np.squeeze(prob_map)
     binary_map = (prob_map > settings.binarization_thresh).astype(np.uint8)
 
-    original_height, original_width, _ = original_shape
-    # Compute pre-pad resized dims (W1, H1) consistent with LongestMaxSize(640)
-    max_side = float(max(original_height, original_width))
-    if max_side == 0:
-        raise ValueError("Invalid original image size")
-    scale = 640.0 / max_side
-    resized_height = int(round(original_height * scale))
-    resized_width = int(round(original_width * scale))
-    if resized_height <= 0 or resized_width <= 0:
-        raise ValueError(f"Invalid resized dims: {resized_width}x{resized_height}")
+    # Use coordinate_manager for consistent transformation logic
+    from .coordinate_manager import calculate_transform_metadata
+
+    original_height, original_width = original_shape[0], original_shape[1]
+
+    try:
+        metadata = calculate_transform_metadata(original_shape, target_size=640)
+    except ValueError as e:
+        raise ValueError(f"Invalid original image size: {e}") from e
 
     # binary_map is sized like the processed map (after model head). We assume it matches 640x640 padded canvas.
     # With top-left padding, unpadding is no-op for coordinates (content starts at 0,0), so we scale by original/pre-pad dims.
-    scale_x = original_width / float(resized_width)
-    scale_y = original_height / float(resized_height)
+    scale_x = original_width / float(metadata.resized_w)
+    scale_y = original_height / float(metadata.resized_h)
 
     contours, _ = cv2.findContours(binary_map, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
 

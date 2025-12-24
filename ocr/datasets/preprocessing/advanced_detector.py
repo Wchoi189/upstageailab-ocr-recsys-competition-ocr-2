@@ -252,13 +252,17 @@ class AdvancedDocumentDetector:
             shi_tomasi_corners = self._extract_shi_tomasi_corners(gray)
 
             # Combine and deduplicate corners
-            all_corners = (
-                np.vstack([harris_corners, shi_tomasi_corners])
-                if len(harris_corners) > 0 and len(shi_tomasi_corners) > 0
-                else harris_corners
-                if len(harris_corners) > 0
-                else shi_tomasi_corners
-            )
+            has_harris = len(harris_corners) > 0
+            has_shi_tomasi = len(shi_tomasi_corners) > 0
+
+            if has_harris and has_shi_tomasi:
+                all_corners = np.vstack([harris_corners, shi_tomasi_corners])
+            elif has_harris:
+                all_corners = harris_corners
+            elif has_shi_tomasi:
+                all_corners = shi_tomasi_corners
+            else:
+                return None
 
             if len(all_corners) < 4:
                 return None
@@ -526,27 +530,40 @@ class AdvancedDocumentDetector:
         best = sorted_hypotheses[0]
 
         # Check if we should fuse multiple hypotheses
-        if len(sorted_hypotheses) > 1:
-            second_best = sorted_hypotheses[1]
-            if abs(best.confidence - second_best.confidence) < 0.1:  # Close confidence
-                # Check if corners are similar (within fusion threshold)
-                avg_distance = np.mean([dist.euclidean(c1, c2) for c1, c2 in zip(best.corners, second_best.corners, strict=True)])
-                if avg_distance < self.config.hypothesis_fusion_threshold * max(best.corners.max(), second_best.corners.max()):
-                    # Fuse hypotheses by averaging corners
-                    fused_corners = (best.corners + second_best.corners) / 2.0
-                    fused_confidence = (best.confidence + second_best.confidence) / 2.0
+        if len(sorted_hypotheses) <= 1:
+            return best
 
-                    best = DetectionHypothesis(
-                        corners=fused_corners,
-                        confidence=fused_confidence,
-                        method="fused_hypotheses",
-                        metadata={
-                            "fused_methods": [best.method, second_best.method],
-                            "original_confidences": [best.confidence, second_best.confidence],
-                        },
-                    )
+        second_best = sorted_hypotheses[1]
+        fused = self._try_fuse_hypotheses(best, second_best)
+        return fused if fused is not None else best
 
-        return best
+    def _try_fuse_hypotheses(self, best: DetectionHypothesis, second_best: DetectionHypothesis) -> DetectionHypothesis | None:
+        """Try to fuse two hypotheses if they are similar enough."""
+        # Check if confidence is close
+        if abs(best.confidence - second_best.confidence) >= 0.1:
+            return None
+
+        # Check if corners are similar (within fusion threshold)
+        avg_distance = np.mean([dist.euclidean(c1, c2) for c1, c2 in zip(best.corners, second_best.corners, strict=True)])
+        max_coord = max(best.corners.max(), second_best.corners.max())
+        distance_threshold = self.config.hypothesis_fusion_threshold * max_coord
+
+        if avg_distance >= distance_threshold:
+            return None
+
+        # Fuse hypotheses by averaging corners
+        fused_corners = (best.corners + second_best.corners) / 2.0
+        fused_confidence = (best.confidence + second_best.confidence) / 2.0
+
+        return DetectionHypothesis(
+            corners=fused_corners,
+            confidence=fused_confidence,
+            method="fused_hypotheses",
+            metadata={
+                "fused_methods": [best.method, second_best.method],
+                "original_confidences": [best.confidence, second_best.confidence],
+            },
+        )
 
     def _validate_document_detection(
         self,

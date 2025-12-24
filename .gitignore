@@ -47,7 +47,7 @@ profile_default/
 ipython_config.py
 
 # pyenv
-.python-version
+# .python-version
 
 # MyPy
 .mypy_cache/
@@ -101,7 +101,7 @@ data/datasets/
 data/pseudo_label/
 data/filter_samples/
 /data/
-/data/ops
+# /data/ops
 # Experiments and Archives
 multirun/
 # _archive/
