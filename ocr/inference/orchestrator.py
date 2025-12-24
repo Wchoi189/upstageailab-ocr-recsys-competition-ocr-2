@@ -6,6 +6,8 @@ components:
 - PreprocessingPipeline: Image preprocessing
 - PostprocessingPipeline: Prediction postprocessing
 - PreviewGenerator: Preview image generation
+- TextRecognizer: Text recognition (optional, disabled by default)
+- CropExtractor: Crop extraction for recognition
 
 The orchestrator follows the single responsibility principle: it only coordinates
 the flow between components, delegating all actual work to specialized classes.
@@ -42,18 +44,31 @@ class InferenceOrchestrator:
     The orchestrator maintains minimal state and focuses solely on coordination.
     """
 
-    def __init__(self, device: str | None = None):
+    def __init__(self, device: str | None = None, enable_recognition: bool = False):
         """Initialize inference orchestrator.
 
         Args:
             device: Device for inference ("cuda" or "cpu", auto-detected if None)
+            enable_recognition: Whether to enable text recognition (default: False)
         """
         self.model_manager = ModelManager(device=device)
         self.preprocessing_pipeline: PreprocessingPipeline | None = None
         self.postprocessing_pipeline: PostprocessingPipeline | None = None
         self.preview_generator = PreviewGenerator(jpeg_quality=85)
 
-        LOGGER.info(f"InferenceOrchestrator initialized (device: {self.model_manager.device})")
+        # Recognition components (disabled by default)
+        self._enable_recognition = enable_recognition
+        self._recognizer = None
+        self._crop_extractor = None
+
+        if enable_recognition:
+            self._init_recognition_components()
+
+        LOGGER.info(
+            "InferenceOrchestrator initialized (device: %s, recognition: %s)",
+            self.model_manager.device,
+            enable_recognition,
+        )
 
     def load_model(self, checkpoint_path: str, config_path: str | None = None) -> bool:
         """Load model from checkpoint.
@@ -75,6 +90,25 @@ class InferenceOrchestrator:
                 self.postprocessing_pipeline = PostprocessingPipeline(settings=bundle.postprocess)
 
         return success
+
+    def _init_recognition_components(self) -> None:
+        """Initialize text recognition components.
+
+        Lazy initialization of recognition module to avoid loading
+        when recognition is disabled.
+        """
+        try:
+            from .crop_extractor import CropConfig, CropExtractor
+            from .recognizer import RecognizerConfig, TextRecognizer
+
+            self._crop_extractor = CropExtractor(config=CropConfig())
+            self._recognizer = TextRecognizer(config=RecognizerConfig())
+            LOGGER.info("Recognition components initialized")
+        except Exception as e:
+            LOGGER.warning("Failed to initialize recognition: %s", e)
+            self._enable_recognition = False
+            self._recognizer = None
+            self._crop_extractor = None
 
     def predict(
         self,
@@ -174,6 +208,13 @@ class InferenceOrchestrator:
             "confidences": postprocess_result.confidences,
         }
 
+        # Optional Stage: Text Recognition
+        if self._enable_recognition and self._recognizer and self._crop_extractor:
+            result = self._run_text_recognition(
+                image=image,
+                result=result,
+            )
+
         # Stage 4: Handle inverse perspective transformation if needed
         if (
             preprocess_result.perspective_matrix is not None
@@ -267,9 +308,94 @@ class InferenceOrchestrator:
                 if hasattr(postprocess, "min_size") and min_detection_size is not None:
                     postprocess.min_size = int(min_detection_size)
 
+    def _run_text_recognition(
+        self,
+        image: np.ndarray,
+        result: dict[str, Any],
+    ) -> dict[str, Any]:
+        """Run text recognition on detected regions.
+
+        Args:
+            image: Original input image (BGR numpy array)
+            result: Detection result with polygons
+
+        Returns:
+            Updated result with recognized text
+        """
+        if not result.get("polygons"):
+            return result
+
+        try:
+            from .recognizer import RecognitionInput
+
+            # Parse polygons from string format
+            polygon_strs = result["polygons"].split("|") if isinstance(result["polygons"], str) else result["polygons"]
+            polygons = []
+            for poly_str in polygon_strs:
+                if isinstance(poly_str, str):
+                    coords = list(map(float, poly_str.split()))
+                    polygons.append(np.array(coords).reshape(-1, 2))
+                else:
+                    polygons.append(np.array(poly_str))
+
+            # Extract crops
+            crop_results = self._crop_extractor.extract_crops(image, polygons)
+
+            # Prepare recognition inputs (only successful crops)
+            recognition_inputs = []
+            crop_indices = []  # Track which detections have valid crops
+            for i, crop_result in enumerate(crop_results):
+                if crop_result.success and crop_result.crop is not None:
+                    detection_conf = result["confidences"][i] if i < len(result["confidences"]) else 0.5
+                    recognition_inputs.append(
+                        RecognitionInput(
+                            crop=crop_result.crop,
+                            polygon=crop_result.original_polygon,
+                            detection_confidence=detection_conf,
+                        )
+                    )
+                    crop_indices.append(i)
+
+            if not recognition_inputs:
+                LOGGER.debug("No valid crops for recognition")
+                return result
+
+            # Run recognition
+            recognition_outputs = self._recognizer.recognize_batch(recognition_inputs)
+
+            # Update result with recognized text
+            recognized_texts = list(result["texts"])  # Copy
+            recognition_confidences = [0.0] * len(result["texts"])
+
+            for idx, output in zip(crop_indices, recognition_outputs):
+                if idx < len(recognized_texts):
+                    recognized_texts[idx] = output.text
+                    recognition_confidences[idx] = output.confidence
+
+            result["recognized_texts"] = recognized_texts
+            result["recognition_confidences"] = recognition_confidences
+
+            LOGGER.debug(
+                "Recognition complete: %d/%d texts recognized",
+                len(recognition_outputs),
+                len(polygon_strs),
+            )
+
+        except Exception as e:
+            LOGGER.warning("Text recognition failed: %s", e)
+            # Don't fail the whole pipeline - just skip recognition
+
+        return result
+
     def cleanup(self) -> None:
         """Clean up resources."""
         self.model_manager.cleanup()
+
+        # Clean up recognition components
+        if self._recognizer is not None:
+            self._recognizer.cleanup()
+            self._recognizer = None
+        self._crop_extractor = None
 
     def __enter__(self):
         """Context manager entry."""

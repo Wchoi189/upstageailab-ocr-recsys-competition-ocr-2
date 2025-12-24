@@ -39,6 +39,10 @@ schemas:
     file: "ui_inference_compat.yaml"
     bytes: 3825
     purpose: frontend_backend_contract
+  layout_result:
+    file: "ocr/inference/layout/contracts.py"
+    bytes: 6500
+    purpose: hierarchical_layout_output
 
 config_locations:
   hydra_base: "configs/_base/"

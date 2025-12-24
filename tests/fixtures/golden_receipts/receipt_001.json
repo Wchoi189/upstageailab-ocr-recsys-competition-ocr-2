@@ -1,0 +1,22 @@
+{
+    "store_name": "스타벅스 강남역점",
+    "store_phone": "02-6254-5678",
+    "business_number": "101-81-45678",
+    "transaction_date": "2024-12-24",
+    "receipt_number": "12345",
+    "items": [
+        {
+            "name": "아메리카노",
+            "total_price": 4500
+        },
+        {
+            "name": "카페라떼",
+            "total_price": 5500
+        }
+    ],
+    "subtotal": 10000,
+    "tax": 909,
+    "total": 10909,
+    "payment_method": "card",
+    "card_last_four": "7890"
+}

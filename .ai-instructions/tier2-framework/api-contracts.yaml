@@ -55,8 +55,10 @@ models:
   TextRegion:
     fields:
       polygon: "List[List[float]] (required, min_length=3)"
-      text: "str (optional)"
+      text: "str (optional, placeholder from detection)"
+      recognized_text: "str (optional, from recognition module when enabled)"
       confidence: "float (0.0 - 1.0)"
+      recognition_confidence: "float (optional, 0.0 - 1.0, from recognition module)"
 
   InferenceMetadata:
     description: "Critical for frontend coordinate handling and overlay alignment"
