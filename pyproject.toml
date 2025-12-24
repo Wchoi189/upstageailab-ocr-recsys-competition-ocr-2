@@ -200,3 +200,7 @@ dev = [
 dev = [
     "uvicorn[standard]>=0.38.0",
 ]
+recognition = [
+    "paddlepaddle-gpu>=3.0.0b1",
+    "paddleocr>=2.9.0",
+]
