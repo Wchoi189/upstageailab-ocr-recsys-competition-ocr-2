@@ -113,11 +113,15 @@ class TestOCRDataset:
         # Verify transform was called
         transform.assert_called_once()
 
-        # Verify the call arguments
+        # Verify the call arguments - transform receives TransformInput as positional arg
         call_args, call_kwargs = transform.call_args
-        assert "image" in call_kwargs
-        assert isinstance(call_kwargs["image"], np.ndarray)  # numpy array
-        assert call_kwargs["image"].shape == (100, 100, 3)
+        assert len(call_args) == 1, "Transform should be called with one positional argument"
+        transform_input = call_args[0]
+
+        # TransformInput is a Pydantic model with image, polygons, metadata
+        assert hasattr(transform_input, "image"), "TransformInput should have 'image' attribute"
+        assert isinstance(transform_input.image, np.ndarray), "Image should be numpy array"
+        assert transform_input.image.shape == (100, 100, 3), "Image should be (100, 100, 3)"
 
         # Verify returned data is correct
         assert "image" in result
@@ -133,11 +137,16 @@ class TestOCRDataset:
             json.dump(annotations, f)
 
         transform = Mock()
+        transform.return_value = {"image": None, "polygons": []}
         config = DatasetConfig(image_path=temp_dir, annotation_path=annotation_path)
         dataset = OCRDataset(config, transform)
 
-        # Should be empty since image doesn't exist
-        assert len(dataset) == 0
+        # Dataset includes missing files in length (lazy validation)
+        assert len(dataset) == 1
+
+        # But accessing the item should raise an error
+        with pytest.raises(RuntimeError, match="Failed to load image"):
+            _ = dataset[0]
 
     def test_empty_words_in_annotation(self, temp_dir, create_sample_images):
         """Test handling of words with empty points."""

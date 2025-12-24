@@ -5,34 +5,9 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
-from pydantic import BaseModel, Field
 
 from ocr.datasets.base import ValidatedOCRDataset
-from ocr.datasets.schemas import ImageLoadingConfig
-
-
-class MockCacheConfig(BaseModel):
-    """Mock cache configuration for testing."""
-
-    cache_images: bool = True
-    cache_maps: bool = True
-    cache_transformed_tensors: bool = True
-    log_statistics_every_n: int | None = None
-
-
-class MockDatasetConfig(BaseModel):
-    """Mock dataset configuration for testing."""
-
-    image_path: Path
-    annotation_path: Path | None = None
-    preload_images: bool = False
-    preload_maps: bool = False
-    load_maps: bool = False
-    image_extensions: list[str] = [".jpg", ".png", ".jpeg"]
-    cache_config: MockCacheConfig
-    image_loading_config: ImageLoadingConfig = Field(
-        default_factory=lambda: ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
-    )
+from ocr.core.validation import CacheConfig, DatasetConfig, ImageLoadingConfig
 
 
 class TestValidatedOCRDatasetIntegration:
@@ -112,8 +87,8 @@ class TestValidatedOCRDatasetIntegration:
             mock_load_image_data.return_value = mock_image_data
 
             # Create dataset configuration
-            cache_config = MockCacheConfig(cache_transformed_tensors=True)
-            config = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=True)
+            config = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             # Initialize the dataset
             dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
@@ -169,8 +144,8 @@ class TestValidatedOCRDatasetIntegration:
             mock_load_image_data.return_value = mock_image_data
 
             # Create dataset with caching enabled
-            cache_config = MockCacheConfig(cache_transformed_tensors=True)
-            config = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=True)
+            config = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
@@ -209,8 +184,8 @@ class TestValidatedOCRDatasetIntegration:
             )
             mock_load_image_data.return_value = mock_image_data
 
-            cache_config = MockCacheConfig(cache_transformed_tensors=False)
-            config = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=False)
+            config = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
@@ -253,8 +228,8 @@ class TestValidatedOCRDatasetIntegration:
             mock_load_image_data.return_value = mock_image_data
 
             # Test with caching enabled
-            cache_config = MockCacheConfig(cache_transformed_tensors=True)
-            config_with_caching = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=True)
+            config_with_caching = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             dataset_with_caching = ValidatedOCRDataset(config=config_with_caching, transform=mock_transform)
 
@@ -268,8 +243,8 @@ class TestValidatedOCRDatasetIntegration:
             time_with_caching = time.time() - start_time
 
             # Test with caching disabled
-            cache_config_no_cache = MockCacheConfig(cache_transformed_tensors=False)
-            config_no_caching = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config_no_cache)
+            cache_config_no_cache = CacheConfig(cache_transformed_tensors=False)
+            config_no_caching = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config_no_cache)
 
             dataset_no_caching = ValidatedOCRDataset(config=config_no_caching, transform=mock_transform)
 
@@ -304,8 +279,8 @@ class TestValidatedOCRDatasetIntegration:
             mock_load_image_data.return_value = mock_image_data
 
             # Test with caching
-            cache_config = MockCacheConfig(cache_transformed_tensors=True)
-            config = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=True)
+            config = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
@@ -373,8 +348,8 @@ class TestEndToEndPipeline:
             mock_load_image_data.return_value = mock_image_data
 
             # Create dataset
-            cache_config = MockCacheConfig(cache_transformed_tensors=False)
-            config = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=False)
+            config = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
@@ -439,8 +414,8 @@ class TestPipelineRobustness:
             )
             mock_load_image_data.return_value = mock_image_data
 
-            cache_config = MockCacheConfig(cache_transformed_tensors=False)
-            config = MockDatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
+            cache_config = CacheConfig(cache_transformed_tensors=False)
+            config = DatasetConfig(image_path=tmp_path, annotation_path=annotation_file, cache_config=cache_config)
 
             dataset = ValidatedOCRDataset(config=config, transform=robust_transform)
 
