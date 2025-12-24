@@ -5,7 +5,7 @@ from __future__ import annotations
 import numpy as np
 from omegaconf import DictConfig, ListConfig, OmegaConf
 
-from ocr.validation.models import MetricConfig
+from ocr.core.validation import MetricConfig
 
 
 def extract_metric_kwargs(metric_cfg: DictConfig | None) -> dict:

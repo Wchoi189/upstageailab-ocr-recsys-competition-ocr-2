@@ -70,6 +70,10 @@ class AdvancedPreprocessingConfig:
 class AdvancedDocumentPreprocessor:
     """Advanced document preprocessor implementing Office Lens quality preprocessing.
 
+    .. deprecated:: 1.0
+        Use :class:`~ocr.datasets.preprocessing.enhanced_pipeline.EnhancedDocumentPreprocessor` instead.
+        This class will be removed in v2.0.
+
     This preprocessor achieves the goals outlined in the handover document:
     - Perfect document detection (>99% accuracy on simple bright rectangles)
     - High-confidence cropping with geometric validation
@@ -84,6 +88,14 @@ class AdvancedDocumentPreprocessor:
         config: AdvancedPreprocessingConfig | None = None,
         logger: logging.Logger | None = None,
     ):
+        import warnings
+        warnings.warn(
+            "AdvancedDocumentPreprocessor is deprecated and will be removed in v2.0. "
+            "Use EnhancedDocumentPreprocessor from enhanced_pipeline instead, "
+            "which provides better Phase 2 feature integration.",
+            DeprecationWarning,
+            stacklevel=2
+        )
         self.config = config or AdvancedPreprocessingConfig()
         self.logger = logger or logging.getLogger(__name__)
 
@@ -320,12 +332,25 @@ class OfficeLensPreprocessorAlbumentations:
 
 
 # Factory functions for easy instantiation
-def create_office_lens_preprocessor(
+def create_legacy_office_lens_preprocessor(
     min_detection_confidence: float = 0.85,
     target_size: tuple[int, int] | None = (640, 640),
     logger: logging.Logger | None = None,
 ) -> AdvancedDocumentPreprocessor:
-    """Create a preprocessor configured for Office Lens quality processing."""
+    """Create a preprocessor configured for Office Lens quality processing.
+
+    .. deprecated:: 1.0
+        Use :func:`~ocr.datasets.preprocessing.enhanced_pipeline.create_office_lens_preprocessor` instead.
+        This function will be removed in v2.0.
+    """
+    import warnings
+    warnings.warn(
+        "create_legacy_office_lens_preprocessor (formerly create_office_lens_preprocessor from advanced_preprocessor) "
+        "is deprecated. Use create_office_lens_preprocessor from enhanced_pipeline instead, "
+        "which provides better Phase 2 integration.",
+        DeprecationWarning,
+        stacklevel=2
+    )
     config = AdvancedPreprocessingConfig(
         use_advanced_detection=True,
         min_detection_confidence=min_detection_confidence,

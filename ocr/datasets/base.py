@@ -63,7 +63,7 @@ from torch.utils.data import Dataset
 # This prevents repetitive logging when multiple datasets are created with the same config
 _logged_warnings: set[str] = set()
 
-from ocr.datasets.schemas import DatasetConfig, ImageData, ImageMetadata, TransformInput, ValidatedPolygonData
+from ocr.core.validation import DatasetConfig, ImageData, ImageMetadata, TransformInput, ValidatedPolygonData
 from ocr.utils.background_normalization import normalize_gray_world
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
@@ -442,7 +442,7 @@ class ValidatedOCRDataset(Dataset):
         # AI_DOCS: Step 1 - Tensor Cache Check
         # ALWAYS check cache first for performance
         # Cache contains fully processed DataItem objects
-        from ocr.datasets.schemas import DataItem
+        from ocr.core.validation import DataItem
 
         cached_data_item = self.cache_manager.get_cached_tensor(idx)
         if cached_data_item is not None:
@@ -507,7 +507,7 @@ class ValidatedOCRDataset(Dataset):
         height, width = image_array.shape[:2]
         image_path = self.config.image_path / image_filename
 
-        from ocr.datasets.schemas import TransformInput
+        from ocr.core.validation import TransformInput
 
         metadata = ImageMetadata(
             filename=image_filename,
@@ -605,7 +605,7 @@ class ValidatedOCRDataset(Dataset):
                             thresh_map = loaded_thresh_map
 
                             # Cache the maps
-                            from ocr.datasets.schemas import MapData
+                            from ocr.core.validation import MapData
 
                             map_data = MapData(prob_map=prob_map, thresh_map=thresh_map)
                             self.cache_manager.set_cached_maps(image_filename, map_data)
@@ -683,7 +683,7 @@ class ValidatedOCRDataset(Dataset):
 
         # Load from disk
         image_path = self.config.image_path / filename
-        from ocr.datasets.schemas import ImageData
+        from ocr.core.validation import ImageData
         from ocr.utils.image_utils import ensure_rgb, load_pil_image, pil_to_numpy, safe_get_image_size
 
         try:
@@ -789,7 +789,7 @@ class ValidatedOCRDataset(Dataset):
 
                     # Validate map shapes (basic validation - full validation happens during __getitem__)
                     if prob_map.ndim == 3 and thresh_map.ndim == 3:
-                        from ocr.datasets.schemas import MapData
+                        from ocr.core.validation import MapData
 
                         map_data = MapData(prob_map=prob_map, thresh_map=thresh_map)
                         self.cache_manager.set_cached_maps(filename, map_data)

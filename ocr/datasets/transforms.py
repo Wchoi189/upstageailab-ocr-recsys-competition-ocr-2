@@ -64,7 +64,7 @@ import numpy as np
 from albumentations.pytorch import ToTensorV2
 from pydantic import ValidationError
 
-from ocr.datasets.schemas import ImageMetadata, PolygonData, TransformInput, TransformOutput
+from ocr.core.validation import ImageMetadata, PolygonData, TransformInput, TransformOutput
 from ocr.utils.geometry_utils import calculate_cropbox, calculate_inverse_transform
 
 

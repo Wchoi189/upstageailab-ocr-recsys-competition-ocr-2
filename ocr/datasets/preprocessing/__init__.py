@@ -8,7 +8,12 @@ from .advanced_preprocessor import (
     AdvancedPreprocessingConfig,
     OfficeLensPreprocessorAlbumentations,
     create_high_accuracy_preprocessor,
-    create_office_lens_preprocessor,
+    create_legacy_office_lens_preprocessor,
+)
+from .enhanced_pipeline import (
+    EnhancedDocumentPreprocessor,
+    create_office_lens_preprocessor,  # Canonical version from enhanced_pipeline
+    create_fast_preprocessor,
 )
 from .config import DocumentPreprocessorConfig
 from .external import (
@@ -44,6 +49,7 @@ __all__ = [
     "DocumentMetadata",
     "DocumentPreprocessor",
     "DocumentPreprocessorConfig",
+    "EnhancedDocumentPreprocessor",  # Added
     "ImageArray",
     "ImageValidator",
     "LensStylePreprocessorAlbumentations",
@@ -51,8 +57,10 @@ __all__ = [
     "OfficeLensPreprocessorAlbumentations",
     "PreprocessingState",
     "TransformationMatrix",
+    "create_fast_preprocessor",  # Added from enhanced_pipeline
     "create_high_accuracy_preprocessor",
-    "create_office_lens_preprocessor",
+    "create_legacy_office_lens_preprocessor",  # Renamed legacy version
+    "create_office_lens_preprocessor",  # Canonical version from enhanced_pipeline
     "doctr_remove_image_padding",
     "doctr_rotate_image",
     "estimate_page_angle",

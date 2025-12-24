@@ -15,7 +15,7 @@ import torch
 import torch.nn as nn
 from pydantic import ValidationError
 
-from ocr.validation.models import ValidatedTensorData
+from ocr.core.validation import ValidatedTensorData
 
 
 class DiceLoss(nn.Module):

@@ -57,7 +57,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from ocr.datasets.schemas import ImageLoadingConfig
+from ocr.core.validation import ImageLoadingConfig
 from ocr.utils.image_loading import load_image_optimized
 
 

@@ -56,7 +56,7 @@ import logging
 from collections.abc import Callable
 from typing import Any
 
-from ocr.datasets.schemas import CacheConfig, DataItem, ImageData, MapData
+from ocr.core.validation import CacheConfig, DataItem, ImageData, MapData
 
 
 class CacheManager:
