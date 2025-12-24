@@ -33,7 +33,7 @@ def run_override_pattern(config_name: str, overrides: list[str], description: st
         (success, error_message)
     """
     try:
-        with hydra.initialize(config_path="configs", version_base="1.2"):
+        with hydra.initialize(config_path="../../configs", version_base="1.2"):
             cfg = hydra.compose(config_name=config_name, overrides=overrides)
             # Try to access some basic config to ensure it's valid
             _ = cfg.get("seed", 42)
@@ -67,12 +67,12 @@ def run_override_tests() -> dict[str, list[tuple[str, bool, str]]]:
 
     # Test group overrides
     group_tests = [
-        ("data=canonical", "Data group override"),
+        ("data=canonical", "Data group override (data in defaults)"),
         ("logger=wandb", "Logger group override"),
         ("model=default", "Model group override"),
         ("trainer=default", "Trainer group override"),
-        ("+data=canonical", "Add data group with +"),
-        ("+logger=wandb", "Add logger group with +"),
+        ("data=craft", "Data group override with craft"),
+        ("logger=csv", "Logger group override with csv"),
         ("override data: canonical", "Override syntax for data"),
         ("override logger: wandb", "Override syntax for logger"),
     ]
@@ -114,11 +114,12 @@ def run_override_tests() -> dict[str, list[tuple[str, bool, str]]]:
             error = str(e)
         test_results["multirun"].append((f"{desc}: {override}", success, error))
 
-    # Test problematic patterns from user issues
+    # Test problematic patterns from user issues (these should fail)
     problematic_tests = [
-        ("+logger=wandb", "Problematic: +logger when logger already exists"),
+        ("+logger=wandb", "Problematic: +logger when logger already in defaults"),
+        ("+data=canonical", "Problematic: +data when data already in defaults"),
         ("+model/architectures=dbnetpp,craft", "Problematic: +model/architectures with sweep"),
-        ("data=canonical trainer.max_epochs=15 +logger=wandb", "Combined problematic overrides"),
+        ("data=canonical trainer.max_epochs=15", "Combined valid overrides"),
     ]
 
     test_results["problematic"] = []
@@ -164,7 +165,7 @@ def main():
 
     # Also test the current config loading
     try:
-        with hydra.initialize(config_path="configs", version_base=None):
+        with hydra.initialize(config_path="../../configs", version_base=None):
             cfg = hydra.compose(config_name="train")
             print(f"\nCurrent config experiment_tag: {cfg.get('experiment_tag', 'None')}")
             print(f"Current config wandb: {cfg.get('wandb', 'Not set')}")

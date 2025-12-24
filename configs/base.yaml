@@ -20,14 +20,18 @@ experiment:
   name: ${exp_name}      # comes from the entry config (e.g., train.yaml)
   run_id: ${now:%Y%m%d_%H%M%S}_${seed}
 
+# OVERRIDE PATTERN GUIDE:
+# Configs listed in defaults below → override WITHOUT + prefix (e.g., logger=wandb)
+# Configs NOT in defaults → override WITH + prefix (e.g., +ablation=model_comparison)
 defaults:
-  - model: default
-  - evaluation: metrics
-  - paths: default
-  - logger: consolidated
-  - trainer: default
-  - callbacks: default
-  - debug: default
+  - model: default          # Override: model=X
+  - data: default           # Override: data=canonical, data=craft (no + needed)
+  - evaluation: metrics     # Override: evaluation=X
+  - paths: default          # Override: paths=X
+  - logger: consolidated    # Override: logger=wandb, logger=csv (no + needed)
+  - trainer: default        # Override: trainer=fp16_safe, trainer=rtx3060_12gb (no + needed)
+  - callbacks: default      # Override: callbacks=X
+  - debug: default          # Override: debug=X
   # NOTE: hydra config moved inline above - config groups don't work with @package in version_base=None
 
 # Runtime extras (inlined from extras/default.yaml)
