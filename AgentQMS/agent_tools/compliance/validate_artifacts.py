@@ -50,6 +50,20 @@ from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
+
+def _refresh_plugin_snapshot_best_effort() -> None:
+    """Refresh .agentqms/state/plugins.yaml if plugin system is available.
+
+    This is intentionally best-effort and must never break validation runs.
+    """
+
+    try:
+        from AgentQMS.agent_tools.core.plugins import get_plugin_registry
+
+        get_plugin_registry(force=False)
+    except Exception:
+        return
+
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator  # noqa: E402
 from AgentQMS.agent_tools.utils.paths import ensure_within_project, get_project_root
 
@@ -998,6 +1012,8 @@ def main():
     )
 
     args = parser.parse_args()
+
+    _refresh_plugin_snapshot_best_effort()
 
     # Determine strict mode (inverse of lenient)
     strict_mode = not args.lenient_plugins

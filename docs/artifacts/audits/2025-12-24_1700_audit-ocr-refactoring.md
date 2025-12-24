@@ -1,3 +1,14 @@
+---
+ads_version: "1.0"
+title: "Audit Ocr Refactoring"
+date: "2025-12-24 17:08 (KST)"
+type: "audit"
+category: "compliance"
+status: "active"
+version: "1.0"
+tags: ['audit', 'compliance']
+---
+
 # OCR Directory Refactoring Audit & Proposal
 
 **Date:** 2025-12-23

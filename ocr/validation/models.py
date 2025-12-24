@@ -22,10 +22,12 @@ from ocr.core.validation import (
     MetricConfig,
     ModelOutput,
     PolygonArray,
-    TransformOutput,
     ValidatedTensorData,
     validate_predictions,
     validator,
+)
+from ocr.core.validation import (
+    LoaderTransformOutput as TransformOutput,
 )
 
 __all__ = [

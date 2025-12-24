@@ -148,7 +148,9 @@ def translate_markdown(readme_text: str, target_lang: str, max_chunk_chars: int 
     try:
         from deep_translator import GoogleTranslator
     except Exception as e:  # pragma: no cover
-        raise RuntimeError("Missing dependency: deep-translator. Install with: pip install deep-translator") from e
+        raise RuntimeError(
+            "Missing dependency: deep-translator. Install with: uv pip install deep-translator"
+        ) from e
 
     translator = GoogleTranslator(source="auto", target=target_lang)
 

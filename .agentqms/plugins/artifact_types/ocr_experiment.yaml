@@ -34,10 +34,6 @@ validation:
     - "## Results"
     - "## Analysis"
   filename_prefix: "ocr_experiment_"
-  allowed_categories:
-    - research
-    - evaluation
-    - development
   allowed_statuses:
     - active
     - incomplete
@@ -120,15 +116,3 @@ template_variables:
   date: "2025-12-06"
   status: "draft"
   intention: "[Experiment objective and goal]"
-
-tools:
-  experiment_tracking:
-    - experiment-tracker/scripts/start-experiment.py
-    - experiment-tracker/scripts/record-artifact.py
-    - experiment-tracker/scripts/generate-assessment.py
-  vlm_analysis:
-    - AgentQMS/vlm/cli/analyze_image_defects.py
-
-instructions:
-  quickstart: experiment-tracker/docs/quickstart.md
-  workflow: experiment-tracker/docs/experiment_workflow.md

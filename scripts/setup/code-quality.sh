@@ -44,18 +44,19 @@ if [ -n "$(git status --porcelain)" ]; then
 fi
 
 print_status "Installing/updating pre-commit hooks..."
-if command -v pre-commit &> /dev/null; then
-    pre-commit install
-    pre-commit autoupdate
-else
-    print_warning "pre-commit not found. Installing..."
-    pip install pre-commit
-    pre-commit install
-    pre-commit autoupdate
+if ! command -v uv &> /dev/null; then
+    print_error "uv not found. Install uv and run: uv sync"
+    exit 1
 fi
 
+print_status "Syncing Python environment (uv sync)..."
+uv sync
+
+uv run pre-commit install
+uv run pre-commit autoupdate
+
 print_status "Running pre-commit on all files..."
-pre-commit run --all-files
+uv run pre-commit run --all-files
 
 # Check if there are changes
 if [ -n "$(git status --porcelain)" ]; then

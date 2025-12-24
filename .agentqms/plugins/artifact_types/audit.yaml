@@ -38,13 +38,6 @@ validation:
     - "## Compliance Status"
     - "## Related Artifacts"
   filename_prefix: "audit-"
-  allowed_categories:
-    - accessibility
-    - security
-    - compliance
-    - performance
-    - code_quality
-    - framework
   allowed_statuses:
     - draft
     - active

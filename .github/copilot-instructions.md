@@ -20,6 +20,10 @@ You are working in an AgentQMS-enabled project.
 2. **Artifacts**: NEVER create `docs/artifacts/*` files manually.
    - Use: `cd AgentQMS/interface && make create-plan` (or similar)
 3. **Safety**: Run `make validate` before asking the user to review.
+4. **Environment**: Use `uv` for Python execution and dependency management.
+  - Run Python via `uv run python ...`
+  - Install/sync deps via `uv sync` (or `uv add ...` when updating `pyproject.toml`)
+  - Avoid `pip install` / `python -m pip`
 
 ## Context
 - AI Documentation Standard: `.ai-instructions/schema/ads-v1.0-spec.yaml`
@@ -30,8 +34,8 @@ You are working in an AgentQMS-enabled project.
 - **State Files**: Experiment state files are now in YAML format (`state.yml`) instead of JSON for better safety and readability.
 - **Safe Editing**: Use `experiment-tracker/scripts/safe_state_manager.py` for all state file operations to prevent corruption.
 - **Commands**:
-  - Validate: `python scripts/safe_state_manager.py <path>/state.yml --validate`
-  - Get section: `python scripts/safe_state_manager.py <path>/state.yml --get <section>`
-  - Set section: `python scripts/safe_state_manager.py <path>/state.yml --set <key> <value>`
+  - Validate: `uv run python experiment-tracker/scripts/safe_state_manager.py <path>/state.yml --validate`
+  - Get section: `uv run python experiment-tracker/scripts/safe_state_manager.py <path>/state.yml --get <section>`
+  - Set section: `uv run python experiment-tracker/scripts/safe_state_manager.py <path>/state.yml --set <key> <value>`
 - **ETK Tool**: Use `etk sync --all` to keep state files and metadata in sync.
 - **Migration**: Existing JSON files have been migrated to YAML with backups.

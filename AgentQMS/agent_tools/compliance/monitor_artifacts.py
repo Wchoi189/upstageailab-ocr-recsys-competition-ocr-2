@@ -26,6 +26,20 @@ from AgentQMS.agent_tools.utils.runtime import ensure_project_root_on_sys_path
 ensure_project_root_on_sys_path()
 
 
+def _refresh_plugin_snapshot_best_effort() -> None:
+    """Refresh .agentqms/state/plugins.yaml if plugin system is available.
+
+    Best-effort only: monitoring must not fail due to plugin snapshot issues.
+    """
+
+    try:
+        from AgentQMS.agent_tools.core.plugins import get_plugin_registry
+
+        get_plugin_registry(force=False)
+    except Exception:
+        return
+
+
 class ArtifactMonitor:
     """Monitors artifact organization and compliance."""
 
@@ -292,6 +306,8 @@ def main():
     parser.add_argument("--output", help="Output file for report")
 
     args = parser.parse_args()
+
+    _refresh_plugin_snapshot_best_effort()
 
     monitor = ArtifactMonitor(args.artifacts_root)
 

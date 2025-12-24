@@ -169,10 +169,10 @@ make ide-config         # Generate configuration files for Antigravity, Cursor, 
 # Clone and install in editable mode
 git clone https://github.com/your-org/agent_qms.git
 cd agent_qms
-pip install -e .
+uv pip install -e .
 
 # Verify installation
-python -c "import AgentQMS; print(AgentQMS.__version__)"
+uv run python -c "import AgentQMS; print(AgentQMS.__version__)"
 ```
 
 ### Option B: Copy into Your Project

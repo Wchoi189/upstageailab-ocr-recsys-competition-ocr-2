@@ -5,17 +5,22 @@ Consolidates:
 - ocr.datasets.schemas (dataset contracts)
 
 This module provides a single source of truth for all validation models.
+
+Rationale (do not modularize): consolidation prevents circular imports and keeps
+schemas + runtime validators consistent across the pipeline.
 """
 
 from __future__ import annotations
 
-from __future__ import annotations
 import hashlib
+from collections.abc import Mapping, Sequence
+from pathlib import Path
+from typing import Any
+
 import numpy as np
 import torch
-from pathlib import Path
-from pydantic import BaseModel, ConfigDict, Field, ValidationInfo, field_validator, model_validator
-from typing import Any
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, ValidationInfo, field_validator, model_validator
+from pydantic_core import InitErrorDetails, PydanticCustomError
 
 # =============================================================================
 # SECTION 1: Base Utilities & Constants (from validation/models)
@@ -32,6 +37,16 @@ def _info_data(info: ValidationInfo | None) -> Mapping[str, Any]:
     if isinstance(data, Mapping):
         return data
     return {}
+
+
+def _batch_size(info: ValidationInfo | None) -> int:
+    """Best-effort batch size lookup from validator context."""
+    data = _info_data(info)
+    for key in ("image_filename", "image_path", "shape", "inverse_matrix"):
+        value = data.get(key)
+        if isinstance(value, list):
+            return len(value)
+    return 0
 
 
 
@@ -525,7 +540,7 @@ class DataItem(BaseModel):
     @field_validator("image", mode="before")
     @classmethod
     def validate_tensor(cls, value: Any) -> Any:
-        if isinstance(value, torch.Tensor | np.ndarray):
+        if isinstance(value, (torch.Tensor, np.ndarray)):
             return value
         raise TypeError(f"Image output must be torch.Tensor or np.ndarray, got {type(value)}")
 
@@ -623,6 +638,7 @@ class DatasetSample(_ModelBase):
     def _check_thresh_maps(cls, thresh_maps: np.ndarray, info: ValidationInfo) -> np.ndarray:
         if thresh_maps.ndim != 2:
             raise ValueError(f"thresh_maps must be 2D; received shape {thresh_maps.shape}.")
+        prob_maps = _info_data(info).get("prob_maps")
         if isinstance(prob_maps, np.ndarray) and prob_maps.shape != thresh_maps.shape:
             raise ValueError("Probability and threshold maps must share the same shape.")
         return thresh_maps
@@ -643,7 +659,7 @@ class DatasetSample(_ModelBase):
 
 
 
-class TransformOutput(_ModelBase):
+class LoaderTransformOutput(_ModelBase):
     """Output of the transform pipeline that feeds the DataLoader."""
 
     image: torch.Tensor = Field(..., description="Transformed image shaped (3, H, W).")
@@ -745,6 +761,7 @@ class CollateOutput(_ModelBase):
     def _check_images(cls, images: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
         if images.ndim != 4 or images.shape[1] != 3:
             raise ValueError("images tensor must be shaped (B, 3, H, W).")
+        batch = _batch_size(info)
         if batch and images.shape[0] != batch:
             raise ValueError("Number of images does not match batch metadata.")
         return images
@@ -752,7 +769,8 @@ class CollateOutput(_ModelBase):
     @field_validator("polygons")
     @classmethod
     def _check_collated_polygons(cls, polygons: list[list[np.ndarray]], info: ValidationInfo) -> list[list[np.ndarray]]:
-        if len(polygons) != len(filenames):
+        batch = _batch_size(info)
+        if batch and len(polygons) != batch:
             raise ValueError("Polygons list must align with batch size.")
         for poly_list in polygons:
             if not isinstance(poly_list, list):
@@ -766,6 +784,7 @@ class CollateOutput(_ModelBase):
     def _check_collated_prob_maps(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
         if tensor.ndim != 4 or tensor.shape[1] != 1:
             raise ValueError("prob_maps tensor must be shaped (B, 1, H, W).")
+        batch = _batch_size(info)
         if batch and tensor.shape[0] != batch:
             raise ValueError("prob_maps batch dimension must match batch size.")
         return tensor
@@ -775,6 +794,7 @@ class CollateOutput(_ModelBase):
     def _check_collated_thresh_maps(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
         if tensor.ndim != 4 or tensor.shape[1] != 1:
             raise ValueError("thresh_maps tensor must be shaped (B, 1, H, W).")
+        batch = _batch_size(info)
         if batch and tensor.shape[0] != batch:
             raise ValueError("thresh_maps batch dimension must match batch size.")
         return tensor
@@ -784,14 +804,18 @@ class CollateOutput(_ModelBase):
     def _check_orientation(cls, value: Sequence[int] | None, info: ValidationInfo) -> Sequence[int] | None:
         if value is None:
             return None
-        if len(value) != batch:
+        items = list(value)
+        batch = _batch_size(info)
+        if batch and len(items) != batch:
             raise ValueError("orientation length must match batch size.")
         normalized: list[int] = []
-        for idx, item in enumerate(value):
+        allowed = ", ".join(str(v) for v in sorted(VALID_EXIF_ORIENTATIONS))
+        for idx, item in enumerate(items):
             try:
                 orientation = int(item)
             except (TypeError, ValueError) as exc:
                 raise TypeError(f"orientation[{idx}] must be castable to int.") from exc
+            if orientation not in VALID_EXIF_ORIENTATIONS:
                 raise ValueError(f"orientation[{idx}] must be one of {{{allowed}}}.")
             normalized.append(orientation)
         return normalized
@@ -801,10 +825,13 @@ class CollateOutput(_ModelBase):
     def _check_raw_sizes(cls, value: Sequence[tuple[int, int]] | None, info: ValidationInfo) -> Sequence[tuple[int, int]] | None:
         if value is None:
             return None
-        if len(value) != batch:
+        items = list(value)
+        batch = _batch_size(info)
+        if batch and len(items) != batch:
             raise ValueError("raw_size length must match batch size.")
         normalized: list[tuple[int, int]] = []
-        for item in value:
+        for idx, item in enumerate(items):
+            normalized_item = _ensure_tuple_pair(item, "raw_size")
             if normalized_item is None:
                 raise ValueError("raw_size entries cannot be null.")
             normalized.append(normalized_item)
@@ -817,9 +844,18 @@ class CollateOutput(_ModelBase):
     ) -> Sequence[tuple[int, int] | None] | None:
         if value is None:
             return None
-        batch = len(info.data.get("image_filename", [])) if info.data else 0
-        if len(value) != batch:
+        items = list(value)
+        batch = _batch_size(info)
+        if batch and len(items) != batch:
             raise ValueError("canonical_size length must match batch size.")
+
+        normalized: list[tuple[int, int] | None] = []
+        for idx, item in enumerate(items):
+            if item is None:
+                normalized.append(None)
+            else:
+                normalized.append(_ensure_tuple_pair(item, "canonical_size") or None)
+        return normalized
 
     @field_validator("metadata")
     @classmethod
@@ -828,13 +864,14 @@ class CollateOutput(_ModelBase):
     ) -> list[dict[str, Any] | ImageMetadata | None] | None:
         if value is None:
             return None
-        if len(value) != batch:
+        batch = _batch_size(info)
+        if batch and len(value) != batch:
             raise ValueError("metadata length must match batch size.")
         normalized: list[dict[str, Any] | ImageMetadata | None] = []
         for entry in value:
             if entry is None:
                 normalized.append(None)
-            elif isinstance(entry, dict | ImageMetadata):
+            elif isinstance(entry, (dict, ImageMetadata)):
                 normalized.append(entry)
             else:
                 raise TypeError("metadata entries must be dicts, ImageMetadata, or None.")
@@ -854,6 +891,15 @@ class ModelOutput(_ModelBase):
     @field_validator("thresh_maps", "binary_maps")
     @classmethod
     def _check_output_shapes(cls, tensor: torch.Tensor, info: ValidationInfo) -> torch.Tensor:
+        data = _info_data(info)
+        field_name = getattr(info, "field_name", None)
+        if field_name == "thresh_maps":
+            reference = data.get("binary_maps")
+        elif field_name == "binary_maps":
+            reference = data.get("thresh_maps")
+        else:
+            reference = None
+
         if isinstance(reference, torch.Tensor) and tensor.shape != reference.shape:
             raise ValueError("Model output tensors must share the same shape.")
         return tensor
@@ -906,7 +952,7 @@ class LightningStepPrediction(_ModelBase):
     @field_validator("metadata")
     @classmethod
     def _validate_metadata(cls, value: dict[str, Any] | ImageMetadata | None) -> dict[str, Any] | ImageMetadata | None:
-        if value is None or isinstance(value, dict | ImageMetadata):
+        if value is None or isinstance(value, (dict, ImageMetadata)):
             return value
         raise TypeError("metadata must be a dict, ImageMetadata, or None.")
 
@@ -1096,50 +1142,6 @@ class ValidatedTensorData(_ModelBase):
         return value
 
 
-def validate_predictions(filenames: Sequence[str], predictions: Sequence[dict[str, Any]]) -> list[LightningStepPrediction]:
-    """Validate a collection of predictions against the expected schema."""
-
-    def _make_error_details(
-        *,
-        error_type: str | PydanticCustomError,
-        loc: tuple[Any, ...],
-        original: Mapping[str, Any] | None = None,
-    ) -> InitErrorDetails:
-        input_value = None if original is None else original.get("input")
-        ctx = None if original is None else original.get("ctx")
-        if ctx:
-            return InitErrorDetails(type=error_type, loc=loc, ctx=ctx, input=input_value)
-        return InitErrorDetails(type=error_type, loc=loc, input=input_value)
-
-    if len(filenames) != len(predictions):
-        raise ValidationError.from_exception_data(
-            LightningStepPrediction.__name__,
-            line_errors=[
-                _make_error_details(
-                    error_type=PydanticCustomError("value_error.mismatched_lengths", "Number of filenames and predictions must match."),
-                    loc=("__len__",),
-                )
-            ],
-        )
-    validated: list[LightningStepPrediction] = []
-    for name, raw_pred in zip(filenames, predictions, strict=True):
-        try:
-            validated.append(LightningStepPrediction(**raw_pred))
-        except ValidationError as exc:
-            raise ValidationError.from_exception_data(
-                LightningStepPrediction.__name__,
-                line_errors=[
-                    _make_error_details(
-                        error_type=error["type"],
-                        loc=("prediction", name, *error["loc"]),
-                        original=error,
-                    )
-                    for error in exc.errors()
-                ],
-            ) from exc
-    return validated
-
-
 
 # =============================================================================
 # PUBLIC API
@@ -1169,6 +1171,7 @@ __all__ = [
     "DatasetSample",
     "BatchSample",
     "CollateOutput",
+    "LoaderTransformOutput",
     "ModelOutput",
     "LightningStepPrediction",
     "MetricConfig",

@@ -126,7 +126,12 @@ artifacts-repair-moves-preview: ## Preview manual move repairs
 	python ../agent_tools/utilities/legacy_migrator.py detect-moves --repair --dry-run
 
 # Validation and Compliance
-validate: ## Validate all artifacts
+
+.PHONY: plugins-snapshot
+plugins-snapshot: ## Refresh .agentqms/state/plugins.yaml (auto)
+	@uv run python -m AgentQMS.agent_tools.core.plugins --write-snapshot --json > /dev/null
+
+validate: plugins-snapshot ## Validate all artifacts
 	uv run python ../agent_tools/compliance/validate_artifacts.py --all
 
 .PHONY: reindex
@@ -156,19 +161,19 @@ commit-fixes: ## Commit artifact fixes with standard message (usage: make commit
 	fi
 
 validate-file: ## Validate specific file (usage: make validate-file FILE=path/to/file.md)
-	python ../agent_tools/compliance/validate_artifacts.py --file $(FILE)
+	uv run python ../agent_tools/compliance/validate_artifacts.py --file $(FILE)
 
 validate-naming: ## Check naming conventions only
-	python ../agent_tools/compliance/validate_artifacts.py --check-naming
+	uv run python ../agent_tools/compliance/validate_artifacts.py --check-naming
 
 boundary: ## Validate framework/project boundaries
-	python ../agent_tools/compliance/validate_boundaries.py
+	uv run python ../agent_tools/compliance/validate_boundaries.py
 
 audit-framework: ## Audit framework plugins and templates for schema compliance
-	python ../agent_tools/audit/framework_audit.py
+	uv run python ../agent_tools/audit/framework_audit.py
 
 audit-framework-verbose: ## Audit framework with verbose output
-	python ../agent_tools/audit/framework_audit.py --verbose
+	uv run python ../agent_tools/audit/framework_audit.py --verbose
 
 audit-framework-json: ## Audit framework and output JSON results
 	python ../agent_tools/audit/framework_audit.py --json
@@ -277,8 +282,8 @@ track-repair-preview: ## Preview tracking database repairs without applying
 track-status: ## Show tracking database status
 	@python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.agent_tools.utilities.tracking.query import get_status; print(get_status('all'))"
 
-compliance: ## Check compliance status
-	python ../agent_tools/compliance/monitor_artifacts.py --check
+compliance: plugins-snapshot ## Check compliance status
+	uv run python ../agent_tools/compliance/monitor_artifacts.py --check
 
 compliance-fix: ## Fix compliance issues automatically (DEPRECATED)
 	@echo "⚠️  compliance-fix is deprecated. No automated fixer is available." && exit 0
@@ -516,8 +521,7 @@ clean-feedback: ## Clean up old feedback files
 # Development Commands
 dev-setup: ## Setup development environment
 	@echo "🛠️ Setting up development environment..."
-	python -m pip install --upgrade pip
-	pip install -e ../..
+	cd ../.. && uv sync
 	@echo "✅ Development environment ready"
 
 dev-test: ## Test all agent tools

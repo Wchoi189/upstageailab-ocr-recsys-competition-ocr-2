@@ -79,3 +79,9 @@ repos:
         # Exclude: DEPRECATED/, tier3-agents/*.yaml (hybrid), tier4-workflows/ (hybrid docs)
         files: ^\.ai-instructions/(tier1-sst|tier2-framework)/.*\.yaml$
         pass_filenames: true
+
+      - id: forbid-pip-install
+        name: forbid-pip-install
+        entry: uv run python scripts/ci/forbid_pip_install.py
+        language: system
+        files: ^(scripts/.*\.(sh|py)|AgentQMS/interface/Makefile)$

@@ -1,15 +1,51 @@
-from hydra.utils import instantiate
-from omegaconf import OmegaConf
-from torch.utils.data import Subset
+"""OCR datasets package.
 
-from .base import ValidatedOCRDataset  # noqa: F401
-from .craft_collate_fn import CraftCollateFN  # noqa: F401
-from .db_collate_fn import DBCollateFN  # noqa: F401
-from .preprocessing import DocumentPreprocessor, LensStylePreprocessorAlbumentations  # noqa: F401
-from .transforms import DBTransforms  # noqa: F401
+This package is imported by many modules (including lightweight schema shims).
+To keep import-time dependencies minimal, heavy submodules are loaded lazily.
+"""
+
+from __future__ import annotations
+
+import importlib
+from typing import Any
+
+__all__ = [
+    "ValidatedOCRDataset",
+    "CraftCollateFN",
+    "DBCollateFN",
+    "DocumentPreprocessor",
+    "LensStylePreprocessorAlbumentations",
+    "DBTransforms",
+    "get_datasets_by_cfg",
+]
+
+
+_LAZY_EXPORTS: dict[str, tuple[str, str]] = {
+    "ValidatedOCRDataset": (".base", "ValidatedOCRDataset"),
+    "CraftCollateFN": (".craft_collate_fn", "CraftCollateFN"),
+    "DBCollateFN": (".db_collate_fn", "DBCollateFN"),
+    "DocumentPreprocessor": (".preprocessing", "DocumentPreprocessor"),
+    "LensStylePreprocessorAlbumentations": (".preprocessing", "LensStylePreprocessorAlbumentations"),
+    "DBTransforms": (".transforms", "DBTransforms"),
+}
+
+
+def __getattr__(name: str) -> Any:
+    target = _LAZY_EXPORTS.get(name)
+    if target is None:
+        raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+    module_name, symbol_name = target
+    module = importlib.import_module(module_name, __name__)
+    value = getattr(module, symbol_name)
+    globals()[name] = value
+    return value
 
 
 def get_datasets_by_cfg(datasets_config, data_config=None, full_config=None):
+    from hydra.utils import instantiate
+    from omegaconf import OmegaConf
+    from torch.utils.data import Subset
+
     train_dataset = instantiate(datasets_config.train_dataset)
     val_dataset = instantiate(datasets_config.val_dataset)
     test_dataset = instantiate(datasets_config.test_dataset)

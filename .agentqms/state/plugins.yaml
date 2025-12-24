@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2025-12-20T17:12:38.823621+00:00'
+  generated_at: '2025-12-24T08:37:55.068028+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -79,13 +79,6 @@ resolved:
         - '## Compliance Status'
         - '## Related Artifacts'
         filename_prefix: audit-
-        allowed_categories:
-        - accessibility
-        - security
-        - compliance
-        - performance
-        - code_quality
-        - framework
         allowed_statuses:
         - draft
         - active
@@ -323,10 +316,6 @@ resolved:
         - '## Results'
         - '## Analysis'
         filename_prefix: ocr_experiment_
-        allowed_categories:
-        - research
-        - evaluation
-        - development
         allowed_statuses:
         - active
         - incomplete
@@ -452,16 +441,6 @@ resolved:
         date: '2025-12-06'
         status: draft
         intention: '[Experiment objective and goal]'
-      tools:
-        experiment_tracking:
-        - experiment-tracker/scripts/start-experiment.py
-        - experiment-tracker/scripts/record-artifact.py
-        - experiment-tracker/scripts/generate-assessment.py
-        vlm_analysis:
-        - AgentQMS/vlm/cli/analyze_image_defects.py
-      instructions:
-        quickstart: experiment-tracker/docs/quickstart.md
-        workflow: experiment-tracker/docs/experiment_workflow.md
   validators:
     prefixes:
       CR_: change_requests/
