@@ -91,7 +91,7 @@ checkpoints/
 *.ckpt
 wandb/
 offline-*/
-
+/archive/
 # Model files
 *.onnx
 frontend/public/models/*.onnx

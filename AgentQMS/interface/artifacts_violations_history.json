@@ -378,5 +378,25 @@
       "directory": 0,
       "frontmatter": 0
     }
+  },
+  {
+    "timestamp": "2025-12-25T02:13:52.436400",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2025-12-25T02:14:14.650763",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
   }
 ]
