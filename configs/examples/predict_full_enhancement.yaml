@@ -1,0 +1,25 @@
+# Example: Prediction with full enhancement pipeline
+# Based on experiment: 20251217_024343_image_enhancements_implementation
+# Usage: uv run python runners/predict.py --config-name predict_full_enhancement
+
+defaults:
+  - ../predict
+  - _self_
+
+exp_name: "prediction_full_enhancement"
+
+# Enable full enhancement pipeline
+preprocessing:
+  # Step 1: Perspective correction (rembg-based mask + 4-point transform)
+  enable_perspective_correction: true
+  perspective_display_mode: "corrected"
+
+  # Step 2: Background normalization (gray-world method - 75% tint reduction)
+  enable_background_normalization: true
+
+  # Alternative enhancements (choose one approach)
+  enable_sepia_enhancement: false  # Alternative to gray-world
+  enable_grayscale: false
+  enable_clahe: false
+
+# Note: Deskewing is intentionally excluded - experiment showed no OCR improvement

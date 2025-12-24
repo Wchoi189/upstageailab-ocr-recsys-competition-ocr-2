@@ -115,7 +115,7 @@ yarn-error.log*
 # Temporary files
 *.tmp
 *.temp
-*.log
+
 
 # Large model files and checkpoints
 *.pth

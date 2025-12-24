@@ -1,0 +1,17 @@
+# Example: Prediction with perspective correction enabled
+# Usage: uv run python runners/predict.py --config-name predict_with_perspective
+
+defaults:
+  - ../predict
+  - _self_
+
+exp_name: "prediction_with_perspective"
+
+# Enable perspective correction
+preprocessing:
+  enable_perspective_correction: true
+  perspective_display_mode: "corrected"  # Display corrected image
+  enable_background_normalization: false
+  enable_grayscale: false
+  enable_sepia_enhancement: false
+  enable_clahe: false

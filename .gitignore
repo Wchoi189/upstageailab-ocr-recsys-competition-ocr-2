@@ -96,6 +96,9 @@ offline-*/
 *.onnx
 frontend/public/models/*.onnx
 
+# Agent-specific settings
+.ai-instructions/tier3-agents/*/settings.local.json
+
 # Data
 data/datasets/
 data/pseudo_label/

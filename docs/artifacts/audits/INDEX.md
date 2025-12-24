@@ -2,18 +2,14 @@
 
 Active audits and development roadmaps.
 
-**Last Updated**: 2025-12-22 01:27:17
-**Total Artifacts**: 1
-
-## Active (1)
-
-- [Audit Perspective Correction Consolidation](2025-12-15_1200_audit-perspective-correction-consolidation.md) (📅 2025-12-16 00:11 (KST), 📄 audit) - **Finding:** Duplicate perspective correction implementations identified across codebase.
+**Last Updated**: 2025-12-25 01:24:11
+**Total Artifacts**: 0
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 1 |
+| Active | 0 |
 | Completed | 0 |
 
 ---

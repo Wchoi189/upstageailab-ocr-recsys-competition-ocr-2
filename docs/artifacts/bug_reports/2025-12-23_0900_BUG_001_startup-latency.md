@@ -1,3 +1,14 @@
+---
+ads_version: "1.0"
+title: "001 Startup Latency SLA Violation"
+date: "2025-12-23 09:00 (KST)"
+type: bug_report
+category: troubleshooting
+status: completed
+version: "1.0"
+tags: ['bug_report', 'performance', 'latency']
+---
+
 # BUG-20251223-001: 3-Minute Startup Delay due to Eager PyTorch Import
 
 ## Overview

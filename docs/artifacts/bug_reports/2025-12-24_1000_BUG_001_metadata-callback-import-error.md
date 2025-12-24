@@ -1,3 +1,14 @@
+---
+ads_version: "1.0"
+title: "001 Metadata Callback ModuleNotFoundError"
+date: "2025-12-24 10:00 (KST)"
+type: bug_report
+category: troubleshooting
+status: completed
+version: "1.0"
+tags: ['bug_report', 'import-error', 'callbacks']
+---
+
 # BUG-20251224-001: ModuleNotFoundError 'ui' in OCR Callbacks
 
 ## Overview

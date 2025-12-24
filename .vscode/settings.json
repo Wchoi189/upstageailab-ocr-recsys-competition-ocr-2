@@ -105,5 +105,19 @@
       "ui",
       "scripts"
     ],
-    "cursorpyright.analysis.typeCheckingMode": "basic"
+    "cursorpyright.analysis.typeCheckingMode": "basic",
+    // ------------------------------------------------------------------
+    // AI Agent Configuration
+    // ------------------------------------------------------------------
+    // Claude Code
+    "claudeCode.customInstructionsPath": ".ai-instructions/tier3-agents/claude",
+    // GitHub Copilot - uses .github/copilot-instructions.md (already configured)
+    // Cursor - uses .cursorrules file in root (if needed, or via cursorDirectory setting)
+    // Gemini - configuration would go here if extension supports custom paths
+    "terminal.integrated.env.linux": {
+        "CLAUDE_CONFIG_DIR": "${workspaceFolder}/.ai-instructions/tier3-agents/claude",
+        "CURSOR_CONFIG_DIR": "${workspaceFolder}/.ai-instructions/tier3-agents/cursor",
+        "COPILOT_CONFIG_DIR": "${workspaceFolder}/.ai-instructions/tier3-agents/copilot",
+        "GEMINI_CONFIG_DIR": "${workspaceFolder}/.ai-instructions/tier3-agents/gemini"
+    }
 }

@@ -1,7 +1,8 @@
 defaults:
   - _self_
   - base                  # Keep for other settings
-  - data: base            # Compose data group
+  - _base/preprocessing   # Include preprocessing config
+  - override data: base   # Override data config from base.yaml
   - data/performance_preset: none  # Default performance preset (no optimizations)
   - data/transforms: base      # Compose transforms group
   - data/dataloaders: default  # Compose dataloaders group
@@ -41,3 +42,12 @@ experiment:
   kind: "predict"
   task: "ocr"
   name: ${exp_name}
+
+# Preprocessing overrides (optional - uncomment to enable)
+# preprocessing:
+#   enable_perspective_correction: true
+#   perspective_display_mode: "corrected"
+#   enable_background_normalization: true
+#   enable_sepia_enhancement: false
+#   enable_grayscale: false
+#   enable_clahe: false
