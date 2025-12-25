@@ -29,6 +29,7 @@ from pydantic_core import InitErrorDetails, PydanticCustomError
 VALID_EXIF_ORIENTATIONS: frozenset[int] = frozenset({0, 1, 2, 3, 4, 5, 6, 7, 8})
 validator = field_validator
 
+
 def _info_data(info: ValidationInfo | None) -> Mapping[str, Any]:
     """Safely extract validator context data across Pydantic versions."""
     if info is None:
@@ -49,7 +50,6 @@ def _batch_size(info: ValidationInfo | None) -> int:
     return 0
 
 
-
 def _ensure_tuple_pair(value: tuple[int, int] | Sequence[int] | None, field_name: str) -> tuple[int, int] | None:
     """Normalize a (width, height) tuple and validate that it is usable."""
     if value is None:
@@ -66,11 +66,10 @@ def _ensure_tuple_pair(value: tuple[int, int] | Sequence[int] | None, field_name
     return int(width), int(height)
 
 
-
-
 # =============================================================================
 # SECTION 2: Dataset Schemas (from datasets/schemas)
 # =============================================================================
+
 
 class CacheConfig(BaseModel):
     """Configuration flags controlling dataset caching behaviour.
@@ -116,13 +115,11 @@ class CacheConfig(BaseModel):
         return hashlib.md5(config_str.encode()).hexdigest()[:8]
 
 
-
 class ImageLoadingConfig(BaseModel):
     """Configuration for image loading backends and fallbacks."""
 
     use_turbojpeg: bool = False
     turbojpeg_fallback: bool = False
-
 
 
 class DatasetConfig(BaseModel):
@@ -161,7 +158,6 @@ class DatasetConfig(BaseModel):
         return extensions
 
 
-
 class ImageMetadata(BaseModel):
     """Metadata describing the context of an image being transformed."""
 
@@ -198,7 +194,6 @@ class ImageMetadata(BaseModel):
         return (int(width), int(height))
 
 
-
 class PolygonData(BaseModel):
     """Validated polygon representation with consistent shape."""
 
@@ -226,7 +221,6 @@ class PolygonData(BaseModel):
             raise ValueError(f"Polygon must have at least 3 points, got {value.shape[0]}")
 
         return value.astype(np.float32)
-
 
 
 class ValidatedPolygonData(PolygonData):
@@ -375,7 +369,6 @@ class ValidatedPolygonData(PolygonData):
         return self
 
 
-
 class TransformInput(BaseModel):
     """Input payload for the OCR transform pipeline."""
 
@@ -398,7 +391,6 @@ class TransformInput(BaseModel):
             raise ValueError(f"Image must have 1 or 3 channels, got {value.shape[2]}")
 
         return value
-
 
 
 class TransformOutput(BaseModel):
@@ -458,7 +450,6 @@ class TransformOutput(BaseModel):
         return value.astype(np.float32)
 
 
-
 class TransformConfig(BaseModel):
     """Configuration for image normalization and transform probabilities."""
 
@@ -473,7 +464,6 @@ class TransformConfig(BaseModel):
         if len(value) != 3:
             raise ValueError("Mean and std must each provide 3 values for RGB channels")
         return tuple(float(v) for v in value)  # type: ignore[return-value]
-
 
 
 class ImageData(BaseModel):
@@ -495,7 +485,6 @@ class ImageData(BaseModel):
         if value.ndim not in (2, 3):
             raise ValueError("Cached image array must be 2D or 3D")
         return value
-
 
 
 class MapData(BaseModel):
@@ -522,7 +511,6 @@ class MapData(BaseModel):
         if prob_map is not None and getattr(prob_map, "shape", None) != thresh_map.shape:
             raise ValueError("Probability and threshold maps must share identical shapes")
         return thresh_map
-
 
 
 class DataItem(BaseModel):
@@ -570,16 +558,15 @@ class DataItem(BaseModel):
         return value.astype(np.float32)
 
 
-
 # =============================================================================
 # SECTION 3: Runtime Validation Models (from validation/models)
 # =============================================================================
+
 
 class _ModelBase(BaseModel):
     """Common configuration shared by every validation model."""
 
     model_config = ConfigDict(arbitrary_types_allowed=True, validate_assignment=True)
-
 
 
 class PolygonArray(_ModelBase):
@@ -599,7 +586,6 @@ class PolygonArray(_ModelBase):
         if value.dtype not in (np.float32, np.float64):
             value = value.astype(np.float32)
         return value
-
 
 
 class DatasetSample(_ModelBase):
@@ -658,7 +644,6 @@ class DatasetSample(_ModelBase):
         return int(shape[0]), int(shape[1])
 
 
-
 class LoaderTransformOutput(_ModelBase):
     """Output of the transform pipeline that feeds the DataLoader."""
 
@@ -702,7 +687,6 @@ class LoaderTransformOutput(_ModelBase):
         return matrix
 
 
-
 class BatchSample(_ModelBase):
     """Single dataset sample produced before collation."""
 
@@ -726,7 +710,6 @@ class BatchSample(_ModelBase):
         if matrix.shape != (3, 3):
             raise ValueError("Inverse matrix must be shaped (3, 3).")
         return matrix
-
 
 
 class CollateOutput(_ModelBase):
@@ -878,7 +861,6 @@ class CollateOutput(_ModelBase):
         return normalized
 
 
-
 class ModelOutput(_ModelBase):
     """Model forward output used during training and evaluation."""
 
@@ -903,7 +885,6 @@ class ModelOutput(_ModelBase):
         if isinstance(reference, torch.Tensor) and tensor.shape != reference.shape:
             raise ValueError("Model output tensors must share the same shape.")
         return tensor
-
 
 
 class LightningStepPrediction(_ModelBase):
@@ -957,7 +938,6 @@ class LightningStepPrediction(_ModelBase):
         raise TypeError("metadata must be a dict, ImageMetadata, or None.")
 
 
-
 class MetricConfig(_ModelBase):
     """Configuration validation for CLEvalMetric parameters."""
 
@@ -990,7 +970,6 @@ class MetricConfig(_ModelBase):
         if not all(value[i] <= value[i + 1] for i in range(len(value) - 1)):
             raise ValueError("scale_bins must be monotonically increasing.")
         return value
-
 
 
 def validate_predictions(filenames: Sequence[str], predictions: Sequence[dict[str, Any]]) -> list[LightningStepPrediction]:
@@ -1142,7 +1121,6 @@ class ValidatedTensorData(_ModelBase):
         return value
 
 
-
 # =============================================================================
 # PUBLIC API
 # =============================================================================
@@ -1151,7 +1129,6 @@ __all__ = [
     # Constants
     "VALID_EXIF_ORIENTATIONS",
     "validator",
-
     # Dataset schemas
     "CacheConfig",
     "ImageLoadingConfig",
@@ -1165,7 +1142,6 @@ __all__ = [
     "ImageData",
     "MapData",
     "DataItem",
-
     # Validation models
     "PolygonArray",
     "DatasetSample",

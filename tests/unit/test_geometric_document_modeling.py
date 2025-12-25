@@ -4,7 +4,6 @@ Tests for Geometric Document Modeling module.
 
 import numpy as np
 import pytest
-
 from ocr.datasets.preprocessing.geometric_document_modeling import (
     GeometricDocumentModeler,
     GeometricModel,

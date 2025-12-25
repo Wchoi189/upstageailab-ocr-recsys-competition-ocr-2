@@ -73,6 +73,11 @@ class InferenceEngine:
 
         LOGGER.info("InferenceEngine cleanup completed")
 
+    @property
+    def orchestrator(self) -> InferenceOrchestrator:
+        """Get underlying orchestrator instance."""
+        return self._orchestrator
+
     # Public API ---------------------------------------------------------
     def load_model(self, checkpoint_path: str, config_path: str | None = None) -> bool:
         """Load model from checkpoint.

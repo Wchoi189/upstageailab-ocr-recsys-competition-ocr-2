@@ -64,6 +64,7 @@ def _refresh_plugin_snapshot_best_effort() -> None:
     except Exception:
         return
 
+
 from AgentQMS.agent_tools.compliance.validate_boundaries import BoundaryValidator  # noqa: E402
 from AgentQMS.agent_tools.utils.paths import ensure_within_project, get_project_root
 

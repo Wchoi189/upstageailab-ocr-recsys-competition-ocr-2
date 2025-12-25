@@ -7,7 +7,6 @@ from unittest.mock import patch
 import cv2
 import numpy as np
 import pytest
-
 from ocr.datasets.preprocessing.high_confidence_decision_making import (
     ConfidenceLevel,
     ContourBasedDetectionStrategy,

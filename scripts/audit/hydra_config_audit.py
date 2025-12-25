@@ -193,10 +193,7 @@ def main():
     print("=" * 60)
     print("LEGACY CONFIGS")
     print("=" * 60)
-    legacy_configs = [
-        (name, data) for name, data in report["configs"].items()
-        if data["architecture"] == "legacy"
-    ]
+    legacy_configs = [(name, data) for name, data in report["configs"].items() if data["architecture"] == "legacy"]
 
     for name, data in sorted(legacy_configs):
         ref_count = sum(len(refs) for refs in data["references"].values())
