@@ -287,8 +287,3 @@ class TestTextRecognizer:
         """CRNN backend should raise NotImplementedError."""
         with pytest.raises(NotImplementedError, match="CRNN"):
             TextRecognizer(config=RecognizerConfig(backend=RecognizerBackend.CRNN))
-
-    def test_paddleocr_not_implemented(self):
-        """PaddleOCR backend should raise NotImplementedError."""
-        with pytest.raises(NotImplementedError, match="PaddleOCR"):
-            TextRecognizer(config=RecognizerConfig(backend=RecognizerBackend.PADDLEOCR))

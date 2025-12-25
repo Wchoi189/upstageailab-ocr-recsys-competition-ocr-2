@@ -1,0 +1,43 @@
+{
+    "name": "OCR RecSys Development",
+    "build": {
+        "dockerfile": "../docker/Dockerfile",
+        "context": ".."
+    },
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-toolsai.jupyter",
+                "charliermarsh.ruff",
+                "ms-azuretools.vscode-docker",
+                "mhutchie.git-graph"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "/opt/uv/bin/uv",
+                "python.analysis.typeCheckingMode": "basic",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.ruff": "explicit",
+                    "source.organizeImports.ruff": "explicit"
+                }
+            }
+        }
+    },
+    "remoteUser": "vscode",
+    "runArgs": [
+        "--gpus",
+        "all",
+        "--shm-size=8gb"
+    ],
+    "mounts": [
+        "source=${localWorkspaceFolder}/data,target=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data,type=bind"
+    ],
+    "postCreateCommand": "uv sync --frozen",
+    "forwardPorts": [
+        8000,
+        8501,
+        6006
+    ]
+}

@@ -231,10 +231,9 @@ class TextRecognizer:
                 "Use backend='stub' for testing."
             )
         elif self.config.backend == RecognizerBackend.PADDLEOCR:
-            raise NotImplementedError(
-                "PaddleOCR backend not yet implemented. "
-                "Use backend='stub' for testing."
-            )
+            from ocr.inference.backends.paddleocr_recognizer import PaddleOCRRecognizer
+
+            return PaddleOCRRecognizer(self.config)
         else:
             raise ValueError(f"Unknown backend: {self.config.backend}")
 
