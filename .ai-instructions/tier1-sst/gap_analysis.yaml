@@ -1,5 +1,5 @@
 ads_version: "1.0"
-type: assessment
+type: quick_reference
 agent: all
 tier: 1
 priority: critical

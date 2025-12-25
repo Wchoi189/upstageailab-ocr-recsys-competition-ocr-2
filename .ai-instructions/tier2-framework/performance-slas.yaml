@@ -1,6 +1,6 @@
 ---
 ads_version: "1.0"
-type: specification
+type: rule_set
 agent: all
 tier: 2
 priority: medium
