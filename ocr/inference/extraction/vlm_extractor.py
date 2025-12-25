@@ -120,8 +120,29 @@ Return ONLY valid JSON, no explanation."""
         result = response.json()
         json_str = result["choices"][0]["message"]["content"]
 
+        # Strip markdown code blocks if present
+        json_str = self._clean_json_string(json_str)
+
         # Parse JSON string into ReceiptData
-        return ReceiptData.model_validate_json(json_str)
+        receipt = ReceiptData.model_validate_json(json_str)
+
+        # Mark as VLM extracted
+        receipt.metadata.model_version = f"VLM:{self.config.model}"
+
+        return receipt
+
+    def _clean_json_string(self, json_str: str) -> str:
+        """Clean markdown code blocks from JSON string."""
+        json_str = json_str.strip()
+        if json_str.startswith("```json"):
+            json_str = json_str[7:]
+        elif json_str.startswith("```"):
+            json_str = json_str[3:]
+
+        if json_str.endswith("```"):
+            json_str = json_str[:-3]
+
+        return json_str.strip()
 
     def is_server_healthy(self) -> bool:
         """Check if vLLM server is responding.
@@ -138,7 +159,8 @@ Return ONLY valid JSON, no explanation."""
     def __del__(self):
         """Clean up HTTP client."""
         try:
-            self._client.close()
+            if hasattr(self, "_client"):
+                self._client.close()
         except Exception:
             pass
 

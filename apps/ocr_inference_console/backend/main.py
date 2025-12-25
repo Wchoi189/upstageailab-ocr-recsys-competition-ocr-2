@@ -438,7 +438,10 @@ async def extract_receipt(request: ExtractionRequest):
         # This needs to be done in executor to avoid blocking
         def _run_extraction():
             # Ensure orchestrator has extraction pipeline enabled
-            orchestrator = _inference_service._engine._orchestrator
+            orchestrator = _inference_service.get_orchestrator()
+            if orchestrator is None:
+                raise ServiceNotInitializedError("Orchestrator not initialized")
+
             if not orchestrator._enable_extraction:
                 orchestrator.enable_extraction_pipeline()
 
@@ -461,9 +464,10 @@ async def extract_receipt(request: ExtractionRequest):
     elapsed = (time.perf_counter() - start_time) * 1000
 
     # Check if VLM was used (heuristic: check metadata)
-    vlm_used = False
     receipt_data_dict = result.get("receipt_data", {})
-    # TODO: Add flag in VLM extractor metadata to track usage
+    metadata = receipt_data_dict.get("metadata", {})
+    model_version = metadata.get("model_version", "")
+    vlm_used = model_version.startswith("VLM:")
 
     return ExtractionResponse(
         detection_result={

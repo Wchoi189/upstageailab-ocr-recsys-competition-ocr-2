@@ -180,3 +180,9 @@ class InferenceService:
             finally:
                 self._engine = None
                 self._current_checkpoint = None
+
+    def get_orchestrator(self):
+        """Get underlying orchestrator (if initialized)."""
+        if self._engine is None:
+            return None
+        return self._engine.orchestrator
