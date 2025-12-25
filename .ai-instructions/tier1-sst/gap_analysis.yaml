@@ -30,8 +30,8 @@ gap_analysis:
       verification: "Valid references to apps/ and ui/"
 
     undocumented_components:
-      - "apps/ocr-inference-console/backend/routers/" (API endpoints not cataloged)
-      - "apps/agentqms-dashboard/" (Mentioned in file system but not in system-architecture tier1)
+      - "apps/ocr_inference_console/backend/routers/ (API endpoints not cataloged)"
+      - "apps/agentqms-dashboard/ (Mentioned in file system but not in system-architecture tier1)"
 
   data_contracts_assessment:
     status: "PARTIAL"
@@ -54,7 +54,7 @@ action_items:
   - id: 2
     priority: "HIGH"
     task: "Generate API Contract"
-    description: "Extract FastAPI routes from apps/ocr-inference-console/backend/main.py and routers/ into a YAML contract."
+    description: "Extract FastAPI routes from apps/ocr_inference_console/backend/main.py and routers/ into a YAML contract."
     status: "COMPLETED"
 
   - id: 3
