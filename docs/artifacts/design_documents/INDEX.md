@@ -2,7 +2,7 @@
 
 Active design documents and development roadmaps.
 
-**Last Updated**: 2025-12-25 02:13:06
+**Last Updated**: 2025-12-25 16:51:26
 **Total Artifacts**: 7
 
 ## Active (5)
@@ -11,7 +11,7 @@ Active design documents and development roadmaps.
 - [Toolkit Deprecation Roadmap](2025-12-06_1548_design-toolkit-deprecation-roadmap.md) (📅 2025-12-07 01:33 (KST), 📄 design) - This document outlines the controlled deprecation of `AgentQMS.toolkit` in favor of the new `AgentQM
 - [Shared Backend Package Contract](2025-12-14_2100_design-shared-backend-contract.md) (📅 2025-12-14 12:00 (KST), 📄 design) - **Package Location**: `apps/shared/backend_shared/`
 - [Sepia Enhancement Approach for OCR Preprocessing](2025-12-21_0208_design-sepia-enhancement-approach.md) (📅 2025-12-21 02:08 (KST), 📄 design) - This document describes the design approach for implementing sepia tone enhancement as an alternativ
-- [Perspective Correction Configuration Reference](2025-12-25_0213_design-perspective-correction-configuration.md) (📅 2025-12-25 02:13 (KST), 📄 design) - This document describes the design for the component.
+- [Perspective Correction Configuration Reference](2025-12-25_0213_design-perspective-correction-configuration.md) (📅 2025-12-25 02:13 (KST), 📄 design) - This document provides the design and configuration reference for integrating perspective correction
 
 ## Completed (2)
 

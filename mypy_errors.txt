@@ -1,0 +1,58 @@
+ocr/inference/extraction/receipt_schema.py:142: error: Incompatible return value type (got "Decimal | Literal[0]", expected "Decimal")
+ocr/datasets/preprocessing/config.py:14: error: Cannot assign multiple types to name "_list_config_type" without an explicit "type[...]" annotation
+ocr/datasets/preprocessing/config.py:14: error: Incompatible types in assignment (expression has type "None", variable has type "type[ListConfig]")
+ocr/inference/extraction/field_extractor.py:208: error: Argument "payment_method" to "ReceiptData" has incompatible type "str"; expected "Literal['cash', 'card', 'mobile', 'gift_card', 'unknown']"
+ocr/utils/perspective_correction/geometry.py:108: error: No overload variant of "fillPoly" matches argument types "ndarray[Any, dtype[unsignedinteger[_8Bit]]]", "list[ndarray[Any, dtype[signedinteger[_32Bit]]]]", "int"
+ocr/utils/perspective_correction/geometry.py:108: note: Possible overload variants:
+ocr/utils/perspective_correction/geometry.py:108: note:     def fillPoly(img: Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]], pts: Sequence[Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]]], color: Sequence[float], lineType: int = ..., shift: int = ..., offset: Sequence[int] = ...) -> Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]]
+ocr/utils/perspective_correction/geometry.py:108: note:     def fillPoly(img: UMat, pts: Sequence[UMat], color: Sequence[float], lineType: int = ..., shift: int = ..., offset: Sequence[int] = ...) -> UMat
+ocr/utils/perspective_correction/geometry.py:112: error: No overload variant of "fillPoly" matches argument types "ndarray[Any, dtype[unsignedinteger[_8Bit]]]", "list[ndarray[Any, dtype[signedinteger[_32Bit]]]]", "int"
+ocr/utils/perspective_correction/geometry.py:112: note: Possible overload variants:
+ocr/utils/perspective_correction/geometry.py:112: note:     def fillPoly(img: Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]], pts: Sequence[Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]]], color: Sequence[float], lineType: int = ..., shift: int = ..., offset: Sequence[int] = ...) -> Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]]
+ocr/utils/perspective_correction/geometry.py:112: note:     def fillPoly(img: UMat, pts: Sequence[UMat], color: Sequence[float], lineType: int = ..., shift: int = ..., offset: Sequence[int] = ...) -> UMat
+ocr/inference/preview_generator.py:81: error: Argument 1 to "b64encode" has incompatible type "ndarray[Any, dtype[unsignedinteger[_8Bit]]]"; expected "Buffer"
+ocr/utils/perspective_correction/quality_metrics.py:136: error: Argument 1 to "append" of "list" has incompatible type "None"; expected "float"
+ocr/utils/perspective_correction/fitting.py:297: error: Argument 1 to "append" of "list" has incompatible type "ndarray[Any, Any] | float"; expected "ndarray[Any, Any]"
+ocr/utils/perspective_correction/fitting.py:298: error: Argument 1 to "append" of "list" has incompatible type "ndarray[Any, Any] | float"; expected "ndarray[Any, Any]"
+ocr/utils/perspective_correction/fitting.py:367: error: Argument 1 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:367: error: Argument 2 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:368: error: Argument 1 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:368: error: Argument 2 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:369: error: Argument 1 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:369: error: Argument 2 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:370: error: Argument 1 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/fitting.py:370: error: Argument 2 to "_intersect_lines" has incompatible type "tuple[float, float, float, float] | None"; expected "tuple[float, float, float, float]"
+ocr/utils/perspective_correction/core.py:187: error: Incompatible types in assignment (expression has type "Mat | ndarray[Any, dtype[integer[Any] | floating[Any]]]", variable has type "ndarray[Any, dtype[signedinteger[Any]]]")
+ocr/utils/checkpoints/inference_engine.py:67: error: Incompatible types in assignment (expression has type "None", variable has type "Callable[[list[Callable[..., Any] | tuple[Callable[..., Any], str]]], None]")
+ocr/utils/checkpoints/catalog.py:374: error: Argument "exp_name" to "CheckpointCatalogEntry" has incompatible type "str | None"; expected "str"
+ocr/datasets/base.py:554: error: Argument "polygons" to "TransformInput" has incompatible type "list[ValidatedPolygonData]"; expected "list[PolygonData] | None"
+ocr/datasets/base.py:554: note: "list" is invariant -- see https://mypy.readthedocs.io/en/stable/common_issues.html#variance
+ocr/datasets/base.py:554: note: Consider using "Sequence" instead, which is covariant
+ocr/datasets/base.py:896: error: Cannot assign to a type
+ocr/datasets/base.py:896: error: Incompatible types in assignment (expression has type "type[ValidatedOCRDataset]", variable has type "type[Dataset[_T_co]]")
+ocr/utils/config_utils.py:67: error: Need type annotation for "result" (hint: "result: dict[<type>, <type>] = ...")
+ocr/utils/config_utils.py:93: error: Argument 1 to "nest_at_path" has incompatible type "dict[str | bytes | int | Enum | float | bool, Any] | list[Any] | str | Any | None"; expected "dict[Any, Any]"
+ocr/utils/config_utils.py:94: error: Incompatible return value type (got "DictConfig | ListConfig", expected "DictConfig")
+ocr/utils/config_utils.py:102: error: Incompatible types in assignment (expression has type "ListConfig | DictConfig", variable has type "DictConfig")
+ocr/utils/config_utils.py:122: error: Incompatible types in assignment (expression has type "ListConfig | DictConfig", variable has type "DictConfig")
+ocr/utils/config_utils.py:136: error: Incompatible types in assignment (expression has type "ListConfig | DictConfig", variable has type "DictConfig")
+ocr/utils/config_utils.py:140: error: Incompatible types in assignment (expression has type "ListConfig | DictConfig", variable has type "DictConfig")
+ocr/utils/config_utils.py:146: error: Argument 1 to "nest_at_path" has incompatible type "dict[str | bytes | int | Enum | float | bool, Any] | list[Any] | str | Any | None"; expected "dict[Any, Any]"
+ocr/inference/config_loader.py:281: error: Incompatible types in assignment (expression has type "str", variable has type "Path")
+ocr/inference/preprocess.py:179: error: Need more than 2 values to unpack (3 expected)
+ocr/inference/preprocess.py:182: error: Too many values to unpack (2 expected, 3 provided)
+ocr/lightning_modules/callbacks/unique_checkpoint.py:288: error: Argument "training_phase" to "TrainingInfo" has incompatible type "str"; expected "Literal['training', 'validation', 'finetuning']"
+ocr/lightning_modules/callbacks/unique_checkpoint.py:304: error: Argument "mode" to "CheckpointingConfig" has incompatible type "str"; expected "Literal['min', 'max']"
+ocr/lightning_modules/callbacks/metadata_callback.py:260: error: Missing positional arguments "task", "name", "run_id", "checkpoint_name" in call to "add_checkpoint" of "CheckpointIndex"
+ocr/lightning_modules/callbacks/metadata_callback.py:260: error: Argument 2 to "add_checkpoint" of "CheckpointIndex" has incompatible type "CheckpointMetadataV1"; expected "str"
+ocr/inference/preprocessing_pipeline.py:143: error: Incompatible types in assignment (expression has type "Any | tuple[Any, Any]", variable has type "ndarray[Any, Any]")
+ocr/inference/preprocessing_pipeline.py:225: error: Argument "original_shape" to "PreprocessingResult" has incompatible type "tuple[int, ...]"; expected "tuple[int, int, int]"
+ocr/inference/model_manager.py:116: error: Argument 2 to "_extract_model_config" of "ModelManager" has incompatible type "Path"; expected "str"
+ocr/inference/orchestrator.py:104: error: Incompatible types in assignment (expression has type "CropExtractor", variable has type "None")
+ocr/inference/orchestrator.py:105: error: Incompatible types in assignment (expression has type "TextRecognizer", variable has type "None")
+ocr/inference/orchestrator.py:187: error: "None" not callable
+ocr/inference/orchestrator.py:229: error: Argument 1 to "transform_polygons_inverse" has incompatible type "Sequence[object]"; expected "str"
+ocr/inference/orchestrator.py:240: error: Argument "original_shape" to "PreprocessingResult" has incompatible type "tuple[int, ...]"; expected "tuple[int, int, int]"
+ocr/inference/orchestrator.py:342: error: "None" has no attribute "extract_crops"
+ocr/inference/orchestrator.py:364: error: "None" has no attribute "recognize_batch"
+Found 49 errors in 19 files (checked 186 source files)

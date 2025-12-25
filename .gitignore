@@ -104,14 +104,12 @@ data/datasets/
 data/pseudo_label/
 data/filter_samples/
 /data/
-# /data/ops
+/data/ops
 # Experiments and Archives
 multirun/
 # _archive/
 __OLD__/
 # /archive/
-CamScanner-Web-App/
-OpenCV-Document-Scanner/
 
 # Temporary files
 *.tmp
@@ -124,8 +122,8 @@ OpenCV-Document-Scanner/
 *.png
 *.svg
 # *.md
-*.csv
-# *.json
+# *.csv
+*.json
 # *.sqlite
 # *.db
 
@@ -141,7 +139,7 @@ real_noise_elimination_demo/
 # reports/
 resource_logs/
 test_*/
-zero_prediction_*/
+# zero_prediction_*/
 /outputs/
 # AgentQMS
 # .agentqms/state.json

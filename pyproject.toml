@@ -75,6 +75,7 @@ dependencies = [
     "rembg>=2.0.67",
     "onnxruntime-gpu>=1.23.1",  # GPU-accelerated ONNX Runtime (includes TensorRT support)
     "Jinja2>=3.1.0",
+    "datasets>=2.19.2",
 ]
 
 
