@@ -9,7 +9,7 @@ from __future__ import annotations
 import logging
 import re
 import time as time_module
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from decimal import Decimal
 from typing import TYPE_CHECKING
 

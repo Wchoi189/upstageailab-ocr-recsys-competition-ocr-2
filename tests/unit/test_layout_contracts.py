@@ -7,6 +7,7 @@ contract shapes and invariants.
 from __future__ import annotations
 
 import pytest
+from pydantic import ValidationError
 
 from ocr.inference.layout.contracts import (
     BoundingBox,
@@ -112,7 +113,7 @@ class TestBoundingBox:
     def test_bbox_is_frozen(self):
         """BoundingBox should be immutable."""
         bbox = BoundingBox(x_min=0, y_min=0, x_max=100, y_max=50)
-        with pytest.raises(Exception):  # Frozen model
+        with pytest.raises(ValidationError):  # Frozen model
             bbox.x_min = 10
 
 

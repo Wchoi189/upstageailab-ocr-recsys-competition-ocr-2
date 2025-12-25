@@ -140,8 +140,6 @@ make ide-config         # Generate configuration files for Antigravity, Cursor, 
   - `references/` – technical and architecture references.
   - `meta/` – maintainer-facing docs (e.g., `MAINTAINERS.md`, framework design).
 
-> Note: `AgentQMS/toolkit/` still exists as a **legacy compatibility layer**
-> but all new code and docs should target `AgentQMS/agent_tools/`.
 
 ### Project-Level Directories
 

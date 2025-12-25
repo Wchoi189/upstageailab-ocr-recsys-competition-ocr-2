@@ -8,7 +8,6 @@ from __future__ import annotations
 
 import pytest
 
-from ocr.inference.layout.contracts import BoundingBox, TextElement
 from ocr.inference.layout.grouper import (
     LineGrouper,
     LineGrouperConfig,

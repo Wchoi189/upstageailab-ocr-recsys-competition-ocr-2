@@ -66,10 +66,11 @@ repos:
 
       - id: validate-agentqms-artifacts
         name: validate-agentqms-artifacts
-        entry: uv run python -c "from agent_qms.toolbelt.core import AgentQMSToolbelt; toolbelt = AgentQMSToolbelt(); toolbelt.validate_all_artifacts()"
+        entry: uv run python AgentQMS/agent_tools/compliance/validate_artifacts.py --no-refresh
         language: system
-        pass_filenames: false
-        files: ^artifacts/
+        pass_filenames: true
+        files: ^docs/artifacts/.*\.md$
+        exclude: /archive/
 
       - id: ads-compliance-check
         name: ADS v1.0 Compliance Check

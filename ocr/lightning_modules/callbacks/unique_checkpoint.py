@@ -252,13 +252,13 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             from ocr.utils.checkpoints.types import (
                 CheckpointingConfig,
                 CheckpointMetadataV1,
+                DecoderInfo,
+                EncoderInfo,
+                HeadInfo,
+                LossInfo,
+                MetricsInfo,
                 ModelInfo,
                 TrainingInfo,
-                MetricsInfo,
-                EncoderInfo,
-                DecoderInfo,
-                HeadInfo,
-                LossInfo
             )
 
             # Get model component details if available

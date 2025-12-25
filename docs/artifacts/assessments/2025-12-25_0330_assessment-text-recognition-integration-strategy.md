@@ -3,7 +3,7 @@ ads_version: "1.0"
 title: "Text Recognition Integration Strategy Assessment"
 date: "2025-12-25 04:10 (KST)"
 type: "assessment"
-category: "technical_feasibility"
+category: "research"
 status: "active"
 version: "1.1"
 tags: ['assessment', 'recognition', 'paddleocr', 'vlm', 'integration']

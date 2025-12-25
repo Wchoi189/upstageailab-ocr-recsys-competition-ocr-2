@@ -4,20 +4,20 @@ This module provides functionality for extracting structured data
 from receipt images, including store info, items, and totals.
 """
 
-from .receipt_schema import (
-    LineItem,
-    ReceiptData,
-    ReceiptMetadata,
-)
 from .field_extractor import (
-    ReceiptFieldExtractor,
     ExtractorConfig,
+    ReceiptFieldExtractor,
 )
 from .normalizers import (
     normalize_currency,
     normalize_date,
     normalize_phone,
     normalize_time,
+)
+from .receipt_schema import (
+    LineItem,
+    ReceiptData,
+    ReceiptMetadata,
 )
 
 __all__ = [

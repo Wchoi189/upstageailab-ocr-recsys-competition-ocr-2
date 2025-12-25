@@ -126,6 +126,6 @@ jobs:
 
           ---
           *This issue was generated automatically by the CI pipeline.*" \
-            --label "bug,cloud-worker,help-wanted"
+            --label "bug,help-wanted"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

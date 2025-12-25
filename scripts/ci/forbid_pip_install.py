@@ -36,8 +36,7 @@ def _iter_text_lines(path: pathlib.Path) -> Iterable[tuple[int, str]]:
         text = path.read_text(encoding="utf-8", errors="replace")
     except OSError:
         return
-    for idx, line in enumerate(text.splitlines(), start=1):
-        yield idx, line
+    yield from enumerate(text.splitlines(), start=1)
 
 
 def main(argv: list[str]) -> int:

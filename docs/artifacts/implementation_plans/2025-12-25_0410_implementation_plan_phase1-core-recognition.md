@@ -3,7 +3,7 @@ ads_version: "1.0"
 title: "Phase 1: Core Recognition Implementation"
 date: "2025-12-25 04:10 (KST)"
 type: "implementation_plan"
-category: "text_recognition"
+category: "development"
 status: "active"
 version: "1.0"
 tags: ['implementation', 'recognition', 'paddleocr', 'phase1']

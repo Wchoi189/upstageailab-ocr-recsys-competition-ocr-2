@@ -12,10 +12,10 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
+from ocr.core.validation import LightningStepPrediction, validate_predictions
 from ocr.metrics import CLEvalMetric
 from ocr.utils.logging import get_rich_console
 from ocr.utils.orientation import remap_polygons
-from ocr.core.validation import LightningStepPrediction, validate_predictions
 
 try:  # Rich is optional – fall back to tqdm when unavailable
     from rich.progress import BarColumn, Progress, TextColumn, TimeElapsedColumn

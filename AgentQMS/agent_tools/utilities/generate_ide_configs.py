@@ -49,7 +49,7 @@ description: Validate all artifacts using AgentQMS compliance tools
    ```
 2. If errors are reported, fix them or run `make compliance` for more details.
 """,
-        "agent_qms_status.md": """---
+        "agentqms_status.md": """---
 description: Check the status of the AgentQMS framework and available tools
 ---
 // turbo

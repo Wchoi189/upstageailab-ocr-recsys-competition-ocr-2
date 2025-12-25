@@ -10,12 +10,12 @@ from .advanced_preprocessor import (
     create_high_accuracy_preprocessor,
     create_legacy_office_lens_preprocessor,
 )
+from .config import DocumentPreprocessorConfig
 from .enhanced_pipeline import (
     EnhancedDocumentPreprocessor,
-    create_office_lens_preprocessor,  # Canonical version from enhanced_pipeline
     create_fast_preprocessor,
+    create_office_lens_preprocessor,  # Canonical version from enhanced_pipeline
 )
-from .config import DocumentPreprocessorConfig
 from .external import (
     ALBUMENTATIONS_AVAILABLE,
     DOCTR_AVAILABLE,

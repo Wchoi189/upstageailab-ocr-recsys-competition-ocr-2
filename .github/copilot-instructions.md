@@ -2,40 +2,12 @@
 
 You are working in an AgentQMS-enabled project.
 
-**Requirements:**
-- Generate artifacts using AgentQMS tools
-- Follow project conventions
-- Reference existing documentation
-- AI-only documentation: ultra-concise, machine-parseable, no tutorials
-- Flag project pain points (standardization gaps, inconsistencies, unclear processes)
-
-**Execution Mode:**
-- Direct answers only
-- Assume domain expertise
-- Execute instructions without conversation
-- Provide solutions, not explanations
-
 ## Critical Rules
-1. **Discovery**: Read `.ai-instructions/tier3-agents/copilot/config.yaml` and `.ai-instructions/tier2-framework/tool-catalog.yaml`.
+1. **Discovery**: Read `.copilot/context/agentqms-overview.md` and `.copilot/context/tool-catalog.md`.
 2. **Artifacts**: NEVER create `docs/artifacts/*` files manually.
    - Use: `cd AgentQMS/interface && make create-plan` (or similar)
 3. **Safety**: Run `make validate` before asking the user to review.
-4. **Environment**: Use `uv` for Python execution and dependency management.
-  - Run Python via `uv run python ...`
-  - Install/sync deps via `uv sync` (or `uv add ...` when updating `pyproject.toml`)
-  - Avoid `pip install` / `python -m pip`
 
 ## Context
-- AI Documentation Standard: `.ai-instructions/schema/ads-v1.0-spec.yaml`
-- Tool Catalog: `.ai-instructions/tier2-framework/tool-catalog.yaml`
-- Critical Rules: `.ai-instructions/tier1-sst/*.yaml`
-
-## Safe State Management
-- **State Files**: Experiment state files are now in YAML format (`state.yml`) instead of JSON for better safety and readability.
-- **Safe Editing**: Use `experiment-tracker/scripts/safe_state_manager.py` for all state file operations to prevent corruption.
-- **Commands**:
-  - Validate: `uv run python experiment-tracker/scripts/safe_state_manager.py <path>/state.yml --validate`
-  - Get section: `uv run python experiment-tracker/scripts/safe_state_manager.py <path>/state.yml --get <section>`
-  - Set section: `uv run python experiment-tracker/scripts/safe_state_manager.py <path>/state.yml --set <key> <value>`
-- **ETK Tool**: Use `etk sync --all` to keep state files and metadata in sync.
-- **Migration**: Existing JSON files have been migrated to YAML with backups.
+- Tool Registry: `.copilot/context/tool-registry.json`
+- Workflows: `.copilot/context/workflow-triggers.yaml`

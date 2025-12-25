@@ -16,7 +16,7 @@ def _find_project_root() -> Path:
     current_path = Path(__file__).resolve().parent
 
     # Look for common project markers
-    project_markers = ["pyproject.toml", "requirements.txt", "setup.py", ".git", "agent_qms"]
+    project_markers = ["pyproject.toml", "requirements.txt", "setup.py", ".git", "AgentQMS"]
 
     for parent in [current_path] + list(current_path.parents):
         if any((parent / marker).exists() for marker in project_markers):

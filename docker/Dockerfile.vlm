@@ -19,16 +19,16 @@ RUN apt-get update && apt-get install -y \
 WORKDIR /workspaces
 
 # Copy requirements
-COPY agent_qms/vlm/requirements.txt /workspaces/vlm-requirements.txt
+COPY AgentQMS/vlm/requirements.txt /workspaces/vlm-requirements.txt
 
 # Install Python dependencies
 RUN pip install --no-cache-dir -r /workspaces/vlm-requirements.txt
 
 # Copy VLM module
-COPY agent_qms/vlm /workspaces/agent_qms/vlm
+COPY AgentQMS/vlm /workspaces/AgentQMS/vlm
 
 # Set Python path
 ENV PYTHONPATH=/workspaces:$PYTHONPATH
 
 # Default command
-CMD ["python", "-m", "agent_qms.vlm.cli.analyze_image_defects", "--help"]
+CMD ["python", "-m", "AgentQMS.vlm.cli.analyze_image_defects", "--help"]

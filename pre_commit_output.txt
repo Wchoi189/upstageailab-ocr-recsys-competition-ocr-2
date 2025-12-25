@@ -1,0 +1,122 @@
+validate-agentqms-artifacts..............................................Failed
+- hook id: validate-agentqms-artifacts
+- files were modified by this hook
+
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-07_0047_BUG_001_catastrophic-bulk-migration-incident.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-25_0410_implementation_plan_phase2-pipeline-integration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/INDEX.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-25_0410_implementation_plan_phase1-core-recognition.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-23_0900_BUG_001_startup-latency.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/completed_plans/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_0003_BUG_001_inference-resize-misalignment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-06_1548_design-toolkit-deprecation-roadmap.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/templates/INDEX.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/audits/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-02_2313_BUG_001_inference-studio-overlay-misalignment.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/2025-12-25_0213_research-perspective-correction-summary.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-15_2100_design-perspective-correction-api-integration.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-11-28_0000_BUG_001_dominant-edge-extension-failure.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-01-20_1000_design-artifact-versioning-lifecycle.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-02_2335_BUG_001_bootstrap-bug.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-16_2100_design-grayscale-preprocessing.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_2300_BUG_002_inference-studio-visual-padding-mismatch.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/templates/2025-12-18_0339_template-perspective-correction-phase2-completion-guide.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/INDEX.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/research/2025-12-06_0201_research-tracking-db-agentqms-integration.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 4
+Valid files: 4
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-24_1000_BUG_001_metadata-callback-import-error.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/bug_reports/2025-12-03_1100_BUG_001_inference-studio-offsets-data-contract.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-25_0213_design-perspective-correction-configuration.md
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-14_2100_design-shared-backend-contract.md
+============================================================
+ARTIFACT VALIDATION REPORT
+============================================================
+Total files: 1
+Valid files: 1
+Invalid files: 0
+Compliance rate: 100.0%
+
+
+✅ VALID FILES:
+----------------------------------------
+✓ /workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md
+

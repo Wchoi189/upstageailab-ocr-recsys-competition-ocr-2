@@ -9,7 +9,12 @@ from datetime import date, time
 from decimal import Decimal
 
 import pytest
+from pydantic import ValidationError
 
+from ocr.inference.extraction.field_extractor import (
+    ExtractorConfig,
+    ReceiptFieldExtractor,
+)
 from ocr.inference.extraction.normalizers import (
     normalize_business_number,
     normalize_currency,
@@ -21,10 +26,6 @@ from ocr.inference.extraction.receipt_schema import (
     LineItem,
     ReceiptData,
     ReceiptMetadata,
-)
-from ocr.inference.extraction.field_extractor import (
-    ExtractorConfig,
-    ReceiptFieldExtractor,
 )
 
 
@@ -193,7 +194,7 @@ class TestLineItem:
     def test_frozen_item(self):
         """Item should be immutable."""
         item = LineItem(name="Test", confidence=0.5)
-        with pytest.raises(Exception):
+        with pytest.raises(ValidationError):
             item.name = "Changed"
 
 

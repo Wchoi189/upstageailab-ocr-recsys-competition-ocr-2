@@ -7,8 +7,7 @@ text crops from detected polygon regions, preparing them for text recognition.
 from __future__ import annotations
 
 import logging
-from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import TYPE_CHECKING
 
 import cv2

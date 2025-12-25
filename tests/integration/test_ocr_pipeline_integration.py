@@ -1,13 +1,12 @@
 """Integration tests for the complete OCR dataset pipeline."""
 
-from pathlib import Path
 from unittest.mock import patch
 
 import numpy as np
 import pytest
 
+from ocr.core.validation import CacheConfig, DatasetConfig
 from ocr.datasets.base import ValidatedOCRDataset
-from ocr.core.validation import CacheConfig, DatasetConfig, ImageLoadingConfig
 
 
 class TestValidatedOCRDatasetIntegration:

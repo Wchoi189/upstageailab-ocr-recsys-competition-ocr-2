@@ -393,6 +393,5 @@ __all__ = [
     "AdvancedPreprocessingConfig",
     "AdvancedDocumentPreprocessor",
     "OfficeLensPreprocessorAlbumentations",
-    "create_office_lens_preprocessor",
     "create_high_accuracy_preprocessor",
 ]

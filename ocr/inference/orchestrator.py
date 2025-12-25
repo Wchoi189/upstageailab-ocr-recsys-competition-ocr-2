@@ -367,7 +367,7 @@ class InferenceOrchestrator:
             recognized_texts = list(result["texts"])  # Copy
             recognition_confidences = [0.0] * len(result["texts"])
 
-            for idx, output in zip(crop_indices, recognition_outputs):
+            for idx, output in zip(crop_indices, recognition_outputs, strict=False):
                 if idx < len(recognized_texts):
                     recognized_texts[idx] = output.text
                     recognition_confidences[idx] = output.confidence

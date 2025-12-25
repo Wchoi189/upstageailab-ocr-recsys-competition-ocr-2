@@ -9,12 +9,12 @@ from omegaconf import DictConfig
 from pydantic import ValidationError
 from torch.utils.data import DataLoader
 
+from ocr.core.validation import CollateOutput, ValidatedTensorData
 from ocr.evaluation import CLEvalEvaluator
 from ocr.lightning_modules.loggers import WandbProblemLogger
 from ocr.lightning_modules.utils import CheckpointHandler, extract_metric_kwargs, extract_normalize_stats, format_predictions
 from ocr.metrics import CLEvalMetric
 from ocr.utils.submission import SubmissionWriter
-from ocr.core.validation import CollateOutput, ValidatedTensorData
 
 
 class OCRPLModule(pl.LightningModule):

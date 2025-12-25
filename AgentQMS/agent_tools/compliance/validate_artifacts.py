@@ -1010,10 +1010,16 @@ def main():
         nargs="*",
         help="Files to validate (positional arguments, for pre-commit hooks)",
     )
+    parser.add_argument(
+        "--no-refresh",
+        action="store_true",
+        help="Skip plugin snapshot refresh (useful for pre-commit hooks)",
+    )
 
     args = parser.parse_args()
 
-    _refresh_plugin_snapshot_best_effort()
+    if not args.no_refresh:
+        _refresh_plugin_snapshot_best_effort()
 
     # Determine strict mode (inverse of lenient)
     strict_mode = not args.lenient_plugins
