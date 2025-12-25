@@ -244,6 +244,7 @@ class ExtractionRequest(BaseModel):
         enable_vlm: Whether to enable VLM for complex receipts
         checkpoint_path: Optional checkpoint path (uses latest if not specified)
     """
+
     image_base64: str
     enable_vlm: bool = True
     checkpoint_path: str | None = None
@@ -258,6 +259,7 @@ class ExtractionResponse(BaseModel):
         processing_time_ms: Total processing time in milliseconds
         vlm_used: Whether VLM was used for extraction
     """
+
     detection_result: dict
     receipt_data: dict
     processing_time_ms: float

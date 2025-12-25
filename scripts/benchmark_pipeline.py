@@ -166,19 +166,16 @@ def print_results(results: dict) -> None:
     print(f"Elapsed Time:        {results['elapsed_seconds']:.2f}s")
     print(f"Throughput:          {results['pages_per_minute']:.1f} pages/min")
     print(f"Avg Time/Image:      {results['avg_time_per_image_ms']:.1f}ms")
-    print(f"VLM Calls:           {results['vlm_calls']}/{results['total_images']} "
-          f"({results['vlm_call_rate']*100:.1f}%)")
+    print(f"VLM Calls:           {results['vlm_calls']}/{results['total_images']} ({results['vlm_call_rate'] * 100:.1f}%)")
     print("=" * 60)
 
     # Success criteria check
     print("\nSUCCESS CRITERIA:")
-    throughput_ok = results['pages_per_minute'] >= 100
-    vlm_rate_ok = results['vlm_call_rate'] <= 0.20
+    throughput_ok = results["pages_per_minute"] >= 100
+    vlm_rate_ok = results["vlm_call_rate"] <= 0.20
 
-    print(f"  Throughput ≥100 pages/min: {'✓' if throughput_ok else '✗'} "
-          f"({results['pages_per_minute']:.1f})")
-    print(f"  VLM call rate ≤20%:        {'✓' if vlm_rate_ok else '✗'} "
-          f"({results['vlm_call_rate']*100:.1f}%)")
+    print(f"  Throughput ≥100 pages/min: {'✓' if throughput_ok else '✗'} ({results['pages_per_minute']:.1f})")
+    print(f"  VLM call rate ≤20%:        {'✓' if vlm_rate_ok else '✗'} ({results['vlm_call_rate'] * 100:.1f}%)")
 
     if throughput_ok and vlm_rate_ok:
         print("\n✓ All success criteria met!")
@@ -190,9 +187,7 @@ def print_results(results: dict) -> None:
 
 def main():
     """Main entry point for benchmark script."""
-    parser = argparse.ArgumentParser(
-        description="Benchmark extraction pipeline throughput"
-    )
+    parser = argparse.ArgumentParser(description="Benchmark extraction pipeline throughput")
     parser.add_argument(
         "--images-dir",
         type=Path,

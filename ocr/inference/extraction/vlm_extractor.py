@@ -48,7 +48,7 @@ class VLMExtractor:
         ...     receipt = extractor.extract(pil_image)
     """
 
-    EXTRACTION_PROMPT = '''Extract the following fields from this receipt image as JSON:
+    EXTRACTION_PROMPT = """Extract the following fields from this receipt image as JSON:
 {
     "store_name": "...",
     "store_address": "...",
@@ -61,7 +61,7 @@ class VLMExtractor:
     "payment_method": "card|cash",
     "card_last_four": "1234"
 }
-Return ONLY valid JSON, no explanation.'''
+Return ONLY valid JSON, no explanation."""
 
     def __init__(self, config: VLMExtractorConfig | None = None):
         """Initialize VLM extractor.

@@ -50,7 +50,7 @@ def test_perspective_correction(
     )
 
     if result_no_persp:
-        num_detections = len(result_no_persp.get('polygons', []))
+        num_detections = len(result_no_persp.get("polygons", []))
         print(f"   ✓ Detected {num_detections} text regions")
     else:
         print("   ✗ Inference failed")
@@ -66,7 +66,7 @@ def test_perspective_correction(
     )
 
     if result_with_persp:
-        num_detections = len(result_with_persp.get('polygons', []))
+        num_detections = len(result_with_persp.get("polygons", []))
         print(f"   ✓ Detected {num_detections} text regions")
     else:
         print("   ✗ Inference failed")
@@ -83,7 +83,7 @@ def test_perspective_correction(
     )
 
     if result_full:
-        num_detections = len(result_full.get('polygons', []))
+        num_detections = len(result_full.get("polygons", []))
         print(f"   ✓ Detected {num_detections} text regions")
     else:
         print("   ✗ Inference failed")
@@ -97,25 +97,16 @@ def test_perspective_correction(
         print(f"\n5. Saving visualization outputs to {output_dir}...")
 
         # Save preview images
-        if 'preview_image' in result_no_persp:
-            cv2.imwrite(
-                str(output_path / "result_no_perspective.jpg"),
-                result_no_persp['preview_image']
-            )
+        if "preview_image" in result_no_persp:
+            cv2.imwrite(str(output_path / "result_no_perspective.jpg"), result_no_persp["preview_image"])
             print("   ✓ Saved: result_no_perspective.jpg")
 
-        if 'preview_image' in result_with_persp:
-            cv2.imwrite(
-                str(output_path / "result_with_perspective.jpg"),
-                result_with_persp['preview_image']
-            )
+        if "preview_image" in result_with_persp:
+            cv2.imwrite(str(output_path / "result_with_perspective.jpg"), result_with_persp["preview_image"])
             print("   ✓ Saved: result_with_perspective.jpg")
 
-        if 'preview_image' in result_full:
-            cv2.imwrite(
-                str(output_path / "result_full_enhancement.jpg"),
-                result_full['preview_image']
-            )
+        if "preview_image" in result_full:
+            cv2.imwrite(str(output_path / "result_full_enhancement.jpg"), result_full["preview_image"])
             print("   ✓ Saved: result_full_enhancement.jpg")
 
     # Summary
@@ -131,9 +122,7 @@ def test_perspective_correction(
 
 
 def main():
-    parser = argparse.ArgumentParser(
-        description="Test perspective correction in inference pipeline"
-    )
+    parser = argparse.ArgumentParser(description="Test perspective correction in inference pipeline")
     parser.add_argument(
         "--image",
         type=str,

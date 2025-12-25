@@ -221,15 +221,9 @@ class TextRecognizer:
         if self.config.backend == RecognizerBackend.STUB:
             return StubRecognizer(self.config)
         elif self.config.backend == RecognizerBackend.TROCR:
-            raise NotImplementedError(
-                "TrOCR backend not yet implemented. "
-                "Use backend='stub' for testing."
-            )
+            raise NotImplementedError("TrOCR backend not yet implemented. Use backend='stub' for testing.")
         elif self.config.backend == RecognizerBackend.CRNN:
-            raise NotImplementedError(
-                "CRNN backend not yet implemented. "
-                "Use backend='stub' for testing."
-            )
+            raise NotImplementedError("CRNN backend not yet implemented. Use backend='stub' for testing.")
         elif self.config.backend == RecognizerBackend.PADDLEOCR:
             from ocr.inference.backends.paddleocr_recognizer import PaddleOCRRecognizer
 

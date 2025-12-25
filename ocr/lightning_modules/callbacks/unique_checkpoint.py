@@ -296,9 +296,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                     head=HeadInfo(name="unknown"),
                     loss=LossInfo(name="unknown"),
                 ),
-                metrics=MetricsInfo(
-                    additional_metrics=safe_metrics
-                ),
+                metrics=MetricsInfo(additional_metrics=safe_metrics),
                 checkpointing=CheckpointingConfig(
                     monitor=self.monitor or "unknown",
                     mode=self.mode or "max",

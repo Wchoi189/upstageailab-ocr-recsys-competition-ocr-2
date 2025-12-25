@@ -220,9 +220,7 @@ class TestReceiptData:
 
     def test_has_items(self):
         """has_items property should work."""
-        receipt = ReceiptData(
-            items=[LineItem(name="Test")]
-        )
+        receipt = ReceiptData(items=[LineItem(name="Test")])
 
         assert receipt.has_items is True
         assert receipt.num_items == 1

@@ -6,11 +6,7 @@ This module will remain indefinitely for compatibility.
 
 import warnings
 
-warnings.warn(
-    "ocr.datasets.schemas is deprecated. Import from ocr.core.validation instead.",
-    DeprecationWarning,
-    stacklevel=2
-)
+warnings.warn("ocr.datasets.schemas is deprecated. Import from ocr.core.validation instead.", DeprecationWarning, stacklevel=2)
 
 # Re-export all classes
 from ocr.core.validation import (

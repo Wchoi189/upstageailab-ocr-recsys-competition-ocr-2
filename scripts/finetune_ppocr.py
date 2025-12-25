@@ -40,9 +40,7 @@ def prepare_dataset(output_dir: Path) -> Path:
     try:
         from datasets import load_dataset  # type: ignore[import-untyped,attr-defined]
     except ImportError as e:
-        raise ImportError(
-            "datasets library not installed. Install with: uv pip install datasets"
-        ) from e
+        raise ImportError("datasets library not installed. Install with: uv pip install datasets") from e
 
     LOGGER.info("Downloading mychen76/invoices-and-receipts_ocr_v1 dataset...")
     dataset = load_dataset("mychen76/invoices-and-receipts_ocr_v1")
@@ -128,17 +126,12 @@ def finetune_ppocr(
         LOGGER.error("Training failed: %s", e.stderr)
         raise
     except FileNotFoundError as e:
-        raise FileNotFoundError(
-            "PaddleOCR training script not found. "
-            "Ensure PaddleOCR is installed with: pip install paddleocr"
-        ) from e
+        raise FileNotFoundError("PaddleOCR training script not found. Ensure PaddleOCR is installed with: pip install paddleocr") from e
 
 
 def main():
     """Main entry point for fine-tuning script."""
-    parser = argparse.ArgumentParser(
-        description="Fine-tune PP-OCRv5 on receipt dataset"
-    )
+    parser = argparse.ArgumentParser(description="Fine-tune PP-OCRv5 on receipt dataset")
     parser.add_argument(
         "--output-dir",
         type=Path,

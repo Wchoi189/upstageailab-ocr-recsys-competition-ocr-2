@@ -89,12 +89,13 @@ class AdvancedDocumentPreprocessor:
         logger: logging.Logger | None = None,
     ):
         import warnings
+
         warnings.warn(
             "AdvancedDocumentPreprocessor is deprecated and will be removed in v2.0. "
             "Use EnhancedDocumentPreprocessor from enhanced_pipeline instead, "
             "which provides better Phase 2 feature integration.",
             DeprecationWarning,
-            stacklevel=2
+            stacklevel=2,
         )
         self.config = config or AdvancedPreprocessingConfig()
         self.logger = logger or logging.getLogger(__name__)
@@ -344,12 +345,13 @@ def create_legacy_office_lens_preprocessor(
         This function will be removed in v2.0.
     """
     import warnings
+
     warnings.warn(
         "create_legacy_office_lens_preprocessor (formerly create_office_lens_preprocessor from advanced_preprocessor) "
         "is deprecated. Use create_office_lens_preprocessor from enhanced_pipeline instead, "
         "which provides better Phase 2 integration.",
         DeprecationWarning,
-        stacklevel=2
+        stacklevel=2,
     )
     config = AdvancedPreprocessingConfig(
         use_advanced_detection=True,

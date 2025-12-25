@@ -5,7 +5,6 @@ Tests for Advanced Corner Detection module.
 import cv2
 import numpy as np
 import pytest
-
 from ocr.datasets.preprocessing.advanced_corner_detection import (
     AdvancedCornerDetector,
     CornerDetectionConfig,

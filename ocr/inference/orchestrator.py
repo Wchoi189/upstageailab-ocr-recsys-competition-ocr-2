@@ -256,9 +256,7 @@ class InferenceOrchestrator:
 
         # Stage 6: Field extraction with hybrid gating (if requested)
         if enable_extraction and self._enable_extraction and layout_result is not None:
-            receipt_data = self._run_extraction_with_gating(
-                layout_result, image
-            )
+            receipt_data = self._run_extraction_with_gating(layout_result, image)
             result["receipt_data"] = receipt_data.model_dump()
 
         # Stage 7: Handle inverse perspective transformation if needed
@@ -445,12 +443,14 @@ class InferenceOrchestrator:
         from .layout.contracts import BoundingBox, TextElement
 
         elements = []
-        for i, (poly, text, conf) in enumerate(zip(
-            result.get("polygons", []),
-            result.get("recognized_texts", []),
-            result.get("recognition_confidences", []),
-            strict=False,
-        )):
+        for i, (poly, text, conf) in enumerate(
+            zip(
+                result.get("polygons", []),
+                result.get("recognized_texts", []),
+                result.get("recognition_confidences", []),
+                strict=False,
+            )
+        ):
             # Convert polygon string to coordinates
             coords = self._parse_polygon(poly)
             if not coords:
@@ -462,12 +462,14 @@ class InferenceOrchestrator:
                 x_max=max(c[0] for c in coords),
                 y_max=max(c[1] for c in coords),
             )
-            elements.append(TextElement(
-                polygon=coords,
-                bbox=bbox,
-                text=text,
-                confidence=conf,
-            ))
+            elements.append(
+                TextElement(
+                    polygon=coords,
+                    bbox=bbox,
+                    text=text,
+                    confidence=conf,
+                )
+            )
 
         return self._layout_grouper.group_elements(elements)
 
@@ -484,7 +486,7 @@ class InferenceOrchestrator:
             try:
                 coords = list(map(float, poly.split()))
                 # Convert flat list to pairs [[x1,y1], [x2,y2], ...]
-                return [[coords[i], coords[i+1]] for i in range(0, len(coords), 2)]
+                return [[coords[i], coords[i + 1]] for i in range(0, len(coords), 2)]
             except (ValueError, IndexError):
                 LOGGER.warning("Failed to parse polygon string: %s", poly)
                 return []
