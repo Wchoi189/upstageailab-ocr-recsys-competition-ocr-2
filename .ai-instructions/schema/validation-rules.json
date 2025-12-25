@@ -25,20 +25,39 @@
         "rule_set",
         "quick_reference",
         "workflow_definition",
-        "validation_script"
+        "validation_script",
+        "specification",
+        "assessment",
+        "gap_analysis",
+        "standard",
+        "audit"
       ]
     },
     "agent": {
       "oneOf": [
         {
           "type": "string",
-          "enum": ["claude", "copilot", "cursor", "gemini", "qwen", "all"]
+          "enum": [
+            "claude",
+            "copilot",
+            "cursor",
+            "gemini",
+            "qwen",
+            "all"
+          ]
         },
         {
           "type": "array",
           "items": {
             "type": "string",
-            "enum": ["claude", "copilot", "cursor", "gemini", "qwen", "all"]
+            "enum": [
+              "claude",
+              "copilot",
+              "cursor",
+              "gemini",
+              "qwen",
+              "all"
+            ]
           },
           "minItems": 1
         }
@@ -51,7 +70,12 @@
     },
     "priority": {
       "type": "string",
-      "enum": ["critical", "high", "medium", "low"]
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low"
+      ]
     },
     "validates_with": {
       "type": "string",
@@ -59,7 +83,11 @@
     },
     "compliance_status": {
       "type": "string",
-      "enum": ["pass", "fail", "unknown"]
+      "enum": [
+        "pass",
+        "fail",
+        "unknown"
+      ]
     },
     "memory_footprint": {
       "type": "integer",
@@ -72,7 +100,11 @@
     },
     "status": {
       "type": "string",
-      "enum": ["active", "deprecated", "draft"]
+      "enum": [
+        "active",
+        "deprecated",
+        "draft"
+      ]
     },
     "depends_on": {
       "type": "array",
