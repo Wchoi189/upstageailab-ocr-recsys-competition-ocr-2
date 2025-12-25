@@ -48,6 +48,7 @@ from apps.shared.backend_shared.models.inference import (
     Padding,
     TextRegion,
 )
+from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -235,6 +236,34 @@ def _parse_inference_result(result: dict) -> list[TextRegion]:
     return regions
 
 
+class ExtractionRequest(BaseModel):
+    """Request model for receipt extraction endpoint.
+
+    Attributes:
+        image_base64: Base64-encoded image data
+        enable_vlm: Whether to enable VLM for complex receipts
+        checkpoint_path: Optional checkpoint path (uses latest if not specified)
+    """
+    image_base64: str
+    enable_vlm: bool = True
+    checkpoint_path: str | None = None
+
+
+class ExtractionResponse(BaseModel):
+    """Response model for receipt extraction endpoint.
+
+    Attributes:
+        detection_result: Detection results (polygons and texts)
+        receipt_data: Extracted structured receipt data
+        processing_time_ms: Total processing time in milliseconds
+        vlm_used: Whether VLM was used for extraction
+    """
+    detection_result: dict
+    receipt_data: dict
+    processing_time_ms: float
+    vlm_used: bool
+
+
 @app.get(f"{API_PREFIX}/health")
 async def health():
     """Health check endpoint."""
@@ -348,6 +377,102 @@ async def run_inference(request: InferenceRequest):
         preview_image_base64=result.get("preview_image_base64"),
         processing_time_ms=processing_time_ms,
         notes=[],  # Placeholder for future warnings/info
+    )
+
+
+@app.post(f"{API_PREFIX}/inference/extract", response_model=ExtractionResponse)
+async def extract_receipt(request: ExtractionRequest):
+    """Extract structured data from receipt image.
+
+    This endpoint runs the full extraction pipeline:
+    1. Text detection
+    2. Text recognition
+    3. Layout grouping
+    4. Field extraction (rule-based + optional VLM)
+
+    Returns structured receipt data with store info, items, and totals.
+    """
+    # Validate services initialized
+    if _checkpoint_service is None:
+        raise ServiceNotInitializedError("CheckpointService")
+    if _inference_service is None:
+        raise ServiceNotInitializedError("InferenceService")
+
+    # Resolve checkpoint path
+    checkpoint_path = request.checkpoint_path
+    if not checkpoint_path:
+        latest = _checkpoint_service.get_latest()
+        if latest is None:
+            raise CheckpointNotFoundError("No checkpoints available")
+        checkpoint_path = latest.checkpoint_path
+
+    # Validate checkpoint exists
+    ckpt_path = Path(checkpoint_path)
+    if not ckpt_path.exists():
+        raise CheckpointNotFoundError(checkpoint_path)
+
+    import asyncio
+    import base64
+    import time
+    import cv2
+    import numpy as np
+
+    start_time = time.perf_counter()
+    loop = asyncio.get_running_loop()
+
+    # Decode base64 image
+    try:
+        image_bytes = base64.b64decode(request.image_base64)
+        image_array = np.frombuffer(image_bytes, np.uint8)
+        image = cv2.imdecode(image_array, cv2.IMREAD_COLOR)
+        if image is None:
+            raise ValueError("Failed to decode image")
+    except Exception as e:
+        raise ImageDecodingError(str(e))
+
+    # Run extraction pipeline
+    try:
+        # This needs to be done in executor to avoid blocking
+        def _run_extraction():
+            # Ensure orchestrator has extraction pipeline enabled
+            orchestrator = _inference_service._engine._orchestrator
+            if not orchestrator._enable_extraction:
+                orchestrator.enable_extraction_pipeline()
+
+            # Run prediction with extraction enabled
+            result = orchestrator.predict(
+                image,
+                return_preview=False,
+                enable_extraction=True,
+            )
+            return result
+
+        result = await loop.run_in_executor(None, _run_extraction)
+
+        if result is None:
+            raise InferenceError("Extraction pipeline returned None")
+
+    except Exception as e:
+        raise InferenceError(str(e))
+
+    elapsed = (time.perf_counter() - start_time) * 1000
+
+    # Check if VLM was used (heuristic: check metadata)
+    vlm_used = False
+    receipt_data_dict = result.get("receipt_data", {})
+    if receipt_data_dict:
+        metadata = receipt_data_dict.get("metadata", {})
+        # VLM extractor would set a flag or we can infer from source
+        vlm_used = False  # TODO: Add flag in VLM extractor to track usage
+
+    return ExtractionResponse(
+        detection_result={
+            "polygons": result.get("polygons"),
+            "texts": result.get("recognized_texts", result.get("texts")),
+        },
+        receipt_data=receipt_data_dict,
+        processing_time_ms=elapsed,
+        vlm_used=vlm_used,
     )
 
 

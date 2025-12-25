@@ -61,6 +61,12 @@ class InferenceOrchestrator:
         self._recognizer = None
         self._crop_extractor = None
 
+        # Layout and extraction components (disabled by default)
+        self._enable_layout = False
+        self._enable_extraction = False
+        self._layout_grouper = None
+        self._field_extractor = None
+
         if enable_recognition:
             self._init_recognition_components()
 
@@ -110,6 +116,28 @@ class InferenceOrchestrator:
             self._recognizer = None
             self._crop_extractor = None
 
+    def enable_extraction_pipeline(self) -> None:
+        """Enable layout + extraction modules.
+
+        This initializes the LineGrouper and ReceiptFieldExtractor components
+        to enable full receipt extraction functionality.
+        """
+        try:
+            from .layout.grouper import LineGrouper, LineGrouperConfig
+            from .extraction.field_extractor import ReceiptFieldExtractor, ExtractorConfig
+
+            self._enable_layout = True
+            self._enable_extraction = True
+            self._layout_grouper = LineGrouper(config=LineGrouperConfig())
+            self._field_extractor = ReceiptFieldExtractor(config=ExtractorConfig())
+            LOGGER.info("Extraction pipeline components initialized")
+        except Exception as e:
+            LOGGER.warning("Failed to initialize extraction pipeline: %s", e)
+            self._enable_layout = False
+            self._enable_extraction = False
+            self._layout_grouper = None
+            self._field_extractor = None
+
     def predict(
         self,
         image: np.ndarray,
@@ -121,6 +149,7 @@ class InferenceOrchestrator:
         enable_sepia_enhancement: bool = False,
         enable_clahe: bool = False,
         sepia_display_mode: str = "enhanced",
+        enable_extraction: bool = False,
     ) -> dict[str, Any] | None:
         """Run inference on image array.
 
@@ -128,7 +157,10 @@ class InferenceOrchestrator:
         1. Preprocessing (resize, normalize, metadata)
         2. Model inference
         3. Postprocessing (decode, format)
-        4. Preview generation (if requested)
+        4. Text recognition (if enabled)
+        5. Layout grouping (if extraction enabled)
+        6. Field extraction (if enabled)
+        7. Preview generation (if requested)
 
         Args:
             image: Input image as BGR numpy array (H, W, C)
@@ -140,6 +172,7 @@ class InferenceOrchestrator:
             enable_sepia_enhancement: Whether to apply sepia tone transformation
             enable_clahe: Whether to apply CLAHE contrast enhancement
             sepia_display_mode: Display mode for sepia ("enhanced" or "original")
+            enable_extraction: Whether to enable layout + field extraction pipeline
 
         Returns:
             Predictions dict with polygons, texts, confidences, and optional preview
@@ -215,7 +248,20 @@ class InferenceOrchestrator:
                 result=result,
             )
 
-        # Stage 4: Handle inverse perspective transformation if needed
+        # Stage 5: Layout grouping (if extraction enabled)
+        layout_result = None
+        if self._enable_layout and self._enable_recognition:
+            layout_result = self._run_layout_grouping(result)
+            result["layout"] = layout_result.model_dump()
+
+        # Stage 6: Field extraction with hybrid gating (if requested)
+        if enable_extraction and self._enable_extraction and layout_result is not None:
+            receipt_data = self._run_extraction_with_gating(
+                layout_result, image
+            )
+            result["receipt_data"] = receipt_data.model_dump()
+
+        # Stage 7: Handle inverse perspective transformation if needed
         if (
             preprocess_result.perspective_matrix is not None
             and perspective_display_mode == "original"
@@ -243,7 +289,7 @@ class InferenceOrchestrator:
                     original_image=preprocess_result.original_image,
                 )
 
-        # Stage 5: Preview generation
+        # Stage 8: Preview generation
         if return_preview:
             result = self.preview_generator.attach_preview_to_payload(
                 payload=result,
@@ -386,6 +432,142 @@ class InferenceOrchestrator:
             # Don't fail the whole pipeline - just skip recognition
 
         return result
+
+    def _run_layout_grouping(self, result: dict) -> Any:
+        """Group recognized text into lines and blocks.
+
+        Args:
+            result: Detection/recognition result dict with polygons and texts
+
+        Returns:
+            LayoutResult with hierarchical text structure
+        """
+        from .layout.contracts import TextElement, BoundingBox
+
+        elements = []
+        for i, (poly, text, conf) in enumerate(zip(
+            result.get("polygons", []),
+            result.get("recognized_texts", []),
+            result.get("recognition_confidences", [])
+        )):
+            # Convert polygon string to coordinates
+            coords = self._parse_polygon(poly)
+            if not coords:
+                continue
+
+            bbox = BoundingBox(
+                x_min=min(c[0] for c in coords),
+                y_min=min(c[1] for c in coords),
+                x_max=max(c[0] for c in coords),
+                y_max=max(c[1] for c in coords),
+            )
+            elements.append(TextElement(
+                polygon=coords,
+                bbox=bbox,
+                text=text,
+                confidence=conf,
+            ))
+
+        return self._layout_grouper.group_elements(elements)
+
+    def _parse_polygon(self, poly: str | list) -> list[list[float]]:
+        """Parse polygon from string or list format.
+
+        Args:
+            poly: Polygon as string "x1 y1 x2 y2 ..." or list of coordinates
+
+        Returns:
+            List of [x, y] coordinate pairs
+        """
+        if isinstance(poly, str):
+            try:
+                coords = list(map(float, poly.split()))
+                # Convert flat list to pairs [[x1,y1], [x2,y2], ...]
+                return [[coords[i], coords[i+1]] for i in range(0, len(coords), 2)]
+            except (ValueError, IndexError):
+                LOGGER.warning("Failed to parse polygon string: %s", poly)
+                return []
+        elif isinstance(poly, list):
+            # Already in list format
+            return poly
+        else:
+            return []
+
+    def _run_extraction_with_gating(
+        self,
+        layout_result: Any,
+        original_image: np.ndarray,
+    ) -> Any:
+        """Extract receipt data with hybrid rule/VLM gating.
+
+        Args:
+            layout_result: LayoutResult from grouping stage
+            original_image: Original BGR image
+
+        Returns:
+            ReceiptData with extracted fields
+        """
+        # Try rule-based first (fast path: 80% of receipts)
+        receipt = self._field_extractor.extract(layout=layout_result)
+
+        # Gate to VLM if confidence too low or complex layout
+        if self._should_use_vlm(receipt, layout_result):
+            LOGGER.debug("Gating to VLM extraction (confidence=%.2f)", receipt.extraction_confidence)
+            receipt = self._run_vlm_extraction(original_image, layout_result)
+
+        return receipt
+
+    def _should_use_vlm(self, receipt: Any, layout: Any) -> bool:
+        """Determine if VLM extraction should be used.
+
+        Args:
+            receipt: ReceiptData from rule-based extraction
+            layout: LayoutResult
+
+        Returns:
+            True if VLM should be used
+        """
+        # Low confidence from rule-based extraction
+        if receipt.extraction_confidence < 0.7:
+            return True
+
+        # Complex layout indicators
+        if len(layout.blocks) > 5:  # Many separate text blocks
+            return True
+        if layout.tables:  # Table structures detected
+            return True
+
+        return False
+
+    def _run_vlm_extraction(
+        self,
+        image: np.ndarray,
+        layout: Any,
+    ) -> Any:
+        """Run VLM extraction with fallback to rule-based.
+
+        Args:
+            image: Original BGR image
+            layout: LayoutResult for context
+
+        Returns:
+            ReceiptData from VLM or rule-based fallback
+        """
+        try:
+            from .extraction.vlm_extractor import VLMExtractor
+            from PIL import Image
+            import cv2
+
+            vlm = VLMExtractor()
+            if not vlm.is_server_healthy():
+                LOGGER.warning("VLM server unavailable, using rule-based")
+                return self._field_extractor.extract(layout=layout)
+
+            pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
+            return vlm.extract(pil_image, ocr_context=layout.text)
+        except Exception as e:
+            LOGGER.warning("VLM extraction failed: %s", e)
+            return self._field_extractor.extract(layout=layout)
 
     def cleanup(self) -> None:
         """Clean up resources."""
