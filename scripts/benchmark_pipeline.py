@@ -22,7 +22,6 @@ import time
 from pathlib import Path
 
 import cv2
-import numpy as np
 
 LOGGER = logging.getLogger(__name__)
 
@@ -60,7 +59,7 @@ def benchmark_extraction_pipeline(
     orchestrator.enable_extraction_pipeline()
 
     # Collect test images
-    image_paths = []
+    image_paths: list[Path] = []
     for ext in ("*.jpg", "*.jpeg", "*.png"):
         image_paths.extend(images_dir.glob(ext))
 

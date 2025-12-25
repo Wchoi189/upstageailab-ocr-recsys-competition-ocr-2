@@ -38,7 +38,7 @@ def prepare_dataset(output_dir: Path) -> Path:
         Path to training data directory
     """
     try:
-        from datasets import load_dataset
+        from datasets import load_dataset  # type: ignore[import-untyped,attr-defined]
     except ImportError as e:
         raise ImportError(
             "datasets library not installed. Install with: uv pip install datasets"

@@ -34,6 +34,7 @@ from exceptions import (
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from models.errors import ErrorResponse
+from pydantic import BaseModel
 
 # Import services
 from services.checkpoint_service import Checkpoint, CheckpointService
@@ -48,7 +49,6 @@ from apps.shared.backend_shared.models.inference import (
     Padding,
     TextRegion,
 )
-from pydantic import BaseModel
 
 logger = logging.getLogger(__name__)
 
@@ -414,6 +414,7 @@ async def extract_receipt(request: ExtractionRequest):
     import asyncio
     import base64
     import time
+
     import cv2
     import numpy as np
 
@@ -460,10 +461,7 @@ async def extract_receipt(request: ExtractionRequest):
     # Check if VLM was used (heuristic: check metadata)
     vlm_used = False
     receipt_data_dict = result.get("receipt_data", {})
-    if receipt_data_dict:
-        metadata = receipt_data_dict.get("metadata", {})
-        # VLM extractor would set a flag or we can infer from source
-        vlm_used = False  # TODO: Add flag in VLM extractor to track usage
+    # TODO: Add flag in VLM extractor metadata to track usage
 
     return ExtractionResponse(
         detection_result={

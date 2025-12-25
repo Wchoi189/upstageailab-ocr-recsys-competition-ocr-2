@@ -123,8 +123,8 @@ class InferenceOrchestrator:
         to enable full receipt extraction functionality.
         """
         try:
+            from .extraction.field_extractor import ExtractorConfig, ReceiptFieldExtractor
             from .layout.grouper import LineGrouper, LineGrouperConfig
-            from .extraction.field_extractor import ReceiptFieldExtractor, ExtractorConfig
 
             self._enable_layout = True
             self._enable_extraction = True
@@ -442,13 +442,14 @@ class InferenceOrchestrator:
         Returns:
             LayoutResult with hierarchical text structure
         """
-        from .layout.contracts import TextElement, BoundingBox
+        from .layout.contracts import BoundingBox, TextElement
 
         elements = []
         for i, (poly, text, conf) in enumerate(zip(
             result.get("polygons", []),
             result.get("recognized_texts", []),
-            result.get("recognition_confidences", [])
+            result.get("recognition_confidences", []),
+            strict=False,
         )):
             # Convert polygon string to coordinates
             coords = self._parse_polygon(poly)
@@ -554,9 +555,10 @@ class InferenceOrchestrator:
             ReceiptData from VLM or rule-based fallback
         """
         try:
-            from .extraction.vlm_extractor import VLMExtractor
-            from PIL import Image
             import cv2
+            from PIL import Image
+
+            from .extraction.vlm_extractor import VLMExtractor
 
             vlm = VLMExtractor()
             if not vlm.is_server_healthy():

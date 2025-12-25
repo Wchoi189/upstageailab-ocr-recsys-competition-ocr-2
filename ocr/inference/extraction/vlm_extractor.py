@@ -6,12 +6,13 @@ receipts that fall below confidence thresholds in rule-based extraction.
 
 from __future__ import annotations
 
-import logging
-import httpx
-from dataclasses import dataclass
-from PIL import Image
 import base64
 import io
+import logging
+from dataclasses import dataclass
+
+import httpx
+from PIL import Image
 
 from .receipt_schema import ReceiptData
 
