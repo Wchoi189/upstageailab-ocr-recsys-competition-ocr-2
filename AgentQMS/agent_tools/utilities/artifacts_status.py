@@ -25,7 +25,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from AgentQMS.agent_tools.utilities.versioning import (
     ArtifactAgeDetector,
-    ArtifactLifecycle,
     VersionManager,
 )
 

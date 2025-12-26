@@ -139,7 +139,7 @@ class ReceiptData(BaseModel):
     @property
     def items_total(self) -> Decimal:
         """Sum of all item prices."""
-        return sum((item.total_price or Decimal(0)) for item in self.items, start=Decimal(0))
+        return sum(((item.total_price or Decimal(0)) for item in self.items), start=Decimal(0))
 
     @property
     def is_complete(self) -> bool:
