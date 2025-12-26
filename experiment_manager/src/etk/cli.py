@@ -1,7 +1,6 @@
 import argparse
-import sys
 import os
-from pathlib import Path
+import sys
 
 from etk.core import ExperimentTracker
 from etk.factory import ExperimentFactory
@@ -129,19 +128,18 @@ Examples:
 
             kwargs = {"tags": [t.strip() for t in args.tags.split(",")] if args.tags else []}
             if args.type == "assessment":
-                if args.phase: kwargs["phase"] = args.phase
-                if args.priority: kwargs["priority"] = args.priority
+                if args.phase:
+                    kwargs["phase"] = args.phase
+                if args.priority:
+                    kwargs["priority"] = args.priority
             elif args.type == "report":
-                if args.metrics: kwargs["metrics"] = [m.strip() for m in args.metrics.split(",")]
-                if args.baseline: kwargs["baseline"] = args.baseline
+                if args.metrics:
+                    kwargs["metrics"] = [m.strip() for m in args.metrics.split(",")]
+                if args.baseline:
+                    kwargs["baseline"] = args.baseline
 
             # Use Tracker to generate the file
-            path = tracker.create_artifact(
-                artifact_type=args.type,
-                title=args.title,
-                experiment_id=args.experiment,
-                **kwargs
-            )
+            path = tracker.create_artifact(artifact_type=args.type, title=args.title, experiment_id=args.experiment, **kwargs)
 
             # Now Record it in Manifest via Factory
             # We need to extract the experiment ID used by tracker
@@ -164,9 +162,9 @@ Examples:
             print(f"📦 Total Artifacts: {status['total_artifacts']}")
             # We could also read the manifest via Factory to show tasks?
             try:
-                manifest = factory._load_manifest(status['experiment_id'])
+                manifest = factory._load_manifest(status["experiment_id"])
                 print(f"📋 Tasks: {len(manifest.tasks)}")
-                pending = sum(1 for t in manifest.tasks if t.status != 'done')
+                pending = sum(1 for t in manifest.tasks if t.status != "done")
                 print(f"   Now: {pending} pending")
             except:
                 pass
@@ -197,8 +195,10 @@ Examples:
             stats = tracker.sync_to_database(args.experiment_id, args.all)
             print("\\n✅ Sync complete:")
             print(f"   ✓ Synced: {stats['synced']}")
-            if stats['skipped'] > 0: print(f"   ⊘ Skipped: {stats['skipped']}")
-            if stats['failed'] > 0: print(f"   ✗ Failed: {stats['failed']}")
+            if stats["skipped"] > 0:
+                print(f"   ⊘ Skipped: {stats['skipped']}")
+            if stats["failed"] > 0:
+                print(f"   ✗ Failed: {stats['failed']}")
 
         elif args.command == "query":
             results = tracker.query_artifacts(args.query)

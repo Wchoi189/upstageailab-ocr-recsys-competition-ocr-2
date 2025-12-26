@@ -7,7 +7,6 @@ from pathlib import Path
 from typing import Any
 
 import yaml
-
 from experiment_manager.utils.path_utils import ExperimentPaths
 
 

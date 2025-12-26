@@ -6,7 +6,7 @@ Simulates processing images with different algorithms.
 
 import argparse
 from pathlib import Path
-import shutil
+
 
 def main():
     parser = argparse.ArgumentParser(description="Run border removal method")
@@ -31,6 +31,7 @@ def main():
         print(f"  Processed: {dummy_file}")
 
     print(f"Method {args.method} complete.")
+
 
 if __name__ == "__main__":
     main()

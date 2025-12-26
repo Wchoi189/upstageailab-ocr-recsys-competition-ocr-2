@@ -149,8 +149,8 @@ class PreprocessingPipeline:
         # Stage 1.5: Optional Background Removal (rembg)
         if enable_background_removal:
             try:
-                from rembg import remove
                 import cv2
+                from rembg import remove
 
                 # rembg expects RGB or BGR, returns RGBA
                 # It handles conversion internally, but let's be explicit if needed
@@ -167,7 +167,7 @@ class PreprocessingPipeline:
                     foreground = output[:, :, :3]
 
                     # Create white background
-                    background = np.ones_like(foreground, dtype=np.uint8) * 255
+                    np.ones_like(foreground, dtype=np.uint8) * 255
 
                     # Composite
                     # output is usually RGB from rembg, but let's check.

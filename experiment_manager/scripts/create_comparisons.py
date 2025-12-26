@@ -6,6 +6,7 @@ Combines original and processed images for side-by-side analysis.
 
 from pathlib import Path
 
+
 def main():
     print("Creating comparison images...")
 
@@ -21,6 +22,7 @@ def main():
         print(f"  Created comparison: {dummy_file}")
 
     print("Comparison creation complete.")
+
 
 if __name__ == "__main__":
     main()

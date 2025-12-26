@@ -8,12 +8,10 @@ in the standardized OCRStorageItem Parquet format.
 
 import argparse
 import asyncio
-import io
 import logging
 import os
 import time
 from pathlib import Path
-from typing import Any, List
 
 import aiohttp
 import cv2  # NEW
@@ -33,6 +31,7 @@ logger = logging.getLogger(__name__)
 API_URL = "https://api.upstage.ai/v1/document-ai/ocr"
 DEFAULT_RATE_LIMIT = 50  # Requests per minute
 
+
 # --- Enhanced Processing Logic ---
 def get_inverse_matrix(matrix: np.ndarray) -> np.ndarray:
     """Calculate inverse homography matrix."""
@@ -40,6 +39,7 @@ def get_inverse_matrix(matrix: np.ndarray) -> np.ndarray:
         return np.linalg.inv(matrix)
     except np.linalg.LinAlgError:
         return np.eye(3)
+
 
 def warp_points(points: list[list[float]], matrix: np.ndarray) -> list[list[float]]:
     """Apply homography transform to a list of points (N, 2)."""
@@ -49,6 +49,7 @@ def warp_points(points: list[list[float]], matrix: np.ndarray) -> list[list[floa
     pts = np.array(points, dtype=np.float32).reshape(-1, 1, 2)
     transformed = cv2.perspectiveTransform(pts, matrix)
     return transformed.reshape(-1, 2).tolist()
+
 
 def enhance_image(image_path: Path) -> tuple[np.ndarray, np.ndarray, tuple[int, int]]:
     """Apply Rembg + Perspective Correction.
@@ -85,11 +86,7 @@ def enhance_image(image_path: Path) -> tuple[np.ndarray, np.ndarray, tuple[int, 
     # 2. Perspective Correction
     # We use the library function but need to capture the matrix
     # Note: apply_optional_perspective_correction returns (image, matrix) when return_matrix=True
-    corrected_image, matrix = apply_optional_perspective_correction(
-        image_rembg,
-        enable_perspective_correction=True,
-        return_matrix=True
-    )
+    corrected_image, matrix = apply_optional_perspective_correction(image_rembg, enable_perspective_correction=True, return_matrix=True)
 
     if matrix is None:
         matrix = np.eye(3)
@@ -133,13 +130,7 @@ class UpstageClient:
             return None
 
 
-async def process_images(
-    image_paths: List[Path],
-    api_key: str,
-    output_path: Path,
-    dataset_name: str,
-    enhance: bool = False
-):
+async def process_images(image_paths: list[Path], api_key: str, output_path: Path, dataset_name: str, enhance: bool = False):
     client = UpstageClient(api_key)
     results = []
 
@@ -208,11 +199,7 @@ async def process_images(
                     polygons=polygons,
                     texts=texts,
                     labels=labels,
-                    metadata={
-                        "source": "upstage_api",
-                        "enhanced": enhance,
-                        "inverse_matrix": inverse_matrix.tolist() if enhance else None
-                    }
+                    metadata={"source": "upstage_api", "enhanced": enhance, "inverse_matrix": inverse_matrix.tolist() if enhance else None},
                 )
                 item.validate_lengths()
                 results.append(item.model_dump())
@@ -249,7 +236,7 @@ def main():
     image_paths = list(root.glob("*.jpg")) + list(root.glob("*.png")) + list(root.glob("*.jpeg"))
 
     if args.limit > 0:
-        image_paths = image_paths[:args.limit]
+        image_paths = image_paths[: args.limit]
 
     logger.info(f"Found {len(image_paths)} images to process.")
 

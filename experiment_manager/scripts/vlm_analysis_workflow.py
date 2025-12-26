@@ -10,20 +10,23 @@ import subprocess
 from pathlib import Path
 
 
-def run_vlm_analysis(
-    image_path: Path,
-    mode: str,
-    output_path: Path,
-    backend: str = "dashscope"
-) -> dict:
+def run_vlm_analysis(image_path: Path, mode: str, output_path: Path, backend: str = "dashscope") -> dict:
     """Run VLM analysis and return metrics."""
 
     cmd = [
-        "uv", "run", "python", "-m", "AgentQMS.vlm.cli.analyze_image_defects",
-        "--image", str(image_path),
-        "--mode", mode,
-        "--backend", backend,
-        "--output", str(output_path),
+        "uv",
+        "run",
+        "python",
+        "-m",
+        "AgentQMS.vlm.cli.analyze_image_defects",
+        "--image",
+        str(image_path),
+        "--mode",
+        mode,
+        "--backend",
+        backend,
+        "--output",
+        str(output_path),
     ]
 
     print(f"Running VLM analysis: {image_path.name} (mode: {mode})...")
@@ -49,9 +52,9 @@ def run_vlm_analysis(
 def run_baseline_analysis(manifest_path: Path, output_dir: Path):
     """Phase 1: Baseline assessment."""
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("PHASE 1: VLM Baseline Assessment")
-    print("="*60)
+    print("=" * 60)
 
     if not manifest_path.exists():
         print(f"Manifest not found at {manifest_path}")
@@ -83,16 +86,12 @@ def run_baseline_analysis(manifest_path: Path, output_dir: Path):
     return results
 
 
-def run_validation_analysis(
-    processed_dir: Path,
-    output_dir: Path,
-    method: str
-):
+def run_validation_analysis(processed_dir: Path, output_dir: Path, method: str):
     """Phase 2: Border detection validation."""
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print(f"PHASE 2: VLM Validation - {method.upper()} method")
-    print("="*60)
+    print("=" * 60)
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -114,15 +113,12 @@ def run_validation_analysis(
     return results
 
 
-def run_quality_analysis(
-    comparison_dir: Path,
-    output_dir: Path
-):
+def run_quality_analysis(comparison_dir: Path, output_dir: Path):
     """Phase 3: Crop quality assessment."""
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("PHASE 3: VLM Quality Assessment")
-    print("="*60)
+    print("=" * 60)
 
     output_dir.mkdir(parents=True, exist_ok=True)
 
@@ -150,8 +146,8 @@ def main():
     # Default to a generic experiment path if specific one not found
     base_dir = Path("experiment-tracker/experiments/20251218_1900_border_removal_preprocessing")
     if not base_dir.exists():
-         # Fallback for current workspace structure
-         base_dir = Path("experiment_manager/experiments/20251218_1900_border_removal_preprocessing")
+        # Fallback for current workspace structure
+        base_dir = Path("experiment_manager/experiments/20251218_1900_border_removal_preprocessing")
 
     # Phase 1: Baseline
     baseline_results = run_baseline_analysis(
@@ -173,11 +169,11 @@ def main():
         output_dir=base_dir / "outputs/vlm_analysis/quality",
     )
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("VLM ANALYSIS COMPLETE")
-    print("="*60)
+    print("=" * 60)
     print(f"Baseline: {len(baseline_results)} reports")
-    print(f"Validation: 3 methods analyzed")
+    print("Validation: 3 methods analyzed")
     print(f"Quality: {len(quality_results) if 'quality_results' in locals() else 0} reports")
     print()
     print("All reports saved to: outputs/vlm_analysis/")
