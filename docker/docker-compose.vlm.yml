@@ -9,7 +9,7 @@ services:
     container_name: vlm-tools
     volumes:
       - ../agent_qms:/workspaces/agent_qms:cached
-      - ../experiment-tracker:/workspaces/experiment-tracker:cached
+      - ../experiment_manager:/workspaces/experiment_manager:cached
       - ../artifacts:/workspaces/artifacts:cached
     working_dir: /workspaces
     environment:

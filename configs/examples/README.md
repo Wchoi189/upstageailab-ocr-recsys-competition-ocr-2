@@ -76,7 +76,7 @@ configs/
 ## Experiment Reference
 
 All preprocessing options are based on validated experiments:
-- **Experiment**: `experiment-tracker/experiments/20251217_024343_image_enhancements_implementation`
+- **Experiment**: `experiment_manager/experiments/20251217_024343_image_enhancements_implementation`
 - **Documentation**: See experiment README and state.yml for detailed results
 - **Key Finding**: Background normalization + perspective correction = best results
 - **Exclusion**: Deskewing excluded from integration (no performance benefit)

@@ -1,0 +1,26 @@
+---
+# EDS v1.0 Validation Protocols - Minimal Schema
+version: "1.0"
+
+pre_commit:
+  enabled: true
+  blocking: true
+
+checks:
+  compliance: "python .ai-instructions/schema/compliance-checker.py {file}"
+  naming: "YYYYMMDD_HHMM_{type}_{slug}.md pattern"
+  metadata: ".metadata/ directory exists with subdirs"
+  placement: "artifact in correct .metadata/ subdirectory"
+
+severity:
+  critical: [manual_creation, all_caps, missing_metadata, missing_frontmatter]
+  high: [wrong_subdirectory, prohibited_content]
+
+commands:
+  validate: "etk validate"
+  validate_all: "etk validate --all"
+  report: "etk compliance-report"
+
+exemptions:
+  - README.md (no frontmatter required)
+  - state.yml (CLI-managed)

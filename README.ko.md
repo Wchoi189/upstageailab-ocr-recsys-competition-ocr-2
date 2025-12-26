@@ -59,19 +59,19 @@ OCR 추론 콘솔은 OCR 웹 서비스를 위한 개념 증명 프론트엔드�
 
 **해결된 문제**: 빠른 AI 기반 실험은 종종 대량의 아티팩트, 스크립트, 문서를 생성하며, 이를 관리 가능한 상태로 유지하려면 체계적인 조직화가 필요합니다. 실험이 매일 반복되고 디버깅에 신뢰할 수 있는 문서에 대한 즉각적인 접근이 필요할 때 기존 프로젝트 구조는 실패합니다.
 
-**해결책**: `experiment-tracker/` - 인간의 가독성과 AI
-**해결책**: `experiment-tracker/` - 인간의 가독성과 AI 소비 모두에 최적화된 실험 아티팩트 조직화를 위한 구조화된 시스템입니다. 일반적인 워크플로우를 위한 표준화된 프로토콜과 아티팩트 출력 형식을 제공합니다.
+**해결책**: `experiment_manager/` - 인간의 가독성과 AI
+**해결책**: `experiment_manager/` - 인간의 가독성과 AI 소비 모두에 최적화된 실험 아티팩트 조직화를 위한 구조화된 시스템입니다. 일반적인 워크플로우를 위한 표준화된 프로토콜과 아티팩트 출력 형식을 제공합니다.
 
 ### 표준화된 기술 보고서 및 문서 예시
 
 **기준선 분석**
-- [기준선 메트릭 요약](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md) - 품질의 미묘한 개선을 비교할 때 성능 벤치마크를 설정하는 포괄적인 기준선 메트릭
+- [기준선 메트릭 요약](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md) - 품질의 미묘한 개선을 비교할 때 성능 벤치마크를 설정하는 포괄적인 기준선 메트릭
 
 **사고 해결**
-- [데이터 손실 사고 보고서](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md) - 중요한 데이터 손실 사고 분석 및 해결 전략
+- [데이터 손실 사고 보고서](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md) - 중요한 데이터 손실 사고 분석 및 해결 전략
 
 **비교 분석**
-- [배경 정규화 비교](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1458_report_background-normalization-comparison.md) - 정량적 결과를 포함한 배경 정규화 전략 비교
+- [배경 정규화 비교](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1458_report_background-normalization-comparison.md) - 정량적 결과를 포함한 배경 정규화 전략 비교
 
 ### 시각적 결과 및 데모
 
@@ -79,7 +79,7 @@ OCR 추론 콘솔은 OCR 웹 서비스를 위한 개념 증명 프론트엔드�
 
 | 맞춤 모서리 | 보정된 출력 |
 | :---: | :---: |
-| [<img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="700px" />](docs/assets/images/demo/original-with-fitted-corners.webp) | [<img src="experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="250px" />](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg) |
+| [<img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="700px" />](docs/assets/images/demo/original-with-fitted-corners.webp) | [<img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="250px" />](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg) |
 | *모서리 검출 및 기하학적 맞춤* | *최종 원근 보정 출력* |
 
 *(이미지를 클릭하여 확대)*

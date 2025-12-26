@@ -28,7 +28,7 @@
   - **Files**: 7 created (services, exceptions, models, context), 4 modified (main.py, App.tsx, Sidebar.tsx, Workspace.tsx)
   - **Impact**: Improved AI tool effectiveness (smaller modules), better debugging (structured errors), reduced coupling (context pattern)
 
-- **[2025-12-17 18:00] Experiment-Tracker EDS v1.0 Phase 2 COMPLETE**: Successfully implemented compliance monitoring and automated legacy artifact migration. **57% average compliance achieved** (from 0% baseline). Phase 2 deliverables (95% complete):
+- **[2025-12-17 18:00] experiment_manager EDS v1.0 Phase 2 COMPLETE**: Successfully implemented compliance monitoring and automated legacy artifact migration. **57% average compliance achieved** (from 0% baseline). Phase 2 deliverables (95% complete):
   - **Compliance Dashboard**: Created `generate-compliance-report.py` (400+ lines) - comprehensive analyzer scanning all experiments, generating detailed markdown reports with violation breakdown, aggregate metrics, remediation priorities. Reports output to `.ai-instructions/tier4-workflows/compliance-reports/`
   - **Legacy Artifact Fixer**: Created `fix-legacy-artifacts.py` (250+ lines) - automated frontmatter generator with type inference, tag extraction, dry-run mode. **Fixed 33 artifacts** (added EDS v1.0 frontmatter), skipped 10 already-compliant
   - **Compliance Improvement**: 0% → 57% average compliance (+57%), 78.6% frontmatter coverage improvement (33 → 0 missing), 2 experiments at 100% compliance (20251217_024343, 20251129_173500)
@@ -36,22 +36,22 @@
   - **Reports Generated**: Initial baseline (0% compliance), post-fixes status (57% compliance), detailed violation breakdown with remediation steps
   - **Next Steps**: Manual fix 9 artifacts (15-30 min), rename 10 ALL-CAPS files (30-45 min), Phase 3 advanced features (optional)
 
-- **[2025-12-17 18:30] Experiment-Tracker EDS v1.0 Phase 1 COMPLETE**: Successfully implemented foundational EDS v1.0 infrastructure with automated enforcement. **Pre-commit hooks operational** blocking ALL-CAPS, missing .metadata/, invalid frontmatter. Phase 1 deliverables (100% complete):
+- **[2025-12-17 18:30] experiment_manager EDS v1.0 Phase 1 COMPLETE**: Successfully implemented foundational EDS v1.0 infrastructure with automated enforcement. **Pre-commit hooks operational** blocking ALL-CAPS, missing .metadata/, invalid frontmatter. Phase 1 deliverables (100% complete):
   - **Schema Layer**: Created `eds-v1.0-spec.yaml` (485 lines, complete specification), `validation-rules.json` (JSON Schema), `compliance-checker.py` (142 lines Python validator)
   - **Tier 1 Rules**: Extracted 5 critical YAML rules (artifact-naming, artifact-placement, artifact-workflow, experiment-lifecycle, validation-protocols) totaling 330+ lines
   - **Pre-Commit Hooks**: Implemented 4 enforcement scripts (naming-validation.sh, metadata-validation.sh, eds-compliance.sh, install-hooks.sh) with orchestrator. **Hooks installed and active** at `.git/hooks/pre-commit`
   - **Artifact Catalog**: Created tier2-framework/artifact-catalog.yaml (400+ lines) with AI-optimized templates for assessment/report/guide/script
   - **Agent Config**: Created tier3-agents/copilot-config.yaml with critical rules, workflow procedures, prohibited actions
-  - **README Replacement**: Simplified experiment-tracker/README.md (171 lines → 24 lines, 86% reduction)
+  - **README Replacement**: Simplified experiment_manager/README.md (171 lines → 24 lines, 86% reduction)
   - **Validation Test**: Tested on recent experiment `20251217_024343` - **6/7 files failed** (no frontmatter, ALL-CAPS names). Pre-commit hooks now **block** these violations
   - **Breaking Changes**: Manual artifact creation BLOCKED, ALL-CAPS filenames BLOCKED, artifacts without .metadata/ BLOCKED, missing frontmatter BLOCKS commits
   - **Next Steps**: Phase 2 (Compliance Dashboard, Experiment Audit) to fix existing violations and measure token reduction
 
-- **[2025-12-17 17:05] Experiment-Tracker Framework Standardization Assessment**: Conducted comprehensive audit of experiment-tracker module revealing **critical standardization failures**. Recent experiment (Dec 17) shows 86% naming violations (6/7 ALL-CAPS files), 100% format violations (verbose prose), missing .metadata/ directory. Framework actively **regressing** compared to older experiments (Nov 22-29). Created implementation plan for **Experiment Documentation Standard (EDS v1.0)** following proven AgentQMS ADS v1.0 patterns:
+- **[2025-12-17 17:05] experiment_manager Framework Standardization Assessment**: Conducted comprehensive audit of experiment_manager module revealing **critical standardization failures**. Recent experiment (Dec 17) shows 86% naming violations (6/7 ALL-CAPS files), 100% format violations (verbose prose), missing .metadata/ directory. Framework actively **regressing** compared to older experiments (Nov 22-29). Created implementation plan for **Experiment Documentation Standard (EDS v1.0)** following proven AgentQMS ADS v1.0 patterns:
   - **Assessment Findings**: 5 experiments analyzed, 100% exhibit naming/organization violations, 0% machine-readable format, estimated 60%+ productivity loss. Root causes: no AI-optimized entry points, user-facing templates, zero enforcement mechanisms, verbose documentation
   - **Implementation Plan**: 4-phase rollout (26-38 hours) - Phase 1: EDS v1.0 schema + tier1-sst rules + pre-commit hooks (7-11h). Phase 2: Template conversion + compliance dashboard + experiment audit (8-11h). Phase 3: Agent configs + deprecation system (6-8h). Phase 4: CLI redesign + registry (5-7h, optional)
   - **Expected Outcomes**: 90%+ token reduction (~8,500 → ~850 tokens), 100% compliance on new experiments, 50%+ productivity improvement, self-healing infrastructure
-  - **Artifacts Created**: Assessment document (2025-12-17_1703_assessment-experiment-tracker-standardization.md), Implementation plan (2025-12-17_1705_implementation_plan_experiment-tracker-eds-v1-implementation.md)
+  - **Artifacts Created**: Assessment document (2025-12-17_1703_assessment-experiment_manager-standardization.md), Implementation plan (2025-12-17_1705_implementation_plan_experiment_manager-eds-v1-implementation.md)
 
 - **[2025-12-16 21:42] AI Documentation Standardization COMPLETE**: Successfully completed comprehensive 4-phase AI documentation overhaul. **100% compliance achieved** (4/4 checks passed) with ADS v1.0 standard. Final deliverables include:
   - **Phase 3 Completion**: Implemented pre-commit hooks (naming, placement, ADS validation) with installation automation. Inventoried and deprecated `.agent/workflows/` (3 files, 100% duplicates). Created compliance dashboard (`generate-compliance-report.py`) with automated reporting

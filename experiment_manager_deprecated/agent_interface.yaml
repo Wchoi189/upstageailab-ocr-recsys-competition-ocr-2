@@ -1,0 +1,60 @@
+# Experiment Manager Agent Interface
+# This file defines the machine-readable capabilities of the experiment_manager package.
+# It replaces verbose documentation with strict schema definitions.
+
+commands:
+  # --- Core Lifecycle ---
+  init:
+    description: Initialize a new experiment
+    usage: "etk init {name} [-d description] [-t tags]"
+    args:
+      name: "Unique experiment identifier (slug)"
+      description: "Optional experiment description"
+      tags: "Comma-separated tags (e.g., 'optimization,vlm')"
+    effect: "Creates ./experiments/{name}/ with complete directory structure (src/, artifacts/, data/)."
+
+  status:
+    description: Check status of current or specific experiment
+    usage: "etk status [experiment_id]"
+    effect: "Returns JSON-like status summary of artifacts and progress."
+
+  # --- Artifact Management ---
+  create_assessment:
+    description: Create a structured assessment artifact
+    usage: "etk create assessment '{title}'"
+    effect: "Creates a new assessment file in artifacts/assessments/ from template."
+
+  create_report:
+    description: Create a performance report
+    usage: "etk create report '{title}' --metrics 'acc,f1'"
+    effect: "Creates a new report file in artifacts/reports/."
+
+  # --- Context Tracking (Retained Scripts) ---
+  add_task:
+    description: Add a task to the active experiment plan
+    usage: "python3 experiment_manager/scripts/add-task.py '{description}'"
+    effect: "Adds entry to tasks.json and updates state."
+
+  complete_task:
+    description: Mark a task as complete
+    usage: "python3 experiment_manager/scripts/complete-task.py {task_id} --notes '{notes}'"
+    effect: "Updates task status in tasks.json."
+
+  log_insight:
+    description: Log a key finding or insight
+    usage: "python3 experiment_manager/scripts/log-insight.py '{insight}'"
+    effect: "Appends to insights.json/md."
+
+  # --- Data Sync ---
+  sync:
+    description: Sync artifacts and metadata to database
+    usage: "etk sync [experiment_id]"
+    effect: "Ensures filesystem state matches SQLite database."
+
+structure:
+  root: "experiments/{experiment_id}/"
+  subdirs:
+    - "src/": "Experiment-specific code"
+    - "artifacts/": "Generated outputs (assessments, reports)"
+    - "data/": "Input/output data specific to this experiment"
+    - ".metadata/": "Internal state tracking"

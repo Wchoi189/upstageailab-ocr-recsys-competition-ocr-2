@@ -1,0 +1,39 @@
+# Experiment Tracker Prompts
+prompts:
+  - id: perspective-failure-analysis-v1
+    title: Perspective Correction Failure Analysis
+    category: analysis
+    tags: [ocr, vision, perspective, failure-analysis]
+    version: "1.0.0"
+    variables:
+      - name: technique_name
+      - name: failure_description
+    content: |
+      Analyze '{{technique_name}}' failure: {{failure_description}}.
+      Identify: vanishing points, line segments, noise/blur.
+      Suggest 2-3 alternatives.
+
+  - id: experiment-planning-v1
+    title: New Experiment Planning
+    category: planning
+    tags: [general, planning, methodology]
+    version: "1.0.0"
+    variables:
+      - name: goal
+    content: |
+      Plan experiment for: {{goal}}.
+      Define: hypothesis, variables, metrics, steps, risks.
+
+  - id: run-log-negative-result-v1
+    title: Interim Run Log – Negative Result
+    category: analysis
+    tags: [run_log, negative_result, assessment]
+    version: "1.0.0"
+    variables:
+      - name: run_id
+      - name: hypothesis
+      - name: prev_summary
+      - name: curr_summary
+    content: |
+      Run {{run_id}}, hypothesis: {{hypothesis}}.
+      Compare failure modes, highlight samples, propose 3 next steps.

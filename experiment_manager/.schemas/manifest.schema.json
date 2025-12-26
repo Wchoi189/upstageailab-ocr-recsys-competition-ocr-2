@@ -1,0 +1,95 @@
+{
+"$schema": "http://json-schema.org/draft-07/schema#",
+"title": "Experiment Manifest",
+"description": "The single source of truth for an OCR experiment state.",
+"type": "OBJECT",
+"required": [
+"experiment_id",
+"name",
+"status",
+"created_at",
+"tasks"
+],
+"properties": {
+"experiment_id": {
+"type": "STRING",
+"pattern": "^[0-9]{8}_[0-9]{6}_[a-z0-9_]+$"
+},
+"name": {
+"type": "STRING",
+"minLength": 3
+},
+"status": {
+"type": "STRING",
+"enum": [
+"active",
+"complete",
+"paused",
+"deprecated"
+]
+},
+"created_at": {
+"type": "STRING",
+"format": "date-time"
+},
+"updated_at": {
+"type": "STRING",
+"format": "date-time"
+},
+"intention": {
+"type": "STRING"
+},
+"tasks": {
+"type": "ARRAY",
+"items": {
+"type": "OBJECT",
+"required": [
+"id",
+"description",
+"status"
+],
+"properties": {
+"id": {
+"type": "STRING"
+},
+"description": {
+"type": "STRING"
+},
+"status": {
+"type": "STRING",
+"enum": [
+"backlog",
+"in_progress",
+"done"
+]
+},
+"completed_at": {
+"type": "STRING"
+}
+}
+}
+},
+"insights": {
+"type": "ARRAY",
+"items": {
+"type": "OBJECT",
+"properties": {
+"type": {
+"type": "STRING",
+"enum": [
+"insight",
+"decision",
+"failure"
+]
+},
+"content": {
+"type": "STRING"
+},
+"timestamp": {
+"type": "STRING"
+}
+}
+}
+}
+}
+}

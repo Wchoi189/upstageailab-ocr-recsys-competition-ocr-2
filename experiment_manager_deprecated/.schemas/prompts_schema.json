@@ -1,0 +1,67 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "prompts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique identifier for the prompt (e.g., 'perspective-analysis-v1')"
+          },
+          "title": {
+            "type": "string",
+            "description": "Short descriptive title for the prompt"
+          },
+          "category": {
+            "type": "string",
+            "enum": ["analysis", "generation", "correction", "planning", "review"],
+            "description": "Broad category for the prompt"
+          },
+          "tags": {
+            "type": "array",
+            "items": { "type": "string" },
+            "description": "Keywords for filtering (e.g., 'ocr', 'vision', 'debug')"
+          },
+          "content": {
+            "type": "string",
+            "description": "The actual prompt text. Can include {{variables}}."
+          },
+          "description": {
+            "type": "string",
+            "description": "Explanation of when and how to use this prompt"
+          },
+          "variables": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "name": { "type": "string" },
+                "description": { "type": "string" },
+                "required": { "type": "boolean", "default": true }
+              },
+              "required": ["name"]
+            },
+            "description": "List of variables used in the content template"
+          },
+          "version": {
+            "type": "string",
+            "description": "Semantic versioning for the prompt"
+          },
+          "author": {
+            "type": "string",
+            "description": "Creator of the prompt"
+          },
+          "last_updated": {
+            "type": "string",
+            "format": "date-time"
+          }
+        },
+        "required": ["id", "category", "content", "version"]
+      }
+    }
+  },
+  "required": ["prompts"]
+}

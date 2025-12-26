@@ -1,0 +1,65 @@
+---
+ads_version: "1.0"
+type: schema_specification
+title: "Dataset Catalog Schema v1.0"
+agent: all
+tier: 1
+priority: high
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 200
+date: "2025-12-25"
+status: active
+
+# Dataset Catalog Schema
+
+schema:
+  type: object
+  properties:
+    datasets:
+      type: array
+      items:
+        type: object
+        properties:
+          name:
+            type: string
+            description: Unique dataset identifier
+          path:
+            type: string
+            description: Absolute or relative path to dataset
+          image_count:
+            type: integer
+            description: Number of images in dataset
+          annotation_format:
+            type: string
+            description: Format of annotations (e.g., COCO JSON, none)
+          status:
+            type: string
+            enum: [available, downloaded, partial, not_downloaded]
+            description: Availability status
+          issues:
+            type: string
+            description: Known problems or notes
+          use_case:
+            type: string
+            description: Primary use (e.g., training, validation)
+          integration_priority:
+            type: string
+            enum: [high, medium, low]
+            description: Priority for integration
+        required:
+          - name
+          - path
+          - image_count
+          - annotation_format
+          - status
+          - use_case
+          - integration_priority
+  required:
+    - datasets
+
+validation_rules:
+  - "Paths must be absolute or resolvable relative to project root"
+  - "Image counts must be verified and accurate"
+  - "Statuses must reflect current state (check cache for HF datasets)"
+  - "Priorities align with assessment priorities"

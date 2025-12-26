@@ -1,0 +1,48 @@
+# Experiment Tracker Scripts
+# Migration scripts are one-time use. Prefer ETK CLI for daily operations.
+
+categories:
+  etk_preferred:
+    description: Use etk CLI instead of these scripts
+    mapping:
+      - script: start-experiment.py
+        use: "etk init {name}"
+      - script: generate-assessment.py
+        use: "etk create assessment '{title}'"
+      - script: record-artifact.py
+        use: "etk record {path} --type {type}"
+      - script: export-experiment.py
+        use: "etk sync --all"
+
+      - script: add-task.py
+        use: "etk task '{description}'"
+      - script: record-decision.py
+        use: "etk create assessment --type decision --title '{title}'"
+      - script: log-insight.py
+        use: "etk create assessment --type insight --title '{title}'"
+
+  specialized:
+    description: Specialized workflows not in etk
+    scripts:
+      - generate-incident-report.py
+      - generate-feedback.py
+      - append-run.py
+      - workflow.py
+
+  migration_only:
+    description: One-time migration scripts (do not use for daily work)
+    scripts:
+      - migrate_all_experiments.py
+      - migrate_state_to_yaml.py
+      - migrate_state_yaml_to_db.py
+      - migrate_to_v2.py
+      - batch_import.py
+      - reorganize_experiment.py
+
+  deprecated:
+    description: Deprecated or deleted scripts
+    scripts:
+      - safe_state_manager.py
+      - resume-experiment.py
+      - stash-incomplete.py
+

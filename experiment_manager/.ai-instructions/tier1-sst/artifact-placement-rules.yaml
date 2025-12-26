@@ -1,0 +1,20 @@
+---
+# EDS v1.0 Artifact Placement - Minimal Schema
+version: "1.0"
+
+structure:
+  root: "experiments/{id}/"
+  metadata: ".metadata/"
+  subdirs: [assessments, reports, guides, scripts, artifacts]
+
+placement:
+  assessment: ".metadata/assessments/"
+  report: ".metadata/reports/"
+  guide: ".metadata/guides/"
+  script: ".metadata/scripts/"
+
+root_allowed: [README.md, state.yml]
+
+prohibited:
+  - "*.md in experiment root (except README.md)"
+  - "artifacts in wrong subdirectory"

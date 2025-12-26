@@ -38,6 +38,7 @@ tier2_framework:
   debugging: ".ai-instructions/tier2-framework/debugging-sessions.yaml"
   coding_standards: ".ai-instructions/tier2-framework/coding-standards.yaml"
   git_conventions: ".ai-instructions/tier2-framework/git-conventions.yaml"
+  datasets: ".ai-instructions/tier2-framework/dataset-catalog.yaml"
 
 tier3_agents:
   claude: ".ai-instructions/tier3-agents/claude/config.yaml"

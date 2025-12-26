@@ -88,6 +88,7 @@ class PreprocessingPipeline:
         self,
         image: np.ndarray,
         enable_perspective_correction: bool = False,
+        enable_background_removal: bool = False,
         perspective_display_mode: str = "corrected",
         enable_grayscale: bool = False,
         enable_background_normalization: bool | None = None,
@@ -138,13 +139,65 @@ class PreprocessingPipeline:
                     return_matrix=True,
                 )
                 LOGGER.debug("Perspective correction applied (matrix captured)")
-            else:
                 # Correct and display corrected (default behavior)
                 image = apply_optional_perspective_correction(
                     image,
                     enable_perspective_correction=True,
                 )
                 LOGGER.debug("Perspective correction applied (corrected mode)")
+
+        # Stage 1.5: Optional Background Removal (rembg)
+        if enable_background_removal:
+            try:
+                from rembg import remove
+                import cv2
+
+                # rembg expects RGB or BGR, returns RGBA
+                # It handles conversion internally, but let's be explicit if needed
+                # For now assuming input is BGR as per docstring
+
+                # Run rembg
+                # remove() returns the image with alpha channel.
+                # We need to composite it over white background to keep 3 channels
+                output = remove(image)
+
+                # Convert RGBA to BGR (white background)
+                if output.shape[2] == 4:
+                    alpha = output[:, :, 3] / 255.0
+                    foreground = output[:, :, :3]
+
+                    # Create white background
+                    background = np.ones_like(foreground, dtype=np.uint8) * 255
+
+                    # Composite
+                    # output is usually RGB from rembg, but let's check.
+                    # rembg doc says "return image as a byte array" if input is bytes, or PIL/ndarray
+                    # If ndarray input (cv2), it returns ndarray.
+                    # Colorspace: rembg uses PIL internally, so it might return RGB.
+                    # Let's verify standard behavior or force conversion.
+                    # Best safety: Convert to RGB before sending to rembg to be sure
+
+                    image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+                    output_rgba = remove(image_rgb)
+
+                    # Extract alpha
+                    alpha = output_rgba[:, :, 3] / 255.0
+                    foreground_rgb = output_rgba[:, :, :3]
+
+                    # Composite over white
+                    bg_color = [255, 255, 255]
+                    composite = np.zeros_like(foreground_rgb)
+                    for c in range(3):
+                        composite[:, :, c] = alpha * foreground_rgb[:, :, c] + (1 - alpha) * bg_color[c]
+
+                    # Convert back to BGR
+                    image = cv2.cvtColor(composite, cv2.COLOR_RGB2BGR)
+                    LOGGER.info("Background removal applied via rembg")
+
+            except ImportError:
+                LOGGER.warning("rembg not installed. Skipping background removal.")
+            except Exception as e:
+                LOGGER.error("Background removal failed: %s", e)
 
         # Stage 2: Optional grayscale conversion (after perspective correction)
         if enable_grayscale:

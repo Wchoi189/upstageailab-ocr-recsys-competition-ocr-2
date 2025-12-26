@@ -29,7 +29,7 @@ Adding comprehensive preprocessing options (perspective correction, background n
 - Validated API signatures and config structure
 
 ### Data Sources
-- Experiment results from `experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/`
+- Experiment results from `experiment_manager/experiments/20251217_024343_image_enhancements_implementation/`
 - Core implementation in `ocr/utils/perspective_correction/`
 - Inference engine API in `ocr/inference/engine.py`
 
@@ -195,7 +195,7 @@ predictions = engine.predict_image(
 
 ## References
 
-- **Experiment**: `experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/`
+- **Experiment**: `experiment_manager/experiments/20251217_024343_image_enhancements_implementation/`
 - **Core Implementation**: `ocr/utils/perspective_correction/`
 - **Inference Engine**: `ocr/inference/engine.py`
 - **Preprocessing Pipeline**: `ocr/inference/preprocessing_pipeline.py`

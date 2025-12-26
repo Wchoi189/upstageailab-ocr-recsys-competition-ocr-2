@@ -39,7 +39,7 @@ This project uses **AgentQMS** for quality management.
 - `ocr/`: Core OCR engine and models.
 - `AgentQMS/`: Quality management and AI documentation.
 - `apps/`: Frontend and inference applications.
-- `experiment-tracker/`: Experimental artifacts and reports.
+- `experiment_manager/`: Experimental artifacts and reports.
 
 For a detailed overview, see [.ai-instructions/tier1-sst/file-placement-rules.yaml](.ai-instructions/tier1-sst/file-placement-rules.yaml).
 

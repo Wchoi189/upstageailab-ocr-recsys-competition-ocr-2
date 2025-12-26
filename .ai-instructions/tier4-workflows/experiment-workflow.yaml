@@ -1,0 +1,37 @@
+# Experiment Workflow Reference
+# Location: experiment_manager/
+# Agent Interface: experiment_manager/agent_interface.yaml (Primary Source of Truth)
+
+workflow:
+  start:
+    command: "etk init {name}"
+    result: "Creates experiments/YYYYMMDD_HHMMSS_{name}/ with strict schema structure."
+
+  create_artifact:
+    assessment: "etk create assessment '{title}'"
+    report: "etk create report '{title}' --metrics 'acc,f1'"
+    guide: "etk create guide '{title}'"
+    script: "etk create script '{title}'"
+
+  context_tracking:
+    add_task: "python3 experiment_manager/scripts/add-task.py '{description}'"
+    complete_task: "python3 experiment_manager/scripts/complete-task.py {task_id}"
+    log_insight: "python3 experiment_manager/scripts/log-insight.py '{insight}'"
+
+  check:
+    status: "etk status"
+    list: "etk list"
+    validate: "etk validate --all"
+
+  database:
+    sync: "etk sync --all"
+
+paths:
+  module: "experiment_manager/"
+  experiments: "experiment_manager/experiments/"
+  agent_interface: "experiment_manager/agent_interface.yaml"
+
+rules:
+  - Read experiment_manager/agent_interface.yaml for exact command arguments.
+  - Always run "etk sync --all" after creating artifacts.
+  - Never create artifacts manually.

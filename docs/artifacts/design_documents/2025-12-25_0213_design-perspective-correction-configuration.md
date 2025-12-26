@@ -178,7 +178,7 @@ python scripts/test_perspective_inference.py \
 ## Validation and Testing
 
 ### Experiment Validation
-Based on: `experiment-tracker/experiments/20251217_024343_image_enhancements_implementation`
+Based on: `experiment_manager/experiments/20251217_024343_image_enhancements_implementation`
 
 #### Results Summary
 - **Perspective Correction**: ✅ One extreme case: -83° → 0.88° skew correction
@@ -220,7 +220,7 @@ preprocessing:
 - **Core Implementation**: `ocr/utils/perspective_correction/`
 - **Preprocessing Pipeline**: `ocr/inference/preprocessing_pipeline.py`
 - **Inference Engine**: `ocr/inference/engine.py`
-- **Experiment Scripts**: `experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/scripts/`
+- **Experiment Scripts**: `experiment_manager/experiments/20251217_024343_image_enhancements_implementation/scripts/`
 
 ### Decision 1
 - **Context**: Why this decision was needed

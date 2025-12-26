@@ -1,0 +1,443 @@
+---
+ads_version: "1.0"
+type: specification
+tier: schema
+priority: critical
+validates_with: "validation-rules.json"
+compliance_status: pass
+memory_footprint: 476_tokens
+---
+
+# Experiment Documentation Standard (EDS) v1.0
+
+## Specification Metadata
+
+version: "1.0"
+status: active
+created: "2025-12-17"
+supersedes: null
+compatible_with: ["ADS v1.0"]
+
+## Purpose
+
+Machine-readable YAML specification for experiment artifact documentation. Optimized for AI agent consumption. Zero user-oriented content permitted.
+
+## Document Types
+
+experiment_manifest:
+  purpose: "Experiment state tracking"
+  required_fields: [experiment_id, status, created, updated, phase, metrics]
+  file_pattern: "state.json"
+  location: "experiments/{experiment_id}/"
+
+assessment:
+  purpose: "Failure analysis with evidence clusters"
+  required_fields: [ads_version, type, experiment_id, phase, priority, evidence_count]
+  file_pattern: "YYYYMMDD_HHMM_assessment_{slug}.md"
+  location: "experiments/{experiment_id}/assessments/"
+
+report:
+  purpose: "Quantitative metrics and comparisons"
+  required_fields: [ads_version, type, experiment_id, metrics, baseline, comparison]
+  file_pattern: "YYYYMMDD_HHMM_report_{slug}.md"
+  location: "experiments/{experiment_id}/reports/"
+
+guide:
+  purpose: "Command sequences (no explanations)"
+  required_fields: [ads_version, type, experiment_id, commands, prerequisites]
+  file_pattern: "YYYYMMDD_HHMM_guide_{slug}.md"
+  location: "experiments/{experiment_id}/guides/"
+
+script:
+  purpose: "Executable code with structured comments"
+  required_fields: [ads_version, type, experiment_id, dependencies]
+  file_pattern: "YYYYMMDD_HHMM_script_{slug}.py"
+  location: "experiments/{experiment_id}/scripts/"
+
+## Required Frontmatter Fields
+
+### Universal Fields (All Documents)
+ads_version:
+  type: string
+  pattern: "^[0-9]+\\.[0-9]+$"
+  example: "1.0"
+  required: true
+
+type:
+  type: enum
+  values: [assessment, report, guide, script, manifest, plan]
+  required: true
+
+experiment_id:
+  type: string
+  pattern: "^[0-9]{8}_[0-9]{6}_[a-z0-9_]+$"
+  example: "20251217_024343_image_enhancements_implementation"
+  required: true
+
+status:
+  type: enum
+  values: [draft, active, complete, deprecated]
+  required: true
+
+created:
+  type: datetime
+  format: "%Y-%m-%d %H:%M (KST)"
+  example: "2025-12-17 02:43 (KST)"
+  required: true
+
+updated:
+  type: datetime
+  format: "%Y-%m-%d %H:%M (KST)"
+  example: "2025-12-17 17:05 (KST)"
+  required: true
+
+tags:
+  type: array
+  item_type: string
+  pattern: "^[a-z0-9-]+$"
+  example: ["phase-1", "background-normalization", "ocr-preprocessing"]
+  required: true
+
+### Type-Specific Fields
+
+## Assessment Documents
+phase:
+  type: enum
+  values: [phase_0, phase_1, phase_2, phase_3, phase_4]
+  required_for: [assessment]
+
+priority:
+  type: enum
+  values: [critical, high, medium, low]
+  required_for: [assessment]
+
+evidence_count:
+  type: integer
+  minimum: 0
+  required_for: [assessment]
+
+## Report Documents
+metrics:
+  type: object
+  required_for: [report]
+  example: {"success_rate": 0.85, "avg_confidence": 0.92}
+
+baseline:
+  type: string
+  required_for: [report]
+  example: "20251129_173500_perspective_correction_implementation"
+
+comparison:
+  type: enum
+  values: [improvement, regression, neutral]
+  required_for: [report]
+
+## Guide Documents
+commands:
+  type: array
+  item_type: string
+  required_for: [guide]
+  example: ["etk init my-experiment --type custom", "etk task \"Run test\""]
+
+prerequisites:
+  type: array
+  item_type: string
+  required_for: [guide]
+  example: ["Python 3.11+", "experiment state initialized"]
+
+## Script Documents
+dependencies:
+  type: array
+  item_type: string
+  required_for: [script]
+  example: ["numpy", "opencv-python", "pathlib"]
+
+## Prohibited Content
+
+user_oriented_content:
+  prohibited: true
+  examples:
+    - "You should follow these steps..."
+    - "For more information, see..."
+    - "It is important to understand..."
+    - "Let's begin by..."
+  enforcement: "compliance-checker.py"
+
+tutorial_phrases:
+  prohibited: true
+  examples:
+    - "tutorial"
+    - "walkthrough"
+    - "guide to understanding"
+    - "introduction to"
+  enforcement: "compliance-checker.py"
+
+emoji_usage:
+  prohibited: true
+  examples: ["🚀", "✅", "📊", "🎯"]
+  exceptions: ["pre-commit hook error messages only"]
+  enforcement: "compliance-checker.py"
+
+verbose_prose:
+  prohibited: true
+  preferred: "structured_data"
+  examples:
+    - "This experiment builds upon the successful implementation..."
+    - "The goal is to incrementally improve OCR accuracy..."
+  alternative: "Use tables, lists, command sequences"
+
+conceptual_explanations:
+  prohibited: true
+  preferred: "execution_commands"
+  examples:
+    - "The importance of background normalization lies in..."
+    - "By understanding the relationship between..."
+  alternative: "State what to execute, not why"
+
+## Document Structure Requirements
+
+### Assessment Structure
+required_sections:
+  - frontmatter: "YAML metadata"
+  - failure_clusters: "Categorized failure modes (table format)"
+  - evidence_samples: "Representative sample IDs (list)"
+  - root_cause_analysis: "Hypothesis (structured data)"
+  - next_actions: "Commands to execute (list)"
+
+prohibited_sections:
+  - "background"
+  - "motivation"
+  - "conceptual_overview"
+
+### Report Structure
+required_sections:
+  - frontmatter: "YAML metadata"
+  - metrics_table: "Quantitative results (markdown table)"
+  - baseline_comparison: "Side-by-side metrics (table)"
+  - statistical_analysis: "Significance tests (structured)"
+
+format: "tables_and_numbers_only"
+prose_maximum: "1 sentence per section header"
+
+### Guide Structure
+required_sections:
+  - frontmatter: "YAML metadata"
+  - command_sequence: "Ordered commands (numbered list)"
+  - expected_outputs: "Output patterns (list)"
+  - validation_steps: "Verification commands (list)"
+
+format: "commands_only"
+explanations: "prohibited"
+
+## Naming Conventions
+
+file_pattern:
+  format: "YYYYMMDD_HHMM_{TYPE}_{slug}.md"
+  examples:
+    - "20251217_1703_assessment_failure-cluster-analysis.md"
+    - "20251217_1705_report_ocr-accuracy-baseline-v1.md"
+    - "20251217_1710_guide_enhancement-testing-commands.md"
+
+slug_rules:
+  characters: "lowercase letters, numbers, hyphens only"
+  pattern: "^[a-z0-9-]+$"
+  max_length: 50
+  examples: ["failure-cluster-analysis", "ocr-accuracy-baseline-v1"]
+
+prohibited_patterns:
+  all_caps: "^[A-Z_]+\\.md$"  # CRITICAL violation
+  camel_case: "^[a-z]+([A-Z][a-z]+)+\\.md$"
+  pascal_case: "^[A-Z][a-z]+([A-Z][a-z]+)*\\.md$"
+  spaces: "\\s+"
+  underscores: "_" # except in {TYPE} delimiter
+
+## Placement Rules
+
+directory_structure:
+  experiments:
+    pattern: "experiments/{experiment_id}/"
+    subdirectories:
+      - ".metadata/"       # REQUIRED - EDS artifacts (validated)
+        - "assessments/"   # Failure analysis documents
+        - "reports/"       # Quantitative metrics documents
+        - "guides/"        # Command sequence documents
+        - "plans/"         # Experiment plan documents
+      - "scripts/"         # Executable Python/Bash scripts
+      - "outputs/"         # Intermediate work (debug, validation, comparisons)
+      - "artifacts/"       # Final curated deliverables (published results)
+
+    root_files:
+      allowed: ["README.md", "state.json"]
+      prohibited: ["ALL OTHER .md FILES"]
+
+metadata_requirements:
+  mandatory_files:
+    - ".metadata/manifest.json"
+
+  manifest_schema:
+    required_fields: [experiment_id, created, updated, phase, status, success_rate]
+
+## Workflow Requirements
+
+cli_commands:
+  mandatory: true
+  manual_creation: "prohibited"  # CRITICAL violation
+
+  available_commands:
+  available_commands:
+    start_experiment: "etk init <name> --type <type> --intention \"<goal>\""
+    resume_experiment: "etk status <experiment_id>"
+    generate_assessment: "etk create assessment \"<title>\" --phase <phase>"
+    generate_report: "etk create report \"<title>\" --metrics <metrics>"
+    record_artifact: "etk record <path> --type <type>"
+
+frontmatter_generation:
+  automatic: true
+  source: "CLI tools"
+  manual_override: "discouraged"
+
+## Validation Protocols
+
+validation_frequency:
+  pre_commit: true
+  on_demand: true
+  automated: true
+
+validation_checks:
+  eds_compliance:
+    command: "etk validate <experiment_id>"
+    scope: "all YAML frontmatter"
+
+  naming_validation:
+    command: ".ai-instructions/tier4-workflows/pre-commit-hooks/naming-validation.sh"
+    scope: "all markdown files"
+
+  metadata_presence:
+    command: ".ai-instructions/tier4-workflows/pre-commit-hooks/metadata-validation.sh"
+    scope: "experiment directories"
+
+  placement_validation:
+    command: ".ai-instructions/tier4-workflows/pre-commit-hooks/placement-validation.sh"
+    scope: "all files"
+
+failure_handling:
+  commit_blocked: true
+  error_message_required: true
+  fix_suggestions_required: true
+
+## Enforcement Mechanisms
+
+pre_commit_hooks:
+  installed: true
+  location: ".ai-instructions/tier4-workflows/pre-commit-hooks/"
+  execution_time: "<1 second"
+
+compliance_dashboard:
+  available: true
+  command: "python .ai-instructions/tier4-workflows/compliance-reporting/generate-compliance-report.py"
+  output: "latest-report.txt"
+
+violation_severity:
+  critical:
+    - "manual_artifact_creation"
+    - "all_caps_filenames"
+    - "missing_metadata_directory"
+
+  high:
+    - "missing_required_frontmatter"
+    - "prohibited_content_present"
+    - "incorrect_placement"
+
+  medium:
+    - "missing_optional_frontmatter"
+    - "suboptimal_structure"
+
+## Lifecycle Management
+
+experiment_states:
+  active:
+    definition: "Currently under development"
+    allowed_updates: "unrestricted"
+
+  complete:
+    definition: "Development finished, results finalized"
+    allowed_updates: "corrections_only"
+
+  deprecated:
+    definition: "Superseded by newer experiment"
+    retention: "30 days"
+    migration_required: true
+
+deprecation_process:
+  step_1: "Mark status as 'deprecated' in manifest.json"
+  step_2: "Add 'superseded_by' field with new experiment_id"
+  step_3: "Move to .ai-instructions/DEPRECATED/tier1/"
+  step_4: "Delete after retention period"
+
+## Compatibility
+
+ads_v1_alignment:
+  shared_principles:
+    - "machine_readable_format"
+    - "ai_only_audience"
+    - "zero_user_oriented_content"
+    - "structured_data_preferred"
+    - "pre_commit_enforcement"
+
+  differences:
+    - "EDS focuses on experiment artifacts"
+    - "EDS requires .metadata/ directory"
+    - "EDS has experiment lifecycle states"
+
+reuse_from_ads:
+  - "compliance-checker.py pattern"
+  - "pre-commit hook structure"
+  - "YAML frontmatter format"
+  - "prohibited content rules"
+
+## Token Footprint Optimization
+
+target_reduction: "90%"
+baseline: "~8,500 tokens (verbose markdown)"
+target: "~850 tokens (structured YAML)"
+
+optimization_strategies:
+  - "Replace prose with tables"
+  - "Replace explanations with commands"
+  - "Replace tutorials with structured data"
+  - "Eliminate redundant frontmatter fields"
+
+measurement:
+  method: "line_count * 4 tokens/line"
+  reported_by: "compliance dashboard"
+
+## Schema Evolution
+
+versioning:
+  current: "1.0"
+  format: "MAJOR.MINOR"
+
+  breaking_changes: "increment MAJOR"
+  backward_compatible: "increment MINOR"
+
+migration_path:
+  v1_to_v2: "TBD - not yet needed"
+  version_field: "ads_version in frontmatter"
+
+## References
+
+related_standards:
+  - "ADS v1.0 (.ai-instructions/schema/ads-v1.0-spec.yaml)"
+  - "AgentQMS Tier 1 SST (naming, placement, workflow rules)"
+
+enforcement_tools:
+  - "compliance-checker.py"
+  - "pre-commit hooks (naming, metadata, EDS compliance)"
+  - "compliance dashboard (generate-compliance-report.py)"
+
+## Validation
+
+schema_validates: true
+passes_compliance: true
+aligned_with_ads_v1: true
+ready_for_enforcement: true

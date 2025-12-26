@@ -17,7 +17,7 @@ branch: "main"
 This document describes the design approach for implementing sepia tone enhancement as an alternative to gray-scale conversion and gray-world normalization in the OCR preprocessing pipeline. Based on user observations, sepia enhancement provides more reliable OCR results than existing normalization methods.
 
 **Experiment Context**: 20251217_024343_image_enhancements_implementation
-**Related Artifacts**: experiment-tracker/experiments/.../scripts/sepia_*.py
+**Related Artifacts**: experiment_manager/experiments/.../scripts/sepia_*.py
 
 ## Problem Statement
 
@@ -311,9 +311,9 @@ Sepia enhancement is considered successful if:
 ## References
 
 - Experiment: `20251217_024343_image_enhancements_implementation`
-- Scripts: `experiment-tracker/.../scripts/sepia_*.py`
-- Documentation: `experiment-tracker/.../docs/SEPIA_TESTING_GUIDE.md`
-- State: `experiment-tracker/.../state.yml`
+- Scripts: `experiment_manager/.../scripts/sepia_*.py`
+- Documentation: `experiment_manager/.../docs/SEPIA_TESTING_GUIDE.md`
+- State: `experiment_manager/.../state.yml`
 - **Decision**: What was chosen
 - **Rationale**: Why this option was selected
 - **Consequences**: Implications of this choice

@@ -62,18 +62,18 @@ Original: https://console.upstage.ai/playground/document-ocr
 
 **Problem Solved**: Rapid AI-driven experimentation often produces a high volume of artifacts, scripts, and documentation that require systematic organization to remain manageable. Traditional project structures fail when experiments iterate daily and debugging requires instant access to reliable documentation.
 
-**Solution**: `experiment-tracker/` - A structured system for organizing experimental artifacts optimized for both human readability and AI consumption. Provides standardized protocols for common workflows and output format for artifacts.
+**Solution**: `experiment_manager/` - A structured system for organizing experimental artifacts optimized for both human readability and AI consumption. Provides standardized protocols for common workflows and output format for artifacts.
 
 ### Example of Standardized Technical Reports & Documentation
 
 **Baseline Analysis**
-- [Baseline Metrics Summary](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md) - Comprehensive baseline metrics establishing performance benchmarks when comparing subtle improvements in quality
+- [Baseline Metrics Summary](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md) - Comprehensive baseline metrics establishing performance benchmarks when comparing subtle improvements in quality
 
 **Incident Resolution**
-- [Data Loss Incident Report](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md) - Critical data loss incident analysis and resolution strategy
+- [Data Loss Incident Report](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md) - Critical data loss incident analysis and resolution strategy
 
 **Comparative Analysis**
-- [Background Normalization Comparison](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1458_report_background-normalization-comparison.md) - Background normalization strategy comparison with quantitative results
+- [Background Normalization Comparison](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1458_report_background-normalization-comparison.md) - Background normalization strategy comparison with quantitative results
 
 ### Visual Results & Demos
 
@@ -81,7 +81,7 @@ Original: https://console.upstage.ai/playground/document-ocr
 
 | Fitted Corners | Corrected Output |
 | :---: | :---: |
-| [<img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="700px" />](docs/assets/images/demo/original-with-fitted-corners.webp) | [<img src="experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="250px" />](experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg) |
+| [<img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="700px" />](docs/assets/images/demo/original-with-fitted-corners.webp) | [<img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="250px" />](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg) |
 | *Corner detection and geometric fitting* | *Final perspective-corrected output* |
 
 *(Click images to enlarge)*
