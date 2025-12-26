@@ -220,14 +220,14 @@ class TrackingRepair:
             current_path = self.current_artifacts[key]
             if current_path.exists():
                 # Found the artifact at a new location
-                self.stale_paths.append((table, record_id, artifact_path))
-                self.repairs.append((table, record_id, artifact_path, str(current_path)))
+                self.stale_paths.append((table, str(record_id), artifact_path))
+                self.repairs.append((table, str(record_id), artifact_path, str(current_path)))
             else:
                 # Artifact exists in index but not on filesystem
                 print(f"⚠️  Artifact in index but missing: {key} -> {current_path}")
         else:
             # Artifact not found in current index
-            self.stale_paths.append((table, record_id, artifact_path))
+            self.stale_paths.append((table, str(record_id), artifact_path))
             print(f"⚠️  Artifact not in index: {key} (from {table} id={record_id})")
 
     def _report_findings(self) -> None:

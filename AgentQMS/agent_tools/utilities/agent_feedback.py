@@ -30,6 +30,7 @@ class AgentFeedbackCollector:
     ) -> str:
         """Collect feedback from an agent about a documentation issue."""
 
+        feedback_id: str = f"FB_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         feedback = {
             "timestamp": datetime.now().isoformat(),
             "issue_type": issue_type,
@@ -39,7 +40,7 @@ class AgentFeedbackCollector:
             "suggested_fix": suggested_fix,
             "agent_context": agent_context,
             "status": "open",
-            "id": f"FB_{datetime.now().strftime('%Y%m%d_%H%M%S')}",
+            "id": feedback_id,
         }
 
         # Load existing feedback
@@ -49,7 +50,7 @@ class AgentFeedbackCollector:
         # Save updated feedback
         self._save_feedback(existing_feedback)
 
-        return feedback["id"]
+        return feedback_id
 
     def suggest_improvement(
         self,

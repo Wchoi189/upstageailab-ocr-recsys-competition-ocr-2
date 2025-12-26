@@ -294,8 +294,13 @@ def _fit_quadrilateral_dominant_extension(
 
     for seg in segments:
         bin_name = assign_bin(seg)
-        bins[bin_name].append(seg["p1"])
-        bins[bin_name].append(seg["p2"])
+        p1 = seg["p1"]
+        p2 = seg["p2"]
+        # p1 and p2 are always ndarrays from pts
+        assert isinstance(p1, np.ndarray)
+        assert isinstance(p2, np.ndarray)
+        bins[bin_name].append(p1)
+        bins[bin_name].append(p2)
 
     # Borrow segments if a bin is empty
     # Prefer borrowing from adjacent bins (top<->left/right, bottom<->left/right, etc.)
@@ -363,6 +368,12 @@ def _fit_quadrilateral_dominant_extension(
             dtype=np.float32,
         )
         return bbox_quad, eps
+
+    # Type assertions for mypy - we've already checked for None above
+    assert l_top is not None
+    assert l_bottom is not None
+    assert l_left is not None
+    assert l_right is not None
 
     tl = _intersect_lines(l_top, l_left)
     tr = _intersect_lines(l_top, l_right)

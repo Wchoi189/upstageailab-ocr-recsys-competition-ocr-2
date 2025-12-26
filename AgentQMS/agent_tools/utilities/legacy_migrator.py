@@ -273,7 +273,7 @@ class LegacyArtifactMigrator:
                 "file": str(filepath),
             }
 
-        result = {
+        result: dict[str, Any] = {
             "status": "success",
             "file": str(filepath),
             "new_name": new_filename,
