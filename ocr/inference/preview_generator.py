@@ -78,7 +78,7 @@ class PreviewGenerator:
                 LOGGER.warning(f"cv2.imencode failed for format {format}")
                 return None
 
-            base64_str = base64.b64encode(buffer).decode("ascii")
+            base64_str = base64.b64encode(buffer.tobytes()).decode("ascii")
             return base64_str
 
         except Exception as e:
