@@ -118,7 +118,7 @@ class ConfigLoader:
             # (avoids conflicts when framework is imported into projects with their own config/)
             framework_config_dir = self.project_root / ".agentqms" / "project_config"
             if framework_config_dir.exists():
-                yaml_files: Iterable[Path] = (
+                yaml_files = (
                     framework_config_dir / "framework.yaml",
                     framework_config_dir / "interface.yaml",
                     framework_config_dir / "paths.yaml",

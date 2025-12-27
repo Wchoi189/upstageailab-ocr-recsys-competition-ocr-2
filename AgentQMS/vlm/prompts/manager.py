@@ -9,9 +9,12 @@ from typing import TYPE_CHECKING, Any
 
 try:
     from jinja2 import Environment, FileSystemLoader
+
+    _Environment = Environment
+    _FileSystemLoader = FileSystemLoader
 except ImportError:
-    Environment = None
-    FileSystemLoader = None
+    _Environment = None  # type: ignore[assignment,misc]
+    _FileSystemLoader = None  # type: ignore[assignment,misc]
 
 if TYPE_CHECKING:
     from jinja2 import Template
@@ -36,9 +39,9 @@ class PromptManager:
         self.examples_file = self.templates_dir / "few_shot_examples.json"
 
         # Initialize Jinja2 environment if available
-        if Environment is not None and FileSystemLoader is not None:
-            self.jinja2_env = Environment(
-                loader=FileSystemLoader(str(self.jinja2_dir)),
+        if _Environment is not None and _FileSystemLoader is not None:
+            self.jinja2_env = _Environment(
+                loader=_FileSystemLoader(str(self.jinja2_dir)),
                 trim_blocks=True,
                 lstrip_blocks=True,
             )

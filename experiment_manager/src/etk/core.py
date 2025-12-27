@@ -54,7 +54,7 @@ class ExperimentTracker:
 
         return None
 
-    def init_experiment(self, name: str, description: str = "", tags: list[str] = None) -> str:
+    def init_experiment(self, name: str, description: str = "", tags: list[str] | None = None) -> str:
         """Initialize new experiment with proper EDS v1.0 structure."""
         timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
         slug = name.lower().replace(" ", "_").replace("-", "_")

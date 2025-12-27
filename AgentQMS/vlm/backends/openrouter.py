@@ -5,8 +5,10 @@ from typing import Any
 
 try:
     from openai import OpenAI
+
+    _OpenAI = OpenAI
 except ImportError:
-    OpenAI = None
+    _OpenAI = None  # type: ignore[assignment,misc]
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value
@@ -24,7 +26,7 @@ class OpenRouterBackend(BaseVLMBackend):
             config: Backend configuration with OpenRouter API key
         """
         super().__init__(config)
-        if OpenAI is None:
+        if _OpenAI is None:
             raise BackendError("openai package is required for OpenRouter backend. Install with: pip install openai")
 
         settings = get_config().backends.openrouter
@@ -33,7 +35,7 @@ class OpenRouterBackend(BaseVLMBackend):
             raise BackendError("OpenRouter API key is required. Provide it via configuration or environment variables.")
 
         base_url = config.endpoint or settings.base_url
-        self.client = OpenAI(
+        self.client = _OpenAI(
             api_key=api_key,
             base_url=base_url,
         )
@@ -115,7 +117,7 @@ class OpenRouterBackend(BaseVLMBackend):
 
     def is_available(self) -> bool:
         """Check if OpenRouter backend is available."""
-        if OpenAI is None:
+        if _OpenAI is None:
             return False
 
         settings = get_config().backends.openrouter
