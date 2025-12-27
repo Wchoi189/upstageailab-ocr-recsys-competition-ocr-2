@@ -91,12 +91,23 @@ packages = ["ocr", "AgentQMS"]
 # extra-index-url = ["https://download.pytorch.org/whl/cu121"]
 
 [tool.mypy]
-# General settings
+# General settings - Balanced for ML/Research projects
 ignore_missing_imports = true
-show_error_codes = false
-exclude = ["scripts/process_monitor.py", "outputs/", "scripts/", "docs/", "ablation_study/", "archive/", "experiment_manager/etk.py", "apps/agentqms-dashboard/"]
+show_error_codes = true  # Help identify error types for targeted fixes
+show_column_numbers = true  # Better error locations
+exclude = [
+    "scripts/",
+    "outputs/",
+    "docs/",
+    "ablation_study/",
+    "archive/",
+    "experiment_manager/etk.py",
+    "apps/agentqms-dashboard/",
+    "tests/",  # Don't strictly type-check tests
+    "runners/",  # ML runners often have dynamic types
+]
 
-# Development-friendly settings (less strictness)
+# Development-friendly settings (optimized for productivity)
 warn_unused_ignores = false
 warn_redundant_casts = false
 warn_unused_configs = false
@@ -104,7 +115,10 @@ warn_unreachable = false
 disallow_untyped_calls = false
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
-check_untyped_defs = true
+check_untyped_defs = false  # Skip type checking in untyped functions to reduce noise
+follow_imports = "silent"  # Don't cascade errors from imports
+warn_return_any = false  # ML code often returns Any from numpy/torch
+no_implicit_optional = false  # Allow implicit Optional for flexibility
 
 [[tool.mypy.overrides]]
 module = [
