@@ -59,7 +59,7 @@ class FrontmatterGenerator:
             "completion_summaries": "completion_summary",
         }
 
-    def analyze_file(self, file_path: str) -> dict[str, str]:
+    def analyze_file(self, file_path: str) -> dict[str, str | list[str]]:
         """Analyze file to determine appropriate frontmatter values"""
         path = Path(file_path)
 

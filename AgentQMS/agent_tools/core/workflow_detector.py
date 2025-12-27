@@ -154,8 +154,8 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
     suggestions: dict[str, Any] = {
         "task_type": task_type,
         "context_bundle": base_suggestions["context_bundle"],
-        "workflows": base_suggestions["suggested_workflows"].copy(),
-        "tools": base_suggestions["suggested_tools"].copy(),
+        "workflows": list(base_suggestions["suggested_workflows"]),
+        "tools": list(base_suggestions["suggested_tools"]),
         "artifact_type": artifact_type,
         "make_commands": [],
     }

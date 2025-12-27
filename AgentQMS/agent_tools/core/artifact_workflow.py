@@ -62,11 +62,9 @@ class ArtifactWorkflow:
             # Import lazily to avoid circular imports at module load time
             from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
 
-            root = get_artifacts_dir()
+            self.artifacts_root = Path(get_artifacts_dir())
         else:
-            root = artifacts_root
-
-        self.artifacts_root = Path(root)
+            self.artifacts_root = Path(artifacts_root)
         self.templates = ArtifactTemplates()
         self.validator = ArtifactValidator(self.artifacts_root)
 
@@ -399,7 +397,9 @@ class ArtifactWorkflow:
         tags = input("Tags (comma-separated): ").strip()
 
         # Prepare kwargs
-        kwargs = {}
+        from typing import Any
+
+        kwargs: dict[str, Any] = {}
         if description:
             kwargs["description"] = description
         if tags:

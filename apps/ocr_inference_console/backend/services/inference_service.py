@@ -87,6 +87,10 @@ class InferenceService:
 
         # Run inference
         try:
+            # Ensure engine is loaded
+            if self._engine is None:
+                raise RuntimeError("Inference engine not loaded")
+
             # Debug: Log preprocessing parameters
             logger.info(
                 "🔍 Preprocessing options: perspective=%s, grayscale=%s, bg_norm=%s, sepia=%s, clahe=%s",
@@ -154,6 +158,9 @@ class InferenceService:
             start_init = time.perf_counter()
             self._engine = InferenceEngine()
             logger.info("✅ InferenceEngine initialized in %.2fs", time.perf_counter() - start_init)
+
+        # Ensure engine is initialized
+        assert self._engine is not None
 
         # Offload blocking model load to threadpool
         loop = asyncio.get_running_loop()
