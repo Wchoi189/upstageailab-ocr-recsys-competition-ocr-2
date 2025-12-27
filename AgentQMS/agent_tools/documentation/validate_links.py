@@ -148,7 +148,7 @@ class LinkValidator:
     def build_reference_graph(self) -> dict[str, list[str]]:
         """Build a reference graph of documentation files."""
         doc_files = self.find_doc_files()
-        graph = {}
+        graph: dict[str, list[str]] = {}
 
         for file_path in doc_files:
             rel_file = str(file_path.relative_to(self.docs_root.parent))

@@ -15,7 +15,7 @@ class DocumentationQualityMonitor:
 
     def __init__(self, project_root: str = "."):
         self.project_root = Path(project_root)
-        self.issues = []
+        self.issues: list[dict[str, Any]] = []
 
     def check_documentation_consistency(self) -> list[dict]:
         """Check for documentation consistency issues."""

@@ -263,7 +263,9 @@ class ArtifactAudit:
 
     def fix_files(self, file_paths: list[Path], dry_run: bool = False) -> dict:
         """Fix frontmatter for given files using AgentQMS tools."""
-        results = {
+        from typing import Any
+
+        results: dict[str, Any] = {
             "processed": 0,
             "success": 0,
             "skipped": 0,
@@ -335,7 +337,9 @@ class ArtifactAudit:
 
     def validate_files(self, file_paths: list[Path]) -> dict:
         """Validate files using ArtifactValidator."""
-        validation_results = {
+        from typing import Any
+
+        validation_results: dict[str, Any] = {
             "valid": [],
             "invalid": [],
         }

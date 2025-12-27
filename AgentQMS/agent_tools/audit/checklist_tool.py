@@ -68,7 +68,7 @@ def extract_checklist_for_phase(phase: str) -> dict[str, list[str]]:
         phase_content = content[start_pos:]
 
     # Extract categories and items
-    categories = {}
+    categories: dict[str, Any] = {}
     current_category = None
 
     # Find category headers (### Category Name)
