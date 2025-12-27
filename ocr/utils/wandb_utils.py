@@ -16,6 +16,8 @@ import wandb
 from omegaconf import DictConfig
 from PIL import Image as PILImage
 
+from .text_rendering import put_text_utf8
+
 
 def load_env_variables():
     """Load environment variables from .env/.env.local if present."""
@@ -554,26 +556,20 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
         cv2.addWeighted(overlay, alpha, img_to_draw, 1 - alpha, 0, dst=img_to_draw)
         # Green = GT, Red = Pred
         cv2.line(img_to_draw, (8, 12), (32, 12), (0, 255, 0), 3)
-        cv2.putText(
+        img_to_draw = put_text_utf8(
             img_to_draw,
             "GT",
-            (38, 16),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (220, 220, 220),
-            1,
-            cv2.LINE_AA,
+            (38, 10),
+            font_size=12,
+            color=(220, 220, 220),
         )
         cv2.line(img_to_draw, (8, 26), (32, 26), (0, 0, 255), 3)  # BGR: Red = (0, 0, 255)
-        cv2.putText(
+        img_to_draw = put_text_utf8(
             img_to_draw,
             "Pred",
-            (38, 30),
-            cv2.FONT_HERSHEY_SIMPLEX,
-            0.5,
-            (220, 220, 220),
-            1,
-            cv2.LINE_AA,
+            (38, 24),
+            font_size=12,
+            color=(220, 220, 220),
         )
 
         # BUG-20251116-001: Convert BGR back to RGB for WandB logging (WandB expects RGB)

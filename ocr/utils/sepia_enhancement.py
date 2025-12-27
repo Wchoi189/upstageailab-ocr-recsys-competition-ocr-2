@@ -15,13 +15,20 @@ import cv2
 import numpy as np
 
 
-def enhance_sepia(img: np.ndarray) -> np.ndarray:
-    """Apply classic sepia tone transformation.
+def enhance_sepia(img: np.ndarray, brightness_scale: float = 0.85) -> np.ndarray:
+    """Apply sepia tone transformation with configurable brightness.
 
-    Standard sepia matrix (Albumentations version) without contrast enhancement.
+    The standard sepia matrix has coefficients > 1.0 (red sum: 1.351, green sum: 1.203),
+    causing ~16% brightness increase. This is beneficial for dark images but can
+    over-brighten normally-lit images.
 
     Args:
         img: BGR numpy array (OpenCV convention), shape (H, W, 3)
+        brightness_scale: Multiplier for sepia matrix coefficients
+            - 1.0: Standard sepia with full brightness boost (best for dark images)
+            - 0.85: Moderate boost (default - good balance)
+            - 0.74: Normalized sepia with no brightness change
+            - 1.2: Extra brightness for very dark images
 
     Returns:
         Sepia-toned BGR numpy array with same shape and dtype uint8
@@ -29,23 +36,26 @@ def enhance_sepia(img: np.ndarray) -> np.ndarray:
     Example:
         >>> import cv2
         >>> img = cv2.imread("document.jpg")
-        >>> sepia_img = enhance_sepia(img)
+        >>> sepia_img = enhance_sepia(img, brightness_scale=0.85)
         >>> cv2.imwrite("sepia.jpg", sepia_img)
     """
     # Convert BGR to RGB for processing
     img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
 
-    # Classic sepia matrix (same as Albumentations)
-    # Formula: R' = 0.393*R + 0.769*G + 0.189*B
-    #          G' = 0.349*R + 0.686*G + 0.168*B
-    #          B' = 0.272*R + 0.534*G + 0.131*B
-    sepia_matrix = np.array(
+    # Classic sepia matrix (Albumentations version)
+    # Formula: R' = 0.393*R + 0.769*G + 0.189*B  (sum = 1.351)
+    #          G' = 0.349*R + 0.686*G + 0.168*B  (sum = 1.203)
+    #          B' = 0.272*R + 0.534*G + 0.131*B  (sum = 0.937)
+    base_sepia_matrix = np.array(
         [
             [0.393, 0.769, 0.189],  # Red channel
             [0.349, 0.686, 0.168],  # Green channel
             [0.272, 0.534, 0.131],  # Blue channel
         ]
     )
+
+    # Apply brightness scaling
+    sepia_matrix = base_sepia_matrix * brightness_scale
 
     sepia = cv2.transform(img_rgb, sepia_matrix)
     sepia = np.clip(sepia, 0, 255).astype(np.uint8)

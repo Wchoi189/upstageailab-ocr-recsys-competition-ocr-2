@@ -25,6 +25,8 @@ import requests
 from PIL import Image
 from tqdm import tqdm
 
+from ocr.utils.api_usage_tracker import get_tracker
+
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
@@ -52,6 +54,9 @@ class UpstageDocumentParser:
 
     def process_image(self, image_path: str) -> dict | None:
         """Process a single image with Upstage API"""
+        tracker = get_tracker()
+        start_time = time.time()
+
         try:
             with open(image_path, "rb") as f:
                 files = {"document": f}
@@ -59,13 +64,44 @@ class UpstageDocumentParser:
 
                 response = requests.post(self.base_url, headers=self.headers, files=files, data=data, timeout=30)
 
+                response_time_ms = (time.time() - start_time) * 1000
+
                 if response.status_code == 200:
-                    return response.json()
+                    result = response.json()
+                    tracker.record_call(
+                        api_type="document_parse",
+                        status="success",
+                        response_time_ms=response_time_ms,
+                        metadata={"image": Path(image_path).name, "elements": len(result.get("elements", []))}
+                    )
+                    return result
+                elif response.status_code == 429:
+                    tracker.record_call(
+                        api_type="document_parse",
+                        status="rate_limited",
+                        response_time_ms=response_time_ms,
+                        metadata={"image": Path(image_path).name}
+                    )
+                    logger.error(f"Rate limited for {image_path}")
+                    return None
                 else:
+                    tracker.record_call(
+                        api_type="document_parse",
+                        status="error",
+                        response_time_ms=response_time_ms,
+                        error_message=f"HTTP {response.status_code}",
+                        metadata={"image": Path(image_path).name}
+                    )
                     logger.error(f"API error for {image_path}: {response.status_code} - {response.text}")
                     return None
 
         except Exception as e:
+            tracker.record_call(
+                api_type="document_parse",
+                status="error",
+                error_message=str(e),
+                metadata={"image": Path(image_path).name}
+            )
             logger.error(f"Error processing {image_path}: {str(e)}")
             return None
 
@@ -272,7 +308,9 @@ def main():
 
     logger.info(f"Total: {total_stats['processed']}/{total_stats['total']} processed, {total_stats['failed']} failed")
 
+    # Print API usage report
     if not args.dry_run and not args.convert_webp_only:
+        get_tracker().print_report()
         cost_estimate = total_stats["processed"] * 0.01  # $0.01 per page
         logger.info(f"Estimated cost: ${cost_estimate:.2f} ({total_stats['processed']} pages × $0.01)")
 

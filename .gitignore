@@ -102,12 +102,12 @@ frontend/public/models/*.onnx
 # Data
 data/datasets/
 data/pseudo_label/
-data/filter_samples/
-/data/
-/data/ops
+data/filter_samples/s
+data/
+data/ops
 # Experiments and Archives
 multirun/
-# _archive/
+_archive/
 __OLD__/
 # /archive/
 
