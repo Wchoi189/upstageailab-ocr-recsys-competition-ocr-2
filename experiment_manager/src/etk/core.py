@@ -19,6 +19,9 @@ class ExperimentTracker:
             # Auto-detect tracker root (climb up from CWD)
             current = Path.cwd()
             while current != current.parent:
+                if (current / "experiment_manager").exists():
+                    self.tracker_root = current / "experiment_manager"
+                    break
                 if (current / "experiment-tracker").exists():
                     self.tracker_root = current / "experiment-tracker"
                     break
@@ -176,6 +179,51 @@ class ExperimentTracker:
             conn.commit()
         finally:
             conn.close()
+        return stats
+
+    def prune_missing(self, dry_run: bool = False) -> dict:
+        """Remove experiments from DB that no longer exist on filesystem."""
+        conn = sqlite3.connect(self.db.db_path)
+        stats = {"pruned": 0, "active": 0}
+
+        try:
+            # Get all DB experiments
+            cursor = conn.execute("SELECT experiment_id FROM experiments")
+            db_experiments = {row[0] for row in cursor.fetchall()}
+
+            # Get all FS experiments
+            fs_experiments = set()
+            for item in self.experiments_dir.iterdir():
+                if item.is_dir() and not item.name.startswith("."):
+                    fs_experiments.add(item.name)
+
+            # Determine stale
+            stale_experiments = db_experiments - fs_experiments
+            stats["active"] = len(fs_experiments)
+
+            if not stale_experiments:
+                return stats
+
+            if dry_run:
+                stats["pruned"] = len(stale_experiments)
+                print(f"🔍 Dry run: Would prune {len(stale_experiments)} experiments:")
+                for exp_id in stale_experiments:
+                    print(f"   - {exp_id}")
+                return stats
+
+            # Prune
+            for exp_id in stale_experiments:
+                conn.execute("DELETE FROM experiments WHERE experiment_id = ?", (exp_id,))
+                conn.execute("DELETE FROM artifacts WHERE experiment_id = ?", (exp_id,))
+                conn.execute("DELETE FROM artifacts_fts WHERE experiment_id = ?", (exp_id,))
+                print(f"🗑️  Pruned: {exp_id}")
+                stats["pruned"] += 1
+
+            conn.commit()
+
+        finally:
+            conn.close()
+
         return stats
 
     def query_artifacts(self, query: str) -> list[dict]:

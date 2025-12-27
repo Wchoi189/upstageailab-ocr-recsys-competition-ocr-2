@@ -4,27 +4,28 @@
 
 workflow:
   start:
-    command: "etk init {name}"
+    command: "uv run python experiment_manager/etk.py init {name}"
     result: "Creates experiments/YYYYMMDD_HHMMSS_{name}/ with strict schema structure."
 
   create_artifact:
-    assessment: "etk create assessment '{title}'"
-    report: "etk create report '{title}' --metrics 'acc,f1'"
-    guide: "etk create guide '{title}'"
-    script: "etk create script '{title}'"
+    assessment: "uv run python experiment_manager/etk.py create assessment '{title}'"
+    report: "uv run python experiment_manager/etk.py create report '{title}' --metrics 'acc,f1'"
+    guide: "uv run python experiment_manager/etk.py create guide '{title}'"
+    script: "uv run python experiment_manager/etk.py create script '{title}'"
 
   context_tracking:
-    add_task: "python3 experiment_manager/scripts/add-task.py '{description}'"
-    complete_task: "python3 experiment_manager/scripts/complete-task.py {task_id}"
-    log_insight: "python3 experiment_manager/scripts/log-insight.py '{insight}'"
+    add_task: "uv run python experiment_manager/scripts/add-task.py '{description}'"
+    complete_task: "uv run python experiment_manager/scripts/complete-task.py {task_id}"
+    log_insight: "uv run python experiment_manager/scripts/log-insight.py '{insight}'"
 
   check:
-    status: "etk status"
-    list: "etk list"
-    validate: "etk validate --all"
+    status: "uv run python experiment_manager/etk.py status"
+    list: "uv run python experiment_manager/etk.py list"
+    validate: "uv run python experiment_manager/etk.py validate --all"
 
   database:
-    sync: "etk sync --all"
+    reconcile: "uv run python experiment_manager/etk.py reconcile --all"
+    sync: "uv run python experiment_manager/etk.py sync --all"
 
 paths:
   module: "experiment_manager/"
@@ -33,5 +34,5 @@ paths:
 
 rules:
   - Read experiment_manager/agent_interface.yaml for exact command arguments.
-  - Always run "etk sync --all" after creating artifacts.
+  - Always run "etk reconcile --all" and "etk sync --all" after creating artifacts.
   - Never create artifacts manually.

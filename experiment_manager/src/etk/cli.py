@@ -78,6 +78,10 @@ Examples:
     sync_parser.add_argument("experiment_id", nargs="?", help="Experiment ID (auto-detected if omitted)")
     sync_parser.add_argument("--all", action="store_true", help="Sync all experiments")
 
+    # prune command
+    prune_parser = subparsers.add_parser("prune", help="Remove missing experiments from database")
+    prune_parser.add_argument("--dry-run", action="store_true", help="Show what would be removed without deleting")
+
     # query command
     query_parser = subparsers.add_parser("query", help="Search artifacts (FTS5)")
     query_parser.add_argument("query", help="Search query")
@@ -189,17 +193,21 @@ Examples:
 
         elif args.command == "reconcile":
             if args.all:
-                experiments = tracker.list_experiments()
+                experiments = []
+                # Scan filesystem directly to bypass empty DB
+                for item in tracker.experiments_dir.iterdir():
+                    if item.is_dir() and not item.name.startswith("."):
+                         experiments.append(item.name)
+
                 if not experiments:
-                    print("No experiments found.")
+                    print("No experiments found in filesystem.")
                     sys.exit(0)
 
                 print(f"🔄 Reconciling {len(experiments)} experiments...")
                 success_count = 0
-                for exp in experiments:
-                    exp_id = exp['experiment_id']
+                for exp_id in experiments:
                     try:
-                        exp_dir = factory._get_experiment_dir(exp_id)
+                        exp_dir = tracker.experiments_dir / exp_id
                         reconciler = ExperimentReconciler(exp_dir)
                         result = reconciler.reconcile()
                         print(f"✅ [{exp_id}] Synced {result['artifacts_count']} artifacts")
@@ -244,6 +252,15 @@ Examples:
                 print(f"   ⊘ Skipped: {stats['skipped']}")
             if stats["failed"] > 0:
                 print(f"   ✗ Failed: {stats['failed']}")
+
+        elif args.command == "prune":
+            print("🔄 Pruning missing experiments from database...")
+            stats = tracker.prune_missing(dry_run=args.dry_run)
+            if args.dry_run:
+                print(f"\\n🔍 Dry run complete. Found {stats['pruned']} stale experiments.")
+            else:
+                print(f"\\n✅ Prune complete. Removed {stats['pruned']} stale experiments.")
+                print(f"   Active experiments: {stats['active']}")
 
         elif args.command == "query":
             results = tracker.query_artifacts(args.query)

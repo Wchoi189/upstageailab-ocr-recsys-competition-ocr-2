@@ -13,6 +13,9 @@ The source of truth for all project rules, architecture, and standards is locate
 - **Artifact Standards**: `.ai-instructions/tier1-sst/artifact-types.yaml`
 - **System Architecture**: `.ai-instructions/tier1-sst/system-architecture.yaml`
 - **Tools Catalog**: `.ai-instructions/tier2-framework/tool-catalog.yaml`
+- **Experiment Manager (ETK)**: `experiment_manager/etk.py` (CLI Entrypoint)
+    - **Guides**: `experiment_manager/.ai-instructions/`
+    - **Key Commands**: `init`, `reconcile`, `validate`
 
 ## 🤖 Tier 3 Agent Configs
 - **Gemini**: `.ai-instructions/tier3-agents/gemini/config.yaml`

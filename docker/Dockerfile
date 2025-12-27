@@ -107,6 +107,7 @@ RUN sed -i 's/\r$//' /home/vscode/.bashrc
 # Set up development environment
 RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
     echo 'alias python3="uv run python3"' >> ~/.bashrc && \
+    echo 'alias etk="uv run python experiment_manager/etk.py"' >> ~/.bashrc && \
     echo 'alias pytest="uv run pytest"' >> ~/.bashrc && \
     echo 'alias make="uv run make"' >> ~/.bashrc
 
