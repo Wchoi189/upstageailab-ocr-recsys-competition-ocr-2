@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 import pyclipper
 import torch
+from ocr.utils.config_utils import is_config
 
 # Module-level flag to prevent duplicate logging across all DBCollateFN instances
 _db_collate_logged_stats = False
@@ -202,7 +203,7 @@ class DBCollateFN:
                 return metadata.model_dump()
             except Exception:
                 return dict(metadata)
-        if isinstance(metadata, dict):
+        if is_config(metadata):
             return metadata
         return {}
 

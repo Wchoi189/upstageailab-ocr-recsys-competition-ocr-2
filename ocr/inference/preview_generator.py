@@ -12,6 +12,7 @@ from typing import Any
 
 import cv2
 import numpy as np
+from ocr.utils.config_utils import is_config
 
 LOGGER = logging.getLogger(__name__)
 
@@ -111,8 +112,9 @@ class PreviewGenerator:
             BUG-001: Using JPEG instead of PNG reduces file size by ~10x while
             maintaining acceptable quality for visualization.
         """
-        if not isinstance(payload, dict):
-            LOGGER.warning("Payload is not a dict, cannot attach preview")
+
+        if not is_config(payload):
+            LOGGER.warning("Payload is not a dict or DictConfig, cannot attach preview")
             return payload
 
         # Create a copy to avoid modifying the input
@@ -171,7 +173,7 @@ class PreviewGenerator:
         Returns:
             Updated payload with transformed polygons
         """
-        if not isinstance(payload, dict) or not payload.get("polygons"):
+        if not is_config(payload) or not payload.get("polygons"):
             return payload
 
         polygons_str = payload["polygons"]

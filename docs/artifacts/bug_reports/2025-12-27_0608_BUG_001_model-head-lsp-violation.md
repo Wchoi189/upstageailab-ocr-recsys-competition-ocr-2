@@ -10,18 +10,6 @@ title: "BaseHead.get_polygons_from_maps Signature Incompatibility (LSP Violation
 date: "2025-12-27 15:08 (KST)"
 branch: "claude/code-quality-plan-oApCV"
 affected_components: "ocr.models.head, ocr.models.core.base_classes"
-description: "Abstract base class BaseHead defines get_polygons_from_maps with signature (pred_maps, ground_truth) but all implementations (DBHead, CRAFTHead) use incompatible signature (batch, pred), breaking Liskov Substitution Principle."
-reproduction_steps: "1. Enable mypy check_untyped_defs=true
-2. Run mypy on ocr/models/head/
-3. Observe signature incompatibility errors"
-expected_behavior: "Subclass signatures should match abstract base class contract"
-actual_behavior: "Implementations use completely different parameter names and types"
-impact: "Type safety broken, polymorphism fails, future refactoring hazardous"
-root_cause: "Base class signature appears to be documentation-only, never enforced"
-proposed_solution: "Update BaseHead signature to match actual implementations (batch, pred) - see implementation plan"
-related_files: "ocr/models/core/base_classes.py:144, ocr/models/head/db_head.py:210, ocr/models/head/craft_head.py:57"
-discovered_by: "Mypy type checker (check_untyped_defs enforcement)"
-verified_by: "Code analysis of 15+ call sites"
 ---
 
 # Bug Report: BaseHead.get_polygons_from_maps Signature Incompatibility (LSP Violation)

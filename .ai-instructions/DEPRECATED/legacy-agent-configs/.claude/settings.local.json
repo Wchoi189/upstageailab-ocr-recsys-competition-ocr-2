@@ -1,0 +1,20 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run type-check:*)",
+      "Bash(npm run lint:*)",
+      "Bash(npm run build:*)",
+      "Bash(python -m py_compile:*)",
+      "Bash(python:*)",
+      "Bash(find:*)",
+      "Bash(uv add:*)",
+      "Bash(uv run python:*)",
+      "Bash(cat:*)",
+      "Bash(npm install:*)",
+      "Bash(xargs ls:*)",
+      "Bash(git -C /workspaces/upstageailab-ocr-recsys-competition-ocr-2 log --oneline -20)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

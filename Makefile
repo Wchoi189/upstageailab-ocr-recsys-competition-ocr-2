@@ -270,7 +270,7 @@ ocr-console-dev:
 # backend-dev, backend-ocr - removed (deprecated unified backend)
 # Use domain-specific backends instead:
 #   - apps/playground-console/backend for playground-specific features
-#   - apps/ocr-inference-console/backend for OCR inference
+#   - apps/ocr_inference_console/backend for OCR inference
 #   - apps/shared/backend_shared for shared InferenceEngine
 
 # ============================================================================
@@ -290,7 +290,7 @@ serve-ocr-console:
 		fi; \
 		echo "Starting OCR Inference Console on http://localhost:5173"; \
 		echo "Using VITE_API_URL=$${VITE_API_URL:-http://127.0.0.1:8002/api}"; \
-		cd apps/ocr-inference-console; \
+		cd apps/ocr_inference_console; \
 		VITE_API_URL=$${VITE_API_URL:-http://127.0.0.1:8002/api} npm run dev -- --host 0.0.0.0 --port 5173; \
 	'
 
@@ -306,7 +306,7 @@ ocr-console-backend:
 		echo "✅ Using checkpoint: $$OCR_CHECKPOINT_PATH"; \
 		echo "🚀 Starting OCR Console backend on http://0.0.0.0:8002"; \
 		echo "   API Docs: http://0.0.0.0:8002/docs"; \
-		uv run uvicorn apps.ocr-inference-console.backend.main:app --host 0.0.0.0 --port 8002 --reload --reload-dir apps/ocr-inference-console/backend; \
+		uv run uvicorn apps.ocr_inference_console.backend.main:app --host 0.0.0.0 --port 8002 --reload --reload-dir apps/ocr_inference_console/backend; \
 	'
 
 # OCR Console full stack (backend + frontend)
@@ -318,7 +318,7 @@ ocr-console-stack:
 			echo "   Start frontend only with: make serve-ocr-console"; \
 		else \
 			echo "✅ Starting backend with checkpoint: $$OCR_CHECKPOINT_PATH"; \
-			cd apps/ocr-inference-console/backend && \
+			cd apps/ocr_inference_console/backend && \
 			uv run uvicorn main:app --host 127.0.0.1 --port 8002 --reload &\
 			BACK_PID=$$!; \
 			trap "echo Killing backend; kill $$BACK_PID 2>/dev/null || true" EXIT INT TERM; \

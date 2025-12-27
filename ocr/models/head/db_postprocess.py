@@ -18,6 +18,8 @@ import pyclipper
 import torch
 from shapely.geometry import Polygon
 
+from ocr.utils.config_utils import is_config
+
 
 class DBPostProcessor:
     def __init__(self, thresh=0.3, box_thresh=0.7, max_candidates=1000, use_polygon=False):
@@ -50,7 +52,7 @@ class DBPostProcessor:
             raise ValueError(f"batch['images'] should have 3 channels (RGB), got {channels}")
 
         # Validate predictions
-        if isinstance(pred, dict):
+        if is_config(pred):
             if "prob_maps" not in pred:
                 raise ValueError("pred dict must contain 'prob_maps' key")
             prob_maps = pred["prob_maps"]
@@ -108,7 +110,7 @@ class DBPostProcessor:
         images = batch["images"]
 
         # Use prob_maps if pred is a dict
-        if isinstance(_pred, dict):
+        if is_config(_pred):
             assert "prob_maps" in _pred, "prob_maps is required in _pred"
             pred = _pred["prob_maps"]
         else:

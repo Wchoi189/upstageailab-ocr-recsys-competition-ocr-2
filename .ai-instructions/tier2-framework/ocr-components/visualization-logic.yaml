@@ -1,0 +1,26 @@
+component: visualization_logic
+description: Draws detected bounding boxes and class labels onto the image.
+role: |
+  Draws detected bounding boxes and class labels onto the image for instant visual verification by the user.
+critical_logic:
+  - id: drawing-context
+    description: |
+      Tool: OpenCV ('cv2.polylines', 'cv2.putText').
+      Space: Draws on the Original Image (using the original coordinates from 'TextRegion').
+  - id: optimization
+    description: |
+      Compression: Encodes output as JPEG (quality 85) instead of PNG or raw bytes.
+      Reason: Reduces payload size from ~10MB (Raw) to ~200KB (JPEG), critical for low-latency HTTP responses.
+  - id: visual-style
+    description: |
+      Color: Green (0, 255, 0) for boxes.
+      Thickness: Adaptive based on image resolution (so lines aren't invisible on 4K images).
+data_contract:
+  input:
+    - field: original_image
+    - field: regions
+      type: List[TextRegion]
+  output:
+    - field: base64_string
+      type: str
+      description: JPEG encoded

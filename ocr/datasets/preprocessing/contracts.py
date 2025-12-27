@@ -7,6 +7,8 @@ from typing import Any
 import numpy as np
 from pydantic import BaseModel, Field, field_validator
 
+from ocr.utils.config_utils import is_config
+
 
 class ImageInputContract(BaseModel):
     """Contract for image inputs to preprocessing components."""
@@ -52,7 +54,7 @@ class PreprocessingResultContract(BaseModel):
     @classmethod
     def validate_metadata(cls, v: Any) -> dict[str, Any]:
         """Validate metadata structure."""
-        if not isinstance(v, dict):
+        if not is_config(v):
             raise ValueError("Metadata must be dictionary")
         return v
 

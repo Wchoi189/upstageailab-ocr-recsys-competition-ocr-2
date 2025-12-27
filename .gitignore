@@ -129,6 +129,7 @@ __OLD__/
 
 # Deprecated and Debug
 DEPRECATED/
+!.ai-instructions/DEPRECATED/
 _deprecated/
 DEBUG_OUTPUT_WORKSPACE/
 framework_export/
@@ -157,3 +158,4 @@ test_*/
 # root-cause.md
 data_gen_exp/
 repomix-output.xml
+run.log

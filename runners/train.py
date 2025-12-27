@@ -38,18 +38,16 @@ setup_project_paths()
 
 
 # Setup consistent logging configuration
-# Create a custom handler that flushes immediately
-class ImmediateFlushHandler(logging.StreamHandler):
-    def emit(self, record):
-        super().emit(record)
-        self.flush()
-
+# Setup consistent logging configuration
+# Use RichHandler to integrate nicely with PyTorch Lightning's RichProgressBar
+from rich.logging import RichHandler
 
 logging.basicConfig(
     level=logging.INFO,
-    format="%(levelname)s - %(name)s - %(message)s",
+    format="%(message)s",
+    datefmt="[%X]",
     force=True,  # Override any existing configuration
-    handlers=[ImmediateFlushHandler(sys.stdout)],
+    handlers=[RichHandler(rich_tracebacks=True, show_path=False)],
 )
 
 # Reduce verbosity of some noisy loggers

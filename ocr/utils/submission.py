@@ -8,6 +8,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from ocr.utils.config_utils import is_config
+
 
 class SubmissionWriter:
     """Handles formatting and saving OCR predictions to submission files.
@@ -55,7 +57,7 @@ class SubmissionWriter:
         include_confidence = getattr(self.config, "include_confidence", False)
 
         for filename, pred_data in predict_outputs.items():
-            if include_confidence and isinstance(pred_data, dict):
+            if include_confidence and is_config(pred_data):
                 boxes = pred_data["boxes"]
                 scores = pred_data["scores"]
             else:

@@ -1,0 +1,34 @@
+---
+alwaysApply: true
+description: Enforce AgentQMS automation and artifact management protocols
+---
+
+# AgentQMS Rules
+
+## SST Reference
+- MUST read `AgentQMS/knowledge/agent/system.md` (SST) before acting
+- Reference SST for details; don't repeat comprehensive guidance here
+
+## Automation
+- Use automation only: `cd AgentQMS/interface && make help` for commands
+- NEVER create artifacts manually; use `make create-*` targets
+- Always validate after changes: `make validate && make compliance`
+
+## Artifacts
+- Naming format: `YYYY-MM-DD_HHMM_[type]_name.md`
+- Location: `docs/artifacts/` subdirectories by type
+- Frontmatter date: `YYYY-MM-DD HH:MM (KST)` format required
+
+## Context Discovery
+- Use `make context` (auto-detects) or `make context-[domain]`
+- Architecture files: `.agentqms/state/architecture.yaml`, `.copilot/context/tool-catalog.md`, `.copilot/context/workflow-triggers.yaml`
+
+## Path Management
+- Use `PYTHONPATH=.` from project root for AgentQMS tools
+- NEVER manually manipulate `sys.path`
+
+## Artifact Creation Commands
+- ✅ `make create-plan NAME=name TITLE="Title"`
+- ✅ `make create-assessment NAME=name TITLE="Title"`
+- ✅ `make create-bug-report NAME=name TITLE="Title"`
+- ❌ NEVER create artifacts manually in `docs/artifacts/`

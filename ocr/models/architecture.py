@@ -1,5 +1,6 @@
 from typing import Any, cast
 
+import torch
 import torch.nn as nn
 from hydra.utils import instantiate
 from omegaconf import DictConfig, OmegaConf
@@ -10,6 +11,8 @@ from .encoder import get_encoder_by_cfg
 from .head import get_head_by_cfg
 from .loss import get_loss_by_cfg
 
+
+from ocr.utils.config_utils import is_config, ensure_dict
 
 class OCRModel(nn.Module):
     def __init__(self, cfg):
@@ -58,7 +61,12 @@ class OCRModel(nn.Module):
 
         return [optimizer], [scheduler] if scheduler else []
 
-    def get_polygons_from_maps(self, batch, pred):
+    def get_polygons_from_maps(
+        self,
+        batch: dict[str, Any],
+        pred: dict[str, torch.Tensor]
+    ) -> tuple[list[list[list[int]]], list[list[float]]]:
+        """Delegate to head's polygon extraction."""
         return self.head.get_polygons_from_maps(batch, pred)
 
     def _init_from_registry(self, cfg):
@@ -118,10 +126,10 @@ class OCRModel(nn.Module):
                 if name not in overrides or overrides[name] is None:
                     continue
 
-                section = self._to_container(overrides[name])
+                section = ensure_dict(overrides[name])
                 if not isinstance(section, dict):
                     raise TypeError(f"Component override for '{name}' must resolve to a mapping, got {type(section)!r}.")
-                section_dict = cast(dict[str, Any], dict(section))
+                section_dict = cast(dict[str, Any], section)
                 component_name_key = f"{name}_name"
                 component_config_key = f"{name}_config"
 
@@ -133,7 +141,7 @@ class OCRModel(nn.Module):
                     params = section_dict.get("params")
                     if params is None:
                         params = {k: v for k, v in section_dict.items() if k != "name"}
-                    override_params = dict(params) if isinstance(params, dict) else {}
+                    override_params = dict(params) if is_config(params) else {}
                 else:
                     override_params = section_dict  # legacy format: plain parameter dict
 
@@ -142,16 +150,3 @@ class OCRModel(nn.Module):
 
                 component_configs[component_config_key] = override_params or {}
         return component_configs
-
-    @staticmethod
-    def _to_container(config_section):
-        if isinstance(config_section, DictConfig):
-            result = OmegaConf.to_container(config_section, resolve=True)
-        elif isinstance(config_section, dict):
-            result = dict(config_section)
-        else:
-            raise TypeError(f"Unsupported override configuration type: {type(config_section)!r}")
-
-        if not isinstance(result, dict):
-            raise TypeError("Component overrides must resolve to a dictionary of keyword arguments.")
-        return result

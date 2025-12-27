@@ -65,6 +65,7 @@ from albumentations.pytorch import ToTensorV2
 from pydantic import ValidationError
 
 from ocr.core.validation import ImageMetadata, PolygonData, TransformInput, TransformOutput
+from ocr.utils.config_utils import is_config
 from ocr.utils.geometry_utils import calculate_cropbox, calculate_inverse_transform
 
 
@@ -207,7 +208,7 @@ class ValidatedDBTransforms:
 
         # AI_DOCS: Step 5 - Metadata Handling
         # Merge input metadata with transformation metadata
-        if metadata is not None and not isinstance(metadata, dict):
+        if metadata is not None and not is_config(metadata):
             try:
                 metadata = dict(metadata)
             except Exception:

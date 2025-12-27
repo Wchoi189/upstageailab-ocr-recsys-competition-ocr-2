@@ -6,6 +6,7 @@ from typing import Any
 
 import cv2
 import numpy as np
+from ocr.utils.config_utils import is_config
 
 
 class CraftPostProcessor:
@@ -46,8 +47,8 @@ class CraftPostProcessor:
         self.expand_ratio = max(expand_ratio, 1.0)
 
     def represent(self, batch, pred) -> tuple[list[list[list[int]]], list[list[float]]]:
-        region_scores = pred["region_score"] if isinstance(pred, dict) else pred
-        affinity_scores = pred.get("affinity_score") if isinstance(pred, dict) else None
+        region_scores = pred["region_score"] if is_config(pred) else pred
+        affinity_scores = pred.get("affinity_score") if is_config(pred) else None
         if affinity_scores is None:
             raise KeyError("CRAFT head predictions must include 'affinity_score'.")
 

@@ -1,0 +1,26 @@
+component: model_management
+description: Manages the lifecycle of the DBNet model (loading, inference, unloading).
+role: |
+  Abstracts away the PyTorch Lightning / Hydra complexity. Provides a simple 'predict(tensor)' interface to the orchestrator.
+critical_logic:
+  - id: checkpoint-loading
+    description: |
+      Loads weights from `.ckpt` file.
+      Optimization: Caches the model in memory (Singleton pattern) to avoid reloading per request.
+      Reason: Serverless-like behavior (cold start vs warm start).
+  - id: configuration-inference
+    description: |
+      Models require 4 components: 'Encoder', 'Decoder', 'Head', 'Transforms'.
+      These are defined in a YAML config.
+      Auto-Discovery: If 'checkpoint.pth' is at '/foo/bar/checkpoints/epoch=1.ckpt', manager looks for '.hydra/config.yaml' or 'config.yaml' in parent directories.
+  - id: resource-management
+    description: |
+      Cleanup: Calls 'torch.cuda.empty_cache()' on model swap to prevent OutOfMemory (OOM) errors on 8GB GPUs.
+      Device: Defaults to 'cuda' if available, else 'cpu'.
+data_contract:
+  input:
+    - field: checkpoint_path
+      description: API/Config provided path
+  output:
+    - field: LightingModule
+      description: Loaded model on device

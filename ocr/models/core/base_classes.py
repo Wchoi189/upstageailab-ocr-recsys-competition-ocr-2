@@ -142,17 +142,33 @@ class BaseHead(nn.Module, ABC):
 
     @abstractmethod
     def get_polygons_from_maps(
-        self, pred_maps: dict[str, torch.Tensor], ground_truth: dict[str, torch.Tensor] | None = None
-    ) -> list[list[list[float]]]:
-        """Extract polygons from prediction maps.
+        self,
+        batch: dict[str, Any],
+        pred: dict[str, torch.Tensor]
+    ) -> tuple[list[list[list[int]]], list[list[float]]]:
+        """Extract polygons and scores from prediction maps.
 
         Args:
-            pred_maps: Dictionary of prediction maps from forward pass
-            ground_truth: Optional ground truth for evaluation
+            batch: Batch dictionary with preprocessing metadata including:
+                - images: Tensor of shape (B, C, H, W)
+                - shape: List of original image dimensions before preprocessing
+                - filename: List of source image filenames
+                - inverse_matrix: Matrices for mapping predictions back to original coords
+            pred: Dictionary of prediction maps from model forward pass.
+                  Keys depend on head type (e.g., 'binary_map', 'thresh_map' for DB)
 
         Returns:
-            List of polygons, where each polygon is a list of [x, y] coordinates.
-            Shape: (batch_size, num_polygons, num_points, 2)
+            Tuple containing:
+            - boxes_batch: List[List[List[int]]] - Polygons per image with integer coordinates
+                          Shape: [batch_size][num_boxes][num_points*2]
+                          Each box is flattened [x1,y1,x2,y2,...,xn,yn]
+            - scores_batch: List[List[float]] - Confidence scores per box
+                           Shape: [batch_size][num_boxes]
+
+        Note:
+            The batch dict provides inverse transformation matrices to map
+            predicted coordinates from model space back to original image space.
+            Implementations typically delegate to postprocessor.represent().
         """
         pass
 

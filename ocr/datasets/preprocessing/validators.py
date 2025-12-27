@@ -8,6 +8,8 @@ import numpy as np
 from pydantic import GetCoreSchemaHandler
 from pydantic_core import core_schema
 
+from ocr.utils.config_utils import is_config
+
 T = TypeVar("T")
 
 
@@ -250,7 +252,7 @@ class ContractValidator:
         Raises:
             ValueError: If contract is violated
         """
-        if not isinstance(result, dict):
+        if not is_config(result):
             raise ValueError(f"{contract_name} must be a dictionary")
 
         required_keys = ["image", "metadata"]
@@ -262,7 +264,7 @@ class ContractValidator:
         ContractValidator.validate_image_input_contract(result["image"], f"{contract_name}.image")
 
         # Validate metadata (basic structure check)
-        if not isinstance(result["metadata"], dict):
+        if not is_config(result["metadata"]):
             raise ValueError(f"{contract_name}.metadata must be a dictionary")
 
         return result
@@ -286,7 +288,7 @@ class ContractValidator:
         Raises:
             ValueError: If contract is violated
         """
-        if not isinstance(detection_result, dict):
+        if not is_config(detection_result):
             raise ValueError(f"{contract_name} must be a dictionary")
 
         # Validate corners

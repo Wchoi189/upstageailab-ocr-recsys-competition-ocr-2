@@ -616,51 +616,46 @@ BUG-{bug_id}
 
 <!-- REQUIRED: Fill these sections when creating the initial bug report -->
 ## Summary
-Brief description of the bug.
+{summary}
 
 ## Environment
-- **OS**: Operating system
-- **Python Version**: Python version
-- **Dependencies**: Key dependencies and versions
-- **Browser**: Browser and version (if applicable)
+- **OS**: {os_info}
+- **Python Version**: {python_version}
+- **Dependencies**: {dependencies}
+- **Browser**: {browser}
 
 ## Steps to Reproduce
-1. Step 1
-2. Step 2
-3. Step 3
+{reproduction_steps}
 
 ## Expected Behavior
-What should happen.
+{expected_behavior}
 
 ## Actual Behavior
-What actually happens.
+{actual_behavior}
 
 ## Error Messages
 ```
-Error message here
+{error_messages}
 ```
 
 ## Screenshots/Logs
 If applicable, include screenshots or relevant log entries.
 
 ## Impact
-- **Severity**: High/Medium/Low
-- **Affected Users**: Who is affected
-- **Workaround**: Any temporary workarounds
+{impact}
 
 <!-- OPTIONAL: Resolution sections - fill these during investigation and fixing -->
 ## Investigation
 
 ### Root Cause Analysis
-- **Cause**: What is causing the issue
-- **Location**: Where in the code
-- **Trigger**: What triggers the issue
+{root_cause}
 
 ### Related Issues
 - Related issue 1
 - Related issue 2
 
 ## Proposed Solution
+{proposed_solution}
 
 ### Fix Strategy
 How to fix the issue.
@@ -855,8 +850,32 @@ High/Medium/Low (urgency for fixing, separate from severity above)
                 frontmatter["branch"] = "main"  # Fallback
 
         # Add any additional frontmatter fields (may override defaults including branch)
+        # Define fields that should NOT be in frontmatter (body content or system args)
+        denylist = {
+            # System args
+            "output_dir",
+            "interactive",
+            # Bug report body content
+            "reproduction_steps",
+            "steps_to_reproduce",
+            "expected_behavior",
+            "actual_behavior",
+            "impact",
+            "root_cause",
+            "proposed_solution",
+            "investigation",
+            "analysis",
+            "summary",
+            "error_messages",
+            "os_info",
+            "python_version",
+            "dependencies",
+            "browser",
+        }
+
         for key, value in kwargs.items():
-            frontmatter[key] = value
+            if key not in denylist:
+                frontmatter[key] = value
 
         # Convert to YAML-like format
         lines = ["---"]
@@ -889,6 +908,19 @@ High/Medium/Low (urgency for fixing, separate from severity above)
             "component/system": "the component",
             "purpose": "documentation",
             "bug_id": "001",
+            # Bug Report Defaults
+            "summary": "Brief description of the bug.",
+            "os_info": "Operating system",
+            "python_version": "Python version",
+            "dependencies": "Key dependencies and versions",
+            "browser": "Browser and version (if applicable)",
+            "reproduction_steps": "1. Step 1\n2. Step 2\n3. Step 3",
+            "expected_behavior": "What should happen.",
+            "actual_behavior": "What actually happens.",
+            "error_messages": "Error message here",
+            "impact": "- **Severity**: High/Medium/Low\n- **Affected Users**: Who is affected\n- **Workaround**: Any temporary workarounds",
+            "root_cause": "- **Cause**: What is causing the issue\n- **Location**: Where in the code\n- **Trigger**: What triggers the issue",
+            "proposed_solution": "Short description of the applied fix, if any.",
         }
 
         # Add plugin-defined template variables if present

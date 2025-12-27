@@ -12,6 +12,7 @@
 """
 
 import math
+from typing import Any
 
 import torch
 import torch.nn as nn
@@ -207,5 +208,10 @@ class DBHead(BaseHead):
 
         return result
 
-    def get_polygons_from_maps(self, batch, pred):
+    def get_polygons_from_maps(
+        self,
+        batch: dict[str, Any],
+        pred: dict[str, torch.Tensor]
+    ) -> tuple[list[list[list[int]]], list[list[float]]]:
+        """Extract polygons using DB postprocessor."""
         return self.postprocess.represent(batch, pred)

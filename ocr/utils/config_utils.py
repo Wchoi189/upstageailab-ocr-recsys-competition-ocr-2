@@ -6,11 +6,36 @@ from typing import Any
 import yaml
 from omegaconf import DictConfig
 
-from ocr.models.core import registry
 from ocr.utils.path_utils import get_path_resolver
 
 CONFIG_ROOT = get_path_resolver().config.config_dir
 SCHEMA_DIR = CONFIG_ROOT / "schemas"
+
+from typing import TypeGuard
+from omegaconf import DictConfig, ListConfig, OmegaConf
+
+
+def is_config(obj: Any) -> TypeGuard[dict | DictConfig]:
+    """
+    Check if object is a valid configuration object (dict or DictConfig).
+    Use this instead of instance(obj, dict).
+    """
+    return isinstance(obj, (dict, DictConfig))
+
+
+def ensure_dict(cfg: Any, resolve: bool = True) -> dict:
+    """
+    Recursively convert DictConfig/ListConfig to native dict/list.
+    Safe to call on already-native objects.
+    """
+    if isinstance(cfg, (DictConfig, ListConfig)):
+        return OmegaConf.to_container(cfg, resolve=resolve)  # type: ignore
+    if isinstance(cfg, dict):
+        return {k: ensure_dict(v, resolve) for k, v in cfg.items()}
+    if isinstance(cfg, list):
+        return [ensure_dict(v, resolve) for v in cfg]
+    return cfg
+
 
 
 def load_config(config_name: str = "train", overrides: list[str] | None = None) -> DictConfig:
@@ -38,11 +63,22 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
 
     def resolve_config_path(path_spec: str) -> Path | None:
         """Resolve a Hydra config path specification to an actual file."""
-        if path_spec.startswith("/"):
-            path_spec = path_spec.lstrip("/")
-            file_path = config_dir / (path_spec.replace("/", os.sep) + ".yaml")
-        else:
-            file_path = config_dir / (path_spec.replace("/", os.sep) + ".yaml")
+        path_str = path_spec.replace("/", os.sep)
+
+        # Strip leading slash
+        if path_str.startswith(os.sep):
+            path_str = path_str.lstrip(os.sep)
+
+        # Handle configs/ prefix if it would result in duplication
+        # config_dir is absolute path to 'configs' directory
+        if path_str.startswith("configs" + os.sep):
+            path_str = path_str[len("configs" + os.sep):]
+
+        # Add extension if missing
+        if not path_str.endswith(".yaml"):
+            path_str += ".yaml"
+
+        file_path = config_dir / path_str
 
         return file_path if file_path.exists() else None
 
@@ -112,7 +148,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
                 merged = merged_result
                 continue
 
-            if isinstance(default, dict):
+            if is_config(default):
                 # Dict-style: {'model': 'default'} means load model/default.yaml
                 for key, value in default.items():
                     if key.startswith("/hydra"):
@@ -169,9 +205,9 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
         return merged
 
     try:
-        config_file = config_dir / f"{config_name}.yaml"
-        if not config_file.exists():
-            raise FileNotFoundError(f"Config file not found: {config_file}")
+        config_file = resolve_config_path(config_name)
+        if config_file is None:
+            raise FileNotFoundError(f"Config file not found: {config_name}")
 
         cfg = process_config(config_file)
 
@@ -210,6 +246,10 @@ def validate_model_config(config: dict[str, Any]) -> list[str]:
         List of error messages (empty if valid)
     """
     errors = []
+
+    # Local import to avoid circular dependency
+    from ocr.models.core import registry
+
     # Check required keys
     for key in ["encoder", "decoder", "head", "loss"]:
         if key not in config:

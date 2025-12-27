@@ -9,6 +9,8 @@ from typing import Any
 
 import yaml
 
+from ocr.utils.config_utils import is_config
+
 LOGGER = logging.getLogger(__name__)
 
 _METADATA_SUFFIXES = (".metadata.yaml", ".metadata.yml", ".metadata.json")
@@ -79,7 +81,7 @@ def _load_metadata_sidecar(checkpoint_path: Path) -> dict[str, Any] | None:
     for suffix in _METADATA_SUFFIXES:
         candidate = checkpoint_path.with_suffix(suffix)
         data = _read_structured_file(candidate)
-        if isinstance(data, dict):
+        if is_config(data):
             return data
     return None
 
@@ -119,7 +121,7 @@ def _load_config_candidates(checkpoint_path: Path) -> list[dict[str, Any]]:
         seen.add(candidate)
 
         data = _read_structured_file(candidate)
-        if isinstance(data, dict):
+        if is_config(data):
             loaded_configs.append(data)
 
     return loaded_configs

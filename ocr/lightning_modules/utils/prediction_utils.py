@@ -6,6 +6,7 @@ from collections.abc import Iterable, Sequence
 from typing import Any
 
 import numpy as np
+from ocr.utils.config_utils import is_config
 
 
 def format_predictions(batch: dict[str, Any], boxes_batch: Sequence[Iterable[np.ndarray]]) -> list[dict[str, Any]]:
@@ -29,7 +30,7 @@ def format_predictions(batch: dict[str, Any], boxes_batch: Sequence[Iterable[np.
             if raw_metadata is not None:
                 if hasattr(raw_metadata, "model_dump"):
                     metadata_entry = raw_metadata.model_dump()  # type: ignore[assignment]
-                elif isinstance(raw_metadata, dict):
+                elif is_config(raw_metadata):
                     metadata_entry = dict(raw_metadata)
                 else:
                     metadata_entry = {"value": raw_metadata}

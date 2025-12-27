@@ -57,7 +57,7 @@ BACKEND_DIR = Path(__file__).parent
 PROJECT_ROOT = BACKEND_DIR.parent.parent.parent
 
 # Structured logging to file + console for backend diagnostics
-LOG_DIR = PROJECT_ROOT / "logs" / "ocr-inference-console"
+LOG_DIR = PROJECT_ROOT / "outputs" / "logs" / "ocr-inference-console"
 LOG_DIR.mkdir(parents=True, exist_ok=True)
 LOG_FILE = LOG_DIR / "backend.log"
 

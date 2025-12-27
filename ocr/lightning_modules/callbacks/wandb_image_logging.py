@@ -9,6 +9,7 @@ import numpy as np
 from PIL import Image
 
 from ocr.lightning_modules.processors.image_processor import ImageProcessor
+from ocr.utils.config_utils import is_config
 from ocr.utils.geometry_utils import apply_padding_offset_to_polygons, compute_padding_offsets
 from ocr.utils.orientation import normalize_pil_image, remap_polygons
 from ocr.utils.polygon_utils import ensure_polygon_array
@@ -32,7 +33,7 @@ class WandbImageLoggingCallback(pl.Callback):
             return
 
         # Get the validation dataset for ground truth
-        if not hasattr(pl_module, "dataset") or not isinstance(pl_module.dataset, dict) or "val" not in pl_module.dataset:
+        if not hasattr(pl_module, "dataset") or not is_config(pl_module.dataset) or "val" not in pl_module.dataset:
             return
 
         val_dataset = pl_module.dataset["val"]  # type: ignore
@@ -50,7 +51,7 @@ class WandbImageLoggingCallback(pl.Callback):
         # Collect up to max_images samples
         count = 0
         for filename, pred_data in list(pl_module.validation_step_outputs.items())[: self.max_images]:  # type: ignore
-            entry = pred_data if isinstance(pred_data, dict) else {"boxes": pred_data}
+            entry = pred_data if is_config(pred_data) else {"boxes": pred_data}
             pred_boxes = entry.get("boxes", [])
             orientation_hint = entry.get("orientation", 1)
             raw_size_hint = entry.get("raw_size")
@@ -250,7 +251,7 @@ class WandbImageLoggingCallback(pl.Callback):
             return None
         if hasattr(metadata, "model_dump"):
             metadata = metadata.model_dump()
-        elif not isinstance(metadata, dict):
+        elif not is_config(metadata):
             try:
                 metadata = dict(metadata)
             except Exception:  # noqa: BLE001

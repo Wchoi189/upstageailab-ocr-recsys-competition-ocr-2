@@ -9,6 +9,8 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any
 
+from ocr.utils.config_utils import is_config
+
 try:
     import torch
 
@@ -162,7 +164,7 @@ class OCRLogger:
         """Format configuration dictionary for display."""
         lines = []
         for key, value in config.items():
-            if isinstance(value, dict):
+            if is_config(value):
                 lines.append("  " * indent + f"{key}:")
                 lines.append(self._format_config(value, indent + 1))
             else:

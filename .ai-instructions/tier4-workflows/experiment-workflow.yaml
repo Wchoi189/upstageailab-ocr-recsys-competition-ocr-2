@@ -1,3 +1,15 @@
+---
+ads_version: "1.0"
+type: workflow_definition
+agent: all
+tier: 4
+priority: high
+validates_with: ".ai-instructions/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 200
+date: "2025-12-27"
+status: active
+
 # Experiment Workflow Reference
 # Location: experiment_manager/
 # Agent Interface: experiment_manager/agent_interface.yaml (Primary Source of Truth)
@@ -31,6 +43,14 @@ paths:
   module: "experiment_manager/"
   experiments: "experiment_manager/experiments/"
   agent_interface: "experiment_manager/agent_interface.yaml"
+
+triggers:
+  - pattern: "ocr/models/**/*.py"
+    workflow: "check.validate"
+  - pattern: "configs/**/*.yaml"
+    workflow: "check.validate"
+  - pattern: "experiment_manager/**/*.py"
+    workflow: "database.reconcile"
 
 rules:
   - Read experiment_manager/agent_interface.yaml for exact command arguments.

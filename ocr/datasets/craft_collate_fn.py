@@ -11,6 +11,8 @@ import numpy as np
 import torch
 from numpy.typing import NDArray
 
+from ocr.utils.config_utils import is_config
+
 
 class CraftCollateFN:
     """Prepare training batches for CRAFT-style text detection.
@@ -44,7 +46,7 @@ class CraftCollateFN:
                 return metadata.model_dump()
             except Exception:
                 return dict(metadata)
-        if isinstance(metadata, dict):
+        if is_config(metadata):
             return metadata
         return {}
 

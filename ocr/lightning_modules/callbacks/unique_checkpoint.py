@@ -7,6 +7,8 @@ from typing import Any
 import torch
 from lightning.pytorch.callbacks import ModelCheckpoint
 
+from ocr.utils.config_utils import ensure_dict, is_config
+
 
 def _get_wandb():
     """Lazy import wandb to avoid slow startup times.
@@ -165,7 +167,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                     info["encoder"] = model.encoder.model_name
                 elif hasattr(model, "component_overrides") and "encoder" in model.component_overrides:
                     encoder_override = model.component_overrides["encoder"]
-                    if isinstance(encoder_override, dict) and "model_name" in encoder_override:
+                    if is_config(encoder_override) and "model_name" in encoder_override:
                         info["encoder"] = encoder_override["model_name"]
 
         except Exception:
@@ -228,7 +230,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                     except Exception:
                         return None
 
-                if isinstance(value, dict):
+                if is_config(value):
                     return {str(k): _json_ready(v) for k, v in value.items()}
 
                 if isinstance(value, list | tuple | set):
@@ -274,7 +276,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                     safe_metrics[str(key)] = _json_ready(value)
 
             safe_components = _json_ready(components)
-            if not isinstance(safe_components, dict):
+            if not is_config(safe_components):
                 safe_components = {}
 
             # Construct V1 models for the newer schema
@@ -318,10 +320,10 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                     from omegaconf import OmegaConf
 
                     # Convert to plain dict for JSON serialization
-                    config_dict = OmegaConf.to_container(resolved_config, resolve=True)
+                    config_dict = ensure_dict(resolved_config, resolve=True)
 
                     # Ensure we have a dict to work with
-                    if not isinstance(config_dict, dict):
+                    if not is_config(config_dict):
                         config_dict = {}
 
                     # Save only the model section if it exists, otherwise save the full config

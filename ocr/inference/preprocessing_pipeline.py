@@ -139,6 +139,7 @@ class PreprocessingPipeline:
                     return_matrix=True,
                 )
                 LOGGER.debug("Perspective correction applied (matrix captured)")
+            else:
                 # Correct and display corrected (default behavior)
                 corrected_result = apply_optional_perspective_correction(
                     image,

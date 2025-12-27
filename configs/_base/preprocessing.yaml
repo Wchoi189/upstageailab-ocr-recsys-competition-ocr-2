@@ -9,7 +9,7 @@ preprocessing:
     std: [0.229, 0.224, 0.225]
 
   # Perspective correction (rembg-based mask detection + 4-point transform)
-  enable_perspective_correction: false
+  enable_perspective_correction: enable
   perspective_display_mode: "corrected"  # "corrected" or "original" (maps polygons back)
 
   # Grayscale conversion
@@ -19,8 +19,8 @@ preprocessing:
   enable_background_normalization: false
 
   # Sepia enhancement (alternative to gray-scale + normalization)
-  enable_sepia_enhancement: false
-  sepia_display_mode: "enhanced"  # "enhanced" or "original"
+  enable_sepia_enhancement: enable
+  sepia_display_mode: "original"  # "enhanced" or "original"
 
   # CLAHE (Contrast Limited Adaptive Histogram Equalization)
   enable_clahe: false

@@ -240,8 +240,11 @@ def _extract_postprocess_settings(config: Any) -> PostprocessSettings:
     )
 
 
+from ocr.utils.config_utils import is_config
+
+
 def _has_attr(obj: Any, attr: str) -> bool:
-    return hasattr(obj, attr) or (isinstance(obj, dict) and attr in obj)
+    return hasattr(obj, attr) or (is_config(obj) and attr in obj)
 
 
 def _get_attr(obj: Any, attr: str, default: Any | None = None) -> Any:
@@ -249,7 +252,7 @@ def _get_attr(obj: Any, attr: str, default: Any | None = None) -> Any:
         return default
     if hasattr(obj, attr):
         return getattr(obj, attr)
-    return obj.get(attr, default) if isinstance(obj, dict) else default
+    return obj.get(attr, default) if is_config(obj) else default
 
 
 def _coerce_tuple(value: Any) -> tuple[int, int] | None:
