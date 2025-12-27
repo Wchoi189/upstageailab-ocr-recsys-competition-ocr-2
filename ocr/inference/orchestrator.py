@@ -16,7 +16,7 @@ the flow between components, delegating all actual work to specialized classes.
 from __future__ import annotations
 
 import logging
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 import numpy as np
 
@@ -26,6 +26,12 @@ from .model_manager import ModelManager
 from .postprocessing_pipeline import PostprocessingPipeline
 from .preprocessing_pipeline import PreprocessingPipeline
 from .preview_generator import PreviewGenerator
+
+if TYPE_CHECKING:
+    from .crop_extractor import CropExtractor
+    from .extraction.field_extractor import ReceiptFieldExtractor
+    from .layout.grouper import LineGrouper
+    from .recognizer import TextRecognizer
 
 LOGGER = logging.getLogger(__name__)
 
@@ -58,14 +64,14 @@ class InferenceOrchestrator:
 
         # Recognition components (disabled by default)
         self._enable_recognition = enable_recognition
-        self._recognizer = None
-        self._crop_extractor = None
+        self._recognizer: TextRecognizer | None = None
+        self._crop_extractor: CropExtractor | None = None
 
         # Layout and extraction components (disabled by default)
         self._enable_layout = False
         self._enable_extraction = False
-        self._layout_grouper = None
-        self._field_extractor = None
+        self._layout_grouper: LineGrouper | None = None
+        self._field_extractor: ReceiptFieldExtractor | None = None
 
         if enable_recognition:
             self._init_recognition_components()
@@ -213,6 +219,10 @@ class InferenceOrchestrator:
             LOGGER.error("OCR modules not available for inference")
             return None
 
+        if self.model_manager.model is None:
+            LOGGER.error("Model not loaded")
+            return None
+
         try:
             import torch
 
@@ -268,9 +278,10 @@ class InferenceOrchestrator:
             # Transform polygons back to original space
             from ocr.utils.perspective_correction import transform_polygons_inverse
 
-            if result["polygons"]:
+            polygons = result["polygons"]
+            if polygons and isinstance(polygons, str):
                 result["polygons"] = transform_polygons_inverse(
-                    result["polygons"],
+                    polygons,
                     preprocess_result.perspective_matrix,
                 )
 
@@ -278,10 +289,14 @@ class InferenceOrchestrator:
             original_preview = self.preprocessing_pipeline.process_for_original_display(preprocess_result.original_image)
             if original_preview is not None:
                 preview_image, metadata = original_preview
+                img_shape = preprocess_result.original_image.shape
+                # Cast to expected 3D shape (H, W, C)
+                assert len(img_shape) == 3, f"Expected 3D image, got shape {img_shape}"
+                original_shape_3d = (img_shape[0], img_shape[1], img_shape[2])
                 preprocess_result = preprocess_result.__class__(
                     batch=preprocess_result.batch,
                     preview_image=preview_image,
-                    original_shape=preprocess_result.original_image.shape,
+                    original_shape=original_shape_3d,
                     metadata=metadata,
                     perspective_matrix=preprocess_result.perspective_matrix,
                     original_image=preprocess_result.original_image,
@@ -366,6 +381,10 @@ class InferenceOrchestrator:
         Returns:
             Updated result with recognized text
         """
+        # Type narrowing for optional components
+        assert self._crop_extractor is not None
+        assert self._recognizer is not None
+
         if not result.get("polygons"):
             return result
 
@@ -440,6 +459,9 @@ class InferenceOrchestrator:
         Returns:
             LayoutResult with hierarchical text structure
         """
+        # Type narrowing for optional components
+        assert self._layout_grouper is not None
+
         from .layout.contracts import BoundingBox, TextElement
 
         elements = []
@@ -510,6 +532,9 @@ class InferenceOrchestrator:
         Returns:
             ReceiptData with extracted fields
         """
+        # Type narrowing for optional components
+        assert self._field_extractor is not None
+
         # Try rule-based first (fast path: 80% of receipts)
         receipt = self._field_extractor.extract(layout=layout_result)
 
@@ -556,6 +581,9 @@ class InferenceOrchestrator:
         Returns:
             ReceiptData from VLM or rule-based fallback
         """
+        # Type narrowing for optional components
+        assert self._field_extractor is not None
+
         try:
             import cv2
             from PIL import Image

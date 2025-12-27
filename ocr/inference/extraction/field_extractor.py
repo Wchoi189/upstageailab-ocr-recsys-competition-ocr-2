@@ -11,7 +11,7 @@ import re
 import time as time_module
 from dataclasses import dataclass
 from decimal import Decimal
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from .normalizers import (
     normalize_business_number,
@@ -309,17 +309,20 @@ class ReceiptFieldExtractor:
                 return normalize_currency(match.group(1))
         return None
 
-    def _detect_payment_method(self, text: str) -> str:
+    def _detect_payment_method(self, text: str) -> Literal["cash", "card", "mobile", "gift_card", "unknown"]:
         """Detect payment method from text."""
         for pattern in self._patterns["card_payment"]:
             if pattern.search(text):
-                return "card"
+                result: Literal["cash", "card", "mobile", "gift_card", "unknown"] = "card"
+                return result
 
         for pattern in self._patterns["cash_payment"]:
             if pattern.search(text):
-                return "cash"
+                result_cash: Literal["cash", "card", "mobile", "gift_card", "unknown"] = "cash"
+                return result_cash
 
-        return "unknown"
+        unknown: Literal["cash", "card", "mobile", "gift_card", "unknown"] = "unknown"
+        return unknown
 
     def _extract_card_last_four(self, text: str) -> str | None:
         """Extract last 4 digits of card number."""
