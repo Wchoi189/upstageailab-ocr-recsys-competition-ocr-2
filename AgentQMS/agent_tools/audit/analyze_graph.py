@@ -9,6 +9,9 @@ def analyze_graph(graphml_path, staleness_report_path, output_path):
     ns = {"g": "http://graphml.graphdrawing.org/xmlns"}
 
     graph = root.find("g:graph", ns)
+    if graph is None:
+        raise ValueError("No graph element found in GraphML file")
+
     nodes = graph.findall("g:node", ns)
     edges = graph.findall("g:edge", ns)
 
