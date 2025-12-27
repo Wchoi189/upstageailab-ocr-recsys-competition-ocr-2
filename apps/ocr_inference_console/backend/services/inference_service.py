@@ -105,10 +105,11 @@ class InferenceService:
             import asyncio
 
             loop = asyncio.get_running_loop()
+            engine = self._engine  # Extract for lambda to avoid mypy None check issues
 
             result = await loop.run_in_executor(
                 None,  # Use default executor
-                lambda: self._engine.predict_array(
+                lambda: engine.predict_array(
                     image_array=image,
                     binarization_thresh=confidence_threshold,
                     box_thresh=nms_threshold,
@@ -164,9 +165,10 @@ class InferenceService:
 
         # Offload blocking model load to threadpool
         loop = asyncio.get_running_loop()
+        engine = self._engine  # Extract for lambda to avoid mypy None check issues
 
         try:
-            success = await loop.run_in_executor(None, lambda: self._engine.load_model(checkpoint_path))
+            success = await loop.run_in_executor(None, lambda: engine.load_model(checkpoint_path))
 
             if success:
                 self._current_checkpoint = checkpoint_path
