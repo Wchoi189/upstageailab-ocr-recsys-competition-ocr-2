@@ -52,8 +52,8 @@ class Artifact(BaseModel):
 
 
 class ExperimentManifest(BaseModel):
-    experiment_id: constr(pattern=r"^[0-9]{8}_[0-9]{6}_[a-z0-9_]+$")
-    name: constr(min_length=3)
+    experiment_id: str = Field(pattern=r"^[0-9]{8}_[0-9]{6}_[a-z0-9_]+$")
+    name: str = Field(min_length=3)
     status: ExperimentStatus
     created_at: datetime
     updated_at: datetime | None = None

@@ -9,9 +9,9 @@ from pydantic import BaseModel, Field, field_validator, model_validator
 try:
     from omegaconf import ListConfig
 
-    _list_config_type = ListConfig
+    _list_config_type: type[ListConfig] | None = ListConfig
 except ImportError:
-    _list_config_type = None
+    _list_config_type: type[ListConfig] | None = None  # type: ignore[assignment]
 
 
 class EnhancementMethod(str, Enum):

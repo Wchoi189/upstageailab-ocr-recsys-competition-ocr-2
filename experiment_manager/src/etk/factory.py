@@ -119,9 +119,11 @@ class ExperimentFactory:
         Record an artifact metadata entry.
         Notes the file path and type in the manifest.
         """
+        from etk.schemas import ArtifactType
+
         manifest = self._load_manifest(experiment_id)
 
-        artifact = Artifact(path=path, type=type, timestamp=datetime.utcnow())
+        artifact = Artifact(path=path, type=ArtifactType(type), timestamp=datetime.utcnow())
 
         manifest.artifacts.append(artifact)
         manifest.updated_at = datetime.utcnow()
