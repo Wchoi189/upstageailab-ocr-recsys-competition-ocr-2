@@ -1,14 +1,13 @@
 import json
 import os
-import time
 from datetime import datetime
 from pathlib import Path
-from typing import Union, List
 
-from .schemas import ExperimentManifest, Task, TaskStatus, Insight, InsightType, Artifact, ExperimentStatus
+from .schemas import Artifact, ExperimentManifest, ExperimentStatus, Task, TaskStatus
+
 
 class ExperimentFactory:
-    def __init__(self, base_dir: Union[str, Path] = "experiments"):
+    def __init__(self, base_dir: str | Path = "experiments"):
         """
         Initialize the ExperimentFactory.
 
@@ -29,7 +28,7 @@ class ExperimentFactory:
         if not manifest_path.exists():
             raise FileNotFoundError(f"Manifest not found for experiment {experiment_id}")
 
-        with open(manifest_path, 'r') as f:
+        with open(manifest_path) as f:
             data = json.load(f)
 
         return ExperimentManifest(**data)
@@ -50,13 +49,13 @@ class ExperimentFactory:
         # Atomic write
         temp_path = manifest_path.with_suffix(".tmp")
         try:
-            with open(temp_path, 'w') as f:
+            with open(temp_path, "w") as f:
                 f.write(json_content)
             os.replace(temp_path, manifest_path)
         except Exception as e:
             if temp_path.exists():
                 temp_path.unlink()
-            raise IOError(f"Failed to save manifest for {manifest.experiment_id}: {e}")
+            raise OSError(f"Failed to save manifest for {manifest.experiment_id}: {e}")
 
     def init_experiment(self, name: str, type: str, intention: str = "") -> ExperimentManifest:
         """
@@ -72,7 +71,7 @@ class ExperimentFactory:
         """
         # Generate ID: YYYYMMDD_HHMMSS_slug
         timestamp_str = datetime.utcnow().strftime("%Y%m%d_%H%M%S")
-        slug = name.lower().replace(" ", "_")[:30] # Limit slug length
+        slug = name.lower().replace(" ", "_")[:30]  # Limit slug length
         # Sanitize slug
         slug = "".join(c for c in slug if c.isalnum() or c == "_")
         experiment_id = f"{timestamp_str}_{slug}"
@@ -89,14 +88,9 @@ class ExperimentFactory:
         (experiment_dir / "artifacts").mkdir(exist_ok=True)
         (experiment_dir / "outputs").mkdir(exist_ok=True)
 
-
         # Create initial manifest
         manifest = ExperimentManifest(
-            experiment_id=experiment_id,
-            name=name,
-            status=ExperimentStatus.ACTIVE,
-            created_at=datetime.utcnow(),
-            intention=intention
+            experiment_id=experiment_id, name=name, status=ExperimentStatus.ACTIVE, created_at=datetime.utcnow(), intention=intention
         )
 
         self._save_manifest(manifest)
@@ -112,11 +106,7 @@ class ExperimentFactory:
         # Using incremental based on list length for simplicity and readability
         task_id = f"task_{len(manifest.tasks) + 1:03d}"
 
-        new_task = Task(
-            id=task_id,
-            description=description,
-            status=TaskStatus.BACKLOG
-        )
+        new_task = Task(id=task_id, description=description, status=TaskStatus.BACKLOG)
 
         manifest.tasks.append(new_task)
         manifest.updated_at = datetime.utcnow()
@@ -129,13 +119,11 @@ class ExperimentFactory:
         Record an artifact metadata entry.
         Notes the file path and type in the manifest.
         """
+        from etk.schemas import ArtifactType
+
         manifest = self._load_manifest(experiment_id)
 
-        artifact = Artifact(
-            path=path,
-            type=type,
-            timestamp=datetime.utcnow()
-        )
+        artifact = Artifact(path=path, type=ArtifactType(type), timestamp=datetime.utcnow())
 
         manifest.artifacts.append(artifact)
         manifest.updated_at = datetime.utcnow()

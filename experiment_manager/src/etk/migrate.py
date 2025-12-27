@@ -1,4 +1,3 @@
-import os
 from pathlib import Path
 
 LEGACY_SCRIPTS = [
@@ -25,6 +24,7 @@ LEGACY_SCRIPTS = [
     "workflow.py",
 ]
 
+
 def migrate():
     base_dir = Path(__file__).resolve().parent.parent.parent
     scripts_dir = base_dir / "scripts"
@@ -40,7 +40,9 @@ def migrate():
     # However, for completeness, we'd log if we found any.
     experiments_dir = base_dir / "experiments"
     if experiments_dir.exists() and any(experiments_dir.iterdir()):
-        print("WARNING: Experiments directory is not empty. Please verify migration of data manually as this script is in 'Kill Only' mode.")
+        print(
+            "WARNING: Experiments directory is not empty. Please verify migration of data manually as this script is in 'Kill Only' mode."
+        )
     else:
         print("Experiments directory is empty or does not exist. Skipping data migration.")
 
@@ -55,6 +57,7 @@ def migrate():
             print(f"Script not found (already gone?): {script_name}")
 
     print("\nMigration/Cleanup Complete.")
+
 
 if __name__ == "__main__":
     migrate()

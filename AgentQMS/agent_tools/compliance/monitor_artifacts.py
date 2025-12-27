@@ -65,7 +65,9 @@ class ArtifactMonitor:
         compliance_rate = (valid_files / total_files * 100) if total_files > 0 else 100.0
 
         # Categorize violations
-        violation_categories = {"naming": [], "directory": [], "frontmatter": []}
+        from typing import Any
+
+        violation_categories: dict[str, list[dict[str, Any]]] = {"naming": [], "directory": [], "frontmatter": []}
 
         for result in results:
             if not result["valid"]:

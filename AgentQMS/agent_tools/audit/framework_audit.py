@@ -53,7 +53,7 @@ class FrameworkAudit:
         self.project_root = self._get_project_root()
         self.plugins_root = self.project_root / ".agentqms" / "plugins"
         self.artifacts_root = self.project_root / "docs" / "artifacts"
-        self.results = {
+        self.results: dict[str, Any] = {
             "plugin_artifacts": [],
             "plugin_validators": [],
             "plugin_bundles": [],
@@ -393,10 +393,13 @@ class FrameworkAudit:
         lines.append("")
 
         # Plugin artifacts
-        if self.results["plugin_artifacts"]:
+        plugin_artifacts = self.results["plugin_artifacts"]
+        if plugin_artifacts:
+            assert isinstance(plugin_artifacts, list)
             lines.append("ARTIFACT TYPE PLUGINS")
             lines.append("-" * 60)
-            for result in self.results["plugin_artifacts"]:
+            for result in plugin_artifacts:
+                assert isinstance(result, dict)
                 status = "✓ PASS" if result.get("valid", True) else "✗ FAIL"
                 lines.append(f"{status}: {Path(result['file']).name}")
                 for error in result.get("errors", []):
@@ -406,10 +409,13 @@ class FrameworkAudit:
             lines.append("")
 
         # Plugin validators
-        if self.results["plugin_validators"]:
+        plugin_validators = self.results["plugin_validators"]
+        if plugin_validators:
+            assert isinstance(plugin_validators, list)
             lines.append("VALIDATORS PLUGIN")
             lines.append("-" * 60)
-            for result in self.results["plugin_validators"]:
+            for result in plugin_validators:
+                assert isinstance(result, dict)
                 status = "✓ PASS" if result.get("valid", True) else "✗ FAIL"
                 lines.append(f"{status}: {Path(result['file']).name}")
                 for error in result.get("errors", []):
@@ -419,10 +425,13 @@ class FrameworkAudit:
             lines.append("")
 
         # Plugin bundles
-        if self.results["plugin_bundles"]:
+        plugin_bundles = self.results["plugin_bundles"]
+        if plugin_bundles:
+            assert isinstance(plugin_bundles, list)
             lines.append("CONTEXT BUNDLE PLUGINS")
             lines.append("-" * 60)
-            for result in self.results["plugin_bundles"]:
+            for result in plugin_bundles:
+                assert isinstance(result, dict)
                 status = "✓ PASS" if result.get("valid", True) else "✗ FAIL"
                 lines.append(f"{status}: {Path(result['file']).name}")
                 for error in result.get("errors", []):
@@ -432,10 +441,13 @@ class FrameworkAudit:
             lines.append("")
 
         # Templates
-        if self.results["templates"]:
+        templates = self.results["templates"]
+        if templates:
+            assert isinstance(templates, list)
             lines.append("ARTIFACT TEMPLATES")
             lines.append("-" * 60)
-            for result in self.results["templates"]:
+            for result in templates:
+                assert isinstance(result, dict)
                 status = "✓ PASS" if result.get("valid", True) else "✗ FAIL"
                 lines.append(f"{status}: {Path(result['file']).name}")
                 for error in result.get("errors", []):

@@ -80,6 +80,7 @@ class WandbImageLoggingCallback(pl.Callback):
             # Get image - prefer transformed_image if available, otherwise load from disk
             try:
                 if using_transformed_image:
+                    assert transformed_image is not None, "transformed_image should not be None when using_transformed_image is True"
                     # Use transformed_image (640x640, CHW, normalized with ImageNet stats)
                     # Convert tensor to PIL Image with proper denormalization
                     mean = np.array([0.485, 0.456, 0.406], dtype=np.float32)

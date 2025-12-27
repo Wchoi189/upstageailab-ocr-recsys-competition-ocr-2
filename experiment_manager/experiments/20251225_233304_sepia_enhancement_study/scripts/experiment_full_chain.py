@@ -2,19 +2,22 @@
 import asyncio
 import logging
 import os
-import cv2
-import aiohttp
-import numpy as np
 from pathlib import Path
+
+import aiohttp
+import cv2
+import numpy as np
 from rembg import remove
-from ocr.utils.sepia_enhancement import enhance_sepia
+
 from ocr.inference.preprocessing_pipeline import apply_optional_perspective_correction
+from ocr.utils.sepia_enhancement import enhance_sepia
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 API_URL = "https://api.upstage.ai/v1/document-ai/ocr"
+
 
 def apply_full_pipeline(image_path: Path) -> np.ndarray:
     logger.info(f"Loading {image_path}...")
@@ -47,7 +50,7 @@ def apply_full_pipeline(image_path: Path) -> np.ndarray:
     corrected_image = apply_optional_perspective_correction(
         image_rembg,
         enable_perspective_correction=True,
-        return_matrix=False # We don't need matrix for this visual test, just the image to send
+        return_matrix=False,  # We don't need matrix for this visual test, just the image to send
     )
 
     # 3. Sepia
@@ -55,6 +58,7 @@ def apply_full_pipeline(image_path: Path) -> np.ndarray:
     final_img = enhance_sepia(corrected_image)
 
     return final_img
+
 
 async def test_full_chain(image_path: str, api_key: str):
     path = Path(image_path)
@@ -101,11 +105,11 @@ async def test_full_chain(image_path: str, api_key: str):
 
                 # Visualize
                 viz_img = processed_img.copy()
-                for poly, text in zip(polygons, texts):
+                for poly, text in zip(polygons, texts, strict=False):
                     pts = np.array(poly, np.int32).reshape((-1, 1, 2))
                     cv2.polylines(viz_img, [pts], True, (0, 255, 0), 2)
                     if len(poly) > 0:
-                         cv2.putText(viz_img, text[:20], (poly[0][0], poly[0][1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                        cv2.putText(viz_img, text[:20], (poly[0][0], poly[0][1] - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
 
                 final_viz_path = "validation_viz/full_chain_viz_1454.jpg"
                 cv2.imwrite(final_viz_path, viz_img)
@@ -116,6 +120,7 @@ async def test_full_chain(image_path: str, api_key: str):
             else:
                 logger.error(f"API Error {response.status}: {await response.text()}")
 
+
 def main():
     api_key = os.environ.get("UPSTAGE_API_KEY")
     if not api_key:
@@ -124,6 +129,7 @@ def main():
 
     image_path = "data/datasets/images/train/drp.en_ko.in_house.selectstar_001454.jpg"
     asyncio.run(test_full_chain(image_path, api_key))
+
 
 if __name__ == "__main__":
     main()

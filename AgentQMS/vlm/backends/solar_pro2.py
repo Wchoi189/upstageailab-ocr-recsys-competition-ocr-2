@@ -5,8 +5,10 @@ from typing import TYPE_CHECKING, Any
 
 try:
     import httpx
+
+    _httpx = httpx
 except ImportError:
-    httpx = None
+    _httpx = None  # type: ignore[assignment]
 
 if TYPE_CHECKING:
     pass
@@ -27,7 +29,7 @@ class SolarPro2Backend(BaseVLMBackend):
             config: Backend configuration with Solar Pro 2 API key
         """
         super().__init__(config)
-        if httpx is None:
+        if _httpx is None:
             raise BackendError("httpx package is required for Solar Pro 2 backend. Install with: pip install httpx")
 
         settings = get_config().backends.solar_pro2
@@ -83,7 +85,7 @@ class SolarPro2Backend(BaseVLMBackend):
 
         for attempt in range(max_retries + 1):
             try:
-                with httpx.Client(timeout=self.config.timeout_seconds) as client:
+                with _httpx.Client(timeout=self.config.timeout_seconds) as client:
                     response = client.post(
                         self.endpoint,
                         json=payload,
@@ -117,7 +119,7 @@ class SolarPro2Backend(BaseVLMBackend):
 
     def is_available(self) -> bool:
         """Check if Solar Pro 2 backend is available."""
-        if httpx is None:
+        if _httpx is None:
             return False
 
         settings = get_config().backends.solar_pro2

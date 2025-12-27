@@ -246,25 +246,25 @@ class VLMClient:
         }
 
         if backend_type == "openrouter":
-            settings = self._config.backends.openrouter
-            api_key = resolve_env_value(settings.api_key_env)
+            openrouter_settings = self._config.backends.openrouter
+            api_key = resolve_env_value(openrouter_settings.api_key_env)
             if api_key:
                 config["api_key"] = api_key
-            config["model"] = settings.default_model
-            config["endpoint"] = settings.base_url
+            config["model"] = openrouter_settings.default_model
+            config["endpoint"] = openrouter_settings.base_url
         elif backend_type == "solar_pro2":
-            settings = self._config.backends.solar_pro2
-            api_key = resolve_env_value(settings.api_key_env)
+            solar_settings = self._config.backends.solar_pro2
+            api_key = resolve_env_value(solar_settings.api_key_env)
             if api_key:
                 config["api_key"] = api_key
-            config["model"] = settings.default_model
-            config["endpoint"] = settings.endpoint
+            config["model"] = solar_settings.default_model
+            config["endpoint"] = solar_settings.endpoint
         elif backend_type == "dashscope":
-            settings = self._config.backends.dashscope
-            api_key = resolve_env_value(settings.api_key_env)
+            dashscope_settings = self._config.backends.dashscope
+            api_key = resolve_env_value(dashscope_settings.api_key_env)
             if api_key:
                 config["api_key"] = api_key
-            config["model"] = settings.default_model
-            config["endpoint"] = settings.endpoint
+            config["model"] = dashscope_settings.default_model
+            config["endpoint"] = dashscope_settings.endpoint
 
         return config

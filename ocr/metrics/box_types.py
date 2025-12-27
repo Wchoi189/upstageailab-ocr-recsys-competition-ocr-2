@@ -133,7 +133,7 @@ def rotate_points(center_of_rotation, angle, points):
 def rectangle_corners(rectangle):
     # Requires: the output of mon_bounding_rectangle
     # Effects: returns the corner locations of the bounding rectangle
-    corner_points = []
+    corner_points: list[tuple[float, float]] = []
     for i1 in (0.5, -0.5):
         corner_points.extend(
             (
@@ -178,7 +178,7 @@ def custom_MinAreaRect(points):
         return (0, 0), (0, 0), 0
 
     hull_ordered.append(hull_ordered[0])
-    hull_ordered = tuple(hull_ordered)
+    hull_ordered = tuple(hull_ordered)  # type: ignore[assignment]
 
     min_rectangle = bounding_area(0, hull_ordered)
     for i in range(1, len(hull_ordered) - 1):
@@ -336,7 +336,7 @@ class QUAD(Box):
         )
 
     def pseudo_character_center(self, vertical_aspect_ratio_threshold):
-        chars = []
+        chars: list[tuple[float, float]] = []
         length = len(self.transcription)
         aspect_ratio = self.aspect_ratio()
 

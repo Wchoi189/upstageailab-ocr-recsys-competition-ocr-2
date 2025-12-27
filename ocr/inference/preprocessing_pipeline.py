@@ -140,17 +140,22 @@ class PreprocessingPipeline:
                 )
                 LOGGER.debug("Perspective correction applied (matrix captured)")
                 # Correct and display corrected (default behavior)
-                image = apply_optional_perspective_correction(
+                corrected_result = apply_optional_perspective_correction(
                     image,
                     enable_perspective_correction=True,
                 )
+                # Result should be just the image when return_matrix is not set
+                if isinstance(corrected_result, tuple):
+                    image = corrected_result[0]
+                else:
+                    image = corrected_result
                 LOGGER.debug("Perspective correction applied (corrected mode)")
 
         # Stage 1.5: Optional Background Removal (rembg)
         if enable_background_removal:
             try:
-                from rembg import remove
                 import cv2
+                from rembg import remove
 
                 # rembg expects RGB or BGR, returns RGBA
                 # It handles conversion internally, but let's be explicit if needed
@@ -167,7 +172,7 @@ class PreprocessingPipeline:
                     foreground = output[:, :, :3]
 
                     # Create white background
-                    background = np.ones_like(foreground, dtype=np.uint8) * 255
+                    np.ones_like(foreground, dtype=np.uint8) * 255
 
                     # Composite
                     # output is usually RGB from rembg, but let's check.
@@ -210,7 +215,9 @@ class PreprocessingPipeline:
             LOGGER.debug("Grayscale preprocessing applied")
 
         # Stage 3: Capture original shape before preprocessing
-        original_shape = image.shape
+        img_shape = image.shape
+        assert len(img_shape) == 3, f"Expected 3D image, got shape {img_shape}"
+        original_shape: tuple[int, int, int] = (img_shape[0], img_shape[1], img_shape[2])
         original_h, original_w = original_shape[:2]
 
         # Stage 4: Resize, pad, and normalize

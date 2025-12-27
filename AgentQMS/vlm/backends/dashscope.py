@@ -8,8 +8,10 @@ from typing import Any
 
 try:
     from openai import OpenAI
+
+    _OpenAI = OpenAI
 except ImportError:
-    OpenAI = None
+    _OpenAI = None  # type: ignore[assignment,misc]
 
 from AgentQMS.vlm.backends.base import BaseVLMBackend
 from AgentQMS.vlm.core.config import get_config, resolve_env_value
@@ -27,7 +29,7 @@ class DashScopeBackend(BaseVLMBackend):
             config: Backend configuration with DashScope API key
         """
         super().__init__(config)
-        if OpenAI is None:
+        if _OpenAI is None:
             raise BackendError("openai package is required for DashScope backend. Install with: pip install openai")
 
         settings = get_config().backends.dashscope
@@ -36,7 +38,7 @@ class DashScopeBackend(BaseVLMBackend):
             raise BackendError("DashScope API key is required. Provide it via DASHSCOPE_API_KEY environment variable.")
 
         # Initialize OpenAI client for DashScope compatible-mode endpoint
-        self.client = OpenAI(
+        self.client = _OpenAI(
             api_key=api_key,
             base_url=config.endpoint or settings.endpoint,
         )
@@ -125,6 +127,6 @@ class DashScopeBackend(BaseVLMBackend):
         Returns:
             True if openai package is installed and API key is configured
         """
-        if OpenAI is None:
+        if _OpenAI is None:
             return False
         return bool(self.client.api_key)

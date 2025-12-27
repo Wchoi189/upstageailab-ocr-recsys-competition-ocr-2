@@ -259,7 +259,7 @@ def set_refactor_status(key: str, status: str) -> None:
         fields = ["updated_at = ?", _utc_now_iso()]
         if status == "in_progress":
             fields[0] = "started_at = ?, updated_at = ?"
-            params = (_utc_now_iso(), _utc_now_iso(), key)
+            params: tuple[str, ...] = (_utc_now_iso(), _utc_now_iso(), key)
         else:
             params = (_utc_now_iso(), key)
         conn.execute(f"UPDATE refactors SET status='{status}', {fields[0]} WHERE key=?", params)

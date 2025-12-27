@@ -8,9 +8,7 @@ and saves them as validated Parquet files using the OCRStorageItem schema.
 import argparse
 import json
 import logging
-import os
 from pathlib import Path
-from typing import Any, List
 
 import pandas as pd
 from tqdm import tqdm
@@ -43,7 +41,7 @@ class DatasetStandardizer:
         }
         """
         logger.info(f"Loading {input_path}...")
-        with open(input_path, "r") as f:
+        with open(input_path) as f:
             data = json.load(f)
 
         # Check if it matches expected structure
@@ -112,19 +110,19 @@ class DatasetStandardizer:
                 split=split,
                 image_path=str(base_img_dir / filename),
                 image_filename=filename,
-                width=0, # To be filled if needed
+                width=0,  # To be filled if needed
                 height=0,
                 polygons=polygons,
                 texts=texts,
                 labels=labels,
-                metadata={"original_source": input_path}
+                metadata={"original_source": input_path},
             )
             storage_item.validate_lengths()
             storage_items.append(storage_item.model_dump())
 
         self._save(storage_items, dataset_name, split)
 
-    def _save(self, items: List[dict], dataset_name: str, split: str):
+    def _save(self, items: list[dict], dataset_name: str, split: str):
         if not items:
             logger.warning("No items to save.")
             return

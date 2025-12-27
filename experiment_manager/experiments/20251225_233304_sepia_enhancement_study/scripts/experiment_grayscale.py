@@ -2,12 +2,13 @@
 import asyncio
 import logging
 import os
-import cv2
-import aiohttp
-import numpy as np
 from pathlib import Path
+
+import aiohttp
+import cv2
+import numpy as np
 from rembg import remove
-from ocr.utils.sepia_enhancement import enhance_sepia
+
 from ocr.inference.preprocessing_pipeline import apply_optional_perspective_correction
 
 # Setup logging
@@ -16,10 +17,12 @@ logger = logging.getLogger(__name__)
 
 API_URL = "https://api.upstage.ai/v1/document-ai/ocr"
 
+
 def apply_grayscale(image: np.ndarray) -> np.ndarray:
     gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
     # Convert back to BGR so it saves/encodes as a standard 3-channel image for consistency
     return cv2.cvtColor(gray, cv2.COLOR_GRAY2BGR)
+
 
 async def test_grayscale(image_path: str, api_key: str):
     path = Path(image_path)
@@ -44,11 +47,7 @@ async def test_grayscale(image_path: str, api_key: str):
     image_rembg = cv2.cvtColor(composite, cv2.COLOR_RGB2BGR)
 
     logger.info("Applying Perspective...")
-    corrected_image = apply_optional_perspective_correction(
-        image_rembg,
-        enable_perspective_correction=True,
-        return_matrix=False
-    )
+    corrected_image = apply_optional_perspective_correction(image_rembg, enable_perspective_correction=True, return_matrix=False)
 
     logger.info("Applying Grayscale...")
     gray_img = apply_grayscale(corrected_image)
@@ -86,6 +85,7 @@ async def test_grayscale(image_path: str, api_key: str):
             else:
                 logger.error(f"API Error {response.status}: {await response.text()}")
 
+
 def main():
     api_key = os.environ.get("UPSTAGE_API_KEY")
     if not api_key:
@@ -94,6 +94,7 @@ def main():
 
     image_path = "data/datasets/images/train/drp.en_ko.in_house.selectstar_001454.jpg"
     asyncio.run(test_grayscale(image_path, api_key))
+
 
 if __name__ == "__main__":
     main()

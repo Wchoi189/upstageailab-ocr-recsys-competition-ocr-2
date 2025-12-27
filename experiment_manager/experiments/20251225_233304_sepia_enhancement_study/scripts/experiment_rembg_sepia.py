@@ -2,11 +2,13 @@
 import asyncio
 import logging
 import os
-import cv2
-import aiohttp
-import numpy as np
 from pathlib import Path
+
+import aiohttp
+import cv2
+import numpy as np
 from rembg import remove
+
 from ocr.utils.sepia_enhancement import enhance_sepia
 
 # Setup logging
@@ -14,6 +16,7 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 API_URL = "https://api.upstage.ai/v1/document-ai/ocr"
+
 
 def apply_rembg_white_bg(image: np.ndarray) -> np.ndarray:
     # Convert to RGB for rembg
@@ -30,6 +33,7 @@ def apply_rembg_white_bg(image: np.ndarray) -> np.ndarray:
 
     # Back to BGR
     return cv2.cvtColor(composite, cv2.COLOR_RGB2BGR)
+
 
 async def test_rembg_sepia(image_path: str, api_key: str):
     path = Path(image_path)
@@ -81,6 +85,7 @@ async def test_rembg_sepia(image_path: str, api_key: str):
             else:
                 logger.error(f"API Error {response.status}: {await response.text()}")
 
+
 def main():
     api_key = os.environ.get("UPSTAGE_API_KEY")
     if not api_key:
@@ -89,6 +94,7 @@ def main():
 
     image_path = "data/datasets/images/train/drp.en_ko.in_house.selectstar_001454.jpg"
     asyncio.run(test_rembg_sepia(image_path, api_key))
+
 
 if __name__ == "__main__":
     main()

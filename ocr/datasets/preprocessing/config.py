@@ -6,6 +6,8 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+_list_config_type: type | None
+
 try:
     from omegaconf import ListConfig
 

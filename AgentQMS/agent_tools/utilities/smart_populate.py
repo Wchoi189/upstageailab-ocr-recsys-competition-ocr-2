@@ -59,7 +59,7 @@ class SmartPopulator:
 
     def _analyze_git(self) -> dict[str, Any]:
         """Analyze git context for current branch and author."""
-        context = {}
+        context: dict[str, Any] = {}
 
         try:
             # Get current branch
@@ -112,9 +112,11 @@ class SmartPopulator:
                 .stdout.strip()
                 .split("\n")
             )
-            context["recent_files"] = [f for f in changed_files if f][:10]
+            recent_files: list[str] = [f for f in changed_files if f][:10]
+            context["recent_files"] = recent_files
         except Exception:
-            context["recent_files"] = []
+            empty_files: list[str] = []
+            context["recent_files"] = empty_files
 
         return context
 

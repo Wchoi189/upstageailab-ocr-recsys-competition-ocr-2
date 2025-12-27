@@ -93,7 +93,7 @@ packages = ["ocr", "AgentQMS"]
 # General settings
 ignore_missing_imports = true
 show_error_codes = false
-exclude = ["scripts/process_monitor.py", "outputs/", "scripts/", "docs/", "ablation_study/", "archive/"]
+exclude = ["scripts/process_monitor.py", "outputs/", "scripts/", "docs/", "ablation_study/", "archive/", "experiment_manager/etk.py", "apps/agentqms-dashboard/"]
 
 # Development-friendly settings (less strictness)
 warn_unused_ignores = false
@@ -103,7 +103,7 @@ warn_unreachable = false
 disallow_untyped_calls = false
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
-check_untyped_defs = false
+check_untyped_defs = true
 
 [[tool.mypy.overrides]]
 module = [

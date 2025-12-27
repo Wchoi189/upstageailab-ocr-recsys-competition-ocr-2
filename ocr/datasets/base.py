@@ -63,7 +63,7 @@ from torch.utils.data import Dataset
 # This prevents repetitive logging when multiple datasets are created with the same config
 _logged_warnings: set[str] = set()
 
-from ocr.core.validation import DatasetConfig, ImageData, ImageMetadata, TransformInput, ValidatedPolygonData
+from ocr.core.validation import DatasetConfig, ImageData, ImageMetadata, PolygonData, TransformInput, ValidatedPolygonData
 from ocr.utils.background_normalization import normalize_gray_world
 from ocr.utils.orientation import (
     EXIF_ORIENTATION_TAG,
@@ -551,7 +551,11 @@ class ValidatedOCRDataset(Dataset):
                     len(processed_polygons),
                 )
 
-        transform_input = TransformInput(image=image_array, polygons=polygon_models, metadata=metadata)
+        # Cast to list[PolygonData] for TransformInput (ValidatedPolygonData is a subclass)
+        from typing import cast
+
+        polygons_for_transform: list[PolygonData] | None = cast(list[PolygonData], polygon_models) if polygon_models else None
+        transform_input = TransformInput(image=image_array, polygons=polygons_for_transform, metadata=metadata)
 
         # Apply transformation
         transformed = self.transform(transform_input)
@@ -893,4 +897,4 @@ class ValidatedOCRDataset(Dataset):
 # =======================================================================
 
 # Backward compatibility alias
-Dataset = ValidatedOCRDataset
+Dataset = ValidatedOCRDataset  # type: ignore[assignment,misc]

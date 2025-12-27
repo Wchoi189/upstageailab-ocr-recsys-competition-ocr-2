@@ -29,7 +29,7 @@ except ImportError:
 class SchemaValidationError(Exception):
     """Raised when schema validation fails."""
 
-    def __init__(self, message: str, path: list[Any] = None):
+    def __init__(self, message: str, path: list[Any] | None = None):
         super().__init__(message)
         self.message = message
         self.path = path or []

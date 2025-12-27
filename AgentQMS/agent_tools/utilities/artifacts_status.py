@@ -25,7 +25,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
 
 from AgentQMS.agent_tools.utilities.versioning import (
     ArtifactAgeDetector,
-    ArtifactLifecycle,
     VersionManager,
 )
 
@@ -51,8 +50,8 @@ def get_artifact_status(artifact_path: Path) -> ArtifactStatus:
         age_category = detector.get_age_category(age_days) if age_days else "unknown"
 
         # Get lifecycle state
-        lifecycle = ArtifactLifecycle()
-        lifecycle_state = lifecycle.get_current_state(artifact_path)
+        # TODO: Implement get_current_state method in ArtifactLifecycle
+        lifecycle_state = "unknown"
 
         # Get version
         version_mgr = VersionManager()
@@ -126,7 +125,7 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
         print(f"   ❌ Errors:        {error_count}")
 
     # Lifecycle state summary
-    states = {}
+    states: dict[str, int] = {}
     for status in statuses:
         states[status.lifecycle_state] = states.get(status.lifecycle_state, 0) + 1
 

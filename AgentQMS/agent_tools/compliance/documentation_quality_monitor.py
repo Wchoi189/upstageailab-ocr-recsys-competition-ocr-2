@@ -8,6 +8,7 @@ import json
 import re
 from datetime import datetime
 from pathlib import Path
+from typing import Any
 
 
 class DocumentationQualityMonitor:
@@ -15,7 +16,7 @@ class DocumentationQualityMonitor:
 
     def __init__(self, project_root: str = "."):
         self.project_root = Path(project_root)
-        self.issues = []
+        self.issues: list[dict[str, Any]] = []
 
     def check_documentation_consistency(self) -> list[dict]:
         """Check for documentation consistency issues."""

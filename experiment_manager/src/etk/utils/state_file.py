@@ -96,7 +96,7 @@ def update_state(exp_path: Path, **updates) -> None:
     temp_file.replace(state_file)
 
 
-def create_state_file(exp_path: Path, experiment_id: str, checkpoint_path: str = None) -> None:
+def create_state_file(exp_path: Path, experiment_id: str, checkpoint_path: str | None = None) -> None:
     """
     Create initial .state file for new experiment.
 

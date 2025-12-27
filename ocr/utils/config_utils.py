@@ -64,7 +64,7 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
             return value
 
         parts = path.split(".")
-        result = {}
+        result: dict[str, Any] = {}
         current = result
 
         for part in parts[:-1]:
@@ -90,16 +90,26 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
             if not skip_own_package:
                 own_package = extract_package_directive(file_path)
                 if own_package:
-                    return OmegaConf.create(nest_at_path(OmegaConf.to_container(cfg), own_package))
+                    container = OmegaConf.to_container(cfg)
+                    assert isinstance(container, dict)
+                    nested = nest_at_path(container, own_package)
+                    result = OmegaConf.create(nested)
+                    assert isinstance(result, DictConfig)
+                    return result
+            assert isinstance(cfg, DictConfig)
             return cfg
 
         defaults = cfg.defaults
-        merged = OmegaConf.create({})
+        merged_temp = OmegaConf.create({})
+        assert isinstance(merged_temp, DictConfig)
+        merged: DictConfig = merged_temp
         own_content = {k: v for k, v in cfg.items() if k != "defaults"}
 
         for default in defaults:
             if default == "_self_":
-                merged = OmegaConf.merge(merged, own_content)
+                merged_result = OmegaConf.merge(merged, own_content)
+                assert isinstance(merged_result, DictConfig)
+                merged = merged_result
                 continue
 
             if isinstance(default, dict):
@@ -119,7 +129,9 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
 
                         # The sub_cfg from process_config already has @package applied
                         # So we just merge it
-                        merged = OmegaConf.merge(merged, OmegaConf.to_container(sub_cfg))
+                        merged_result = OmegaConf.merge(merged, OmegaConf.to_container(sub_cfg))
+                        assert isinstance(merged_result, DictConfig)
+                        merged = merged_result
             else:
                 # String-style
                 default_str = str(default)
@@ -133,17 +145,26 @@ def load_config(config_name: str = "train", overrides: list[str] | None = None) 
                     # Remove defaults from sub_cfg
                     sub_cfg.pop("defaults", None)
 
-                    merged = OmegaConf.merge(merged, OmegaConf.to_container(sub_cfg))
+                    merged_result = OmegaConf.merge(merged, OmegaConf.to_container(sub_cfg))
+                    assert isinstance(merged_result, DictConfig)
+                    merged = merged_result
 
         # Apply _self_ at the end if not explicitly placed
         if "_self_" not in defaults:
-            merged = OmegaConf.merge(merged, own_content)
+            merged_result = OmegaConf.merge(merged, own_content)
+            assert isinstance(merged_result, DictConfig)
+            merged = merged_result
 
         # Apply this file's own @package directive (unless skipped)
         if not skip_own_package:
             own_package = extract_package_directive(file_path)
             if own_package:
-                merged = OmegaConf.create(nest_at_path(OmegaConf.to_container(merged), own_package))
+                container = OmegaConf.to_container(merged)
+                assert isinstance(container, dict)
+                nested = nest_at_path(container, own_package)
+                merged_result = OmegaConf.create(nested)
+                assert isinstance(merged_result, DictConfig)
+                merged = merged_result
 
         return merged
 

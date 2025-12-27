@@ -126,7 +126,7 @@ class DatabaseManager:
         finally:
             conn.close()
 
-    def record_decision(self, experiment_id: str, decision: str, rationale: str, impact: str = None) -> str:
+    def record_decision(self, experiment_id: str, decision: str, rationale: str, impact: str | None = None) -> str:
         """Log decision to database."""
         import uuid
 
@@ -196,9 +196,11 @@ class DatabaseManager:
 
     def get_analytics(self) -> dict:
         """Generate analytics dashboard data."""
+        from typing import Any
+
         conn = self._get_connection()
         try:
-            analytics = {}
+            analytics: dict[str, Any] = {}
             # Experiment counts
             row = conn.execute("""
                 SELECT

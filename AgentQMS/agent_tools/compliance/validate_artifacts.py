@@ -163,7 +163,7 @@ class ArtifactValidator:
 
             self.artifacts_root = ensure_within_project(artifacts_root_path.resolve())
 
-        self.violations = []
+        self.violations: list[dict[str, Any]] = []
 
         # Load rules from YAML schema if available
         self.rules = ARTIFACT_RULES
@@ -372,7 +372,7 @@ class ArtifactValidator:
 
         # Check timestamp format
         valid, msg, match = self.validate_timestamp_format(filename)
-        if not valid:
+        if not valid or match is None:
             return valid, msg
 
         after_timestamp = filename[match.end() :]
@@ -652,7 +652,7 @@ class ArtifactValidator:
 
         return True, "Type consistency validated"
 
-    def validate_single_file(self, file_path: Path, strict_mode: bool = None) -> dict:
+    def validate_single_file(self, file_path: Path, strict_mode: bool | None = None) -> dict:
         """Validate a single artifact file.
 
         Args:
@@ -681,7 +681,7 @@ class ArtifactValidator:
 
             file_path = file_path.resolve()
 
-        result = {"file": str(file_path), "valid": True, "errors": []}
+        result: dict[str, Any] = {"file": str(file_path), "valid": True, "errors": []}
 
         # Skip INDEX.md files
         if file_path.name == "INDEX.md":
@@ -731,7 +731,7 @@ class ArtifactValidator:
 
         return result
 
-    def validate_directory(self, directory: Path, strict_mode: bool = None) -> list[dict]:
+    def validate_directory(self, directory: Path, strict_mode: bool | None = None) -> list[dict]:
         """Validate all markdown files in a directory.
 
         Args:
@@ -759,7 +759,7 @@ class ArtifactValidator:
 
         return results
 
-    def validate_all(self, strict_mode: bool = None) -> list[dict]:
+    def validate_all(self, strict_mode: bool | None = None) -> list[dict]:
         """Validate all artifacts in the artifacts directory.
 
         Args:
@@ -816,7 +816,7 @@ class ArtifactValidator:
                 else:
                     bundle_file_display = f"context_bundles/{bundle_name}.yaml"
 
-                bundle_result = {
+                bundle_result: dict[str, Any] = {
                     "file": bundle_file_display,
                     "valid": True,
                     "errors": [],

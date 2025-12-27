@@ -113,7 +113,7 @@ class ModelManager:
         self._config_bundle = bundle
 
         # Extract model config
-        model_config = self._extract_model_config(bundle, resolved_config)
+        model_config = self._extract_model_config(bundle, str(resolved_config))
         if model_config is None:
             return False
 

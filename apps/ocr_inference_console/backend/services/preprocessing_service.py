@@ -51,7 +51,9 @@ class PreprocessingService:
 
             return image
 
-        except base64.binascii.Error as e:
-            raise ValueError(f"Invalid base64 encoding: {str(e)}")
         except Exception as e:
+            # Handle base64 decoding errors
+            error_msg = str(e).lower()
+            if "base64" in error_msg or "binascii" in error_msg or "incorrect padding" in error_msg:
+                raise ValueError(f"Invalid base64 encoding: {str(e)}")
             raise ValueError(f"Image decoding failed: {str(e)}")

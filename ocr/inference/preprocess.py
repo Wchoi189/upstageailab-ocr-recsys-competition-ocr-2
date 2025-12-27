@@ -176,10 +176,16 @@ def apply_optional_perspective_correction(
     try:
         image_no_bg, mask = remove_background_and_mask(image_bgr)
         if return_matrix:
-            corrected, _result, matrix = correct_perspective_from_mask(image_no_bg, mask, return_matrix=True)
+            result = correct_perspective_from_mask(image_no_bg, mask, return_matrix=True)
+            # When return_matrix=True, we get 3 values
+            assert len(result) == 3
+            corrected, _result, matrix = result  # type: ignore[misc]
             return corrected, matrix
         else:
-            corrected, _result = correct_perspective_from_mask(image_no_bg, mask)
+            result = correct_perspective_from_mask(image_no_bg, mask, return_matrix=False)
+            # When return_matrix=False, we get 2 values
+            assert len(result) == 2
+            corrected, _result = result  # type: ignore[misc]
             return corrected
     except Exception as exc:  # noqa: BLE001
         LOGGER.warning("Perspective correction failed or unavailable: %s", exc)

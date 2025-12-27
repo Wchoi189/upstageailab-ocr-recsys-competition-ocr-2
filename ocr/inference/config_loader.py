@@ -275,7 +275,7 @@ def _determine_hydra_location(config_file: Path) -> tuple[Path, str]:
     if project_configs_dir in config_file.parents:
         relative_path = config_file.relative_to(project_configs_dir)
         config_dir = project_configs_dir
-        config_name = relative_path.with_suffix("")
+        config_name = str(relative_path.with_suffix(""))
     else:
         config_dir = config_file.parent
         config_name = config_file.with_suffix("").name

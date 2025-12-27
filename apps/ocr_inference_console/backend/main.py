@@ -106,6 +106,9 @@ async def lifespan(app: FastAPI):
             # We can just poll or trust the service - let's wait a moment for FS ops
             await asyncio.sleep(0.5)
 
+            assert _checkpoint_service is not None, "Checkpoint service not initialized"
+            assert _inference_service is not None, "Inference service not initialized"
+
             latest = await _checkpoint_service.get_latest_async()
             if latest:
                 logger.info("🚀 Triggering background warm-up for: %s", latest.checkpoint_path)

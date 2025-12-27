@@ -129,7 +129,7 @@ def _compute_linearity_rmse(
             "linearity_rmse_mean": None,
         }
 
-    rmses: list[float] = []
+    rmses: list[float | None] = []
     for entry in data:
         dist = entry["dist"]
         if len(dist) == 0:

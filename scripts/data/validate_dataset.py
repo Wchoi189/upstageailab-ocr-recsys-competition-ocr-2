@@ -7,7 +7,6 @@ visual inspection of bounding boxes and text.
 
 import argparse
 import logging
-import random
 from pathlib import Path
 
 import cv2
@@ -46,7 +45,7 @@ def validate_file(parquet_path: Path) -> pd.DataFrame | None:
                 data["labels"] = data["labels"].tolist()
             if isinstance(data.get("metadata"), np.ndarray):
                 # Metadata might be serialised as dict or numpy struct
-                 data["metadata"] = data["metadata"].tolist() if hasattr(data["metadata"], "tolist") else data["metadata"]
+                data["metadata"] = data["metadata"].tolist() if hasattr(data["metadata"], "tolist") else data["metadata"]
 
             item = OCRStorageItem(**data)
             item.validate_lengths()
@@ -87,7 +86,7 @@ def visualize_samples(df: pd.DataFrame, num_samples: int = 5, output_dir: str = 
         metadata = row.get("metadata", {})
 
         if isinstance(polygons, np.ndarray):
-             polygons = polygons.tolist()
+            polygons = polygons.tolist()
 
         # Deep conversion for nested numpy arrays (pandas/pyarrow artifact)
         clean_polygons = []
@@ -105,7 +104,7 @@ def visualize_samples(df: pd.DataFrame, num_samples: int = 5, output_dir: str = 
 
         # 1. Visualize Raw (Original Image + Reprojected Boxes)
         viz_img = img.copy()
-        for poly, text in zip(polygons, texts):
+        for poly, text in zip(polygons, texts, strict=False):
             try:
                 pts = np.array(poly, np.int32).reshape((-1, 1, 2))
                 cv2.polylines(viz_img, [pts], True, (0, 255, 0), 2)
@@ -126,10 +125,10 @@ def visualize_samples(df: pd.DataFrame, num_samples: int = 5, output_dir: str = 
 
         has_inverse = False
         if inverse_matrix_list is not None:
-             if isinstance(inverse_matrix_list, np.ndarray):
-                 has_inverse = inverse_matrix_list.size > 0
-             elif isinstance(inverse_matrix_list, list):
-                 has_inverse = len(inverse_matrix_list) > 0
+            if isinstance(inverse_matrix_list, np.ndarray):
+                has_inverse = inverse_matrix_list.size > 0
+            elif isinstance(inverse_matrix_list, list):
+                has_inverse = len(inverse_matrix_list) > 0
 
         if has_inverse:
             try:

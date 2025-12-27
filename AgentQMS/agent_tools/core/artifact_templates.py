@@ -35,10 +35,12 @@ try:
     from AgentQMS.agent_tools.utils.timestamps import get_kst_timestamp
 
     UTILITIES_AVAILABLE = True
+    _get_current_branch = get_current_branch
+    _get_kst_timestamp = get_kst_timestamp
 except ImportError:
     UTILITIES_AVAILABLE = False
-    get_current_branch = None
-    get_kst_timestamp = None
+    _get_current_branch = None  # type: ignore[assignment]
+    _get_kst_timestamp = None  # type: ignore[assignment]
 
 
 class ArtifactTemplates:
@@ -834,8 +836,8 @@ High/Medium/Low (urgency for fixing, separate from severity above)
         frontmatter["title"] = title
 
         # Add timestamp using new utility if available, fallback to old method
-        if UTILITIES_AVAILABLE and get_kst_timestamp:
-            frontmatter["date"] = get_kst_timestamp()
+        if UTILITIES_AVAILABLE and _get_kst_timestamp is not None:
+            frontmatter["date"] = _get_kst_timestamp()
         else:
             from datetime import timedelta, timezone
 
@@ -844,9 +846,9 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
         # Add branch name if not explicitly provided in kwargs
         if "branch" not in kwargs:
-            if UTILITIES_AVAILABLE and get_current_branch:
+            if UTILITIES_AVAILABLE and _get_current_branch is not None:
                 try:
-                    frontmatter["branch"] = get_current_branch()
+                    frontmatter["branch"] = _get_current_branch()
                 except Exception:
                     frontmatter["branch"] = "main"  # Fallback
             else:

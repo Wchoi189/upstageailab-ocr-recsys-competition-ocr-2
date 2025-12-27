@@ -74,7 +74,9 @@ def analyze_run(run_id: str):
         # --- Output Proposed Next Run ---
         print("## 🚀 Proposed Next Experiment\n")
         # Sort by priority and take the top recommendation
-        best_recommendation = sorted(recommendations, key=lambda x: x["priority"])[0]
+        from typing import cast
+
+        best_recommendation = sorted(recommendations, key=lambda x: cast(int, x["priority"]))[0]
 
         print("### Objective\n")
         print(f"* **Hypothesis:** {best_recommendation['hypothesis']}")

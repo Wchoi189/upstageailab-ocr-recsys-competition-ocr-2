@@ -59,7 +59,7 @@ class FrontmatterGenerator:
             "completion_summaries": "completion_summary",
         }
 
-    def analyze_file(self, file_path: str) -> dict[str, str]:
+    def analyze_file(self, file_path: str) -> dict[str, str | list[str]]:
         """Analyze file to determine appropriate frontmatter values"""
         path = Path(file_path)
 
@@ -353,11 +353,18 @@ class FrontmatterGenerator:
             standard_order = ["title", "date", "type", "category", "status", "version", "ads_version"]
             for field in standard_order:
                 if field in updates:
-                    new_fm += f'{field}: "{updates[field]}"\n'
+                    value = updates[field]
+                    if isinstance(value, list):
+                        new_fm += f"{field}: {value}\n"
+                    else:
+                        new_fm += f'{field}: "{value}"\n'
 
-            for k, v in updates.items():
-                if k not in standard_order:
-                    new_fm += f'{k}: "{v}"\n'
+            for key, val in updates.items():
+                if key not in standard_order:
+                    if isinstance(val, list):
+                        new_fm += f"{key}: {val}\n"
+                    else:
+                        new_fm += f'{key}: "{val}"\n'
             new_fm += "---\n"
 
             if not dry_run:
