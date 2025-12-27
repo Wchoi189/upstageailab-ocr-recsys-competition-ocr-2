@@ -1,10 +1,10 @@
 metadata:
-  generated_at: '2025-12-27T12:33:37.133281+00:00'
+  generated_at: '2025-12-27T19:39:12.700937+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
-  framework: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
-  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
+  framework: /home/user/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
+  project: /home/user/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
 plugins_loaded:
   artifact_types:
   - audit
@@ -18,27 +18,27 @@ plugin_metadata:
   type: artifact_type
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
+  path: /home/user/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
 - name: change_request
   type: artifact_type
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+  path: /home/user/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
 - name: ocr_experiment_report
   type: artifact_type
   version: '1.1'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+  path: /home/user/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
 - name: validators
   type: validator
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
+  path: /home/user/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
 - name: security-review
   type: context_bundle
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
+  path: /home/user/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
 validation_errors: []
 resolved:
   artifact_types:
