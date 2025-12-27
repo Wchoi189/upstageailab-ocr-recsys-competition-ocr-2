@@ -4,6 +4,7 @@ import sys
 
 from etk.core import ExperimentTracker
 from etk.factory import ExperimentFactory
+from etk.reconciler import ExperimentReconciler
 
 ETK_VERSION = "1.0.0"
 EDS_VERSION = "1.0"
@@ -63,6 +64,11 @@ Examples:
     validate_parser = subparsers.add_parser("validate", help="Validate experiment compliance")
     validate_parser.add_argument("experiment_id", nargs="?", help="Experiment ID (auto-detected if omitted)")
     validate_parser.add_argument("--all", action="store_true", help="Validate all experiments")
+
+    # reconcile command
+    reconcile_parser = subparsers.add_parser("reconcile", help="Reconcile manifest with filesystem")
+    reconcile_parser.add_argument("experiment_id", nargs="?", help="Experiment ID (auto-detected if omitted)")
+    reconcile_parser.add_argument("--all", action="store_true", help="Reconcile all experiments")
 
     # list command
     subparsers.add_parser("list", help="List all experiments")
@@ -178,7 +184,46 @@ Examples:
                 print("\\n✅ Validation passed")
                 sys.exit(0)
             else:
-                print("\\n❌ Validation failed")
+                print("\n❌ Validation failed")
+                sys.exit(1)
+
+        elif args.command == "reconcile":
+            if args.all:
+                experiments = tracker.list_experiments()
+                if not experiments:
+                    print("No experiments found.")
+                    sys.exit(0)
+
+                print(f"🔄 Reconciling {len(experiments)} experiments...")
+                success_count = 0
+                for exp in experiments:
+                    exp_id = exp['experiment_id']
+                    try:
+                        exp_dir = factory._get_experiment_dir(exp_id)
+                        reconciler = ExperimentReconciler(exp_dir)
+                        result = reconciler.reconcile()
+                        print(f"✅ [{exp_id}] Synced {result['artifacts_count']} artifacts")
+                        success_count += 1
+                    except Exception as e:
+                        print(f"❌ [{exp_id}] Failed: {e}")
+
+                print(f"\nCompleted: {success_count}/{len(experiments)} reconciled.")
+                sys.exit(0 if success_count == len(experiments) else 1)
+
+            exp_id = args.experiment_id or tracker.get_current_experiment()
+            if not exp_id:
+                print("❌ Error: No experiment specified and none could be detected.")
+                sys.exit(1)
+
+            try:
+                exp_dir = factory._get_experiment_dir(exp_id)
+                reconciler = ExperimentReconciler(exp_dir)
+                result = reconciler.reconcile()
+                print(f"✅ Reconciliation complete for {exp_id}")
+                print(f"   artifacts found: {result['artifacts_count']}")
+                print(f"   last_reconciled: {result['last_reconciled']}")
+            except Exception as e:
+                print(f"❌ Error reconciling experiment: {e}")
                 sys.exit(1)
 
         elif args.command == "list":

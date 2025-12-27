@@ -1,15 +1,16 @@
 ---
-ads_version: "1.0"
-type: "guide"
-experiment_id: "20251217_024343_image_enhancements_implementation"
-status: "complete"
-created: "2025-12-17T17:59:48Z"
-updated: "2025-12-17T17:59:48Z"
-tags: ['image-enhancements', 'guide']
+ads_version: '1.0'
+type: guide
+experiment_id: 20251217_024343_image_enhancements_implementation
+status: complete
+created: '2025-12-17T17:59:48Z'
+updated: '2025-12-17T17:59:48Z'
+tags:
+- image-enhancements
+- guide
 commands: []
 prerequisites: []
 ---
-
 # VLM Integration Guide for Image Enhancement Experiment
 
 **Experiment**: `20251217_024343_image_enhancements_implementation`

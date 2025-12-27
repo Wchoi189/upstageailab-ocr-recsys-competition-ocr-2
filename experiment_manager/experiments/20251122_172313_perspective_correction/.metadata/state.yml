@@ -1,0 +1,41 @@
+created_at: 2025-11-22 17:23 (KST)
+current_phase: Mask-only trapezoid fitting with LCC filtering and heuristic enforcement
+current_state: incomplete
+experiment_goal: Evaluate and improve perspective correction algorithms on rembg-processed
+  images
+improvement_status: Largest connected component filtering, adaptive approxPolyDP quadrilateral
+  fitting, and stricter per-edge support/linearity heuristics are implemented and
+  validated across the 25-image worst-performer suite
+initial_assessment: Import and organize existing perspective correction and rembg
+  optimization experiments
+key_achievements:
+- Comprehensive 200-image baseline test established (73% success)
+- Pre-correction validation catches ~52% of doomed cases
+- Mask-only fitter now uses LCC filtering plus approxPolyDP trapezoids (no pixel dependencies)
+- Document-aware metrics (mask, bbox retention, skew) integrated into harness
+- Per-edge heuristics (coverage, ratio, linearity, solidity, corner sharpness, parallelism)
+  gate every correction and log line-quality reports
+- Mask-only approach runs on worst performers without crashes while flagging low-support/ghost-line
+  cases
+- Assessment docs created for mask-only rewrite and heuristics plan
+known_issues:
+- Trapezoid fits still shrink canvas significantly under current heuristics (avg -18.5%
+  area ratio)
+- Many cases fail the 0.80 edge-support ratio, forcing bbox fallbacks despite good
+  mask retention
+- Success rate on worst performers remains low (12%); requires threshold tuning and
+  corner snapping
+- Complex layouts and highly distorted documents remain difficult
+last_updated: '2025-11-28T00:52:31.077337'
+next_steps:
+- Tune edge-support thresholds and snapping logic to recover borderline fits without
+  inviting ghost lines
+- Experiment with hull-aware padding / blend strategies to regain canvas area while
+  respecting mask evidence
+- "Re-run larger cohorts (\u226550 and 200 images) once heuristics are tuned to measure\
+  \ success rate vs. document metrics"
+- Define acceptance metrics that prioritize mask/bbox retention over raw area ratio
+  for trapezoid fits
+- Feed validated approach into production pipeline once success metrics exceed baseline
+success_rate: "Baseline 73% (146/200); latest LCC+approxPolyDP run on worst 25 \u2192\
+  \ 12% success (3/25) with 32% showing higher area ratio (avg \u0394 -18.5%)"

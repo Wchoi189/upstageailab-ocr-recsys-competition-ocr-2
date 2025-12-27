@@ -1,23 +1,25 @@
 ---
-ads_version: "1.0"
+ads_version: '1.0'
 type: assessment
 title: Week 1 Background Normalization - VLM Visual Validation
 status: complete
-created: 2025-12-18T18:35:00+09:00
-updated: 2025-12-18T18:35:00+09:00
+created: 2025-12-18 18:35:00+09:00
+updated: 2025-12-18 18:35:00+09:00
 experiment_id: 20251217_024343_image_enhancements_implementation
 phase: phase_1
 priority: high
 evidence_count: 2
-tags: [background-normalization, vlm-validation, week1]
+tags:
+- background-normalization
+- vlm-validation
+- week1
 related_artifacts:
- - 20251218_1621_assessment_gray-world-validation.md
- - 20251218_1415_baseline-quality-metrics.json
+- 20251218_1621_assessment_gray-world-validation.md
+- 20251218_1415_baseline-quality-metrics.json
 checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
 vlm_backend: dashscope
 vlm_model: qwen3-vl-plus-2025-09-23
 ---
-
 # Week 1 Background Normalization - VLM Visual Validation
 
 ## Executive Summary

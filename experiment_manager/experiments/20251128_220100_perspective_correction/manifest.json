@@ -1,0 +1,29 @@
+{
+  "experiment_id": "20251128_220100_perspective_correction",
+  "name": "Perspective Correction",
+  "status": "active",
+  "created_at": "2025-11-28T22:01:00.630861",
+  "updated_at": "2025-12-27T16:16:43.367762",
+  "intention": "Implement angle-based bucketing for dominant edge fitting",
+  "tasks": [],
+  "insights": [],
+  "artifacts": [
+    {
+      "path": ".metadata/assessments/20251128_2201_assessment_run-01-angle-bucketing-initial.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251128_2201_assessment_run-02-coordinate-inversion-fix.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251128_2201_assessment_run-03-geometric-synthesis-success.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/reports/20251129_0218_assessment_variable-shadowing-bug-geometric-synthesis.md",
+      "type": "report"
+    }
+  ],
+  "last_reconciled": "2025-12-27T17:04:48.592490"
+}

@@ -1,23 +1,25 @@
 ---
-ads_version: "1.0"
+ads_version: '1.0'
 type: assessment
 title: Week 2 Text Deskewing - VLM Visual Validation
 status: complete
-created: 2025-12-18T18:40:00+09:00
-updated: 2025-12-18T18:40:00+09:00
+created: 2025-12-18 18:40:00+09:00
+updated: 2025-12-18 18:40:00+09:00
 experiment_id: 20251217_024343_image_enhancements_implementation
 phase: phase_2
 priority: high
 evidence_count: 2
-tags: [deskewing, vlm-validation, week2]
+tags:
+- deskewing
+- vlm-validation
+- week2
 related_artifacts:
- - 20251218_1829_assessment_deskewing-comparison.md
- - text_deskewing.py
+- 20251218_1829_assessment_deskewing-comparison.md
+- text_deskewing.py
 checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
 vlm_backend: dashscope
 vlm_model: qwen3-vl-plus-2025-09-23
 ---
-
 # Week 2 Text Deskewing - VLM Visual Validation
 
 ## Executive Summary

@@ -1,0 +1,97 @@
+{
+  "experiment_id": "20251122_172313_perspective_correction",
+  "name": "Perspective Correction",
+  "status": "active",
+  "created_at": "2025-11-22T17:23:13.299839",
+  "updated_at": "2025-11-23T12:53:14.854328",
+  "intention": "Import and organize existing perspective correction and rembg optimization experiments",
+  "tasks": [],
+  "insights": [],
+  "artifacts": [
+    {
+      "path": ".metadata/assessments/20251122_1723_assessment_200-image-test-results.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251122_1723_assessment_failed-cases-retest-results.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251122_1723_assessment_improved-edge-based-approach.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251122_1723_assessment_mask-only-edge-detection-with-heuristics.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251122_1723_assessment_perspective-correction-failures-analysis.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251122_1723_assessment_worst-performers-test-results.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251122_1723_guide_algorithm-refinement-implementation.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-gpu-setup-status.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-gpu-verification.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-mask-based-approach-results.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-optimization-implementation-summary.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-optimization-test-plan.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-performance-optimization.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-pipeline-summary.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_assessment_rembg-test-results-summary.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_guide_pipeline-test-readme.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/2025-11/20251122_1723_guide_quick-start-optimized.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/logs/20251122_1723_report_insights.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/reports/20251124_1338_assessment_catastrophic-perspective-correction-failure-on-optimal-orientation-images.md",
+      "type": "report"
+    },
+    {
+      "path": ".metadata/reports/20251124_1347_assessment_improved-edge-based-approach-performance-regression-and-technical-bugs.md",
+      "type": "report"
+    },
+    {
+      "path": ".metadata/reports/20251124_1925_assessment_edge-line-selection-and-area-metric-defects.md",
+      "type": "report"
+    }
+  ],
+  "last_reconciled": "2025-12-27T17:04:48.505477"
+}

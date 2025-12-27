@@ -2,7 +2,7 @@
 ads_version: "1.0"
 type: "bug_report"
 category: "troubleshooting"
-status: "confirmed"
+status: "active"
 severity: "high"
 version: "1.0"
 tags: ['bug', 'issue', 'troubleshooting']

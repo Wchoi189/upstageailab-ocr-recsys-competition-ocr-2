@@ -1,3 +1,0 @@
-3	I001	[*] unsorted-imports
-Found 3 errors.
-[*] 3 fixable with the `--fix` option.

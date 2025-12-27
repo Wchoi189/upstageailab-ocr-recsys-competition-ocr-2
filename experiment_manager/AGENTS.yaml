@@ -3,10 +3,10 @@
 # PATHS: Root: ./ | Experiments: ./experiments/{ID} | Manifest: {ID}/manifest.json
 
 commands:
-  INIT: "python3 -m etk.factory init --name {name}" # Output: experiment_id
-  TASK: "python3 -m etk.factory task --id {task_id} --status {status}"
-  LOG:  "python3 -m etk.factory log --msg {text} --type {insight|decision|failure}"
-  SYNC: "python3 -m etk.factory sync" # Reconcile FS to DB
+  INIT: "uv run python3 -m etk.factory init --name {name}" # Output: experiment_id
+  TASK: "uv run python3 -m etk.factory task --id {task_id} --status {status}"
+  LOG:  "uv run python3 -m etk.factory log --msg {text} --type {insight|decision|failure}"
+  SYNC: "uv run python3 -m etk.factory sync" # Reconcile FS to DB
 
 schema:
   manifest: ".schemas/manifest.schema.json"

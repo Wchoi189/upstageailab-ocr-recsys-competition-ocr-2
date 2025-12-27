@@ -7,17 +7,17 @@ set -e
 echo "🔍 Checking for diagram updates..."
 
 # Run the diagram generation script
-python scripts/generate_diagrams.py --check-changes > /tmp/diagram_changes.txt
+uv run python scripts/generate_diagrams.py --check-changes > /tmp/diagram_changes.txt
 
 # Check if any diagrams need updates
 if grep -q "YES" /tmp/diagram_changes.txt; then
     echo "📊 Diagrams need updates. Generating new versions..."
 
     # Update all diagrams that changed
-    python scripts/generate_diagrams.py --update
+    uv run python scripts/generate_diagrams.py --update
 
     # Validate the updated diagrams
-    python scripts/generate_diagrams.py --validate
+    uv run python scripts/generate_diagrams.py --validate
 
     echo "✅ Diagrams updated and validated successfully"
 

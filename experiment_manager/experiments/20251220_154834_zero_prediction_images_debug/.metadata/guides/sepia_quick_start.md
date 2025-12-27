@@ -1,12 +1,17 @@
 ---
-ads_version: "1.0"
+ads_version: '1.0'
 type: guide
-experiment_id: "20251220_154834_zero_prediction_images_debug"
-title: "Sepia Testing Quick Start"
-created: "2025-12-21T02:23:00+09:00"
-tags: ["sepia", "quickstart"]
+experiment_id: 20251220_154834_zero_prediction_images_debug
+title: Sepia Testing Quick Start
+created: '2025-12-21T02:23:00+09:00'
+tags:
+- sepia
+- quickstart
+status: complete
+updated: '2025-12-21T02:23:00+09:00'
+commands: []
+prerequisites: []
 ---
-
 # Sepia Testing Quick Start
 
 ## Directory Structure

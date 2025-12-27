@@ -1,0 +1,114 @@
+tasks:
+- id: task_001
+  description: Organize perspective correction scripts and move to experiment-tracker
+  status: completed
+  created_at: '2025-11-22 17:23 (KST)'
+  completed_at: '2025-11-23 00:51 (KST)'
+  notes: Moved all test_ prefixed scripts, verify_gpu_usage.py, optimized_rembg.py, and documentation files to experiment-tracker
+
+- id: task_002
+  description: Analyze 200-image comprehensive test results
+  status: completed
+  created_at: '2025-11-23 00:26 (KST)'
+  completed_at: '2025-11-23 00:28 (KST)'
+  notes: Found 73% success rate (146/200), 27% failure rate. All failures due to area loss. Created assessment document.
+
+- id: task_003
+  description: Integrate pre-correction validation into comprehensive test script
+  status: completed
+  created_at: '2025-11-23 00:28 (KST)'
+  completed_at: '2025-11-23 00:29 (KST)'
+  notes: Added validate_corners() and calculate_skew_angle() functions. Pre-validation catches 52% of failures early.
+
+- id: task_004
+  description: Improve corner detection (increase min_area_ratio from 0.1 to 0.3)
+  status: completed
+  created_at: '2025-11-23 00:28 (KST)'
+  completed_at: '2025-11-23 00:29 (KST)'
+  notes: Updated DocumentDetector to use min_area_ratio=0.3, aligning with pre-validation threshold.
+
+- id: task_005
+  description: Test improved algorithm on previously failed cases (54 cases)
+  status: completed
+  created_at: '2025-11-23 00:40 (KST)'
+  completed_at: '2025-11-23 00:42 (KST)'
+  notes: Pre-validation caught 28 cases (52%), post-validation failed 25 cases (46%), 1 case now succeeds (1.9% improvement).
+
+- id: task_006
+  description: Update experiment-tracker metadata (tasks, decisions, state)
+  status: completed
+  created_at: '2025-11-23 00:52 (KST)'
+  completed_at: '2025-11-23 13:00 (KST)'
+  notes: Documenting current state, completed tasks, and key decisions. Updated timestamp format to human-readable format.
+
+- id: task_007
+  description: Integrate improvements into main production pipeline
+  status: pending
+  created_at: '2025-11-23 00:52 (KST)'
+  notes: Pre-validation and improved corner detection ready for production integration.
+
+- id: task_008
+  description: Monitor production performance and track success rates
+  status: pending
+  created_at: '2025-11-23 00:52 (KST)'
+  notes: Track fallback usage and failure patterns in production environment.
+
+- id: task_009
+  description: Implement rembg mask-based perspective correction approach
+  status: completed
+  created_at: '2025-11-23 13:30 (KST)'
+  completed_at: '2025-11-23 13:50 (KST)'
+  notes: Extracted rembg mask (alpha channel), implemented outer point detection, quadrilateral fitting. Achieved 50% success on random failures, 44% on worst 50 performers.
+
+- id: task_010
+  description: Extract and analyze worst performing images
+  status: completed
+  created_at: '2025-11-23 13:45 (KST)'
+  completed_at: '2025-11-23 13:50 (KST)'
+  notes: Created script to extract worst 50 performers based on area loss metrics. Tested rembg mask approach on them - 44% success rate (22/50).
+
+- id: task_011
+  description: Develop multi-point edge detection and line fitting approach
+  status: completed
+  created_at: '2025-11-23 14:00 (KST)'
+  completed_at: '2025-11-23 14:30 (KST)'
+  notes: Implemented edge extraction from mask, edge grouping, RANSAC line fitting, and corner intersection. Created comparison test script. Initial tests show need for parameter tuning.
+
+- id: task_012
+  description: Create process documentation and diagrams
+  status: completed
+  created_at: '2025-11-23 14:20 (KST)'
+  completed_at: '2025-11-23 14:30 (KST)'
+  notes: Created mermaid process flow diagrams, documented current approach limitations, and proposed improvements. Added comprehensive assessment documents.
+
+- id: task_013
+  description: Refine edge-based line fitting algorithm
+  status: in_progress
+  created_at: '2025-11-23 14:35 (KST)'
+  notes: Edge-based approach currently underperforming (worse than 4-point approach). Need to tune RANSAC parameters, edge grouping margins, and line fitting logic.
+
+- id: task_014
+  description: Test refined approaches on full dataset
+  status: pending
+  created_at: '2025-11-23 14:40 (KST)'
+  notes: Once edge-based approach is refined, test on full 200-image dataset to compare all approaches.
+- id: task_015
+  description: Implement mask-only rectangle fitter and integrate into test harness
+  status: completed
+  created_at: '2025-11-25 20:30 (KST)'
+  completed_at: '2025-11-25 22:30 (KST)'
+  notes: Replaced edge-detection pipeline with mask-only fitter, added document-aware metrics, ensured UV tests run without crashes.
+
+- id: task_016
+  description: Add line-quality heuristics (edge support, linearity, solidity, corner sharpness, parallelism)
+  status: completed
+  created_at: '2025-11-25 22:45 (KST)'
+  completed_at: '2025-11-26 11:55 (KST)'
+  notes: Implemented full heuristic stack with edge support coverage/ratio, linearity RMSE, solidity, corner sharpness, and parallelism gates plus blend/fallback handling.
+
+- id: task_017
+  description: Pivot mask-only fitter to LCC + approxPolyDP quadrilateral fitting
+  status: completed
+  created_at: '2025-11-26 11:20 (KST)'
+  completed_at: '2025-11-26 12:10 (KST)'
+  notes: Added largest connected component filtering, replaced minAreaRect with adaptive approxPolyDP trapezoid fitting, enforced 0.80 per-edge support floor, and re-ran 25-image worst performer suite.

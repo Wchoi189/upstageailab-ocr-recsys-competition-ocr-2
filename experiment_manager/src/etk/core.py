@@ -133,7 +133,7 @@ class ExperimentTracker:
 
         cmd = ["python3", str(checker_path)]
         if all_experiments:
-            cmd.append("--all")
+            cmd.append(str(self.experiments_dir))
         else:
             experiment_id = experiment_id or self.get_current_experiment()
             if not experiment_id:

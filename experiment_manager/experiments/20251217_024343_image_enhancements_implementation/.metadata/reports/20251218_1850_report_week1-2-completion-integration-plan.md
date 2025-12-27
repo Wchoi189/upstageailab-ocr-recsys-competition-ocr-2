@@ -1,28 +1,31 @@
 ---
-ads_version: "1.0"
+ads_version: '1.0'
 type: report
 title: Week 1-2 Completion Summary & Integration Plan
 status: complete
-created: 2025-12-18T18:50:00+09:00
-updated: 2025-12-18T18:50:00+09:00
+created: 2025-12-18 18:50:00+09:00
+updated: 2025-12-18 18:50:00+09:00
 experiment_id: 20251217_024343_image_enhancements_implementation
 phase: phase_2
 metrics:
- gray_world_score: 4.75
- deskewing_score: 4.6
- baseline_skew_avg: 15.0
- corrected_skew_avg: 2.87
+  gray_world_score: 4.75
+  deskewing_score: 4.6
+  baseline_skew_avg: 15.0
+  corrected_skew_avg: 2.87
 baseline: 20251129_173500_perspective_correction_implementation
 comparison: improvement
-tags: [summary, integration-plan, week1, week2]
+tags:
+- summary
+- integration-plan
+- week1
+- week2
 related_artifacts:
- - 20251218_1835_assessment_week1-vlm-validation.md
- - 20251218_1840_assessment_week2-vlm-validation.md
- - background_normalization.py
- - text_deskewing.py
+- 20251218_1835_assessment_week1-vlm-validation.md
+- 20251218_1840_assessment_week2-vlm-validation.md
+- background_normalization.py
+- text_deskewing.py
 checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
 ---
-
 # Week 1-2 Completion Summary & Integration Plan
 
 ## Executive Summary

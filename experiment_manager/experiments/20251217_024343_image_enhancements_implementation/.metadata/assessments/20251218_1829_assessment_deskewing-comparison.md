@@ -1,21 +1,23 @@
 ---
-ads_version: "1.0"
+ads_version: '1.0'
 type: assessment
 title: Text Deskewing Methods Comparison
 status: complete
-created: 2025-12-18T18:29:00+09:00
-updated: 2025-12-18T18:29:00+09:00
+created: 2025-12-18 18:29:00+09:00
+updated: 2025-12-18 18:29:00+09:00
 experiment_id: 20251217_024343_image_enhancements_implementation
 phase: phase_2
 priority: high
 evidence_count: 6
-tags: [deskewing, comparison, week2]
+tags:
+- deskewing
+- comparison
+- week2
 related_artifacts:
- - 20251218_1415_baseline-quality-metrics.json
- - text_deskewing.py
+- 20251218_1415_baseline-quality-metrics.json
+- text_deskewing.py
 checkpoint: outputs/experiments/train/ocr/pan_resnet18_add_polygons_canonical/20241019_0033_00/checkpoints/epoch-18_step-001957.ckpt
 ---
-
 # Text Deskewing Methods Comparison
 
 ## Executive Summary

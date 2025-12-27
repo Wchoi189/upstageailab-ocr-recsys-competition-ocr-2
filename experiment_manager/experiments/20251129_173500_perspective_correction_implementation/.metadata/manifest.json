@@ -1,9 +1,0 @@
-{
-  "version": "1.0",
-  "experiment_id": "20251129_173500_perspective_correction_implementation",
-  "files": [
-    "scripts/mask_only_edge_detector.py",
-    "scripts/perspective_transformer.py",
-    "scripts/run_perspective_correction.py"
-  ]
-}

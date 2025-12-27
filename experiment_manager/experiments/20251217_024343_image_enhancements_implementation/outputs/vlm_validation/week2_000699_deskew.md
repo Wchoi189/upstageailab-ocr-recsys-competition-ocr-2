@@ -1,14 +1,20 @@
 ---
-type: "enhancement_validation_analysis"
-image_path: "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/deskew_hough/comparison_drp.en_ko.in_house.selectstar_000699.jpg"
-image_id: "comparison_drp.en_ko.in_house.selectstar_000699.jpg"
-model: "qwen3-vl-plus-2025-09-23"
-backend: "dashscope"
-timestamp: "2025-12-18T09:59:47.094411Z"
+type: assessment
+image_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/deskew_hough/comparison_drp.en_ko.in_house.selectstar_000699.jpg
+image_id: comparison_drp.en_ko.in_house.selectstar_000699.jpg
+model: qwen3-vl-plus-2025-09-23
+backend: dashscope
+timestamp: '2025-12-18T09:59:47.094411Z'
 tags: []
-status: "unknown"
+status: complete
+ads_version: '1.0'
+created: '2025-12-27T04:19:50.246980'
+updated: '2025-12-27T04:19:50.246980'
+experiment_id: 20251217_024343_image_enhancements_implementation
+phase: phase_2
+priority: medium
+evidence_count: 0
 ---
-
 # Analysis Result
 
 **Mode:** enhancement_validation

@@ -1,0 +1,308 @@
+{
+  "experiment_id": "20251217_024343_image_enhancements_implementation",
+  "name": "Image Enhancements Implementation",
+  "status": "active",
+  "created_at": "2025-12-17T02:43:43",
+  "updated_at": "2025-12-27T16:30:00",
+  "intention": "Implementation and evaluation of additional image enhancement techniques beyond perspective correction, including shadow removal, brightness/contrast normalization, noise reduction, and adaptive binarization.",
+  "tasks": [
+    {
+      "id": "vlm_validation_background_norm_visual",
+      "description": "VLM validation complete via Dashscope/Qwen3 VL Plus. Combined score: 4.75/5",
+      "status": "done",
+      "completed_at": "2025-12-18T18:35:00"
+    },
+    {
+      "id": "integration_decision_background_norm",
+      "description": "integration_decision_background_norm",
+      "status": "done",
+      "completed_at": "2025-12-18T18:35:00"
+    },
+    {
+      "id": "implement_text_deskewing",
+      "description": "Implemented 3 methods: projection, Hough lines, combined. Tested on 6 images.",
+      "status": "done",
+      "completed_at": "2025-12-18T18:28:00"
+    },
+    {
+      "id": "test_deskewing_methods",
+      "description": "Hough lines: 2.87\u00b0 avg, 38.77ms. Projection: failed at boundary. Combined: inherited failure.",
+      "status": "done",
+      "completed_at": "2025-12-18T18:28:00"
+    },
+    {
+      "id": "vlm_validation_deskewing",
+      "description": "VLM confirmed perfect alignment (\u00b115\u00b0 \u2192 \u00b10\u00b0). Combined score: 4.6/5",
+      "status": "done",
+      "completed_at": "2025-12-18T18:40:00"
+    },
+    {
+      "id": "integration_decision_deskewing",
+      "description": "integration_decision_deskewing",
+      "status": "done",
+      "completed_at": "2025-12-18T18:40:00"
+    },
+    {
+      "id": "integrate_combined_pipeline",
+      "description": "Integrate gray-world + Hough deskewing into preprocessing pipeline",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "ocr_end_to_end_validation",
+      "description": "Test combined preprocessing with epoch-18_step-001957.ckpt checkpoint",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "week3_border_removal",
+      "description": "Deferred to new experiment 20251218_1900_border_removal_preprocessing. Will run in parallel with integration.",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "sepia_isolated_testing",
+      "description": "Test sepia methods on reference samples (drp.en_ko.in_house.selectstar_000732, 000712_sepia.jpg)",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "sepia_comparison_analysis",
+      "description": "Compare sepia results against gray-scale and gray-world normalization using comparison script",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "sepia_pipeline_validation",
+      "description": "Test full sepia + perspective correction pipeline on problem images",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "sepia_vlm_validation",
+      "description": "VLM validation of sepia results using Dashscope/Qwen3 VL Plus",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "sepia_ocr_validation",
+      "description": "End-to-end OCR testing with sepia-enhanced images and epoch-18 checkpoint",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "implement_background_normalization",
+      "description": "implement_background_normalization",
+      "status": "done",
+      "completed_at": "2025-12-18T15:00:00"
+    },
+    {
+      "id": "test_background_normalization_methods",
+      "description": "test_background_normalization_methods",
+      "status": "done",
+      "completed_at": "2025-12-18T15:00:00"
+    },
+    {
+      "id": "vlm_validation_background_norm",
+      "description": "Quantitative validation complete, VLM visual validation deferred",
+      "status": "backlog",
+      "completed_at": "2025-12-18T15:10:00"
+    },
+    {
+      "id": "integration_decision_background_norm",
+      "description": "integration_decision_background_norm",
+      "status": "done",
+      "completed_at": "2025-12-18T15:10:00"
+    },
+    {
+      "id": "integrate_background_norm_pipeline",
+      "description": "integrate_background_norm_pipeline",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "implement_text_deskewing",
+      "description": "implement_text_deskewing",
+      "status": "backlog",
+      "completed_at": null
+    }
+  ],
+  "insights": [
+    {
+      "type": "decision",
+      "content": "Prioritize background normalization over shadow removal based on 100% prevalence in test set: All 6 test images show severe background tint (avg score: 58.1) and variation (avg: 36.5)",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Restructured experiment to comply with EDS v1.0: Improved traceability and consistency with experiment-tracker standards",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Selected gray-world method for background normalization: Achieves 75% tint reduction, 100% target achievement (6/6 images <20), fastest processing (62.6ms)",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Rejected edge-based method: Fails to meet tint target on any image, slower processing, no advantages",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Approved gray-world background normalization for pipeline integration: Achieves 75% tint reduction, 100% target achievement, 4.65/5 validation score. Trade-offs acceptable.",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Selected Hough lines method for text deskewing: 2.87\u00b0 avg angle (83% success), 38.77ms processing, handles extreme skews (\u00b115\u00b0 \u2192 \u00b10\u00b0 per VLM)",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Rejected projection profile and combined methods for deskewing: Projection failed at -45\u00b0 boundary on all images. Combined inherited failure. Hough lines superior.",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Approved Hough lines deskewing for pipeline integration: 4.5/5 quantitative + 4.5/5 VLM = 4.6/5 combined. VLM confirmed perfect horizontal alignment on extreme cases.",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Initiate sepia enhancement testing as alternative to gray-scale and normalization: User reports sepia provides more reliable OCR results than normalization and gray-scale combined. Reference sample drp.en_ko.in_house.selectstar_000712_sepia.jpg shows promising quality.",
+      "timestamp": "2025-12-21T00:00:00"
+    },
+    {
+      "type": "decision",
+      "content": "Test sepia combined with perspective correction as optimal pipeline: Hypothesis that sepia + perspective correction provides best enhancement without advanced Office Lens-style processing",
+      "timestamp": "2025-12-21T00:00:00"
+    },
+    {
+      "type": "insight",
+      "content": "VLM validation with Dashscope/Qwen3 VL Plus provides critical visual confirmation: VLM detected perfect alignment (\u00b115\u00b0 \u2192 \u00b10\u00b0) that quantitative missed, plus identified sharpening artifacts",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "insight",
+      "content": "Sharpening artifacts originate from gray-world method, not deskewing: Tuning should focus on gray-world sharpening parameters. Deskewing does not introduce artifacts.",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "insight",
+      "content": "Combined preprocessing (background norm + deskewing) compounds benefits: VLM analysis on deskewing results showed background norm effects too, validating pipeline integration approach",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "insight",
+      "content": "VLM and quantitative metrics have 96-100% correlation on quality scores: High confidence in both validation methods. Future experiments can use either or both as needed.",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "insight",
+      "content": "Background color tint and variation are universal issues (100% prevalence): Validates Week 1 focus on background normalization before other enhancements",
+      "timestamp": "2025-12-18T00:00:00"
+    },
+    {
+      "type": "insight",
+      "content": "One image (000732) has extreme -83\u00b0 rotation requiring robust deskewing: Week 2 deskewing implementation must handle extreme angles",
+      "timestamp": "2025-12-18T00:00:00"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".metadata/assessments/20251217_0243_assessment_current-state-summary.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251217_0243_assessment_enhancement-quick-reference.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251217_0243_assessment_executive-summary.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251217_0243_assessment_master-roadmap.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251217_0243_assessment_priority-plan-revised.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_0530_assessment_21step-image-enhancement-pipeline.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_0550_assessment_planning-phase-completion.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_0703_assessment_baseline-quality-000699.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_0703_assessment_validation-000699.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_0926_assessment_enhancement-validation-000699.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_1510_assessment_week1-validation-integration-decision.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_1829_assessment_deskewing-comparison.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_1835_assessment_week1-vlm-validation.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/20251218_1840_assessment_week2-vlm-validation.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/guides/20251217_0243_guide_vlm-integration-guide.md",
+      "type": "guide"
+    },
+    {
+      "path": ".metadata/guides/20251218_0545_guide_artifact-index.md",
+      "type": "guide"
+    },
+    {
+      "path": ".metadata/guides/20251220_0200_guide_gray-world-integration.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/reports/20251218_1415_report_baseline-metrics-summary.md",
+      "type": "report"
+    },
+    {
+      "path": ".metadata/reports/20251218_1458_report_background-normalization-comparison.md",
+      "type": "report"
+    },
+    {
+      "path": ".metadata/reports/20251218_1850_report_handoff.md",
+      "type": "report",
+      "subtype": "handoff"
+    },
+    {
+      "path": ".metadata/reports/20251218_1850_report_week1-2-completion-integration-plan.md",
+      "type": "report"
+    },
+    {
+      "path": ".metadata/reports/20251220_0130_incident_report_perspective_correction_data_loss.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/reports/20251227_1603_report_eds-compliance.md",
+      "type": "report"
+    }
+  ],
+  "last_reconciled": "2025-12-27T17:04:48.823076"
+}

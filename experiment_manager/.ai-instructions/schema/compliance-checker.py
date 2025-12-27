@@ -46,6 +46,13 @@ TYPE_SPECIFIC_REQUIRED = {
     "script": ["dependencies"],
 }
 
+# Subtypes that may relax requirements
+RELAXED_SUBTYPES = {
+    "report": {
+        "handoff": ["metrics", "baseline", "comparison"],  # Fields to skip for handoffs
+    }
+}
+
 # Valid enum values
 VALID_TYPES = ["assessment", "report", "guide", "script", "manifest", "plan"]
 VALID_STATUSES = ["draft", "active", "complete", "deprecated"]
@@ -97,10 +104,19 @@ def validate_required_fields(frontmatter: dict[str, Any]) -> list[str]:
 
     # Check type-specific required fields
     doc_type = frontmatter.get("type")
+    subtype = frontmatter.get("subtype")
+
     if doc_type in TYPE_SPECIFIC_REQUIRED:
-        for field in TYPE_SPECIFIC_REQUIRED[doc_type]:
+        required = TYPE_SPECIFIC_REQUIRED[doc_type]
+
+        # Remove fields that are relaxed for this subtype
+        if subtype and doc_type in RELAXED_SUBTYPES and subtype in RELAXED_SUBTYPES[doc_type]:
+            relaxed = RELAXED_SUBTYPES[doc_type][subtype]
+            required = [f for f in required if f not in relaxed]
+
+        for field in required:
             if field not in frontmatter:
-                errors.append(f"Missing required field for type '{doc_type}': {field}")
+                errors.append(f"Missing required field for type '{doc_type}' (subtype '{subtype}'): {field}")
 
     return errors
 

@@ -20,31 +20,31 @@ help:
 
 exp-init:
 	@if [ -z "$(name)" ]; then echo "Error: name is required. Example: make exp-init name=\"baseline_test\""; exit 1; fi
-	python3 etk.py init "$(name)"
+	uv run python3 etk.py init "$(name)"
 
 exp-status:
 	@if [ -z "$(id)" ]; then \
-		python3 etk.py status; \
+		uv run python3 etk.py status; \
 	else \
-		python3 etk.py status "$(id)"; \
+		uv run python3 etk.py status "$(id)"; \
 	fi
 
 exp-list:
-	python3 etk.py list
+	uv run python3 etk.py list
 
 exp-sync:
 	@if [ "$(all)" = "true" ]; then \
-		python3 etk.py sync --all; \
+		uv run python3 etk.py sync --all; \
 	else \
-		python3 etk.py sync; \
+		uv run python3 etk.py sync; \
 	fi
 
 exp-analytics:
-	python3 etk.py analytics
+	uv run python3 etk.py analytics
 
 exp-validate:
 	@if [ -z "$(id)" ]; then \
-		python3 etk.py validate; \
+		uv run python3 etk.py validate; \
 	else \
-		python3 etk.py validate "$(id)"; \
+		uv run python3 etk.py validate "$(id)"; \
 	fi

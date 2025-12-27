@@ -1,29 +1,32 @@
 ---
-ads_version: "1.0"
-type: "assessment"
-experiment_id: "20251217_024343_image_enhancements_implementation"
-status: "active"
-created: "2025-12-18T05:30:00Z"
-updated: "2025-12-18T05:30:00Z"
-tags: ['implementation-plan', 'image-enhancements', 'preprocessing', 'office-lens-pipeline']
-phase: "phase_1"
-priority: "critical"
+ads_version: '1.0'
+type: assessment
+experiment_id: 20251217_024343_image_enhancements_implementation
+status: active
+created: '2025-12-18T05:30:00Z'
+updated: '2025-12-18T05:30:00Z'
+tags:
+- implementation-plan
+- image-enhancements
+- preprocessing
+- office-lens-pipeline
+phase: phase_1
+priority: critical
 evidence_count: 6
-estimated_effort: "10-12 weeks (4 phases)"
-target_completion: "Q1-Q2 2026"
-branch: "refactor/inference-module-consolidation"
+estimated_effort: 10-12 weeks (4 phases)
+target_completion: Q1-Q2 2026
+branch: refactor/inference-module-consolidation
 depends_on:
-  - "20251129_173500_perspective_correction_implementation"
-  - "AgentQMS.vlm.cli"
+- 20251129_173500_perspective_correction_implementation
+- AgentQMS.vlm.cli
 related_artifacts:
-  - "20251217_0243_assessment_priority-plan-revised.md"
-  - "20251217_0243_assessment_master-roadmap.md"
-  - "20251217_0243_assessment_current-state-summary.md"
-  - "20251217_0243_assessment_executive-summary.md"
-  - "20251217_0243_guide_vlm-integration-guide.md"
-validation_method: "VLM-based structured assessment + OCR accuracy metrics"
+- 20251217_0243_assessment_priority-plan-revised.md
+- 20251217_0243_assessment_master-roadmap.md
+- 20251217_0243_assessment_current-state-summary.md
+- 20251217_0243_assessment_executive-summary.md
+- 20251217_0243_guide_vlm-integration-guide.md
+validation_method: VLM-based structured assessment + OCR accuracy metrics
 ---
-
 # Implementation Plan: 21-Step Office Lens Image Enhancement Pipeline
 
 ## Master Prompt

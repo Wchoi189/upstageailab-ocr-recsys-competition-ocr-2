@@ -1,341 +1,266 @@
 ---
-ads_version: "1.0"
-type: "guide"
-experiment_id: "20251217_024343_image_enhancements_implementation"
-status: "complete"
-created: "2025-12-18T05:45:00Z"
-updated: "2025-12-18T05:45:00Z"
-tags: ['index', 'navigation', 'artifact-catalog']
+ads_version: '1.0'
+type: guide
+experiment_id: 20251217_024343_image_enhancements_implementation
+title: Index
+status: complete
+created: '2025-12-27T16:03:57.311796'
+updated: '2025-12-27T04:19:49.743115'
+tags: []
+phase: phase_2
+priority: medium
+evidence_count: 0
 commands: []
 prerequisites: []
 ---
+# 🎨 Sepia Enhancement Testing - Navigation Index
 
-# Artifact Index: Image Enhancement Experiment
-
-**Purpose**: Navigation map for all experiment documentation
-**Audience**: AI agents, implementation executors
-**Status**: Phase 1 Week 1 Day 1 Ready
-
----
-
-## Document Hierarchy
-
-### Level 1: Master References (Start Here)
-1. **[README.md](README.md)** - Experiment overview, quick start, status tracking
-2. **[20251218_0530_implementation_plan_21step-image-enhancement-pipeline.md](20251218_0530_implementation_plan_21step-image-enhancement-pipeline.md)** - Complete implementation plan (PRIMARY REFERENCE)
-
-### Level 2: Phase-Specific Details
-3. **[20251217_0243_assessment_priority-plan-revised.md](20251217_0243_assessment_priority-plan-revised.md)** - Week 1-3 detailed plan with code examples
-4. **[20251217_0243_assessment_master-roadmap.md](20251217_0243_assessment_master-roadmap.md)** - 21-step pipeline tracking
-5. **[20251217_0243_assessment_executive-summary.md](20251217_0243_assessment_executive-summary.md)** - Strategic overview, success metrics
-
-### Level 3: Technical Context
-6. **[20251217_0243_assessment_current-state-summary.md](20251217_0243_assessment_current-state-summary.md)** - Capabilities matrix, codebase analysis
-7. **[20251217_0243_guide_vlm-integration-guide.md](20251217_0243_guide_vlm-integration-guide.md)** - VLM validation workflows
-8. **[20251217_0243_assessment_enhancement-quick-reference.md](20251217_0243_assessment_enhancement-quick-reference.md)** - Quick lookup tables
+**Experiment**: 20251217_024343_image_enhancements_implementation
+**Status**: ✅ Ready for Testing
+**Date**: December 21, 2025
 
 ---
 
-## Document Usage Matrix
+## 📋 Quick Navigation
 
-| Task | Primary Document | Supporting Documents |
-|------|------------------|---------------------|
-| **Start experiment** | README.md | Implementation Plan |
-| **Week 1-3 implementation** | Implementation Plan (Phase 1) | Priority Plan Revised, VLM Guide |
-| **Week 4+ implementation** | Implementation Plan (Phases 2-4) | Master Roadmap |
-| **VLM validation** | VLM Integration Guide | Implementation Plan (Validation sections) |
-| **Track progress** | Master Roadmap | Executive Summary |
-| **Understand codebase** | Current State Summary | Implementation Plan (Dependencies) |
-| **Quick lookups** | Enhancement Quick Reference | Priority Plan Revised |
-| **Strategic decisions** | Executive Summary | Master Roadmap |
+### 🚀 Official AgentQMS Artifacts
+- **[Design Document](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md)** - Architecture and design decisions
+- **[Implementation Plan](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md)** - Testing workflow and checklist
+- **[Readiness Assessment](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md)** - Implementation review (9.5/10 score)
+
+### 📜 Scripts
+| Script | Purpose | Size |
+|--------|---------|------|
+| [sepia_enhancement.py](../scripts/sepia_enhancement.py) | Core sepia methods (4 variations) | 13KB |
+| [compare_sepia_methods.py](../scripts/compare_sepia_methods.py) | Compare vs gray-scale/normalization | 13KB |
+| [sepia_perspective_pipeline.py](../scripts/sepia_perspective_pipeline.py) | Full pipeline integration | 15KB |
+| [vlm_validate_sepia.sh](../scripts/vlm_validate_sepia.sh) | VLM quality validation | 5.7KB |
+
+### 📊 Outputs
+| Directory | Contains |
+|-----------|----------|
+| [outputs/sepia_tests/](../outputs/sepia_tests/) | Isolated sepia method tests |
+| [outputs/sepia_comparison/](../outputs/sepia_comparison/) | Comparison grids & metrics |
+| [outputs/sepia_pipeline/](../outputs/sepia_pipeline/) | Full pipeline results |
+| [outputs/sepia_vlm_reports/](../outputs/sepia_vlm_reports/) | VLM validation reports |
+
+### 📝 State Tracking
+- **[state.yml](../state.yml)** - Experiment state with sepia tasks
 
 ---
 
-## Information Flow
+## 🎯 Recommended Testing Workflow
 
-```
-README.md (Entry point)
-    ↓
-Implementation Plan (Execution blueprint)
-    ↓
-    ├── Priority Plan Revised (Week 1-3 details)
-    ├── Master Roadmap (21-step tracking)
-    ├── VLM Integration Guide (Validation workflows)
-    └── Current State Summary (Technical context)
+```mermaid
+graph TD
+    A[Start: Isolated Testing] --> B[Compare vs Alternatives]
+    B --> C[Full Pipeline Testing]
+    C --> D[VLM Validation]
+    D --> E[OCR End-to-End Testing]
+    E --> F{Sepia Superior?}
+    F -->|Yes| G[Update Pipeline]
+    F -->|No| H[Document Findings]
 ```
 
----
+### Step-by-Step
 
-## Document Summaries
+1. **Isolated Testing** (30 min)
+   - Test all 4 sepia methods
+   - Generate metrics
+   - Visual inspection
 
-### [README.md](README.md) (250 lines)
-**Purpose**: Experiment overview, quick start guide
-**Key Sections**:
-- Current status (4/21 steps complete)
-- Quick start (Week 1 Day 1 commands)
-- Directory structure
-- Phase breakdown
-- Success criteria
+2. **Comparison** (45 min)
+   - Compare vs gray-scale/normalization
+   - Generate comparison grid
+   - Analyze metrics
 
-**Use When**: First time accessing experiment, checking status, running initial commands
+3. **Pipeline** (30 min)
+   - Test sepia + perspective correction
+   - Optional deskewing
+   - Full pipeline metrics
 
----
+4. **VLM Validation** (1 hour)
+   - Visual quality assessment
+   - Method ranking
+   - Recommendations
 
-### [Implementation Plan](20251218_0530_implementation_plan_21step-image-enhancement-pipeline.md) (750 lines)
-**Purpose**: Complete 10-12 week implementation blueprint
-**Key Sections**:
-- Progress tracker
-- Phase 1-4 checklists (Week 1 Day 1 → Week 10 Day 5)
-- Code examples and pseudocode
-- VLM validation framework
-- Success metrics per phase
-- Risk mitigation
-
-**Use When**: Executing implementation tasks, need code examples, checking validation workflows
-
-**Critical Features**:
-- Autonomous execution protocol
-- Week-by-week task breakdown
-- Detailed success criteria
-- Helper script specifications
+5. **OCR Testing** (2 hours)
+   - Run with epoch-18 checkpoint
+   - Compare accuracy
+   - Document results
 
 ---
 
-### [Priority Plan Revised](20251217_0243_assessment_priority-plan-revised.md) (693 lines)
-**Purpose**: Detailed 3-week plan for Phase 1 based on production observations
-**Key Sections**:
-- Critical issues prioritized (tinted backgrounds #1, text slant #2)
-- 3-week roadmap with daily tasks
-- Code pseudocode for gray-world, edge-based, Hough transform
-- Integration strategies
+## 📚 Documentation Structure
 
-**Use When**: Implementing Week 1-3, need algorithm details, understanding priorities
+```
+docs/
+├── INDEX.md                                    ← You are here
+└── (other experiment docs...)
 
-**Critical Features**:
-- Data-driven prioritization (vs. theoretical)
-- Production observation evidence
-- Incremental approach with go/no-go gates
+AgentQMS Artifacts (Official Documentation):
+├── design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md
+├── implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md
+└── assessments/2025-12-21_0208_assessment-sepia-implementation-review.md
+```
 
 ---
 
-### [Master Roadmap](20251217_0243_assessment_master-roadmap.md) (562 lines)
-**Purpose**: 21-step pipeline tracking with phase breakdown
-**Key Sections**:
-- Full 21-step sequence ([Geometry] → [Tone/Color] → [Background/Text] → [Edge/Detail] → [Cleanup])
-- Current status: 4/21 (19%) → Phase 1 target: 8/21 (38%)
-- Phase dependencies
-- Timeline estimation (Q1-Q2 2026 completion)
+## 🚀 Quick Start Commands
 
-**Use When**: Tracking overall progress, planning future phases, understanding pipeline structure
-
-**Critical Features**:
-- Phase completion percentages
-- Step dependencies
-- Office Lens methodology mapping
-
----
-
-### [Executive Summary](20251217_0243_assessment_executive-summary.md) (359 lines)
-**Purpose**: Strategic overview with success metrics
-**Key Sections**:
-- Key findings from production
-- Revised priority order (data-driven)
-- 3-week implementation roadmap
-- Go/No-Go decision criteria
-- Risk assessment
-
-**Use When**: Making strategic decisions, reporting to stakeholders, understanding rationale
-
-**Critical Features**:
-- Expected OCR gains per enhancement
-- Complexity vs. impact matrix
-- Phase gates with success thresholds
-
----
-
-### [Current State Summary](20251217_0243_assessment_current-state-summary.md) (431 lines)
-**Purpose**: Capabilities matrix and codebase analysis
-**Key Sections**:
-- What's already working (perspective correction: 100% success)
-- Preprocessing pipeline architecture
-- Extension points for integration
-- Testing infrastructure
-- Code references with line numbers
-
-**Use When**: Understanding existing codebase, identifying integration points, code archaeology
-
-**Critical Features**:
-- Detailed code locations (files + line counts)
-- Extension points identified
-- Architectural analysis
-
----
-
-### [VLM Integration Guide](20251217_0243_guide_vlm-integration-guide.md) (550 lines)
-**Purpose**: VLM validation workflows and helper scripts
-**Key Sections**:
-- Setup instructions
-- 3 workflow modes (baseline, validation, debugging)
-- Helper scripts (bash + python)
-- Integration into phases
-- Best practices
-
-**Use When**: Running VLM validation, creating before/after comparisons, debugging failures
-
-**Critical Features**:
-- Complete bash commands
-- Python aggregation script
-- Prompt mode descriptions
-- Troubleshooting section
-
----
-
-### [Enhancement Quick Reference](20251217_0243_assessment_enhancement-quick-reference.md) (200+ lines)
-**Purpose**: Quick lookup tables for algorithms
-**Key Sections**:
-- Top 3 enhancements with implementation checklists
-- Code snippets for each method
-- Parameter recommendations
-- Expected processing times
-
-**Use When**: Need quick algorithm reference, checking parameters, implementation checklists
-
----
-
-## Scripts Reference
-
-### Helper Scripts (✅ Ready)
-| Script | Purpose | Lines | Usage |
-|--------|---------|-------|-------|
-| **vlm_baseline_assessment.sh** | Batch VLM baseline on 10 images | 40 | `bash scripts/vlm_baseline_assessment.sh` |
-| **vlm_validate_enhancement.sh** | VLM validation on comparisons | 45 | `bash scripts/vlm_validate_enhancement.sh phase1_bg_norm` |
-| **aggregate_vlm_validations.py** | Aggregate VLM reports to summary | 120 | `python scripts/aggregate_vlm_validations.py --input ... --output ...` |
-
-### Implementation Scripts (📋 TODO)
-| Script | Purpose | Phase | Implementation Week |
-|--------|---------|-------|---------------------|
-| **background_normalization.py** | Gray-world, edge-based, illumination | Phase 1 | Week 1 Day 2-3 |
-| **text_deskewing.py** | Projection profile, Hough transform | Phase 1 | Week 2 Day 1-4 |
-| **create_before_after_comparison.py** | Side-by-side visualizations | Phase 1 | Week 1 Day 5 |
-| **compute_accuracy.py** | OCR accuracy with delta tracking | Phase 1 | Week 1 Day 1 |
-| **validate_coordinates.py** | Coordinate alignment verification | Phase 1 | Week 3 Day 4 |
-
-### Parent Experiment Scripts (✅ Copied)
-| Script | Purpose | Lines | Notes |
-|--------|---------|-------|-------|
-| **mask_only_edge_detector.py** | Robust rectangle fitting | 1339 | From perspective correction |
-| **perspective_transformer.py** | Transform utilities | ~200 | Coordinate matrix ops |
-| **run_perspective_correction.py** | Batch processing | ~300 | Metrics, configurability |
-| **test_worst_performers.py** | Validation on 25 images | ~250 | Proven test set |
-
----
-
-## VLM Prompts Reference
-
-### Prompt Files (AgentQMS/vlm/prompts/markdown/)
-| Prompt | Mode | Purpose | Output Format |
-|--------|------|---------|---------------|
-| **image_quality_analysis.md** | `image_quality` | Baseline quality assessment | 1-10 scores, RGB estimates, angle detection, priority ranking |
-| **enhancement_validation.md** | `enhancement_validation` | Before/after comparison | Δ metrics, ✅/⚠️/❌ indicators, recommendations |
-| **preprocessing_diagnosis.md** | `preprocessing_diagnosis` | Failure root cause analysis | Hypotheses, remediation strategies, validation plans |
-
-### Prompt Usage
+### Isolated Testing
 ```bash
-# Baseline quality
-uv run python -m AgentQMS.vlm.cli.analyze_defects \
-  --image data/image.jpg \
-  --mode image_quality \
-  --backend openrouter \
-  --output vlm_reports/baseline/image_quality.md
+cd scripts/
+python sepia_enhancement.py --input <image> --method all --output ../outputs/sepia_tests/
+```
 
-# Enhancement validation
-uv run python -m AgentQMS.vlm.cli.analyze_defects \
-  --image outputs/comparisons/comparison.jpg \
-  --mode enhancement_validation \
-  --backend openrouter \
-  --output vlm_reports/phase1_validation/validation.md
+### Comparison Analysis
+```bash
+python compare_sepia_methods.py --input <image> --output ../outputs/sepia_comparison/ --save-metrics
+```
 
-# Debugging diagnosis
-uv run python -m AgentQMS.vlm.cli.analyze_defects \
-  --image outputs/comparisons/failed_comparison.jpg \
-  --mode preprocessing_diagnosis \
-  --backend openrouter \
-  --output vlm_reports/debugging/diagnosis.md \
-  --context "Applied gray-world white-balance, result shows blue tint"
+### Full Pipeline
+```bash
+python sepia_perspective_pipeline.py --input <image> --sepia-method warm --output ../outputs/sepia_pipeline/
+```
+
+### VLM Validation
+```bash
+export DASHSCOPE_API_KEY='your_key'
+./vlm_validate_sepia.sh ../outputs/sepia_comparison/
 ```
 
 ---
 
-## Phase Execution Flow
+## 🔍 Reference Samples
 
-### Phase 1 (Current): Background Normalization + Deskewing
+### Test Images to Use
 
+**Problematic (poor OCR)**:
 ```
-Week 1 Day 1: Baseline Assessment
-    ├─ README.md (Quick start commands)
-    ├─ Implementation Plan (Day 1 checklist)
-    └─ VLM Guide (Baseline workflow)
-         ↓
-    Execute: bash scripts/vlm_baseline_assessment.sh
-         ↓
-Week 1 Day 2-3: Implement Background Normalization
-    ├─ Implementation Plan (Code examples)
-    ├─ Priority Plan Revised (Algorithm details)
-    └─ Enhancement Quick Reference (Parameters)
-         ↓
-    Create: scripts/background_normalization.py
-         ↓
-Week 1 Day 4-5: Validation
-    ├─ VLM Guide (Validation workflow)
-    ├─ Implementation Plan (Success criteria)
-    └─ Execute: bash scripts/vlm_validate_enhancement.sh
-         ↓
-Week 2: Text Deskewing
-    [Similar flow with deskewing scripts]
-         ↓
-Week 3: Integration & Ablation
-    ├─ Implementation Plan (Integration section)
-    ├─ Executive Summary (Go/No-Go criteria)
-    └─ Master Roadmap (Update completion %)
+drp.en_ko.in_house.selectstar_000732
+```
+- High background tint
+- Poor contrast
+- Current baseline failure case
+
+**Target Quality (good OCR)**:
+```
+drp.en_ko.in_house.selectstar_000712_sepia.jpg
+```
+- Reference sepia output
+- Good OCR results observed
+- Quality target
+
+---
+
+## ⚙️ Sepia Methods
+
+| Method | Speed | Use Case | Recommended |
+|--------|-------|----------|-------------|
+| **Classic** | Fast | Standard sepia | General use |
+| **Adaptive** | Medium | Detail preservation | Complex docs |
+| **Warm** | Fast | OCR optimization | ⭐ **Start here** |
+| **Contrast** | Slow | Low contrast docs | Problematic images |
+
+---
+
+## 📈 Success Metrics
+
+Track these for comparison:
+
+- **Color Tint**: Target < 20 (baseline: 58.1, gray-world: 14.6)
+- **Contrast**: Maintain or improve from baseline
+- **Edge Strength**: Higher = better text clarity
+- **Processing Time**: Target < 100ms
+- **VLM Score**: Target > 4.5/5
+- **OCR Accuracy**: Better than alternatives
+
+---
+
+## 🚦 Current Status
+
+### ✅ Completed
+- [x] Sepia enhancement implementation (4 methods)
+- [x] Comparison framework
+- [x] Pipeline integration script
+- [x] VLM validation script
+- [x] Documentation suite
+- [x] Output directories
+- [x] Experiment state updated
+
+### ⏳ Pending (Your Next Steps)
+- [ ] Run isolated sepia tests
+- [ ] Generate comparison analysis
+- [ ] Test full pipeline
+- [ ] VLM validation
+- [ ] OCR end-to-end testing
+- [ ] Document findings
+- [ ] Update experiment state
+- [ ] Integration decision
+
+---
+
+## 💡 Pro Tips
+
+1. **Start with warm sepia** - Best initial results for OCR
+2. **Test on reference samples first** - Validate on known cases
+3. **Save all metrics** - Use `--save-metrics` flag
+4. **Compare visually** - Grid images show differences clearly
+5. **Use VLM validation** - Confirms visual quality
+6. **Batch processing** - Test multiple images together
+
+---
+
+## 🆘 Need Help?
+
+### Common Issues
+
+**Script won't run?**
+```bash
+cd experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/scripts
+python sepia_enhancement.py --help
 ```
 
----
+**Missing dependencies?**
+```bash
+pip install opencv-python numpy
+```
 
-## Document Maintenance
+**VLM not working?**
+```bash
+export DASHSCOPE_API_KEY='your_key'
+./vlm_validate_sepia.sh ../outputs/sepia_comparison/
+```
 
-### Update Triggers
-| Trigger | Document to Update | Action |
-|---------|-------------------|--------|
-| **Step completed** | Master Roadmap | Mark step complete, update % |
-| **Week completed** | Implementation Plan | Update progress tracker |
-| **Phase completed** | Executive Summary, Master Roadmap | Update timeline, success metrics |
-| **Method selected** | Priority Plan Revised | Document chosen approach |
-| **Issue discovered** | README.md, Implementation Plan | Add to known issues |
+### Documentation
 
-### Version Control
-- All documents use ADS v1.0 frontmatter
-- Track updates in `updated` field
-- Link related artifacts in frontmatter
-
----
-
-## Quick Navigation
-
-### By Role
-- **Implementer**: Implementation Plan → Priority Plan Revised → Enhancement Quick Reference
-- **Validator**: VLM Integration Guide → Implementation Plan (Validation sections)
-- **Tracker**: Master Roadmap → Executive Summary → README.md
-- **Architect**: Current State Summary → Implementation Plan (Architecture sections)
-
-### By Activity
-- **Starting experiment**: README.md → Implementation Plan
-- **Coding**: Implementation Plan → Priority Plan Revised
-- **Testing**: VLM Integration Guide → Implementation Plan
-- **Reporting**: Executive Summary → Master Roadmap
-- **Debugging**: VLM Integration Guide (Diagnosis workflow) → Current State Summary
+- Design Document: [/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/design_documents/2025-12-21_0208_design-sepia-enhancement-approach.md)
+- Implementation Plan: [/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/implementation_plans/2025-12-21_0208_implementation_plan_sepia-testing-workflow.md)
+- Assessment: [/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md](/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts/assessments/2025-12-21_0208_assessment-sepia-implementation-review.md)
 
 ---
 
-**Navigation Tip**: Start with README.md, drill down to Implementation Plan for execution, reference supporting docs as needed.
+## 🎬 Get Started Now!
 
-**Last Updated**: 2025-12-18 05:45 KST
+```bash
+# 1. Navigate to scripts
+cd experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/scripts
+
+# 2. Test sepia methods
+python sepia_enhancement.py \
+  --input ../artifacts/sepia/drp.en_ko.in_house.selectstar_000732_REMBG.jpg \
+  --method all \
+  --output ../outputs/sepia_tests/
+
+# 3. Generate comparison
+python compare_sepia_methods.py \
+  --input ../artifacts/sepia/drp.en_ko.in_house.selectstar_000732_REMBG.jpg \
+  --output ../outputs/sepia_comparison/ \
+  --save-metrics
+
+# 4. Review results
+ls -lh ../outputs/sepia_comparison/
+```
+
+**Good luck with your testing! 🚀**

@@ -1,0 +1,40 @@
+{
+  "experiment_id": "20251220_154834_zero_prediction_images_debug",
+  "name": "Sepia Enhancement for Zero-Prediction OCR",
+  "status": "complete",
+  "created_at": "2025-12-20T15:48:34",
+  "updated_at": "2025-12-21T03:18:00",
+  "intention": "investigate sepia color transformation as a robust alternative to gray-scale and gray-world normalization for OCR preprocessing",
+  "tasks": [],
+  "insights": [
+    {
+      "type": "insight",
+      "content": "Best Method: sepia_clahe (Reddish Tint + Adaptive Contrast)",
+      "timestamp": "2025-12-21T03:18:00"
+    },
+    {
+      "type": "insight",
+      "content": "Edge Improvement: +164.0%",
+      "timestamp": "2025-12-21T03:18:00"
+    }
+  ],
+  "artifacts": [
+    {
+      "path": ".metadata/assessments/2025-12-21_sepia_testing_progress.md",
+      "type": "assessment"
+    },
+    {
+      "path": ".metadata/assessments/sepia_testing_plan.md",
+      "type": "plan"
+    },
+    {
+      "path": ".metadata/guides/sepia_quick_start.md",
+      "type": "guide"
+    },
+    {
+      "path": ".metadata/reports/20251221_0316_report_final-sepia-vs-clahe-performance-analysis.md",
+      "type": "report"
+    }
+  ],
+  "last_reconciled": "2025-12-27T17:04:48.883378"
+}

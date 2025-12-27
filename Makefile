@@ -4,7 +4,7 @@
 
 .PHONY: config-validate
 config-validate:  ## Validate configuration system for errors
-	@unset PYENV_VERSION && python scripts/validate_config.py
+	@unset PYENV_VERSION && uv run python scripts/validate_config.py
 
 .PHONY: config-archive
 config-archive:   ## Archive legacy configs to .deprecated/
@@ -23,28 +23,28 @@ config-show-structure:  ## Show current config structure
 .PHONY: profile-imports
 profile-imports:  ## Profile import times to identify startup bottlenecks
 	@echo "⏱️  Profiling import times (this will take ~90s)..."
-	python scripts/performance/profile_imports.py
+	uv run python scripts/performance/profile_imports.py
 
 .PHONY: analyze-imports
 analyze-imports:  ## Analyze import structure to identify heavy dependencies
-	python scripts/performance/analyze_imports.py
+	uv run python scripts/performance/analyze_imports.py
 
 .PHONY: benchmark-startup
 benchmark-startup:  ## Benchmark startup times for training scripts
 	@echo "Benchmarking train.py (monolithic imports)..."
-	@/usr/bin/time -f "Time: %E (user: %U, sys: %S)" python -c "import runners.train" 2>&1 | grep "Time:"
+	@/usr/bin/time -f "Time: %E (user: %U, sys: %S)" uv run python -c "import runners.train" 2>&1 | grep "Time:"
 	@echo ""
 	@echo "Benchmarking train_fast.py (lazy imports)..."
-	@/usr/bin/time -f "Time: %E (user: %U, sys: %S)" python -c "import runners.train_fast" 2>&1 | grep "Time:"
+	@/usr/bin/time -f "Time: %E (user: %U, sys: %S)" uv run python -c "import runners.train_fast" 2>&1 | grep "Time:"
 
 .PHONY: test-config-validation
 test-config-validation:  ## Test config validation speed with fast entry point
 	@echo "Testing config validation with train_fast.py..."
-	@/usr/bin/time -f "⏱️  Total time: %E" python runners/train_fast.py validate_only=true
+	@/usr/bin/time -f "⏱️  Total time: %E" uv run python runners/train_fast.py validate_only=true
 
 .PHONY: test-fast-train
 test-fast-train:  ## Run quick training test with optimized entry point
-	python runners/train_fast.py \
+	uv run python runners/train_fast.py \
 		trainer.max_epochs=1 \
 		trainer.limit_train_batches=0.25 \
 		trainer.limit_val_batches=0.25 \
@@ -228,23 +228,23 @@ docs-deploy:
 
 diagrams-check:
 	@echo "🔍 Checking for diagram updates..."
-	python scripts/generate_diagrams.py --check-changes
+	uv run python scripts/generate_diagrams.py --check-changes
 
 diagrams-update:
 	@echo "🔄 Updating diagrams that have changed..."
-	python scripts/generate_diagrams.py --update
+	uv run python scripts/generate_diagrams.py --update
 
 diagrams-force-update:
 	@echo "🔄 Force updating all diagrams..."
-	python scripts/generate_diagrams.py --update --force
+	uv run python scripts/generate_diagrams.py --update --force
 
 diagrams-validate:
 	@echo "✅ Validating diagram syntax..."
-	python scripts/generate_diagrams.py --validate
+	uv run python scripts/generate_diagrams.py --validate
 
 diagrams-update-specific:
 	@echo "🔄 Updating specific diagrams: $(DIAGRAMS)"
-	python scripts/generate_diagrams.py --update $(DIAGRAMS)
+	uv run python scripts/generate_diagrams.py --update $(DIAGRAMS)
 
 # ============================================================================
 # UI APPLICATIONS (Parameterized)
