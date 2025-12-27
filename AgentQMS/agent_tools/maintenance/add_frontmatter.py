@@ -355,14 +355,14 @@ class FrontmatterGenerator:
                 if field in updates:
                     value = updates[field]
                     if isinstance(value, list):
-                        new_fm += f'{field}: {value}\n'
+                        new_fm += f"{field}: {value}\n"
                     else:
                         new_fm += f'{field}: "{value}"\n'
 
             for key, val in updates.items():
                 if key not in standard_order:
                     if isinstance(val, list):
-                        new_fm += f'{key}: {val}\n'
+                        new_fm += f"{key}: {val}\n"
                     else:
                         new_fm += f'{key}: "{val}"\n'
             new_fm += "---\n"

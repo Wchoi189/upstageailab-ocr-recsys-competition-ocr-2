@@ -22,8 +22,7 @@ import argparse
 import json
 from pathlib import Path
 
-from PIL import Image
-from PIL import UnidentifiedImageError
+from PIL import Image, UnidentifiedImageError
 from tqdm import tqdm
 
 

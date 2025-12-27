@@ -1,7 +1,7 @@
 from datetime import datetime
 from enum import Enum
 
-from pydantic import BaseModel, Field, constr
+from pydantic import BaseModel, Field
 
 
 class TaskStatus(str, Enum):
