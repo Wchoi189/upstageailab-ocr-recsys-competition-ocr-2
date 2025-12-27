@@ -118,7 +118,7 @@ class VIAIntegration:
                         height = shape_attrs.get("height", 0)
 
                         draw.rectangle(
-                            [(x, y), (x + width, y + height)],
+                            ((x, y), (x + width, y + height)),
                             outline="red",
                             width=2,
                         )

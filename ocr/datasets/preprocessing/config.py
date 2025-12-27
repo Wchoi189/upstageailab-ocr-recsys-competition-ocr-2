@@ -6,12 +6,14 @@ from enum import Enum
 
 from pydantic import BaseModel, Field, field_validator, model_validator
 
+_list_config_type: type | None
+
 try:
     from omegaconf import ListConfig
 
-    _list_config_type: type[ListConfig] | None = ListConfig
+    _list_config_type = ListConfig
 except ImportError:
-    _list_config_type: type[ListConfig] | None = None  # type: ignore[assignment]
+    _list_config_type = None
 
 
 class EnhancementMethod(str, Enum):
