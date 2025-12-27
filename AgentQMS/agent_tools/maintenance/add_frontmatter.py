@@ -353,11 +353,18 @@ class FrontmatterGenerator:
             standard_order = ["title", "date", "type", "category", "status", "version", "ads_version"]
             for field in standard_order:
                 if field in updates:
-                    new_fm += f'{field}: "{updates[field]}"\n'
+                    value = updates[field]
+                    if isinstance(value, list):
+                        new_fm += f'{field}: {value}\n'
+                    else:
+                        new_fm += f'{field}: "{value}"\n'
 
             for k, v in updates.items():
                 if k not in standard_order:
-                    new_fm += f'{k}: "{v}"\n'
+                    if isinstance(v, list):
+                        new_fm += f'{k}: {v}\n'
+                    else:
+                        new_fm += f'{k}: "{v}"\n'
             new_fm += "---\n"
 
             if not dry_run:
