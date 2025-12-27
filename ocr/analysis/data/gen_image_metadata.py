@@ -23,6 +23,7 @@ import json
 from pathlib import Path
 
 from PIL import Image
+from PIL import UnidentifiedImageError
 from tqdm import tqdm
 
 
@@ -50,7 +51,7 @@ def main():
         try:
             with Image.open(p) as im:
                 w, h = im.size
-        except (OSError, Image.UnidentifiedImageError):
+        except (OSError, UnidentifiedImageError):
             continue
         short_side = min(w, h)
         long_side = max(w, h)
