@@ -1,17 +1,22 @@
 # AI CI Healer Integration for OCR Project
 # This workflow integrates AI CI Healer with your existing CI
+#
+# TEMPORARILY DISABLED: Re-enable after CI stabilizes
+# Reason: Adds complexity when we need clear error signals during debugging
 
-name: AI CI Healer Integration
+name: AI CI Healer Integration (DISABLED)
 
 on:
-  workflow_run:
-    workflows: ["CI & Auto-format"]
-    types:
-      - completed
+  workflow_dispatch:  # Manual trigger only
+  # workflow_run:  # Disabled: Was triggering on all CI failures
+  #   workflows: ["CI & Auto-format"]
+  #   types:
+  #     - completed
 
 jobs:
   ai-ci-healer:
-    if: failure() && github.event.workflow_run.conclusion == 'failure'
+    if: false  # Disabled - change to true when ready to re-enable
+    # if: failure() && github.event.workflow_run.conclusion == 'failure'
     runs-on: ubuntu-latest
     permissions:
       contents: read
