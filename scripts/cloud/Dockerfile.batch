@@ -22,13 +22,13 @@ RUN apt-get update && apt-get install -y \
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
 ENV PATH="/root/.cargo/bin:${PATH}"
 
-# Copy requirements first (for layer caching)
-COPY requirements.txt .
+# Copy dependency files first (for layer caching)
 COPY pyproject.toml .
+COPY README.md .
 
 # Install Python dependencies via uv
-RUN uv pip install --system -r requirements.txt
 RUN uv pip install --system boto3 aioboto3  # AWS SDK
+RUN uv sync --no-dev --frozen || uv pip install --system -e .
 
 # Copy application code
 COPY ocr/ /app/ocr/
