@@ -5,7 +5,7 @@
         "FARGATE"
     ],
     "containerProperties": {
-        "image": "<ECR_URI>:latest",
+        "image": "145023108624.dkr.ecr.us-east-1.amazonaws.com/batch-processor:latest",
         "fargatePlatformConfiguration": {
             "platformVersion": "LATEST"
         },
@@ -19,19 +19,19 @@
                 "value": "4096"
             }
         ],
-        "jobRoleArn": "<JOB_ROLE_ARN>",
-        "executionRoleArn": "<EXEC_ROLE_ARN>",
+        "jobRoleArn": "arn:aws:iam::145023108624:role/BatchProcessorJobRole",
+        "executionRoleArn": "arn:aws:iam::145023108624:role/BatchProcessorExecutionRole",
         "networkConfiguration": {
             "assignPublicIp": "ENABLED"
         },
         "environment": [
             {
                 "name": "AWS_SECRET_ARN",
-                "value": "<SECRET_ARN>"
+                "value": "arn:aws:secretsmanager:us-east-1:145023108624:secret:upstage-api-key"
             },
             {
                 "name": "S3_BUCKET",
-                "value": "<S3_BUCKET>"
+                "value": "ocr-batch-processing"
             },
             {
                 "name": "CHECKPOINT_PREFIX",
