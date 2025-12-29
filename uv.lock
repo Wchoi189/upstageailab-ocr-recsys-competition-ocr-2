@@ -3695,6 +3695,16 @@ wheels = [
 ]
 
 [[package]]
+name = "seqeval"
+version = "1.2.2"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "numpy" },
+    { name = "scikit-learn" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/9d/2d/233c79d5b4e5ab1dbf111242299153f3caddddbb691219f363ad55ce783d/seqeval-1.2.2.tar.gz", hash = "sha256:f28e97c3ab96d6fcd32b648f6438ff2e09cfba87f05939da9b3970713ec56e6f", size = 43605, upload-time = "2020-10-24T00:24:54.926Z" }
+
+[[package]]
 name = "setuptools"
 version = "80.9.0"
 source = { registry = "https://pypi.org/simple" }
@@ -4340,6 +4350,7 @@ dependencies = [
     { name = "scipy" },
     { name = "scipy-stubs" },
     { name = "seaborn" },
+    { name = "seqeval" },
     { name = "shapely" },
     { name = "streamlit" },
     { name = "tensorboard" },
@@ -4424,6 +4435,7 @@ requires-dist = [
     { name = "scipy", specifier = "==1.11.4" },
     { name = "scipy-stubs" },
     { name = "seaborn", specifier = "==0.13.0" },
+    { name = "seqeval", specifier = ">=1.2.2" },
     { name = "shapely", specifier = "==2.0.2" },
     { name = "streamlit", specifier = ">=1.28.0" },
     { name = "tensorboard", specifier = "==2.15.1" },

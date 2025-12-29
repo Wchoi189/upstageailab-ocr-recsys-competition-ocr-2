@@ -1,0 +1,34 @@
+# @package _global_
+
+defaults:
+  - _self_
+  - paths: default
+  - hydra: default
+
+seed: 42
+debug: false
+print_config: true
+ignore_warnings: true
+
+project_name: "ocr-kie"
+run_name: "kie-layoutlmv3-base"
+use_wandb: false
+
+model:
+  type: "layoutlmv3"
+  pretrained_model_name_or_path: "microsoft/layoutlmv3-base"
+  num_labels: 7 # O, B/I-HEADER, B/I-QUESTION, B/I-ANSWER
+  max_length: 512
+
+data:
+  train_path: "ocr/data/datasets/kie_train.parquet"
+  val_path: "ocr/data/datasets/kie_val.parquet"
+  image_dir: "ocr/data/images" # Optional if paths in parquet are absolute
+  label_list: ["O", "B-HEADER", "I-HEADER", "B-QUESTION", "I-QUESTION", "B-ANSWER", "I-ANSWER"]
+
+train:
+  batch_size: 4
+  num_workers: 4
+  max_epochs: 10
+  devices: 1
+  accelerator: "gpu"

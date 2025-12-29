@@ -2,33 +2,33 @@ name: Run Batch Processing Job
 
 on:
   workflow_dispatch:
-    inputs:
-      dataset:
-        description: 'Dataset to process'
-        required: true
-        type: choice
-        options:
-          - baseline_train
-          - baseline_val
-        default: 'baseline_train'
+    # inputs:
+    #   dataset:
+    #     description: 'Dataset to process'
+    #     required: true
+    #     type: choice
+    #     options:
+    #       - baseline_train
+    #       - baseline_val
+    #     default: 'baseline_train'
 
-      resume:
-        description: 'Resume from checkpoints'
-        required: false
-        type: boolean
-        default: false
+    #   resume:
+    #     description: 'Resume from checkpoints'
+    #     required: false
+    #     type: boolean
+    #     default: false
 
-      batch_size:
-        description: 'Batch size for checkpoints'
-        required: false
-        type: number
-        default: 500
+    #   batch_size:
+    #     description: 'Batch size for checkpoints'
+    #     required: false
+    #     type: number
+    #     default: 500
 
-      concurrency:
-        description: 'Concurrent API requests'
-        required: false
-        type: number
-        default: 3
+    #   concurrency:
+    #     description: 'Concurrent API requests'
+    #     required: false
+    #     type: number
+    #     default: 3
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION }}

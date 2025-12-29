@@ -1,144 +1,74 @@
-name: "CI & Auto-format"
+name: "CI"
+
 on:
   push:
-    branches:
-      - '*'
-    paths:
-      - 'ocr/**'
-      - 'runners/**'
-      - 'ui/**'
-      - 'tests/**'
-      - 'docs/**'
-      - 'scripts/**'
-      - 'agent_qms/**'
-      - 'pyproject.toml'
-      - 'setup.cfg'
-      - 'pytest.ini'
-      - 'mkdocs.yml'
-      - '.github/workflows/ci.yml'
-      - 'Makefile'
+    branches: ['*']
   pull_request:
-    branches:
-      - '*'
-    paths:
-      - 'ocr/**'
-      - 'runners/**'
-      - 'ui/**'
-      - 'tests/**'
-      - 'docs/**'
-      - 'scripts/**'
-      - 'agent_qms/**'
-      - 'pyproject.toml'
-      - 'setup.cfg'
-      - 'pytest.ini'
-      - 'mkdocs.yml'
-      - '.github/workflows/ci.yml'
-      - 'Makefile'
+    branches: ['*']
 
 permissions:
-  contents: write
-  issues: write
+  contents: read
 
 jobs:
-  build-and-test:
+  # 1. Fast checks first
+  lint:
+    name: Code Quality
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ github.event_name == 'pull_request' && github.head_ref || github.ref }}
-
+      - uses: actions/checkout@v4
       - name: Set up Python 3.11
         uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+      - uses: astral-sh/setup-uv@v1
+      - run: uv sync
+      - run: uv run ruff check .  # No auto-fix in CI
+      - run: uv run ruff format . --check
 
-      - name: Install uv
-        uses: astral-sh/setup-uv@v1
-
-      - name: Cache uv dependencies
-        uses: actions/cache@v4
+  # 2. Type checking (allow failures initially)
+  typecheck:
+    name: Type Check
+    runs-on: ubuntu-latest
+    continue-on-error: true  # Don't block on mypy errors yet
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
         with:
-          path: ~/.cache/uv
-          key: ${{ runner.os }}-uv-${{ hashFiles('**/pyproject.toml') }}
-          restore-keys: |
-            ${{ runner.os }}-uv-
-
-      - name: Install dependencies
-        run: uv sync
-
-      - name: Install ruff
-        run: uv run pip install ruff
-
-      - name: Auto-fix with Ruff
-        id: ruff_fix
-        run: |
-          echo "Running Ruff linter and formatter with auto-fix..."
-          # Note: Removed --unsafe-fixes to prevent breaking nested loops and indentation
-          uv run ruff check . --fix
-          uv run ruff format .
-
-          if git diff --quiet; then
-            echo "No linting changes were applied."
-            echo "changes=false" >> $GITHUB_OUTPUT
-          else
-            echo "Linting and formatting changes were applied."
-            echo "changes=true" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Verify code quality after auto-fix
-        run: |
-          echo "Verifying all linting issues are resolved..."
-          uv run ruff check .
-          echo "Verifying all formatting issues are resolved..."
-          uv run ruff format . --check
-          echo "✅ All quality checks passed."
-
-      - name: Commit and Push Fixes
-        if: ${{ steps.ruff_fix.outputs.changes == 'true' && github.event_name == 'pull_request' }}
-        run: |
-          git config --global user.name 'github-actions[bot]'
-          git config --global user.email 'github-actions[bot]@users.noreply.github.com'
-          git add .
-          git commit -m "🤖 [CI] Auto-fix code style with Ruff"
-          git push origin ${{ github.head_ref }}
-
-      - name: Run Mypy Static Type Checking
-        continue-on-error: true  # Don't block CI on mypy errors during transition
-        run: |
-          echo "Running mypy type checking..."
-          uv run mypy . --no-error-summary | tee mypy-report.txt || true
-          echo "📊 MyPy check completed. See artifacts for full report."
-
-      - name: Upload MyPy Report
-        if: always()
-        uses: actions/upload-artifact@v4
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v1
+      - run: uv sync
+      - run: uv run mypy ocr/ --no-error-summary | tee mypy-report.txt
+      - uses: actions/upload-artifact@v4
         with:
           name: mypy-report
           path: mypy-report.txt
-          if-no-files-found: ignore
 
-      - name: Run tests with pytest
-        run: uv run pytest tests/ -v -m "not slow"
+  # 3. Tests
+  test:
+    name: Tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v1
+      - run: uv sync
+      - run: uv run pytest tests/ -v -m "not slow"
 
-      - name: Report Failure to Cloud Workers
-        if: failure() && github.event_name == 'push'
-        run: |
-          gh issue create \
-            --title "🔴 CI Failure: Code Quality Checks Failed" \
-            --body "## CI Failure Report
-
-          The CI job [${{ github.run_id }}](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) failed on branch \`${{ github.ref_name }}\`.
-
-          Ruff auto-fix was unable to resolve all issues automatically. This requires manual intervention from a Cloud Worker.
-
-          **Failure Details:**
-          - **Commit:** ${{ github.sha }}
-          - **Author:** ${{ github.actor }}
-          - **Run Link:** [View logs](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }})
-
-          ---
-          *This issue was generated automatically by the CI pipeline.*" \
-            --label "bug"
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  # 4. AgentQMS validation
+  agentqms:
+    name: AgentQMS Compliance
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+      - run: |
+          cd AgentQMS/interface
+          pip install -r requirements.txt
+          make validate

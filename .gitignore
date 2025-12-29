@@ -142,6 +142,7 @@ resource_logs/
 test_*/
 # zero_prediction_*/
 /outputs/
+# !aws-batch-processor/data/output
 # AgentQMS
 # .agentqms/state.json
 # .agentqms/sessions/
@@ -159,3 +160,4 @@ test_*/
 data_gen_exp/
 repomix-output.xml
 run.log
+aws-batch-processor/

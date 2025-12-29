@@ -1,14 +1,14 @@
 name: Deploy Batch Processor to AWS
 
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - 'runners/batch_pseudo_labels*.py'
-      - 'ocr/**'
-      - 'scripts/cloud/Dockerfile.batch'
-      - '.github/workflows/deploy-batch-processor.yml'
+  # push:
+  #   branches:
+  #     - main
+  #   paths:
+  #     - 'runners/batch_pseudo_labels*.py'
+  #     - 'ocr/**'
+  #     - 'scripts/cloud/Dockerfile.batch'
+  #     - '.github/workflows/deploy-batch-processor.yml'
   workflow_dispatch:
 
 env:

@@ -1,20 +1,9 @@
 name: Update Diagrams
 
 on:
-  push:
-    branches: [ main, develop ]
-    paths:
-      - 'ocr/**'
-      - 'ui/**'
-      - 'configs/**'
-      - 'scripts/generate_diagrams.py'
-  pull_request:
-    branches: [ main, develop ]
-    paths:
-      - 'ocr/**'
-      - 'ui/**'
-      - 'configs/**'
-      - 'scripts/generate_diagrams.py'
+  schedule:
+    - cron: '0 0 * * 0' # Weekly at midnight on Sunday
+  workflow_dispatch:
 
 jobs:
   update-diagrams:

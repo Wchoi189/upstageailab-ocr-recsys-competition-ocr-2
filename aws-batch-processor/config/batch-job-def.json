@@ -58,6 +58,6 @@
     ]
   },
   "timeout": {
-    "attemptDurationSeconds": 7200
+    "attemptDurationSeconds": 21600
   }
 }
