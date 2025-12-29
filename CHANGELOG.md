@@ -8,6 +8,8 @@
 
 ## [Unreleased]
 
+- **[2025-12-29 12:00] CI Workflow Optimization**: Streamlined ci.yml, disabled redundant actions, and added mypy analyzer.
+
 - **[2025-12-24 16:00] Phase 3: Validation Module Consolidation COMPLETE**: Merged `ocr.validation.models` + `ocr.datasets.schemas` into `ocr.core.validation` with zero breaking changes. **-3,632 LOC removed, 1 circular import eliminated, 104/104 tests passing**. Implementation complete:
   - **Core Module**: Created `ocr/core/validation.py` (1,177 LOC) merging validation models + dataset schemas into single source of truth. Eliminated circular dependency (validation ↔ schemas)
   - **Backward Compatibility**: Replaced original files with deprecation shims (631→45 LOC, 542→45 LOC). All imports work via shims with `DeprecationWarning`

@@ -17,6 +17,28 @@ The source of truth for all project rules, architecture, and standards is locate
     - **Guides**: `experiment_manager/.ai-instructions/`
     - **Key Commands**: `init`, `reconcile`, `validate`
 
+## 🛠️ Environment & Tools
+Before starting work, ensure the environment is healthy:
+1. **Validate Environment**:
+   ```bash
+   python scripts/validate_environment.py
+   ```
+   (Run this after `uv sync`)
+
+2. **AgentQMS Tools**:
+   Located in `AgentQMS/`, these tools help with validation and planning.
+   **Best Practice**: Use the Makefile in `AgentQMS/interface/`.
+   ```bash
+   cd AgentQMS/interface
+   make help          # List all tools
+   make validate      # Validate artifacts
+   make create-plan NAME=my-plan TITLE="My Plan"
+   ```
+
+   **Direct Access**:
+   - `python -m AgentQMS.agent_tools.compliance.validate_artifacts`
+   - `python -m AgentQMS.agent_tools.compliance.validate_boundaries`
+
 ## 🤖 Tier 3 Agent Configs
 - **Gemini**: `.ai-instructions/tier3-agents/gemini/config.yaml`
 - **Claude**: `.ai-instructions/tier3-agents/claude/config.yaml`

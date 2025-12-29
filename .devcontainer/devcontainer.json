@@ -4,18 +4,21 @@
         "dockerfile": "../docker/Dockerfile",
         "context": ".."
     },
+    // "image": "ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest", // Uncomment to use pre-built image (faster) after first successful CI build
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-python.python",
                 "ms-python.vscode-pylance",
+                "ms-python.mypy-type-checker",
                 "ms-toolsai.jupyter",
                 "charliermarsh.ruff",
                 "ms-azuretools.vscode-docker",
-                "mhutchie.git-graph"
+                "mhutchie.git-graph",
+                "GitHub.copilot"
             ],
             "settings": {
-                "python.defaultInterpreterPath": "/opt/uv/bin/uv",
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
                 "python.analysis.typeCheckingMode": "basic",
                 "editor.formatOnSave": true,
                 "editor.codeActionsOnSave": {
@@ -34,7 +37,7 @@
     "mounts": [
         "source=${localWorkspaceFolder}/data,target=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data,type=bind"
     ],
-    "postCreateCommand": "uv sync --frozen",
+    "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validate_environment.py",
     "forwardPorts": [
         8000,
         8501,

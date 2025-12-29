@@ -8,7 +8,6 @@ ENV PYTHONUNBUFFERED=1
 ENV UV_LINK_MODE=copy
 
 # Install system dependencies and cuDNN for GPU acceleration
-# Note: NVIDIA CUDA base image already includes the CUDA repository
 RUN apt-get update && apt-get install -y \
     sudo \
     curl \
@@ -53,6 +52,10 @@ ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
 ENV LC_CTYPE=en_US.UTF-8
 
+# Install uv system-wide
+RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
+ENV PATH="/opt/uv/bin:$PATH"
+
 # Create vscode user
 RUN groupadd -g 1000 vscode && \
     useradd -u 1000 -g vscode -m -s /bin/bash vscode && \
@@ -80,23 +83,29 @@ RUN touch /home/vscode/.ssh/authorized_keys && \
     sudo chmod 600 /home/vscode/.ssh/authorized_keys && \
     sudo chown vscode:vscode /home/vscode/.ssh/authorized_keys
 
-# Install uv system-wide
-RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
-ENV PATH="/opt/uv/bin:$PATH"
-
 # Set up project directory
 RUN mkdir -p /workspaces && chown vscode:vscode /workspaces
+
+# === DEPENDENCY LAYER (CACHED) ===
+FROM base AS dependencies
 
 USER vscode
 WORKDIR /workspaces
 
 # Copy dependency files first for better caching
-COPY --chown=vscode:vscode pyproject.toml uv.lock* ./README.md ./
+# copying to a temp location or root workspace to run sync
+COPY --chown=vscode:vscode pyproject.toml uv.lock* ./
 
-# Note: Dependencies will be installed at runtime to avoid build issues
-# RUN uv sync --frozen
+# Install dependencies into the user's cache or a dummy venv
+# This populates the uv cache at /home/vscode/.cache/uv
+RUN uv sync --frozen --no-dev || uv sync --frozen
 
-# Source code will be mounted via volume at runtime
+# === DEVELOPMENT IMAGE ===
+FROM dependencies AS development
+
+# Note: We do NOT copy the source code here (COPY . .) because
+# devcontainer mounts the workspace volume at runtime.
+# However, we can copy the .bashrc and other configs.
 
 # Copy .bashrc for enhanced shell experience
 COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
@@ -104,7 +113,7 @@ COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
 # Fix Windows line endings in .bashrc
 RUN sed -i 's/\r$//' /home/vscode/.bashrc
 
-# Set up development environment
+# Set up development environment aliases
 RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
     echo 'alias python3="uv run python3"' >> ~/.bashrc && \
     echo 'alias etk="uv run python experiment_manager/etk.py"' >> ~/.bashrc && \
