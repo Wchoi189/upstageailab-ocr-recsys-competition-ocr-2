@@ -20,7 +20,7 @@ from pathlib import Path
 
 # Import AgentQMS utilities
 try:
-    from AgentQMS.agent_tools.utils.paths import get_artifacts_dir
+    from AgentQMS.tools.utils.paths import get_artifacts_dir
 except ImportError:
     print("Error: AgentQMS utilities not available")
     sys.exit(1)
@@ -290,7 +290,7 @@ def main():
     else:
         print(f"📊 Fixed {fixed_count}/{total_count} files")
         if fixed_count > 0:
-            print("✨ Run validation to confirm: python AgentQMS/agent_tools/compliance/validate_artifacts.py --all")
+            print("✨ Run validation to confirm: python AgentQMS.tools/compliance/validate_artifacts.py --all")
 
 
 if __name__ == "__main__":

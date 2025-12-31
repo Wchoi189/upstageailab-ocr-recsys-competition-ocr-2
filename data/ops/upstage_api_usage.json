@@ -1,0 +1,198 @@
+{
+  "records": [
+    {
+      "timestamp": "2025-12-28T03:05:06.604973",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 158.80751609802246,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000414.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.610957",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 127.17866897583008,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000079.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.617482",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 152.34708786010742,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000115.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.623994",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 152.44770050048828,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000374.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.629846",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 198.20928573608398,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000114.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.635840",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 176.68628692626953,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000078.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.641608",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 219.95282173156738,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000077.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.647497",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 208.73665809631348,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000372.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:06.654162",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 201.7993927001953,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000622.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:07.375887",
+      "api_type": "document_parse",
+      "status": "success",
+      "response_time_ms": 881.4709186553955,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000415.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:05:07.421367",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 32.50575065612793,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000117.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:09:48.242078",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 124.35698509216309,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000114.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:09:48.248207",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 126.25479698181152,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000157.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:09:48.670665",
+      "api_type": "document_parse",
+      "status": "success",
+      "response_time_ms": 543.9789295196533,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000077.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:09:48.818028",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 36.19790077209473,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000199.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:13:52.435422",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 120.06926536560059,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000037.jpg",
+        "retry": 0
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:13:52.443007",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 115.81587791442871,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000091.jpg",
+        "retry": 0
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:13:53.094821",
+      "api_type": "document_parse",
+      "status": "success",
+      "response_time_ms": 781.8763256072998,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000012.jpg"
+      }
+    },
+    {
+      "timestamp": "2025-12-28T03:13:53.256559",
+      "api_type": "document_parse",
+      "status": "rate_limited",
+      "response_time_ms": 50.00662803649902,
+      "error_message": null,
+      "metadata": {
+        "image": "drp.en_ko.in_house.selectstar_000053.jpg",
+        "retry": 0
+      }
+    }
+  ],
+  "last_updated": "2025-12-28T03:13:53.256740"
+}

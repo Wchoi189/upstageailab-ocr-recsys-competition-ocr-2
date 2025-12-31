@@ -1,0 +1,11 @@
+INFO:__main__:Loaded UPSTAGE_API_KEY from .env.local
+INFO:ocr.utils.api_usage_tracker:Loaded 15 usage records from data/ops/upstage_api_usage.json
+INFO:__main__:Loaded 3272 images from data/processed/baseline_train.parquet
+INFO:__main__:
+================================================================================
+INFO:__main__:Batch 1: Processing images 0-100/3272
+INFO:__main__:================================================================================
+
+Processing batch from 0:   0%|          | 0/100 [00:00<?, ?it/s]WARNING:__main__:Rate limited: drp.en_ko.in_house.selectstar_000037.jpg, retry 1/3 after 5s
+WARNING:__main__:Rate limited: drp.en_ko.in_house.selectstar_000091.jpg, retry 1/3 after 5s
+Processing batch from 0:   1%|          | 1/100 [00:00<01:29,  1.11it/s]WARNING:__main__:Rate limited: drp.en_ko.in_house.selectstar_000053.jpg, retry 1/3 after 5s

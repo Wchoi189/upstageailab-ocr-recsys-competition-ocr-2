@@ -184,7 +184,7 @@ def main():
     print(f"  ✅ Renamed files: {renamed}")
     print(f"  ✅ Fixed frontmatter: {fixed_fm}")
     print("\n  ✨ Next: Run validation")
-    print("  $ python AgentQMS/agent_tools/compliance/validate_artifacts.py --all")
+    print("  $ python AgentQMS.tools/compliance/validate_artifacts.py --all")
 
 
 if __name__ == "__main__":

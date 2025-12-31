@@ -1,0 +1,98 @@
+---
+ads_version: "1.0"
+type: workflow_definition
+agent: all
+tier: 2
+priority: high
+validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 400
+date: "2025-12-21"
+status: active
+
+# Debugging Session Schema v1.0
+
+session_structure:
+  base_path: "docs/artifacts/bug_reports/"
+  folder_pattern: "BUG-{NNN}"
+
+  phases:
+    01_intake:
+      file: "01_intake.md"
+      purpose: "Problem statement, symptoms, reproduction steps"
+      required: true
+    02_investigation:
+      file: "02_investigation.md"
+      purpose: "Hypotheses, tests, findings (accumulative)"
+      required: true
+    03_resolution:
+      file: "03_resolution.md"
+      purpose: "Fix details, verification results"
+      required: false
+    04_postmortem:
+      file: "04_postmortem.md"
+      purpose: "Root cause, prevention measures"
+      required: false
+
+  artifacts:
+    base: "artifacts/"
+    subdirs:
+      - images
+      - logs
+      - scripts
+
+frontmatter_schema:
+  required:
+    - schema: "debugging-session-v1"
+    - schema_version: "1.0"
+    - session_id: "BUG-{NNN}"
+    - phase: [1, 2, 3, 4]
+    - status: [active, resolved, blocked, abandoned]
+    - created: "ISO8601 timestamp"
+    - severity: [critical, high, medium, low]
+  optional:
+    - updated: "ISO8601 timestamp"
+    - tags: "list of strings"
+    - related_bugs: "list of BUG-{NNN} references"
+
+workflow:
+  phase_1_intake:
+    trigger: "make debug-session BUG_ID=NNN TITLE=description"
+    actions:
+      - "Create session folder"
+      - "Generate 01_intake.md with frontmatter"
+      - "Create artifacts/ subdirectories"
+      - "Generate README.md index"
+    duration: "5-10 minutes"
+
+  phase_2_investigation:
+    trigger: "Manual progression after intake"
+    actions:
+      - "Form hypothesis"
+      - "Design test"
+      - "Execute and log results"
+      - "Update 02_investigation.md incrementally"
+    pattern: "Iterate until root cause identified"
+
+  phase_3_resolution:
+    trigger: "Root cause confirmed"
+    actions:
+      - "Implement fix"
+      - "Verify with original reproduction"
+      - "Document in 03_resolution.md"
+
+  phase_4_postmortem:
+    trigger: "Severity = high or critical"
+    actions:
+      - "Conduct root cause analysis"
+      - "Identify prevention measures"
+      - "Update 04_postmortem.md"
+
+commands:
+  create_session: "make debug-session BUG_ID=NNN TITLE='description'"
+  list_sessions: "ls docs/artifacts/bug_reports/"
+  view_session: "cat docs/artifacts/bug_reports/BUG-{NNN}/README.md"
+
+integration:
+  agentqms: "AgentQMS/agent_tools/utilities/init_debug_session.py"
+  artifact_types: "Add debug_session to tier1-sst/artifact-types.yaml"

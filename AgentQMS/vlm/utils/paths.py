@@ -101,7 +101,7 @@ class VLMPathConfig:
         return cls(
             project_root=project_root,
             vlm_module_dir=vlm_module_dir,
-            cache_dir=Path(config.get("cache_dir", project_root / ".vlm_cache")),
+            cache_dir=Path(config.get("cache_dir", vlm_module_dir / "cache")),
             via_annotations_dir=Path(config.get("via_annotations_dir", vlm_module_dir / "via" / "annotations")),
             prompt_templates_dir=Path(config.get("prompt_templates_dir", vlm_module_dir / "prompts")),
             analysis_output_dir=Path(config.get("analysis_output_dir", project_root / "artifacts" / "vlm_analysis")),
@@ -155,7 +155,7 @@ class VLMPathResolver:
         return VLMPathConfig(
             project_root=project_root,
             vlm_module_dir=vlm_module_dir,
-            cache_dir=project_root / ".vlm_cache",
+            cache_dir=vlm_module_dir / "cache",
             via_annotations_dir=vlm_module_dir / "via" / "annotations",
             prompt_templates_dir=vlm_module_dir / "prompts",
             analysis_output_dir=project_root / "artifacts" / "vlm_analysis",

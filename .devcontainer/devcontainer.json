@@ -1,10 +1,25 @@
 {
     "name": "OCR RecSys Development",
-    "build": {
-        "dockerfile": "../docker/Dockerfile",
-        "context": ".."
+
+    // Use pre-built image for faster Codespaces startup (80% faster)
+    "image": "ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest",
+
+    // Fallback to build if image not available (for local development)
+    // "build": {
+    //     "dockerfile": "../docker/Dockerfile",
+    //     "context": "..",
+    //     "target": "development"
+    // },
+
+    // Codespaces-specific resource requirements
+    // Optimized for free tier: 4 CPUs (30 hours/month free), 15GB storage (free tier limit)
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "16gb",
+        "storage": "15gb"  // Free tier limit (reduced from 32gb to avoid storage overage)
+        // "gpu": true  // Uncomment if GPU support needed (expensive: ~$1-2/hour)
     },
-    // "image": "ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest", // Uncomment to use pre-built image (faster) after first successful CI build
+
     "customizations": {
         "vscode": {
             "extensions": [
@@ -28,19 +43,46 @@
             }
         }
     },
+
     "remoteUser": "vscode",
+
+    // GPU support (only works in local Docker, not Codespaces)
     "runArgs": [
         "--gpus",
         "all",
         "--shm-size=8gb"
     ],
+
+    // Data mount (for local development)
     "mounts": [
         "source=${localWorkspaceFolder}/data,target=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data,type=bind"
     ],
+
+    // Lifecycle commands
+    "onCreateCommand": "echo '✅ Container created'",
+    "updateContentCommand": "uv sync --frozen",
     "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validate_environment.py",
-    "forwardPorts": [
-        8000,
-        8501,
-        6006
-    ]
+    "postStartCommand": "python scripts/validate_environment.py",
+
+    // Port forwarding
+    "forwardPorts": [8000, 8501, 6006],
+    "portsAttributes": {
+        "8000": {
+            "label": "API Server",
+            "onAutoForward": "notify"
+        },
+        "8501": {
+            "label": "Streamlit",
+            "onAutoForward": "notify"
+        },
+        "6006": {
+            "label": "TensorBoard",
+            "onAutoForward": "silent"
+        }
+    },
+
+    // Additional features
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    }
 }

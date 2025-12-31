@@ -156,13 +156,17 @@ def main(config: DictConfig):
             name=config.get("run_name", "kie-run")
         )
 
+    # Filter out known keys that we handle explicitly or that might conflict if passed twice
+    trainer_args = {k: v for k, v in train_config.items() if k not in ["batch_size", "num_workers", "max_epochs", "accelerator", "devices"]}
+
     trainer = pl.Trainer(
         max_epochs=train_config.get("max_epochs", 10),
         accelerator=train_config.get("accelerator", "auto"),
         devices=train_config.get("devices", 1),
         callbacks=[checkpoint_callback, LearningRateMonitor(logging_interval="step")],
         logger=logger_type,
-        strategy="ddp_find_unused_parameters_true" if train_config.get("devices", 1) > 1 else "auto"
+        strategy="ddp_find_unused_parameters_true" if train_config.get("devices", 1) > 1 else "auto",
+        **trainer_args
     )
 
     # 6. Train

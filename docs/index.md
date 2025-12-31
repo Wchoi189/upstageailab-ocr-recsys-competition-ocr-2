@@ -10,6 +10,7 @@ Use this guide as the single entry point for all project documentation. It group
 | **Changelog** | Tracking project changes and version history. | `docs/changelog/` | `ls docs/changelog` |
 | **Schemas** | Understanding data contracts and validation rules. | `docs/schemas/` | `ls docs/schemas` |
 | **VLM Reports** | Reviewing Vision Language Model evaluation results. | `docs/vlm_reports/` | `ls docs/vlm_reports` |
+| **Guides** | Setup and usage guides. | `docs/guides/` | `ls docs/guides` |
 | **Archive** | Accessing historical code, docs, and legacy UI. | `docs/archive/` | `ls -R docs/archive` |
 | **System Source of Truth** | Core instructions and framework guidance. | `.ai-instructions/` | `ls -R .ai-instructions` |
 

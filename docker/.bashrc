@@ -1,15 +1,18 @@
 # === OCR Development Environment .bashrc ===
 # A rich shell experience with a modern prompt, robust environment management, and utility functions.
+# Updated: 2025-12-29
 
 # If not running interactively, don't do anything
 [ -z "$PS1" ] && return
 
-# Correctly unset stale VIRTUAL_ENV if it's invalid or points to an outside project
-if [ -n "$VIRTUAL_ENV" ]; then
-    # Check if the directory doesn't exist OR if it's not inside the current path
-    if [ ! -d "$VIRTUAL_ENV" ] || [[ "$VIRTUAL_ENV" != "$PWD"* ]]; then
-        unset VIRTUAL_ENV
-    fi
+# Clear any problematic PYENV_VERSION before initialization
+if [ "$PYENV_VERSION" = "doc-pyenv" ]; then
+    unset PYENV_VERSION
+fi
+
+# Correctly unset stale VIRTUAL_ENV if directory doesn't exist
+if [ -n "$VIRTUAL_ENV" ] && [ ! -d "$VIRTUAL_ENV" ]; then
+    unset VIRTUAL_ENV
 fi
 
 # === History Configuration ===
@@ -27,6 +30,15 @@ if locale -a | grep -q "ko_KR.utf8"; then
     export LC_MESSAGES=ko_KR.UTF-8
     export LC_TIME=ko_KR.UTF-8
     export LANGUAGE=en_US:ko_KR
+fi
+
+# === Python Environment Management (PyEnv) ===
+export PYENV_ROOT="$HOME/.pyenv"
+if [ -d "$PYENV_ROOT" ]; then
+    export PATH="$PYENV_ROOT/bin:$PATH"
+    eval "$(pyenv init --path)"
+    eval "$(pyenv init -)"
+    eval "$(pyenv virtualenv-init -)"
 fi
 
 # === Color Prompt Configuration ===
@@ -55,17 +67,9 @@ if [ "$TERM" != "dumb" ]; then
     PS1="${CYAN}\$(parse_venv_name)${BLUE} \W ${YELLOW}\$(parse_git_branch)${RESET}${GREEN} ❯ ${RESET}"
 fi
 
-# === Python Environment Management (PyEnv, UV, Conda) ===
-# Manually add pyenv's shims and bin to the PATH for predictable behavior
-export PYENV_ROOT="$HOME/.pyenv"
-export PATH="$PYENV_ROOT/shims:$PYENV_ROOT/bin:$PATH"
-
 # === UV Environment Management ===
 # UV is the primary package manager for this project
 export UV_LINK_MODE=copy
-# Add UV to PATH (prioritize system install, then user installs)
-# UV installs to ~/.local/bin by default, but may be at /opt/uv/bin (system) or ~/.cargo/bin (fallback)
-export PATH="/opt/uv/bin:$HOME/.local/bin:$HOME/.cargo/bin:$PATH"
 
 # Auto-activate UV environment if .venv exists in current directory
 uv_auto_activate() {
@@ -86,6 +90,7 @@ alias uv-test='uv run pytest tests/ -v --tb=short'
 alias uv-lint='uv run flake8 .'
 alias uv-format='uv run black . && uv run isort .'
 
+# === Conda Environment Management ===
 # Properly initialize Conda to override any external activation scripts.
 if [ -f "/opt/conda/etc/profile.d/conda.sh" ]; then
     . "/opt/conda/etc/profile.d/conda.sh"
@@ -141,14 +146,14 @@ alias run-tests='uv run python -m pytest tests/'
 # === Utility Functions ===
 # Extract various archive formats
 extract() {
-    if [ -f $1 ]; then
+    if [ -f "$1" ]; then
         case $1 in
-            *.tar.bz2)   tar xjf $1     ;; *.tar.gz)    tar xzf $1     ;;
-            *.bz2)       bunzip2 $1     ;; *.rar)       unrar e $1     ;;
-            *.gz)        gunzip $1      ;; *.tar)       tar xf $1      ;;
-            *.tbz2)      tar xjf $1     ;; *.tgz)       tar xzf $1     ;;
-            *.zip)       unzip $1       ;; *.Z)         uncompress $1  ;;
-            *.7z)        7z x $1        ;; *)           echo "'$1' cannot be extracted via extract()" ;;
+            *.tar.bz2)   tar xjf "$1"     ;; *.tar.gz)    tar xzf "$1"     ;;
+            *.bz2)       bunzip2 "$1"     ;; *.rar)       unrar e "$1"     ;;
+            *.gz)        gunzip "$1"      ;; *.tar)       tar xf "$1"      ;;
+            *.tbz2)      tar xjf "$1"     ;; *.tgz)       tar xzf "$1"     ;;
+            *.zip)       unzip "$1"       ;; *.Z)         uncompress "$1"  ;;
+            *.7z)        7z x "$1"        ;; *)           echo "'$1' cannot be extracted via extract()" ;;
         esac
     else
         echo "'$1' is not a valid file"
@@ -160,16 +165,26 @@ mkcd() {
     mkdir -p "$1" && cd "$1"
 }
 
-# === Final PATH & Environment Setup ===
-# Add local user bin to PATH
-if [ -d "$HOME/.local/bin" ] ; then
-    PATH="$HOME/.local/bin:$PATH"
-fi
-if [ -d "$HOME/bin" ] ; then
-    PATH="$HOME/bin:$PATH"
-fi
+# === PATH Management ===
+# Function to add directory to PATH only if it exists and isn't already there
+add_to_path() {
+    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
+        PATH="$1:$PATH"
+    fi
+}
 
-# Development environment variables
+# Add paths in order of priority
+add_to_path "/opt/uv/bin"
+add_to_path "$HOME/.local/bin"
+add_to_path "$HOME/.cargo/bin"
+add_to_path "$HOME/bin"
+add_to_path "/workspaces/node_modules_global/bin"
+add_to_path "/workspaces/repomix/bin"
+# add_to_path "/home/vscode/google-cloud-sdk/bin"
+
+export PATH
+
+# === Development Environment Variables ===
 export EDITOR=vim
 
 # Enable programmable completion features
@@ -180,3 +195,17 @@ if ! shopt -oq posix; then
     . /etc/bash_completion
   fi
 fi
+
+# === Optional: External Prompt Functions (commented out to avoid conflicts) ===
+# Uncomment this section if you prefer to use external prompt functions instead of the built-in prompt
+# if [ -f ~/.bash_prompt_functions ]; then
+#     source ~/.bash_prompt_functions
+#     export PROMPT_STYLE="ultra-concise"
+#     export SHOW_GIT_INFO="true"
+#     export SHOW_CONDA_ENV="true"
+#     export SHOW_PYTHON_VERSION="false"
+#     export SHOW_NODE_VERSION="false"
+#     __init_prompt
+# fi
+
+# === End of .bashrc ===

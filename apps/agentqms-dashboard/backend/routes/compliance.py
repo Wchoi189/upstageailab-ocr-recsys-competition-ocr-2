@@ -27,7 +27,7 @@ async def validate_artifacts(target: str = Query("all", description="Target to v
     # server.py is in apps/agentqms-dashboard/backend/
     # project root is ../../../
     project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../.."))
-    script_path = os.path.join(project_root, "AgentQMS/agent_tools/compliance/validate_artifacts.py")
+    script_path = os.path.join(project_root, "AgentQMS.tools/compliance/validate_artifacts.py")
 
     if not os.path.exists(script_path):
         raise HTTPException(status_code=500, detail=f"Validation script not found at {script_path}")

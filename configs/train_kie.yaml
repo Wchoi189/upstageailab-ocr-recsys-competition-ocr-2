@@ -21,9 +21,9 @@ model:
   max_length: 512
 
 data:
-  train_path: "ocr/data/datasets/kie_train.parquet"
-  val_path: "ocr/data/datasets/kie_val.parquet"
-  image_dir: "ocr/data/images" # Optional if paths in parquet are absolute
+  train_path: "data/export/baseline_kie/train.parquet"
+  val_path: "data/export/baseline_kie/val.parquet"
+  image_dir: "." # Paths in parquet are relative to project root (e.g., data/datasets/...)
   label_list: ["O", "B-HEADER", "I-HEADER", "B-QUESTION", "I-QUESTION", "B-ANSWER", "I-ANSWER"]
 
 train:
@@ -31,4 +31,4 @@ train:
   num_workers: 4
   max_epochs: 10
   devices: 1
-  accelerator: "gpu"
+  accelerator: "auto"

@@ -100,17 +100,12 @@ frontend/public/models/*.onnx
 .ai-instructions/tier3-agents/*/settings.local.json
 
 # Data
-data/datasets/
-data/pseudo_label/
-data/filter_samples/s
-data/
-data/ops
 # Experiments and Archives
 multirun/
 _archive/
 __OLD__/
 # /archive/
-
+*.parquet
 # Temporary files
 *.tmp
 *.temp
@@ -153,6 +148,7 @@ test_*/
 # !.agentqms/*.md
 # .agentqms/state/agent_state.json
 # .agentqms/state/*.sqlite
+AgentQMS/vlm/cache/
 
 # Project-specific files (review and remove if no longer needed)
 # notepad.md
@@ -160,4 +156,9 @@ test_*/
 data_gen_exp/
 repomix-output.xml
 run.log
-aws-batch-processor/
+# aws-batch-processor/
+# data/metadata/dataset_catalog.yml
+
+# data
+data/datasets/
+/data/

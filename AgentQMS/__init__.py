@@ -7,9 +7,9 @@ This package provides:
 - `knowledge` – Protocols, references, and agent-facing instructions
 
 Usage:
-    from AgentQMS.agent_tools.core.artifact_workflow import ArtifactWorkflow
-    from AgentQMS.agent_tools.compliance.validate_artifacts import ArtifactValidator
-    from AgentQMS.agent_tools.utils.config import load_config
+    from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+    from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
+    from AgentQMS.tools.utils.config import load_config
 """
 
 __version__ = "0.3.0"

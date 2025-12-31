@@ -386,7 +386,7 @@ Robust test suite with good edge case coverage:
 
 **Missing Docstrings**:
 - `ocr/utils/polygon_utils.py`: 12 functions (0% documented)
-- `AgentQMS/agent_tools/utilities/`: 8 modules (45% documented)
+- `AgentQMS.tools/utilities/`: 8 modules (45% documented)
 - Dashboard backend routes: 3 files (60% documented)
 
 **Recommendation**:
@@ -418,13 +418,13 @@ def normalize_polygon(points: list[tuple[int, int]]) -> list[tuple[int, int]]:
 **Duplicate Logic Found**:
 
 1. **Validation Functions** (2 instances)
-   - Location: `ocr/validation/schema.py` + `AgentQMS/agent_tools/compliance/validate_artifacts.py`
+   - Location: `ocr/validation/schema.py` + `AgentQMS.tools/compliance/validate_artifacts.py`
    - Issue: Frontmatter validation duplicated
    - Impact: Maintenance burden, inconsistent behavior
    - **Fix**: Extract to shared `validation_utils.py`
 
 2. **Path Resolution** (1 instance)
-   - Location: `backend/fs_utils.py` + `AgentQMS/agent_tools/utils/paths.py`
+   - Location: `backend/fs_utils.py` + `AgentQMS.tools/utils/paths.py`
    - Issue: Similar path normalization logic
    - Impact: Duplicate security checks
    - **Fix**: Unify into single utility module

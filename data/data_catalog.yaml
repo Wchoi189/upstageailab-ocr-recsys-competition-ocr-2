@@ -1,0 +1,89 @@
+datasets:
+  - name: baseline_text_detection
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/datasets
+    image_count: 4089
+    annotation_format: COCO-like JSON (detection polygons, no text)
+    status: available
+    issues: no text labels for recognition fine-tuning
+    use_case: training baseline for detection
+    integration_priority: high
+  - name: zero_prediction_worst_performers
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/zero_prediction_worst_performers
+    image_count: 7
+    annotation_format: none
+    status: available
+    issues: no annotations
+    use_case: enhancement validation
+    integration_priority: medium
+  - name: filter_samples_receipt_filters
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/filter_samples/receipt_filters
+    image_count: 28
+    annotation_format: none
+    status: available
+    issues: no annotations
+    use_case: benchmark contrast
+    integration_priority: medium
+  - name: zero_prediction_imgs_with_rembg
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/zero_prediction_imgs_with_rembg
+    image_count: 24
+    annotation_format: none
+    status: available
+    issues: no annotations
+    use_case: preprocessing test
+    integration_priority: low
+  - name: zero_prediction_imgs_with_gray_scales
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/zero_prediction_imgs_with_gray_scales
+    image_count: 1
+    annotation_format: none
+    status: available
+    issues: no annotations
+    use_case: grayscale baseline
+    integration_priority: low
+  - name: pseudo_labels
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/pseudo_label
+    image_count: 3683
+    annotation_format: potential (check subdirs for annotations)
+    status: available
+    issues: verify annotations, overlaps with HF datasets
+    use_case: pseudo-labeling
+    integration_priority: medium
+  - name: hf_invoices_receipts
+    path: cached
+    image_count: 2043
+    annotation_format: JSON (KIE data, ocr_words available)
+    status: downloaded
+    issues: KIE dataset, not line-level text recognition; requires cropping for fine-tuning
+    use_case: potential text recognition with processing
+    integration_priority: high
+  - name: hf_wildreceipts_ocr_v1
+    path: cached
+    image_count: 1618
+    annotation_format: JSON (KIE data, ocr_words available)
+    status: downloaded
+    issues: KIE dataset, not line-level text recognition; requires cropping for fine-tuning
+    use_case: potential text recognition with processing
+    integration_priority: high
+  - name: hf_receipt_cord_ocr_v2
+    path: cached
+    image_count: 800
+    annotation_format: JSON (KIE data, ocr_words available)
+    status: downloaded
+    issues: KIE dataset, not line-level text recognition; requires cropping for fine-tuning
+    use_case: potential text recognition with processing
+    integration_priority: high
+  - name: hf_ds_receipts_v2_train
+    path: cached
+    image_count: 1137
+    annotation_format: JSON (KIE data, ocr_words available)
+    status: downloaded
+    issues: KIE dataset, not line-level text recognition; requires cropping for fine-tuning
+    use_case: potential text recognition with processing
+    integration_priority: high
+  - name: ai_samples_text_recognition
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/samples_for_ai/original
+    image_count: 6
+    annotation_format: COCO-like JSON from val.json (available)
+    status: available
+    issues: worst performers, useful for testing filters like sepia and perspective warping
+    use_case: providing representative samples to AI assistants for POC
+    integration_priority: high

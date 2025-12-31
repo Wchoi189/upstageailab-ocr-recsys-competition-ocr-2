@@ -1,0 +1,523 @@
+metadata:
+  generated_at: '2025-12-29T07:42:31.355174+00:00'
+  generator: AgentQMS PluginLoader
+  schema_version: '1.0'
+discovery_paths:
+  framework: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
+  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
+plugins_loaded:
+  artifact_types:
+  - audit
+  - change_request
+  - ocr_experiment_report
+  validators: true
+  context_bundles:
+  - security-review
+plugin_metadata:
+- name: audit
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
+- name: change_request
+  type: artifact_type
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+- name: ocr_experiment_report
+  type: artifact_type
+  version: '1.1'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+- name: validators
+  type: validator
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
+- name: security-review
+  type: context_bundle
+  version: '1.0'
+  source: project
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
+validation_errors: []
+resolved:
+  artifact_types:
+    audit:
+      name: audit
+      version: '1.0'
+      description: 'Framework audits, compliance checks, and quality evaluations with
+
+        automated implementation plan generation via GitHub Actions.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_audit-{name}.md'
+        directory: audits/
+        frontmatter:
+          type: audit
+          category: compliance
+          status: draft
+          version: '1.0'
+          related_artifacts: []
+          generated_artifacts: []
+          tags:
+          - audit
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - category
+        - related_artifacts
+        - generated_artifacts
+        required_sections:
+        - '## Executive Summary'
+        - '## Findings'
+        - '## Recommendations'
+        - '## Compliance Status'
+        - '## Related Artifacts'
+        filename_prefix: audit-
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: "# Audit: {title}\n\n**Audit Date**: {date}\n**Category**: {category}\n\
+        **Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
+        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
+        \ Scope**: [Describe what was audited]\n**Compliance Status**: [Overall status]\n\
+        **Critical Issues**: [Number]\n**High Priority Issues**: [Number]\n\n---\n\
+        \n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
+        \ Critical\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
+        \ recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n**Severity**:\
+        \ High\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
+        \ recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\n**Severity**:\
+        \ Medium\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\n## Recommendations\n\
+        \n### Immediate Actions (Week 1)\n1. [Action item with priority and owner]\n\
+        2. [Action item with priority and owner]\n\n### Short-term (Weeks 2-4)\n3.\
+        \ [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action item]\n\n---\n\
+        \n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
+        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
+        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
+        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
+        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
+        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
+        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
+        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
+        \n---\n\n**Last Updated**: {date}\n**Auditor**: {auditor}\n"
+      template_variables:
+        date: '2025-11-29'
+        category: compliance
+        status: draft
+        auditor: AI Agent
+    change_request:
+      name: change_request
+      version: '1.0'
+      description: 'A structured change request document for tracking proposed changes
+
+        that require approval before implementation.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_{type}_change-request-{name}.md'
+        directory: change_requests/
+        frontmatter:
+          type: change_request
+          category: governance
+          status: pending
+          version: '1.0'
+          tags:
+          - change-request
+          - governance
+          - approval
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - requester
+        - approver
+        required_sections:
+        - '## Change Summary'
+        - '## Justification'
+        - '## Impact Assessment'
+        - '## Approval'
+        filename_prefix: change_request_
+        allowed_statuses:
+        - draft
+        - pending
+        - approved
+        - rejected
+        - implemented
+      template: '# Change Request: {title}
+
+
+        ## Metadata
+
+        - **CR ID**: {cr_id}
+
+        - **Requester**: {requester}
+
+        - **Approver**: {approver}
+
+        - **Priority**: {priority}
+
+
+        ---
+
+
+        ## Change Summary
+
+
+        Brief description of the proposed change.
+
+
+        ## Justification
+
+
+        ### Business Need
+
+        Why is this change necessary?
+
+
+        ### Expected Benefits
+
+        - Benefit 1
+
+        - Benefit 2
+
+
+        ## Impact Assessment
+
+
+        ### Affected Systems
+
+        - System 1
+
+        - System 2
+
+
+        ### Risk Level
+
+        - **Risk**: Low / Medium / High
+
+        - **Mitigation**: Describe risk mitigation strategy
+
+
+        ### Resource Requirements
+
+        - Estimated effort: X hours/days
+
+        - Required skills: List skills
+
+
+        ## Implementation Plan
+
+
+        ### Approach
+
+        1. Step 1
+
+        2. Step 2
+
+        3. Step 3
+
+
+        ### Timeline
+
+        - Start date: YYYY-MM-DD
+
+        - Target completion: YYYY-MM-DD
+
+
+        ### Rollback Plan
+
+        How to revert if issues occur.
+
+
+        ## Approval
+
+
+        ### Approval Status
+
+        - [ ] Technical Review
+
+        - [ ] Security Review (if applicable)
+
+        - [ ] Manager Approval
+
+        - [ ] Final Approval
+
+
+        ### Approver Comments
+
+        _Comments from approver will be added here._
+
+
+        ### Decision
+
+        - **Status**: Pending
+
+        - **Date**:
+
+        - **Approved By**:
+
+
+        ---
+
+
+        *This change request follows the AgentQMS governance protocol.*
+
+        '
+      template_variables:
+        cr_id: CR-001
+        requester: AI Agent
+        approver: '[Pending Assignment]'
+        priority: Medium
+    ocr_experiment_report:
+      name: ocr_experiment_report
+      version: '1.1'
+      description: 'OCR experiment workflow and analysis report with structured metadata
+
+        and artifact tracking for experiment-tracker integration.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_ocr-experiment_{name}.md'
+        directory: experiments/
+        frontmatter:
+          type: ocr_experiment_report
+          category: research
+          status: draft
+          version: '1.0'
+          tags:
+          - ocr
+          - experiment
+          - tracking
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - experiment_id
+        - intention
+        required_sections:
+        - '## Experiment Overview'
+        - '## Methodology'
+        - '## Results'
+        - '## Analysis'
+        filename_prefix: ocr_experiment_
+        allowed_statuses:
+        - active
+        - incomplete
+        - completed
+        - archived
+      template: '# OCR Experiment: {title}
+
+
+        ## Experiment Overview
+
+
+        **Experiment ID**: {experiment_id}
+
+        **Date**: {date}
+
+        **Status**: {status}
+
+        **Intention**: {intention}
+
+
+        ---
+
+
+        ## Methodology
+
+
+        ### Objective
+
+        [Describe the experiment objective]
+
+
+        ### Scope
+
+        [Define the scope of the experiment]
+
+
+        ### Setup
+
+        [Describe the experimental setup]
+
+
+        ---
+
+
+        ## Results
+
+
+        ### Key Findings
+
+        - Finding 1
+
+        - Finding 2
+
+        - Finding 3
+
+
+        ### Metrics
+
+        [Document relevant metrics]
+
+
+        ### Artifacts Generated
+
+        - [Artifact 1](path/to/artifact)
+
+        - [Artifact 2](path/to/artifact)
+
+
+        ---
+
+
+        ## Analysis
+
+
+        ### Observations
+
+        [Detailed analysis of observations]
+
+
+        ### Performance Impact
+
+        [Describe any performance improvements or regressions]
+
+
+        ### Recommendations
+
+        1. [Recommendation 1]
+
+        2. [Recommendation 2]
+
+
+        ### Related Assessments
+
+        - [Assessment](../assessments/YYYY-MM-DD_HHMM_assessment_name.md)
+
+
+        ---
+
+
+        ## Related Artifacts
+
+
+        **Implementation Plans**:
+
+        - [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)
+
+
+        **Incident Reports**:
+
+        - [Report](../incident_reports/YYYY-MM-DD_HHMM_incident_report_name.md)
+
+
+        ---
+
+
+        **Last Updated**: {date}
+
+        **Researcher**: AI Agent
+
+        '
+      template_variables:
+        experiment_id: EXP-001
+        date: '2025-12-06'
+        status: draft
+        intention: '[Experiment objective and goal]'
+  validators:
+    prefixes:
+      CR_: change_requests/
+      DR_: decision_records/
+      SPEC_: specifications/
+      vlm_report_: vlm_reports/
+    types:
+    - change_request
+    - decision_record
+    - meeting_notes
+    - specification
+    - vlm_report
+    categories:
+    - compliance
+    - governance
+    - meeting
+    - security
+    statuses:
+    - approved
+    - deferred
+    - pending
+    - rejected
+    rules:
+      enforce_timestamp: true
+      enforce_kebab_case: true
+      enforce_lowercase: true
+      enforce_frontmatter: true
+      enforce_directory_placement: true
+    custom_validators: []
+    disabled_validators: []
+  context_bundles:
+    security-review:
+      name: security-review
+      title: Security Review Context Bundle
+      version: '1.0'
+      scope: project
+      description: 'Context files for conducting security-focused code reviews.
+
+        Includes security policies, threat models, and review checklists.
+
+        '
+      tags:
+      - security
+      - review
+      - compliance
+      tiers:
+        tier1:
+          name: Security Essentials
+          description: Core security documentation and policies
+          max_files: 5
+          files:
+          - path: AgentQMS/knowledge/agent/system.md
+            priority: critical
+            description: Agent guidelines for security awareness
+          - path: .agentqms/plugins/validators.yaml
+            priority: high
+            description: Validation rules including security checks
+            optional: true
+        tier2:
+          name: Review Guidelines
+          description: Security review process documentation
+          max_files: 5
+          files:
+          - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+            priority: high
+            description: Artifact governance rules
+          - path: AgentQMS/conventions/audit_framework/README.md
+            priority: medium
+            description: Audit framework for systematic review
+        tier3:
+          name: Project Context
+          description: Project-specific security context
+          max_files: 5
+          files:
+          - path: README.md
+            priority: medium
+            description: Project overview
+          - path: .agentqms/state/architecture.yaml
+            priority: medium
+            description: System architecture for threat surface analysis

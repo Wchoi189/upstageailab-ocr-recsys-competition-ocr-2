@@ -1,0 +1,119 @@
+---
+ads_version: "1.0"
+type: schema_specification
+title: "AI Documentation Standard v1.0"
+agent: all
+tier: 1
+priority: critical
+validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 400
+date: "2025-12-16"
+status: active
+
+# AI Documentation Standard (ADS) v1.0 Specification
+
+## Required Frontmatter Fields
+
+required_keys:
+  - ads_version        # Must be "1.0"
+  - type               # Document type from allowed list
+  - agent              # Target agent(s)
+  - tier               # Hierarchy tier (1-4)
+  - priority           # critical | high | medium | low
+  - validates_with     # Validation script path
+  - compliance_status  # pass | fail | unknown
+  - memory_footprint   # Estimated tokens
+
+## Document Types
+
+allowed_types:
+  - schema_specification
+  - agent_configuration
+  - tool_catalog
+  - rule_set
+  - quick_reference
+  - workflow_definition
+  - validation_script
+
+## Agent Identifiers
+
+allowed_agents:
+  - claude
+  - copilot
+  - cursor
+  - gemini
+  - qwen
+  - all
+
+## Tier Hierarchy
+
+tiers:
+  1: "System Source of Truth (SST) - Critical rules extracted"
+  2: "Framework guidance - Tool catalogs, workflow triggers"
+  3: "Agent-specific configurations"
+  4: "Supporting workflows - Automation, validation"
+
+## Priority Levels
+
+priority_levels:
+  - critical  # Must comply, blocks operations
+  - high      # Strong enforcement, warnings
+  - medium    # Encouraged, tracked
+  - low       # Optional, best practice
+
+## Compliance Status
+
+compliance_values:
+  - pass      # Validated and compliant
+  - fail      # Violations detected
+  - unknown   # Not yet validated
+
+## Content Requirements
+
+content_rules:
+  format: "YAML structured data only"
+  prose: "PROHIBITED - No markdown paragraphs or tutorials"
+  audience: "AI-only - Zero user-oriented content"
+  verbosity: "Ultra-concise - Maximum information density"
+  structure: "Enumerated lists, tables, key-value pairs"
+
+## Validation Levels
+
+validation_stages:
+  schema: "YAML well-formed and parseable"
+  structure: "Required sections present"
+  content: "Rules machine-parseable"
+  compliance: "Follows ADS v1.0 completely"
+
+## Enforcement Mechanisms
+
+enforcement:
+  pre_commit: "Block non-compliant commits"
+  ci_cd: "Automated compliance checks in pipeline"
+  periodic: "Weekly audit reports"
+  on_create: "Validation at file creation"
+
+## Prohibited Content
+
+prohibited:
+  - "User-oriented tutorials or explanations"
+  - "Markdown prose paragraphs"
+  - "Conceptual background or rationale"
+  - "Example walkthroughs for humans"
+  - "Historical context or justifications"
+  - "Phrases: 'You should', 'For example', 'It is important'"
+
+## Memory Optimization
+
+token_targets:
+  tier1_file: "≤100 tokens per rule set"
+  tier2_file: "≤500 tokens per catalog"
+  tier3_file: "≤300 tokens for config, ≤100 for quick-ref"
+  tier4_file: "≤200 tokens per workflow"
+
+## Schema Version
+
+version: "1.0"
+released: "2025-12-16"
+deprecates: "All prior unstructured markdown AI instructions"

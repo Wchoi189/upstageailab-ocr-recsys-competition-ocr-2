@@ -1,0 +1,61 @@
+version: "1.0"
+project: "KIE Batch Processor"
+
+datasets:
+  train:
+    description: "Training dataset with pseudo-labels from Upstage Document Parse API"
+    path: "data/kie_datasets/merged_baseline_train.parquet"
+    format: "parquet"
+    image_base_path: "data/datasets/images/train"
+    num_samples: 3272
+    schema:
+      - name: "id"
+        type: "string"
+        description: "Unique identifier for the sample"
+      - name: "image_path"
+        type: "string"
+        description: "Relative path to the image file"
+      - name: "texts"
+        type: "list[string]"
+        description: "Extracted text segments"
+      - name: "labels"
+        type: "list[string]"
+        description: "Categories/Labels for text segments"
+      - name: "polygons"
+        type: "list[list[float]]"
+        description: "Polygon coordinates for each segment"
+
+  val:
+    description: "Validation dataset (Canonical Images)"
+    path: "data/kie_datasets/baseline_val_pseudo_labels.parquet"
+    format: "parquet"
+    image_base_path: "data/datasets/images_val_canonical"
+    num_samples: 404
+    schema: "Same as train"
+
+  test:
+    description: "Test dataset"
+    path: "data/kie_datasets/baseline_test_pseudo_labels.parquet"
+    format: "parquet"
+    image_base_path: "data/datasets/images/test"
+    schema: "Same as train"
+
+storage:
+  root: "/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
+  images: "data/datasets/"
+
+exports:
+  description: "Finalized datasets ready for handoff"
+  base_path: "data/export/"
+  
+  baseline_dp:
+    description: "Document Parse Results"
+    train: "data/export/baseline_dp/train.parquet"
+    val: "data/export/baseline_dp/val.parquet"
+    test: "data/export/baseline_dp/test.parquet"
+    
+  baseline_kie:
+    description: "KIE Baseline Data"
+    train: "data/export/baseline_kie/train.parquet"
+    val: "data/export/baseline_kie/val.parquet"
+    test: "data/export/baseline_kie/test.parquet"

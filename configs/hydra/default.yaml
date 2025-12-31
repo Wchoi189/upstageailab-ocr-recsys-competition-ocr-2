@@ -16,7 +16,7 @@ sweep:
   subdir: ${now:%Y%m%d_%H%M%S}_${hydra.job.num}
 
 job:
-  chdir: true
+  chdir: false
 
 job_logging:
   handlers:

@@ -1,0 +1,270 @@
+{
+  "api": "2.0",
+  "content": {
+    "html": "<p id='0' data-category='paragraph' style='font-size:18px'>[\uc8fc\ubb38\ubc88\ud638 : 44]<br>\uccad\uc8fc\uc131\uc548\uc810<br>317-01-53080 Tel:<br>\ucda9\uccad\ubd81\ub3c4 \uccad\uc8fc\uc2dc \uc0c1\ub2f9\uad6c \uc131\uc548\ub85c 8</p>\n<table id='1' style='font-size:16px'><thead></thead><tbody><tr><td>POS:04-010204463</td><td>2021/10/09 15:12</td></tr><tr><td>(T)\uc2a4\ud2b8\ub85c\ud53c\uce58\ud504\ub77c\ud398L T. \ud53c\uce58\uc120\uc0e4\uc778\uc5d0\uc774\ub4dc(L)</td><td>1\uac1c 6,300 1\uac1c 6,000</td></tr><tr><td>\ucd1d \uc561 \ud569 \uacc4</td><td>12,300 12,300</td></tr><tr><td>\uacfc\uc138\ubb3c\ud488\uac00\uc561 \ubd80 \uac00 \uc138</td><td>11,182 1,118</td></tr><tr><td>\uc2e0\uc6a9\uce74\ub4dc</td><td>12,300</td></tr></tbody></table>\n<br><p id='2' data-category='paragraph' style='font-size:14px'>[\uce74 \ub4dc \uba85] \uc2e0\ud55c\uccb4\ud06c\uce74\ub4dc<br>[\uce74\ub4dc\ubc88\ud638</p>\n<br><p id='3' data-category='paragraph' style='font-size:16px'>[\ud560\ubd80\uac1c\uc6d4] \uc77c\uc2dc\ubd88</p>\n<br><table id='4' style='font-size:14px'><thead></thead><tbody><tr><td>[\uc2b9\uc778\ubc88\ud638]</td><td>20872646</td></tr><tr><td>[\uac00\ub9f9\ubc88\ud638]</td><td>70745740</td></tr><tr><td>[\uacb0\uc81c\uae08\uc561]</td><td>12,300</td></tr></tbody></table>\n<p id='5' data-category='paragraph' style='font-size:14px'>* \uce90\uc154\uba85 : \ud22c\uc378\uccad\uc8fc\uc131\uc548</p>\n<br><p id='6' data-category='paragraph' style='font-size:22px'>\uc54c\ub824 \ub4dc\ub9bd\ub2c8\ub2e4</p>\n<br><p id='7' data-category='paragraph' style='font-size:18px'>\uc7ac\uacb0\uc81c\ub294 \uacb0\uc81c\uc77c\ub85c\ubd80\ud130 30\uc77c\ub0b4 \ud574\ub2f9 \ub9e4\uc7a5\uc5d0<br>\uce74\ub4dc\uc640 \uc601\uc218\uc99d \uc9c0\ucc38 \ud6c4 \ubc29\ubb38\ud558\uc5ec \uc8fc\uc2ed\uc2dc\uc624.<br>\ubcf4\uc548\uc778\uc99d\ub2e8\ub9d0\uae30 \uc0ac\uc6a9\uc73c\ub85c \uacb0\uc81c \uc2dc \uc0ac\uc6a9\ud558\uc2e0<br>\ubaa8\ub4e0 \uce74\ub4dc(\uc2e0\uc6a9\uce74\ub4dc, \uba64\ubc84\uc2ed. \ud604\uae08\uc601\uc218\uc99d,<br>\ud1b5\uc2e0\uc0ac \ub4f1)\uc5d0 \ub300\ud574 \uaf2d \uc9c0\ucc38\ud574 \uc8fc\uc138\uc694.</p>\n<p id='8' data-category='paragraph' style='font-size:20px'>21100911023300400043</p>",
+    "markdown": "",
+    "text": ""
+  },
+  "elements": [
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<p id='0' data-category='paragraph' style='font-size:18px'>[\uc8fc\ubb38\ubc88\ud638 : 44]<br>\uccad\uc8fc\uc131\uc548\uc810<br>317-01-53080 Tel:<br>\ucda9\uccad\ubd81\ub3c4 \uccad\uc8fc\uc2dc \uc0c1\ub2f9\uad6c \uc131\uc548\ub85c 8</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2447,
+          "y": 0.0716
+        },
+        {
+          "x": 0.5995,
+          "y": 0.0759
+        },
+        {
+          "x": 0.5974,
+          "y": 0.1726
+        },
+        {
+          "x": 0.2426,
+          "y": 0.1683
+        }
+      ],
+      "id": 0,
+      "page": 1
+    },
+    {
+      "category": "table",
+      "content": {
+        "html": "<table id='1' style='font-size:16px'><thead></thead><tbody><tr><td>POS:04-010204463</td><td>2021/10/09 15:12</td></tr><tr><td>(T)\uc2a4\ud2b8\ub85c\ud53c\uce58\ud504\ub77c\ud398L T. \ud53c\uce58\uc120\uc0e4\uc778\uc5d0\uc774\ub4dc(L)</td><td>1\uac1c 6,300 1\uac1c 6,000</td></tr><tr><td>\ucd1d \uc561 \ud569 \uacc4</td><td>12,300 12,300</td></tr><tr><td>\uacfc\uc138\ubb3c\ud488\uac00\uc561 \ubd80 \uac00 \uc138</td><td>11,182 1,118</td></tr><tr><td>\uc2e0\uc6a9\uce74\ub4dc</td><td>12,300</td></tr></tbody></table>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2454,
+          "y": 0.2129
+        },
+        {
+          "x": 0.713,
+          "y": 0.2187
+        },
+        {
+          "x": 0.7077,
+          "y": 0.465
+        },
+        {
+          "x": 0.2401,
+          "y": 0.4593
+        }
+      ],
+      "id": 1,
+      "page": 1
+    },
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<br><p id='2' data-category='paragraph' style='font-size:14px'>[\uce74 \ub4dc \uba85] \uc2e0\ud55c\uccb4\ud06c\uce74\ub4dc<br>[\uce74\ub4dc\ubc88\ud638</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2539,
+          "y": 0.4679
+        },
+        {
+          "x": 0.5159,
+          "y": 0.4711
+        },
+        {
+          "x": 0.5151,
+          "y": 0.5122
+        },
+        {
+          "x": 0.2529,
+          "y": 0.509
+        }
+      ],
+      "id": 2,
+      "page": 1
+    },
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<br><p id='3' data-category='paragraph' style='font-size:16px'>[\ud560\ubd80\uac1c\uc6d4] \uc77c\uc2dc\ubd88</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2539,
+          "y": 0.5076
+        },
+        {
+          "x": 0.4497,
+          "y": 0.5099
+        },
+        {
+          "x": 0.4493,
+          "y": 0.5314
+        },
+        {
+          "x": 0.2533,
+          "y": 0.529
+        }
+      ],
+      "id": 3,
+      "page": 1
+    },
+    {
+      "category": "table",
+      "content": {
+        "html": "<br><table id='4' style='font-size:14px'><thead></thead><tbody><tr><td>[\uc2b9\uc778\ubc88\ud638]</td><td>20872646</td></tr><tr><td>[\uac00\ub9f9\ubc88\ud638]</td><td>70745740</td></tr><tr><td>[\uacb0\uc81c\uae08\uc561]</td><td>12,300</td></tr></tbody></table>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2527,
+          "y": 0.5259
+        },
+        {
+          "x": 0.4734,
+          "y": 0.5286
+        },
+        {
+          "x": 0.4721,
+          "y": 0.5906
+        },
+        {
+          "x": 0.2514,
+          "y": 0.5879
+        }
+      ],
+      "id": 4,
+      "page": 1
+    },
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<p id='5' data-category='paragraph' style='font-size:14px'>* \uce90\uc154\uba85 : \ud22c\uc378\uccad\uc8fc\uc131\uc548</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2445,
+          "y": 0.604
+        },
+        {
+          "x": 0.5164,
+          "y": 0.6073
+        },
+        {
+          "x": 0.5158,
+          "y": 0.6313
+        },
+        {
+          "x": 0.244,
+          "y": 0.628
+        }
+      ],
+      "id": 5,
+      "page": 1
+    },
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<br><p id='6' data-category='paragraph' style='font-size:22px'>\uc54c\ub824 \ub4dc\ub9bd\ub2c8\ub2e4</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.4152,
+          "y": 0.6452
+        },
+        {
+          "x": 0.5775,
+          "y": 0.6471
+        },
+        {
+          "x": 0.5766,
+          "y": 0.6902
+        },
+        {
+          "x": 0.4143,
+          "y": 0.6882
+        }
+      ],
+      "id": 6,
+      "page": 1
+    },
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<br><p id='7' data-category='paragraph' style='font-size:18px'>\uc7ac\uacb0\uc81c\ub294 \uacb0\uc81c\uc77c\ub85c\ubd80\ud130 30\uc77c\ub0b4 \ud574\ub2f9 \ub9e4\uc7a5\uc5d0<br>\uce74\ub4dc\uc640 \uc601\uc218\uc99d \uc9c0\ucc38 \ud6c4 \ubc29\ubb38\ud558\uc5ec \uc8fc\uc2ed\uc2dc\uc624.<br>\ubcf4\uc548\uc778\uc99d\ub2e8\ub9d0\uae30 \uc0ac\uc6a9\uc73c\ub85c \uacb0\uc81c \uc2dc \uc0ac\uc6a9\ud558\uc2e0<br>\ubaa8\ub4e0 \uce74\ub4dc(\uc2e0\uc6a9\uce74\ub4dc, \uba64\ubc84\uc2ed. \ud604\uae08\uc601\uc218\uc99d,<br>\ud1b5\uc2e0\uc0ac \ub4f1)\uc5d0 \ub300\ud574 \uaf2d \uc9c0\ucc38\ud574 \uc8fc\uc138\uc694.</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.2331,
+          "y": 0.7002
+        },
+        {
+          "x": 0.7109,
+          "y": 0.7061
+        },
+        {
+          "x": 0.7084,
+          "y": 0.8221
+        },
+        {
+          "x": 0.2306,
+          "y": 0.8162
+        }
+      ],
+      "id": 7,
+      "page": 1
+    },
+    {
+      "category": "paragraph",
+      "content": {
+        "html": "<p id='8' data-category='paragraph' style='font-size:20px'>21100911023300400043</p>",
+        "markdown": "",
+        "text": ""
+      },
+      "coordinates": [
+        {
+          "x": 0.3558,
+          "y": 0.8952
+        },
+        {
+          "x": 0.5968,
+          "y": 0.8981
+        },
+        {
+          "x": 0.5961,
+          "y": 0.928
+        },
+        {
+          "x": 0.3552,
+          "y": 0.925
+        }
+      ],
+      "id": 8,
+      "page": 1
+    }
+  ],
+  "model": "document-parse-251217",
+  "ocr": true,
+  "usage": {
+    "pages": 1,
+    "standard": [
+      1
+    ]
+  }
+}

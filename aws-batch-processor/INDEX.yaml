@@ -1,0 +1,32 @@
+---
+ads_version: "1.0"
+type: quick_reference
+agent: all
+tier: 2
+priority: high
+compliance_status: partial
+date: "2025-12-30"
+status: active
+
+# AWS Batch Processor Index
+
+root_map:
+  documentation: "docs/artifacts/"
+  scripts: "scripts/"
+  source: "src/"
+  data: "data/"
+
+doc_locations:
+  assessments: "docs/artifacts/assessments/"
+  plans: "docs/artifacts/implementation_plans/"
+  guides: "docs/artifacts/guides/"
+  audits: "docs/artifacts/audits/"
+
+key_scripts:
+  batch_processor: "scripts/run_processor.py"
+  serialization: "scripts/runners/reprocess_serial.py"
+
+active_datasets:
+  input: "data/input/"
+  output: "data/output/"
+  checkpoints: "data/checkpoints/"

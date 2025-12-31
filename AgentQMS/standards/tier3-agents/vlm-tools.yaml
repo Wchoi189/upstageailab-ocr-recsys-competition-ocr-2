@@ -1,0 +1,106 @@
+---
+ads_version: "1.0"
+type: quick_reference
+agent: all
+tier: 3
+priority: high
+validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 350
+date: "2025-12-19"
+status: active
+
+# VLM Image Analysis Tools - AI Agent Quick Reference
+
+## Discovery Trigger
+Keywords: image analysis, visual inspection, defect detection, image quality, OCR preprocessing, before/after comparison, VLM
+
+## Core Command
+```bash
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image <path> \
+  --mode <mode> \
+  --backend openrouter \
+  --output-format markdown \
+  --output <output_path>
+```
+
+## Analysis Modes
+
+### General Purpose
+- `defect`: Visual artifacts in output images
+- `input`: Source image characteristics
+- `compare`: Before/after comparisons
+- `full`: Comprehensive multi-mode analysis
+
+### OCR/Preprocessing Experiments
+- `image_quality`: Document quality for OCR (background, slant, shadows, contrast)
+- `enhancement_validation`: Quantify preprocessing effectiveness
+- `preprocessing_diagnosis`: Debug preprocessing failures
+
+### Bug-Specific
+- `bug_001`: Inference overlay misalignment analysis
+
+## Backends (Auto-fallback)
+1. `openrouter` - Qwen3 40b (primary, highest quality)
+2. `solar_pro2` - Alternative API
+3. `cli_qwen` - Local fallback
+
+## Configuration
+- Config: `AgentQMS/vlm/config.yaml`
+- API keys: `.env` or `.env.local` (OPENROUTER_API_KEY, SOLAR_PRO2_API_KEY)
+- Prompts: `AgentQMS/vlm/prompts/` (markdown/jinja2 templates)
+
+## Experiment Integration
+- Output location: `{experiment_id}/vlm_reports/`
+- Intermediate outputs: `{experiment_id}/outputs/vlm_validation/`
+- Final deliverables: `{experiment_id}/artifacts/`
+
+## Custom Prompts
+Each experiment may need specialized analysis:
+1. Check existing prompts: `AgentQMS/vlm/prompts/`
+2. Create experiment-specific prompt if needed
+3. Prompts can be markdown or jinja2 templates
+4. Reference in CLI with `--mode` or programmatically
+
+## VIA Annotations
+Include manual annotations: `--via-annotations path/to/annotations.json`
+
+## Usage Pattern
+1. **Baseline assessment**: `--mode image_quality` on source images
+2. **Validation**: `--mode enhancement_validation` on before/after comparisons
+3. **Debugging**: `--mode preprocessing_diagnosis` on failures
+4. **Evidence collection**: Generate markdown reports for .metadata/assessments/
+
+## Output Formats
+- `markdown`: YAML frontmatter + structured content (for EDS artifacts)
+- `json`: Raw structured data
+
+## Example Workflow
+```bash
+# 1. Assess baseline
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image data/worst_performers/img_001.jpg \
+  --mode image_quality \
+  --output vlm_reports/baseline_img_001.md
+
+# 2. Validate enhancement
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image outputs/comparison_img_001.jpg \
+  --mode enhancement_validation \
+  --output vlm_reports/validation_img_001.md
+
+# 3. Diagnose failure
+uv run python -m AgentQMS.vlm.cli.analyze_image_defects \
+  --image outputs/failed_img_005.jpg \
+  --mode preprocessing_diagnosis \
+  --output vlm_reports/diagnosis_img_005.md
+```
+
+## Key Principle
+VLM tools generate visual evidence for EDS assessments. Use when experiments involve:
+- Image preprocessing validation
+- Visual defect analysis
+- OCR quality assessment
+- Before/after comparisons
+- Failure investigation requiring visual inspection

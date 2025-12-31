@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/v1/tracking", tags=["tracking"])
 async def get_tracking_status(kind: str = Query("all", description="Kind: plan, experiment, debug, refactor, or all")):
     """Get tracking database status for plans, experiments, debug sessions, or refactors."""
     try:
-        from AgentQMS.agent_tools.utilities.tracking.query import get_status
+        from AgentQMS.tools.utilities.tracking.query import get_status
 
         status_text = get_status(kind)
         return {"kind": kind, "status": status_text, "success": True}

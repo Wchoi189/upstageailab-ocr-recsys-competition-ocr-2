@@ -1,0 +1,53 @@
+---
+ads_version: "1.0"
+type: quick_reference
+agent: all
+tier: 2
+priority: high
+validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 180
+date: "2025-12-21"
+status: active
+
+# Data Contracts Index
+
+schema_location: "docs/schemas/"
+
+schemas:
+  default_model:
+    file: "default_model.yaml"
+    bytes: 938
+    purpose: model_configuration
+  default_predict:
+    file: "default_predict.yaml"
+    bytes: 1592
+    purpose: inference_params
+  default_test:
+    file: "default_test.yaml"
+    bytes: 1617
+    purpose: test_configuration
+  default_train:
+    file: "default_train.yaml"
+    bytes: 3343
+    purpose: training_hyperparams
+  preprocessing_schema:
+    file: "preprocessing_schema.yaml"
+    bytes: 4025
+    purpose: image_preprocessing
+  ui_inference_compat:
+    file: "ui_inference_compat.yaml"
+    bytes: 3825
+    purpose: frontend_backend_contract
+  layout_result:
+    file: "ocr/inference/layout/contracts.py"
+    bytes: 6500
+    purpose: hierarchical_layout_output
+
+config_locations:
+  hydra_base: "configs/_base/"
+  model_configs: "configs/model/"
+  data_configs: "configs/data/"
+  trainer_configs: "configs/trainer/"
+
+config_note: "106 YAML files total in configs/"

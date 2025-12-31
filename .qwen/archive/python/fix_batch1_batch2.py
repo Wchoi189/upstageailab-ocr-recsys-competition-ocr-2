@@ -195,7 +195,7 @@ def main():
             fixed += 1
 
     print(f"\n📊 Fixed {fixed}/{len(all_files)} files")
-    print("✨ Run validation: python AgentQMS/agent_tools/compliance/validate_artifacts.py --all")
+    print("✨ Run validation: python AgentQMS.tools/compliance/validate_artifacts.py --all")
 
 
 if __name__ == "__main__":

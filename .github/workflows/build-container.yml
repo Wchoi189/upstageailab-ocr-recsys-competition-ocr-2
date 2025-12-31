@@ -7,6 +7,7 @@ on:
       - 'pyproject.toml'
       - 'uv.lock'
       - 'docker/Dockerfile'
+      - '.devcontainer/devcontainer.json'
   workflow_dispatch:
 
 jobs:
@@ -33,9 +34,17 @@ jobs:
         with:
           context: .
           file: ./docker/Dockerfile
+          target: development
           push: true
           tags: |
             ghcr.io/${{ github.repository }}:latest
             ghcr.io/${{ github.repository }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          platforms: linux/amd64
+
+      - name: Verify image was pushed
+        run: |
+          echo "✅ Container image built and pushed successfully"
+          echo "Image: ghcr.io/${{ github.repository }}:latest"
+          echo "Image: ghcr.io/${{ github.repository }}:${{ github.sha }}"

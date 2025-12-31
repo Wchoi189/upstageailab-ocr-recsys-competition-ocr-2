@@ -1,0 +1,74 @@
+---
+ads_version: "1.0"
+type: quick_reference
+agent: all
+tier: 2
+priority: high
+validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+compliance_status: unknown
+memory_footprint: 350
+date: "2025-12-21"
+status: active
+
+# Inference Framework Architecture
+
+components:
+  InferenceOrchestrator:
+    file: "ocr/inference/orchestrator.py"
+    lines: 274
+    role: pipeline_coordinator
+  ModelManager:
+    file: "ocr/inference/model_manager.py"
+    lines: 248
+    role: model_lifecycle
+  PreprocessingPipeline:
+    file: "ocr/inference/preprocessing_pipeline.py"
+    lines: 264
+    role: image_preprocessing
+  PostprocessingPipeline:
+    file: "ocr/inference/postprocessing_pipeline.py"
+    lines: 149
+    role: prediction_decoding
+  PreviewGenerator:
+    file: "ocr/inference/preview_generator.py"
+    lines: 239
+    role: overlay_encoding
+  ImageLoader:
+    file: "ocr/inference/image_loader.py"
+    lines: 273
+    role: io_exif_normalization
+  CoordinateManager:
+    file: "ocr/inference/coordinate_manager.py"
+    lines: 410
+    role: space_transforms
+  PreprocessingMetadata:
+    file: "ocr/inference/preprocessing_metadata.py"
+    lines: 163
+    role: metadata_creation
+
+dependency_graph:
+  InferenceEngine:
+    delegates_to: InferenceOrchestrator
+  InferenceOrchestrator:
+    uses: [ModelManager, PreprocessingPipeline, PostprocessingPipeline, PreviewGenerator]
+  PreviewGenerator:
+    uses: [CoordinateManager]
+  PreprocessingPipeline:
+    uses: [PreprocessingMetadata]
+
+data_flow:
+  - stage: input
+    accepts: [file_path, pil_image, numpy_array]
+  - stage: preprocessing
+    operations: [resize, pad_top_left, normalize]
+    output: batch_tensor
+  - stage: inference
+    via: ModelManager
+    output: predictions_dict
+  - stage: postprocessing
+    operations: [decode_polygons, transform_coords]
+    output: competition_format
+  - stage: preview
+    operations: [encode_jpeg_base64, attach_metadata]
+
+external_deps: [torch, numpy, cv2, PIL]
