@@ -29,6 +29,7 @@ class KIEDataset(Dataset):
         max_length: int = 512,
         pad_to_max_length: bool = True,
         label_list: Optional[List[str]] = None,
+        max_img_size: int = 1024, # Optimized default size
     ):
         """
         Args:
@@ -60,6 +61,7 @@ class KIEDataset(Dataset):
         self.max_length = max_length
         self.pad_to_max_length = pad_to_max_length
         self.label_list = label_list
+        self.max_img_size = max_img_size
 
         if self.label_list:
             if not isinstance(self.label_list, list):
@@ -79,9 +81,9 @@ class KIEDataset(Dataset):
     def __len__(self):
         return len(self.df)
 
-    def __getitem__(self, idx) -> Dict[str, Any]:
+    def __getitem__(self, idx) -> Optional[Dict[str, Any]]:
         """
-        Returns a dictionary validated by KIEDataItem.
+        Returns a dictionary validated by KIEDataItem. Returns None if image loading fails.
         """
         try:
             row = self.df.iloc[idx]
@@ -97,11 +99,18 @@ class KIEDataset(Dataset):
             # KIE models usually need RGB
             try:
                 if not full_image_path.exists():
-                     raise FileNotFoundError(f"Image not found: {full_image_path}")
+                     # Return None to be filtered by collate_fn
+                     logger.warning(f"Image not found (skipping): {full_image_path}")
+                     return None
                 image = Image.open(full_image_path).convert("RGB")
+
+                # Resize if too large to speed up processing
+                if self.max_img_size and (image.width > self.max_img_size or image.height > self.max_img_size):
+                    image.thumbnail((self.max_img_size, self.max_img_size))
+
             except Exception as e:
                 logger.error(f"Failed to load image {full_image_path}: {e}")
-                raise e
+                return None
 
             # Get Text, Boxes, Labels
             words = row["texts"]
@@ -267,4 +276,4 @@ class KIEDataset(Dataset):
 
         except Exception as e:
             logger.error(f"Error loading sample {idx}: {e}")
-            raise e
+            return None

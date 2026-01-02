@@ -39,9 +39,18 @@ class ExperimentReconciler:
         manifest_data["artifacts"] = found_artifacts
         manifest_data["last_reconciled"] = datetime.now().isoformat()
 
-        # Save updated manifest
-        with open(self.manifest_path, "w") as f:
-            json.dump(manifest_data, f, indent=2)
+        # Save updated manifest atomically (tempfile + os.replace pattern)
+        import tempfile
+        json_content = json.dumps(manifest_data, indent=2)
+        temp_path = self.manifest_path.with_suffix(".tmp")
+        try:
+            with open(temp_path, "w", encoding="utf-8") as f:
+                f.write(json_content)
+            os.replace(temp_path, self.manifest_path)
+        except Exception as e:
+            if temp_path.exists():
+                temp_path.unlink()
+            raise OSError(f"Failed to save manifest: {e}")
 
         return {
             "status": "success",

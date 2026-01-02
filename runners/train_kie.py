@@ -1,14 +1,19 @@
 import logging
 import warnings
 import sys
+import pandas as pd
+import numpy as np
+
 
 # Setup project paths automatically
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
 # Determine project root and add to path if not already there
-# This mimics setup_project_paths from ocr.utils.path_utils but we verify imports first
 from pathlib import Path
+project_root = Path(__file__).resolve().parent.parent
+if str(project_root) not in sys.path:
+    sys.path.append(str(project_root))
 
 # Setup logging with RichHandler
 from rich.logging import RichHandler
@@ -27,6 +32,10 @@ logging.getLogger("torch").setLevel(logging.WARNING)
 logging.getLogger("PIL").setLevel(logging.WARNING)
 # Suppress specific warnings if needed
 warnings.filterwarnings("ignore", category=UserWarning, module="torch.nn.modules.module")
+# Suppress Transformers FutureWarning about device argument
+warnings.filterwarnings("ignore", category=FutureWarning, message="The `device` argument is deprecated")
+# Suppress LR Scheduler warning (common false positive in PL)
+warnings.filterwarnings("ignore", category=UserWarning, module="torch.optim.lr_scheduler")
 
 @hydra.main(config_path="../configs", config_name="train_kie", version_base=None)
 def main(config: DictConfig):
@@ -47,6 +56,9 @@ def main(config: DictConfig):
     from ocr.models.kie_models import LayoutLMv3Wrapper, LiLTWrapper
     from ocr.lightning_modules.kie_pl import KIEPLModule, KIEDataPLModule
     from ocr.utils.path_utils import ensure_output_dirs
+    from torch.utils.data import ConcatDataset
+    from ocr.lightning_modules.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
+
     # === END LAZY IMPORTS ===
 
     # Import config utils
@@ -97,23 +109,70 @@ def main(config: DictConfig):
          # But allows robust fallback
          label_list = ensure_dict(label_list) if hasattr(label_list, "_content") else list(label_list)
 
-    train_dataset = KIEDataset(
-        parquet_file=train_path,
-        processor=processor,
-        tokenizer=tokenizer,
-        image_dir=data_config.get("image_dir", None),
-        max_length=model_config.get("max_length", 512),
-        label_list=label_list
-    )
+    def create_dataset(path_or_list, img_dir, label_list, processor, tokenizer, max_length):
+        if isinstance(path_or_list, (list, pd.Series, np.ndarray)) or (isinstance(path_or_list, (DictConfig, list))):
+            # It's a list of datasets
+            # If it's a list from Hydra, it might be a ListConfig. ensure_dict converts it to list.
+            # But here `path_or_list` comes from data_config.get(), which is already processed by ensure_dict?
+            # data_config is from ensure_dict(config.data).
 
-    val_dataset = KIEDataset(
-        parquet_file=val_path,
-        processor=processor,
-        tokenizer=tokenizer,
-        image_dir=data_config.get("image_dir", None),
-        max_length=model_config.get("max_length", 512),
-        label_list=label_list
-    )
+            datasets = []
+            # Check if it's a list of dicts (advanced config) or list of strings (simple paths)
+            items = path_or_list if isinstance(path_or_list, list) else [path_or_list]
+
+            for item in items:
+                if isinstance(item, dict):
+                    # {path: ..., image_dir: ...}
+                    dataset_path = item.get("path") or item.get("parquet")
+                    p = dataset_path
+                    i_d = item.get("image_dir", img_dir) # Fallback to global image_dir
+                else:
+                    # just a string path
+                    p = item
+                    i_d = img_dir
+
+                if not p: continue
+
+                ds = KIEDataset(
+                    parquet_file=p,
+                    processor=processor,
+                    tokenizer=tokenizer,
+                    image_dir=i_d,
+                    max_length=max_length,
+                    label_list=label_list
+                )
+                datasets.append(ds)
+
+            if not datasets:
+                raise ValueError("No valid datasets found in list")
+            return ConcatDataset(datasets) if len(datasets) > 1 else datasets[0]
+
+        else:
+            # Single path
+            return KIEDataset(
+                parquet_file=path_or_list,
+                processor=processor,
+                tokenizer=tokenizer,
+                image_dir=img_dir,
+                max_length=max_length,
+                label_list=label_list
+            )
+
+    # Allow "train_datasets" list in config, fallback to "train_path"
+    train_input = data_config.get("train_datasets", data_config.get("train_path"))
+    val_input = data_config.get("val_datasets", data_config.get("val_path"))
+    global_image_dir = data_config.get("image_dir", None)
+    max_len = model_config.get("max_length", 512)
+
+    if not train_input or not val_input:
+        raise ValueError("train_datasets/train_path and val_datasets/val_path must be specified")
+
+    train_dataset = create_dataset(train_input, global_image_dir, label_list, processor, tokenizer, max_len)
+    val_dataset = create_dataset(val_input, global_image_dir, label_list, processor, tokenizer, max_len)
+
+    logger.info(f"Train dataset size: {len(train_dataset)}")
+    logger.info(f"Val dataset size: {len(val_dataset)}")
+
 
     train_config = ensure_dict(config.train)
     data_module = KIEDataPLModule(
@@ -149,22 +208,28 @@ def main(config: DictConfig):
 
     # Configure Logger
     logger_type = None
+    callbacks_list = [checkpoint_callback, LearningRateMonitor(logging_interval="step")]
+
     if config.get("use_wandb", False):
         from lightning.pytorch.loggers import WandbLogger
         logger_type = WandbLogger(
             project=config.get("project_name", "ocr-kie"),
             name=config.get("run_name", "kie-run")
         )
+        # Add WandB Image Logger
+        callbacks_list.append(WandBKeyInformationExtractionImageLogger(label_list=label_list))
+
 
     # Filter out known keys that we handle explicitly or that might conflict if passed twice
-    trainer_args = {k: v for k, v in train_config.items() if k not in ["batch_size", "num_workers", "max_epochs", "accelerator", "devices"]}
+    trainer_args = {k: v for k, v in train_config.items() if k not in ["batch_size", "num_workers", "max_epochs", "accelerator", "devices", "strategy"]}
 
     trainer = pl.Trainer(
         max_epochs=train_config.get("max_epochs", 10),
         accelerator=train_config.get("accelerator", "auto"),
         devices=train_config.get("devices", 1),
-        callbacks=[checkpoint_callback, LearningRateMonitor(logging_interval="step")],
+        callbacks=callbacks_list,
         logger=logger_type,
+
         strategy="ddp_find_unused_parameters_true" if train_config.get("devices", 1) > 1 else "auto",
         **trainer_args
     )

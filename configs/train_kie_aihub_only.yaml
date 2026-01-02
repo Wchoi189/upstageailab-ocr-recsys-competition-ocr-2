@@ -1,0 +1,39 @@
+# @package _global_
+# Training config using ONLY AI Hub data (which has valid word-level text)
+# Created to verify training works while baseline_train empty text issue is fixed
+
+defaults:
+  - train_kie_aihub_production
+  - _self_
+
+project_name: "ocr-kie-aihub-only"
+run_name: "kie-aihub-only-3090"
+
+# Use AI Hub optimized dataset (has proper text and resized images)
+data:
+  train_datasets:
+    - parquet: data/processed/aihub_validation_optimized.parquet
+      image_dir: null  # Paths in optimized parquet are relative to project root
+
+  val_datasets:
+    - parquet: data/processed/aihub_validation_optimized.parquet
+      image_dir: null
+
+  label_list: ["O", "text"]
+
+model:
+  type: "layoutlmv3"
+  pretrained_model_name_or_path: "microsoft/layoutlmv3-base"
+  num_labels: 2
+  max_length: 512
+
+train:
+  # RTX 3090 settings
+  batch_size: 8
+  accumulate_grad_batches: 2
+  precision: "bf16-mixed"
+  num_workers: 8
+  max_epochs: 5  # Quick test
+  accelerator: "gpu"
+  devices: 1
+  gradient_clip_val: 1.0  # Stability

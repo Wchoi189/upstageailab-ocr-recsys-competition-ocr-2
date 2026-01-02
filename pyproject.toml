@@ -49,7 +49,7 @@ dependencies = [
     "tensorboard==2.15.1",
     "tensorboard-data-server==0.7.2",
     "timm==0.9.12",
-    "torchmetrics==1.2.1",
+    "torchmetrics>=1.2.1",
     "tqdm==4.66.1",
     "types-Pillow",
     "types-pyyaml>=6.0.12.20250915",
@@ -78,6 +78,8 @@ dependencies = [
     "Jinja2>=3.1.0",
     "datasets>=2.19.2",
     "seqeval>=1.2.2",
+    "jsonschema>=4.25.1",
+    "mcp>=1.25.0",
 ]
 
 
@@ -89,7 +91,7 @@ build-backend = "hatchling.build"
 packages = ["ocr", "AgentQMS"]
 
 [tool.uv]
-# extra-index-url = ["https://download.pytorch.org/whl/cu121"]
+extra-index-url = ["https://download.pytorch.org/whl/cu124"]
 
 [tool.mypy]
 # General settings - Balanced for ML/Research projects

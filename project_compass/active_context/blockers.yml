@@ -1,0 +1,10 @@
+# ACTIVE BLOCKERS REGISTRY
+# List of immediate technical debt or errors blocking progress
+# SCHEMA: ../.config/schemas/session.schema.json (active_blockers section)
+
+blockers:
+  - issue: ""
+    status: "blocked"
+    impact: ""
+    first_observed: ""  # Format: "YYYY-MM-DD HH:MM (KST)"
+    last_updated: ""     # Format: "YYYY-MM-DD HH:MM (KST)"

@@ -14,7 +14,8 @@ def test_pipeline_preview():
     print("Testing /api/pipelines/preview...")
 
     # Try to find a real image file first
-    gallery_root = Path("data/datasets/images/val")
+    # Using canonical val images (rotation-corrected) instead of corrupt val
+    gallery_root = Path("data/datasets/images_val_canonical")
     test_image = None
     if gallery_root.exists():
         for img_path in gallery_root.glob("*.jpg"):

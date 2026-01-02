@@ -156,9 +156,12 @@ AgentQMS/vlm/cache/
 data_gen_exp/
 repomix-output.xml
 run.log
-# aws-batch-processor/
+aws-batch-processor/
 # data/metadata/dataset_catalog.yml
 
 # data
 data/datasets/
 /data/
+!/data/audit/
+!/data/metadata/
+!/data/export/

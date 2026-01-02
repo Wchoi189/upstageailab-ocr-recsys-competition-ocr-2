@@ -1,0 +1,22 @@
+# ACTIVE SESSION CONTEXT
+# MANDATORY: Verify env_lock before execution.
+# SCHEMA: ../.config/schemas/session.schema.json
+session_id: 20260102_session_01
+objective:
+  primary_goal: Consolidate Compass, Optimize AI Hub Data (Fix Rotation/Size), Verify
+    KIE Pipeline
+  active_pipeline: kie
+  success_criteria: ''
+env_lock:
+  uv_path: /opt/uv/bin/uv
+  python_version: 3.11.14
+  is_gpu_required: false
+  verified_at: 2026-01-02 17:30 (KST)
+active_blockers:
+- issue: KIE Training Runtime Hang
+  status: investigating
+  impact: Training script hangs during module imports (Transformers/Torchmetrics)
+working_references:
+  experiment_id: 20241218_kie_debug_run_01
+  dataset_name: receipts_kie_v1
+  checkpoint_path: outputs/ocr/epoch-18_step-001957.ckpt

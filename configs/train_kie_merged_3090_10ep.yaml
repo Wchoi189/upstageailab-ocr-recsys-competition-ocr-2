@@ -1,0 +1,8 @@
+# @package _global_
+
+defaults:
+  - train_kie_merged_3090
+  - _self_
+
+train:
+  max_epochs: 10

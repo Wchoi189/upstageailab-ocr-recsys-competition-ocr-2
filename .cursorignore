@@ -6,8 +6,8 @@ data.tar.gz
 *.7z
 
 # Data directories
-data/
-datasets/
+# data/
+# datasets/
 demo_images/
 test_*/
 test_corrected*/
@@ -30,9 +30,9 @@ _llm_code_gen_workflow_exp/
 ablation_study/
 data_gen_exp/
 debug/
-debug_empty_predictions/
+# debug_empty_predictions/
 DEBUG_OUTPUT_WORKSPACE/
-filter_samples/
+# filter_samples/
 invalid_checkpoints_for_inspection/
 real_demo_simple/
 streamlit-preprocessing-plan/

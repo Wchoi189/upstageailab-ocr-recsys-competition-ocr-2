@@ -1,0 +1,6 @@
+[2026-01-02 17:38:59,629][lightning.fabric.utilities.seed][INFO] - Seed set to 42
+[2026-01-02 17:38:59,648][__main__][INFO] - Initializing layoutlmv3 model from microsoft/layoutlmv3-base
+[2026-01-02 17:39:02,173][ocr.data.datasets.kie_dataset][INFO] - Loaded 3125 samples from data/export/baseline_kie/train_optimized_v2.parquet
+[2026-01-02 17:39:02,198][ocr.data.datasets.kie_dataset][INFO] - Loaded 404 samples from data/export/baseline_kie/val_optimized_v2.parquet
+[2026-01-02 17:39:02,200][__main__][INFO] - Train dataset size: 3125
+[2026-01-02 17:39:02,200][__main__][INFO] - Val dataset size: 404

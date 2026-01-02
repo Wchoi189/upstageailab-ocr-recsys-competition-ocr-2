@@ -1,0 +1,42 @@
+defaults:
+  - train_kie
+  - _self_
+
+project_name: "ocr-kie-baseline-v2"
+experiment:
+  kind: "kie"
+
+hydra:
+  run:
+    dir: outputs/kie_baseline_v2/${now:%Y-%m-%d}/${now:%H-%M-%S}
+  job_logging:
+    handlers:
+      file:
+        filename: .hydra/train.log
+
+# Validation for KIE Pipeline (Baseline Optimized V2)
+data:
+  train_datasets:
+    - parquet: data/export/baseline_kie/train_optimized_v2.parquet
+      image_dir: null # Absolute paths in parquet
+
+  val_datasets:
+    - parquet: data/export/baseline_kie/val_optimized_v2.parquet
+      image_dir: null
+
+train:
+  # RTX 3090 Optimizations
+  batch_size: 16
+  accumulate_grad_batches: 2
+  precision: "bf16-mixed"
+  num_workers: 8
+  accelerator: "gpu"
+  devices: 1
+  strategy: "auto"
+
+  # Verification Settings
+  max_epochs: 5
+  check_val_every_n_epoch: 1
+
+wandb:
+  run_name: "kie-baseline-v2-verify"

@@ -1,0 +1,16 @@
+# PROJECT COMPASS AI-INTERFACE V2.1
+# CONSUMPTION: ~55 Tokens
+# PROTOCOL: Check [Compass:Lock] before execution. Validate against schemas.
+
+rules:
+  - "Environment: Only use UV. Never overwrite Torch 2.6.0+cu124."
+  - "State: manifest.json is the SSoT for experiments. compass.json is SSoT for strategy."
+  - "Nomenclature: Use [Compass:X] tags in dialogue to refer to project state."
+
+entry_points:
+  env_check: "uv run python -m etk.factory check-env"
+  session_init: "uv run python -m etk.factory session-init --objective {str}"
+  milestone_update: "uv run python -m etk.factory milestone --id {01|02|03} --status {enum}"
+  reconcile: "uv run python -m etk.factory reconcile"
+
+schema_root: "project_compass/.config/schemas/"

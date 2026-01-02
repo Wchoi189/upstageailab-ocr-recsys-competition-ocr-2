@@ -118,9 +118,9 @@ datasets:
     integration_priority: high
   - name: aihub_public_admin_doc_validation
     path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/raw/external/aihub_public_admin_doc/validation
-    image_count: unknown # Pending unpack
+    image_count: 5468
     annotation_format: AI Hub JSON
-    status: unpacking
-    issues: none
+    status: available
+    issues: schema variances handled by process_aihub_validation.py
     use_case: validation
     integration_priority: high

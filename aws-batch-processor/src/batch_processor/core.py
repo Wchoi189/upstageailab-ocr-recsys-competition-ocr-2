@@ -50,7 +50,7 @@ API_URL_PREBUILT_EXTRACTION = cfg["api"]["endpoints"]["prebuilt_extraction"]
 
 DEFAULT_CONCURRENCY = cfg["processing"]["default_concurrency"]
 DEFAULT_BATCH_SIZE = cfg["processing"]["default_batch_size"]
-REQUEST_DELAY = cfg["processing"]["request_delay"]
+REQUEST_DELAY = 1.2  # Force 1.2s delay to comply with 1 RPS limit
 POLL_DELAY = cfg["processing"]["poll_delay"]
 POLL_CONCURRENCY = cfg["processing"]["poll_concurrency"]
 POLL_MAX_WAIT = cfg["processing"]["poll_max_wait"]
@@ -88,28 +88,28 @@ class ResumableBatchProcessor:
         """Download image from S3 to temporary file. Returns temp file path or None."""
         if not self.s3_client:
             return None
-        
+
         try:
             # Parse S3 URI: s3://bucket/key
             if not s3_uri.startswith('s3://'):
                 return None
-            
+
             parts = s3_uri[5:].split('/', 1)
             if len(parts) != 2:
                 return None
-            
+
             bucket, key = parts
-            
+
             # Create temporary file
             temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=Path(key).suffix)
             temp_path = Path(temp_file.name)
             temp_file.close()
-            
+
             # Download from S3
             self.s3_client.download_file(bucket, key, str(temp_path))
             logger.debug(f"Downloaded {s3_uri} to {temp_path}")
             return temp_path
-            
+
         except Exception as e:
             logger.error(f"Failed to download {s3_uri} from S3: {e}")
             return None
@@ -127,7 +127,7 @@ class ResumableBatchProcessor:
             image_path_str = image_row['image_path']
             image_path = Path(image_path_str)
             temp_file_path = None
-            
+
             # Handle S3 URIs
             if image_path_str.startswith('s3://'):
                 if not self.s3_client:
@@ -152,7 +152,7 @@ class ResumableBatchProcessor:
                 headers = {"Authorization": f"Bearer {self.api_key}"}
                 data = aiohttp.FormData()
                 data.add_field('document', image_bytes, filename=image_path.name)
-                
+
 
                 if self.api_type == "prebuilt-extraction":
                     # Prebuilt Extraction uses synchronous API
@@ -170,7 +170,7 @@ class ResumableBatchProcessor:
                 async with session.post(submit_url, headers=headers, data=data) as response:
                     if response.status == 200:
                         result = await response.json()
-                        
+
                         # Prebuilt Extraction returns results directly (synchronous)
                         if self.api_type == "prebuilt-extraction":
                             # Store result for direct processing (no polling needed)
@@ -180,7 +180,7 @@ class ResumableBatchProcessor:
                                 temp_file_path.unlink()
                             # Return result dict wrapped in a way we can identify it
                             return {"type": "prebuilt-extraction", "result": result}
-                        
+
                         # Document Parse returns request_id (async)
                         request_id = result.get('request_id')
                         if request_id:
@@ -201,7 +201,7 @@ class ResumableBatchProcessor:
                             if temp_file_path and temp_file_path.exists():
                                 temp_file_path.unlink()
                             return None
-                        
+
                         backoff_delay = min(5 * (retry_count + 1), 30)
                         await asyncio.sleep(backoff_delay)
                         return await self.submit_image_async(
@@ -233,14 +233,14 @@ class ResumableBatchProcessor:
         start_time = time.time()
         headers = {"Authorization": f"Bearer {self.api_key}"}
         retry_count = 0  # Track consecutive rate limits for exponential backoff
-        
+
         while time.time() - start_time < POLL_MAX_WAIT:
             await asyncio.sleep(POLL_DELAY)
-            
+
             # Use semaphore to limit concurrent polling requests
             if poll_semaphore:
                 await poll_semaphore.acquire()
-            
+
             try:
                 # Prebuilt Extraction doesn't use polling (synchronous API)
                 # This should not be called for prebuilt-extraction, but handle it gracefully
@@ -249,7 +249,7 @@ class ResumableBatchProcessor:
                     if poll_semaphore:
                         poll_semaphore.release()
                     return None
-                
+
                 # Document Parse uses async polling
                 status_url = f"{API_URL_STATUS_DOCUMENT_PARSE}/{request_id}"
                 async with session.get(status_url, headers=headers) as response:
@@ -258,7 +258,7 @@ class ResumableBatchProcessor:
                         retry_count = 0
                         status_data = await response.json()
                         status = status_data.get('status')
-                        
+
                         if status == 'completed':
                             # Get download_url from batches (async API structure)
                             batches = status_data.get('batches', [])
@@ -268,14 +268,14 @@ class ResumableBatchProcessor:
                                     download_url = first_batch.get('download_url')
                             else:
                                 download_url = status_data.get('download_url')
-                            
+
                             if download_url:
-                                
+
                                 # Download result
                                 async with session.get(download_url) as result_response:
                                     if result_response.status == 200:
                                         api_result = await result_response.json()
-                                        
+
                                         # Parse API response - async API may have different structure
                                         polygons = []
                                         texts = []
@@ -285,17 +285,17 @@ class ResumableBatchProcessor:
                                         logger.debug(f"API response type: {type(api_result)} (API type: {self.api_type})")
                                         if isinstance(api_result, dict):
                                             logger.debug(f"API response keys: {list(api_result.keys())}")
-                                        
+
                                         # Upstage async API returns structure: {elements: [...], content: {...}, ocr: bool}
                                         # Elements have: coordinates (normalized 0-1), content.text/html, category
                                         # Prebuilt Extraction may have similar or different structure
-                                        
+
                                         elements = []
-                                        
+
                                         if isinstance(api_result, dict):
                                             # Format 1: elements array (async API format)
                                             elements = api_result.get('elements', [])
-                                            
+
                                             # Format 2: Try pages (sync API format) for backward compatibility
                                             if not elements:
                                                 pages = api_result.get('pages', [])
@@ -305,7 +305,7 @@ class ResumableBatchProcessor:
                                                         if isinstance(page, dict):
                                                             words = page.get('words', [])
                                                             elements.extend(words)
-                                            
+
                                             # Format 3: Nested structure
                                             if not elements and 'result' in api_result:
                                                 result_data = api_result['result']
@@ -313,25 +313,25 @@ class ResumableBatchProcessor:
                                                     elements = result_data.get('elements', result_data.get('pages', []))
                                                 elif isinstance(result_data, list):
                                                     elements = result_data
-                                        
+
                                         # Format 4: Check if it's a list directly
                                         if not elements and isinstance(api_result, list):
                                             elements = api_result
-                                        
+
                                         logger.debug(f"Found {len(elements)} elements")
-                                        
+
                                         # Get image dimensions for coordinate conversion
                                         width = int(image_row.get('width', 0))
                                         height = int(image_row.get('height', 0))
-                                        
+
                                         # Parse elements
                                         for element in elements:
                                             if not isinstance(element, dict):
                                                 continue
-                                            
+
                                             # Get coordinates (normalized 0-1 in async API)
                                             coords = element.get('coordinates', [])
-                                            
+
                                             # Also try other formats for backward compatibility
                                             if not coords:
                                                 if 'boundingBox' in element:
@@ -340,10 +340,10 @@ class ResumableBatchProcessor:
                                                         coords = bbox_obj.get('vertices', [])
                                                     elif isinstance(bbox_obj, list):
                                                         coords = bbox_obj
-                                            
+
                                             if not coords:
                                                 coords = element.get('bbox', element.get('polygon', []))
-                                            
+
                                             if coords and isinstance(coords, list) and len(coords) >= 3:
                                                 try:
                                                     # Convert coordinates to polygon
@@ -355,18 +355,18 @@ class ResumableBatchProcessor:
                                                         poly = [[float(v[0]), float(v[1])] for v in coords]
                                                     else:
                                                         continue
-                                                    
+
                                                     # Convert normalized coordinates (0-1) to pixel coordinates if needed
                                                     # Check if coordinates are normalized (all values < 1.0)
                                                     is_normalized = all(0 <= p[0] <= 1.0 and 0 <= p[1] <= 1.0 for p in poly)
-                                                    
+
                                                     if is_normalized and width > 0 and height > 0:
                                                         # Convert to pixel coordinates
                                                         poly = [[p[0] * width, p[1] * height] for p in poly]
-                                                    
+
                                                     if len(poly) >= 3:
                                                         polygons.append(poly)
-                                                        
+
                                                         # Get text from content
                                                         text = ''
                                                         content = element.get('content', {})
@@ -382,7 +382,7 @@ class ResumableBatchProcessor:
                                                                     text = ' '.join(text.split())
                                                         elif isinstance(content, str):
                                                             text = content
-                                                        
+
                                                         # Fallback to direct text field
                                                         # Fallback to direct text field
                                                         if not text:
@@ -391,23 +391,23 @@ class ResumableBatchProcessor:
                                                             # Just ensure we never assign a dict to text
                                                             if not text and isinstance(element.get('content'), str):
                                                                 text = element.get('content')
-                                                        
+
                                                         texts.append(text)
-                                                        
+
                                                         # Get label/category
                                                         label = element.get('category', element.get('label', 'text'))
                                                         labels.append(label)
-                                                        
+
                                                 except (ValueError, IndexError, TypeError) as e:
                                                     logger.warning(f"Error parsing element coordinates: {e}")
                                                     continue
-                                        
+
                                         logger.info(f"Parsed {len(polygons)} polygons from async result for {request_id}")
-                                        
+
                                         # Extract image dimensions from API response if available
                                         width = int(image_row.get('width', 0))
                                         height = int(image_row.get('height', 0))
-                                        
+
                                         if width == 0 or height == 0:
                                             # Try to get from API response
                                             if isinstance(api_result, dict):
@@ -415,7 +415,7 @@ class ResumableBatchProcessor:
                                                     width = int(api_result.get('width', 0))
                                                 if 'height' in api_result:
                                                     height = int(api_result.get('height', 0))
-                                                
+
                                                 # Check pages for dimensions
                                                 if (width == 0 or height == 0) and 'pages' in api_result and len(api_result['pages']) > 0:
                                                     first_page = api_result['pages'][0]
@@ -424,7 +424,7 @@ class ResumableBatchProcessor:
                                                             width = int(first_page.get('width', 0))
                                                         if 'height' in first_page:
                                                             height = int(first_page.get('height', 0))
-                                        
+
                                         # CRITICAL: Log warning if no polygons found
                                         if len(polygons) == 0:
                                             logger.error(f"⚠️  NO POLYGONS PARSED for {request_id}!")
@@ -439,7 +439,7 @@ class ResumableBatchProcessor:
                                                     logger.error(f"   Response sample:\n{response_sample}")
                                                 except:
                                                     logger.error(f"   Response (str): {str(api_result)[:1000]}")
-                                            
+
                                             # Still return the result (with empty polygons) so we can track failures
                                             # But log it as an error
 
@@ -447,7 +447,7 @@ class ResumableBatchProcessor:
                                         image_path_str = image_row['image_path']
                                         original_image_path = image_path_str if image_path_str.startswith('s3://') else str(image_path_str)
                                         image_filename = Path(image_path_str).name if image_path_str.startswith('s3://') else Path(image_path_str).name
-                                        
+
                                         result = OCRStorageItem(
                                             id=f"{dataset_name}_pseudo_{Path(image_path_str).stem}",
                                             split="pseudo",
@@ -460,7 +460,7 @@ class ResumableBatchProcessor:
                                             labels=labels,
                                             metadata={"source": f"upstage_api_async_{self.api_type}", "enhanced": self.enhanced, "api_type": self.api_type}
                                         )
-                                        
+
                                         logger.info(f"✓ Completed: {request_id}")
                                         # Release semaphore before returning
                                         if poll_semaphore:
@@ -476,7 +476,7 @@ class ResumableBatchProcessor:
                                 if poll_semaphore:
                                     poll_semaphore.release()
                                 return None
-                                
+
                         elif status == 'failed':
                             failure_msg = status_data.get('failure_message', 'Unknown error')
                             logger.error(f"Request {request_id} failed: {failure_msg}")
@@ -485,7 +485,7 @@ class ResumableBatchProcessor:
                             return None
                         # else: still processing, continue polling
                         # Semaphore will be released after this iteration completes
-                        
+
                     elif response.status == 429:
                         # Check for Retry-After header (in seconds)
                         retry_after = response.headers.get('Retry-After')
@@ -497,7 +497,7 @@ class ResumableBatchProcessor:
                         else:
                             # Exponential backoff: 4s, 8s, 16s, 32s, max 60s
                             wait_time = min(POLL_DELAY * (2 ** min(5, retry_count + 1)), 60)
-                        
+
                         retry_count += 1
                         logger.warning(f"Rate limited (poll): {request_id}, waiting {wait_time}s (attempt {retry_count})")
                         # Release semaphore before waiting
@@ -511,18 +511,18 @@ class ResumableBatchProcessor:
                         if poll_semaphore:
                             poll_semaphore.release()
                         return None
-                    
+
                     # Release semaphore after each polling attempt (for "still processing" case)
                     if poll_semaphore:
                         poll_semaphore.release()
-                        
+
             except Exception as e:
                 logger.error(f"Error polling {request_id}: {e}")
                 if poll_semaphore:
                     poll_semaphore.release()
                 await asyncio.sleep(POLL_DELAY)
                 continue
-        
+
         logger.error(f"Timeout waiting for {request_id}")
         return None
 
@@ -531,36 +531,36 @@ class ResumableBatchProcessor:
         polygons = []
         texts = []
         labels = []
-        
+
         fields = api_result.get('fields', [])
-        
+
         # Get image dimensions
         width = int(image_row.get('width', 0))
         height = int(image_row.get('height', 0))
-        
+
         # Try to get dimensions from metadata
         if (width == 0 or height == 0) and 'metadata' in api_result:
             pages = api_result.get('metadata', {}).get('pages', [])
             if pages and len(pages) > 0:
                 width = int(pages[0].get('width', 0))
                 height = int(pages[0].get('height', 0))
-        
+
         # Extract text from fields
         for field in fields:
             if not isinstance(field, dict):
                 continue
-            
+
             field_type = field.get('type', '')
             field_value = field.get('value', '')
             refined_value = field.get('refinedValue', '')
             field_key = field.get('key', '')
-            
+
             # Use refined value if available, otherwise use value
             text = refined_value if refined_value else field_value
-            
+
             if text:
                 texts.append(text)
-                
+
                 # Create label from key (e.g., "store.store_name" -> "store_name")
                 if field_key:
                     label_parts = field_key.split('.')
@@ -568,13 +568,13 @@ class ResumableBatchProcessor:
                 else:
                     label = field_type if field_type else 'text'
                 labels.append(label)
-                
+
                 # For Prebuilt Extraction, we don't have coordinate information
                 # Create a placeholder polygon (full image or empty)
                 # In practice, you might want to use OCR coordinates if available
                 # For now, we'll use empty polygons since coordinates aren't in the response
                 polygons.append([])
-            
+
             # Also process properties if it's a group
             if field_type == 'group' and 'properties' in field:
                 properties = field.get('properties', [])
@@ -591,7 +591,7 @@ class ResumableBatchProcessor:
                                 label = prop.get('type', 'text')
                             labels.append(label)
                             polygons.append([])
-        
+
         return polygons, texts, labels
 
     async def process_single_image(
@@ -609,14 +609,14 @@ class ResumableBatchProcessor:
         submit_result = await self.submit_image_async(session, semaphore, image_row, retry_count, max_retries)
         if not submit_result:
             return None
-        
+
         # Prebuilt Extraction returns results directly (synchronous)
         if isinstance(submit_result, dict) and submit_result.get('type') == 'prebuilt-extraction':
             api_result = submit_result.get('result', {})
-            
+
             # Parse Prebuilt Extraction response
             polygons, texts, labels = self._parse_prebuilt_extraction_result(api_result, image_row)
-            
+
             # Get image dimensions
             width = int(image_row.get('width', 0))
             height = int(image_row.get('height', 0))
@@ -625,12 +625,12 @@ class ResumableBatchProcessor:
                 if pages and len(pages) > 0:
                     width = int(pages[0].get('width', 0))
                     height = int(pages[0].get('height', 0))
-            
+
             # Create storage item
             image_path_str = image_row['image_path']
             original_image_path = image_path_str if image_path_str.startswith('s3://') else str(image_path_str)
             image_filename = Path(image_path_str).name if image_path_str.startswith('s3://') else Path(image_path_str).name
-            
+
             result = OCRStorageItem(
                 id=f"{dataset_name}_pseudo_{Path(image_path_str).stem}",
                 split="pseudo",
@@ -643,10 +643,10 @@ class ResumableBatchProcessor:
                 labels=labels,
                 metadata={"source": f"upstage_api_prebuilt_extraction", "enhanced": False, "api_type": self.api_type}
             )
-            
+
             logger.info(f"✓ Prebuilt Extraction completed: {image_filename} ({len(texts)} fields extracted)")
             return result
-        
+
         # Document Parse uses async API - poll for result
         request_id = submit_result
         return await self.poll_and_get_result(session, request_id, image_row, dataset_name, poll_semaphore)
@@ -691,21 +691,21 @@ class ResumableBatchProcessor:
                     # Find the corresponding image_row for this failed task
                     # Since as_completed doesn't preserve order, we need to track differently
                     pass
-            
+
             # Create entries for failed images
             # Get all image IDs that succeeded
             successful_ids = {result.id for result in results}
-            
+
             # Create empty entries for failed images
             for idx, row_dict in image_rows:
                 image_path_str = row_dict.get('image_path', '')
                 image_id = f"{dataset_name}_pseudo_{Path(image_path_str).stem if image_path_str else idx}"
-                
+
                 if image_id not in successful_ids:
                     # Create empty result for failed image
                     original_image_path = image_path_str if image_path_str.startswith('s3://') else str(image_path_str)
                     image_filename = Path(image_path_str).name if image_path_str.startswith('s3://') else Path(image_path_str).name if image_path_str else f"image_{idx}"
-                    
+
                     failed_result = OCRStorageItem(
                         id=image_id,
                         split="pseudo",
@@ -728,6 +728,7 @@ class ResumableBatchProcessor:
             return
 
         checkpoint_path = self.checkpoint_dir / f"{checkpoint_name}.parquet"
+        checkpoint_path.parent.mkdir(parents=True, exist_ok=True)
         df = pd.DataFrame([item.model_dump() for item in results])
         df.to_parquet(checkpoint_path, engine='pyarrow', index=False)
         logger.info(f"Checkpoint saved: {checkpoint_path} ({len(results)} items)")
@@ -776,12 +777,12 @@ class ResumableBatchProcessor:
         checkpoint_interval = min(100, self.batch_size)  # Checkpoint every 100 images or batch_size, whichever is smaller
         batch_num = start_idx // checkpoint_interval
         processed_in_batch = 0
-        
+
         while start_idx < total_images:
             # Process in smaller chunks for frequent checkpointing
             chunk_size = min(checkpoint_interval, total_images - start_idx)
             end_idx = start_idx + chunk_size
-            
+
             logger.info(f"\n{'='*80}")
             logger.info(f"Processing images {start_idx}-{end_idx}/{total_images} (chunk {batch_num + 1})")
             logger.info(f"{'='*80}\n")
@@ -792,7 +793,7 @@ class ResumableBatchProcessor:
 
             all_results.extend(chunk_results)
             processed_in_batch += len(chunk_results)
-            
+
             # Save checkpoint after each chunk (more frequent for better recovery)
             if self.checkpoint_dir and len(chunk_results) > 0:
                 checkpoint_name = f"{dataset_name.replace('_pseudo', '')}_batch_{batch_num:04d}"
@@ -808,6 +809,7 @@ class ResumableBatchProcessor:
 
         # Save final output
         final_df = pd.DataFrame([item.model_dump() for item in all_results])
+        output_file.parent.mkdir(parents=True, exist_ok=True)
         final_df.to_parquet(output_file, engine='pyarrow', index=False)
         logger.info(f"\n{'='*80}")
         logger.info(f"✓ Complete: {len(all_results)}/{total_images} images saved to {output_file}")

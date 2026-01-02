@@ -5,8 +5,9 @@ import sys
 from etk.core import ExperimentTracker
 from etk.factory import ExperimentFactory
 from etk.reconciler import ExperimentReconciler
+from etk.compass import CompassPaths, EnvironmentChecker, SessionManager
 
-ETK_VERSION = "1.0.0"
+ETK_VERSION = "1.1.0"  # Bumped for Compass integration
 EDS_VERSION = "1.0"
 
 
@@ -88,6 +89,36 @@ Examples:
 
     # analytics command
     subparsers.add_parser("analytics", help="Show analytics dashboard")
+
+    # ===== PROJECT COMPASS COMMANDS =====
+
+    # check-env command (Environment Guard)
+    check_env_parser = subparsers.add_parser(
+        "check-env",
+        help="Validate environment against Project Compass lock state"
+    )
+    check_env_parser.add_argument(
+        "--strict",
+        action="store_true",
+        help="Treat warnings as errors"
+    )
+
+    # session-init command (Session Management)
+    session_init_parser = subparsers.add_parser(
+        "session-init",
+        help="Initialize or update current session context"
+    )
+    session_init_parser.add_argument(
+        "--objective", "-o",
+        required=True,
+        help="Primary goal for this session"
+    )
+    session_init_parser.add_argument(
+        "--pipeline", "-p",
+        default="kie",
+        choices=["text_detection", "text_recognition", "layout_analysis", "kie"],
+        help="Active pipeline (default: kie)"
+    )
 
     args = parser.parse_args()
 
@@ -278,6 +309,50 @@ Examples:
             print("\\n📊 Analytics Dashboard")
             print(f"Total Experiments: {analytics['experiments']['total']}")
             print(f"Total Artifacts: {analytics['total_artifacts']}")
+
+        # ===== PROJECT COMPASS COMMAND HANDLERS =====
+
+        elif args.command == "check-env":
+            print("🔒 Environment Guard: Checking against Project Compass lock state...\n")
+            checker = EnvironmentChecker()
+            passed, errors, warnings = checker.check_all()
+
+            if warnings:
+                for warning in warnings:
+                    print(f"⚠️  {warning}")
+                print()
+
+            if errors:
+                print("❌ ENVIRONMENT BREACH DETECTED\n")
+                for error in errors:
+                    print(f"  ✗ {error}\n")
+                print("\n🔧 Path Restoration Instructions:")
+                print("   1. Ensure you are using the correct UV binary")
+                print("   2. Run: uv sync")
+                print("   3. Verify with: uv run python -c \"import torch; print(torch.__version__)\"")
+                sys.exit(1)
+            else:
+                print("✅ Environment validated against Compass lock state")
+                if args.strict and warnings:
+                    print("\n❌ Strict mode: warnings treated as errors")
+                    sys.exit(1)
+                sys.exit(0)
+
+        elif args.command == "session-init":
+            print("📋 Session Management: Initializing session...\n")
+            manager = SessionManager()
+            success, message = manager.init_session(
+                objective=args.objective,
+                active_pipeline=args.pipeline
+            )
+
+            if success:
+                print(f"✅ {message}")
+                print(f"📂 Updated: {manager.paths.current_session}")
+                sys.exit(0)
+            else:
+                print(f"❌ {message}")
+                sys.exit(1)
 
     except Exception as e:
         print(f"❌ ERROR: {str(e)}", file=sys.stderr)

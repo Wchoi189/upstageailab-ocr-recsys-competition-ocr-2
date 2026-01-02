@@ -1,0 +1,24 @@
+# DATASET REGISTRY
+# Maps datasets to their pipeline types (detection, recognition, kie, layout)
+# Prevents mixing incompatible datasets
+
+datasets:
+  detection:
+    - name: ""
+      path: ""
+      format: ""
+
+  recognition:
+    - name: ""
+      path: ""
+      format: ""
+
+  kie:
+    - name: ""
+      path: ""
+      format: ""
+
+  layout:
+    - name: ""
+      path: ""
+      format: ""

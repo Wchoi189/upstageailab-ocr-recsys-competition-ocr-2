@@ -39,6 +39,9 @@ class KIEDataPLModule(pl.LightningDataModule):
 
     def collate_fn(self, batch):
         # Strictly typed collation
+        # Filter failed samples (None)
+        batch = [x for x in batch if x is not None]
+
         batch_out = {}
         if not batch:
             return batch_out
@@ -67,6 +70,9 @@ class KIEPLModule(pl.LightningModule):
         self.label_list = label_list
         self.save_hyperparameters(ignore=["model"])
 
+        # Ensure model is in train mode to avoid "found modules in eval mode" warning
+        self.train()
+
     def forward(self, **kwargs):
         return self.model(**kwargs)
 
@@ -80,7 +86,9 @@ class KIEPLModule(pl.LightningModule):
         loss = outputs["loss"]
 
         # Log carefully
-        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True)
+        # Log carefully
+        batch_size = batch["input_ids"].shape[0] if "input_ids" in batch else 1
+        self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
         return loss
 
     def on_validation_epoch_start(self):
@@ -90,7 +98,8 @@ class KIEPLModule(pl.LightningModule):
         outputs_model = self.model(**batch)
         loss = outputs_model["loss"]
         logits = outputs_model["logits"]
-        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True)
+        batch_size = batch["input_ids"].shape[0] if "input_ids" in batch else 1
+        self.log("val_loss", loss, on_step=False, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
 
         predictions = torch.argmax(logits, dim=2)
         labels = batch["labels"]
@@ -118,11 +127,11 @@ class KIEPLModule(pl.LightningModule):
             f1 = f1_score(labels, preds)
             report = classification_report(labels, preds)
 
-            self.log("val_f1", f1, prog_bar=True)
+            self.log("val_f1", f1, prog_bar=True, batch_size=len(labels)) # Approximate batch size for epoch metric
             # Log classification report
             # print("\n" + report) # Avoid printing in production/CI
         else:
-            self.log("val_f1", 0.0, prog_bar=True)
+            self.log("val_f1", 0.0, prog_bar=True, batch_size=1)
 
         self.validation_step_outputs.clear()
 

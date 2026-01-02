@@ -1,0 +1,4 @@
+#!/bin/bash
+# Shim to force usage of 'uv run python' instead of raw python
+# using unsafe-best-match to resolve mixed-index dependencies (CUDA vs PyPI)
+exec uv run --index-strategy unsafe-best-match python "$@"

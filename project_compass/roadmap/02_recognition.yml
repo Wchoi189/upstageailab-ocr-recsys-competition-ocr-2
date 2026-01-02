@@ -1,0 +1,10 @@
+# ROADMAP MILESTONE: Text Recognition Pipeline
+# SCHEMA: ../.config/schemas/milestone.schema.json
+
+milestone_id: "02_recognition"
+status: "not_started"
+last_successful_exp: ""
+target_metrics:
+  accuracy: null
+  f1_score: null
+notes: ""

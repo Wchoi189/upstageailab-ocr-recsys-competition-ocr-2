@@ -3,11 +3,11 @@ project: "KIE Batch Processor"
 
 datasets:
   train:
-    description: "Training dataset with pseudo-labels from Upstage Document Parse API"
-    path: "data/kie_datasets/merged_baseline_train.parquet"
+    description: "Training dataset with pseudo-labels from Upstage Prebuilt Extraction API"
+    path: "data/export/baseline_kie/train.parquet"
     format: "parquet"
-    image_base_path: "data/datasets/images/train"
-    num_samples: 3272
+    image_base_path: "data/raw/competition/baseline_text_detection/images/train"
+    num_samples: 3125
     schema:
       - name: "id"
         type: "string"
@@ -24,20 +24,27 @@ datasets:
       - name: "polygons"
         type: "list[list[float]]"
         description: "Polygon coordinates for each segment"
+      - name: "width"
+        type: "int"
+        description: "Image width"
+      - name: "height"
+        type: "int"
+        description: "Image height"
 
   val:
     description: "Validation dataset (Canonical Images)"
-    path: "data/kie_datasets/baseline_val_pseudo_labels.parquet"
+    path: "data/export/baseline_kie/val.parquet"
     format: "parquet"
-    image_base_path: "data/datasets/images_val_canonical"
+    image_base_path: "data/raw/competition/baseline_text_detection/images/val"
     num_samples: 404
     schema: "Same as train"
 
   test:
     description: "Test dataset"
-    path: "data/kie_datasets/baseline_test_pseudo_labels.parquet"
+    path: "data/export/baseline_kie/test.parquet"
     format: "parquet"
-    image_base_path: "data/datasets/images/test"
+    image_base_path: "data/raw/competition/baseline_text_detection/images/test"
+    num_samples: 413
     schema: "Same as train"
 
 storage:
@@ -47,13 +54,13 @@ storage:
 exports:
   description: "Finalized datasets ready for handoff"
   base_path: "data/export/"
-  
+
   baseline_dp:
     description: "Document Parse Results"
     train: "data/export/baseline_dp/train.parquet"
     val: "data/export/baseline_dp/val.parquet"
     test: "data/export/baseline_dp/test.parquet"
-    
+
   baseline_kie:
     description: "KIE Baseline Data"
     train: "data/export/baseline_kie/train.parquet"

@@ -17,11 +17,17 @@ The source of truth for all project rules, architecture, and standards is locate
     - **Guides**: `experiment_manager/.ai-instructions/`
     - **Key Commands**: `init`, `reconcile`, `validate`
 
-## 🛠️ Environment & Tools
+## Package Management
+**Use `uv`, never `pip`**: `uv add <pkg>`, `uv sync`, `uv run python <script>`
+
+---
+
+## �🛠️ Environment & Tools
+
 Before starting work, ensure the environment is healthy:
 1. **Validate Environment**:
    ```bash
-   python scripts/validate_environment.py
+   uv run python scripts/validate_environment.py
    ```
    (Run this after `uv sync`)
 
@@ -38,6 +44,13 @@ Before starting work, ensure the environment is healthy:
    **Direct Access**:
    - `python -m AgentQMS.tools.compliance.validate_artifacts`
    - `python -m AgentQMS.tools.compliance.validate_boundaries`
+
+3. **Research Tools**:
+   - **Perplexity Client**: `scripts/research/perplexity_client.py`
+     ```bash
+     python scripts/research/perplexity_client.py --query "Research topic"
+     ```
+     (Requires `PERPLEXITY_API_KEY` in `.env.local`)
 
 ## 🤖 Tier 3 Agent Configs
 - **Gemini**: `AgentQMS/standards/tier3-agents/gemini/config.yaml`

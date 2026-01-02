@@ -1,39 +1,36 @@
-# Session Handover: AgentQMS Architecture Consolidation
+# Session Handover: KIE Training - NaN Loss Resolution
 
-## 🎯 Objective Accomplished
-Successfully executed the **Architecture Consolidation** plan. The project now follows a unified, "Zero-Archaeology" directory structure.
+## Issue Resolved
+**Root Cause**: The `baseline_train_optimized.parquet` dataset contains **100% empty text strings** in the `texts` column.
 
-## 🏗️ Key Changes
--   **Consolidated Root**: `.ai-instructions`, `.agentqms`, and `AgentQMS` merged into `AgentQMS/`.
--   **Refactored Packages**:
-    -   `AgentQMS/agent_tools` -> `AgentQMS/tools`
-    -   `AgentQMS/interface` -> `AgentQMS/bin` (removed duplicate `bin_broken`)
-    -   `AgentQMS/knowledge` -> `AgentQMS/docs`
-    -   **Relocated Data**: Moved `.vlm_cache` to `AgentQMS/vlm/cache`.
--   **Updated Configuration**:
-    -   `.vscode/tasks.json`: Updated paths, removed deprecated tasks, reordered by priority.
-    -   `.vscode/README.md`: Added AgentQMS section.
-    -   Agent Instructions: Updated `.claude`, `.cursor`, `.copilot` instructions to point to `AgentQMS/standards`.
-    -   State Files: Updated `effective.yaml` and `version` (ADS_v1.0).
--   **Cleanup**: Archived deprecated files (including `AgentQMS.agent.md`) to `AgentQMS/archive/`.
+When `LayoutLMv3Processor` processes empty strings:
+1. No tokens are generated for those words
+2. No word-level labels can be aligned
+3. All labels become `-100` (ignore index for CrossEntropyLoss)
+4. CrossEntropyLoss with all-ignored targets → NaN
 
-## ⚠️ Current Status & Known Issues
-1.  **Environment**: `lightning` and `mypy` are missing from the current environment (identified by `validate_environment.py`). This needs to be resolved by installing dependencies.
-2.  **Verification**: Basic import verification passed. Full functional testing of all tools in the new structure is recommended for the next session.
+## Data Status
+| Dataset | Texts | Labels | Status |
+|---------|-------|--------|--------|
+| `aihub_validation_optimized.parquet` | ✅ Valid (0% empty) | ✅ "text" | Ready for training |
+| `baseline_train_optimized.parquet` | ❌ 100% empty | ✅ "text" | **BROKEN** |
 
-## 📝 Next Steps
-1.  **Install Dependencies**: Fix missing `lightning` and `mypy`.
-2.  **Functional Testing**: Run comprehensive tests on `AgentQMS/tools` to ensure no subtle path-dependency logic breaks.
-3.  **Documentation Review**: Briefly review `AgentQMS/docs` to ensure internal links (if any) are valid, though `grep` updates should have caught most.
+## Solution
+Created `configs/train_kie_aihub_only.yaml` which uses only AI Hub data:
+- Dataset: 5,467 samples with valid word-level text and polygons
+- Verified: Forward pass produces loss = 0.656 (NOT NaN)
 
-## 📂 New Directory Map
-```text
-AgentQMS/
-├── bin/          # CLI tools and Makeup
-├── config/       # Configuration
-├── docs/         # Documentation
-├── standards/    # Standards & Schema
-├── state/        # State files
-├── tools/        # Python tools
-└── archive/      # Deprecated/Legacy items
+## Run Command
+```bash
+# Fixed training command
+python runners/train_kie.py --config-name train_kie_aihub_only
 ```
+
+## Longer-Term Fix Needed
+The `baseline_train` pseudo-labeling pipeline needs to be fixed to properly extract text content from the Upstage Document Parse API response. The current pipeline only captured:
+- Polygons ✅
+- Label type ("text") ✅
+- Actual text content ❌ (stored as empty strings)
+
+## Files Modified
+- **Created**: `configs/train_kie_aihub_only.yaml` - AI Hub-only training config
