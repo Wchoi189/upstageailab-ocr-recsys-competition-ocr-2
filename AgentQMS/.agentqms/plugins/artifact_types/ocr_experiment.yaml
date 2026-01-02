@@ -1,0 +1,118 @@
+# OCR Experiment Artifact Type Plugin
+# OCR experiment workflow and analysis report
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: ocr_experiment_report
+version: "1.1"
+description: |
+  OCR experiment workflow and analysis report with structured metadata
+  and artifact tracking for experiment-tracker integration.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_ocr-experiment_{name}.md"
+  directory: experiments/
+  frontmatter:
+    type: ocr_experiment_report
+    category: research
+    status: draft
+    version: "1.0"
+    tags: [ocr, experiment, tracking]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - status
+    - experiment_id
+    - intention
+  required_sections:
+    - "## Experiment Overview"
+    - "## Methodology"
+    - "## Results"
+    - "## Analysis"
+  filename_prefix: "ocr_experiment_"
+  allowed_statuses:
+    - active
+    - incomplete
+    - completed
+    - archived
+
+template: |
+  # OCR Experiment: {title}
+
+  ## Experiment Overview
+
+  **Experiment ID**: {experiment_id}
+  **Date**: {date}
+  **Status**: {status}
+  **Intention**: {intention}
+
+  ---
+
+  ## Methodology
+
+  ### Objective
+  [Describe the experiment objective]
+
+  ### Scope
+  [Define the scope of the experiment]
+
+  ### Setup
+  [Describe the experimental setup]
+
+  ---
+
+  ## Results
+
+  ### Key Findings
+  - Finding 1
+  - Finding 2
+  - Finding 3
+
+  ### Metrics
+  [Document relevant metrics]
+
+  ### Artifacts Generated
+  - [Artifact 1](path/to/artifact)
+  - [Artifact 2](path/to/artifact)
+
+  ---
+
+  ## Analysis
+
+  ### Observations
+  [Detailed analysis of observations]
+
+  ### Performance Impact
+  [Describe any performance improvements or regressions]
+
+  ### Recommendations
+  1. [Recommendation 1]
+  2. [Recommendation 2]
+
+  ### Related Assessments
+  - [Assessment](../assessments/YYYY-MM-DD_HHMM_assessment_name.md)
+
+  ---
+
+  ## Related Artifacts
+
+  **Implementation Plans**:
+  - [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)
+
+  **Incident Reports**:
+  - [Report](../incident_reports/YYYY-MM-DD_HHMM_incident_report_name.md)
+
+  ---
+
+  **Last Updated**: {date}
+  **Researcher**: AI Agent
+
+template_variables:
+  experiment_id: "EXP-001"
+  date: "2025-12-06"
+  status: "draft"
+  intention: "[Experiment objective and goal]"

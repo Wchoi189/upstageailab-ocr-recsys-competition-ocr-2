@@ -1,0 +1,120 @@
+# Change Request Artifact Type Plugin
+# Structured change request document for tracking proposed changes requiring approval
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: change_request
+version: "1.0"
+description: |
+  A structured change request document for tracking proposed changes
+  that require approval before implementation.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_{type}_change-request-{name}.md"
+  directory: change_requests/
+  frontmatter:
+    type: change_request
+    category: governance
+    status: pending
+    version: "1.0"
+    tags: [change-request, governance, approval]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - status
+    - requester
+    - approver
+  required_sections:
+    - "## Change Summary"
+    - "## Justification"
+    - "## Impact Assessment"
+    - "## Approval"
+  filename_prefix: "change_request_"
+  allowed_statuses:
+    - draft
+    - pending
+    - approved
+    - rejected
+    - implemented
+
+template: |
+  # Change Request: {title}
+
+  ## Metadata
+  - **CR ID**: {cr_id}
+  - **Requester**: {requester}
+  - **Approver**: {approver}
+  - **Priority**: {priority}
+
+  ---
+
+  ## Change Summary
+
+  Brief description of the proposed change.
+
+  ## Justification
+
+  ### Business Need
+  Why is this change necessary?
+
+  ### Expected Benefits
+  - Benefit 1
+  - Benefit 2
+
+  ## Impact Assessment
+
+  ### Affected Systems
+  - System 1
+  - System 2
+
+  ### Risk Level
+  - **Risk**: Low / Medium / High
+  - **Mitigation**: Describe risk mitigation strategy
+
+  ### Resource Requirements
+  - Estimated effort: X hours/days
+  - Required skills: List skills
+
+  ## Implementation Plan
+
+  ### Approach
+  1. Step 1
+  2. Step 2
+  3. Step 3
+
+  ### Timeline
+  - Start date: YYYY-MM-DD
+  - Target completion: YYYY-MM-DD
+
+  ### Rollback Plan
+  How to revert if issues occur.
+
+  ## Approval
+
+  ### Approval Status
+  - [ ] Technical Review
+  - [ ] Security Review (if applicable)
+  - [ ] Manager Approval
+  - [ ] Final Approval
+
+  ### Approver Comments
+  _Comments from approver will be added here._
+
+  ### Decision
+  - **Status**: Pending
+  - **Date**:
+  - **Approved By**:
+
+  ---
+
+  *This change request follows the AgentQMS governance protocol.*
+
+template_variables:
+  cr_id: "CR-001"
+  requester: "AI Agent"
+  approver: "[Pending Assignment]"
+  priority: "Medium"

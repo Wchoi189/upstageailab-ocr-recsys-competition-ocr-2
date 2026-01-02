@@ -1,0 +1,59 @@
+# Validator Extensions Plugin
+# Example plugin demonstrating validator extensibility
+#
+# Schema: AgentQMS/conventions/schemas/plugin_validators.json
+
+version: "1.0"
+description: |
+  Project-specific validator extensions for AgentQMS.
+  Adds support for custom artifact types and categories.
+
+# Additional filename prefixes and their directories
+prefixes:
+  CR_: change_requests/
+  DR_: decision_records/
+  SPEC_: specifications/
+  vlm_report_: vlm_reports/
+
+# Additional valid artifact types
+types:
+  - change_request
+  - decision_record
+  - specification
+  - meeting_notes
+  - vlm_report
+
+# Additional valid categories
+categories:
+  - governance
+  - security
+  - compliance
+  - meeting
+
+# Additional valid statuses
+statuses:
+  - pending
+  - approved
+  - rejected
+  - deferred
+
+# Validation rule configuration
+rules:
+  enforce_timestamp: true
+  enforce_kebab_case: true
+  enforce_lowercase: true
+  enforce_frontmatter: true
+  enforce_directory_placement: true
+
+# Custom validators (Phase 2 - not yet implemented)
+# custom_validators:
+#   - name: security_classification
+#     description: Ensures security-sensitive artifacts have classification
+#     module: myproject.validators.security
+#     function: check_classification
+#     applies_to: [specification, change_request]
+#     severity: warning
+
+# Built-in validators to disable (if needed)
+# disabled_validators:
+#   - timestamp_format
