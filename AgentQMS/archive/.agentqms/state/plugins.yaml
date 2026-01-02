@@ -1,10 +1,10 @@
 metadata:
-  generated_at: '2025-12-29T07:42:31.355174+00:00'
+  generated_at: '2026-01-02T17:53:15.793557+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
   framework: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
-  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins
+  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins
 plugins_loaded:
   artifact_types:
   - audit
@@ -18,27 +18,27 @@ plugin_metadata:
   type: artifact_type
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/audit.yaml
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
 - name: change_request
   type: artifact_type
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/change_request.yaml
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
 - name: ocr_experiment_report
   type: artifact_type
   version: '1.1'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
 - name: validators
   type: validator
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/validators.yaml
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins/validators.yaml
 - name: security-review
   type: context_bundle
   version: '1.0'
   source: project
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/plugins/context_bundles/security-review.yaml
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
 validation_errors: []
 resolved:
   artifact_types:
@@ -492,10 +492,10 @@ resolved:
           description: Core security documentation and policies
           max_files: 5
           files:
-          - path: AgentQMS/knowledge/agent/system.md
+          - path: AgentQMS/internal_docs/agent/system.md
             priority: critical
             description: Agent guidelines for security awareness
-          - path: .agentqms/plugins/validators.yaml
+          - path: AgentQMS/.agentqms/plugins/validators.yaml
             priority: high
             description: Validation rules including security checks
             optional: true
@@ -504,7 +504,7 @@ resolved:
           description: Security review process documentation
           max_files: 5
           files:
-          - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+          - path: AgentQMS/internal_docs/protocols/governance/artifact_rules.md
             priority: high
             description: Artifact governance rules
           - path: AgentQMS/conventions/audit_framework/README.md
@@ -518,6 +518,6 @@ resolved:
           - path: README.md
             priority: medium
             description: Project overview
-          - path: .agentqms/state/architecture.yaml
+          - path: AgentQMS/.agentqms/state/architecture.yaml
             priority: medium
             description: System architecture for threat surface analysis

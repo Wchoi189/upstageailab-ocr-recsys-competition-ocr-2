@@ -1,0 +1,17 @@
+metadata:
+  generated_at: '2026-01-02T18:40:40.059469+00:00'
+  generator: AgentQMS PluginLoader
+  schema_version: '1.0'
+discovery_paths:
+  framework: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/conventions/plugins
+  project: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/.agentqms/plugins
+plugins_loaded:
+  artifact_types: []
+  validators: false
+  context_bundles: []
+plugin_metadata: []
+validation_errors: []
+resolved:
+  artifact_types: {}
+  validators: {}
+  context_bundles: {}

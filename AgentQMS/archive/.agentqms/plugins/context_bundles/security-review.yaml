@@ -22,10 +22,10 @@ tiers:
     description: Core security documentation and policies
     max_files: 5
     files:
-      - path: AgentQMS/knowledge/agent/system.md
+      - path: AgentQMS/internal_docs/agent/system.md
         priority: critical
         description: Agent guidelines for security awareness
-      - path: .agentqms/plugins/validators.yaml
+      - path: AgentQMS/.agentqms/plugins/validators.yaml
         priority: high
         description: Validation rules including security checks
         optional: true
@@ -35,7 +35,7 @@ tiers:
     description: Security review process documentation
     max_files: 5
     files:
-      - path: AgentQMS/knowledge/protocols/governance/artifact_rules.md
+      - path: AgentQMS/internal_docs/protocols/governance/artifact_rules.md
         priority: high
         description: Artifact governance rules
       - path: AgentQMS/conventions/audit_framework/README.md
@@ -50,6 +50,6 @@ tiers:
       - path: README.md
         priority: medium
         description: Project overview
-      - path: .agentqms/state/architecture.yaml
+      - path: AgentQMS/.agentqms/state/architecture.yaml
         priority: medium
         description: System architecture for threat surface analysis

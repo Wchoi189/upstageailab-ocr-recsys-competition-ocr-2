@@ -17,8 +17,8 @@ framework:
 paths:
   artifacts: docs/artifacts
   docs: docs
-  agent_interface: interface
-  implementation: agent_tools
+  agent_interface: bin
+  implementation: tools
   project_conventions: conventions
   artifact_categories:
     implementation_plan: implementation_plans
@@ -59,7 +59,7 @@ interface:
     environment: project
     access_level: restricted
   tools:
-    base_path: ../agent_tools
+    base_path: ../tools
     discovery_enabled: true
     feedback_enabled: true
     quality_monitoring: true
@@ -81,31 +81,31 @@ interface:
 tool_mappings:
   tool_mappings:
     artifact_workflow:
-      path: ../agent_tools/core/artifact_workflow.py
+      path: ../tools/core/artifact_workflow.py
       description: Unified interface for artifact creation
       agent_only: true
     validate_artifacts:
-      path: ../agent_tools/compliance/validate_artifacts.py
+      path: ../tools/compliance/validate_artifacts.py
       description: Validates naming conventions and structure
       agent_only: true
     monitor_artifacts:
-      path: ../agent_tools/compliance/monitor_artifacts.py
+      path: ../tools/compliance/monitor_artifacts.py
       description: Compliance monitoring and alerts
       agent_only: true
     agent_feedback:
-      path: ../agent_tools/utilities/agent_feedback.py
+      path: ../tools/utilities/agent_feedback.py
       description: Agent feedback and issue reporting
       agent_only: true
     documentation_quality_monitor:
-      path: ../agent_tools/compliance/documentation_quality_monitor.py
+      path: ../tools/compliance/documentation_quality_monitor.py
       description: Documentation quality monitoring
       agent_only: true
   workflow_scripts:
-    create_artifact: ../interface/workflows/create-artifact.sh
-    validate: ../interface/workflows/validate.sh
-    compliance: ../interface/workflows/compliance.sh
+    create_artifact: ../bin/workflows/create-artifact.sh
+    validate: ../bin/workflows/validate.sh
+    compliance: ../bin/workflows/compliance.sh
   agent_tools:
-    discover: ../interface/cli_tools/discover.py
-    feedback: ../interface/cli_tools/feedback.py
-    quality: ../interface/cli_tools/quality.py
+    discover: ../tools/core/discover.py
+    feedback: ../bin/cli_tools/feedback.py
+    quality: ../bin/cli_tools/quality.py
 

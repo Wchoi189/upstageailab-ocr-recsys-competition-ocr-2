@@ -66,3 +66,13 @@ exports:
     train: "data/export/baseline_kie/train.parquet"
     val: "data/export/baseline_kie/val.parquet"
     test: "data/export/baseline_kie/test.parquet"
+
+  baseline_kie_aligned:
+    description: "KIE Data aligned with Document Parse bboxes (Fixed Polygons)"
+    train: "data/processed/aligned/baseline_kie_dp_train.parquet"
+    val: "data/processed/aligned/baseline_kie_dp_val.parquet"
+
+  baseline_kie_aligned:
+    description: "KIE Data aligned with Document Parse bboxes (Fixed Polygons)"
+    train: "data/processed/aligned/baseline_kie_dp_train.parquet"
+    val: "data/processed/aligned/baseline_kie_dp_val.parquet"

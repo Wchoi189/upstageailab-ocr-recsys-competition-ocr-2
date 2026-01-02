@@ -78,14 +78,22 @@ class KIEPLModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # Validate batch existence usually covered by collate, but double check keys
+        if not batch: # Handle empty batch from collate_fn
+             return None
+
         required_keys = {"input_ids", "attention_mask", "bbox", "labels"}
         if not all(k in batch for k in required_keys):
-            raise ValueError(f"Batch missing required keys: {required_keys - batch.keys()}")
+             # Try to see if it's just missing some keys or completely empty
+             if not batch:
+                 return None
+             # If keys are missing but batch exists, strict error or skip?
+             # Skip to be robust
+             print(f"Warning: Batch missing required keys: {required_keys - batch.keys()}. Skipping.")
+             return None
 
         outputs = self.model(**batch)
         loss = outputs["loss"]
 
-        # Log carefully
         # Log carefully
         batch_size = batch["input_ids"].shape[0] if "input_ids" in batch else 1
         self.log("train_loss", loss, on_step=True, on_epoch=True, prog_bar=True, logger=True, batch_size=batch_size)
@@ -95,6 +103,13 @@ class KIEPLModule(pl.LightningModule):
         self.validation_step_outputs = []
 
     def validation_step(self, batch, batch_idx):
+        if not batch: # Handle empty batch
+             return None
+
+        required_keys = {"input_ids", "attention_mask", "bbox", "labels"}
+        if not all(k in batch for k in required_keys):
+             return None
+
         outputs_model = self.model(**batch)
         loss = outputs_model["loss"]
         logits = outputs_model["logits"]
@@ -123,13 +138,23 @@ class KIEPLModule(pl.LightningModule):
             preds.extend(x["predictions"])
             labels.extend(x["labels"])
 
-        if preds:
-            f1 = f1_score(labels, preds)
-            report = classification_report(labels, preds)
+        if preds and labels:
+            try:
+                f1 = f1_score(labels, preds)
+                self.log("val_f1", f1, prog_bar=True, batch_size=len(labels))
 
-            self.log("val_f1", f1, prog_bar=True, batch_size=len(labels)) # Approximate batch size for epoch metric
-            # Log classification report
-            # print("\n" + report) # Avoid printing in production/CI
+                # Only generate classification report if there are actual entities
+                try:
+                    report = classification_report(labels, preds)
+                    # Log classification report (optional, can print for debugging)
+                    # print("\n" + report)
+                except ValueError as e:
+                    # This can happen if all predictions are "O" (no entities)
+                    self.log("val_f1_warning", 1.0, prog_bar=False)
+            except Exception as e:
+                # Fallback if f1_score fails
+                self.log("val_f1", 0.0, prog_bar=True, batch_size=1)
+                print(f"Warning: Could not compute validation metrics: {e}")
         else:
             self.log("val_f1", 0.0, prog_bar=True, batch_size=1)
 

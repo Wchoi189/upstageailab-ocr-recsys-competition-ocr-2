@@ -8,11 +8,11 @@ defaults:
 # Output directory, generated dynamically on each run.
 # We route all runs through a structured experiments hierarchy under `outputs/`.
 run:
-  dir: ${paths.experiments_root}/${experiment.kind}/${experiment.task}/${experiment.name}/${experiment.run_id}
+  dir: ${paths.experiments_root}/kie/${now:%Y%m%d_%H%M%S}
 
 # Multirun (sweeps) live alongside single runs under the same experiment family.
 sweep:
-  dir: ${paths.experiments_root}/${experiment.kind}/${experiment.task}/${experiment.name}/multirun
+  dir: ${paths.experiments_root}/kie/multirun
   subdir: ${now:%Y%m%d_%H%M%S}_${hydra.job.num}
 
 job:
@@ -24,4 +24,4 @@ job_logging:
       # Incorporates fix from https://github.com/facebookresearch/hydra/pull/2242
       # Note: hydra.runtime.output_dir is only available during actual runs, not during compose()
       # For inference, we'll use a relative path instead
-      filename: .hydra/${task_name}.log
+      filename: .hydra/hydra.log

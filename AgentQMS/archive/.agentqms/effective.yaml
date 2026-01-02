@@ -1,7 +1,7 @@
 layers:
-  settings: AgentQMS/config/settings.yaml
+  settings: AgentQMS/.agentqms/settings.yaml
 metadata:
-  generated_at: '2025-12-29T07:42:32.019914Z'
+  generated_at: '2026-01-02T17:50:52.016384Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:
@@ -23,9 +23,9 @@ resolved:
   paths:
     artifacts: docs/artifacts
     docs: docs
-    agent_bin: bin
+    agent_interface: bin
     implementation: tools
-    project_conventions: standards
+    project_conventions: conventions
     artifact_categories:
       implementation_plan: implementation_plans
       assessment: assessments
@@ -55,7 +55,7 @@ resolved:
     pre_commit:
       enabled: false
       validate_artifacts: true
-  bin:
+  interface:
     agent:
       name: AI Agent
       version: '1.0'
@@ -84,7 +84,7 @@ resolved:
     tool_mappings:
       artifact_workflow:
         path: ../tools/core/artifact_workflow.py
-        description: Unified bin for artifact creation
+        description: Unified interface for artifact creation
         agent_only: true
       validate_artifacts:
         path: ../tools/compliance/validate_artifacts.py
@@ -106,7 +106,7 @@ resolved:
       create_artifact: ../bin/workflows/create-artifact.sh
       validate: ../bin/workflows/validate.sh
       compliance: ../bin/workflows/compliance.sh
-    tools:
-      discover: ../bin/cli_tools/discover.py
+    agent_tools:
+      discover: ../tools/core/discover.py
       feedback: ../bin/cli_tools/feedback.py
       quality: ../bin/cli_tools/quality.py

@@ -1,0 +1,48 @@
+scripts:
+  - name: reprocess_with_prebuilt_extraction.py
+    path: scripts/runners/reprocess_with_prebuilt_extraction.py
+    purpose: KIE/Prebuilt processing runner
+    key_args:
+      - --dataset
+      - --resume
+      - --api-key-env
+  - name: reprocess_with_document_parse.py
+    path: scripts/runners/reprocess_with_document_parse.py
+    purpose: Document Parse processing runner
+    key_args:
+      - --dataset
+      - --resume
+      - --api-key-env
+  - name: run_train_splits.sh
+    path: scripts/runners/run_train_splits.sh
+    purpose: Orchestrates Train splits (Supports Tier 1/2)
+    key_args:
+      - START
+      - END
+      - TIER
+  - name: run_test_splits.sh
+    path: scripts/runners/run_test_splits.sh
+    purpose: Orchestrates KIE Test splits
+    key_args:
+      - START
+      - END
+      - TIER
+  - name: run_test_dp_splits.sh
+    path: scripts/runners/run_test_dp_splits.sh
+    purpose: Orchestrates DP Test splits
+    key_args:
+      - START
+      - END
+      - TIER
+  - name: fix_dims.py
+    path: scripts/runners/fix_dims.py
+    purpose: Fills missing width/height in DP datasets
+    key_args: []
+  - name: merge_and_export.py
+    path: scripts/runners/merge_and_export.py
+    purpose: Merges KIE splits & exports final KIE data
+    key_args: []
+  - name: merge_dp_export.py
+    path: scripts/runners/merge_dp_export.py
+    purpose: Merges DP test splits & exports final DP data
+    key_args: []

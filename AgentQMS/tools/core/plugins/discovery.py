@@ -53,7 +53,8 @@ class PluginDiscovery:
 
         # Standard plugin directories
         self.framework_plugins_dir = self.framework_root / "conventions" / "plugins"
-        self.project_plugins_dir = self.project_root / ".agentqms" / "plugins"
+        # Project plugins are now located inside the framework directory
+        self.project_plugins_dir = self.framework_root / ".agentqms" / "plugins"
 
     def discover_all(self) -> list[DiscoveredPlugin]:
         """

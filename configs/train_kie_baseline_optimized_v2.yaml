@@ -6,6 +6,10 @@ project_name: "ocr-kie-baseline-v2"
 experiment:
   kind: "kie"
 
+# Override model settings for 32 labels (not BIO)
+model:
+  num_labels: 32
+
 hydra:
   run:
     dir: outputs/kie_baseline_v2/${now:%Y-%m-%d}/${now:%H-%M-%S}
@@ -15,14 +19,25 @@ hydra:
         filename: .hydra/train.log
 
 # Validation for KIE Pipeline (Baseline Optimized V2)
+# Uses aligned DP+KIE dataset with correct polygons
 data:
-  train_datasets:
-    - parquet: data/export/baseline_kie/train_optimized_v2.parquet
-      image_dir: null # Absolute paths in parquet
+  train_path: data/processed/aligned/baseline_kie_dp_train.parquet
+  val_path: data/processed/aligned/baseline_kie_dp_val.parquet
+  image_dir: "."  # Paths in parquet are relative to project root
 
-  val_datasets:
-    - parquet: data/export/baseline_kie/val_optimized_v2.parquet
-      image_dir: null
+  # 32 labels: O + 31 entity types (simple format, not BIO)
+  label_list: [
+    "O",
+    "approval_code", "branch_name", "card_payment_price", "cash_payment_price",
+    "cc_code", "cc_expiry", "cc_number", "change", "charged_price",
+    "coupon_payment_price", "group_0", "installment", "payment_price",
+    "product_name", "store_address", "store_name", "store_phone_number",
+    "store_registration_number", "subtotal_price", "tax_price", "tip_price",
+    "transaction_date", "unit_product_code", "unit_product_discounted_price",
+    "unit_product_discounted_reason", "unit_product_order", "unit_product_price",
+    "unit_product_quantity", "unit_product_total_price_after_discount",
+    "unit_product_total_price_before_discount", "voucher_payment_price"
+  ]
 
 train:
   # RTX 3090 Optimizations
@@ -34,8 +49,11 @@ train:
   devices: 1
   strategy: "auto"
 
+  # LR Warmup for stability (prevents 0.0 F1 at start)
+  warmup_steps: 100
+
   # Verification Settings
-  max_epochs: 5
+  max_epochs: 15
   check_val_every_n_epoch: 1
 
 wandb:

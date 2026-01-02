@@ -38,7 +38,7 @@ class ConfigLoader:
             return deepcopy(self._config_cache)
 
         # Prefer consolidated .agentqms/settings.yaml when present.
-        settings_path = self.project_root / ".agentqms" / "settings.yaml"
+        settings_path = self.framework_root / ".agentqms" / "settings.yaml"
         if settings_path.exists():
             config = self._load_yaml(settings_path)
             config = self._merge_config(config, self._load_environment_overrides())
@@ -116,7 +116,7 @@ class ConfigLoader:
         else:
             # Framework project's own config in .agentqms/project_config/
             # (avoids conflicts when framework is imported into projects with their own config/)
-            framework_config_dir = self.project_root / ".agentqms" / "project_config"
+            framework_config_dir = self.framework_root / ".agentqms" / "project_config"
             if framework_config_dir.exists():
                 yaml_files = (
                     framework_config_dir / "framework.yaml",
@@ -167,7 +167,7 @@ class ConfigLoader:
         return result
 
     def _write_runtime_snapshot(self, config: dict[str, Any], *, settings_path: Path | None = None) -> None:
-        runtime_dir = self.project_root / ".agentqms"
+        runtime_dir = self.framework_root / ".agentqms"
         runtime_dir.mkdir(parents=True, exist_ok=True)
         runtime_config = runtime_dir / "effective.yaml"
 

@@ -58,7 +58,7 @@ class PluginLoader:
             project_root=project_root,
             framework_root=self.framework_root,
         )
-        self.validator = PluginValidator(schemas_dir=self.framework_root / "conventions" / "schemas")
+        self.validator = PluginValidator(schemas_dir=self.framework_root / "standards" / "schemas")
 
         # Cached registry
         self._registry: PluginRegistry | None = None

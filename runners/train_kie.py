@@ -221,7 +221,8 @@ def main(config: DictConfig):
 
 
     # Filter out known keys that we handle explicitly or that might conflict if passed twice
-    trainer_args = {k: v for k, v in train_config.items() if k not in ["batch_size", "num_workers", "max_epochs", "accelerator", "devices", "strategy"]}
+    # warmup_steps is used by KIEPLModule.configure_optimizers(), not Trainer
+    trainer_args = {k: v for k, v in train_config.items() if k not in ["batch_size", "num_workers", "max_epochs", "accelerator", "devices", "strategy", "warmup_steps"]}
 
     trainer = pl.Trainer(
         max_epochs=train_config.get("max_epochs", 10),

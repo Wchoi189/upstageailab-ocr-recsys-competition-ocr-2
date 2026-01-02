@@ -228,9 +228,9 @@ def main(argv: list[str] | None = None) -> int:
 
     # Write snapshot if requested
     if args.write_snapshot:
-        from AgentQMS.tools.utils.paths import get_project_root
+        from AgentQMS.tools.utils.paths import get_framework_root
 
-        state_dir = (project_root or get_project_root()) / ".agentqms" / "state"
+        state_dir = get_framework_root() / ".agentqms" / "state"
         writer = SnapshotWriter(state_dir)
         snapshot_path = writer.write(registry, loader.get_discovery_paths())
         if not args.json:

@@ -87,3 +87,29 @@ datasets:
     issues: worst performers, useful for testing filters like sepia and perspective warping
     use_case: providing representative samples to AI assistants for POC
     integration_priority: high
+  - name: baseline_kie
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/export/baseline_kie
+    image_count: 3125
+    annotation_format: Parquet (aligned with DP bboxes)
+    status: available
+    issues: none
+    use_case: kie model training (aligned labels)
+    integration_priority: critical
+
+  - name: baseline_kie_optimized_v2
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/export/baseline_kie
+    image_count: 3125
+    annotation_format: Parquet (KIE only, no bboxes)
+    status: available
+    issues: missing polygons (archived reference)
+    use_case: text recognition or testing
+    integration_priority: low
+
+  - name: baseline_dp
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/export/baseline_dp
+    image_count: 3272
+    annotation_format: Parquet (Document Parse layout)
+    status: archived
+    issues: none
+    use_case: layout analysis source
+    integration_priority: medium

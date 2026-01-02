@@ -16,7 +16,7 @@ class LayoutLMv3Wrapper(nn.Module):
             num_labels=num_labels
         )
 
-    def forward(self, input_ids, bbox, attention_mask, pixel_values, labels=None, return_loss=True, **kwargs):
+    def forward(self, input_ids=None, bbox=None, attention_mask=None, pixel_values=None, labels=None, return_loss=True, **kwargs):
         outputs = self.model(
             input_ids=input_ids,
             bbox=bbox,

@@ -1,0 +1,43 @@
+# Implementation Plan - AgentQMS Pruning Strategy (Re-Audited)
+
+**Goal**: Further simplify AgentQMS by aggressively pruning "bloat" from the [tools/](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/mcp_server.py#151-228) directory, while preserving the critical core required by [mcp_server.py](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/mcp_server.py).
+
+## User Review Required
+> [!IMPORTANT]
+> This plan archives significant portions of `AgentQMS/tools`. Ensure no external scripts rely on `tools/ocr` or `tools/maintenance` before proceeding.
+
+## Proposed Changes
+
+### 1. Pruning AgentQMS/tools/
+**Goal**: Reduce tool count from ~140 to ~20 essential files.
+
+#### [MOVE] AgentQMS/tools/ -> AgentQMS/archive/tools/
+- Move `AgentQMS/tools/ocr/` -> `AgentQMS/archive/tools/ocr/`
+- Move `AgentQMS/tools/maintenance/` -> `AgentQMS/archive/tools/maintenance/`
+- Move `AgentQMS/tools/audio/` -> `AgentQMS/archive/tools/audio/` (if exists)
+
+#### [CLEANUP] AgentQMS/tools/utilities/
+- Keep `tracking/` (if used).
+- Move `legacy_migrator.py`, `migrate_vlm_reports.py`, `deprecated_registry.py` -> `AgentQMS/archive/tools/utilities/`
+
+#### [CLEANUP] AgentQMS/tools/documentation/
+- Keep `reindex_artifacts.py`.
+- Move `check_links.py`, `validate_manifest.py` -> `AgentQMS/archive/tools/documentation/`
+
+### 2. Consolidating Core Logic (Future Step)
+**Goal**: After pruning, flatten the remaining tools.
+- *Note: This step is deferred to ensure immediate stability first.*
+
+### 3. Verify MCP Server Integrity
+**Goal**: Ensure `mcp_server.py` still functions.
+- The re-audit confirmed `mcp_server.py` only depends on `tools/core`, `tools/compliance`, `tools/utils`, and `tools/documentation/reindex_artifacts.py`. The proposed moves are safe.
+
+## Verification Plan
+
+### Automated Tests
+1.  **List Templates**: Run `python AgentQMS/mcp_server.py` (simulated or via `list-templates` tool) to ensure core workflow loads.
+2.  **Import Check**: Run a simple python script to import `AgentQMS.tools.core.artifact_workflow`.
+
+### Manual Verification
+1.  Verify `AgentQMS/tools` is significantly smaller.
+2.  Verify `AgentQMS/archive` contains the moved directories.

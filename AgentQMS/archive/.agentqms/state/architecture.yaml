@@ -7,27 +7,27 @@ framework:
   version: 0.3.1
 
 paths:
-  docs_root: AgentQMS/knowledge
-  agent_instructions: AgentQMS/knowledge/agent/system.md
-  protocols_root: AgentQMS/knowledge/protocols
-  references_root: AgentQMS/knowledge/references
+  docs_root: AgentQMS/internal_docs
+  agent_instructions: AgentQMS/internal_docs/agent/system.md
+  protocols_root: AgentQMS/internal_docs/protocols
+  references_root: AgentQMS/internal_docs/references
   templates_root: AgentQMS/conventions/templates
   conventions_root: AgentQMS/conventions
   artifacts_root: artifacts
   config_root: config
   runtime_state: .agentqms
-  context_bundles: AgentQMS/knowledge/context_bundles
+  context_bundles: AgentQMS/internal_docs/context_bundles
 
 knowledge_domains:
   agent:
-    path: AgentQMS/knowledge/agent
+    path: AgentQMS/internal_docs/agent
     contents:
       - system.md                    # SST (Single Source of Truth for agents)
       - ocr_experiment_agent.md      # OCR experiment specialization
       - tool_catalog.md              # Available tools and usage
       - tracking_cli.md              # Tracking CLI reference
   protocols:
-    path: AgentQMS/knowledge/protocols
+    path: AgentQMS/internal_docs/protocols
     subdirectories:
       governance:
         - artifact_rules.md
@@ -40,14 +40,14 @@ knowledge_domains:
       testing:
         - test_organization_protocol.md
   references:
-    path: AgentQMS/knowledge/references
+    path: AgentQMS/internal_docs/references
     subdirectories:
       development:
         - loader_path_resolution.md
       context_optimization:
         - smart-context-loading.md
   meta:
-    path: AgentQMS/knowledge/meta
+    path: AgentQMS/internal_docs/meta
     contents:
       - MAINTAINERS.md
       - framework_maintenance_design.md
@@ -55,7 +55,7 @@ knowledge_domains:
 components:
   # Core implementation layer (canonical)
   - id: agent_tools_core
-    path: AgentQMS/agent_tools/core
+    path: AgentQMS/tools/core
     canonical: true
     responsibilities:
       - artifact_creation
@@ -69,7 +69,7 @@ components:
       - discover.py
 
   - id: agent_tools_compliance
-    path: AgentQMS/agent_tools/compliance
+    path: AgentQMS/tools/compliance
     canonical: true
     responsibilities:
       - artifact_validation
@@ -81,7 +81,7 @@ components:
       - monitor_artifacts.py
 
   - id: agent_tools_documentation
-    path: AgentQMS/agent_tools/documentation
+    path: AgentQMS/tools/documentation
     canonical: true
     responsibilities:
       - index_generation
@@ -93,7 +93,7 @@ components:
       - validate_links.py
 
   - id: agent_tools_utilities
-    path: AgentQMS/agent_tools/utilities
+    path: AgentQMS/tools/utilities
     canonical: true
     responsibilities:
       - context_lookup
@@ -105,7 +105,7 @@ components:
       - adapt_project.py
 
   - id: agent_tools_audit
-    path: AgentQMS/agent_tools/audit
+    path: AgentQMS/tools/audit
     canonical: true
     responsibilities:
       - audit_document_generation
@@ -118,7 +118,7 @@ components:
 
   # Interface layer
   - id: interface
-    path: AgentQMS/interface
+    path: AgentQMS/bin
     responsibilities:
       - agent_makefile
       - workflow_scripts
@@ -211,7 +211,7 @@ capabilities:
       - incident_report
       - assessment
     instructions:
-      - AgentQMS/knowledge/agent/ocr_experiment_agent.md
+      - AgentQMS/internal_docs/agent/ocr_experiment_agent.md
     make_targets: []
     notes: "CLI-based workflow using experiment-tracker scripts and VLM tools"
 
@@ -219,8 +219,8 @@ context_features:
   smart_context_loading:
     status: basic_implementation
     protocol: null
-    reference: AgentQMS/knowledge/references/context_optimization/smart-context-loading.md
-    bundles_path: AgentQMS/knowledge/context_bundles
+    reference: AgentQMS/internal_docs/references/context_optimization/smart-context-loading.md
+    bundles_path: AgentQMS/internal_docs/context_bundles
     supported_types:
       - development
       - documentation
