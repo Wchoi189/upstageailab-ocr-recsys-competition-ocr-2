@@ -14,11 +14,13 @@ Resources exposed:
 """
 
 import asyncio
+import json
 from pathlib import Path
+from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Resource
+from mcp.types import Resource, TextContent, Tool
 
 
 # Auto-discover project root
@@ -98,6 +100,39 @@ async def list_resources() -> list[Resource]:
         )
         for res in RESOURCES
     ]
+
+
+@app.list_tools()
+async def list_tools() -> list[Tool]:
+    """List all available tools."""
+    return [
+        Tool(
+            name="get_server_info",
+            description="Get information about the Project Compass MCP server",
+            inputSchema={
+                "type": "object",
+                "properties": {},
+            },
+        )
+    ]
+
+
+@app.call_tool()
+async def call_tool(name: str, arguments: Any) -> list[TextContent]:
+    """Execute a tool."""
+    if name == "get_server_info":
+        return [
+            TextContent(
+                type="text",
+                text=json.dumps({
+                    "name": "project_compass",
+                    "version": "0.1.0",
+                    "status": "running"
+                }, indent=2)
+            )
+        ]
+
+    raise ValueError(f"Unknown tool: {name}")
 
 
 @app.read_resource()

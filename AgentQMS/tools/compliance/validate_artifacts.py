@@ -25,6 +25,13 @@ from typing import Any
 
 import yaml
 
+# Add project root to sys.path BEFORE importing AgentQMS modules
+# Bootstrap: Calculate actual workspace root (4 levels up from this script)
+_script_path = Path(__file__).resolve()
+_workspace_root = _script_path.parent.parent.parent.parent
+if str(_workspace_root) not in sys.path:
+    sys.path.insert(0, str(_workspace_root))
+
 # Try to import context bundle functions for validation
 try:
     from AgentQMS.tools.core.context_bundle import (
@@ -45,10 +52,6 @@ try:
     PLUGINS_AVAILABLE = True
 except ImportError:
     PLUGINS_AVAILABLE = False
-
-from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
-
-ensure_project_root_on_sys_path()
 
 
 def _refresh_plugin_snapshot_best_effort() -> None:

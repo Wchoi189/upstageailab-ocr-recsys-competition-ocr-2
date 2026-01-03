@@ -270,12 +270,93 @@ class InferenceEngine:
         )
 
 
-    def _remap_predictions_if_needed(self, predictions: dict[str, Any]) -> dict[str, Any]:
-        """Remap predictions if needed.
+    def _remap_predictions_if_needed(
+        self,
+        predictions: dict[str, Any],
+        orientation: int | None = None,
+        canonical_width: int | None = None,
+        canonical_height: int | None = None,
+    ) -> dict[str, Any]:
+        """Remap predictions from canonical frame back to raw orientation if needed.
 
-        This method is required for backward compatibility with some tests.
+        BUG-2026-002: This method is for TEST VERIFICATION ONLY. It should NOT be used
+        in production inference paths. Predictions should remain in canonical (normalized)
+        coordinate space for display. See BUG-2025-011 for context on why this was
+        previously removed from the inference path.
+
+        This implementation uses a custom coordinate inverse mapping because coordinate
+        transformations across different dimension spaces require different inverses than
+        image transformations. Specifically, orientations 5 (TRANSPOSE) and 7 (TRANSVERSE)
+        are self-inverse for coordinate transformations.
+
+        Args:
+            predictions: Predictions dict with 'polygons' key (comma-separated string)
+            orientation: EXIF orientation value (1-8)
+            canonical_width: Width of canonical (normalized) image
+            canonical_height: Height of canonical (normalized) image
+
+        Returns:
+            Predictions dict with remapped polygons
         """
-        return predictions
+        # If no orientation info provided, return as-is
+        if orientation is None or canonical_width is None or canonical_height is None:
+            return predictions
+
+        # Orientation 1 means no rotation needed
+        if orientation == 1:
+            return predictions
+
+        # Import here to avoid circular dependencies
+        from ocr.utils.orientation import remap_polygons
+
+        # Parse polygons from comma-separated string format
+        polygon_str = predictions.get("polygons", "")
+        if not polygon_str:
+            return predictions
+
+        try:
+            # Convert string to numpy array
+            coords = [float(x) for x in polygon_str.split(",")]
+            polygon = np.array(coords, dtype=np.float32).reshape(-1, 2)
+
+            # BUG-2026-002: For coordinate transformations (not image transformations),
+            # the inverse orientation mapping is different:
+            # - Orientations 5 (TRANSPOSE) and 7 (TRANSVERSE) are self-inverse
+            # - Orientations 6 (ROTATE_90_CW) and 8 (ROTATE_90_CCW) are inverses of each other
+            # This is because we're transforming coordinates across different dimension spaces
+            _COORDINATE_INVERSE = {
+                1: 1,  # NORMAL
+                2: 2,  # FLIP_HORIZONTAL (self-inverse)
+                3: 3,  # ROTATE_180 (self-inverse)
+                4: 4,  # FLIP_VERTICAL (self-inverse)
+                5: 5,  # TRANSPOSE (self-inverse for coordinates)
+                6: 8,  # ROTATE_90_CW -> ROTATE_90_CCW
+                7: 7,  # TRANSVERSE (self-inverse for coordinates)
+                8: 6,  # ROTATE_90_CCW -> ROTATE_90_CW
+            }
+            inverse_orientation = _COORDINATE_INVERSE.get(orientation, orientation)
+
+            # Apply the inverse transformation with canonical dimensions
+            remapped_polygons = remap_polygons(
+                [polygon],
+                canonical_width,
+                canonical_height,
+                inverse_orientation
+            )
+
+            # Convert back to comma-separated string format
+            remapped_str = ",".join(
+                str(int(round(v))) for v in remapped_polygons[0].reshape(-1)
+            )
+
+            # Update predictions with remapped polygons
+            result = predictions.copy()
+            result["polygons"] = remapped_str
+            return result
+
+        except (ValueError, IndexError) as e:
+            LOGGER.warning(f"Failed to remap polygons: {e}")
+            return predictions
 
 
 def run_inference_on_image(
