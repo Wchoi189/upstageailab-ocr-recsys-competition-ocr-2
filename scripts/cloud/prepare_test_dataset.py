@@ -70,7 +70,7 @@ def upload_images_to_s3(df: pd.DataFrame, s3_bucket: str, local_base: Path):
             print(f"❌ Failed to upload {image_name}: {e}")
             failed += 1
 
-    print(f"\n✓ Upload complete:")
+    print("\n✓ Upload complete:")
     print(f"  - Uploaded: {uploaded}")
     print(f"  - Skipped (already exists): {skipped}")
     print(f"  - Failed: {failed}")
@@ -84,7 +84,7 @@ def upload_parquet_to_s3(local_file: Path, s3_bucket: str, s3_key: str):
 
     print(f"\nUploading {local_file} to s3://{s3_bucket}/{s3_key}...")
     s3_client.upload_file(str(local_file), s3_bucket, s3_key)
-    print(f"✓ Upload complete")
+    print("✓ Upload complete")
 
 
 def main():
@@ -136,12 +136,12 @@ def main():
     print("\n" + "="*60)
     print("✅ Test dataset ready!")
     print("="*60)
-    print(f"\nS3 Locations:")
+    print("\nS3 Locations:")
     print(f"  Images:  s3://{s3_bucket}/images/ ({len(test_df)} files)")
     print(f"  Parquet: s3://{s3_bucket}/data/processed/test_50.parquet")
-    print(f"\nNext steps:")
-    print(f"  1. Build and push Docker image (see docs/aws-batch-quickref.md)")
-    print(f"  2. Run test job with dataset: test_50")
+    print("\nNext steps:")
+    print("  1. Build and push Docker image (see docs/aws-batch-quickref.md)")
+    print("  2. Run test job with dataset: test_50")
     print("="*60)
 
     return 0

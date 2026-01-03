@@ -6,6 +6,7 @@ from collections.abc import Iterable, Sequence
 from typing import Any
 
 import numpy as np
+
 from ocr.utils.config_utils import is_config
 
 

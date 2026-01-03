@@ -175,7 +175,7 @@ class UpstageAPITracker:
         print(f"  ✗ Failed: {stats.failed_calls}")
         print(f"  ⏸ Rate Limited: {stats.rate_limited_calls}")
         print(f"\nAverage Response Time: {stats.avg_response_time_ms:.1f} ms")
-        print(f"\nCalls by Type:")
+        print("\nCalls by Type:")
         for api_type, count in stats.calls_by_type.items():
             print(f"  - {api_type}: {count}")
         if stats.first_call and stats.last_call:

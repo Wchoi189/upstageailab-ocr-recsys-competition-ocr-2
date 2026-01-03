@@ -1,10 +1,11 @@
-import lightning.pytorch as pl
-import wandb
-import torch
-import numpy as np
-from PIL import Image, ImageDraw, ImageFont
-from typing import Any, Optional
 import logging
+from typing import Any
+
+import lightning.pytorch as pl
+import torch
+from PIL import Image, ImageDraw
+
+import wandb
 
 logger = logging.getLogger(__name__)
 
@@ -14,7 +15,7 @@ class WandBKeyInformationExtractionImageLogger(pl.Callback):
     Annotates images with Ground Truth (Green) and Predicted (Red) bounding boxes.
     """
 
-    def __init__(self, num_samples: int = 4, label_list: Optional[list[str]] = None):
+    def __init__(self, num_samples: int = 4, label_list: list[str] | None = None):
         super().__init__()
         self.num_samples = num_samples
         self.label_list = label_list

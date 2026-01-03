@@ -9,7 +9,6 @@ PRINCIPLE: "If it's in the Compass, it's a rule. If it's a rule, ETK must enforc
 
 import json
 import os
-import shutil
 import subprocess
 import tempfile
 from datetime import datetime

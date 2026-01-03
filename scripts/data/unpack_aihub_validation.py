@@ -1,8 +1,6 @@
-import os
-import tarfile
-import subprocess
-import glob
 import shutil
+import subprocess
+import tarfile
 from pathlib import Path
 
 # Configuration

@@ -1,7 +1,9 @@
 import torch
 import torch.nn as nn
 from transformers import LayoutLMv3ForTokenClassification, LiltForTokenClassification
+
 from ocr.utils.config_utils import ensure_dict
+
 
 class LayoutLMv3Wrapper(nn.Module):
     def __init__(self, config):

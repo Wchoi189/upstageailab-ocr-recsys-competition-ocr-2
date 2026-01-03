@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-import sys
 import subprocess
 from collections import Counter
+
 
 def analyze_mypy():
     print("Running Mypy analysis on ocr/ directory...")

@@ -30,8 +30,6 @@ import time
 from pathlib import Path
 
 import aiohttp
-import cv2
-import numpy as np
 import pandas as pd
 from tqdm.asyncio import tqdm
 

@@ -317,7 +317,6 @@ class UniqueModelCheckpoint(ModelCheckpoint):
                 # Get the resolved config from trainer (passed via callback setup)
                 resolved_config = getattr(self, "_resolved_config", None)
                 if resolved_config is not None:
-                    from omegaconf import OmegaConf
 
                     # Convert to plain dict for JSON serialization
                     config_dict = ensure_dict(resolved_config, resolve=True)

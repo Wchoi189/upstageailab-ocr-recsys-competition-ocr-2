@@ -10,13 +10,13 @@ Usage:
     python scripts/research/perplexity_client.py -q "Question" -m llama-3.1-sonar-huge-128k-online
 """
 
-import sys
-import os
 import argparse
-import json
-import requests
 import datetime
+import os
+import sys
 from pathlib import Path
+
+import requests
 
 # Try to load .env.local if available
 try:

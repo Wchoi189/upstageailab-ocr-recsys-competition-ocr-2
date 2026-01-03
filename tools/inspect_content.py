@@ -1,22 +1,23 @@
 
+
 import pandas as pd
-import os
+
 
 def inspect_content(path, name):
     print(f"\n--- Inspecting {name} Content ---")
     df = pd.read_parquet(path)
 
     # Check raw paths
-    print(f"Sample raw paths:")
+    print("Sample raw paths:")
     print(df['image_path'].head(3).values)
 
     # Check labels sample
     if 'labels' in df.columns:
-        print(f"Sample labels (first row):")
+        print("Sample labels (first row):")
         print(df['labels'].iloc[0])
 
     if 'texts' in df.columns:
-        print(f"Sample texts (first row):")
+        print("Sample texts (first row):")
         print(df['texts'].iloc[0])
 
 def main():

@@ -1,10 +1,11 @@
 #!/usr/bin/env python3
 import json
-import shutil
-from pathlib import Path
-from datetime import datetime
-import yaml
 import re
+import shutil
+from datetime import datetime
+from pathlib import Path
+
+import yaml
 
 EXPERIMENTS_ROOT = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2/experiment_manager/experiments")
 TARGET_EXPERIMENTS = [
@@ -95,7 +96,7 @@ def migrate_experiment(exp_id):
     manifest_file = exp_path / "manifest.json"
 
     if state_file.exists():
-        print(f"  Converting state.json to manifest.json")
+        print("  Converting state.json to manifest.json")
         with open(state_file) as f:
             state = json.load(f)
 

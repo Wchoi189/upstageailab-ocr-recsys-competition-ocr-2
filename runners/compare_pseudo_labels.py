@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """Compare pseudo-label results across enhancement strategies."""
 
-import pandas as pd
 from pathlib import Path
+
+import pandas as pd
 
 
 def analyze_strategy(name: str, parquet_file: Path):
@@ -73,7 +74,7 @@ def main():
         polygon_improvement = ((enhanced['avg_polygons'] - baseline['avg_polygons']) / baseline['avg_polygons']) * 100
 
         print("-" * 80)
-        print(f"Enhancement Impact:")
+        print("Enhancement Impact:")
         print(f"  Polygon Count Change: {polygon_improvement:+.1f}%")
         print(f"  Empty Result Change: {baseline['empty_results']} → {enhanced['empty_results']}")
 

@@ -3,7 +3,8 @@ from typing import Any, cast
 import torch
 import torch.nn as nn
 from hydra.utils import instantiate
-from omegaconf import DictConfig, OmegaConf
+
+from ocr.utils.config_utils import ensure_dict, is_config
 
 from .core import get_registry
 from .decoder import get_decoder_by_cfg
@@ -11,8 +12,6 @@ from .encoder import get_encoder_by_cfg
 from .head import get_head_by_cfg
 from .loss import get_loss_by_cfg
 
-
-from ocr.utils.config_utils import is_config, ensure_dict
 
 class OCRModel(nn.Module):
     def __init__(self, cfg):

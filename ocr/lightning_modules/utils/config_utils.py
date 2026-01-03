@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 import numpy as np
-from omegaconf import DictConfig, ListConfig, OmegaConf
-
-from ocr.utils.config_utils import ensure_dict
+from omegaconf import DictConfig, ListConfig
 
 from ocr.core.validation import MetricConfig
+from ocr.utils.config_utils import ensure_dict
 
 
 def extract_metric_kwargs(metric_cfg: DictConfig | None) -> dict:

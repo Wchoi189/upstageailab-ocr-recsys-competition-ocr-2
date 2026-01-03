@@ -33,7 +33,7 @@ def get_korean_font(size: int = 20) -> ImageFont.FreeTypeFont | ImageFont.ImageF
     for font_path in KOREAN_FONT_PATHS:
         try:
             return ImageFont.truetype(font_path, size)
-        except (OSError, IOError):
+        except OSError:
             continue
 
     # Fallback to default font (limited character support)

@@ -1,14 +1,14 @@
 
-import os
-import sys
 import argparse
+import logging
+import multiprocessing
+import sys
+from functools import partial
 from pathlib import Path
+
 import pandas as pd
 from PIL import Image
 from tqdm import tqdm
-import multiprocessing
-from functools import partial
-import logging
 
 # Add project root to path for imports
 project_root = Path(__file__).parent.parent
@@ -97,7 +97,7 @@ def resize_and_save(row, output_root, max_dim=1024, image_dir=None):
             logger.error(f"Error processing {orig_path}: {e}")
             return None
 
-    except Exception as e:
+    except Exception:
         return None
 
 def process_dataset(parquet_path, output_dir, max_dim, num_workers=8, image_dir=None):

@@ -2,10 +2,10 @@ import argparse
 import os
 import sys
 
+from etk.compass import EnvironmentChecker, SessionManager
 from etk.core import ExperimentTracker
 from etk.factory import ExperimentFactory
 from etk.reconciler import ExperimentReconciler
-from etk.compass import CompassPaths, EnvironmentChecker, SessionManager
 
 ETK_VERSION = "1.1.0"  # Bumped for Compass integration
 EDS_VERSION = "1.0"

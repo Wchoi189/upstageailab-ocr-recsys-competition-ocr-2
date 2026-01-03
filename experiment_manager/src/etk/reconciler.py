@@ -1,11 +1,12 @@
 
-import os
 import json
-import yaml
-from pathlib import Path
+import os
 from datetime import datetime
-from typing import List, Dict, Any, Optional
-from etk.schemas import ExperimentManifest
+from pathlib import Path
+from typing import Any
+
+import yaml
+
 
 class ExperimentReconciler:
     """
@@ -17,7 +18,7 @@ class ExperimentReconciler:
         self.metadata_dir = experiment_dir / ".metadata"
         self.manifest_path = experiment_dir / "manifest.json"
 
-    def reconcile(self) -> Dict[str, Any]:
+    def reconcile(self) -> dict[str, Any]:
         """
         Scans .metadata/ for artifacts, updates manifest.json, and returns stats.
         """
@@ -25,7 +26,7 @@ class ExperimentReconciler:
             raise FileNotFoundError(f"Manifest not found at {self.manifest_path}")
 
         # Load current manifest
-        with open(self.manifest_path, "r") as f:
+        with open(self.manifest_path) as f:
             manifest_data = json.load(f)
 
         # Scan for artifacts
@@ -40,7 +41,6 @@ class ExperimentReconciler:
         manifest_data["last_reconciled"] = datetime.now().isoformat()
 
         # Save updated manifest atomically (tempfile + os.replace pattern)
-        import tempfile
         json_content = json.dumps(manifest_data, indent=2)
         temp_path = self.manifest_path.with_suffix(".tmp")
         try:
@@ -58,7 +58,7 @@ class ExperimentReconciler:
             "last_reconciled": manifest_data["last_reconciled"]
         }
 
-    def _scan_artifacts(self) -> List[Dict[str, Any]]:
+    def _scan_artifacts(self) -> list[dict[str, Any]]:
         """
         Recursively scans .metadata directory for markdown artifacts.
         """
@@ -86,7 +86,7 @@ class ExperimentReconciler:
 
         return artifacts
 
-    def _extract_frontmatter(self, file_path: Path) -> Optional[Dict[str, Any]]:
+    def _extract_frontmatter(self, file_path: Path) -> dict[str, Any] | None:
         """
         Extracts YAML frontmatter from a markdown file.
         """

@@ -8,9 +8,9 @@ from __future__ import annotations
 
 from typing import Any
 
-import numpy as np
 import torch
-from pydantic import BaseModel, ConfigDict, Field, field_validator
+from pydantic import BaseModel, ConfigDict, field_validator
+
 
 class KIEDataItem(BaseModel):
     """Validated dataset sample for KIE models (LayoutLMv3/LiLT)."""

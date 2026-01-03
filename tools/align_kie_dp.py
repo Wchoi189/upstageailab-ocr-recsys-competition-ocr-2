@@ -1,9 +1,11 @@
-import pandas as pd
-import numpy as np
 import os
 import re
 from difflib import SequenceMatcher
+
+import numpy as np
+import pandas as pd
 from tqdm import tqdm
+
 
 def normalize_filename(path):
     return os.path.basename(str(path))

@@ -14,13 +14,11 @@ Resources exposed:
 """
 
 import asyncio
-import json
 from pathlib import Path
-from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Resource, TextContent
+from mcp.types import Resource
 
 
 # Auto-discover project root

@@ -1,7 +1,9 @@
 
-import pandas as pd
 import glob
 import os
+
+import pandas as pd
+
 
 def normalize_filename(path):
     return os.path.basename(str(path))

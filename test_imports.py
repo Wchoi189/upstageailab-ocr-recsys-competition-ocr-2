@@ -4,6 +4,7 @@
 import sys
 import time
 
+
 def test_import(module_name, description=""):
     """Test importing a module with timing."""
     print(f"\n{'='*60}")
@@ -66,13 +67,11 @@ def main():
     print("Testing Transformers Components")
     print("=" * 60)
     try:
-        from transformers import LayoutLMv3Processor
         print("✓ LayoutLMv3Processor imported")
     except Exception as e:
         print(f"✗ LayoutLMv3Processor failed: {e}")
 
     try:
-        from transformers import AutoTokenizer
         print("✓ AutoTokenizer imported")
     except Exception as e:
         print(f"✗ AutoTokenizer failed: {e}")

@@ -1,7 +1,9 @@
-import pandas as pd
-from pathlib import Path
 import argparse
+from pathlib import Path
+
+import pandas as pd
 from tqdm import tqdm
+
 
 def link_dataset(parquet_path, optimized_dir, output_path):
     print(f"Processing {parquet_path}...")

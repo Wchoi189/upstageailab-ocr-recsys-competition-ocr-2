@@ -1,7 +1,7 @@
-import pandas as pd
-import os
 import glob
-from pathlib import Path
+import os
+
+import pandas as pd
 
 # Configuration
 EXPORT_DIR = "aws-batch-processor/data/export"

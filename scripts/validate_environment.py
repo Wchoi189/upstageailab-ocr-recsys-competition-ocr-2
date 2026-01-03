@@ -7,8 +7,8 @@ Usage:
     python scripts/validate_environment.py
 """
 
-import sys
 import importlib
+import sys
 from pathlib import Path
 
 
@@ -58,14 +58,14 @@ def validate_environment() -> bool:
         print(f"✓ ocr module (from {ocr.__file__})")
     except ImportError as e:
         errors.append(f"Cannot import ocr: {e}")
-        print(f"✗ ocr module")
+        print("✗ ocr module")
 
     try:
         import AgentQMS
         print(f"✓ AgentQMS module (from {AgentQMS.__file__})")
     except ImportError as e:
         errors.append(f"Cannot import AgentQMS: {e}")
-        print(f"✗ AgentQMS module")
+        print("✗ AgentQMS module")
 
     # Check 5: GPU availability
     try:

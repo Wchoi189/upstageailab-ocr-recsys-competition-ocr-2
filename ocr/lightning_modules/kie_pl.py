@@ -1,12 +1,11 @@
-import torch
 import lightning.pytorch as pl
+import torch
+from seqeval.metrics import classification_report, f1_score
 from torch.utils.data import DataLoader
 from transformers import get_linear_schedule_with_warmup
-from seqeval.metrics import f1_score, classification_report
-import numpy as np
 
 # Use centralized config utilities
-from ocr.utils.config_utils import ensure_dict, is_config
+from ocr.utils.config_utils import ensure_dict
 
 # Import data contracts
 # from ocr.core.kie_validation import KIEDataItem
@@ -148,7 +147,7 @@ class KIEPLModule(pl.LightningModule):
                     report = classification_report(labels, preds)
                     # Log classification report (optional, can print for debugging)
                     # print("\n" + report)
-                except ValueError as e:
+                except ValueError:
                     # This can happen if all predictions are "O" (no entities)
                     self.log("val_f1_warning", 1.0, prog_bar=False)
             except Exception as e:

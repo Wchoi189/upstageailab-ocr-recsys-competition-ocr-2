@@ -1,6 +1,5 @@
 import argparse
 import logging
-import sys
 from pathlib import Path
 
 # Setup logging with RichHandler
@@ -49,13 +48,14 @@ def main():
     args = parser.parse_args()
 
     # LAZY IMPORTS
-    import torch
     import cv2
-    import pandas as pd
     import numpy as np
-    from tqdm import tqdm
-    from transformers import LayoutLMv3Processor, AutoTokenizer
+    import pandas as pd
+    import torch
     from PIL import Image
+    from tqdm import tqdm
+    from transformers import AutoTokenizer, LayoutLMv3Processor
+
     from ocr.models.kie_models import LayoutLMv3Wrapper, LiLTWrapper
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")

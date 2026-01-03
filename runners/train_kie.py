@@ -1,16 +1,16 @@
 import logging
-import warnings
 import sys
-import pandas as pd
-import numpy as np
-
-
-# Setup project paths automatically
-import hydra
-from omegaconf import DictConfig, OmegaConf
+import warnings
 
 # Determine project root and add to path if not already there
 from pathlib import Path
+
+# Setup project paths automatically
+import hydra
+import numpy as np
+import pandas as pd
+from omegaconf import DictConfig, OmegaConf
+
 project_root = Path(__file__).resolve().parent.parent
 if str(project_root) not in sys.path:
     sys.path.append(str(project_root))
@@ -48,21 +48,20 @@ def main(config: DictConfig):
         OmegaConf.set_struct(config.hydra, False)
 
     # === LAZY IMPORTS: Heavy ML libraries loaded here after Hydra config validation ===
-    import torch
     import lightning.pytorch as pl
-    from transformers import LayoutLMv3Processor, AutoTokenizer
+    import torch
+    from torch.utils.data import ConcatDataset
+    from transformers import AutoTokenizer, LayoutLMv3Processor
 
     from ocr.data.datasets.kie_dataset import KIEDataset
-    from ocr.models.kie_models import LayoutLMv3Wrapper, LiLTWrapper
-    from ocr.lightning_modules.kie_pl import KIEPLModule, KIEDataPLModule
-    from ocr.utils.path_utils import ensure_output_dirs
-    from torch.utils.data import ConcatDataset
     from ocr.lightning_modules.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
+    from ocr.lightning_modules.kie_pl import KIEDataPLModule, KIEPLModule
+    from ocr.models.kie_models import LayoutLMv3Wrapper, LiLTWrapper
 
     # === END LAZY IMPORTS ===
-
     # Import config utils
     from ocr.utils.config_utils import ensure_dict
+    from ocr.utils.path_utils import ensure_output_dirs
 
     pl.seed_everything(config.get("seed", 42), workers=True)
 
@@ -196,7 +195,7 @@ def main(config: DictConfig):
     pl_module = KIEPLModule(model, train_config, label_list)
 
     # 5. Prepare Trainer
-    from lightning.pytorch.callbacks import ModelCheckpoint, LearningRateMonitor
+    from lightning.pytorch.callbacks import LearningRateMonitor, ModelCheckpoint
 
     checkpoint_callback = ModelCheckpoint(
         dirpath=config.paths.checkpoint_dir,

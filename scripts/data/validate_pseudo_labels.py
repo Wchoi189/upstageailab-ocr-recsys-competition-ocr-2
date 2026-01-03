@@ -15,8 +15,6 @@ Usage:
 
 import argparse
 import logging
-import os
-import random
 from pathlib import Path
 
 import cv2
@@ -52,7 +50,7 @@ def draw_polygons(image, polygons, texts=None, color=(0, 255, 0), thickness=2):
                 if len(pts) > 0:
                      cv2.putText(image, text[:15], (int(pts[0][0][0]), int(pts[0][0][1]) - 5),
                                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
-        except Exception as e:
+        except Exception:
             # logger.warning(f"Failed to draw polygon {i}: {e}")
             pass
     return image

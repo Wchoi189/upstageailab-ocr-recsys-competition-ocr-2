@@ -31,15 +31,14 @@ import argparse
 import asyncio
 import logging
 import os
-import sys
 from pathlib import Path
 
-import aioboto3
 import boto3
 import pandas as pd
 
 # Import base processor
 from batch_pseudo_labels import ResumableBatchProcessor
+
 from ocr.data.schemas.storage import OCRStorageItem
 
 logging.basicConfig(

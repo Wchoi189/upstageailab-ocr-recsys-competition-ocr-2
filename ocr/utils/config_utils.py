@@ -12,7 +12,8 @@ CONFIG_ROOT = get_path_resolver().config.config_dir
 SCHEMA_DIR = CONFIG_ROOT / "schemas"
 
 from typing import TypeGuard
-from omegaconf import DictConfig, ListConfig, OmegaConf
+
+from omegaconf import ListConfig, OmegaConf
 
 
 def is_config(obj: Any) -> TypeGuard[dict | DictConfig]:

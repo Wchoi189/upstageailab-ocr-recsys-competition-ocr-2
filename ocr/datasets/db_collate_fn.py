@@ -17,6 +17,7 @@ import cv2
 import numpy as np
 import pyclipper
 import torch
+
 from ocr.utils.config_utils import is_config
 
 # Module-level flag to prevent duplicate logging across all DBCollateFN instances

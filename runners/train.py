@@ -1,6 +1,5 @@
 import logging
 import math
-import sys
 import warnings
 
 # Setup project paths automatically
@@ -81,9 +80,9 @@ def train(config: DictConfig):
     # - Improved development iteration speed (3-5x faster)
     import lightning.pytorch as pl
     import torch
-    import wandb
     from lightning.pytorch.callbacks import LearningRateMonitor
 
+    import wandb
     from ocr.lightning_modules import get_pl_modules_by_cfg
     # === END LAZY IMPORTS ===
 

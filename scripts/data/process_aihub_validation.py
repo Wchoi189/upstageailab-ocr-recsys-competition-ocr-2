@@ -1,9 +1,9 @@
 import json
 import logging
 from pathlib import Path
+
 import pandas as pd
 from tqdm import tqdm
-import os
 
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
@@ -32,7 +32,7 @@ def process_aihub_validation(
 
     for json_file in tqdm(json_files, desc="Processing JSON files"):
         try:
-            with open(json_file, 'r', encoding='utf-8') as f:
+            with open(json_file, encoding='utf-8') as f:
                 content = json.load(f)
 
             # AI Hub format usually has 'images' and 'annotations'

@@ -1,6 +1,8 @@
 
-import pandas as pd
 import os
+
+import pandas as pd
+
 
 def inspect_parquet(path, name):
     print(f"--- Inspecting {name} ---")

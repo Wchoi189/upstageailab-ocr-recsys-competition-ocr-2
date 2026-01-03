@@ -1,7 +1,9 @@
 
-import pandas as pd
 import glob
 import os
+
+import pandas as pd
+
 
 def count_splits():
     split_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/aws-batch-processor/data/archive/output/splits_train"
@@ -20,7 +22,7 @@ def count_splits():
             print(f"Error reading {f}: {e}")
 
     print(f"\nTotal rows in splits: {total_rows}")
-    print(f"Expected (KIE train var): 3125")
+    print("Expected (KIE train var): 3125")
 
 if __name__ == "__main__":
     count_splits()

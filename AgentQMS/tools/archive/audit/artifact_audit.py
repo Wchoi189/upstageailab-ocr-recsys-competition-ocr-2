@@ -38,8 +38,9 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 try:
-    from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
     from AgentQMS.tools.maintenance.add_frontmatter import FrontmatterGenerator
+
+    from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
     from AgentQMS.tools.utils.config import load_config
     from AgentQMS.tools.utils.timestamps import infer_artifact_date
 except ImportError as e:

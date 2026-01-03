@@ -1,6 +1,6 @@
 import logging
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Union
+from typing import Any
 
 import numpy as np
 import pandas as pd
@@ -9,7 +9,6 @@ from PIL import Image
 from torch.utils.data import Dataset
 from transformers import PreTrainedTokenizerBase, ProcessorMixin
 
-from ocr.utils.image_utils import load_pil_image
 from ocr.core.kie_validation import KIEDataItem
 
 logger = logging.getLogger(__name__)
@@ -22,13 +21,13 @@ class KIEDataset(Dataset):
 
     def __init__(
         self,
-        parquet_file: Union[str, Path],
-        processor: Optional[ProcessorMixin] = None,
-        tokenizer: Optional[PreTrainedTokenizerBase] = None,
-        image_dir: Optional[Union[str, Path]] = None,
+        parquet_file: str | Path,
+        processor: ProcessorMixin | None = None,
+        tokenizer: PreTrainedTokenizerBase | None = None,
+        image_dir: str | Path | None = None,
         max_length: int = 512,
         pad_to_max_length: bool = True,
-        label_list: Optional[List[str]] = None,
+        label_list: list[str] | None = None,
         max_img_size: int = 1024, # Optimized default size
     ):
         """
@@ -81,7 +80,7 @@ class KIEDataset(Dataset):
     def __len__(self):
         return len(self.df)
 
-    def __getitem__(self, idx) -> Optional[Dict[str, Any]]:
+    def __getitem__(self, idx) -> dict[str, Any] | None:
         """
         Returns a dictionary validated by KIEDataItem. Returns None if image loading fails.
         """
