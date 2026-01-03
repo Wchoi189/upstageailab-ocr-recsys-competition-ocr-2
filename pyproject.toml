@@ -3,7 +3,7 @@ name = "upstage-ocr-receipt-text-detection-continuation"
 version = "0.1.2"
 description = "OCR Text Recognition & Layout Analysis System"
 readme = "README.md"
-requires-python = ">=3.11"
+requires-python = "==3.11.*"
 dependencies = [
     "albumentations==1.3.1",
     "better-exceptions==0.3.3",
@@ -59,7 +59,7 @@ dependencies = [
     "webdataset>=0.2.0",
     "ocrd-fork-pylsd==0.0.8",
     # PyTorch with CUDA support - Pinned to 2.6.0
-    "torch==2.6.0",
+    "torch>=2.5.1",
     "torchvision==0.21.0",
     "openai>=1.109.1",
     "dotenv>=0.9.9",
@@ -92,6 +92,7 @@ packages = ["ocr", "AgentQMS"]
 
 [tool.uv]
 extra-index-url = ["https://download.pytorch.org/whl/cu124"]
+index-strategy = "unsafe-best-match"
 
 [tool.mypy]
 # General settings - Balanced for ML/Research projects

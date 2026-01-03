@@ -40,20 +40,20 @@ jobs:
 
       - name: Install interface deps
         run: |
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           uv pip install -r requirements.txt --system
 
       - name: Validate artifacts
         id: validate
         run: |
-          cd AgentQMS/interface
-          python ../agent_tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
+          cd AgentQMS/bin
+          python ../tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
 
           # Check if JSON file is valid before parsing
           if [ ! -s /tmp/validation.json ] || ! jq empty /tmp/validation.json 2>/dev/null; then
             echo "⚠️ Warning: Invalid or empty JSON output. Errors:" >&2
             cat /tmp/validation.err >&2 || true
-            echo '[]' > /tmp/validation.json
+            echo '[[]]' > /tmp/validation.json
           fi
 
           # Parse results
@@ -97,12 +97,12 @@ jobs:
 
       - name: Install interface deps
         run: |
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           uv pip install -r requirements.txt --system
 
       - name: Reindex artifacts
         run: |
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           make reindex
 
   check-links:
@@ -125,12 +125,12 @@ jobs:
 
       - name: Install interface deps
         run: |
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           uv pip install -r requirements.txt --system
 
       - name: Check links
         run: |
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           make check-links
         continue-on-error: true  # Allow warnings for now, will be enforced later
 
