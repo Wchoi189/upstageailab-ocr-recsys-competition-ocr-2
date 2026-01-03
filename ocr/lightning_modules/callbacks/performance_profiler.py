@@ -129,7 +129,8 @@ class PerformanceProfilerCallback(Callback):
             step = max(self._last_wandb_step + 1, current_step)
             self._last_wandb_step = step
 
-            wandb.log(metrics, step=step)  # type: ignore
+            if WANDB_AVAILABLE and wandb.run is not None:  # type: ignore
+                wandb.log(metrics, step=step)  # type: ignore
 
     def on_test_batch_end(
         self, trainer: Trainer, pl_module: LightningModule, outputs: Any, batch: Any, batch_idx: int, dataloader_idx: int = 0
@@ -155,7 +156,8 @@ class PerformanceProfilerCallback(Callback):
             step = self._last_test_wandb_step + 1
             self._last_test_wandb_step = step
 
-            wandb.log(metrics, step=step)  # type: ignore
+            if WANDB_AVAILABLE and wandb.run is not None:  # type: ignore
+                wandb.log(metrics, step=step)  # type: ignore
 
     def on_validation_epoch_end(self, trainer: Trainer, pl_module: LightningModule) -> None:
         """Compute and log summary statistics."""

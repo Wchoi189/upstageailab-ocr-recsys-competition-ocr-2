@@ -2,10 +2,10 @@
 
 Active bug reports and development roadmaps.
 
-**Last Updated**: 2025-12-29 16:42:32
-**Total Artifacts**: 11
+**Last Updated**: 2026-01-03 17:24:44
+**Total Artifacts**: 12
 
-## Active (8)
+## Active (9)
 
 - [001 Dominant Edge Extension Failure](2025-11-28_0000_BUG_001_dominant-edge-extension-failure.md) (📅 2025-12-06 18:09 (KST), 📄 bug_report) - The "Dominant Edge Extension" algorithm, designed to handle folded or torn document corners by exten
 - [001 Inference Studio Overlay Misalignment](2025-12-02_2313_BUG_001_inference-studio-overlay-misalignment.md) (📅 2025-12-04 12:43 (KST), 📄 bug_report) - BUG-001
@@ -15,6 +15,7 @@ Active bug reports and development roadmaps.
 - [002 Inference Studio Visual Padding Mismatch](2025-12-03_2300_BUG_002_inference-studio-visual-padding-mismatch.md) (📅 2025-12-06 18:09 (KST), 📄 bug_report) - **Date**: 2025-12-03
 - [001 Catastrophic Bulk Migration Incident](2025-12-07_0047_BUG_001_catastrophic-bulk-migration-incident.md) (📅 2025-12-07 01:33 (KST), 📄 bug_report) - BUG-001-CATASTROPHIC-MIGRATION
 - [BaseHead.get_polygons_from_maps Signature Incompatibility (LSP Violation)](2025-12-27_0608_BUG_001_model-head-lsp-violation.md) (📅 2025-12-27 15:08 (KST), 📄 bug_report) - BUG-20251227-001
+- [Test Bug Report](2026-01-03_0340_BUG_001_test-bug.md) (📅 2026-01-03 03:40 (KST), 📄 bug_report) - BUG-001
 
 ## Completed (3)
 
@@ -26,7 +27,7 @@ Active bug reports and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 8 |
+| Active | 9 |
 | Completed | 3 |
 
 ---

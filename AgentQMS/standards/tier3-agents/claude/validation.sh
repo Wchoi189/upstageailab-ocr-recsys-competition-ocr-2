@@ -10,12 +10,12 @@ echo "🔍 Validating Claude agent configuration..."
 
 # 1. Validate config.yaml against ADS v1.0
 echo "📋 Checking config.yaml compliance..."
-python3 "$ROOT_DIR/AgentQMS/standards/schema/compliance-checker.py" \
+python3 "$ROOT_DIR/AgentQMS/standards/schemas/compliance-checker.py" \
   "$SCRIPT_DIR/config.yaml"
 
 # 2. Validate quick-reference.yaml
 echo "📋 Checking quick-reference.yaml compliance..."
-python3 "$ROOT_DIR/AgentQMS/standards/schema/compliance-checker.py" \
+python3 "$ROOT_DIR/AgentQMS/standards/schemas/compliance-checker.py" \
   "$SCRIPT_DIR/quick-reference.yaml"
 
 # 3. Check dependencies exist

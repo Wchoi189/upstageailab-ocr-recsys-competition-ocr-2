@@ -5,7 +5,7 @@ title: Configuration Handling Standards
 agent: all
 tier: 2
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: unknown
 memory_footprint: 300
 date: "2025-12-27"

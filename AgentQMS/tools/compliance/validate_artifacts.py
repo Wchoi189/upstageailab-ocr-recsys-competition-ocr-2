@@ -72,7 +72,7 @@ from AgentQMS.tools.utils.paths import ensure_within_project, get_project_root
 def load_artifact_rules() -> dict[str, Any] | None:
     """Load artifact rules from the YAML schema file."""
     try:
-        rules_path = get_project_root() / "AgentQMS" / "knowledge" / "agent" / "artifact_rules.yaml"
+        rules_path = get_project_root() / "AgentQMS" / "standards" / "tier1-sst" / "artifact_rules.yaml"
         if rules_path.exists():
             with open(rules_path, encoding="utf-8") as f:
                 return yaml.safe_load(f)
@@ -806,11 +806,11 @@ class ArtifactValidator:
 
             for bundle_name in available_bundles:
                 # Determine bundle file path (framework or plugin)
-                framework_bundle_path = project_root / "AgentQMS" / "knowledge" / "context_bundles" / f"{bundle_name}.yaml"
+                framework_bundle_path = project_root / "AgentQMS" / ".agentqms" / "plugins" / "context_bundles" / f"{bundle_name}.yaml"
                 plugin_bundle_path = project_root / ".agentqms" / "plugins" / "context_bundles" / f"{bundle_name}.yaml"
 
                 if framework_bundle_path.exists():
-                    bundle_file_display = f"AgentQMS/knowledge/context_bundles/{bundle_name}.yaml"
+                    bundle_file_display = f"AgentQMS/.agentqms/plugins/context_bundles/{bundle_name}.yaml"
                 elif plugin_bundle_path.exists():
                     bundle_file_display = f".agentqms/plugins/context_bundles/{bundle_name}.yaml"
                 else:

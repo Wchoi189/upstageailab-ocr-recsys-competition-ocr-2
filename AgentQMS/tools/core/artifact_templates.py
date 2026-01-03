@@ -63,148 +63,53 @@ class ArtifactTemplates:
                     "version": "1.0",
                     "tags": ["implementation", "plan", "development"],
                 },
-                "content_template": """# Master Prompt
+                "content_template": """# Implementation Plan - {title}
 
-You are an autonomous AI agent, my Chief of Staff for implementing the **{title}**. Your primary responsibility is to execute the "Living Implementation Blueprint" systematically, handle outcomes, and keep track of our progress. Do not ask for clarification on what to do next; your next task is always explicitly defined.
+## Goal
+{description}
 
----
+## Proposed Changes
 
-**Your Core Workflow is a Goal-Execute-Update Loop:**
-1. **Goal:** A clear `🎯 Goal` will be provided for you to achieve.
-2. **Execute:** You will start working on the task defined in the `NEXT TASK`
-3. **Handle Outcome & Update:** Based on the success or failure of the command, you will follow the specified contingency plan. Your response must be in two parts:
-   * **Part 1: Execution Report:** Provide a concise summary of the results and analysis of the outcome (e.g., "All tests passed" or "Test X failed due to an IndexError...").
-   * **Part 2: Blueprint Update Confirmation:** Confirm that the living blueprint has been updated with the new progress status and next task. The updated blueprint is available in the workspace file.
+### Configuration
+- [ ] Change 1
 
----
+### Code
+- [ ] Change 1
 
-# Living Implementation Blueprint: {title}
+## Verification Plan
 
-## Progress Tracker
-- **STATUS:** Not Started
-- **CURRENT STEP:** Phase 1, Task 1.1 - [Initial Task Name]
-- **LAST COMPLETED TASK:** None
-- **NEXT TASK:** [Description of the immediate next task]
+### Automated Tests
+- [ ] `pytest ...`
 
-### Implementation Outline (Checklist)
-
-#### **Phase 1: Foundation (Week 1-2)**
-1. [ ] **Task 1.1: [Task 1.1 Title]**
-   - [ ] [Sub-task 1.1.1 description]
-   - [ ] [Sub-task 1.1.2 description]
-   - [ ] [Sub-task 1.1.3 description]
-
-2. [ ] **Task 1.2: [Task 1.2 Title]**
-   - [ ] [Sub-task 1.2.1 description]
-   - [ ] [Sub-task 1.2.2 description]
-
-#### **Phase 2: Core Implementation (Week 3-4)**
-3. [ ] **Task 2.1: [Task 2.1 Title]**
-   - [ ] [Sub-task 2.1.1 description]
-   - [ ] [Sub-task 2.1.2 description]
-
-4. [ ] **Task 2.2: [Task 2.2 Title]**
-   - [ ] [Sub-task 2.2.1 description]
-   - [ ] [Sub-task 2.2.2 description]
-
-#### **Phase 3: Testing & Validation (Week 5-6)**
-5. [ ] **Task 3.1: [Task 3.1 Title]**
-   - [ ] [Sub-task 3.1.1 description]
-   - [ ] [Sub-task 3.1.2 description]
-
-6. [ ] **Task 3.2: [Task 3.2 Title]**
-   - [ ] [Sub-task 3.2.1 description]
-   - [ ] [Sub-task 3.2.2 description]
-
----
-
-## 📋 **Technical Requirements Checklist**
-
-### **Architecture & Design**
-- [ ] [Architectural Principle 1 (e.g., Modular Design)]
-- [ ] [Data Model Requirement (e.g., Pydantic V2 Integration)]
-- [ ] [Configuration Method (e.g., YAML-Driven)]
-- [ ] [State Management Strategy]
-
-### **Integration Points**
-- [ ] [Integration with System X]
-- [ ] [API Endpoint Definition]
-- [ ] [Use of Existing Utility/Library]
-
-### **Quality Assurance**
-- [ ] [Unit Test Coverage Goal (e.g., > 90%)]
-- [ ] [Integration Test Requirement]
-- [ ] [Performance Test Requirement]
-- [ ] [UI/UX Test Requirement]
-
----
-
-## 🎯 **Success Criteria Validation**
-
-### **Functional Requirements**
-- [ ] [Key Feature 1 Works as Expected]
-- [ ] [Key Feature 2 is Fully Implemented]
-- [ ] [Performance Metric is Met (e.g., <X ms latency)]
-- [ ] [User-Facing Outcome is Achieved]
-
-### **Technical Requirements**
-- [ ] [Code Quality Standard is Met (e.g., Documented, type-hinted)]
-- [ ] [Resource Usage is Within Limits (e.g., <X GB memory)]
-- [ ] [Compatibility with System Y is Confirmed]
-- [ ] [Maintainability Goal is Met]
-
----
-
-## 📊 **Risk Mitigation & Fallbacks**
-
-### **Current Risk Level**: LOW / MEDIUM / HIGH
-### **Active Mitigation Strategies**:
-1. [Mitigation Strategy 1 (e.g., Incremental Development)]
-2. [Mitigation Strategy 2 (e.g., Comprehensive Testing)]
-3. [Mitigation Strategy 3 (e.g., Regular Code Quality Checks)]
-
-### **Fallback Options**:
-1. [Fallback Option 1 if Risk A occurs (e.g., Simplified version of a feature)]
-2. [Fallback Option 2 if Risk B occurs (e.g., CPU-only mode)]
-3. [Fallback Option 3 if Risk C occurs (e.g., Phased Rollout)]
-
----
-
-## 🔄 **Blueprint Update Protocol**
-
-**Update Triggers:**
-- Task completion (move to next task)
-- Blocker encountered (document and propose solution)
-- Technical discovery (update approach if needed)
-- Quality gate failure (address issues before proceeding)
-
-**Update Format:**
-1. Update Progress Tracker (STATUS, CURRENT STEP, LAST COMPLETED TASK, NEXT TASK)
-2. Mark completed items with [x]
-3. Add any new discoveries or changes to approach
-4. Update risk assessment if needed
-
----
-
-## 🚀 **Immediate Next Action**
-
-**TASK:** [Description of the immediate next task]
-
-**OBJECTIVE:** [Clear, concise goal of the task]
-
-**APPROACH:**
-1. [Step 1 to execute the task]
-2. [Step 2 to execute the task]
-3. [Step 3 to execute the task]
-
-**SUCCESS CRITERIA:**
-- [Measurable outcome 1 that defines task completion]
-- [Measurable outcome 2 that defines task completion]
-
----
-
-*This implementation plan follows the Blueprint Protocol Template (PROTO-GOV-003) for systematic, autonomous execution with clear progress tracking.*""",
+### Manual Verification
+- [ ] Verify ...""",
             },
+
+            "walkthrough": {
+                "filename_pattern": "YYYY-MM-DD_HHMM_walkthrough_{name}.md",
+                "directory": "walkthroughs/",
+                "frontmatter": {
+                    "ads_version": "1.0",
+                    "type": "walkthrough",
+                    "category": "documentation",
+                    "status": "active",
+                    "version": "1.0",
+                    "tags": ["walkthrough", "documentation", "guide"],
+                },
+                "content_template": """# Walkthrough - {title}
+
+## Goal
+{description}
+
+## Steps
+1. Step 1
+2. Step 2
+
+## Verification
+- [ ] Verify result
+""",
+            },
+
             "assessment": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_assessment-{name}.md",
                 "directory": "assessments/",
@@ -216,83 +121,29 @@ You are an autonomous AI agent, my Chief of Staff for implementing the **{title}
                     "version": "1.0",
                     "tags": ["assessment", "evaluation", "analysis"],
                 },
-                "content_template": """# {title}
+                "content_template": """# Assessment - {title}
 
 ## Purpose
-
-This assessment evaluates {subject} and provides recommendations for improvement.
-
-## Scope
-
-- **Subject**: {subject}
-- **Assessment Date**: {assessment_date}
-- **Assessor**: AI Agent
-- **Methodology**: {methodology}
+Evaluate {subject} and provide recommendations.
 
 ## Findings
 
-### Key Findings
-1. Finding 1
-2. Finding 2
-3. Finding 3
+### Key Observations
+1. Observation 1
+2. Observation 2
 
-### Detailed Analysis
-
-#### Area 1
-- **Current State**: Description
-- **Issues Identified**: List of issues
-- **Impact**: High/Medium/Low
-
-#### Area 2
-- **Current State**: Description
-- **Issues Identified**: List of issues
-- **Impact**: High/Medium/Low
+## Analysis
+- **Area 1**: Status/Issues
+- **Area 2**: Status/Issues
 
 ## Recommendations
-
-### High Priority
-1. **Recommendation 1**
-   - **Action**: Specific action
-   - **Timeline**: When to complete
-   - **Owner**: Who is responsible
-
-2. **Recommendation 2**
-   - **Action**: Specific action
-   - **Timeline**: When to complete
-   - **Owner**: Who is responsible
-
-### Medium Priority
-1. **Recommendation 3**
-   - **Action**: Specific action
-   - **Timeline**: When to complete
+1. **Action Item** (Priority: High)
+2. **Action Item** (Priority: Medium)
 
 ## Implementation Plan
-
-### Phase 1: Immediate Actions (Week 1-2)
-- [ ] Action 1
-- [ ] Action 2
-
-### Phase 2: Short-term Improvements (Week 3-4)
-- [ ] Action 1
-- [ ] Action 2
-
-### Phase 3: Long-term Enhancements (Month 2+)
-- [ ] Action 1
-- [ ] Action 2
-
-## Success Metrics
-
-- **Metric 1**: Target value
-- **Metric 2**: Target value
-- **Metric 3**: Target value
-
-## Conclusion
-
-Summary of assessment findings and next steps.
-
----
-
-*This assessment follows the project's standardized format for evaluation and analysis.*""",
+- [ ] Immediate Action
+- [ ] Long-term Action
+""",
             },
             "design": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_design-{name}.md",
@@ -305,116 +156,33 @@ Summary of assessment findings and next steps.
                     "version": "1.0",
                     "tags": ["design", "architecture", "specification"],
                 },
-                "content_template": """# {title}
+                "content_template": """# Design - {title}
 
 ## Overview
+Design for {component/system}.
 
-This document describes the design for {component/system}.
-
-## Problem Statement
-
-What problem does this design solve?
-
-## Design Goals
-
+## Goals
 - Goal 1
 - Goal 2
-- Goal 3
 
 ## Architecture
-
-### High-Level Architecture
-
-```
-[Architecture Diagram or Description]
+```mermaid
+graph TD
+    A[Component A] --> B[Component B]
 ```
 
 ### Components
-
-#### Component 1
-- **Purpose**: What it does
-- **Responsibilities**: Key responsibilities
-- **Interfaces**: How it interacts with other components
-
-#### Component 2
-- **Purpose**: What it does
-- **Responsibilities**: Key responsibilities
-- **Interfaces**: How it interacts with other components
+- **Component 1**: Responsibility
+- **Component 2**: Responsibility
 
 ## Design Decisions
+- **Decision 1**: Rationale...
+- **Decision 2**: Rationale...
 
-### Decision 1
-- **Context**: Why this decision was needed
-- **Options Considered**: Alternative approaches
-- **Decision**: What was chosen
-- **Rationale**: Why this option was selected
-- **Consequences**: Implications of this choice
-
-### Decision 2
-- **Context**: Why this decision was needed
-- **Options Considered**: Alternative approaches
-- **Decision**: What was chosen
-- **Rationale**: Why this option was selected
-- **Consequences**: Implications of this choice
-
-## Implementation Considerations
-
-### Technical Requirements
-- Requirement 1
-- Requirement 2
-
-### Dependencies
-- Dependency 1
-- Dependency 2
-
-### Constraints
-- Constraint 1
-- Constraint 2
-
-## Testing Strategy
-
-### Unit Testing
-- Test approach for individual components
-
-### Integration Testing
-- Test approach for component interactions
-
-### End-to-End Testing
-- Test approach for complete workflows
-
-## Deployment
-
-### Deployment Strategy
-- How this will be deployed
-
-### Rollback Plan
-- How to rollback if issues occur
-
-## Monitoring & Observability
-
-### Metrics
-- Key metrics to monitor
-
-### Logging
-- Logging strategy
-
-### Alerting
-- Alert conditions and thresholds
-
-## Future Considerations
-
-### Scalability
-- How this design will scale
-
-### Extensibility
-- How this design can be extended
-
-### Maintenance
-- Maintenance considerations
-
----
-
-*This design document follows the project's standardized format for architectural documentation.*""",
+## Implementation
+- [ ] Requirement 1
+- [ ] Requirement 2
+""",
             },
             "research": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_research-{name}.md",
@@ -427,101 +195,24 @@ What problem does this design solve?
                     "version": "1.0",
                     "tags": ["research", "investigation", "analysis"],
                 },
-                "content_template": """# {title}
+                "content_template": """# Research - {title}
 
-## Research Question
-
-What question is this research trying to answer?
-
-## Hypothesis
-
-What do we expect to find?
-
-## Methodology
-
-### Research Approach
-- Approach 1
-- Approach 2
-
-### Data Sources
-- Source 1
-- Source 2
-
-### Analysis Methods
-- Method 1
-- Method 2
+## Objective
+Answer: {title}?
 
 ## Findings
-
-### Key Findings
-1. Finding 1
-2. Finding 2
-3. Finding 3
-
-### Detailed Results
-
-#### Result 1
-- **Description**: What was found
-- **Evidence**: Supporting data/observations
-- **Implications**: What this means
-
-#### Result 2
-- **Description**: What was found
-- **Evidence**: Supporting data/observations
-- **Implications**: What this means
+- Finding 1
+- Finding 2
 
 ## Analysis
+Details of the investigation.
 
-### Patterns Identified
-- Pattern 1
-- Pattern 2
-
-### Trends Observed
-- Trend 1
-- Trend 2
-
-### Anomalies
-- Anomaly 1
-- Anomaly 2
-
-## Conclusions
-
-### Primary Conclusions
-1. Conclusion 1
-2. Conclusion 2
-
-### Secondary Conclusions
-1. Conclusion 3
-2. Conclusion 4
-
-## Recommendations
-
-### Immediate Actions
-- Action 1
-- Action 2
-
-### Future Research
-- Research direction 1
-- Research direction 2
-
-## Limitations
-
-### Research Limitations
-- Limitation 1
-- Limitation 2
-
-### Data Limitations
-- Limitation 1
-- Limitation 2
+## Conclusion
+Summary of the answer.
 
 ## References
-
-- Reference 1
-- Reference 2
-
----
-
-*This research document follows the project's standardized format for research documentation.*""",
+- [Link]
+""",
             },
             "template": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_template-{name}.md",
@@ -534,68 +225,21 @@ What do we expect to find?
                     "version": "1.0",
                     "tags": ["template", "reference", "guidelines"],
                 },
-                "content_template": """# {title}
+                "content_template": """# Template - {title}
 
 ## Purpose
+Standard format for {purpose}.
 
-This template provides a standardized format for {purpose}.
-
-## Usage Instructions
-
-1. Copy this template
-2. Replace placeholder text with actual content
-3. Follow the structure and formatting guidelines
-4. Ensure all required sections are completed
-
-## Template Structure
-
-### Section 1: Overview
-Brief description of what this document covers.
-
-### Section 2: Main Content
-The primary content of the document.
-
-### Section 3: Implementation
-How to implement or use this information.
-
-### Section 4: Examples
-Concrete examples of usage.
+## Structure
+```markdown
+# Title
+## Section 1
+```
 
 ## Guidelines
-
-### Content Guidelines
-- Guideline 1
-- Guideline 2
-
-### Formatting Guidelines
-- Guideline 1
-- Guideline 2
-
-## Examples
-
-### Example 1
-```markdown
-Example content here
-```
-
-### Example 2
-```markdown
-Another example here
-```
-
-## Best Practices
-
-- Practice 1
-- Practice 2
-
-## Common Pitfalls
-
-- Pitfall 1: Description and how to avoid
-- Pitfall 2: Description and how to avoid
-
----
-
-*This template follows the project's standardized format for reusable templates.*""",
+1. Guideline 1
+2. Guideline 2
+""",
             },
             "bug_report": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_BUG_NNN_{name}.md",
@@ -609,80 +253,61 @@ Another example here
                     "version": "1.0",
                     "tags": ["bug", "issue", "troubleshooting"],
                 },
-                "content_template": """# Bug Report: {title}
+                "content_template": """# Bug Report - {title}
+Bug ID: BUG-{bug_id}
 
-## Bug ID
-BUG-{bug_id}
-
-<!-- REQUIRED: Fill these sections when creating the initial bug report -->
 ## Summary
 {summary}
 
 ## Environment
-- **OS**: {os_info}
-- **Python Version**: {python_version}
+- **OS/Env**: {os_info}
 - **Dependencies**: {dependencies}
-- **Browser**: {browser}
 
-## Steps to Reproduce
+## Reproduction
 {reproduction_steps}
 
-## Expected Behavior
-{expected_behavior}
+## Comparison
+**Expected**: {expected_behavior}
+**Actual**: {actual_behavior}
 
-## Actual Behavior
-{actual_behavior}
-
-## Error Messages
+## Logs
 ```
 {error_messages}
 ```
 
-## Screenshots/Logs
-If applicable, include screenshots or relevant log entries.
-
 ## Impact
 {impact}
+""",
+            },
+            "vlm_report": {
+                "filename_pattern": "YYYY-MM-DD_HHMM_vlm_report_{name}.md",
+                "directory": "../vlm_reports/",
+                "frontmatter": {
+                    "ads_version": "1.0",
+                    "type": "vlm_report",
+                    "category": "evaluation",
+                    "status": "active",
+                    "version": "1.0",
+                    "tags": ["vlm", "report", "analysis"],
+                },
+                "content_template": """# {title}
 
-<!-- OPTIONAL: Resolution sections - fill these during investigation and fixing -->
-## Investigation
+## Overview
+Brief description of the VLM analysis.
 
-### Root Cause Analysis
-{root_cause}
+## Analysis Result
+<!-- Paste analysis results here -->
 
-### Related Issues
-- Related issue 1
-- Related issue 2
+## Findings
+- Finding 1
+- Finding 2
 
-## Proposed Solution
-{proposed_solution}
-
-### Fix Strategy
-How to fix the issue.
-
-### Implementation Plan
-1. Step 1
-2. Step 2
-
-### Testing Plan
-How to test the fix.
-
-## Status
-- [ ] Confirmed
-- [ ] Investigating
-- [ ] Fix in progress
-- [ ] Fixed
-- [ ] Verified
-
-## Assignee
-Who is working on this bug.
-
-## Priority
-High/Medium/Low (urgency for fixing, separate from severity above)
+## Conclusion
+Summary of the analysis.
 
 ---
 
-*This bug report follows the project's standardized format for issue tracking.*""",
+*This VLM report follows the project's standardized format for VLM analysis.*""",
             },
         }
 
@@ -907,6 +532,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
             "methodology": "systematic analysis",
             "component/system": "the component",
             "purpose": "documentation",
+            "description": "Description of the artifact.",
             "bug_id": "001",
             # Bug Report Defaults
             "summary": "Brief description of the bug.",
@@ -938,6 +564,7 @@ High/Medium/Low (urgency for fixing, separate from severity above)
         name: str,
         title: str,
         output_dir: str = "docs/artifacts/",
+        quiet: bool = False,
         **kwargs,
     ) -> str:
         """Create a complete artifact file."""
@@ -984,8 +611,9 @@ High/Medium/Low (urgency for fixing, separate from severity above)
 
                 # If file was created within the last 5 minutes, reuse it
                 if time_diff < 300:  # 5 minutes = 300 seconds
-                    print(f"⚠️  Found recently created file: {existing_file.name}")
-                    print("   Reusing existing file instead of creating duplicate.")
+                    if not quiet:
+                        print(f"⚠️  Found recently created file: {existing_file.name}")
+                        print("   Reusing existing file instead of creating duplicate.")
                     return str(existing_file)
 
         # Create filename
@@ -1016,11 +644,12 @@ def create_artifact(
     name: str,
     title: str,
     output_dir: str = "docs/artifacts/",
+    quiet: bool = False,
     **kwargs,
 ) -> str:
     """Create a complete artifact file."""
     templates = ArtifactTemplates()
-    return templates.create_artifact(template_type, name, title, output_dir, **kwargs)
+    return templates.create_artifact(template_type, name, title, output_dir, quiet=quiet, **kwargs)
 
 
 def get_available_templates() -> list:

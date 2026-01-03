@@ -30,7 +30,7 @@ class PluginDiscovery:
     Discovers plugin files from registered directories.
 
     Discovery paths:
-    1. Framework plugins: {framework_root}/conventions/plugins/
+    1. Framework plugins: {framework_root}/.agentqms/plugins/
     2. Project plugins: {project_root}/.agentqms/plugins/
 
     This class only finds files - it does not read or validate them.
@@ -52,9 +52,11 @@ class PluginDiscovery:
         self.framework_root = framework_root or (project_root / "AgentQMS")
 
         # Standard plugin directories
-        self.framework_plugins_dir = self.framework_root / "conventions" / "plugins"
-        # Project plugins are now located inside the framework directory
-        self.project_plugins_dir = self.framework_root / ".agentqms" / "plugins"
+        # Framework plugins: {framework_root}/.agentqms/plugins/
+        self.framework_plugins_dir = self.framework_root / ".agentqms" / "plugins"
+
+        # Project plugins: {project_root}/.agentqms/plugins/
+        self.project_plugins_dir = self.project_root / ".agentqms" / "plugins"
 
     def discover_all(self) -> list[DiscoveredPlugin]:
         """
@@ -109,10 +111,10 @@ class PluginDiscovery:
         """
         plugins: list[DiscoveredPlugin] = []
 
-        # Artifact types: base_dir/artifact_types/*.yaml
+        # Artifact types: base_dir/artifact_types/**/*.yaml
         artifact_types_dir = base_dir / "artifact_types"
         if artifact_types_dir.exists():
-            for yaml_file in sorted(artifact_types_dir.glob("*.yaml")):
+            for yaml_file in sorted(artifact_types_dir.rglob("*.yaml")):
                 plugins.append(
                     DiscoveredPlugin(
                         path=yaml_file,
@@ -132,10 +134,10 @@ class PluginDiscovery:
                 )
             )
 
-        # Context bundles: base_dir/context_bundles/*.yaml
+        # Context bundles: base_dir/context_bundles/**/*.yaml
         context_bundles_dir = base_dir / "context_bundles"
         if context_bundles_dir.exists():
-            for yaml_file in sorted(context_bundles_dir.glob("*.yaml")):
+            for yaml_file in sorted(context_bundles_dir.rglob("*.yaml")):
                 plugins.append(
                     DiscoveredPlugin(
                         path=yaml_file,

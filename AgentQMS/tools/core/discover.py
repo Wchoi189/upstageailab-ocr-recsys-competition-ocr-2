@@ -17,7 +17,7 @@ def show_tools():
     print("📁 Architecture:")
     print("   Implementation Layer: AgentQMS.tools/ (canonical)")
     print("   Agent Interface: AgentQMS/interface/")
-    print("   See AgentQMS/knowledge/meta/MAINTAINERS.md for details.")
+    print("   See archive/archive_agentqms/internal_docs/meta/MAINTAINERS.md (Archived) for details.")
     print()
 
     categories = ["core", "compliance", "documentation", "utilities", "audit"]

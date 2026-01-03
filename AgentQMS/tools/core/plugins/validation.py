@@ -39,7 +39,7 @@ class PluginValidator:
     """
     Validates plugin data against JSON schemas.
 
-    Schemas are loaded from the conventions/schemas directory.
+    Schemas are loaded from the AgentQMS/standards/schemas directory.
     If jsonschema is not installed, validation is skipped.
     """
 

@@ -139,7 +139,7 @@ async def _get_template_list() -> str:
     try:
         from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
 
-        workflow = ArtifactWorkflow()
+        workflow = ArtifactWorkflow(quiet=True)
         templates = workflow.get_available_templates()
 
         # Return as JSON
@@ -166,6 +166,7 @@ async def list_tools() -> list[Tool]:
                             "bug_report",
                             "design_document",
                             "implementation_plan",
+                            "walkthrough",
                             "completed_plan",
                             "vlm_report",
                         ],
@@ -224,6 +225,20 @@ async def list_tools() -> list[Tool]:
                 "properties": {},
             },
         ),
+        Tool(
+            name="get_standard",
+            description="Retrieve project standard or rule content by name (fuzzy match)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "type": "string",
+                        "description": "Name of the standard (e.g. 'naming-conventions', 'artifact-types')",
+                    },
+                },
+                "required": ["name"],
+            },
+        ),
     ]
 
 
@@ -233,7 +248,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     try:
         from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
 
-        workflow = ArtifactWorkflow()
+        workflow = ArtifactWorkflow(quiet=True)
 
         if name == "create_artifact":
             artifact_type = arguments["artifact_type"]
@@ -315,6 +330,47 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 TextContent(
                     type="text",
                     text=json.dumps(report, indent=2)
+                )
+            ]
+
+        elif name == "get_standard":
+            query = arguments["name"].lower()
+            standards_dir = AGENTQMS_DIR / "standards"
+            matches = []
+
+            # Recursive search for .yaml and .md files
+            if standards_dir.exists():
+                for path in standards_dir.rglob("*"):
+                    if path.is_file() and path.suffix in [".yaml", ".md", ".json"]:
+                        if query in path.stem.lower():
+                            matches.append(path)
+
+            if not matches:
+                return [
+                    TextContent(
+                        type="text",
+                        text=json.dumps({"error": f"No standards found matching '{query}'"}, indent=2)
+                    )
+                ]
+
+            if len(matches) == 1:
+                 content = matches[0].read_text(encoding="utf-8")
+                 return [
+                     TextContent(
+                         type="text",
+                         text=f"Standard: {matches[0].name}\nLocation: {matches[0]}\n\n{content}"
+                     )
+                 ]
+
+            # Multiple matches
+            names = [str(p.relative_to(standards_dir)) for p in matches]
+            return [
+                TextContent(
+                    type="text",
+                    text=json.dumps({
+                        "message": "Multiple matches found. Please specify:",
+                        "matches": names
+                    }, indent=2)
                 )
             ]
 

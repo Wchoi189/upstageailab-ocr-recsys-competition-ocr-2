@@ -1,24 +1,35 @@
 ---
 title: "{{ title }}"
 author: "{{ author }}"
-date: "{{ date }}"
+timestamp: "{{ date }}"
+branch: "main"
+type: "bug_report"
+category: "troubleshooting"
 status: "draft"
-severity: "medium"
 tags: []
 ---
 
-## 1. Summary
+# Bug Report - {title}
+Bug ID: BUG-{bug_id}
 
-## 2. Steps to Reproduce
+## Summary
+{summary}
 
-## 3. Expected Behavior
+## Environment
+- **OS/Env**: {os_info}
+- **Dependencies**: {dependencies}
 
-## 4. Actual Behavior
+## Reproduction
+{reproduction_steps}
 
-## 5. Root Cause
+## Comparison
+**Expected**: {expected_behavior}
+**Actual**: {actual_behavior}
 
-## 6. Fix Summary
+## Logs
+```
+{error_messages}
+```
 
-## 7. Testing Notes
-
-
+## Impact
+{impact}

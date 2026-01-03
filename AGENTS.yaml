@@ -1,0 +1,55 @@
+---
+ads_version: "1.0"
+type: entrypoint
+description: "Master entrypoint for AI Agents. Read this first."
+context_map_location: "AgentQMS/standards/INDEX.yaml"
+
+project_standards:
+  workflow_rules: "AgentQMS/standards/tier1-sst/workflow-requirements.yaml"
+  artifact_standards: "AgentQMS/standards/tier1-sst/artifact-types.yaml"
+  system_architecture: "AgentQMS/standards/tier1-sst/system-architecture.yaml"
+  tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
+  naming_conventions: "AgentQMS/standards/tier1-sst/naming-conventions.yaml"
+
+package_management:
+  tool: "uv"
+  policy: "STRICT: Use `uv`, never `pip` directly. All python execution must be prefixed with `uv run` unless using `aqms`."
+  commands:
+    add: "uv add <pkg>"
+    sync: "uv sync"
+    run: "uv run python <script>"
+
+environment_tools:
+  validate_environment:
+    command: "uv run python scripts/validate_environment.py"
+    when: "After `uv sync` or environment changes"
+
+  agent_qms:
+    location: "AgentQMS/"
+    cli_entrypoint: "bin/aqms"
+    commands:
+      help: "bin/aqms help"
+      validate: "bin/aqms validate"
+      create_plan: "bin/aqms create-plan NAME=slug TITLE='Title'"
+      compliance: "bin/aqms compliance"
+
+  research:
+    tool: "Perplexity Client"
+    command: "python scripts/research/perplexity_client.py --query 'Query'"
+    requirements: "PERPLEXITY_API_KEY in .env.local"
+
+experiment_manager:
+  entrypoint: "experiment_manager/etk.py"
+  guides_dir: "experiment_manager/.ai-instructions/"
+  key_commands: ["init", "reconcile", "validate"]
+
+agent_configurations:
+  gemini: "AgentQMS/standards/tier3-agents/gemini/config.yaml"
+  claude: "AgentQMS/standards/tier3-agents/claude/config.yaml"
+  cursor: "AgentQMS/standards/tier3-agents/cursor/config.yaml"
+  copilot: "AgentQMS/standards/tier3-agents/copilot/config.yaml"
+
+critical_directives:
+  - "Do not hallucinate project standards. Read the `INDEX.yaml` first."
+  - "Follow the Agentic Documentation Standard (ADS) v1.0."
+  - "Always check `AgentQMS/standards` for the latest rules."

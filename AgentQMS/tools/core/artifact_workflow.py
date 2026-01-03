@@ -56,7 +56,7 @@ except ImportError:
 class ArtifactWorkflow:
     """Unified workflow for AI agents to manage artifacts."""
 
-    def __init__(self, artifacts_root: str | Path | None = None):
+    def __init__(self, artifacts_root: str | Path | None = None, quiet: bool = False):
         # Default to the configured artifacts directory if none is provided
         if artifacts_root is None:
             # Import lazily to avoid circular imports at module load time
@@ -67,6 +67,12 @@ class ArtifactWorkflow:
             self.artifacts_root = Path(artifacts_root)
         self.templates = ArtifactTemplates()
         self.validator = ArtifactValidator(self.artifacts_root)
+        self.quiet = quiet
+
+    def _log(self, msg: str = "") -> None:
+        """Log message if not in quiet mode."""
+        if not self.quiet:
+            print(msg)
 
     def create_artifact(
         self,
@@ -81,7 +87,7 @@ class ArtifactWorkflow:
         """Create a new artifact following project standards.
 
         Note: Implementation plans use Blueprint Protocol Template (PROTO-GOV-003).
-        See AgentQMS/knowledge/protocols/governance/implementation_plan_protocol.md
+        See archive/archive_agentqms/internal_docs/protocols/governance/implementation_plan_protocol.md (Archived)
 
         Args:
             artifact_type: Type of artifact to create
@@ -92,25 +98,25 @@ class ArtifactWorkflow:
             track: Auto-register in tracking DB (default: True for trackable types)
             **kwargs: Additional arguments passed to create_artifact
         """
-        print(f"🚀 Creating {artifact_type} artifact: {name}")
+        self._log(f"🚀 Creating {artifact_type} artifact: {name}")
 
         try:
             # Create the artifact
-            file_path: str = create_artifact(artifact_type, name, title, str(self.artifacts_root), **kwargs)
+            file_path: str = create_artifact(artifact_type, name, title, str(self.artifacts_root), quiet=self.quiet, **kwargs)
 
-            print(f"✅ Created artifact: {file_path}")
+            self._log(f"✅ Created artifact: {file_path}")
 
             # Auto-execution: Validate the created artifact
             if auto_validate:
-                print("🔍 Validating created artifact...")
+                self._log("🔍 Validating created artifact...")
                 results = self.validator.validate_single_file(Path(file_path))
 
                 if results["valid"]:
-                    print("✅ Artifact validation passed")
+                    self._log("✅ Artifact validation passed")
                 else:
-                    print("❌ Artifact validation failed:")
+                    self._log("❌ Artifact validation failed:")
                     for error in results["errors"]:
-                        print(f"   • {error}")
+                        self._log(f"   • {error}")
                     # Continue even if validation fails - return path
 
             # Auto-execution: Register in tracking DB
@@ -119,7 +125,7 @@ class ArtifactWorkflow:
 
             # Auto-execution: Update indexes
             if auto_update_indexes:
-                print("📝 Updating indexes...")
+                self._log("📝 Updating indexes...")
                 self.update_indexes()
 
             # Hook: Notify bundle system about artifact change
@@ -131,70 +137,71 @@ class ArtifactWorkflow:
             return file_path
 
         except Exception as e:
-            print(f"❌ Error creating artifact: {e}")
+            self._log(f"❌ Error creating artifact: {e}")
             raise
 
     def validate_artifact(self, file_path: str) -> bool:
         """Validate a specific artifact."""
-        print(f"🔍 Validating artifact: {file_path}")
+        self._log(f"🔍 Validating artifact: {file_path}")
 
         result = self.validator.validate_single_file(Path(file_path))
 
         if result["valid"]:
-            print("✅ Artifact validation passed")
+            self._log("✅ Artifact validation passed")
             return True
         else:
-            print("❌ Artifact validation failed:")
+            self._log("❌ Artifact validation failed:")
             for error in result["errors"]:
-                print(f"   • {error}")
+                self._log(f"   • {error}")
             return False
 
     def validate_all(self) -> bool:
         """Validate all artifacts."""
-        print("🔍 Validating all artifacts...")
+        self._log("🔍 Validating all artifacts...")
 
         results = self.validator.validate_all()
         report = self.validator.generate_report(results)
-        print(report)
+        self._log(report)
 
         # Check if any validation failed
         failed_count = sum(1 for r in results if not r["valid"])
         if failed_count > 0:
-            print(f"\n❌ {failed_count} artifacts failed validation")
+            self._log(f"\n❌ {failed_count} artifacts failed validation")
             return False
         else:
-            print("\n✅ All artifacts passed validation")
+            self._log("\n✅ All artifacts passed validation")
             return True
 
     def update_indexes(self) -> bool:
         """Update all artifact indexes."""
-        print("📝 Updating artifact indexes...")
+        self._log("📝 Updating artifact indexes...")
 
         try:
             # Run the index updater
+            reindex_script = str(Path(__file__).parent.parent.parent / "tools" / "documentation" / "reindex_artifacts.py")
             result = subprocess.run(
                 [
                     sys.executable,
-                    str(Path(__file__).parent.parent.parent / "agent_tools" / "documentation" / "reindex_artifacts.py"),
+                    reindex_script,
                 ],
                 capture_output=True,
                 text=True,
             )
 
             if result.returncode == 0:
-                print("✅ Indexes updated successfully")
+                self._log("✅ Indexes updated successfully")
                 return True
             else:
-                print(f"❌ Error updating indexes: {result.stderr}")
+                self._log(f"❌ Error updating indexes: {result.stderr}")
                 return False
 
         except Exception as e:
-            print(f"❌ Error running index updater: {e}")
+            self._log(f"❌ Error running index updater: {e}")
             return False
 
     def check_compliance(self) -> dict:
         """Check overall compliance with artifact standards."""
-        print("📊 Checking artifact compliance...")
+        self._log("📊 Checking artifact compliance...")
 
         results = self.validator.validate_all()
         total_files = len(results)
@@ -211,20 +218,20 @@ class ArtifactWorkflow:
             "violations": [r for r in results if not r["valid"]],
         }
 
-        print("📈 Compliance Report:")
-        print(f"   Total files: {total_files}")
-        print(f"   Valid files: {valid_files}")
-        print(f"   Invalid files: {invalid_files}")
-        print(f"   Compliance rate: {compliance_rate:.1f}%")
+        self._log("📈 Compliance Report:")
+        self._log(f"   Total files: {total_files}")
+        self._log(f"   Valid files: {valid_files}")
+        self._log(f"   Invalid files: {invalid_files}")
+        self._log(f"   Compliance rate: {compliance_rate:.1f}%")
 
         if invalid_files > 0:
-            print("\n❌ Violations found:")
+            self._log("\n❌ Violations found:")
             violations = compliance_report.get("violations", [])
             if isinstance(violations, list):
                 for violation in violations:
-                    print(f"   • {violation['file']}")
+                    self._log(f"   • {violation['file']}")
                     for error in violation["errors"]:
-                        print(f"     - {error}")
+                        self._log(f"     - {error}")
 
         return compliance_report
 
@@ -242,52 +249,52 @@ class ArtifactWorkflow:
                 register_artifact_in_tracking,
             )
 
-            print("📊 Registering in tracking database...")
+            self._log("📊 Registering in tracking database...")
             result = register_artifact_in_tracking(artifact_type, file_path, title, owner, track_flag=True)
 
             if result.get("tracked"):
-                print(f"✅ Registered in tracking DB: {result.get('tracking_type')} (key: {result.get('tracking_key')})")
+                self._log(f"✅ Registered in tracking DB: {result.get('tracking_type')} (key: {result.get('tracking_key')})")
             elif not result.get("should_track"):
                 # Not an error - this artifact type just isn't tracked
                 pass
             else:
                 # Failed to track but should have been tracked
                 reason = result.get("reason", "unknown")
-                print(f"⚠️  Tracking registration skipped: {reason}")
+                self._log(f"⚠️  Tracking registration skipped: {reason}")
 
         except ImportError:
             # Tracking integration not available - silently continue
             pass
         except Exception as e:
             # Don't fail artifact creation if tracking fails
-            print(f"⚠️  Tracking registration failed: {e}")
+            self._log(f"⚠️  Tracking registration failed: {e}")
 
     def _suggest_next_steps(self, artifact_type: str, file_path: str) -> None:
         """Suggest next steps after artifact creation."""
-        print("\n💡 Suggested next steps:")
+        self._log("\n💡 Suggested next steps:")
 
         # Suggest validation if not already done
-        print("   1. Review the artifact:")
-        print(f"      {file_path}")
+        self._log("   1. Review the artifact:")
+        self._log(f"      {file_path}")
 
         # Suggest compliance check
-        print("   2. Run compliance check:")
-        print("      cd AgentQMS/interface && make compliance")
+        self._log("   2. Run compliance check:")
+        self._log("      cd AgentQMS/interface && make compliance")
 
         # Suggest context loading if applicable
         if artifact_type == "implementation_plan":
-            print("   3. Load planning context:")
-            print("      cd AgentQMS/interface && make context-plan")
+            self._log("   3. Load planning context:")
+            self._log("      cd AgentQMS/interface && make context-plan")
         elif artifact_type == "bug_report":
-            print("   3. Load debugging context:")
-            print("      cd AgentQMS/interface && make context-debug")
+            self._log("   3. Load debugging context:")
+            self._log("      cd AgentQMS/interface && make context-debug")
 
         # Suggest related workflows
         if artifact_type in ["implementation_plan", "design"]:
-            print("   4. Consider creating related artifacts:")
-            print("      cd AgentQMS/interface && make create-assessment NAME=... TITLE=...")
+            self._log("   4. Consider creating related artifacts:")
+            self._log("      cd AgentQMS/interface && make create-assessment NAME=... TITLE=...")
 
-        print()
+        self._log()
 
     def update_bundles_on_artifact_change(self, artifact_path: str) -> None:
         """
@@ -347,24 +354,24 @@ class ArtifactWorkflow:
         """Show information about a specific template."""
         template = self.templates.get_template(template_type)
         if not template:
-            print(f"❌ Unknown template type: {template_type}")
+            self._log(f"❌ Unknown template type: {template_type}")
             return
 
-        print(f"📋 Template: {template_type}")
-        print(f"   Directory: {template['directory']}")
-        print(f"   Filename pattern: {template['filename_pattern']}")
-        print(f"   Frontmatter fields: {', '.join(template['frontmatter'].keys())}")
+        self._log(f"📋 Template: {template_type}")
+        self._log(f"   Directory: {template['directory']}")
+        self._log(f"   Filename pattern: {template['filename_pattern']}")
+        self._log(f"   Frontmatter fields: {', '.join(template['frontmatter'].keys())}")
 
     def interactive_create(self) -> str:
         """Interactive artifact creation for AI agents."""
-        print("🤖 AI Agent Artifact Creation")
-        print("=" * 40)
+        self._log("🤖 AI Agent Artifact Creation")
+        self._log("=" * 40)
 
         # Show available templates
         templates = self.get_available_templates()
-        print("Available artifact types:")
+        self._log("Available artifact types:")
         for i, template_type in enumerate(templates, 1):
-            print(f"  {i}. {template_type}")
+            self._log(f"  {i}. {template_type}")
 
         # Get artifact type
         while True:
@@ -374,25 +381,25 @@ class ArtifactWorkflow:
                     artifact_type = templates[int(choice) - 1]
                     break
                 else:
-                    print("❌ Invalid choice. Please try again.")
+                    self._log("❌ Invalid choice. Please try again.")
             except KeyboardInterrupt:
-                print("\n❌ Cancelled by user")
+                self._log("\n❌ Cancelled by user")
                 return ""
 
         # Get artifact name
         name = input("Enter artifact name (kebab-case): ").strip()
         if not name:
-            print("❌ Name is required")
+            self._log("❌ Name is required")
             return ""
 
         # Get title
         title = input("Enter artifact title: ").strip()
         if not title:
-            print("❌ Title is required")
+            self._log("❌ Title is required")
             return ""
 
         # Get additional information
-        print("\nAdditional information (optional):")
+        self._log("\nAdditional information (optional):")
         description = input("Description: ").strip()
         tags = input("Tags (comma-separated): ").strip()
 
@@ -408,10 +415,10 @@ class ArtifactWorkflow:
         # Create artifact
         try:
             file_path = self.create_artifact(artifact_type, name, title, **kwargs)
-            print(f"\n🎉 Successfully created artifact: {file_path}")
+            self._log(f"\n🎉 Successfully created artifact: {file_path}")
             return file_path
         except Exception as e:
-            print(f"\n❌ Failed to create artifact: {e}")
+            self._log(f"\n❌ Failed to create artifact: {e}")
             return ""
 
 

@@ -9,7 +9,7 @@ if [ -n "$CAPS_FILES" ]; then
     echo "$CAPS_FILES"
     echo ""
     echo "💡 Use proper naming: YYYY-MM-DD_HHMM_{TYPE}_slug.md"
-    echo "💡 Create via: cd AgentQMS/interface && make create-{TYPE}"
+    echo "💡 Create via: cd AgentQMS/bin && make create-{TYPE}"
     echo ""
     echo "See: AgentQMS/standards/tier1-sst/naming-conventions.yaml"
     exit 1

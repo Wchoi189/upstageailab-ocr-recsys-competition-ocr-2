@@ -4,7 +4,7 @@ type: rule_set
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 90
 date: "2025-12-21"
@@ -35,6 +35,9 @@ artifact_types:
     vlm_report:
       location: "docs/artifacts/vlm_reports/"
       purpose: "VLM image analysis outputs"
+    walkthrough:
+      location: "docs/artifacts/walkthroughs/"
+      purpose: "Step-by-step guides, verification proofs, demo documentation"
 
   prohibited:
     - type: completion_report

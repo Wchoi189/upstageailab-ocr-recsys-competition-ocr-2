@@ -41,7 +41,7 @@ class SmartPopulator:
             project_root = get_project_root()
 
         self.project_root = Path(project_root)
-        self.rules_file = self.project_root / "AgentQMS" / "knowledge" / "agent" / "artifact_rules.yaml"
+        self.rules_file = self.project_root / "AgentQMS" / "standards" / "tier1-sst" / "artifact_rules.yaml"
         self._rules = self._load_rules()
         self._git_context = self._analyze_git()
 

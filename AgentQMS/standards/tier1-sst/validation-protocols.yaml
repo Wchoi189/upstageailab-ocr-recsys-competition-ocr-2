@@ -4,7 +4,7 @@ type: rule_set
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 60
 date: "2025-12-16"
@@ -16,34 +16,34 @@ depends_on: ["workflow-requirements.yaml"]
 validation_commands:
   primary:
     validate:
-      command: "cd AgentQMS/interface && make validate"
+      command: "cd AgentQMS/bin && make validate"
       purpose: "Validate all artifacts (naming, frontmatter, structure)"
       frequency: "After EVERY artifact operation"
       failure: "BLOCK - Fix before proceeding"
 
     compliance:
-      command: "cd AgentQMS/interface && make compliance"
+      command: "cd AgentQMS/bin && make compliance"
       purpose: "Check AgentQMS framework compliance"
       frequency: "Before commits"
       failure: "BLOCK - Address violations"
 
     boundary:
-      command: "cd AgentQMS/interface && make boundary"
+      command: "cd AgentQMS/bin && make boundary"
       purpose: "Verify framework boundaries"
       frequency: "Weekly or after major changes"
       failure: "WARN - Review boundaries"
 
   discovery:
     help:
-      command: "cd AgentQMS/interface && make help"
+      command: "cd AgentQMS/bin && make help"
       purpose: "Show available make targets"
 
     discover:
-      command: "cd AgentQMS/interface && make discover"
+      command: "cd AgentQMS/bin && make discover"
       purpose: "List all AgentQMS tools"
 
     status:
-      command: "cd AgentQMS/interface && make status"
+      command: "cd AgentQMS/bin && make status"
       purpose: "Check framework status"
 
 validation_workflow:

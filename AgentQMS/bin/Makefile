@@ -27,7 +27,7 @@ help: ## Show agent help message
 
 # Discovery and Help
 discover: ## Discover all available agent tools
-	python ../tools/core/discover.py
+	uv run python ../tools/core/discover.py
 
 tools: discover ## Alias for discover
 
@@ -45,25 +45,25 @@ status: ## Check overall system status
 
 # Artifact Management
 create-plan: ## Create implementation plan (usage: make create-plan NAME=my-plan TITLE="My Plan")
-	python ../tools/core/artifact_workflow.py create --type implementation_plan --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type implementation_plan --name $(NAME) --title "$(TITLE)"
 
 create-assessment: ## Create assessment (usage: make create-assessment NAME=my-assessment TITLE="My Assessment")
-	python ../tools/core/artifact_workflow.py create --type assessment --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type assessment --name $(NAME) --title "$(TITLE)"
 
 create-audit: ## Create audit (usage: make create-audit NAME=my-audit TITLE="My Audit")
-	python ../tools/core/artifact_workflow.py create --type audit --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type audit --name $(NAME) --title "$(TITLE)"
 
 create-design: ## Create design document (usage: make create-design NAME=my-design TITLE="My Design")
-	python ../tools/core/artifact_workflow.py create --type design --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type design --name $(NAME) --title "$(TITLE)"
 
 create-research: ## Create research document (usage: make create-research NAME=my-research TITLE="My Research")
-	python ../tools/core/artifact_workflow.py create --type research --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type research --name $(NAME) --title "$(TITLE)"
 
 create-template: ## Create template (usage: make create-template NAME=my-template TITLE="My Template")
-	python ../tools/core/artifact_workflow.py create --type template --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type template --name $(NAME) --title "$(TITLE)"
 
 create-bug-report: ## Create bug report (usage: make create-bug-report NAME=my-bug TITLE="My Bug Report")
-	python ../tools/core/artifact_workflow.py create --type bug_report --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type bug_report --name $(NAME) --title "$(TITLE)"
 
 # Smart Auto-Population for Artifacts
 smart-suggest-metadata: ## Suggest metadata for artifact (usage: make smart-suggest-metadata TYPE=implementation_plan)
@@ -71,32 +71,32 @@ smart-suggest-metadata: ## Suggest metadata for artifact (usage: make smart-sugg
 		echo "ERROR: TYPE parameter required. Usage: make smart-suggest-metadata TYPE=implementation_plan"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/smart_populate.py suggest-metadata --type "$(TYPE)" --json
+	uv run python ../tools/utilities/smart_populate.py suggest-metadata --type "$(TYPE)" --json
 
 smart-suggest-tags: ## Suggest tags for artifact type (usage: make smart-suggest-tags TYPE=assessment)
 	@if [ -z "$(TYPE)" ]; then \
 		echo "ERROR: TYPE parameter required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/smart_populate.py suggest-tags --type "$(TYPE)"
+	uv run python ../tools/utilities/smart_populate.py suggest-tags --type "$(TYPE)"
 
 smart-suggest-files: ## Suggest related files (usage: make smart-suggest-files TYPE=bug_report LIMIT=5)
 	@if [ -z "$(TYPE)" ]; then \
 		echo "ERROR: TYPE parameter required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/smart_populate.py suggest-files --type "$(TYPE)" $(if $(LIMIT),--limit $(LIMIT),)
+	uv run python ../tools/utilities/smart_populate.py suggest-files --type "$(TYPE)" $(if $(LIMIT),--limit $(LIMIT),)
 
 smart-frontmatter: ## Generate artifact frontmatter (usage: make smart-frontmatter TYPE=design)
 	@if [ -z "$(TYPE)" ]; then \
 		echo "ERROR: TYPE parameter required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/smart_populate.py frontmatter --type "$(TYPE)"
+	uv run python ../tools/utilities/smart_populate.py frontmatter --type "$(TYPE)"
 
 # Legacy Artifact Migration
 artifacts-find: ## Find legacy artifacts (usage: make artifacts-find LIMIT=10)
-	python ../tools/utilities/legacy_migrator.py find $(if $(LIMIT),--limit $(LIMIT),)
+	uv run python ../tools/utilities/legacy_migrator.py find $(if $(LIMIT),--limit $(LIMIT),)
 
 artifacts-migrate-dry: ## Show artifact migrations without applying (usage: make artifacts-migrate-dry FILE=path/to/artifact.md)
 	@if [ -n "$(FILE)" ]; then \
@@ -117,13 +117,13 @@ artifacts-migrate: ## Migrate artifacts to current naming convention (usage: mak
 	fi
 
 artifacts-detect-moves: ## Detect manually moved/renamed artifacts
-	python ../tools/utilities/legacy_migrator.py detect-moves
+	uv run python ../tools/utilities/legacy_migrator.py detect-moves
 
 artifacts-repair-moves: ## Repair manually moved artifacts (remove duplicates)
-	python ../tools/utilities/legacy_migrator.py detect-moves --repair
+	uv run python ../tools/utilities/legacy_migrator.py detect-moves --repair
 
 artifacts-repair-moves-preview: ## Preview manual move repairs
-	python ../tools/utilities/legacy_migrator.py detect-moves --repair --dry-run
+	uv run python ../tools/utilities/legacy_migrator.py detect-moves --repair --dry-run
 
 # Validation and Compliance
 
@@ -176,13 +176,13 @@ audit-framework-verbose: ## Audit framework with verbose output
 	uv run python ../tools/audit/framework_audit.py --verbose
 
 audit-framework-json: ## Audit framework and output JSON results
-	python ../tools/audit/framework_audit.py --json
+	uv run python ../tools/audit/framework_audit.py --json
 
 audit-framework-plugins: ## Audit plugins only
-	python ../tools/audit/framework_audit.py --plugins-only
+	uv run python ../tools/audit/framework_audit.py --plugins-only
 
 audit-framework-templates: ## Audit templates only
-	python ../tools/audit/framework_audit.py --templates-only
+	uv run python ../tools/audit/framework_audit.py --templates-only
 
 # Artifact Audit (Safe Mode)
 audit-fix-batch: ## Preview batch N changes (usage: make audit-fix-batch BATCH=1)
@@ -233,23 +233,23 @@ archive-artifacts: ## Move archived artifacts to archive/artifacts/
 
 audit-vlm-migrate: ## Migrate VLM reports from BUG prefix to vlm_report_ prefix
 	@echo "🔍 Previewing VLM reports migration..."
-	python ../tools/utilities/migrate_vlm_reports.py --dry-run
+	uv run python ../tools/utilities/migrate_vlm_reports.py --dry-run
 	@echo ""
 	@echo "💡 To apply migration, run: make audit-vlm-migrate-apply"
 
 audit-vlm-migrate-apply: ## Apply VLM reports migration
-	python ../tools/utilities/migrate_vlm_reports.py
+	uv run python ../tools/utilities/migrate_vlm_reports.py
 
 # Deprecated Code Registry
 deprecated-list: ## List all deprecated symbols
-	python ../tools/utilities/deprecated_registry.py list
+	uv run python ../tools/utilities/deprecated_registry.py list
 
 deprecated-register: ## Register a deprecated symbol (usage: make deprecated-register SYMBOL=Name FILE=path REPLACEMENT=path)
 	@if [ -z "$(SYMBOL)" ] || [ -z "$(FILE)" ] || [ -z "$(REPLACEMENT)" ]; then \
 		echo "ERROR: SYMBOL, FILE, and REPLACEMENT parameters required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/deprecated_registry.py register "$(SYMBOL)" "$(FILE)" "$(REPLACEMENT)" \
+	uv run python ../tools/utilities/deprecated_registry.py register "$(SYMBOL)" "$(FILE)" "$(REPLACEMENT)" \
 		$(if $(REMOVAL_PLAN),--removal-plan "$(REMOVAL_PLAN)",) \
 		$(if $(REMOVAL_DATE),--removal-date "$(REMOVAL_DATE)",) \
 		$(if $(DESCRIPTION),--description "$(DESCRIPTION)",)
@@ -267,7 +267,7 @@ deprecated-validate: ## Validate artifacts for deprecated references (usage: mak
 
 # Tracking Database Repair
 track-init: ## Initialize tracking database
-	@python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.tools.utilities.tracking.db import init_db; init_db(); print('✅ Tracking database initialized')"
+	@uv run python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.tools.utilities.tracking.db import init_db; init_db(); print('✅ Tracking database initialized')"
 
 track-repair: ## Repair tracking database artifact paths (usage: make track-repair [DRY_RUN=1])
 	@if [ "$(DRY_RUN)" = "1" ]; then \
@@ -277,10 +277,10 @@ track-repair: ## Repair tracking database artifact paths (usage: make track-repa
 	fi
 
 track-repair-preview: ## Preview tracking database repairs without applying
-	python ../tools/utilities/tracking_repair.py --dry-run
+	uv run python ../tools/utilities/tracking_repair.py --dry-run
 
 track-status: ## Show tracking database status
-	@python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.tools.utilities.tracking.query import get_status; print(get_status('all'))"
+	@uv run python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.tools.utilities.tracking.query import get_status; print(get_status('all'))"
 
 compliance: plugins-snapshot ## Check compliance status
 	uv run python ../tools/compliance/monitor_artifacts.py --check
@@ -293,22 +293,22 @@ compliance-dashboard: ## Open enhanced compliance dashboard (DEPRECATED)
 
 # Documentation Management
 docs-generate: ## Generate documentation index
-	python ../tools/documentation/auto_generate_index.py --validate
+	uv run python ../tools/documentation/auto_generate_index.py --validate
 
 docs-regenerate: ## Regenerate all documentation
-	python ../tools/documentation/regenerate_docs.py
+	uv run python ../tools/documentation/regenerate_docs.py
 
 docs-update-indexes: ## Update artifact indexes
-	python ../tools/documentation/update_artifact_indexes.py --all
+	uv run python ../tools/documentation/update_artifact_indexes.py --all
 
 docs-validate-links: ## Validate documentation links
-	python ../tools/documentation/validate_links.py AgentQMS/knowledge
+	uv run python ../tools/documentation/validate_links.py AgentQMS/knowledge
 
 docs-validate-manifest: ## Validate documentation manifest
-	python ../tools/documentation/validate_manifest.py
+	uv run python ../tools/documentation/validate_manifest.py
 
 docs-validate-metadata: ## Validate documentation metadata
-	python ../tools/documentation/validate_metadata.py
+	uv run python ../tools/documentation/validate_metadata.py
 
 # Context Bundles
 context: ## Generate context bundle for task (usage: make context TASK="task description")
@@ -316,101 +316,101 @@ context: ## Generate context bundle for task (usage: make context TASK="task des
 		echo "ERROR: TASK parameter required. Usage: make context TASK=\"task description\""; \
 		exit 1; \
 	fi
-	python ../tools/utilities/get_context.py --task "$(TASK)"
+	uv run python ../tools/utilities/get_context.py --task "$(TASK)"
 
 context-development: ## Get development context bundle
-	python ../tools/utilities/get_context.py --type development
+	uv run python ../tools/utilities/get_context.py --type development
 
 context-docs: ## Get documentation context bundle
-	python ../tools/utilities/get_context.py --type documentation
+	uv run python ../tools/utilities/get_context.py --type documentation
 
 context-debug: ## Get debugging context bundle
-	python ../tools/utilities/get_context.py --type debugging
+	uv run python ../tools/utilities/get_context.py --type debugging
 
 context-plan: ## Get planning context bundle
-	python ../tools/utilities/get_context.py --type planning
+	uv run python ../tools/utilities/get_context.py --type planning
 
 context-list: ## List all available context bundles
-	python ../tools/utilities/get_context.py --list-bundles
+	uv run python ../tools/utilities/get_context.py --list-bundles
 
 context-suggest: ## Suggest context bundles for task (usage: make context-suggest TASK="task description")
 	@if [ -z "$(TASK)" ]; then \
 		echo "ERROR: TASK parameter required. Usage: make context-suggest TASK=\"task description\""; \
 		exit 1; \
 	fi
-	python ../tools/utilities/suggest_context.py "$(TASK)"
+	uv run python ../tools/utilities/suggest_context.py "$(TASK)"
 
 plan-progress: ## Show or update plan progress (usage: make plan-progress show FILE=path/to/plan.md)
 	@if [ -z "$(FILE)" ]; then \
 		echo "ERROR: FILE parameter required. Usage: make plan-progress show FILE=path/to/plan.md"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/plan_progress.py $(ACTION) --file "$(FILE)"
+	uv run python ../tools/utilities/plan_progress.py $(ACTION) --file "$(FILE)"
 
 plan-progress-show: ## Show plan progress (usage: make plan-progress-show FILE=path/to/plan.md)
 	@if [ -z "$(FILE)" ]; then \
 		echo "ERROR: FILE parameter required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/plan_progress.py show --file "$(FILE)"
+	uv run python ../tools/utilities/plan_progress.py show --file "$(FILE)"
 
 plan-progress-update: ## Update plan status (usage: make plan-progress-update FILE=plan.md STATUS="New Status")
 	@if [ -z "$(FILE)" ] || [ -z "$(STATUS)" ]; then \
 		echo "ERROR: FILE and STATUS parameters required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/plan_progress.py update-status --file "$(FILE)" --status "$(STATUS)"
+	uv run python ../tools/utilities/plan_progress.py update-status --file "$(FILE)" --status "$(STATUS)"
 
 plan-progress-complete: ## Mark task as complete (usage: make plan-progress-complete FILE=plan.md TASK="Task X.X")
 	@if [ -z "$(FILE)" ] || [ -z "$(TASK)" ]; then \
 		echo "ERROR: FILE and TASK parameters required."; \
 		exit 1; \
 	fi
-	python ../tools/utilities/plan_progress.py mark-complete --file "$(FILE)" --task "$(TASK)"
+	uv run python ../tools/utilities/plan_progress.py mark-complete --file "$(FILE)" --task "$(TASK)"
 
 # Audit Framework Tools
 audit-init: ## Initialize audit (usage: make audit-init FRAMEWORK="Framework Name" DATE="2025-11-09" SCOPE="Scope description")
-	python ../tools/audit/audit_generator.py init \
+	uv run python ../tools/audit/audit_generator.py init \
 		--framework-name "$(FRAMEWORK)" \
 		--audit-date "$(DATE)" \
 		--audit-scope "$(SCOPE)" \
 		--output-dir "docs/audit"
 
 audit-validate: ## Validate audit documents
-	python ../tools/audit/audit_validator.py validate --audit-dir "docs/audit"
+	uv run python ../tools/audit/audit_validator.py validate --audit-dir "docs/audit"
 
 audit-checklist-generate: ## Generate checklist for phase (usage: make audit-checklist-generate PHASE="discovery")
-	python ../tools/audit/checklist_tool.py generate \
+	uv run python ../tools/audit/checklist_tool.py generate \
 		--phase "$(PHASE)" \
 		--output "docs/audit/checklist_$(PHASE).md"
 
 audit-checklist-report: ## Generate audit progress report
-	python ../tools/audit/checklist_tool.py report --audit-dir "docs/audit"
+	uv run python ../tools/audit/checklist_tool.py report --audit-dir "docs/audit"
 
 docs-validate-templates: ## Validate documentation templates
-	python ../tools/documentation/validate_templates.py
+	uv run python ../tools/documentation/validate_templates.py
 
 docs-validate-ui-schema: ## Validate UI schema documentation
-	python ../tools/documentation/validate_ui_schema.py
+	uv run python ../tools/documentation/validate_ui_schema.py
 
 docs-validate-ai: ## Validate AI documentation (DEPRECATED)
 	@echo "⚠️  docs-validate-ai is deprecated. Use other docs-validate-* commands." && exit 0
 
 # Feedback and Quality
 feedback-report: ## Generate feedback report
-	python ../tools/utilities/agent_feedback.py --report
+	uv run python ../tools/utilities/agent_feedback.py --report
 
 feedback-issue: ## Report documentation issue (usage: make feedback-issue ISSUE="description" FILE="path")
-	python ../tools/utilities/agent_feedback.py --issue "$(ISSUE)" --file "$(FILE)" --description "Agent reported issue"
+	uv run python ../tools/utilities/agent_feedback.py --issue "$(ISSUE)" --file "$(FILE)" --description "Agent reported issue"
 
 feedback-suggest: ## Suggest improvement (usage: make feedback-suggest AREA="area" CURRENT="current" CHANGE="suggested" RATIONALE="reason")
-	python ../tools/utilities/agent_feedback.py --suggest --area "$(AREA)" --current "$(CURRENT)" --change "$(CHANGE)" --rationale "$(RATIONALE)"
+	uv run python ../tools/utilities/agent_feedback.py --suggest --area "$(AREA)" --current "$(CURRENT)" --change "$(CHANGE)" --rationale "$(RATIONALE)"
 
 quality-check: ## Check documentation quality
-	python ../tools/compliance/documentation_quality_monitor.py --report
+	uv run python ../tools/compliance/documentation_quality_monitor.py --report
 
 quality-check-output: ## Check documentation quality and save to file
-	python ../tools/compliance/documentation_quality_monitor.py --report --output logs/quality/quality_report_$(shell date +%Y%m%d_%H%M).md
+	uv run python ../tools/compliance/documentation_quality_monitor.py --report --output logs/quality/quality_report_$(shell date +%Y%m%d_%H%M).md
 
 ast-analyze: ## Run AST analysis on codebase (usage: make ast-analyze [TARGET=path/to/code])
 	@if [ -n "$(TARGET)" ]; then \
@@ -424,14 +424,14 @@ ast-generate-tests: ## Generate test scaffolds using AST analysis (usage: make a
 		echo "ERROR: TARGET parameter required. Usage: make ast-generate-tests TARGET=path/to/module.py"; \
 		exit 1; \
 	fi
-	python ./cli_tools/ast_analysis.py generate-tests "$(TARGET)"
+	uv run python ./cli_tools/ast_analysis.py generate-tests "$(TARGET)"
 
 ast-extract-docs: ## Extract documentation from code using AST (usage: make ast-extract-docs TARGET=path/to/module.py)
 	@if [ -z "$(TARGET)" ]; then \
 		echo "ERROR: TARGET parameter required. Usage: make ast-extract-docs TARGET=path/to/module.py"; \
 		exit 1; \
 	fi
-	python ./cli_tools/ast_analysis.py extract-docs "$(TARGET)"
+	uv run python ./cli_tools/ast_analysis.py extract-docs "$(TARGET)"
 
 ast-check-quality: ## Check code quality using AST analysis (usage: make ast-check-quality [TARGET=path/to/code])
 	@if [ -n "$(TARGET)" ]; then \
@@ -441,7 +441,7 @@ ast-check-quality: ## Check code quality using AST analysis (usage: make ast-che
 	fi
 
 context-bundle: ## Get specific context bundle (usage: make context-bundle BUNDLE=bundle-name)
-	python ../tools/utilities/get_context.py --bundle $(BUNDLE)
+	uv run python ../tools/utilities/get_context.py --bundle $(BUNDLE)
 
 # Workflow Commands
 workflow-create: ## Complete workflow: create artifact, validate, update indexes
@@ -453,46 +453,46 @@ workflow-create: ## Complete workflow: create artifact, validate, update indexes
 		echo "❌ Missing required parameters"; \
 		exit 1; \
 	fi
-	python ../tools/core/artifact_workflow.py create --type $(TYPE) --name $(NAME) --title "$(TITLE)"
+	uv run python ../tools/core/artifact_workflow.py create --type $(TYPE) --name $(NAME) --title "$(TITLE)"
 	@echo "✅ Artifact created"
 	@echo "🔍 Validating artifact..."
-	python ../tools/compliance/validate_artifacts.py --all
+	uv run python ../tools/compliance/validate_artifacts.py --all
 	@echo "📊 Updating indexes..."
-	python ../tools/documentation/update_artifact_indexes.py --all
+	uv run python ../tools/documentation/update_artifact_indexes.py --all
 	@echo "🎉 Workflow completed successfully!"
 
 workflow-validate: ## Complete validation workflow: validate, fix, monitor
 	@echo "🔍 Starting validation workflow..."
 	@echo "📋 Validating all artifacts..."
-	python ../tools/compliance/validate_artifacts.py --all
+	uv run python ../tools/compliance/validate_artifacts.py --all
 	@echo "📊 Checking compliance status..."
-	python ../tools/compliance/monitor_artifacts.py --check
+	uv run python ../tools/compliance/monitor_artifacts.py --check
 	@echo "💡 Note: Automated compliance fixes are available via maintenance scripts"
 	@echo "🎉 Validation workflow completed!"
 
 workflow-docs: ## Complete documentation workflow: generate, validate, update
 	@echo "📚 Starting documentation workflow..."
 	@echo "🔄 Generating documentation index..."
-	python ../tools/documentation/auto_generate_index.py --validate
+	uv run python ../tools/documentation/auto_generate_index.py --validate
 	@echo "🔗 Validating documentation links..."
-	python ../tools/documentation/validate_links.py AgentQMS/knowledge
+	uv run python ../tools/documentation/validate_links.py AgentQMS/knowledge
 	@echo "📊 Updating artifact indexes..."
-	python ../tools/documentation/update_artifact_indexes.py --all
+	uv run python ../tools/documentation/update_artifact_indexes.py --all
 	@echo "🎉 Documentation workflow completed!"
 
 # Tracking (CLI-first)
 plan-new: ## Create plan (usage: make plan-new TITLE="..." OWNER="me" [KEY=slug])
-	python ../tools/utilities/tracking/cli.py plan new --title "$(TITLE)" $(if $(OWNER),--owner "$(OWNER)",) $(if $(KEY),--key "$(KEY)",)
+	uv run python ../tools/utilities/tracking/cli.py plan new --title "$(TITLE)" $(if $(OWNER),--owner "$(OWNER)",) $(if $(KEY),--key "$(KEY)",)
 
 exp-new: ## Create experiment (usage: make exp-new TITLE="..." OBJECTIVE="..." OWNER="me" [KEY=slug])
-	python ../tools/utilities/tracking/cli.py exp new --title "$(TITLE)" $(if $(OBJECTIVE),--objective "$(OBJECTIVE)",) $(if $(OWNER),--owner "$(OWNER)",) $(if $(KEY),--key "$(KEY)",)
+	uv run python ../tools/utilities/tracking/cli.py exp new --title "$(TITLE)" $(if $(OBJECTIVE),--objective "$(OBJECTIVE)",) $(if $(OWNER),--owner "$(OWNER)",) $(if $(KEY),--key "$(KEY)",)
 
 exp-export: ## Export experiment runs to CSV (usage: make exp-export OUT=data/ops/experiment_runs.csv)
 	@if [ -z "$(OUT)" ]; then \
 		echo "ERROR: OUT parameter required. Example: make exp-export OUT=data/ops/experiment_runs.csv"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/tracking/cli.py exp export-runs --out "$(OUT)"
+	uv run python ../tools/utilities/tracking/cli.py exp export-runs --out "$(OUT)"
 
 # Framework Export & Adoption
 agentqms-init: ## Initialize AgentQMS in a new project (usage: make agentqms-init TARGET=/path/to/project)
@@ -526,11 +526,11 @@ dev-setup: ## Setup development environment
 
 dev-test: ## Test all agent tools
 	@echo "🧪 Testing agent tools..."
-	python ../tools/core/discover.py
-	python ../tools/core/artifact_workflow.py --help
-	python ../tools/compliance/validate_artifacts.py --help
-	python ../tools/documentation/auto_generate_index.py --help
-	python ../tools/utilities/agent_feedback.py --help
+	uv run python ../tools/core/discover.py
+	uv run python ../tools/core/artifact_workflow.py --help
+	uv run python ../tools/compliance/validate_artifacts.py --help
+	uv run python ../tools/documentation/auto_generate_index.py --help
+	uv run python ../tools/utilities/agent_feedback.py --help
 	@echo "✅ All tools tested successfully"
 
 # Information Commands
@@ -572,7 +572,7 @@ quick-status: status ## Quick status check (alias for status)
 
 # Catalog and Index Generation
 tool-catalog: ## Generate tool catalog and scripts index
-	python ../tools/utilities/generate_tool_catalog.py
+	uv run python ../tools/utilities/generate_tool_catalog.py
 
 generate-registry: ## Generate tool registry and context files for auto-discovery
 	@echo "🔧 Generating tool registry and context files..."
@@ -590,21 +590,21 @@ export: ## Export framework to project-agnostic package (usage: make export OUTP
 		echo "ERROR: OUTPUT parameter required. Usage: make export OUTPUT=export_package/"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/export_framework.py --output "$(OUTPUT)" --project-root ../..
+	uv run python ../tools/utilities/export_framework.py --output "$(OUTPUT)" --project-root ../..
 
 export-dry-run: ## Dry run export (see what would be exported) (usage: make export-dry-run OUTPUT=export_package/)
 	@if [ -z "$(OUTPUT)" ]; then \
 		echo "ERROR: OUTPUT parameter required. Usage: make export-dry-run OUTPUT=export_package/"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/export_framework.py --output "$(OUTPUT)" --project-root ../.. --dry-run
+	uv run python ../tools/utilities/export_framework.py --output "$(OUTPUT)" --project-root ../.. --dry-run
 
 export-validate: ## Export framework with validation (usage: make export-validate OUTPUT=export_package/)
 	@if [ -z "$(OUTPUT)" ]; then \
 		echo "ERROR: OUTPUT parameter required. Usage: make export-validate OUTPUT=export_package/"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/export_framework.py --output "$(OUTPUT)" --project-root ../.. --validate
+	uv run python ../tools/utilities/export_framework.py --output "$(OUTPUT)" --project-root ../.. --validate
 
 # Versioning and Deprecation
 version-bump: ## Bump project version (usage: make version-bump VERSION=0.8.0 NOTES="..." DATE=YYYY-MM-DDTHH:MM:SSZ)
@@ -617,38 +617,38 @@ version-bump: ## Bump project version (usage: make version-bump VERSION=0.8.0 NO
 	echo "Wrote ../project_version.yaml"
 
 docs-deprecate: ## Deprecate docs based on project_version.yaml (add --dry-run with DRY_RUN=1)
-	python ../tools/documentation/deprecate_docs.py $(if $(DRY_RUN),--dry-run,)
-	python ../tools/documentation/update_artifact_indexes.py --all
-	python ../tools/compliance/validate_artifacts.py --all
+	uv run python ../tools/documentation/deprecate_docs.py $(if $(DRY_RUN),--dry-run,)
+	uv run python ../tools/documentation/update_artifact_indexes.py --all
+	uv run python ../tools/compliance/validate_artifacts.py --all
 
 changelog-draft: ## Generate changelog draft from tracking DB and git log
-	python ../tools/documentation/generate_changelog_draft.py
+	uv run python ../tools/documentation/generate_changelog_draft.py
 
 changelog-preview: ## Preview changelog draft without writing file
-	python ../tools/documentation/generate_changelog_draft.py --preview
+	uv run python ../tools/documentation/generate_changelog_draft.py --preview
 
 # Artifact Status and Lifecycle Management
 artifacts-status: ## Show artifact status dashboard with aging and lifecycle information
-	python ../tools/utilities/artifacts_status.py
+	uv run python ../tools/utilities/artifacts_status.py
 
 artifacts-status-dashboard: ## Show full dashboard view of artifact health
-	python ../tools/utilities/artifacts_status.py --dashboard
+	uv run python ../tools/utilities/artifacts_status.py --dashboard
 
 artifacts-status-compact: ## Show compact table view of artifact status
-	python ../tools/utilities/artifacts_status.py --compact
+	uv run python ../tools/utilities/artifacts_status.py --compact
 
 artifacts-status-aging: ## Show aging information for all artifacts
-	python ../tools/utilities/artifacts_status.py --aging-only
+	uv run python ../tools/utilities/artifacts_status.py --aging-only
 
 artifacts-status-json: ## Output artifact status as JSON
-	python ../tools/utilities/artifacts_status.py --json
+	uv run python ../tools/utilities/artifacts_status.py --json
 
 artifacts-status-threshold: ## Show artifacts older than threshold days (usage: make artifacts-status-threshold DAYS=90)
 	@if [ -z "$(DAYS)" ]; then \
 		echo "ERROR: DAYS parameter required. Usage: make artifacts-status-threshold DAYS=90"; \
 		exit 1; \
 	fi
-	python ../tools/utilities/artifacts_status.py --threshold $(DAYS)
+	uv run python ../tools/utilities/artifacts_status.py --threshold $(DAYS)
 
 # All-in-one Commands
 all-check: validate compliance quality-check ## Run all checks: validate, compliance, quality
@@ -661,7 +661,7 @@ emergency-reset: clean clean-feedback ## Emergency: reset and clean everything
 
 # IDE Configuration
 ide-config: ## Generate/Update configuration files for all IDEs (Antigravity, Cursor, etc.)
-	python ../tools/utilities/generate_ide_configs.py
+	uv run python ../tools/utilities/generate_ide_configs.py
 
 # Show version and system info
 version: ## Show system version information

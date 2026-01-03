@@ -4,7 +4,7 @@ type: rule_set
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 50
 date: "2025-12-16"
@@ -17,7 +17,7 @@ prohibited_actions:
   file_creation:
     - action: "Manual artifact creation (touch, echo, cat >)"
       reason: "Bypasses validation, naming enforcement, frontmatter generation"
-      instead: "cd AgentQMS/interface && make create-{TYPE}"
+      instead: "cd AgentQMS/bin && make create-{TYPE}"
       severity: critical
       detection: "pre-commit hooks"
 

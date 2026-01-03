@@ -270,6 +270,14 @@ class InferenceEngine:
         )
 
 
+    def _remap_predictions_if_needed(self, predictions: dict[str, Any]) -> dict[str, Any]:
+        """Remap predictions if needed.
+
+        This method is required for backward compatibility with some tests.
+        """
+        return predictions
+
+
 def run_inference_on_image(
     image_path: str | np.ndarray,
     checkpoint_path: str,

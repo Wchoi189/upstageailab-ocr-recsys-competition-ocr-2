@@ -4,7 +4,7 @@ type: quick_reference
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: unknown
 memory_footprint: 80
 date: "2025-12-21"

@@ -39,7 +39,7 @@ def check_ads_compliance() -> dict:
     results = {"total": len(yaml_files), "passed": 0, "failed": 0, "warnings": 0, "details": []}
 
     for yaml_file in yaml_files:
-        cmd = ["python3", ".ai-instructions/schema/compliance-checker.py", str(yaml_file)]
+        cmd = ["python3", "AgentQMS/standards/schemas/compliance-checker.py", str(yaml_file)]
         code, stdout, stderr = run_command(cmd)
 
         if code == 0:

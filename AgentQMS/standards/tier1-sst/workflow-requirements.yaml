@@ -4,7 +4,7 @@ type: rule_set
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 90
 date: "2025-12-16"
@@ -15,7 +15,7 @@ depends_on: ["naming-conventions.yaml", "file-placement-rules.yaml"]
 
 required_workflows:
   artifact_creation:
-    command_base: "cd AgentQMS/interface && make create-{TYPE}"
+    command_base: "cd AgentQMS/bin && make create-{TYPE}"
     args_required:
       - NAME: "lowercase-slug-format"
       - TITLE: "quoted-string"
@@ -38,18 +38,18 @@ required_workflows:
 
   validation_workflow:
     commands:
-      validate: "cd AgentQMS/interface && make validate"
-      compliance: "cd AgentQMS/interface && make compliance"
-      boundary: "cd AgentQMS/interface && make boundary"
+      validate: "cd AgentQMS/bin && make validate"
+      compliance: "cd AgentQMS/bin && make compliance"
+      boundary: "cd AgentQMS/bin && make boundary"
 
     frequency: "After EVERY artifact operation"
     failure_mode: "BLOCK until resolved"
 
   discovery_workflow:
     commands:
-      help: "cd AgentQMS/interface && make help"
-      discover: "cd AgentQMS/interface && make discover"
-      status: "cd AgentQMS/interface && make status"
+      help: "cd AgentQMS/bin && make help"
+      discover: "cd AgentQMS/bin && make discover"
+      status: "cd AgentQMS/bin && make status"
 
     usage: "When operation unclear or tool not found"
 
@@ -78,4 +78,4 @@ blueprint_protocol:
     - "Goal-Execute-Update Loop"
   auto_applied: true
 
-validation_command: "cd AgentQMS/interface && make validate"
+validation_command: "cd AgentQMS/bin && make validate"

@@ -52,8 +52,8 @@ The user interface design is inspired by the **Upstage Document OCR Console**. T
 
 All code and implementations in this repository are based on the Upstage# OCR & RecSys Competition - OCR Track
 
-> **Start Here for AI Agents**: [`AGENTS.md`](./AGENTS.md)
-seline. Key contributions include modernizing configurations, improve performance, and enhancing the development workflow.
+> **Start Here for AI Agents**: [`AGENTS.yaml`](./AGENTS.yaml)
+> **AgentQMS Entrypoint**: `bin/aqms` (Use `bin/aqms help` to list commands)
 
 Original: https://console.upstage.ai/playground/document-ocr
 
@@ -128,14 +128,27 @@ Original: https://console.upstage.ai/playground/document-ocr
 
 ---
 
-## Tech Stack
+## Tech Stack & Environment
+
+**Strict Policy**: This project uses `uv` for all Python package management and execution.
+- **Do not use `pip` or `python` directly.**
+- Use `uv run python script.py` or the `bin/aqms` wrapper.
 
 | Category | Technologies |
 |----------|-------------|
 | **ML/DL** | PyTorch, PyTorch Lightning, Hydra |
 | **Backend** | FastAPI, ONNX Runtime |
 | **Frontend** | React 19, Next.js 16, Chakra UI, Streamlit |
-| **Tools** | UV (Python), npm, W&B, Playwright, Vitest |
+| **Tools** | **UV (Required)**, npm, W&B, Playwright, Vitest |
+| **QMS** | AgentQMS (Artifacts, Standards, Compliance) |
+
+### AgentQMS Architecture
+- **Standards** (`AgentQMS/standards`): The source of truth for policies and schemas.
+- **Plugins** (`.agentqms/plugins`): Implementations of artifact templates and context bundles.
+- **Tools**:
+  - `bin/aqms`: Unified task runner (wraps `make`).
+  - `get_standard` (MCP): AI tool to fuzzy-search project standards.
+  - `discovery`: Recursive plugin discovery engine.
 
 ---
 

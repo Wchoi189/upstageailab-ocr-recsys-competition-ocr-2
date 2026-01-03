@@ -1,7 +1,7 @@
 layers:
-  settings: AgentQMS/.agentqms/settings.yaml
+  settings: .agentqms/settings.yaml
 metadata:
-  generated_at: '2026-01-02T18:40:40.012255Z'
+  generated_at: '2026-01-03T08:34:09.024160Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:

@@ -1,0 +1,10 @@
+#!/bin/bash
+# AgentQMS Task Runner Wrapper
+# Delegates to AgentQMS/bin/Makefile
+# Ensures commands are run from project root context
+
+# Get project root (where this script is in bin/)
+PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+
+# Run make in AgentQMS/bin
+make -C "$PROJECT_ROOT/AgentQMS/bin" "$@"

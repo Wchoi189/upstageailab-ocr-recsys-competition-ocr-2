@@ -4,7 +4,7 @@ type: rule_set
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 70
 date: "2025-12-16"
@@ -39,7 +39,7 @@ placement_rules:
     all_others: "PROHIBITED at docs/ root"
 
   knowledge_base:
-    location: "AgentQMS/knowledge/"
+    location: "AgentQMS/standards/"
     purpose: "Long-form guidance (not for agents)"
     structure:
       - "agent/ - Agent instruction references"
@@ -54,6 +54,6 @@ prohibited_actions:
 
   - action: "Manual artifact creation"
     severity: critical
-    instead: "Use: cd AgentQMS/interface && make create-{TYPE}"
+    instead: "Use: cd AgentQMS/bin && make create-{TYPE}"
 
 validation_command: "make validate"

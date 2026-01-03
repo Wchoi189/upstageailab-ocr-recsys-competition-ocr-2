@@ -11,7 +11,7 @@ if [ -n "$ROOT_FILES" ]; then
     echo "$ROOT_FILES"
     echo ""
     echo "💡 Place in: docs/artifacts/{TYPE}/"
-    echo "💡 Create via: cd AgentQMS/interface && make create-{TYPE}"
+    echo "💡 Create via: cd AgentQMS/bin && make create-{TYPE}"
     echo ""
     echo "Allowed at docs/ root: README.md, CHANGELOG.md, CONTRIBUTING.md"
     echo "See: AgentQMS/standards/tier1-sst/file-placement-rules.yaml"

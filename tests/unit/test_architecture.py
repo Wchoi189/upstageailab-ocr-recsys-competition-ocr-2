@@ -242,7 +242,17 @@ class TestOCRModel:
             assert model.decoder is decoder
             assert model.head is head
             assert model.loss is loss
-            registry_mock.create_architecture_components.assert_called_once_with("craft", **{})
+            from unittest.mock import ANY
+            registry_mock.create_architecture_components.assert_called_once_with(
+                "craft",
+                encoder_config=ANY,
+                decoder_name=ANY,
+                decoder_config=ANY,
+                head_name=ANY,
+                head_config=ANY,
+                loss_name=ANY,
+                loss_config=ANY,
+            )
 
     def test_component_override_with_decoder_name(self, mock_config):
         with patch("ocr.models.architecture.get_registry") as mock_get_registry:

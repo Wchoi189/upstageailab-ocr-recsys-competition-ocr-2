@@ -214,7 +214,15 @@ class TestCollateIntegration:
         ann_path = self.create_annotation_file(temp_dataset_dir, annotations)
         img_dir = os.path.join(temp_dataset_dir, "images")
 
-        dataset = OCRDataset(image_path=img_dir, annotation_path=ann_path, transform=mock_transform)
+        cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
+        image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
+        config = DatasetConfig(
+            image_path=Path(img_dir),
+            annotation_path=Path(ann_path),
+            cache_config=cache_config,
+            image_loading_config=image_loading_config
+        )
+        dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
         collate_fn = DBCollateFN()
         dataloader = DataLoader(dataset, batch_size=3, shuffle=False, collate_fn=collate_fn, num_workers=0)
@@ -252,7 +260,15 @@ class TestCollateIntegration:
         ann_path = self.create_annotation_file(temp_dataset_dir, annotations)
         img_dir = os.path.join(temp_dataset_dir, "images")
 
-        dataset = OCRDataset(image_path=img_dir, annotation_path=ann_path, transform=mock_transform)
+        cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
+        image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
+        config = DatasetConfig(
+            image_path=Path(img_dir),
+            annotation_path=Path(ann_path),
+            cache_config=cache_config,
+            image_loading_config=image_loading_config
+        )
+        dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
         collate_fn = DBCollateFN()
 
@@ -285,7 +301,15 @@ class TestCollateIntegration:
         ann_path = self.create_annotation_file(temp_dataset_dir, annotations)
         img_dir = os.path.join(temp_dataset_dir, "images")
 
-        dataset = OCRDataset(image_path=img_dir, annotation_path=ann_path, transform=mock_transform)
+        cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
+        image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
+        config = DatasetConfig(
+            image_path=Path(img_dir),
+            annotation_path=Path(ann_path),
+            cache_config=cache_config,
+            image_loading_config=image_loading_config
+        )
+        dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
         collate_fn = DBCollateFN()
         dataloader = DataLoader(dataset, batch_size=1, shuffle=False, collate_fn=collate_fn, num_workers=0)

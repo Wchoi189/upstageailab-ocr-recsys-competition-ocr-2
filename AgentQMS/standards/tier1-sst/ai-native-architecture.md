@@ -6,7 +6,7 @@ The system must be **Schema-First** and **Method-Locked**.
 
 ### 1. Schema-First Configuration
 - **No Markdown for Specs**: Logic, contracts, and configurations must be in YAML/JSON. Markdown is for humans; schemas are for agents.
-- **Strict Typing**: All configuration files must adhere to a defined schema (e.g., in `.ai-instructions/schema/`).
+- **Strict Typing**: All configuration files must adhere to a defined schema (e.g., in `AgentQMS/standards/schemas/`).
 - **Example**: `ocr-components` logic is defined in YAML, allowing agents to ingest rules programmatically (e.g., `inverse-mapping` rule in `coordinate-transforms.yaml`).
 
 ### 2. Method-Locked Execution

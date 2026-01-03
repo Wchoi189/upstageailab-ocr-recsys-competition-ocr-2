@@ -2,14 +2,18 @@
 
 Active audits and development roadmaps.
 
-**Last Updated**: 2025-12-29 16:42:32
-**Total Artifacts**: 0
+**Last Updated**: 2026-01-03 17:24:44
+**Total Artifacts**: 1
+
+## Active (1)
+
+- [Audit of Path References in AgentQMS/standards](2026-01-03_1559_audit-agentqms-standards-path-audit.md) (📅 2026-01-03 15:59 (KST), 📄 audit) - **Audit Date**: 2025-11-29
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 0 |
+| Active | 1 |
 | Completed | 0 |
 
 ---

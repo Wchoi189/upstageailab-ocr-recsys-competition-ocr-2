@@ -41,7 +41,7 @@ ensure_project_root_on_sys_path()
 PROJECT_ROOT = get_project_root()
 
 # Default bundle directory - canonical location
-BUNDLES_DIR = PROJECT_ROOT / "AgentQMS" / "knowledge" / "context_bundles"
+BUNDLES_DIR = PROJECT_ROOT / "AgentQMS" / ".agentqms" / "plugins" / "context_bundles"
 
 # Try to import plugin registry for extensibility
 try:
@@ -140,7 +140,7 @@ def load_bundle_definition(bundle_name: str) -> dict[str, Any]:
     Load bundle definition from YAML file or plugin registry.
 
     Searches in order:
-    1. Framework bundles: AgentQMS/knowledge/context_bundles/
+    1. Framework bundles: AgentQMS/.agentqms/plugins/context_bundles/
     2. Plugin bundles: .agentqms/plugins/context_bundles/ (via registry)
 
     Args:
@@ -328,7 +328,7 @@ def list_available_bundles() -> list[str]:
     List all available bundle names from framework and plugins.
 
     Searches:
-    1. Framework bundles: AgentQMS/knowledge/context_bundles/
+    1. Framework bundles: AgentQMS/.agentqms/plugins/context_bundles/
     2. Plugin bundles: .agentqms/plugins/context_bundles/ (via registry)
 
     Returns:

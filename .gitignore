@@ -98,7 +98,7 @@ frontend/public/models/*.onnx
 
 # Agent-specific settings
 .ai-instructions/tier3-agents/*/settings.local.json
-
+!archive/archive_agentqms/*
 # Data
 # Experiments and Archives
 multirun/

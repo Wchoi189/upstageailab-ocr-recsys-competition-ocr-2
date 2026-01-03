@@ -4,7 +4,7 @@ type: tool_catalog
 agent: all
 tier: 2
 priority: critical
-validates_with: "AgentQMS/standards/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 800
 date: "2025-12-16"
@@ -17,7 +17,7 @@ source: "Converted from .copilot/context/tool-catalog.md"
 
 artifact_commands:
   create_plan:
-    command: "cd AgentQMS/interface && make create-plan"
+    command: "cd AgentQMS/bin && make create-plan"
     args:
       NAME: "lowercase-slug"
       TITLE: "quoted-string"
@@ -26,7 +26,7 @@ artifact_commands:
     auto_validation: true
 
   create_assessment:
-    command: "cd AgentQMS/interface && make create-assessment"
+    command: "cd AgentQMS/bin && make create-assessment"
     args:
       NAME: "lowercase-slug"
       TITLE: "quoted-string"
@@ -34,7 +34,7 @@ artifact_commands:
     auto_validation: true
 
   create_design:
-    command: "cd AgentQMS/interface && make create-design"
+    command: "cd AgentQMS/bin && make create-design"
     args:
       NAME: "lowercase-slug"
       TITLE: "quoted-string"
@@ -42,7 +42,7 @@ artifact_commands:
     auto_validation: true
 
   create_research:
-    command: "cd AgentQMS/interface && make create-research"
+    command: "cd AgentQMS/bin && make create-research"
     args:
       NAME: "lowercase-slug"
       TITLE: "quoted-string"
@@ -50,7 +50,7 @@ artifact_commands:
     auto_validation: true
 
   create_audit:
-    command: "cd AgentQMS/interface && make create-audit"
+    command: "cd AgentQMS/bin && make create-audit"
     args:
       NAME: "lowercase-slug"
       TITLE: "quoted-string"
@@ -58,7 +58,7 @@ artifact_commands:
     auto_validation: true
 
   create_bug_report:
-    command: "cd AgentQMS/interface && make create-bug-report"
+    command: "cd AgentQMS/bin && make create-bug-report"
     args:
       NAME: "lowercase-slug"
       TITLE: "quoted-string"
@@ -69,27 +69,27 @@ artifact_commands:
 
 validation_commands:
   validate:
-    command: "cd AgentQMS/interface && make validate"
+    command: "cd AgentQMS/bin && make validate"
     purpose: "Validate all artifacts (naming, frontmatter, structure)"
     frequency: "After every artifact operation"
 
   validate_file:
-    command: "cd AgentQMS/interface && make validate-file FILE=path"
+    command: "cd AgentQMS/bin && make validate-file FILE=path"
     purpose: "Validate specific artifact"
     args:
       FILE: "path/to/artifact.md"
 
   validate_naming:
-    command: "cd AgentQMS/interface && make validate-naming"
+    command: "cd AgentQMS/bin && make validate-naming"
     purpose: "Check naming conventions only"
 
   compliance:
-    command: "cd AgentQMS/interface && make compliance"
+    command: "cd AgentQMS/bin && make compliance"
     purpose: "Check framework compliance"
     frequency: "Before commits"
 
   boundary:
-    command: "cd AgentQMS/interface && make boundary"
+    command: "cd AgentQMS/bin && make boundary"
     purpose: "Validate framework boundaries"
     frequency: "Weekly or after major changes"
 
@@ -97,66 +97,66 @@ validation_commands:
 
 discovery_commands:
   help:
-    command: "cd AgentQMS/interface && make help"
+    command: "cd AgentQMS/bin && make help"
     purpose: "Show available make targets"
 
   discover:
-    command: "cd AgentQMS/interface && make discover"
+    command: "cd AgentQMS/bin && make discover"
     purpose: "Discover all AgentQMS tools"
 
   status:
-    command: "cd AgentQMS/interface && make status"
+    command: "cd AgentQMS/bin && make status"
     purpose: "Check system status"
 
 ## Context Loading Commands
 
 context_commands:
   context_auto:
-    command: "cd AgentQMS/interface && make context TASK='description'"
+    command: "cd AgentQMS/bin && make context TASK='description'"
     purpose: "Auto-detect and load context bundle"
     args:
       TASK: "Task description"
 
   context_development:
-    command: "cd AgentQMS/interface && make context-development"
+    command: "cd AgentQMS/bin && make context-development"
     purpose: "Load development context"
 
   context_docs:
-    command: "cd AgentQMS/interface && make context-docs"
+    command: "cd AgentQMS/bin && make context-docs"
     purpose: "Load documentation context"
 
   context_debug:
-    command: "cd AgentQMS/interface && make context-debug"
+    command: "cd AgentQMS/bin && make context-debug"
     purpose: "Load debugging context"
 
   context_plan:
-    command: "cd AgentQMS/interface && make context-plan"
+    command: "cd AgentQMS/bin && make context-plan"
     purpose: "Load planning context"
 
   context_list:
-    command: "cd AgentQMS/interface && make context-list"
+    command: "cd AgentQMS/bin && make context-list"
     purpose: "List available context bundles"
 
 ## Documentation Commands
 
 documentation_commands:
   docs_generate:
-    command: "cd AgentQMS/interface && make docs-generate"
+    command: "cd AgentQMS/bin && make docs-generate"
     purpose: "Generate documentation index"
 
   docs_update_indexes:
-    command: "cd AgentQMS/interface && make docs-update-indexes"
+    command: "cd AgentQMS/bin && make docs-update-indexes"
     purpose: "Update artifact indexes"
 
   docs_validate_links:
-    command: "cd AgentQMS/interface && make docs-validate-links"
+    command: "cd AgentQMS/bin && make docs-validate-links"
     purpose: "Validate documentation links"
 
 ## Audit Commands
 
 audit_commands:
   audit_init:
-    command: "cd AgentQMS/interface && make audit-init"
+    command: "cd AgentQMS/bin && make audit-init"
     args:
       FRAMEWORK: "Framework name"
       DATE: "YYYY-MM-DD"
@@ -164,17 +164,17 @@ audit_commands:
     purpose: "Initialize audit"
 
   audit_validate:
-    command: "cd AgentQMS/interface && make audit-validate"
+    command: "cd AgentQMS/bin && make audit-validate"
     purpose: "Validate audit documents"
 
   audit_checklist_generate:
-    command: "cd AgentQMS/interface && make audit-checklist-generate PHASE=phase"
+    command: "cd AgentQMS/bin && make audit-checklist-generate PHASE=phase"
     args:
       PHASE: "Audit phase"
     purpose: "Generate checklist"
 
   audit_checklist_report:
-    command: "cd AgentQMS/interface && make audit-checklist-report"
+    command: "cd AgentQMS/bin && make audit-checklist-report"
     purpose: "Generate audit progress report"
 
 ## Tracking CLI Commands

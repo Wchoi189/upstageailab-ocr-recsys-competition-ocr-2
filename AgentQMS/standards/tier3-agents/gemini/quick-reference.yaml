@@ -4,7 +4,7 @@ type: quick_reference
 agent: gemini
 tier: 3
 priority: critical
-validates_with: ".ai-instructions/schema/compliance-checker.py"
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 50
 date: "2025-12-16"
@@ -20,10 +20,10 @@ mandatory_rules:
   - "PLACEMENT: docs/artifacts/{TYPE}/"
 
 common_commands:
-  create: "cd AgentQMS/interface && make create-{TYPE} NAME=slug TITLE='Title'"
-  validate: "cd AgentQMS/interface && make validate"
-  compliance: "cd AgentQMS/interface && make compliance"
-  discover: "cd AgentQMS/interface && make discover"
+  create: "cd AgentQMS/bin && make create-{TYPE} NAME=slug TITLE='Title'"
+  validate: "cd AgentQMS/bin && make validate"
+  compliance: "cd AgentQMS/bin && make compliance"
+  discover: "cd AgentQMS/bin && make discover"
 
 when_uncertain:
   - "STOP operations"
