@@ -1,4 +1,3 @@
-import pytest
 import sys
 from unittest.mock import MagicMock
 
@@ -7,8 +6,10 @@ mock_registry = MagicMock()
 sys.modules["ocr.models.core"] = MagicMock()
 sys.modules["ocr.models.core.registry"] = mock_registry
 
-from omegaconf import DictConfig, ListConfig, OmegaConf
+from omegaconf import OmegaConf
+
 from ocr.utils.config_utils import ensure_dict, is_config
+
 
 def test_is_config():
     # Test valid configs

@@ -1,11 +1,12 @@
-import unittest
 import json
-import tempfile
-import shutil
-from pathlib import Path
-import pandas as pd
-import sys
 import os
+import shutil
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+import pandas as pd
 
 # Add scripts directory to path to import the module
 sys.path.append(os.path.abspath("scripts/data"))

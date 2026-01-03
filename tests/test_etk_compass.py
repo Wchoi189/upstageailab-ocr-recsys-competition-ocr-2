@@ -8,6 +8,8 @@ Tests:
 - Atomic write utilities
 """
 
+# Import after path setup if needed
+import sys
 import tempfile
 from datetime import datetime
 from pathlib import Path
@@ -16,19 +18,15 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-
-# Import after path setup if needed
-import sys
 sys.path.insert(0, str(Path(__file__).parent.parent / "experiment_manager" / "src"))
 
 from etk.compass import (
     CompassPaths,
     EnvironmentChecker,
     SessionManager,
-    atomic_yaml_write,
     atomic_json_write,
+    atomic_yaml_write,
     format_uv_command,
-    validate_against_schema,
 )
 
 
@@ -152,7 +150,6 @@ class TestEnvironmentChecker:
 
         with patch.dict("sys.modules", {"torch": MagicMock(cuda=MagicMock(is_available=lambda: False))}):
             # Import mock module
-            import sys
             mock_torch = MagicMock()
             mock_torch.cuda.is_available.return_value = False
 

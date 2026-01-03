@@ -3,7 +3,12 @@
 import numpy as np
 import pytest
 
-from ocr.inference.dependencies import torch, transforms
+try:
+    import torch
+    from torchvision import transforms
+except ImportError:
+    torch = None
+    transforms = None
 
 # Skip all tests if torch/transforms not available
 pytestmark = pytest.mark.skipif(torch is None or transforms is None, reason="Torch or torchvision not available")

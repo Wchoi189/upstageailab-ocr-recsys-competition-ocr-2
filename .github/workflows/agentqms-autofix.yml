@@ -47,13 +47,13 @@ jobs:
 
       - name: Install interface deps
         run: |
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           uv pip install -r requirements.txt --system
 
       - name: Validate and save JSON
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
-          python AgentQMS/agent_tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2>&1 || true
+          python AgentQMS/tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2>&1 || true
           cat /tmp/validation.json | jq 'length' || echo "No results"
 
       - name: Run Autofix
@@ -71,8 +71,8 @@ jobs:
             FLAGS="$FLAGS --update-links"
           fi
 
-          echo "Running: python AgentQMS/agent_tools/utilities/autofix_artifacts.py $FLAGS"
-          python AgentQMS/agent_tools/utilities/autofix_artifacts.py $FLAGS
+          echo "Running: python AgentQMS/tools/utilities/autofix_artifacts.py $FLAGS"
+          python AgentQMS/tools/utilities/autofix_artifacts.py $FLAGS
 
           # Check if any changes were made
           if git diff --quiet && git diff --staged --quiet; then
@@ -85,7 +85,7 @@ jobs:
         if: steps.autofix.outputs.changes == 'true' && env.DRY_RUN != 'true'
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
-          cd AgentQMS/interface
+          cd AgentQMS/bin
           make reindex
 
       - name: Check for changes

@@ -1,8 +1,7 @@
 """Tests for image preprocessor."""
 
-from PIL import Image
-
 from AgentQMS.vlm.core.preprocessor import VLMImagePreprocessor
+from PIL import Image
 
 
 class TestVLMImagePreprocessor:

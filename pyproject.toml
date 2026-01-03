@@ -146,6 +146,10 @@ target-version = "py311"
 # Exclude a variety of commonly ignored directories.
 exclude = [
     ".bzr",
+    "aws-batch-processor",
+    "scripts/audit",
+    "scripts/maintenance",
+    "tools/optimize_images*.py",
     ".direnv",
     ".eggs",
     ".git",
