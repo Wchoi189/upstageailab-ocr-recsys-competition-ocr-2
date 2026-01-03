@@ -12,7 +12,7 @@
 
 [English](README.md) • [한국어](README.ko.md)
 
-[Features](#features) • [Progress](#project-progress) • [Documentation](#documentation)
+[Features](#features) • [Project Compass](#project-compass-ai-navigation) • [Documentation](#documentation)
 
 </div>
 
@@ -28,6 +28,98 @@ This project originated from the Upstage AI Bootcamp OCR competition and has evo
 
 ---
 
+## Project Compass: AI Navigation
+
+**Project Compass** is the central nervous system of this project, designed to help AI agents navigate, understand, and maintain the codebase without needing to perform archaeological digs through git history.
+
+### MCP Integration
+We have exposed Project Compass internals via **Model Context Protocol (MCP)**, allowing AI agents to directly interact with the project state.
+
+**Available Tools:**
+- `env_check`: Validates the `uv` environment, Python version, and CUDA status against the lock file.
+- `session_init --objective [GOAL]`: Atomically updates the current session context to focus on a specific objective.
+- `reconcile`: Performs a deep scan of experiment metadata and synchronizes the state (`manifest.json`) with the actual disk content.
+- `ocr_convert`: **(New)** Launch the multi-threaded ETL pipeline to convert datasets to LMDB.
+- `ocr_inspect`: **(New)** Verify the integrity of LMDB datasets.
+
+<details>
+<summary><strong>📂 Explore Project Compass State (Click to Expand)</strong></summary>
+
+The **Project Compass** maintains the live state of the project. AI agents read these files to understand context, blockers, and goals.
+
+| Category | File | Description |
+|----------|------|-------------|
+| **🧠 Active Context** | [`current_session.yml`](project_compass/active_context/current_session.yml) | Current high-level objective and lock state. |
+| | [`blockers.yml`](project_compass/active_context/blockers.yml) | List of active impediments and dependency issues. |
+| **🗺️ Roadmap** | [`02_recognition.yml`](project_compass/roadmap/02_recognition.yml) | Plan for the Text Recognition phase. |
+| **🤖 Agents** | [`AGENTS.yaml`](project_compass/AGENTS.yaml) | Registry of available tools and MCP commands. |
+| **💾 Data** | [`dataset_registry.yml`](project_compass/environments/dataset_registry.yml) | Single source of truth for dataset paths and formats. |
+| **📜 History** | [`session_handover.md`](project_compass/session_handover.md) | The "Landing Page" for the next agent. |
+
+</details>
+
+---
+
+## OCR ETL Pipeline & Data Processing
+
+We have developed a standalone, high-performance data processing package `ocr-etl-pipeline` to handle massive datasets efficiently.
+
+### Key Features
+- **Zero Clutter**: Converts millions of raw image files into a single **LMDB (Lightning Memory-Mapped Database)** file.
+- **Resumable**: Uses a JSON state file to track progress, allowing huge jobs to be paused and resumed without data loss.
+- **Multiprocessing**: Optimized for RTX 3090 workstations, utilizing all available CPU cores for image decoding and cropping.
+
+**Performance**:
+- Processed 616,366 samples from AI Hub in ~1 minute.
+- Reduced filesystem overhead significantly (1 file vs 600k files).
+
+---
+
+## Research Insights & Pivots
+
+### Why We Abandoned KIE + Document Parse for Receipts
+
+Our initial strategy involved using a Key Information Extraction (KIE) model combined with the Document Parse API. However, extensive testing revealed critical misalignment:
+
+1.  **Fundamental Mismatch**: Receipts are primarily linear or semi-structured text streams. The Document Parse API treats documents as highly structured tables/forms.
+2.  **HTML Contamination**: The API output for receipts often contained excessive HTML table tags that did not represent the visual layout, poisoning the embeddings.
+3.  **LayoutLM Inefficiency**: LayoutLM models thrive on complex 2D spatial relationships (like forms). For receipt OCR, a robust **Text Recognition (PARSeq/CRNN)** model proved to be far more effective and less brittle.
+
+**Result**: We pivoted to building a dedicated Text Recognition pipeline on the AI Hub dataset, abandoning the KIE approach for this specific domain.
+
+---
+
+## AWS Batch Processor: Cloud-Native Data Engineering
+
+To overcome local resource constraints and API rate limits, we built `aws-batch-processor`, a standalone module for serverless batch processing.
+
+**Problem**: The Document Parse API free tier enforces strict rate limits, and processing 5,000+ documents would stall the main workflow if run synchronously locally.
+**Solution**: Offloaded processing to **AWS Fargate** using a serverless batch architecture. This allowed overnight processing without keeping the local machine online.
+
+- **Architecture**: [View Diagram & Implementation Details](aws-batch-processor/README.md)
+- **Data Catalog**: [`aws-batch-processor/data/export/data_catalog.yaml`](aws-batch-processor/data/export/data_catalog.yaml)
+- **Script Catalog**: [`aws-batch-processor/script_catalog.yaml`](aws-batch-processor/script_catalog.yaml)
+
+### Key Technologies
+- **AWS Fargate**: Serverless compute for batch jobs.
+- **S3**: Durable storage for intermediate and final results.
+- **Parquet**: Columnar storage for efficient annotation querying.
+
+---
+
+## Quality Assurance & Bug Tracking
+
+We maintain a rigorous quality standard by generating detailed, structured bug reports for major incidents. These artifacts serve as persistent learning resources.
+
+[📂 **View Bug Report Collection**](docs/artifacts/bug_reports/)
+
+**Example Artifacts:**
+- **Critical Failures**: Documenting root causes of pipeline crashes.
+- **Data Integrity**: tracking issues like "HTML contamination in receipt parsing".
+- **Resolution**: Every report includes a verified fix strategy, preventing regression.
+
+---
+
 ## Features
 
 - **Perspective Correction**: High-reliability edge detection using binary mask outputs from Rembg.
@@ -36,33 +128,12 @@ This project originated from the Upstage AI Bootcamp OCR competition and has evo
 - **Image Analysis**: Specialized VLM tools for automated image assessment and technical defect reporting.
 
 ---
-## OCR Inference Console
 
-The OCR Inference Console is a proof-of-concept frontend for the OCR web service. It provides a streamlined interface for document preview and structured output analysis.
-
-<div align="center">
-  <a href="docs/assets/images/demo/my-app.webp">
-    <img src="docs/assets/images/demo/my-app.webp" alt="OCR Inference Console" width="800px" />
-  </a>
-  <p><em>OCR Inference Console: Three-panel layout featuring document preview, layout analysis, and structured JSON output. (Click to enlarge)</em></p>
-</div>
-
-### UX Attribution
-The user interface design is inspired by the **Upstage Document OCR Console**. The layout patterns, including the three-panel console with document preview and structured output, follow the interaction models established by Upstage's product suite.
-
-All code and implementations in this repository are based on the Upstage# OCR & RecSys Competition - OCR Track
-
-> **Start Here for AI Agents**: [`AGENTS.yaml`](./AGENTS.yaml)
-> **AgentQMS Entrypoint**: `bin/aqms` (Use `bin/aqms help` to list commands)
-
-Original: https://console.upstage.ai/playground/document-ocr
-
----
 ## Experiment Tracker: Organized AI-Driven Research
 
-**Problem Solved**: Rapid AI-driven experimentation often produces a high volume of artifacts, scripts, and documentation that require systematic organization to remain manageable. Traditional project structures fail when experiments iterate daily and debugging requires instant access to reliable documentation.
+**Problem Solved**: Rapid AI-driven experimentation often produces a high volume of artifacts, scripts, and documentation that require systematic organization to remain manageable.
 
-**Solution**: `experiment_manager/` - A structured system for organizing experimental artifacts optimized for both human readability and AI consumption. Provides standardized protocols for common workflows and output format for artifacts.
+**Solution**: `experiment_manager/` - A structured system for organizing experimental artifacts optimized for both human readability and AI consumption.
 
 ### Example of Standardized Technical Reports & Documentation
 
@@ -72,44 +143,8 @@ Original: https://console.upstage.ai/playground/document-ocr
 **Incident Resolution**
 - [Data Loss Incident Report](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md) - Critical data loss incident analysis and resolution strategy
 
-**Comparative Analysis**
-- [Background Normalization Comparison](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1458_report_background-normalization-comparison.md) - Background normalization strategy comparison with quantitative results
-
-### Visual Results & Demos
-
-<div align="center">
-
-| Fitted Corners | Corrected Output |
-| :---: | :---: |
-| [<img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="700px" />](docs/assets/images/demo/original-with-fitted-corners.webp) | [<img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="250px" />](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg) |
-| *Corner detection and geometric fitting* | *Final perspective-corrected output* |
-
-*(Click images to enlarge)*
-
-</div>
-
-### Key Benefits
-
-- **AI-Optimized**: Documentation structure designed for efficient AI consumption.
-- **Standardized Protocols**: Reduces manual prompting and produces high-quality results.
-- **Traceability**: Full reproduction path for all experimental results.
-- **Scalable Organization**: Isolated experiment artifacts to prevent context chaos.
-
 ---
-## Low Prediction Resolution
 
-<div align="center">
-
-| Before: Persistent Low Predictions | Internal Process | After: Successful Detection |
-| :---: | :---: | :---: |
-| [<img src="docs/assets/images/demo/inference-persistent-empties-before.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-before.webp) | [<img src="docs/assets/images/demo/inference-persistent-empties-after.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-after.webp) | [<img src="docs/assets/images/demo/inference-persistent-empties-after2.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-after2.webp) |
-| *Empty patches* | *Filter application* | *Normalized geometry* |
-
-*(Click images to enlarge)*
-
-</div>
-
----
 ## Project Progress
 
 <div align="center">
@@ -117,38 +152,27 @@ Original: https://console.upstage.ai/playground/document-ocr
 | Phase | Status | Progress |
 |-------|--------|----------|
 | **Phase 1-4: Core Development** | Complete | 100% |
-| **Phase 5: Pre-Upgrade Preparation** | In Progress | 80% |
+| **Phase 5: Pre-Upgrade Preparation** | In Progress | 90% |
 | **Phase 6: Architectural Upgrades** | Planned | 0% |
 
-**Overall: 80% Complete**
+**Overall: 85% Complete**
 
 </div>
 
-**Current Focus:** Final safety checks, system validation, and preparation for major architectural enhancements.
+**Current Focus:** Training the Text Recognition Model (PARSeq/CRNN) using the newly generated AI Hub LMDB dataset.
 
 ---
 
 ## Tech Stack & Environment
 
 **Strict Policy**: This project uses `uv` for all Python package management and execution.
-- **Do not use `pip` or `python` directly.**
-- Use `uv run python script.py` or the `bin/aqms` wrapper.
 
 | Category | Technologies |
 |----------|-------------|
 | **ML/DL** | PyTorch, PyTorch Lightning, Hydra |
 | **Backend** | FastAPI, ONNX Runtime |
-| **Frontend** | React 19, Next.js 16, Chakra UI, Streamlit |
 | **Tools** | **UV (Required)**, npm, W&B, Playwright, Vitest |
 | **QMS** | AgentQMS (Artifacts, Standards, Compliance) |
-
-### AgentQMS Architecture
-- **Standards** (`AgentQMS/standards`): The source of truth for policies and schemas.
-- **Plugins** (`.agentqms/plugins`): Implementations of artifact templates and context bundles.
-- **Tools**:
-  - `bin/aqms`: Unified task runner (wraps `make`).
-  - `get_standard` (MCP): AI tool to fuzzy-search project standards.
-  - `discovery`: Recursive plugin discovery engine.
 
 ---
 
@@ -162,31 +186,14 @@ Original: https://console.upstage.ai/playground/document-ocr
 
 ## Documentation
 
-**AI-Facing Resources (.ai-instructions)**
-- [System Architecture](.ai-instructions/tier1-sst/system-architecture.yaml)
-- [API Contracts](.ai-instructions/tier2-framework/api-contracts.yaml)
+**AI-Facing Resources (AgentQMS Standards)**
+- [System Architecture](AgentQMS/standards/tier1-sst/system-architecture.yaml)
+- [API Contracts](AgentQMS/standards/tier2-framework/api-contracts.yaml)
 - [AgentQMS Workflows](AgentQMS/knowledge/agent/system.md)
 
 **Reference**
-- [File Placement Rules](.ai-instructions/tier1-sst/file-placement-rules.yaml)
+- [File Placement Rules](AgentQMS/standards/tier1-sst/file-placement-rules.yaml)
 - [Changelog](CHANGELOG.md)
-
----
-
-## Project Structure
-
-```
-├── AgentQMS/          # AI documentation and quality management
-├── apps/              # Frontend & backend applications
-├── configs/           # Hydra configuration (89 YAML files)
-├── docs/              # AI-optimized documentation & artifacts
-├── ocr/               # Core OCR Python package
-├── runners/           # Training/testing/prediction scripts
-├── scripts/           # Utility scripts
-├── tests/             # Unit & integration tests
-```
-
-Detailed structure: [.ai-instructions/tier1-sst/file-placement-rules.yaml](.ai-instructions/tier1-sst/file-placement-rules.yaml)
 
 ---
 
@@ -199,8 +206,6 @@ Contributions welcome! See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 ## License
 
 MIT License - see [LICENSE](LICENSE) for details.
-
----
 
 <div align="center">
 

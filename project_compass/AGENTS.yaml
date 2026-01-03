@@ -12,5 +12,7 @@ entry_points:
   session_init: "uv run python -m etk.factory session-init --objective {str}"
   milestone_update: "uv run python -m etk.factory milestone --id {01|02|03} --status {enum}"
   reconcile: "uv run python -m etk.factory reconcile"
+  ocr_convert: "uv run ocr-etl convert --input-dir {path} --output-dir {path}"
+  ocr_inspect: "uv run ocr-etl inspect --lmdb-path {path}"
 
 schema_root: "project_compass/.config/schemas/"

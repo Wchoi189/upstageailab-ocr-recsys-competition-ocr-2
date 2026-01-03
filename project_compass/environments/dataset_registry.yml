@@ -19,11 +19,17 @@ datasets:
       notes: "Clean word-level bboxes, no HTML contamination. ⚠️ Verify image_path column points to optimized images"
 
     - name: "aihub_public_admin_docs_raw"
-      path: "data/raw/aihub/공공행정문서/"
+      path: "data/raw/external/aihub_public_admin_doc/validation/"
       format: "nested_images"
       status: "available"
       image_count: 5467
       notes: "Raw images, avg 2459x3443"
+
+    - name: "aihub_lmdb_validation"
+      path: "data/processed/aihub_lmdb_validation/"
+      format: "lmdb"
+      status: "planned"
+      notes: "LMDB format for high-performance training. Converted from aihub_public_admin_docs_raw."
 
   kie:
     - name: "baseline_kie"
