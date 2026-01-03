@@ -1,0 +1,34 @@
+{
+    "mcpServers": {
+        "project_compass": {
+            "command": "uv",
+            "args": [
+                "run",
+                "--directory",
+                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "python",
+                "project_compass/mcp_server.py"
+            ]
+        },
+        "agentqms": {
+            "command": "uv",
+            "args": [
+                "run",
+                "--directory",
+                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "python",
+                "AgentQMS/mcp_server.py"
+            ]
+        },
+        "experiments": {
+            "command": "uv",
+            "args": [
+                "run",
+                "--directory",
+                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "python",
+                "experiment_manager/mcp_server.py"
+            ]
+        }
+    }
+}

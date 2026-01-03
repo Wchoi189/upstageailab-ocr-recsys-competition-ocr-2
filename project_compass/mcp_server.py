@@ -15,12 +15,14 @@ Resources exposed:
 
 import asyncio
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Resource, TextContent, Tool
+from mcp.types import Resource, Tool, TextContent
+from mcp.server.lowlevel.helper_types import ReadResourceContents
 
 
 # Auto-discover project root
@@ -136,22 +138,29 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
 
 @app.read_resource()
-async def read_resource(uri: str) -> str:
+async def read_resource(uri: str) -> list[ReadResourceContents]:
     """Read content of a compass resource."""
     # Find matching resource
+    uri = str(uri).strip()
     resource = next((r for r in RESOURCES if r["uri"] == uri), None)
 
     if not resource:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        raise ValueError(f"Unknown resource URI: {repr(uri)}. Available: {[r['uri'] for r in RESOURCES]}")
 
     path: Path = resource["path"]
 
     if not path.exists():
         raise FileNotFoundError(f"Resource file not found: {path}")
 
-    # Read and return content
+    # Read and return content wrapped in proper MCP types
     content = path.read_text(encoding="utf-8")
-    return content
+
+    return [
+        ReadResourceContents(
+            content=content,
+            mime_type=resource["mimeType"]
+        )
+    ]
 
 
 async def main():

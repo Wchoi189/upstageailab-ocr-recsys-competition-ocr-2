@@ -2,9 +2,28 @@
 # SCHEMA: ../.config/schemas/milestone.schema.json
 
 milestone_id: "02_recognition"
-status: "not_started"
+status: "in_progress"
+started_at: "2026-01-03 19:15 (KST)"
 last_successful_exp: ""
 target_metrics:
-  accuracy: null
-  f1_score: null
-notes: ""
+  accuracy: 0.85  # Target Korean text recognition accuracy
+  character_error_rate: 0.15  # Target CER
+  word_error_rate: 0.25  # Target WER
+notes: |
+  Pivoted from KIE+DP approach after discovering Document Parse API limitation for receipts.
+
+  Current Focus:
+  - Build text recognition pipeline on AI Hub 공공행정문서 dataset
+  - Train PARSeq or CRNN model on word crops
+  - Target Korean + alphanumeric recognition
+
+  Dataset Ready:
+  - 5467 images optimized @ 1024px height
+  - Clean word-level bboxes available
+  - Estimated ~100k+ word crops for training
+
+  Next Steps:
+  1. Verify AI Hub parquet image paths point to optimized images
+  2. Create word-crop extraction script
+  3. Train text recognizer (PARSeq/CRNN)
+  4. Validate on held-out AI Hub samples

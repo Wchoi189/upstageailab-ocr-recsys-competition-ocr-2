@@ -1,10 +1,44 @@
-# ROADMAP MILESTONE: Key Information Extraction Pipeline
+# ROADMAP MILESTONE: Key Information Extraction (KIE)
 # SCHEMA: ../.config/schemas/milestone.schema.json
 
 milestone_id: "03_kie"
-status: "not_started"
+status: "blocked"
+last_attempted: "2026-01-03"
 last_successful_exp: ""
+wandb_run: "https://wandb.ai/ocr-team2/ocr-kie/runs/e7l6f9k4"
 target_metrics:
-  accuracy: null
-  f1_score: null
-notes: ""
+  f1_score: 0.85  # Target entity extraction F1
+  precision: 0.85
+  recall: 0.85
+notes: |
+  ⚠️ BLOCKED: LayoutLMv3 KIE approach abandoned for receipts due to Document Parse API limitations.
+
+  Failed Approach (2026-01-02 to 2026-01-03):
+  - Attempted to merge Upstage KIE API (entities) + Document Parse API (bboxes)
+  - Achieved val_F1=0.623 at Epoch 10, but fundamentally flawed
+
+  Root Cause:
+  - Document Parse API treats receipts as tables, not text blocks
+  - Returns 1-2 giant bboxes covering 96%+ of image
+  - Text fields contain raw HTML (<table>, <thead>, <br> tags)
+  - Makes token-level classification impossible
+
+  Key Lessons Learned:
+  1. Document Parse ≠ Universal OCR (optimized for forms/reports, not receipts)
+  2. Receipts don't need layout analysis (inherently linear text)
+  3. Always validate API outputs before building pipelines
+
+  Alternative Approaches for Receipt KIE:
+  1. OCR + LLM extraction (no layout modeling needed)
+  2. Text-only NER on Upstage KIE outputs
+  3. Pretrain LayoutLMv3 on AI Hub, fine-tune on manually labeled receipts
+  4. Use text-detection models (DBNet/CRAFT) instead of Document Parse
+
+  Datasets Created (Deprecated):
+  - baseline_kie_dp_train.parquet (3125 samples) - DO NOT USE
+  - baseline_kie_dp_val.parquet (402 samples) - DO NOT USE
+
+  Artifacts Preserved:
+  - WandB Run: https://wandb.ai/ocr-team2/ocr-kie/runs/e7l6f9k4
+  - Alignment Script: tools/align_kie_dp.py
+  - Assessment: /home/vscode/.gemini/antigravity/brain/ff1e2aa9-0a2a-4b92-baee-4c9e31fea213/assessment_kie_dp_failure.md.resolved

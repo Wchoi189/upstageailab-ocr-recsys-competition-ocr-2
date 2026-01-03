@@ -26,7 +26,8 @@ from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Resource, TextContent, Tool
+from mcp.types import ReadResourceResult, Resource, TextContent, TextResourceContents, Tool
+from mcp.server.lowlevel.helper_types import ReadResourceContents
 
 
 # Auto-discover project root
@@ -112,17 +113,24 @@ async def list_resources() -> list[Resource]:
 
 
 @app.read_resource()
-async def read_resource(uri: str) -> str:
+async def read_resource(uri: str) -> list[ReadResourceContents]:
     """Read content of an AgentQMS resource."""
     # Find matching resource
+    uri = str(uri).strip()
     resource = next((r for r in RESOURCES if r["uri"] == uri), None)
 
     if not resource:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        raise ValueError(f"Unknown resource URI: {uri}. Available: {[r['uri'] for r in RESOURCES]}")
 
     # Handle dynamic template list
     if uri == "agentqms://templates/list":
-        return await _get_template_list()
+        content = await _get_template_list()
+        return [
+            ReadResourceContents(
+                content=content,
+                mime_type="application/json"
+            )
+        ]
 
     # Handle file-based resources
     path: Path = resource["path"]
@@ -131,7 +139,13 @@ async def read_resource(uri: str) -> str:
         raise FileNotFoundError(f"Resource file not found: {path}")
 
     content = path.read_text(encoding="utf-8")
-    return content
+
+    return [
+        ReadResourceContents(
+            content=content,
+            mime_type=resource["mimeType"]
+        )
+    ]
 
 
 async def _get_template_list() -> str:

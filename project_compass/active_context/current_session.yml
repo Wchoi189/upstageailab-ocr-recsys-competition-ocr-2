@@ -1,22 +1,25 @@
 # ACTIVE SESSION CONTEXT
 # MANDATORY: Verify env_lock before execution.
 # SCHEMA: ../.config/schemas/session.schema.json
-session_id: 20260102_session_01
+session_id: 20260103_session_01
 objective:
-  primary_goal: Consolidate Compass, Optimize AI Hub Data (Fix Rotation/Size), Verify
-    KIE Pipeline
-  active_pipeline: kie
-  success_criteria: ''
+  primary_goal: Build Text Recognition Pipeline on AI Hub Public Administration Documents
+  active_pipeline: text_recognition
+  success_criteria: Train PARSeq/CRNN recognizer on AI Hub word crops; validate Korean text recognition
 env_lock:
   uv_path: /opt/uv/bin/uv
   python_version: 3.11.14
-  is_gpu_required: false
-  verified_at: 2026-01-02 17:30 (KST)
+  is_gpu_required: true
+  verified_at: 2026-01-03 19:15 (KST)
 active_blockers:
-- issue: KIE Training Runtime Hang
+- issue: Image path verification needed
+  status: pending
+  impact: AI Hub parquet may reference raw images instead of optimized
+- issue: Text recognition pipeline audit required
   status: investigating
-  impact: Training script hangs during module imports (Transformers/Torchmetrics)
+  impact: Unknown if crop extraction and training scripts exist
 working_references:
-  experiment_id: 20241218_kie_debug_run_01
-  dataset_name: receipts_kie_v1
-  checkpoint_path: outputs/ocr/epoch-18_step-001957.ckpt
+  experiment_id: 20260103_text_recognition_pivot
+  dataset_name: aihub_validation_optimized_v2
+  deprecated_dataset: baseline_kie_dp  # Do not use - HTML contaminated
+  previous_wandb_run: https://wandb.ai/ocr-team2/ocr-kie/runs/e7l6f9k4
