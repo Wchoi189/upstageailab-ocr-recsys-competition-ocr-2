@@ -1,31 +1,62 @@
-# Session Handover: Text Recognition Training
-**Date:** 2026-01-04
-**Status:** Ready to Train
-**Previous Phase:** OCR ETL Integration (Archived in `history/handoffs/2026-01-04_0130_ocr_etl_integration.yml`)
+# Session Handover: ParSeq Dataset Implementation
+**Date:** 2026-01-05
+**Status:** IMPLEMENTATION COMPLETE | Training Integration Pending
+**Previous Phase:** Dataset Components Implemented
 
 ---
 
-## Current Objectives
-The ETL pipeline is built, and the **validation dataset is fully converted to LMDB**. The system is now ready for model training.
+## Quick Summary
 
-### Primary Goal
-**Train a Text Recognition Model (PARSeq or CRNN)** using the `aihub_lmdb_validation` dataset.
+**Completed:** All dataset components for PARSeq text recognition training.
+
+**LMDB Data Format:**
+```
+image-{idx:09d} → JPEG bytes (cropped text line)
+label-{idx:09d} → UTF-8 string (Korean text)
+num-samples → total count (616K+)
+```
+
+**PARSeq Decoder Contract:**
+- `vocab_size=100`, `max_len=25`
+- Token IDs: PAD=0, BOS=1, EOS=2
+- Input: `text_tokens [B, T]`
 
 ---
 
-## Key Assets
-| Asset | Location | Details |
-|-------|----------|---------|
-| **Dataset** | `data/processed/aihub_lmdb_validation` | LMDB, 616k samples, 4.3GB |
-| **Registry** | `project_compass/environments/dataset_registry.yml` | Entry: `aihub_lmdb_validation` |
-| **Codebase** | `ocr-etl-pipeline/` | ETL Logic (Completed) |
+## Components to Implement
+
+| Component              | File                                     | Priority |
+| ---------------------- | ---------------------------------------- | -------- |
+| LMDBRecognitionDataset | `ocr/datasets/lmdb_dataset.py`           | 1        |
+| KoreanOCRTokenizer     | `ocr/data/tokenizer.py`                  | 1        |
+| recognition_collate_fn | `ocr/datasets/recognition_collate_fn.py` | 2        |
+| Hydra config           | `configs/data/recognition.yaml`          | 2        |
+| Dependency             | `pyproject.toml` + `uv add lmdb`         | 0        |
 
 ---
 
-## Recommended Next Steps
-1.  **Architecture Selection**: Choose between PARSeq (SOTA accuracy) or CRNN (speed).
-2.  **Configuration**: Create a Hydra config file referencing `aihub_lmdb_validation`.
-3.  **Training**: Launch the training run.
+## Key Decision (Resolved)
 
-> [!TIP]
-> Use `uv run ocr-etl inspect` if you need to double-check the data integrity before training.
+**Charset:** LMDB-driven (extract all unique chars from labels) + safety set
+**vocab_size:** `3 (specials) + len(charset)` → dynamically computed
+**out_channels:** Must match vocab_size (remove hardcoded 98)
+
+---
+
+## Implementation Plan Location
+
+Full plan: [implementation_plan.md](file:///home/vscode/.gemini/antigravity/brain/7904a812-988d-42df-8978-334974c64f48/implementation_plan.md)
+
+---
+
+## Verification Command
+
+```bash
+uv add lmdb && uv run python runners/train.py --config-name train_parseq trainer.fast_dev_run=true
+```
+
+---
+
+## Resolved (Previous Sessions)
+
+- ✅ BUG_001–004: Hydra, Timm, Config, CrossEntropyLoss

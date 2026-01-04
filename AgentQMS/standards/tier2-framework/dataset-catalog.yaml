@@ -124,3 +124,22 @@ datasets:
     issues: schema variances handled by process_aihub_validation.py
     use_case: validation
     integration_priority: high
+  - name: aihub_lmdb_validation
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/aihub_lmdb_validation
+    sample_count: 616367
+    format: LMDB
+    lmdb_schema:
+      image_key: "image-{idx:09d}"
+      label_key: "label-{idx:09d}"
+      count_key: "num-samples"
+      image_value: JPEG bytes
+      label_value: UTF-8 Korean text
+    status: available
+    created_by: ocr-etl-pipeline
+    issues: no train/val split (single LMDB)
+    use_case: text recognition (PARSeq)
+    integration_priority: critical
+    parseq_contract:
+      vocab_size: 98
+      max_len: 25
+      tokens: {PAD: 0, BOS: 1, EOS: 2}

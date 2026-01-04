@@ -61,38 +61,67 @@ class TimmBackbone(BaseEncoder):
         if out_indices_override is not None:
             select_features = list(out_indices_override)
 
-        self.model = timm.create_model(
-            model_name,
-            pretrained=pretrained,
-            features_only=True,
-            **timm_kwargs,
-        )
-
-        feature_info = self.model.feature_info
-        available_indices = list(range(len(feature_info)))
-
-        if select_features is None:
-            # Default to the deepest four stages when available; otherwise use
-            # all produced feature maps.
-            if len(available_indices) >= 4:
-                select_features = available_indices[-4:]
+        try:
+            self.model = timm.create_model(
+                model_name,
+                pretrained=pretrained,
+                features_only=True,
+                **timm_kwargs,
+            )
+            self._is_features_only = True
+        except RuntimeError as e:
+            if "features_only not implemented" in str(e):
+                self.model = timm.create_model(
+                    model_name,
+                    pretrained=pretrained,
+                    features_only=False,
+                    **timm_kwargs,
+                )
+                self._is_features_only = False
             else:
-                select_features = available_indices
+                raise e
 
-        for idx in select_features:
-            if idx not in available_indices:
-                raise ValueError(f"Requested feature index {idx} not available. Valid indices: {available_indices}.")
+        if self._is_features_only:
+            feature_info = self.model.feature_info
+            available_indices = list(range(len(feature_info)))
 
-        self.select_features = list(select_features)
+            if select_features is None:
+                # Default to the deepest four stages when available; otherwise use
+                # all produced feature maps.
+                if len(available_indices) >= 4:
+                    select_features = available_indices[-4:]
+                else:
+                    select_features = available_indices
 
-        if freeze_backbone:
-            for param in self.model.parameters():
-                param.requires_grad = False
+            for idx in select_features:
+                if idx not in available_indices:
+                    raise ValueError(f"Requested feature index {idx} not available. Valid indices: {available_indices}.")
 
-        # Cache feature information for property access
-        self._feature_info = feature_info
-        self._out_channels = [self._feature_info[i]["num_chs"] for i in self.select_features]
-        self._strides = [self._feature_info[i]["reduction"] for i in self.select_features]
+            self.select_features = list(select_features)
+            self._feature_info = feature_info
+            self._out_channels = [self._feature_info[i]["num_chs"] for i in self.select_features]
+            self._strides = [self._feature_info[i]["reduction"] for i in self.select_features]
+        else:
+            # Fallback for models like ViT that don't support features_only
+            # We assume a single output scale (the sequence of embeddings)
+            self.select_features = [-1] # Dummy index
+
+            # Try to get embed_dim or num_features
+            out_ch = getattr(self.model, "embed_dim", None) or getattr(self.model, "num_features", None)
+            if out_ch is None:
+                raise RuntimeError(f"Could not determine output channels for model {model_name}")
+
+            self._out_channels = [out_ch]
+
+            # Try to determine stride usually it's patch size e.g. 16
+            stride = 16 # Default fallback
+            if hasattr(self.model, "patch_embed") and hasattr(self.model.patch_embed, "patch_size"):
+                 patch_size = self.model.patch_embed.patch_size
+                 if isinstance(patch_size, tuple):
+                     stride = patch_size[0]
+                 else:
+                     stride = patch_size
+            self._strides = [stride]
 
     def forward(self, x: torch.Tensor) -> list[torch.Tensor]:
         """Extract features from input images.
@@ -103,8 +132,13 @@ class TimmBackbone(BaseEncoder):
         Returns:
             List of feature tensors at selected levels
         """
-        features = self.model(x)
-        return [features[i] for i in self.select_features]
+        if getattr(self, "_is_features_only", True):
+             features = self.model(x)
+             return [features[i] for i in self.select_features]
+        else:
+             # ViT case: forward_features returns the sequence of patch embeddings (B, N, E)
+             features = self.model.forward_features(x)
+             return [features]
 
     @property
     def out_channels(self) -> list[int]:

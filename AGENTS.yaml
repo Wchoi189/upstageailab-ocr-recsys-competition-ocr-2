@@ -43,6 +43,23 @@ experiment_manager:
   guides_dir: "experiment_manager/.ai-instructions/"
   key_commands: ["init", "reconcile", "validate"]
 
+agent_debug_toolkit:
+  description: "AST-based debugging toolkit for AI agents to analyze Hydra/OmegaConf configuration issues"
+  location: "agent-debug-toolkit/"
+  cli_entrypoint: "adt"
+  mcp_server: "agent-debug-toolkit/run_mcp.sh"
+  commands:
+    analyze_config: "uv run adt analyze-config <path> [--component <name>]"
+    trace_merges: "uv run adt trace-merges <file> --output markdown"
+    find_hydra: "uv run adt find-hydra <path>"
+    find_instantiations: "uv run adt find-instantiations <path> [--component <type>]"
+    full_analysis: "uv run adt full-analysis <path>"
+  use_cases:
+    - "Debug config precedence issues (e.g., legacy defaults overriding architecture)"
+    - "Trace OmegaConf.merge() call order to identify override winners"
+    - "Find all Hydra entry points and instantiate() calls"
+    - "Track component factory patterns (get_*_by_cfg, registry.create)"
+
 agent_configurations:
   gemini: "AgentQMS/standards/tier3-agents/gemini/config.yaml"
   claude: "AgentQMS/standards/tier3-agents/claude/config.yaml"

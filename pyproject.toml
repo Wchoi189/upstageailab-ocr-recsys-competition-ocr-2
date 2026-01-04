@@ -80,6 +80,7 @@ dependencies = [
     "seqeval>=1.2.2",
     "jsonschema>=4.25.1",
     "mcp>=1.25.0",
+    "lmdb>=1.7.5",
 ]
 
 

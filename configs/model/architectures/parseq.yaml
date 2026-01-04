@@ -1,0 +1,32 @@
+name: parseq
+architecture_name: parseq
+
+encoder:
+  name: timm_backbone
+  params:
+    model_name: vit_small_patch16_224
+    pretrained: true
+    dynamic_img_size: true # Allow non-224x224 inputs (e.g. 32x128)
+    output_indices: [-1] # Last feature map only
+
+decoder:
+  name: parseq_decoder
+  params:
+    d_model: 384
+    nhead: 12 # ViT Small uses 384 dim, 12 heads = 32 dim/head. Or 6 heads = 64.
+    num_layers: 12
+    dim_feedforward: 1536 # 4 * 384
+    dropout: 0.1
+    max_len: 26 # max_label_length + 1 for EOS
+    # vocab_size injected by runner or defaults
+
+head:
+  name: parseq_head
+  params:
+    in_channels: 384
+    # out_channels injected by runner
+
+loss:
+  name: cross_entropy
+  params:
+    ignore_index: 0 # Check dataset padding index
