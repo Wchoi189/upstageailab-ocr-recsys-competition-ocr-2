@@ -20,8 +20,9 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Lowercase Repository Name
+        id: prep
         run: |
-          echo "REPO_LOWER=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "repo_lower=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -41,8 +42,8 @@ jobs:
           target: development
           push: true
           tags: |
-            ghcr.io/${{ env.REPO_LOWER }}:latest
-            ghcr.io/${{ env.REPO_LOWER }}:${{ github.sha }}
+            ghcr.io/${{ steps.prep.outputs.repo_lower }}:latest
+            ghcr.io/${{ steps.prep.outputs.repo_lower }}:${{ github.sha }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           platforms: linux/amd64
@@ -50,5 +51,5 @@ jobs:
       - name: Verify image was pushed
         run: |
           echo "✅ Container image built and pushed successfully"
-          echo "Image: ghcr.io/${{ env.REPO_LOWER }}:latest"
-          echo "Image: ghcr.io/${{ env.REPO_LOWER }}:${{ github.sha }}"
+          echo "Image: ghcr.io/${{ steps.prep.outputs.repo_lower }}:latest"
+          echo "Image: ghcr.io/${{ steps.prep.outputs.repo_lower }}:${{ github.sha }}"

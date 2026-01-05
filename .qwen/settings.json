@@ -89,5 +89,49 @@
   "model": {
     "name": "qwen/qwen3-coder"
   },
-  "$version": 2
+  "$version": 2,
+  "mcpServers": {
+    "unified_project": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+        "python",
+        "scripts/mcp/unified_server.py"
+      ]
+    },
+    "agent_debug_toolkit": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/agent-debug-toolkit",
+        "python",
+        "-m",
+        "agent_debug_toolkit.mcp_server"
+      ]
+    },
+    "perplexity-ask": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "server-perplexity-ask"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
+      }
+    },
+    "debug-toolkit": {
+      "command": "uv",
+      "args": [
+        "run",
+        "--directory",
+        "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/agent-debug-toolkit",
+        "python",
+        "-m",
+        "agent_debug_toolkit.mcp_server"
+      ]
+    }
+  }
 }

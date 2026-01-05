@@ -1,0 +1,137 @@
+name: Translate Technical Documents (Batch)
+
+on:
+  workflow_dispatch:
+    inputs:
+      documents:
+        description: 'Which documents to translate'
+        required: true
+        type: choice
+        options:
+          - 'All documents'
+          - 'Bug reports only'
+          - 'Experiment reports only'
+          - 'Assessments only'
+        default: 'All documents'
+
+jobs:
+  translate-docs:
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 3  # Limit concurrent API calls to avoid rate limits
+      matrix:
+        include:
+          # Bug Reports
+          - file: 'docs/artifacts/bug_reports/2026-01-04_1730_BUG_003_config-precedence-leak.md'
+            category: 'bug-report'
+
+          # Assessments
+          - file: 'docs/artifacts/assessments/2026-01-03_1200_assessment-layoutlmv3-kie-receipt-failure.md'
+            category: 'assessment'
+
+          # Experiment Reports
+          - file: 'experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.md'
+            category: 'experiment'
+
+          - file: 'experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.md'
+            category: 'experiment'
+
+          - file: 'experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.md'
+            category: 'experiment'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Check if should translate
+        id: check
+        run: |
+          SELECTION="${{ github.event.inputs.documents }}"
+          CATEGORY="${{ matrix.category }}"
+
+          SHOULD_TRANSLATE="false"
+
+          if [ "$SELECTION" = "All documents" ]; then
+            SHOULD_TRANSLATE="true"
+          elif [ "$SELECTION" = "Bug reports only" ] && [ "$CATEGORY" = "bug-report" ]; then
+            SHOULD_TRANSLATE="true"
+          elif [ "$SELECTION" = "Experiment reports only" ] && [ "$CATEGORY" = "experiment" ]; then
+            SHOULD_TRANSLATE="true"
+          elif [ "$SELECTION" = "Assessments only" ] && [ "$CATEGORY" = "assessment" ]; then
+            SHOULD_TRANSLATE="true"
+          fi
+
+          echo "should_translate=$SHOULD_TRANSLATE" >> $GITHUB_OUTPUT
+
+      - name: Translate document to Korean
+        if: steps.check.outputs.should_translate == 'true'
+        id: translate
+        uses: wchoi189/translation-action@solar
+        with:
+          provider: upstage
+          lang: en-ko
+          source: ${{ matrix.file }}
+          api_key: ${{ secrets.UPSTAGE_API_KEY }}
+          api_additional_parameter: solar-pro2
+
+      - name: Save Korean translation
+        if: steps.check.outputs.should_translate == 'true'
+        run: |
+          FILE="${{ matrix.file }}"
+          dir=$(dirname "$FILE")
+          base=$(basename "$FILE" .md)
+
+          # Special handling for README files in experiment directories
+          if [ "$base" = "README" ]; then
+            output="${dir}/README.ko.md"
+          else
+            output="${dir}/${base}.ko.md"
+          fi
+
+          echo "${{ steps.translate.outputs.text }}" > "$output"
+
+          # Add translation metadata
+          cat > "${output}.meta" << EOF
+          ---
+          translation_date: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+          source_file: $FILE
+          translator: Upstage Solar Pro 2
+          workflow_run: ${{ github.run_id }}
+          ---
+          EOF
+
+          echo "Translated: $FILE → $output"
+
+      - name: Commit translation
+        if: steps.check.outputs.should_translate == 'true'
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add "*.ko.md" "*.ko.md.meta"
+
+          if ! git diff --staged --quiet; then
+            git commit -m "docs: add Korean translation for ${{ matrix.file }} [skip ci]"
+            git push
+          else
+            echo "No changes to commit"
+          fi
+
+  summary:
+    needs: translate-docs
+    runs-on: ubuntu-latest
+    if: always()
+    steps:
+      - name: Translation Summary
+        run: |
+          echo "## Translation Batch Complete 🎉" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "Selection: ${{ github.event.inputs.documents }}" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "All Korean translations have been generated and committed." >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Next Steps" >> $GITHUB_STEP_SUMMARY
+          echo "1. Review the generated \`.ko.md\` files" >> $GITHUB_STEP_SUMMARY
+          echo "2. Check translation quality for technical terms" >> $GITHUB_STEP_SUMMARY
+          echo "3. Update README.md links to include Korean versions" >> $GITHUB_STEP_SUMMARY

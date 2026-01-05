@@ -54,6 +54,6 @@ architecture:
 
 # MCP Integration
 mcp:
-  unified_server: "mcp/unified_server.py"
-  config: "mcp/shared_config.json"
+  unified_server: "scripts/mcp/unified_server.py"
+  config: "scripts/mcp/shared_config.json"
   description: "Shared MCP server combining Project Compass, AgentQMS, and Experiment Manager functionality"
