@@ -62,8 +62,10 @@ jobs:
           api_additional_parameter: solar-pro2
 
       - name: Save Korean README
+        env:
+          TRANSLATED_TEXT: ${{ steps.translate-readme.outputs.text }}
         run: |
-          echo "${{ steps.translate-readme.outputs.text }}" > README.ko.md
+          echo "$TRANSLATED_TEXT" > README.ko.md
 
       - name: Commit and push translations
         run: |

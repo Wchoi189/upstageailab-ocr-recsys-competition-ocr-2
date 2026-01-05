@@ -78,6 +78,8 @@ jobs:
 
       - name: Save Korean translation
         if: steps.check.outputs.should_translate == 'true'
+        env:
+          TRANSLATED_TEXT: ${{ steps.translate.outputs.text }}
         run: |
           FILE="${{ matrix.file }}"
           dir=$(dirname "$FILE")
@@ -90,7 +92,7 @@ jobs:
             output="${dir}/${base}.ko.md"
           fi
 
-          echo "${{ steps.translate.outputs.text }}" > "$output"
+          echo "$TRANSLATED_TEXT" > "$output"
 
           # Add translation metadata
           cat > "${output}.meta" << EOF
