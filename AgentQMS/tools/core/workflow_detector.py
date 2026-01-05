@@ -256,7 +256,7 @@ def main() -> int:
 
     print("\nMake Commands:")
     for cmd in suggestions["make_commands"]:
-        print(f"  cd AgentQMS/interface && {cmd}")
+        print(f"  cd AgentQMS/bin && {cmd}")
 
     return 0
 

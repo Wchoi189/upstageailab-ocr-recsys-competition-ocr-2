@@ -42,6 +42,7 @@ validation:
     - features
     - implementation_guides
     - specs
+    - walkthroughs
   rules:
     naming: true
     frontmatter: true

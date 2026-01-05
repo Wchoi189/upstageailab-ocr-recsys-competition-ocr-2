@@ -117,9 +117,7 @@ def get_plugin_registry(force: bool = False) -> PluginRegistry:
     # Auto-write snapshot on first load
     if not force:
         try:
-            from AgentQMS.tools.utils.paths import get_project_root
-
-            state_dir = get_project_root() / ".agentqms" / "state"
+            state_dir = loader.framework_root / ".agentqms" / "state"
             writer = SnapshotWriter(state_dir)
             writer.write(registry, loader.get_discovery_paths())
         except Exception:

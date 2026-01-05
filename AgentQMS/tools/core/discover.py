@@ -16,7 +16,7 @@ def show_tools():
     print()
     print("📁 Architecture:")
     print("   Implementation Layer: AgentQMS.tools/ (canonical)")
-    print("   Agent Interface: AgentQMS/interface/")
+    print("   Agent Interface: AgentQMS/bin/")
     print("   See archive/archive_agentqms/internal_docs/meta/MAINTAINERS.md (Archived) for details.")
     print()
 
@@ -42,7 +42,7 @@ def show_tools():
             print()
 
     print("💡 Usage:")
-    print("   For agents: cd AgentQMS/interface/ && make help")
+    print("   For agents: cd AgentQMS/bin/ && make help")
     print("   Direct CLI: PYTHONPATH=. python AgentQMS.tools/<category>/<tool>.py")
     print("   See README.md for detailed usage information")
     print()

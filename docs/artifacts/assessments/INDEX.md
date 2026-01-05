@@ -2,29 +2,33 @@
 
 Active assessments and development roadmaps.
 
-**Last Updated**: 2026-01-03 17:24:44
-**Total Artifacts**: 4
+**Last Updated**: 2026-01-05 18:36:19
+**Total Artifacts**: 8
 
-## Active (2)
+## Active (3)
 
 - [Text Recognition Integration Strategy Assessment](2025-12-25_0330_assessment-text-recognition-integration-strategy.md) (📅 2025-12-25 04:10 (KST), 📄 assessment) - > [!NOTE]
 - [AgentQMS Usability and Consolidation Assessment](2026-01-03_1637_assessment-agentqms-usability-and-consolidation.md) (📅 2026-01-03 16:37 (KST), 📄 assessment) - To assess the usability of AgentQMS for AI Agents, resolve architecture overlaps, and fix environmen
+- [Verification Test](2026-01-05_1836_assessment-verification-test.md) (📅 2026-01-05 18:36 (KST), 📄 assessment) - Evaluate the system and provide recommendations.
 
 ## Completed (1)
 
-- [LayoutLMv3 KIE Training on Receipt Data](layoutlmv3-kie-receipt-failure.md) (📅 2026-01-03, 📄 ) - Attempted to train LayoutLMv3 for Key Information Extraction (KIE) on Korean receipts by merging Ups
+- [LayoutLMv3 KIE Training on Receipt Data](2026-01-03_1200_assessment-layoutlmv3-kie-receipt-failure.md) (📅 2026-01-03, 📄 ) - Attempted to train LayoutLMv3 for Key Information Extraction (KIE) on Korean receipts by merging Ups
 
-## Other (1)
+## Other (4)
 
+- [2025-12-29-1640_assessment-architecture-consolidation](2025-12-29-1640_assessment-architecture-consolidation.md) (📅 , 📄 ) - 
+- [2026-01-05_0327_ai-workflow-efficiency-survey](2026-01-05_0327_ai-workflow-efficiency-survey.md) (📅 , 📄 ) - --- | -------------------- | ------------------------------------- |
+- [2026-01-05_1811_github_sync_roadmap_extension](2026-01-05_1811_github_sync_roadmap_extension.md) (📅 , 📄 ) - ------------------------ | --------------------------------------------- | -------------------------
 - [ENVIRONMENT_SETUP_FEEDBACK](ENVIRONMENT_SETUP_FEEDBACK.md) (📅 , 📄 ) - ```bash
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 2 |
+| Active | 3 |
 | Completed | 1 |
-| Other | 1 |
+| Other | 4 |
 
 ---
 

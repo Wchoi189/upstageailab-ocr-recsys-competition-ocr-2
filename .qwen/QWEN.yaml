@@ -1,0 +1,59 @@
+---
+ads_version: "1.0"
+type: qwen_context
+date: "2026-01-05"
+status: active
+
+# Core Project Context for AI Agents
+project:
+  name: "upstageailab-ocr-recsys-competition-ocr-2"
+  description: "OCR and recommendation system competition project"
+  entrypoint: "AGENTS.yaml"
+
+# AI Instructions System
+instructions:
+  general_standards: "AgentQMS/standards/"
+  experiment_protocols: "experiment_manager/.ai-instructions/"
+  # NOTE: These are independent systems with different purposes
+
+# Context Loading System
+context:
+  context_map: "AgentQMS/standards/context_map.yaml"
+  context_priority: "AgentQMS/standards/context_priority.yaml"
+  context_classification: "AgentQMS/standards/context_classification.yaml"
+
+# Key Configuration Files
+config_files:
+  - "AGENTS.yaml"
+  - "AgentQMS/standards/INDEX.yaml"
+  - ".qwen/settings.json"
+  - "pyproject.toml"
+  - "README.md"
+
+# Directory Structure
+directories:
+  ocr: "ocr/"
+  experiments: "experiment_manager/"
+  agents: "AgentQMS/"
+  docs: "docs/artifacts/"
+  configs: "configs/"
+
+# Task Classifications
+task_types:
+  - ocr_experiment
+  - documentation_update
+  - pipeline_development
+  - agent_configuration
+  - compliance_check
+
+# System Architecture
+architecture:
+  general_standards: "AgentQMS/standards/ (tier1-4)"
+  experiment_protocols: "experiment_manager/.ai-instructions/ (independent)"
+  distinction: "These systems operate independently with different purposes"
+
+# MCP Integration
+mcp:
+  unified_server: "mcp/unified_server.py"
+  config: "mcp/shared_config.json"
+  description: "Shared MCP server combining Project Compass, AgentQMS, and Experiment Manager functionality"

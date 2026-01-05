@@ -951,7 +951,7 @@ class ArtifactValidator:
             report.append("")
             report.append("SUGGESTED NEXT COMMAND:")
             report.append("-" * 40)
-            report.append(f'  cd AgentQMS/interface && make fix ARGS="--limit {min(invalid_files, 10)} --dry-run"')
+            report.append(f'  cd AgentQMS/bin && make fix ARGS="--limit {min(invalid_files, 10)} --dry-run"')
             report.append("")
 
         if valid_files > 0:

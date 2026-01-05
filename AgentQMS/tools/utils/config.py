@@ -76,6 +76,10 @@ class ConfigLoader:
         raise RuntimeError("Could not determine framework root. Is AgentQMS installed?")
 
     def _detect_project_root(self, framework_root: Path) -> Path:
+        # Check if we are running nested in a project (look for AGENTS.yaml or .git in parent)
+        if (framework_root.parent / "AGENTS.yaml").exists() or (framework_root.parent / ".git").exists():
+            return framework_root.parent
+
         # Check if we are running in self-contained mode (AgentQMS has its own .agentqms)
         if (framework_root / ".agentqms").exists():
             return framework_root

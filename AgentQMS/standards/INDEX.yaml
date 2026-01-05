@@ -7,7 +7,7 @@ priority: critical
 validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: unknown
 memory_footprint: 150
-date: "2025-12-22"
+date: "2026-01-05"
 status: active
 
 # AI Instructions Index
@@ -18,6 +18,14 @@ root_map:
   framework: "AgentQMS/standards/tier2-framework/"
   agents: "AgentQMS/standards/tier3-agents/"
   workflows: "AgentQMS/standards/tier4-workflows/"
+
+# Context System - Task-Specific File Loading
+context_system:
+  context_map: "AgentQMS/standards/context_map.yaml"
+  context_priority: "AgentQMS/standards/context_priority.yaml"
+  context_classification: "AgentQMS/standards/context_classification.yaml"
+  task_classification: "AgentQMS/standards/context_classification.yaml"
+  priority_system: "AgentQMS/standards/context_priority.yaml"
 
 glob_patterns:
   - pattern: "ocr/inference/**/*.py"

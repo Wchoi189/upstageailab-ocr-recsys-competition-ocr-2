@@ -1,0 +1,41 @@
+roadmap:
+  title: "Project Polaris: Master Architecture Refactoring"
+  status: "active"
+  owner: "User & AI Agent"
+  start_date: "2026-01-05"
+
+  phases:
+    - name: "Phase 1: Foundation"
+      status: "pending"
+      description: "Establish the core and manifest."
+      deliverables:
+        - "ocr/structure_manifest.json"
+        - "ocr/core/architecture.py"
+        - "configs/_foundation/"
+
+    - name: "Phase 2: Data Pivot"
+      status: "ready"
+      description: "Consolidate data concerns into feature directories."
+      deliverables:
+        - "ocr/recognition/data/tokenizer.py"
+        - "ocr/recognition/data/charset.json"
+        - "configs/data/recognition.yaml update"
+      dependencies: ["Phase 1"]
+
+    - name: "Phase 3: Recognition Feature Migration"
+      status: "pending"
+      description: "Isolate PARSeq and Recognition trainer."
+      deliverables:
+        - "ocr/recognition/models/"
+        - "ocr/recognition/trainer.py"
+      dependencies: ["Phase 2"]
+
+    - name: "Phase 4: KIE & Detection Migration"
+      status: "pending"
+      description: "Isolate KIE and Detection domains."
+      dependencies: ["Phase 3"]
+
+    - name: "Phase 5: Cleanup"
+      status: "pending"
+      description: "Remove legacy scaffolding."
+      dependencies: ["Phase 4"]

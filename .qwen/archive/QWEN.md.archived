@@ -1,8 +1,19 @@
 # AgentQMS Context
 
-Last Updated: 2025-12-06 22:00 (KST)
+Last Updated: 2026-01-05 10:30 (KST)
 
 **AgentQMS** is a quality management framework for AI agents working with documentation artifacts.
+
+## Project Documentation Philosophy
+
+This project follows a unique approach to documentation, specifically designed for AI agent consumption. We prioritize:
+
+- **Ultra-concise, schema-only documentation** that is machine-parseable
+- **Low-memory footprint formats** (YAML, JSON) optimized for AI processing
+- **AI-focused content** without verbose narratives or user-facing documentation
+- **Proactive resource utilization** to reduce effort needed to achieve goals
+
+The core pipeline is sensitive to changes and downstream consumers depend on predefined output formats. This documentation approach helps AI agents navigate the complex project structure efficiently without getting overwhelmed by excessive information.
 
 ## Structure
 
@@ -135,6 +146,18 @@ make version                         # Show version info
 - Excluded directories (archive/, deprecated/)
 - Path configurations
 
+**Settings Configuration:** `.qwen/settings.json`
+- Workspace settings including exclude patterns
+- Archive directories are automatically ignored with pattern: `**/archive/**`
+- Architecture reference: `AgentQMS/standards/tier1-sst/system-architecture.yaml`
+- Context-aware loading: `AgentQMS/standards/context_map.yaml`
+
+**Context System - Task-Specific Loading:**
+- **Purpose**: Load only relevant files for each task to reduce compute overhead
+- **Context Map**: `AgentQMS/standards/context_map.yaml` - Maps tasks to relevant files
+- **Priority System**: `AgentQMS/standards/context_priority.yaml` - Defines loading tiers
+- **Classification**: `AgentQMS/standards/context_classification.yaml` - Task detection rules
+
 **Artifact Rules:** `AgentQMS/knowledge/agent/artifact_rules.yaml`
 - Artifact type definitions
 - Naming conventions
@@ -150,6 +173,7 @@ make version                         # Show version info
 
 **Directory Exclusion:**
 - `archive/` and `deprecated/` excluded by default
+- Additional archive directories excluded via `**/archive/**` pattern
 - Configurable via `settings.yaml`
 - Override with `--include-excluded` flag
 
@@ -175,6 +199,24 @@ make workflow-docs        # Generate, validate, update
 ```bash
 make workflow-validate    # Validate, fix, monitor
 ```
+
+## System Architecture: Two Independent Instruction Systems
+
+This project uses two independent instruction systems:
+
+### 1. General Project Standards (`AgentQMS/standards/`)
+- **Purpose**: General AI instructions for the entire project
+- **Scope**: All project-wide standards, conventions, and protocols
+- **Location**: `AgentQMS/standards/` (tier1-sst, tier2-framework, tier3-agents, tier4-workflows)
+- **Use Case**: General development, documentation, compliance, and agent configuration
+
+### 2. Experiment Protocols (`experiment_manager/.ai-instructions/`)
+- **Purpose**: Experiment-specific protocols and workflows
+- **Scope**: Experiment tracking, management, and execution
+- **Location**: `experiment_manager/.ai-instructions/`
+- **Use Case**: Running and managing OCR experiments with the ETK (Experiment Toolkit)
+
+**Key Distinction**: These systems operate independently. The experiment system does not inherit from general project standards and has its own specific protocols.
 
 ## For Humans
 

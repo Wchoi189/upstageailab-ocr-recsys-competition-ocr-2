@@ -32,6 +32,8 @@ environment_tools:
       validate: "bin/aqms validate"
       create_plan: "bin/aqms create-plan NAME=slug TITLE='Title'"
       compliance: "bin/aqms compliance"
+      sync_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py"
+      init_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py --init"
 
   research:
     tool: "Perplexity Client"
@@ -41,6 +43,9 @@ environment_tools:
 experiment_manager:
   entrypoint: "experiment_manager/etk.py"
   guides_dir: "experiment_manager/.ai-instructions/"
+  # NOTE: This is an independent system from AgentQMS/standards/
+  # experiment_manager/.ai-instructions/ contains experiment-specific protocols
+  # AgentQMS/standards/ contains general project AI instructions
   key_commands: ["init", "reconcile", "validate"]
 
 agent_debug_toolkit:
@@ -65,6 +70,7 @@ agent_configurations:
   claude: "AgentQMS/standards/tier3-agents/claude/config.yaml"
   cursor: "AgentQMS/standards/tier3-agents/cursor/config.yaml"
   copilot: "AgentQMS/standards/tier3-agents/copilot/config.yaml"
+  qwen: "AgentQMS/standards/tier3-agents/qwen/config.yaml"
 
 critical_directives:
   - "Do not hallucinate project standards. Read the `INDEX.yaml` first."

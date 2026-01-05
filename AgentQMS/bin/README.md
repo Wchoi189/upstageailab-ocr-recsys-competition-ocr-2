@@ -62,12 +62,12 @@ FIRST: Read these files to understand the framework:
 
 KEY RULES:
 - Use automation tools; never create artifacts manually
-- Run `cd AgentQMS/interface && make help` to see available commands
+- Run `cd AgentQMS/bin && make help` to see available commands
 - Artifacts go in docs/artifacts/ with proper naming: YYYY-MM-DD_HHMM_[type]_name.md
 - Validate changes: `make validate` and `make compliance`
 
 When creating implementation plans, assessments, audits, or bug reports, use:
-  cd AgentQMS/interface && make create-plan NAME=my-plan TITLE="My Title"
+  cd AgentQMS/bin && make create-plan NAME=my-plan TITLE="My Title"
 ```
 
 ### Encouraging Proactive Use
@@ -78,19 +78,19 @@ To make the AI agent **proactively** use AgentQMS, include these instructions in
 QUALITY MANAGEMENT RULES:
 1. Before starting any significant task, check if an implementation plan exists
 2. For multi-step work, create an implementation plan first:
-   cd AgentQMS/interface && make create-plan NAME=feature-name TITLE="Feature Title"
+   cd AgentQMS/bin && make create-plan NAME=feature-name TITLE="Feature Title"
 3. After completing work, run validation:
-   cd AgentQMS/interface && make validate && make compliance
+   cd AgentQMS/bin && make validate && make compliance
 4. Document bugs using the bug report workflow, not ad-hoc notes
 5. When stuck, run `make discover` to see available tools
 ```
 
 ### Agent Interface Commands
 
-All agent commands are run from `AgentQMS/interface/`:
+All agent commands are run from `AgentQMS/bin/`:
 
 ```bash
-cd AgentQMS/interface
+cd AgentQMS/bin
 
 # Discovery & Status
 make help              # Show all available commands

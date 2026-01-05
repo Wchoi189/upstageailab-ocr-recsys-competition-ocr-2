@@ -39,13 +39,14 @@
       "**/*.jsonl",
       "**/multirun.yaml",
       "**/test_runs/**",
-      ".qwen/archive/**"
+      ".qwen/archive/**",
+      "**/archive/**"
     ]
   },
   "agentqms": {
     "enabled": true,
-    "instructions": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/knowledge/agent/system.md",
-    "architecture": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.agentqms/state/architecture.yaml",
+    "instructions": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/AGENTS.yaml",
+    "architecture": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/tier1-sst/system-architecture.yaml",
     "artifactsPath": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts",
     "validation": {
       "enabled": true,
@@ -62,16 +63,22 @@
   "context": {
     "fileFiltering": {
       "respectGitIgnore": true,
-      "respectGeminiIgnore": true,
+      "respectQwenIgnore": true,
+      "context_aware_loading": true,
+      "context_map": "AgentQMS/standards/context_map.yaml",
       "includePatterns": [
-        "**/*.py",
-        "**/*.md",
-        "**/requirements.txt",
         "**/pyproject.toml",
-        "docs/artifacts/**"
+        "**/AGENTS.yaml",
+        "**/README.md"
       ],
       "excludePatterns": [
-
+        "**/node_modules/**",
+        "**/.git/**",
+        "**/logs/**",
+        "**/outputs/**",
+        "**/data/**",
+        "**/archive/**",
+        "**/_*/**"
       ]
     },
     "includeDirectories": [],

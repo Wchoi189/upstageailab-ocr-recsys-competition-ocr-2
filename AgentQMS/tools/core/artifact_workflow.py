@@ -279,20 +279,20 @@ class ArtifactWorkflow:
 
         # Suggest compliance check
         self._log("   2. Run compliance check:")
-        self._log("      cd AgentQMS/interface && make compliance")
+        self._log("      cd AgentQMS/bin && make compliance")
 
         # Suggest context loading if applicable
         if artifact_type == "implementation_plan":
             self._log("   3. Load planning context:")
-            self._log("      cd AgentQMS/interface && make context-plan")
+            self._log("      cd AgentQMS/bin && make context-plan")
         elif artifact_type == "bug_report":
             self._log("   3. Load debugging context:")
-            self._log("      cd AgentQMS/interface && make context-debug")
+            self._log("      cd AgentQMS/bin && make context-debug")
 
         # Suggest related workflows
         if artifact_type in ["implementation_plan", "design"]:
             self._log("   4. Consider creating related artifacts:")
-            self._log("      cd AgentQMS/interface && make create-assessment NAME=... TITLE=...")
+            self._log("      cd AgentQMS/bin && make create-assessment NAME=... TITLE=...")
 
         self._log()
 

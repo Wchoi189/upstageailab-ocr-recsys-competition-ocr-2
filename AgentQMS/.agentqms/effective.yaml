@@ -1,7 +1,7 @@
 layers:
-  settings: .agentqms/settings.yaml
+  settings: AgentQMS/.agentqms/settings.yaml
 metadata:
-  generated_at: '2026-01-04T18:27:15.112917Z'
+  generated_at: '2026-01-05T10:26:23.644643Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:
@@ -47,6 +47,7 @@ resolved:
     - features
     - implementation_guides
     - specs
+    - walkthroughs
     rules:
       naming: true
       frontmatter: true

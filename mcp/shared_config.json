@@ -1,0 +1,14 @@
+{
+    "mcpServers": {
+        "unified_project": {
+            "command": "uv",
+            "args": [
+                "run",
+                "--directory",
+                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "python",
+                "mcp/unified_server.py"
+            ]
+        }
+    }
+}
