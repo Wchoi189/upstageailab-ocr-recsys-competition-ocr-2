@@ -15,7 +15,6 @@ Resources exposed:
 
 import asyncio
 import json
-import sys
 from pathlib import Path
 from typing import Any
 
@@ -115,6 +114,29 @@ async def list_tools() -> list[Tool]:
                 "type": "object",
                 "properties": {},
             },
+        ),
+        Tool(
+            name="manage_session",
+            description="Manage project sessions (export, import, list, new) to save/restore context.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "action": {
+                        "type": "string",
+                        "enum": ["export", "import", "list", "new"],
+                        "description": "Action to perform on the session."
+                    },
+                    "session_name": {
+                        "type": "string",
+                        "description": "Name of the session to import (required for import action)."
+                    },
+                    "note": {
+                        "type": "string",
+                        "description": "Note to attach to the session (optional for export)."
+                    }
+                },
+                "required": ["action"]
+            },
         )
     ]
 
@@ -133,6 +155,32 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 }, indent=2)
             )
         ]
+
+    if name == "manage_session":
+        import subprocess
+        action = arguments.get("action")
+        session_name = arguments.get("session_name")
+        note = arguments.get("note")
+
+        cmd = ["uv", "run", "python", str(COMPASS_DIR / "scripts/session_manager.py"), action]
+
+        if action == "export" and note:
+            cmd.extend(["--note", note])
+        elif action == "import":
+            if not session_name:
+                raise ValueError("session_name is required for import action")
+            cmd.append(session_name)
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=PROJECT_ROOT)
+            if result.returncode != 0:
+                output = f"Error executing session manager:\n{result.stderr}\n{result.stdout}"
+            else:
+                output = result.stdout
+
+            return [TextContent(type="text", text=output)]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to execute session manager: {str(e)}")]
 
     raise ValueError(f"Unknown tool: {name}")
 

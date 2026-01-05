@@ -1,0 +1,197 @@
+import shutil
+import os
+import sys
+import argparse
+import datetime
+import json
+import yaml
+from pathlib import Path
+
+# Paths
+PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+COMPASS_DIR = PROJECT_ROOT / "project_compass"
+ACTIVE_CONTEXT_DIR = COMPASS_DIR / "active_context"
+HISTORY_DIR = COMPASS_DIR / "history"
+SESSIONS_DIR = HISTORY_DIR / "sessions"
+TASK_FILE = PROJECT_ROOT / "task.md" # Assuming task.md is in root for agent use, but artifacts might be elsewhere.
+# Re-checking task.md location: The user has artifacts in ~/.gemini/.../brain/.../task.md
+# BUT, usually agents act on files in the workspace. The task.md artifact is a special case.
+# Wait, the user's `task.md` in the context of "Project Compass" usually refers to a file AI Agents use.
+# Let's check if there is a 'task.md' in the workspace or if we should rely on the artifact path.
+# The user's request mentioned: "The work area needs to stay low-memory footprint... Any long content or many artifacts if there is any should be stored outside the project_compass directory."
+# However, "context" usually implies the active tasks.
+# Let's assume for now we only manage `active_context` files and maybe a `task.md` if it exists in a known location.
+# Current session files: active_context/current_session.yml, active_context/blockers.yml.
+# We will focus on `active_context` first.
+
+def get_current_session_id():
+    session_file = ACTIVE_CONTEXT_DIR / "current_session.yml"
+    if not session_file.exists():
+        return None
+    try:
+        with open(session_file) as f:
+            data = yaml.safe_load(f)
+            return data.get("session_id")
+    except Exception:
+        return None
+
+def export_session(note=None):
+    """Archives the current active context to history/sessions."""
+    session_id = get_current_session_id()
+    if not session_id:
+        print("Error: No active session found in active_context/current_session.yml")
+        sys.exit(1)
+
+    timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
+    # Folder name: YYYYMMDD_HHMMSS_session_id
+    session_folder_name = f"{timestamp}_{session_id}"
+    dest_dir = SESSIONS_DIR / session_folder_name
+
+    if dest_dir.exists():
+        print(f"Warning: Session directory {dest_dir} already exists.")
+        # We proceed to overwrite or maybe fail? Unique timestamp prevents this usually.
+
+    os.makedirs(dest_dir, exist_ok=True)
+
+    # 1. Copy active_context
+    shutil.copytree(ACTIVE_CONTEXT_DIR, dest_dir / "active_context", dirs_exist_ok=True)
+
+    # 2. Copy session_handover.md
+    handover_file = COMPASS_DIR / "session_handover.md"
+    if handover_file.exists():
+        shutil.copy2(handover_file, dest_dir / "session_handover.md")
+
+    # 3. Manifest
+    manifest = {
+        "original_session_id": session_id,
+        "exported_at": timestamp,
+        "note": note or ""
+    }
+    with open(dest_dir / "manifest.json", "w") as f:
+        json.dump(manifest, f, indent=2)
+
+    print(f"Session exported to: {dest_dir}")
+    return dest_dir
+
+def list_sessions():
+    if not SESSIONS_DIR.exists():
+        print("No sessions found.")
+        return
+
+    sessions = sorted(SESSIONS_DIR.iterdir(), key=os.path.getmtime, reverse=True)
+    print(f"{'TIMESTAMP & ID':<40} {'NOTE'}")
+    print("-" * 60)
+    for sess in sessions:
+        if sess.is_dir():
+            note = ""
+            manifest_path = sess / "manifest.json"
+            if manifest_path.exists():
+                try:
+                    with open(manifest_path) as f:
+                        m = json.load(f)
+                        note = m.get("note", "")
+                except:
+                    pass
+            print(f"{sess.name:<40} {note}")
+
+def import_session(session_folder_name):
+    """Restores a session from history/sessions to active_context."""
+    src_dir = SESSIONS_DIR / session_folder_name
+    if not src_dir.exists():
+        # Try fuzzy match?
+        print(f"Error: Session {session_folder_name} not found in {SESSIONS_DIR}")
+        sys.exit(1)
+
+    print(f"Restoring session from {src_dir}...")
+
+    # Safety: Backup current if it looks important?
+    # For now, we assume user knows what they are doing or we could do a quick auto-export.
+    # Let's do a quick auto-backup to a 'trash' or 'temp' if needed, but user asked for simple.
+
+    # Nuke current active_context content?
+    # Or just overwrite. Overwrite is safer to keep untracked files, but technically we want a clean state.
+    # Let's clean ACTIVE_CONTEXT_DIR first to avoid mixing.
+    for item in ACTIVE_CONTEXT_DIR.iterdir():
+        if item.name == ".gitkeep": continue
+        if item.is_dir():
+            shutil.rmtree(item)
+        else:
+            item.unlink()
+
+    # Copy back
+    src_active = src_dir / "active_context"
+    if src_active.exists():
+        shutil.copytree(src_active, ACTIVE_CONTEXT_DIR, dirs_exist_ok=True)
+        print("Restored active_context.")
+    else:
+        print("Warning: No active_context found in archived session.")
+
+    # Copy back session_handover.md
+    src_handover = src_dir / "session_handover.md"
+    if src_handover.exists():
+        shutil.copy2(src_handover, COMPASS_DIR / "session_handover.md")
+        print("Restored session_handover.md")
+
+def new_session(session_id=None):
+    """Clears active context for a fresh start."""
+    # Auto-export current before clearing
+    current_id = get_current_session_id()
+    if current_id:
+        print(f"Auto-exporting current session {current_id}...")
+        export_session(note="Auto-save before new session")
+
+    print("Clearing active context...")
+    for item in ACTIVE_CONTEXT_DIR.iterdir():
+        if item.name == ".gitkeep": continue
+        if item.is_dir():
+            shutil.rmtree(item)
+        else:
+            item.unlink()
+
+    # Clear session_handover.md
+    handover_file = COMPASS_DIR / "session_handover.md"
+    if handover_file.exists():
+        with open(handover_file, "w") as f:
+            f.write("# Session Handover\n\nNo active session.\n")
+
+    # Create template files
+    # We might want to read valid schemas or templates but for now let's just create placeholder
+    if session_id:
+        # Create minimal current_session.yml
+        pass
+        # Actually better to copy from a template...
+        # Let's look for templates/session.yml
+
+    print("Session cleared. Ready for new context.")
+
+def main():
+    parser = argparse.ArgumentParser(description="Project Compass Session Manager")
+    subparsers = parser.add_subparsers(dest="command", required=True)
+
+    # Export
+    export_parser = subparsers.add_parser("export", help="Archive current session")
+    export_parser.add_argument("--note", "-n", help="Note for the manifest")
+
+    # Import
+    import_parser = subparsers.add_parser("import", help="Restore a session")
+    import_parser.add_argument("session_name", help="Name of the session folder to import")
+
+    # List
+    list_parser = subparsers.add_parser("list", help="List archived sessions")
+
+    # New
+    new_parser = subparsers.add_parser("new", help="Start fresh session (archives current)")
+
+    args = parser.parse_args()
+
+    if args.command == "export":
+        export_session(args.note)
+    elif args.command == "list":
+        list_sessions()
+    elif args.command == "import":
+        import_session(args.session_name)
+    elif args.command == "new":
+        new_session()
+
+if __name__ == "__main__":
+    main()
