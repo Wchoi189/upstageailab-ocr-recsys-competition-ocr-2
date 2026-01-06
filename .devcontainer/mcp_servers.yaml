@@ -42,6 +42,16 @@ servers:
       - log_insight
       - sync_experiment
 
+  - name: agent-debug-toolkit
+    path: agent-debug-toolkit/src/agent_debug_toolkit/mcp_server.py
+    description: AST-based analysis for Hydra/OmegaConf debugging
+    tools:
+      - analyze_config_access
+      - trace_merge_order
+      - find_hydra_usage
+      - find_component_instantiations
+      - explain_config_flow
+
 # Startup command template
 command_template: "uv run --directory ${workspaceFolder} python {path}"
 

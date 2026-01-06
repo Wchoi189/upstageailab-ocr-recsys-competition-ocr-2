@@ -1,0 +1,267 @@
+2026-01-06T16:11:09.814Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.3ms)
+2026-01-06T16:11:09.961Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.9ms)
+2026-01-06T16:11:09.978Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (6.5ms)
+2026-01-06T16:11:09.990Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.7ms)
+2026-01-06T16:11:10.009Z [DEBUG] [LSP MANAGER] initializeLspServerManager() called
+2026-01-06T16:11:10.009Z [DEBUG] [LSP MANAGER] Created manager instance, state=pending
+2026-01-06T16:11:10.009Z [DEBUG] [LSP MANAGER] Starting async initialization (generation 1)
+2026-01-06T16:11:10.043Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.6ms)
+2026-01-06T16:11:10.052Z [DEBUG] LSP server manager initialized successfully
+2026-01-06T16:11:10.052Z [DEBUG] LSP notification handlers registered successfully for all 0 server(s)
+2026-01-06T16:11:10.053Z [DEBUG] Found 0 plugins (0 enabled, 0 disabled)
+2026-01-06T16:11:10.083Z [DEBUG] Stats cache does not exist, returning empty cache
+2026-01-06T16:11:10.083Z [DEBUG] Stats cache empty, processing all historical data in background
+2026-01-06T16:11:10.096Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (12.2ms): ldd /bin/ls 2>/dev/null
+2026-01-06T16:11:10.111Z [DEBUG] Loading skills from: managed=/etc/claude-code/.claude/skills, user=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/skills, project=[]
+2026-01-06T16:11:10.153Z [DEBUG] installed_plugins.json doesn't exist, returning empty V2 object
+2026-01-06T16:11:10.170Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (11.9ms)
+2026-01-06T16:11:10.193Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (8.0ms)
+2026-01-06T16:11:10.229Z [DEBUG] Creating shell snapshot for bash (/bin/bash)
+2026-01-06T16:11:10.229Z [DEBUG] Looking for shell config file: /home/vscode/.bashrc
+2026-01-06T16:11:10.229Z [DEBUG] Snapshots directory: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/shell-snapshots
+2026-01-06T16:11:10.234Z [DEBUG] Creating snapshot at: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/shell-snapshots/snapshot-bash-1767715870229-wmptm4.sh
+2026-01-06T16:11:10.234Z [DEBUG] Shell binary exists: true
+2026-01-06T16:11:10.234Z [DEBUG] Execution timeout: 10000ms
+2026-01-06T16:11:10.240Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/todos/d6773f93-31c2-429c-a0b4-ec62c6506337-agent-d6773f93-31c2-429c-a0b4-ec62c6506337.json.tmp.83547.1767715870240
+2026-01-06T16:11:10.248Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (6.6ms)
+2026-01-06T16:11:10.248Z [DEBUG] Temp file written successfully, size: 2 bytes
+2026-01-06T16:11:10.248Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/todos/d6773f93-31c2-429c-a0b4-ec62c6506337-agent-d6773f93-31c2-429c-a0b4-ec62c6506337.json.tmp.83547.1767715870240 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/todos/d6773f93-31c2-429c-a0b4-ec62c6506337-agent-d6773f93-31c2-429c-a0b4-ec62c6506337.json
+2026-01-06T16:11:10.253Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (5.2ms)
+2026-01-06T16:11:10.253Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/todos/d6773f93-31c2-429c-a0b4-ec62c6506337-agent-d6773f93-31c2-429c-a0b4-ec62c6506337.json written atomically
+2026-01-06T16:11:10.270Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (6.2ms)
+2026-01-06T16:11:10.272Z [DEBUG] getPluginSkills: Processing 0 enabled plugins
+2026-01-06T16:11:10.272Z [DEBUG] Total plugin skills loaded: 0
+2026-01-06T16:11:10.272Z [DEBUG] Total plugin commands loaded: 0
+2026-01-06T16:11:10.272Z [DEBUG] Registered 0 hooks from 0 plugins
+2026-01-06T16:11:10.351Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.0ms)
+2026-01-06T16:11:10.373Z [DEBUG] [SLOW OPERATION DETECTED] fs.existsSync (5.7ms)
+2026-01-06T16:11:10.384Z [DEBUG] [SLOW OPERATION DETECTED] fs.existsSync (11.1ms)
+2026-01-06T16:11:10.453Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (6.9ms)
+2026-01-06T16:11:10.472Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.6ms)
+2026-01-06T16:11:10.534Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.5ms)
+2026-01-06T16:11:10.551Z [DEBUG] Total plugin agents loaded: 0
+2026-01-06T16:11:10.551Z [DEBUG] Loaded 0 unique skills (managed: 0, user: 0, project: 0, legacy commands: 0)
+2026-01-06T16:11:10.584Z [DEBUG] getSkills returning: 0 skill dir commands, 0 plugin skills
+2026-01-06T16:11:10.630Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (18.9ms)
+2026-01-06T16:11:10.653Z [DEBUG] [SLOW OPERATION DETECTED] fs.readdirSync (8.4ms)
+2026-01-06T16:11:10.663Z [DEBUG] [SLOW OPERATION DETECTED] fs.readdirSync (9.5ms)
+2026-01-06T16:11:10.680Z [DEBUG] [SLOW OPERATION DETECTED] fs.readdirSync (8.3ms)
+2026-01-06T16:11:10.680Z [DEBUG] [SLOW OPERATION DETECTED] fs.isDirEmptySync (8.4ms)
+2026-01-06T16:11:10.686Z [DEBUG] [SLOW OPERATION DETECTED] fs.readdirSync (5.8ms)
+2026-01-06T16:11:10.737Z [DEBUG] Git remote URL: https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2.git
+2026-01-06T16:11:10.737Z [DEBUG] Parsed repository: Wchoi189/upstageailab-ocr-recsys-competition-ocr-2 from https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2.git
+2026-01-06T16:11:10.737Z [DEBUG] Parsed repository: Wchoi189/upstageailab-ocr-recsys-competition-ocr-2 from URL: https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2.git
+2026-01-06T16:11:10.744Z [DEBUG] Path /workspaces/upstageailab-ocr-recsys-competition-ocr-2 already tracked for repo wchoi189/upstageailab-ocr-recsys-competition-ocr-2
+2026-01-06T16:11:10.891Z [DEBUG] Ripgrep first use test: PASSED (mode=builtin, path=/workspaces/node_modules_global/lib/node_modules/@anthropic-ai/claude-code/vendor/ripgrep/x64-linux/rg)
+2026-01-06T16:11:10.997Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (7.5ms)
+2026-01-06T16:11:11.074Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (6.7ms)
+2026-01-06T16:11:11.082Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.9ms)
+2026-01-06T16:11:11.088Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.2ms)
+2026-01-06T16:11:11.149Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (24.4ms)
+2026-01-06T16:11:11.172Z [DEBUG] Shell snapshot created successfully (2945 bytes)
+2026-01-06T16:11:11.202Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (24.2ms)
+2026-01-06T16:11:11.232Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (23.4ms)
+2026-01-06T16:11:11.265Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (27.5ms)
+2026-01-06T16:11:11.292Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.2ms)
+2026-01-06T16:11:11.345Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.2ms)
+2026-01-06T16:11:11.377Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.3ms)
+2026-01-06T16:11:11.560Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (21.1ms)
+2026-01-06T16:11:11.592Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (29.5ms)
+2026-01-06T16:11:11.600Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715871600
+2026-01-06T16:11:11.605Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:11.624Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (18.5ms)
+2026-01-06T16:11:11.624Z [DEBUG] Temp file written successfully, size: 54613 bytes
+2026-01-06T16:11:11.629Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:11.629Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715871600 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:11.640Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (10.4ms)
+2026-01-06T16:11:11.640Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:11.695Z [DEBUG] [SLOW OPERATION DETECTED] fs.existsSync (5.3ms)
+2026-01-06T16:11:11.731Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (36.0ms)
+2026-01-06T16:11:11.743Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.6ms)
+2026-01-06T16:11:11.776Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (6.6ms)
+2026-01-06T16:11:11.816Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (36.6ms)
+2026-01-06T16:11:12.077Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (25.2ms)
+2026-01-06T16:11:12.299Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (14.8ms)
+2026-01-06T16:11:12.326Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (25.0ms)
+2026-01-06T16:11:12.331Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715872331
+2026-01-06T16:11:12.333Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:12.341Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (7.6ms)
+2026-01-06T16:11:12.341Z [DEBUG] Temp file written successfully, size: 54616 bytes
+2026-01-06T16:11:12.344Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:12.344Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715872331 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:12.351Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (7.0ms)
+2026-01-06T16:11:12.351Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:12.383Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (22.6ms)
+2026-01-06T16:11:12.787Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (10.7ms)
+2026-01-06T16:11:12.787Z [DEBUG] Successfully refreshed marketplace: claude-plugins-official
+2026-01-06T16:11:12.787Z [DEBUG] Plugin autoupdate: checking installed plugins
+2026-01-06T16:11:13.234Z [DEBUG] [SLOW OPERATION DETECTED] fs.readdirSync (5.3ms)
+2026-01-06T16:11:13.245Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.2ms)
+2026-01-06T16:11:13.262Z [DEBUG] [SLOW OPERATION DETECTED] fs.readSync (11.5ms)
+2026-01-06T16:11:13.271Z [DEBUG] [SLOW OPERATION DETECTED] fs.readSync (9.3ms)
+2026-01-06T16:11:13.277Z [DEBUG] [SLOW OPERATION DETECTED] fs.readSync (5.5ms)
+2026-01-06T16:11:13.288Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (8.1ms)
+2026-01-06T16:11:13.410Z [DEBUG] Initialized versioned plugins system with 0 plugins
+2026-01-06T16:11:13.468Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (6.3ms)
+2026-01-06T16:11:13.522Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (9.8ms)
+2026-01-06T16:11:13.550Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (26.0ms)
+2026-01-06T16:11:13.559Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715873559
+2026-01-06T16:11:13.564Z [DEBUG] [SLOW OPERATION DETECTED] fs.existsSync (5.2ms)
+2026-01-06T16:11:13.567Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:13.581Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (14.8ms)
+2026-01-06T16:11:13.581Z [DEBUG] Temp file written successfully, size: 54616 bytes
+2026-01-06T16:11:13.583Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:13.584Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715873559 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:13.590Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (6.0ms)
+2026-01-06T16:11:13.590Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:13.629Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (23.1ms)
+2026-01-06T16:11:13.687Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (17.4ms)
+2026-01-06T16:11:13.688Z [DEBUG] Getting matching hook commands for SessionStart with query: startup
+2026-01-06T16:11:13.688Z [DEBUG] Found 0 hook matchers in settings
+2026-01-06T16:11:13.688Z [DEBUG] Matched 0 unique hooks for query "startup" (0 before deduplication)
+2026-01-06T16:11:13.696Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (5.0ms)
+2026-01-06T16:11:14.130Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (9.9ms)
+2026-01-06T16:11:14.190Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (13.3ms)
+2026-01-06T16:11:14.201Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (8.0ms)
+2026-01-06T16:11:14.211Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (7.9ms)
+2026-01-06T16:11:14.237Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (13.8ms)
+2026-01-06T16:11:14.324Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (7.2ms)
+2026-01-06T16:11:14.352Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (23.9ms)
+2026-01-06T16:11:14.355Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715874355
+2026-01-06T16:11:14.356Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:14.365Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (8.1ms)
+2026-01-06T16:11:14.365Z [DEBUG] Temp file written successfully, size: 54543 bytes
+2026-01-06T16:11:14.367Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:14.367Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715874355 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:14.375Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (7.7ms)
+2026-01-06T16:11:14.375Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:14.400Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (17.4ms)
+2026-01-06T16:11:14.438Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (12.9ms)
+2026-01-06T16:11:14.462Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (22.4ms)
+2026-01-06T16:11:14.464Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715874464
+2026-01-06T16:11:14.466Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:14.472Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (5.3ms)
+2026-01-06T16:11:14.472Z [DEBUG] Temp file written successfully, size: 54586 bytes
+2026-01-06T16:11:14.474Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:14.474Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715874464 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:14.481Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (7.3ms)
+2026-01-06T16:11:14.481Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:14.530Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (32.9ms)
+2026-01-06T16:11:14.558Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (20.1ms)
+2026-01-06T16:11:14.570Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (7.8ms)
+2026-01-06T16:11:14.586Z [DEBUG] Official marketplace auto-install skipped: already_attempted
+2026-01-06T16:11:14.587Z [DEBUG] performStartupChecks called
+2026-01-06T16:11:14.601Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (12.1ms)
+2026-01-06T16:11:14.601Z [DEBUG] Starting background plugin installations
+2026-01-06T16:11:14.602Z [DEBUG] performBackgroundPluginInstallations called
+2026-01-06T16:11:14.612Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (7.3ms)
+2026-01-06T16:11:14.624Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (10.2ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:14.765Z [DEBUG] [SLOW OPERATION DETECTED] fs.statSync (6.1ms)
+2026-01-06T16:11:14.778Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (10.7ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:14.810Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.4ms)
+2026-01-06T16:11:14.834Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (11.2ms)
+2026-01-06T16:11:14.855Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (18.8ms)
+2026-01-06T16:11:14.858Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715874858
+2026-01-06T16:11:14.860Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:14.865Z [DEBUG] Temp file written successfully, size: 54659 bytes
+2026-01-06T16:11:14.866Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:14.866Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715874858 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:14.871Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:14.895Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (16.9ms)
+2026-01-06T16:11:14.910Z [DEBUG] Setting installation status: 0 marketplaces, 0 installable plugins, 0 uninstallable plugins
+2026-01-06T16:11:14.938Z [DEBUG] Loaded plugins - Enabled: 0, Disabled: 0, Commands: 0, Agents: 0, Errors: 0
+2026-01-06T16:11:15.026Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-01-06T16:11:15.087Z [DEBUG] [SLOW OPERATION DETECTED] fs.existsSync (8.3ms)
+2026-01-06T16:11:15.219Z [DEBUG] Summarizing all 3 messages (~0 tokens)
+2026-01-06T16:11:15.438Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (5.7ms)
+2026-01-06T16:11:15.448Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (6.9ms)
+2026-01-06T16:11:15.448Z [DEBUG] FileHistory: Added snapshot for b599dc60-f3e7-4b56-9ae3-ae614d76c733, tracking 0 files
+2026-01-06T16:11:15.477Z [DEBUG] UserCommandMessage rendering: "mcp" (args: "none")
+2026-01-06T16:11:15.477Z [DEBUG] isSkillFormat: false
+2026-01-06T16:11:15.589Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (7.7ms)
+2026-01-06T16:11:15.612Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (19.3ms)
+2026-01-06T16:11:15.615Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715875615
+2026-01-06T16:11:15.619Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:15.625Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (6.5ms)
+2026-01-06T16:11:15.625Z [DEBUG] Temp file written successfully, size: 54659 bytes
+2026-01-06T16:11:15.628Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:15.628Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715875615 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:15.635Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (6.8ms)
+2026-01-06T16:11:15.635Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:15.672Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (16.7ms)
+2026-01-06T16:11:15.799Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (16.3ms)
+2026-01-06T16:11:15.804Z [DEBUG] [SLOW OPERATION DETECTED] fs.existsSync (5.2ms)
+2026-01-06T16:11:15.827Z [DEBUG] [SLOW OPERATION DETECTED] fs.copyFileSync (22.5ms)
+2026-01-06T16:11:15.833Z [DEBUG] Writing to temp file: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715875833
+2026-01-06T16:11:15.836Z [DEBUG] Preserving file permissions: 100600
+2026-01-06T16:11:15.844Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (7.7ms)
+2026-01-06T16:11:15.844Z [DEBUG] Temp file written successfully, size: 54697 bytes
+2026-01-06T16:11:15.845Z [DEBUG] Applied original permissions to temp file
+2026-01-06T16:11:15.845Z [DEBUG] Renaming /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json.tmp.83547.1767715875833 to /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json
+2026-01-06T16:11:15.852Z [DEBUG] [SLOW OPERATION DETECTED] fs.renameSync (7.1ms)
+2026-01-06T16:11:15.852Z [DEBUG] File /workspaces/upstageailab-ocr-recsys-competition-ocr-2/.ai-instructions/tier3-agents/claude/.claude.json written atomically
+2026-01-06T16:11:15.878Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (20.5ms)
+2026-01-06T16:11:15.984Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (6.7ms)
+2026-01-06T16:11:15.997Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.3ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:16.004Z [DEBUG] AutoUpdaterWrapper: Installation type: npm-global
+2026-01-06T16:11:16.037Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (8.3ms)
+2026-01-06T16:11:16.052Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (12.5ms)
+2026-01-06T16:11:16.065Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (9.2ms)
+2026-01-06T16:11:16.079Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (9.3ms)
+2026-01-06T16:11:16.462Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.1ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:16.480Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.8ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:16.585Z [DEBUG] Stream started - received first chunk
+2026-01-06T16:11:17.077Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (8.7ms)
+2026-01-06T16:11:17.332Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.0ms)
+2026-01-06T16:11:17.332Z [DEBUG] Getting matching hook commands for SubagentStart with query: Explore
+2026-01-06T16:11:17.332Z [DEBUG] Found 0 hook matchers in settings
+2026-01-06T16:11:17.332Z [DEBUG] Matched 0 unique hooks for query "Explore" (0 before deduplication)
+2026-01-06T16:11:17.339Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.3ms)
+2026-01-06T16:11:17.340Z [DEBUG] Getting matching hook commands for SubagentStart with query: Plan
+2026-01-06T16:11:17.340Z [DEBUG] Found 0 hook matchers in settings
+2026-01-06T16:11:17.340Z [DEBUG] Matched 0 unique hooks for query "Plan" (0 before deduplication)
+2026-01-06T16:11:17.406Z [DEBUG] Skills and commands included in Skill tool:
+2026-01-06T16:11:17.478Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (7.3ms)
+2026-01-06T16:11:17.771Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (6.9ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:17.786Z [DEBUG] [SLOW OPERATION DETECTED] fs.writeFileSync (7.3ms)
+2026-01-06T16:11:17.794Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (7.8ms)
+2026-01-06T16:11:18.790Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.7ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:19.237Z [DEBUG] Stream started - received first chunk
+2026-01-06T16:11:19.815Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:20.347Z [DEBUG] Stream started - received first chunk
+2026-01-06T16:11:20.835Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.4ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:21.594Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (5.6ms)
+2026-01-06T16:11:21.774Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (9.5ms)
+2026-01-06T16:11:21.897Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (7.3ms)
+2026-01-06T16:11:21.937Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-06T16:11:21.937Z [DEBUG] Found 0 hook matchers in settings
+2026-01-06T16:11:21.937Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-06T16:11:22.000Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.2ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:23.032Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (11.0ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:24.056Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:25.089Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (9.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:26.119Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (11.0ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:26.655Z [DEBUG] [SLOW OPERATION DETECTED] fs.appendFileSync (9.9ms)
+2026-01-06T16:11:26.806Z [DEBUG] Getting matching hook commands for SubagentStop with query: undefined
+2026-01-06T16:11:26.806Z [DEBUG] Found 0 hook matchers in settings
+2026-01-06T16:11:26.806Z [DEBUG] Matched 0 unique hooks for query "no match query" (0 before deduplication)
+2026-01-06T16:11:27.146Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.8ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:28.166Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.6ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:29.186Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (6.4ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:30.212Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (10.6ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:31.233Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.9ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:32.251Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:33.271Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.8ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:34.306Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (14.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:35.326Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:36.346Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (9.9ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:37.367Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.9ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:38.402Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (13.5ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:39.429Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (9.7ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:40.451Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (7.2ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:41.470Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (6.8ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:42.489Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (6.3ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:43.514Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.7ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:44.546Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (10.8ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:11:45.574Z [DEBUG] [SLOW OPERATION DETECTED] execSyncWithDefaults_DEPRECATED (8.3ms): powershell.exe -Command '$env:USERPROFILE'
+2026-01-06T16:14:22.909Z [DEBUG] [SLOW OPERATION DETECTED] fs.readFileSync (20.8ms)

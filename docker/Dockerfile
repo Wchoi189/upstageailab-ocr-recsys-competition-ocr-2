@@ -103,6 +103,9 @@ WORKDIR /workspaces
 # copying to a temp location or root workspace to run sync
 COPY --chown=vscode:vscode pyproject.toml uv.lock* ./
 
+# Copy README.md before package installation (required by pyproject.toml)
+COPY --chown=vscode:vscode README.md ./
+
 # Install dependencies into the user's cache or a dummy venv
 # This populates the uv cache at /home/vscode/.cache/uv
 RUN uv sync --frozen --no-dev || uv sync --frozen

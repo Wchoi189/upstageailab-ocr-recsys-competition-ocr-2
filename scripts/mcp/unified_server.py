@@ -36,9 +36,13 @@ AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
 EXPERIMENT_MANAGER_DIR = PROJECT_ROOT / "experiment_manager"
 EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
 
-# Add AgentQMS to path for dynamic templates
+# Add AgentQMS and Agent Debug Toolkit to path
 if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
+
+DEBUG_TOOLKIT_SRC = PROJECT_ROOT / "agent-debug-toolkit/src"
+if DEBUG_TOOLKIT_SRC.exists() and str(DEBUG_TOOLKIT_SRC) not in sys.path:
+    sys.path.insert(0, str(DEBUG_TOOLKIT_SRC))
 
 app = Server("unified_project")
 
@@ -49,28 +53,38 @@ RESOURCES_CONFIG = [
     {
         "uri": "compass://compass.json",
         "name": "Project Compass State",
+        "description": "Main compass state: current phase, health, handoff reference",
         "path": COMPASS_DIR / "compass.json",
         "mimeType": "application/json",
     },
     {
         "uri": "compass://session_handover.md",
         "name": "Session Handover",
+        "description": "Current session handover document with accomplishments and next steps",
         "path": COMPASS_DIR / "session_handover.md",
         "mimeType": "text/markdown",
     },
     {
         "uri": "compass://current_session.yml",
         "name": "Active Session Context",
+        "description": "Active session metadata: objective, pipeline, environment lock",
         "path": COMPASS_DIR / "active_context" / "current_session.yml",
         "mimeType": "application/x-yaml",
     },
     {
         "uri": "compass://uv_lock_state.yml",
         "name": "Environment Lock State",
+        "description": "UV environment lock state: Python version, CUDA config, dependencies",
         "path": COMPASS_DIR / "environments" / "uv_lock_state.yml",
         "mimeType": "application/x-yaml",
     },
-    {"uri": "compass://agents.yaml", "name": "Agent Configuration", "path": COMPASS_DIR / "AGENTS.yaml", "mimeType": "application/x-yaml"},
+    {
+        "uri": "compass://agents.yaml",
+        "name": "Agent Configuration",
+        "description": "AI agent configuration: rules, entry points, schema root",
+        "path": COMPASS_DIR / "AGENTS.yaml",
+        "mimeType": "application/x-yaml",
+    },
     # AgentQMS
     {
         "uri": "agentqms://standards/index",
@@ -116,7 +130,7 @@ RESOURCES_CONFIG = [
 
 @app.list_resources()
 async def list_resources() -> list[Resource]:
-    return [Resource(uri=res["uri"], name=res["name"], mimeType=res["mimeType"]) for res in RESOURCES_CONFIG]
+    return [Resource(uri=res["uri"], name=res["name"], description=res.get("description", ""), mimeType=res["mimeType"]) for res in RESOURCES_CONFIG]
 
 
 @app.read_resource()
@@ -164,14 +178,28 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
 async def list_tools() -> list[Tool]:
     return [
         Tool(
+            name="get_server_info",
+            description="Get information about the Unified Project MCP server",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
+            name="project_compass",
+            description="Project Compass guide and entrypoint information",
+            inputSchema={"type": "object", "properties": {}},
+        ),
+        Tool(
             name="manage_session",
-            description="Manage project sessions",
+            description="Manage project sessions (export, import, list, new) to save/restore context.",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "action": {"type": "string", "enum": ["export", "import", "list", "new"]},
-                    "session_name": {"type": "string"},
-                    "note": {"type": "string"},
+                    "action": {
+                        "type": "string",
+                        "enum": ["export", "import", "list", "new"],
+                        "description": "Action to perform on the session.",
+                    },
+                    "session_name": {"type": "string", "description": "Name of the session to import (required for import action)."},
+                    "note": {"type": "string", "description": "Note to attach to the session (optional for export)."},
                 },
                 "required": ["action"],
             },
@@ -179,23 +207,54 @@ async def list_tools() -> list[Tool]:
         Tool(name="env_check", description="Validate project environment", inputSchema={"type": "object", "properties": {}}),
         Tool(
             name="create_artifact",
-            description="Create standard artifact",
+            description="Create standard artifact following project standards",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "artifact_type": {"type": "string"},
+                    "artifact_type": {
+                        "type": "string",
+                        "enum": [
+                            "assessment",
+                            "audit",
+                            "bug_report",
+                            "design_document",
+                            "implementation_plan",
+                            "walkthrough",
+                            "completed_plan",
+                            "vlm_report",
+                        ],
+                    },
                     "name": {"type": "string"},
                     "title": {"type": "string"},
                     "description": {"type": "string"},
+                    "tags": {"type": "string"},
                 },
                 "required": ["artifact_type", "name", "title"],
             },
         ),
         Tool(
             name="validate_artifact",
-            description="Validate artifact(s)",
-            inputSchema={"type": "object", "properties": {"file_path": {"type": "string"}, "validate_all": {"type": "boolean"}}},
+            description="Validate artifact(s) against naming and structure standards",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file_path": {"type": "string"},
+                    "validate_all": {"type": "boolean"},
+                },
+            },
         ),
+        Tool(name="list_artifact_templates", description="List all available artifact templates", inputSchema={"type": "object", "properties": {}}),
+        Tool(name="check_compliance", description="Check overall artifact compliance status", inputSchema={"type": "object", "properties": {}}),
+        Tool(
+            name="get_standard",
+            description="Retrieve project standard or rule content by name",
+            inputSchema={
+                "type": "object",
+                "properties": {"name": {"type": "string"}},
+                "required": ["name"],
+            },
+        ),
+        # Experiment Manager (ETK)
         Tool(
             name="init_experiment",
             description="Initialize experiment",
@@ -214,6 +273,67 @@ async def list_tools() -> list[Tool]:
                 "required": ["insight"],
             },
         ),
+        # Agent Debug Toolkit
+        Tool(
+            name="analyze_config_access",
+            description="Analyze Python code for configuration access patterns (cfg.X, self.cfg.X, config['key']).",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string"},
+                    "component": {"type": "string"},
+                    "output": {"type": "string", "enum": ["json", "markdown"]},
+                },
+                "required": ["path"],
+            },
+        ),
+        Tool(
+            name="trace_merge_order",
+            description="Trace OmegaConf.merge() operations and their precedence order.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file": {"type": "string"},
+                    "explain": {"type": "boolean"},
+                    "output": {"type": "string", "enum": ["json", "markdown"]},
+                },
+                "required": ["file"],
+            },
+        ),
+        Tool(
+            name="find_hydra_usage",
+            description="Find Hydra framework usage patterns including @hydra.main decorators.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string"},
+                    "output": {"type": "string", "enum": ["json", "markdown"]},
+                },
+                "required": ["path"],
+            },
+        ),
+        Tool(
+            name="find_component_instantiations",
+            description="Track component instantiation patterns: get_*_by_cfg() factory calls.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string"},
+                    "component": {"type": "string"},
+                    "output": {"type": "string", "enum": ["json", "markdown"]},
+                },
+                "required": ["path"],
+            },
+        ),
+        Tool(
+            name="explain_config_flow",
+            description="Generate a high-level summary of configuration flow through a file.",
+            inputSchema={
+                "type": "object",
+                "properties": {"file": {"type": "string"}},
+                "required": ["file"],
+            },
+        ),
     ]
 
 
@@ -225,6 +345,15 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             res = subprocess.run(["uv", "run", "python3"] + args, capture_output=True, text=True, cwd=PROJECT_ROOT)
             return [TextContent(type="text", text=res.stdout + res.stderr)]
 
+        if name == "get_server_info":
+            return [TextContent(type="text", text=json.dumps({"name": "project_compass", "version": "1.0.0", "status": "running", "components": ["Compass", "AgentQMS", "ETK", "ADT"]}, indent=2))]
+
+        if name == "project_compass":
+            entrypoint_path = COMPASS_DIR / "AI_ENTRYPOINT.md"
+            if entrypoint_path.exists():
+                return [TextContent(type="text", text=entrypoint_path.read_text())]
+            return [TextContent(type="text", text="Project Compass Entrypoint not found.")]
+
         if name == "manage_session":
             action = arguments["action"]
             cmd = [str(COMPASS_DIR / "scripts/session_manager.py"), action]
@@ -235,29 +364,95 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return run_py(cmd)
 
         if name == "env_check":
-            return run_py([str(COMPASS_DIR / "env_check.py")])
+            try:
+                # Import the EnvironmentChecker from ETK
+                from etk.compass import EnvironmentChecker
+
+                checker = EnvironmentChecker()
+                passed, errors, warnings = checker.check_all()
+
+                result_lines = []
+                if warnings:
+                    for warning in warnings:
+                        result_lines.append(f"⚠️  {warning}")
+
+                if errors:
+                    result_lines.append("❌ ENVIRONMENT BREACH DETECTED")
+                    for error in errors:
+                        result_lines.append(f"  ✗ {error}")
+                    result_lines.append("\n🔧 Path Restoration Instructions:")
+                    result_lines.append("   1. Ensure you are using the correct UV binary")
+                    result_lines.append("   2. Run: uv sync")
+                    result_lines.append('   3. Verify with: uv run python -c "import torch; print(torch.__version__)"')
+                else:
+                    result_lines.append("✅ Environment validated against Compass lock state")
+
+                return [TextContent(type="text", text="\n".join(result_lines))]
+            except Exception as e:
+                return [TextContent(type="text", text=f"Error checking environment: {e}")]
 
         if name == "create_artifact":
-            cmd = [
-                str(AGENTQMS_DIR / "bin/create-artifact.py"),
-                "--type",
-                arguments["artifact_type"],
-                "--name",
-                arguments["name"],
-                "--title",
-                arguments["title"],
-            ]
-            if arguments.get("description"):
-                cmd.extend(["--description", arguments["description"]])
-            return run_py(cmd)
+            try:
+                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+                workflow = ArtifactWorkflow(quiet=True)
+                result = workflow.create_artifact(
+                    artifact_type=arguments["artifact_type"],
+                    name=arguments["name"],
+                    title=arguments["title"],
+                    description=arguments.get("description"),
+                    tags=arguments.get("tags")
+                )
+                return [TextContent(type="text", text=result)]
+            except Exception as e:
+                return [TextContent(type="text", text=f"Error creating artifact: {e}")]
 
         if name == "validate_artifact":
-            cmd = [str(AGENTQMS_DIR / "bin/validate-artifact.py")]
-            if arguments.get("validate_all"):
-                cmd.append("--all")
-            else:
-                cmd.append(arguments.get("file_path", ""))
-            return run_py(cmd)
+            try:
+                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+                workflow = ArtifactWorkflow(quiet=True)
+
+                if arguments.get("validate_all"):
+                    success = workflow.validate_all()
+                    return [TextContent(type="text", text=f"Validation {'passed' if success else 'failed'}")]
+                elif arguments.get("file_path"):
+                    success = workflow.validate_artifact(arguments["file_path"])
+                    return [TextContent(type="text", text=f"Validation {'passed' if success else 'failed'}")]
+                else:
+                    return [TextContent(type="text", text="Error: Must specify either validate_all or file_path")]
+            except Exception as e:
+                return [TextContent(type="text", text=f"Error validating artifact: {e}")]
+
+        if name == "list_artifact_templates":
+            try:
+                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+                workflow = ArtifactWorkflow(quiet=True)
+                return [TextContent(type="text", text=json.dumps({"templates": workflow.get_available_templates()}, indent=2))]
+            except Exception as e:
+                return [TextContent(type="text", text=f"Error: {e}")]
+
+        if name == "check_compliance":
+            try:
+                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+                workflow = ArtifactWorkflow(quiet=True)
+                return [TextContent(type="text", text=json.dumps(workflow.check_compliance(), indent=2))]
+            except Exception as e:
+                return [TextContent(type="text", text=f"Error: {e}")]
+
+        if name == "get_standard":
+            # Direct python implementation for get_standard as it's simple file searching
+            query = arguments["name"].lower()
+            standards_dir = AGENTQMS_DIR / "standards"
+            matches = []
+            if standards_dir.exists():
+                for path in standards_dir.rglob("*"):
+                    if path.is_file() and path.suffix in [".yaml", ".md", ".json"]:
+                        if query in path.stem.lower():
+                            matches.append(path)
+            if not matches:
+                return [TextContent(type="text", text=f"No standards found matching '{query}'")]
+            if len(matches) == 1:
+                return [TextContent(type="text", text=f"Standard: {matches[0].name}\n\n{matches[0].read_text(encoding='utf-8')}")]
+            return [TextContent(type="text", text=f"Multiple matches: {[str(p.relative_to(standards_dir)) for p in matches]}")]
 
         if name == "init_experiment":
             cmd = ["-m", "etk.factory", "init", "--name", arguments["name"]]
@@ -267,6 +462,61 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         if name == "log_insight":
             return run_py(["-m", "etk.factory", "log", "--msg", arguments["insight"], "--type", arguments.get("type", "insight")])
+
+        # Agent Debug Toolkit Tools
+        def resolve_adt_path(p: str) -> Path:
+            path = Path(p)
+            return path if path.is_absolute() else PROJECT_ROOT / path
+
+        if name == "analyze_config_access":
+            from agent_debug_toolkit.analyzers.config_access import ConfigAccessAnalyzer
+            path = resolve_adt_path(arguments["path"])
+            report = ConfigAccessAnalyzer().analyze_file(path) if path.is_file() else ConfigAccessAnalyzer().analyze_directory(path)
+            if arguments.get("component"):
+                report.results = report.filter_by_component(arguments["component"])
+            return [TextContent(type="text", text=report.to_json() if arguments.get("output") == "json" else report.to_markdown())]
+
+        if name == "trace_merge_order":
+            from agent_debug_toolkit.analyzers.merge_order import MergeOrderTracker
+            path = resolve_adt_path(arguments["file"])
+            analyzer = MergeOrderTracker()
+            report = analyzer.analyze_file(path)
+            content = report.to_json() if arguments.get("output") == "json" else f"{analyzer.explain_precedence()}\n\n{report.to_markdown()}"
+            return [TextContent(type="text", text=content)]
+
+        if name == "find_hydra_usage":
+            from agent_debug_toolkit.analyzers.hydra_usage import HydraUsageAnalyzer
+            path = resolve_adt_path(arguments["path"])
+            report = HydraUsageAnalyzer().analyze_file(path) if path.is_file() else HydraUsageAnalyzer().analyze_directory(path)
+            return [TextContent(type="text", text=report.to_json() if arguments.get("output") == "json" else report.to_markdown())]
+
+        if name == "find_component_instantiations":
+            from agent_debug_toolkit.analyzers.instantiation import ComponentInstantiationTracker
+            path = resolve_adt_path(arguments["path"])
+            report = ComponentInstantiationTracker().analyze_file(path) if path.is_file() else ComponentInstantiationTracker().analyze_directory(path)
+            content = report.to_json() if arguments.get("output") == "json" else report.to_markdown()
+            return [TextContent(type="text", text=content)]
+
+        if name == "explain_config_flow":
+            # Nested imports to avoid circular/missing dependencies if not used
+            from agent_debug_toolkit.analyzers.config_access import ConfigAccessAnalyzer
+            from agent_debug_toolkit.analyzers.merge_order import MergeOrderTracker
+            from agent_debug_toolkit.analyzers.hydra_usage import HydraUsageAnalyzer
+            from agent_debug_toolkit.analyzers.instantiation import ComponentInstantiationTracker
+
+            path = resolve_adt_path(arguments["file"])
+            if not path.is_file(): return [TextContent(type="text", text="Error: File not found")]
+
+            creport = ConfigAccessAnalyzer().analyze_file(path)
+            mtracker = MergeOrderTracker()
+            mreport = mtracker.analyze_file(path)
+            hreport = HydraUsageAnalyzer().analyze_file(path)
+            ireport = ComponentInstantiationTracker().analyze_file(path)
+
+            summary = [f"# Config Flow: {path.name}", "", f"Accesses: {len(creport.results)}", f"Merges: {len(mreport.results)}", f"Hydra: {len(hreport.results)}", f"Components: {len(ireport.results)}"]
+            if mreport.results: summary.extend(["", "## Precedence", mtracker.explain_precedence()])
+
+            return [TextContent(type="text", text="\n".join(summary))]
 
         raise ValueError(f"Unknown tool: {name}")
     except Exception as e:

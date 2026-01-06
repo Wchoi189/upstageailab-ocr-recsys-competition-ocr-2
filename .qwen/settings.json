@@ -101,17 +101,6 @@
         "scripts/mcp/unified_server.py"
       ]
     },
-    "agent_debug_toolkit": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/agent-debug-toolkit",
-        "python",
-        "-m",
-        "agent_debug_toolkit.mcp_server"
-      ]
-    },
     "perplexity-ask": {
       "command": "npx",
       "args": [

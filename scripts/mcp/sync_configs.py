@@ -83,6 +83,11 @@ def main():
     for server_name, server_config in shared_config["mcpServers"].items():
         gemini_config["mcpServers"][server_name] = server_config
 
+    # Remove deprecated servers
+    for deprecated in ["agent_debug_toolkit", "project_compass"]:
+        if deprecated in gemini_config["mcpServers"]:
+            del gemini_config["mcpServers"][deprecated]
+
     save_json(GEMINI_CONFIG_PATH, gemini_config)
 
     # Update Claude Config
@@ -93,6 +98,11 @@ def main():
     # Merge servers (preserving placeholders)
     for server_name, server_config in shared_config["mcpServers"].items():
         claude_config["mcpServers"][server_name] = server_config
+
+    # Remove deprecated servers
+    for deprecated in ["agent_debug_toolkit", "project_compass"]:
+        if deprecated in claude_config["mcpServers"]:
+            del claude_config["mcpServers"][deprecated]
 
     save_json(CLAUDE_CONFIG_PATH, claude_config)
 
@@ -106,6 +116,11 @@ def main():
     # Merge servers (preserving placeholders)
     for server_name, server_config in shared_config["mcpServers"].items():
         qwen_config["mcpServers"][server_name] = server_config
+
+    # Remove deprecated servers
+    for deprecated in ["agent_debug_toolkit", "project_compass"]:
+        if deprecated in qwen_config["mcpServers"]:
+            del qwen_config["mcpServers"][deprecated]
 
     save_json(QWEN_CONFIG_PATH, qwen_config)
 
