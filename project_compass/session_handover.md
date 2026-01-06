@@ -1,10 +1,10 @@
-# Session Handover: Phase 1 & 2 Complete
+# Session Handover: Phase 1, 2, 3 & 4 Complete
 
 ## Session Summary
-**Date**: 2026-01-07 02:20 (KST)
-**Session ID**: 2026-01-05_strategic_refactor
-**Objective**: Master Architecture Refactoring (Phase 1 & 2 Implementation)
-**Status**: ✅ **COMPLETED**
+**Date**: 2026-01-07 05:00 (KST)
+**Session ID**: 2026-01-07_phase4_kie_detection_refactor
+**Objective**: Master Architecture Refactoring (Phase 1, 2, 3 & 4 Implementation)
+**Status**: ✅ **PHASE 4 COMPLETED**
 
 ## What Was Accomplished
 
@@ -37,46 +37,124 @@ Consolidated recognition-specific data logic into feature-scoped package.
 - Updated config references: `ocr.data.tokenizer` → `ocr.recognition.data.tokenizer`
 - Updated config references: `ocr.datasets.lmdb_dataset` → `ocr.recognition.data.lmdb_dataset`
 
+### Phase 3: Recognition Models Migration (✅ COMPLETE)
+Fully isolated the Recognition domain by moving PARSeq models into `ocr/recognition/models`.
+
+**Deliverables**:
+- ✅ `ocr/recognition/models/architecture.py` - Moved from `ocr/models/architectures/parseq.py`
+- ✅ `ocr/recognition/models/head.py` - Moved from `ocr/models/head/parseq_head.py`
+- ✅ `ocr/recognition/models/decoder.py` - Moved from `ocr/models/decoder/parseq_decoder.py`
+- ✅ `ocr/recognition/models/__init__.py` - Package init with lazy imports
+- ✅ `configs/model/recognition/parseq.yaml` - Moved from `configs/model/architectures/`
+- ✅ Updated `configs/train_parseq.yaml` with new config path
+
+**Changes**:
+- Created `ocr/recognition/models/` package structure
+- Moved PARSeq architecture, head, and decoder to recognition package
+- Updated imports within moved files to reference new locations
+- Fixed circular import in `ocr/models/__init__.py` (moved OCRModel import to function scope)
+- Updated `ocr/models/architectures/__init__.py` to remove parseq import
+- Updated config reference: `model/architectures/parseq` → `model/recognition/parseq`
+- Implemented lazy imports in `ocr/recognition/models/__init__.py` to avoid circular dependencies
+
+**Key Fixes**:
+- Resolved circular import between `ocr.core.architecture` and `ocr.models` by moving OCRModel import to function scope
+- Used lazy imports (`__getattr__`) in recognition models package for clean module loading
+
+### Phase 4: KIE & Detection Migration (✅ COMPLETE - NEW)
+Isolated KIE and Detection domains into their own feature packages.
+
+#### KIE Migration
+**Deliverables**:
+- ✅ `ocr/kie/data/dataset.py` - Moved from `ocr/data/datasets/kie_dataset.py`
+- ✅ `ocr/kie/models/model.py` - Moved from `ocr/models/kie_models.py`
+- ✅ `ocr/kie/trainer.py` - Moved from `ocr/lightning_modules/kie_pl.py`
+- ✅ `ocr/kie/__init__.py`, `ocr/kie/data/__init__.py`, `ocr/kie/models/__init__.py` - Package inits with lazy imports
+
+**Changes**:
+- Created `ocr/kie/` feature package structure with data and models subdirectories
+- Updated imports in `runners/train_kie.py` and `runners/kie_predictor.py`
+- Implemented lazy imports for KIEDataset, LayoutLMv3Wrapper, LiLTWrapper, KIEPLModule
+
+#### Detection Migration
+**Deliverables**:
+- ✅ `ocr/detection/models/architectures/` - Moved CRAFT, DBNet, DBNetPP from `ocr/models/architectures/`
+- ✅ `ocr/detection/models/heads/` - Moved craft_head.py, db_head.py from `ocr/models/head/`
+- ✅ `ocr/detection/models/postprocess/` - Moved craft_postprocess.py, db_postprocess.py from `ocr/models/head/`
+- ✅ `ocr/detection/models/decoders/` - Moved craft_decoder.py, dbpp_decoder.py, fpn_decoder.py from `ocr/models/decoder/`
+- ✅ `ocr/detection/models/encoders/` - Moved craft_vgg.py from `ocr/models/encoder/`
+- ✅ Created all necessary `__init__.py` files with lazy imports
+
+**Changes**:
+- Created `ocr/detection/models/` feature package with architectures, heads, postprocess, decoders, encoders subdirectories
+- Updated imports in all moved files to reference new locations
+- Updated test imports in `tests/unit/`, `tests/integration/`, and `tests/ocr/models/`
+- Updated `scripts/troubleshooting/test_model_forward_backward.py`
+- Updated `ocr/models/architectures/__init__.py` to import detection architectures from new location
+- Updated `ocr/models/architectures/shared_decoders.py` to import FPNDecoder from detection package
+- Fixed relative imports in heads (craft_head.py, db_head.py) to reference postprocess from correct location
+- Cleaned up `ocr/models/decoder/__init__.py`, `ocr/models/encoder/__init__.py`, `ocr/models/head/__init__.py` to remove moved components
+
+**Key Fixes**:
+- Fixed relative imports in detection heads to use absolute paths for postprocess modules
+- Removed imports of moved components from `ocr/models/decoder/__init__.py`, `ocr/models/encoder/__init__.py`, and `ocr/models/head/__init__.py`
+- Maintained backward compatibility through architecture registry
+
 ## Verification Results
 
-### ADT Config Analysis
+### Phase 4 Verification
 ```bash
+# KIE imports test
+uv run python -c "from ocr.kie.models import LayoutLMv3Wrapper, LiLTWrapper; from ocr.kie.data import KIEDataset; from ocr.kie.trainer import KIEPLModule; print('✓ KIE imports successful')"
+# Result: ✓ KIE imports successful
+
+# Detection imports test
+uv run python -c "from ocr.detection.models.architectures import craft, dbnet, dbnetpp; print('✓ Detection architecture imports successful')"
+# Result: ✓ Detection architecture imports successful
+
+# ADT analysis
 uv run adt analyze-config configs/ --output markdown
 # Result: 0 findings (clean)
 ```
 
 ### Git Commit
 ```
-Commit: f6fd4a7
-Message: refactor(phase1): Establish Feature-First architecture foundation
-Stats: 44 files changed, 76 insertions(+), 67 deletions(-)
+Commit: d489034
+Message: refactor(phase4): Migrate KIE and Detection features to dedicated packages
+Stats: 38 files changed, 121 insertions(+), 34 deletions(-)
+Files:
+- create ocr/detection/__init__.py
+- create ocr/detection/models/__init__.py
+- create ocr/detection/models/architectures/__init__.py
+- rename ocr/{models/architectures => detection/models/architectures}/(craft.py, dbnet.py, dbnetpp.py)
+- rename ocr/{models/decoder => detection/models/decoders}/(craft_decoder.py, dbpp_decoder.py, fpn_decoder.py)
+- rename ocr/{models/encoder => detection/models/encoders}/craft_vgg.py
+- rename ocr/{models/head => detection/models/heads}/(craft_head.py, db_head.py)
+- rename ocr/{models/head => detection/models/postprocess}/(craft_postprocess.py, db_postprocess.py)
+- create ocr/kie/__init__.py
+- create ocr/kie/data/__init__.py
+- create ocr/kie/models/__init__.py
+- rename ocr/{data/datasets/kie_dataset.py => kie/data/dataset.py}
+- rename ocr/{models/kie_models.py => kie/models/model.py}
+- rename ocr/{lightning_modules/kie_pl.py => kie/trainer.py}
 ```
 
 ## What's Next
 
-### Phase 3: Recognition Feature Migration (READY)
+### Phase 5: Cleanup (READY)
 **Status**: Ready to begin
-**Goal**: Isolate PARSeq and Recognition trainer into feature package
+**Goal**: Remove legacy scaffolding and empty directories
 
-**Planned Deliverables**:
-- `ocr/recognition/models/` - Recognition-specific model implementations
-- `ocr/recognition/trainer.py` - Recognition training logic
-- Updated configs with recognition-scoped paths
-
-**Dependencies**: Phase 1 & 2 ✅ Complete
-
-### Phase 4: KIE & Detection Migration (PENDING)
-**Status**: Blocked by Phase 3
-**Goal**: Isolate KIE and Detection domains
-
-### Phase 5: Cleanup (PENDING)
-**Status**: Blocked by Phase 4
-**Goal**: Remove legacy scaffolding
+**Planned Actions**:
+- Clean up empty directories in `ocr/models/`
+- Remove or consolidate remaining shared components
+- Final verification of all feature packages
+- Update documentation to reflect new structure
 
 ## Environment State
 - **Branch**: `refactor/hydra`
 - **Base Branch**: (not set - will need to determine)
-- **Git Status**: Clean (all changes committed)
+- **Git Status**: Clean (all changes committed at d489034)
 - **UV Version**: ✅ Compatible
 - **Python**: 3.11.14
 
@@ -84,38 +162,48 @@ Stats: 44 files changed, 76 insertions(+), 67 deletions(-)
 None at this time.
 
 ## Recommendations for Next Session
-1. **Immediately begin Phase 3** - Recognition Feature Migration
-2. Review the implementation plan at: `docs/artifacts/implementation_plans/2026-01-07_0054_implementation_plan_refactor-phase1-core-data.md`
-3. Create Phase 3 implementation plan if not already exists
-4. Continue aggressive refactoring approach with periodic commits using `--no-verify`
-5. Use ADT tools for config validation after each major move
+1. **Begin Phase 5** - Cleanup and final verification
+2. Consider creating a migration guide for developers
+3. Run full test suite to ensure no regressions
+4. Update any remaining documentation
 
 ## Critical Context
 - **Refactor Philosophy**: Nuclear-style transformation with progress tracking
 - **Commit Strategy**: Periodic commits with `--no-verify` flag
 - **Verification**: ADT analysis + pytest for import validation
 - **Git Strategy**: Use `git mv` to preserve file history
+- **Import Pattern**: Use lazy imports for feature packages to avoid circular dependencies
 
-## Files Modified This Session
+## Cumulative Files Modified (All Phases)
+
 ```
- agent-debug-toolkit/tests/fixtures/sample_code.py
- configs/_foundation/ (renamed from _base)
- configs/data/recognition.yaml
- configs/predict.yaml
- configs/train.yaml
- configs/train_v2.yaml
- ocr/core/ (created)
- ocr/recognition/data/ (created)
- ocr/models/__init__.py
- ocr/models/architectures/*.py (imports updated)
- ocr/models/decoder/*.py (imports updated)
- ocr/models/encoder/*.py (imports updated)
- ocr/models/head/*.py (imports updated)
- ocr/models/loss/*.py (imports updated)
- ocr/utils/*.py (imports updated)
- tests/unit/*.py (imports updated)
+Phase 1:
+- configs/_foundation/ (renamed from _base)
+- ocr/core/ (created)
+- ocr/models/__init__.py, architectures/*.py, decoder/*.py, encoder/*.py, head/*.py, loss/*.py
+- ocr/utils/*.py
+- tests/unit/*.py
+
+Phase 2:
+- ocr/recognition/data/ (created)
+- configs/data/recognition.yaml
+
+Phase 3:
+- ocr/recognition/models/ (created)
+- configs/model/recognition/ (created)
+- configs/train_parseq.yaml
+
+Phase 4:
+- ocr/kie/ (created - data/, models/, trainer.py)
+- ocr/detection/models/ (created - architectures/, heads/, postprocess/, decoders/, encoders/)
+- runners/train_kie.py, runners/kie_predictor.py
+- tests/unit/, tests/integration/, tests/ocr/models/
+- scripts/troubleshooting/test_model_forward_backward.py
+- ocr/models/architectures/__init__.py, shared_decoders.py
+- ocr/models/decoder/__init__.py, encoder/__init__.py, head/__init__.py
 ```
 
 ---
-**Session End**: 2026-01-07 02:20 (KST)
-**Next Phase**: Phase 3 - Recognition Feature Migration
+**Session End**: 2026-01-07 05:00 (KST)
+**Next Phase**: Phase 5 - Cleanup and Final Verification
+**Current Branch**: refactor/hydra (d489034)
