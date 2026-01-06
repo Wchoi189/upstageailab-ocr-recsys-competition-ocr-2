@@ -140,7 +140,7 @@ reindex: ## Reindex artifacts
 
 .PHONY: check-links
 check-links: ## Check Markdown links referring to artifacts
-	uv run python ../tools/documentation/check_links.py
+	uv run python ../tools/documentation/validate_links.py
 
 .PHONY: fix
 fix: ## Safe autofix pipeline
