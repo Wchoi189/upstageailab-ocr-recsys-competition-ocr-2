@@ -1,0 +1,126 @@
+# Fast Feedback CI Workflow
+# Runs critical checks first, fails fast on common issues
+# Copy this to .github/workflows/ci-fast-feedback.yml
+
+name: "CI - Fast Feedback"
+
+on:
+  pull_request:
+    branches: ['*']
+  push:
+    branches: ['*']
+
+# Cancel in-progress runs on new push
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Job 1: Super fast syntax checks (< 30 seconds)
+  syntax-check:
+    name: "⚡ Syntax & Format (30s)"
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Validate GitHub Workflows
+        run: |
+          python3 -c "
+          import yaml, sys
+          from pathlib import Path
+
+          failed = []
+          for f in Path('.github/workflows').glob('*.yml'):
+              try:
+                  yaml.safe_load(f.read_text())
+                  print(f'✅ {f.name}')
+              except Exception as e:
+                  print(f'❌ {f.name}: {e}')
+                  failed.append(str(f))
+
+          if failed:
+              sys.exit(1)
+          "
+
+      - name: Check Python Syntax
+        run: |
+          python3 -m py_compile $(find . -name "*.py" -not -path "./.*" | head -20)
+
+      - name: Quick AgentQMS Check
+        run: |
+          export PYTHONPATH=$PWD
+          # Just check a few recent artifacts for speed
+          python3 AgentQMS/tools/compliance/validate_artifacts.py --limit 5 || true
+
+  # Job 2: Fast linting (< 1 minute)
+  lint:
+    name: "🔍 Lint (1m)"
+    runs-on: ubuntu-latest
+    needs: syntax-check  # Only run if syntax is valid
+    timeout-minutes: 3
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v1
+
+      - name: Install dependencies (cached)
+        run: |
+          uv sync --no-install-project --frozen
+
+      - name: Ruff Check
+        run: uv run ruff check . --output-format=github
+
+      - name: Ruff Format Check
+        run: uv run ruff format . --check
+
+  # Job 3: Critical tests only (< 2 minutes)
+  critical-tests:
+    name: "🧪 Critical Tests (2m)"
+    runs-on: ubuntu-latest
+    needs: syntax-check
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - uses: astral-sh/setup-uv@v1
+
+      - name: Install dependencies
+        run: uv sync --frozen
+
+      - name: Run critical tests only
+        run: |
+          # Run only fast, critical tests
+          uv run pytest tests/ -v \
+            -m "not slow" \
+            -k "not integration" \
+            --maxfail=3 \
+            --tb=short \
+            --durations=10
+
+  # Job 4: Summary (always runs)
+  fast-feedback-summary:
+    name: "📊 Summary"
+    runs-on: ubuntu-latest
+    needs: [syntax-check, lint, critical-tests]
+    if: always()
+    steps:
+      - name: Check Results
+        run: |
+          echo "## Fast Feedback Summary 🚀" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Check | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Syntax | ${{ needs.syntax-check.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Lint | ${{ needs.lint.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tests | ${{ needs.critical-tests.result == 'success' && '✅' || '❌' }} |" >> $GITHUB_STEP_SUMMARY
+
+          if [ "${{ needs.syntax-check.result }}" != "success" ]; then
+            echo "" >> $GITHUB_STEP_SUMMARY
+            echo "⚠️ **Syntax errors found** - Fix workflow YAML or Python syntax" >> $GITHUB_STEP_SUMMARY
+            exit 1
+          fi
