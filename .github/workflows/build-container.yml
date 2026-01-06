@@ -21,8 +21,10 @@ jobs:
 
       - name: Lowercase Repository Name
         id: prep
+        env:
+          REPO_NAME: ${{ github.repository }}
         run: |
-          echo "repo_lower=$(echo ${{ github.repository }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
+          echo "repo_lower=$(echo "$REPO_NAME" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_OUTPUT
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3

@@ -23,9 +23,11 @@ jobs:
 
       - name: Translate files to Korean
         id: translate
+        env:
+          INPUT_FILES: ${{ github.event.inputs.files || 'README.md' }}
         run: |
-          # Split input files by comma
-          IFS=',' read -ra FILES <<< "${{ github.event.inputs.files || 'README.md' }}"
+          # Split input files by comma (safely using env var)
+          IFS=',' read -ra FILES <<< "$INPUT_FILES"
 
           for file in "${FILES[@]}"; do
             file=$(echo "$file" | xargs)  # trim whitespace
