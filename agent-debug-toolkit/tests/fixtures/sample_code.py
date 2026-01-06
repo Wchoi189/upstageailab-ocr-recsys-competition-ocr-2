@@ -80,7 +80,7 @@ SAMPLE_COMPONENT_INSTANTIATION = """
 from ocr.models.encoder import get_encoder_by_cfg
 from ocr.models.decoder import get_decoder_by_cfg
 from ocr.models.head import get_head_by_cfg
-from ocr.models.core import get_registry
+from ocr.core import get_registry
 
 class ModelFactory:
     def create_model(self, cfg):

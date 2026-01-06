@@ -1,7 +1,7 @@
 defaults:
   - _self_
   - base                  # Keep for other settings
-  - _base/preprocessing   # Include preprocessing config
+  - _foundation/preprocessing   # Include preprocessing config
   - override data: base   # Override data config from base.yaml
   - data/performance_preset: none  # Default performance preset (no optimizations)
   - data/transforms: base      # Compose transforms group

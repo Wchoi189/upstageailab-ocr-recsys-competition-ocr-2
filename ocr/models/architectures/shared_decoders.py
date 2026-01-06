@@ -1,6 +1,6 @@
 """Registration of decoder components shared across architectures."""
 
-from ocr.models.core import registry
+from ocr.core import registry
 from ocr.models.decoder.fpn_decoder import FPNDecoder
 from ocr.models.decoder.pan_decoder import PANDecoder
 

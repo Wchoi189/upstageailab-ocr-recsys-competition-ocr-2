@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from ocr.models.architecture import OCRModel
+from ocr.core.architecture import OCRModel
 
 
 class TestOCRModel:

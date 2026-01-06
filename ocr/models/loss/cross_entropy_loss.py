@@ -6,7 +6,7 @@ BUG_003: Created as part of PARSeq component implementation.
 import torch
 import torch.nn.functional as F
 
-from ..core import BaseLoss
+from ocr.core import BaseLoss
 
 
 class CrossEntropyLoss(BaseLoss):

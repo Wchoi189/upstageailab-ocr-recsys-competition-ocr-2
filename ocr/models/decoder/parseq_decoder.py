@@ -1,7 +1,7 @@
 import math
 import torch
 import torch.nn as nn
-from ocr.models.core.base_classes import BaseDecoder
+from ocr.core.base_classes import BaseDecoder
 
 
 class PARSeqDecoder(BaseDecoder):

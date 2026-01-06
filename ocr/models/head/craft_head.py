@@ -7,7 +7,7 @@ from typing import Any
 import torch
 import torch.nn as nn
 
-from ..core import BaseHead
+from ocr.core import BaseHead
 from .craft_postprocess import CraftPostProcessor
 
 

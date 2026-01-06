@@ -1,6 +1,6 @@
 """Registration of DBNet architecture components."""
 
-from ocr.models.core import registry
+from ocr.core import registry
 from ocr.models.decoder.unet import UNetDecoder
 from ocr.models.encoder.timm_backbone import TimmBackbone
 from ocr.models.head.db_head import DBHead

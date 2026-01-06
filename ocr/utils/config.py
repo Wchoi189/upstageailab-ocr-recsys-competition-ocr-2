@@ -78,7 +78,7 @@ class ConfigParser:
 
         # Add registry-discovered components (if not already present) - lazy import
         try:
-            from ocr.models.core import registry
+            from ocr.core import registry
 
             for enc in registry.list_encoders():
                 if enc not in models["encoders"]:
@@ -122,7 +122,7 @@ class ConfigParser:
         # Lazy import to avoid blocking during module import
         # Ensure architectures are registered by importing the module
         from ocr.models import architectures  # noqa: F401
-        from ocr.models.core import registry
+        from ocr.core import registry
 
         return registry.list_architectures()
 

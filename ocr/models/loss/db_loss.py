@@ -13,7 +13,7 @@
 
 import torch
 
-from ..core import BaseLoss
+from ocr.core import BaseLoss
 from .bce_loss import BCELoss
 from .dice_loss import DiceLoss
 from .l1_loss import MaskL1Loss

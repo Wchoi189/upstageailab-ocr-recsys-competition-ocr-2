@@ -1,11 +1,11 @@
-# Simplified training config using _base/ consolidated structure
+# Simplified training config using _foundation/ consolidated structure
 defaults:
   - _self_
-  - /_base/core
-  - /_base/model
-  - /_base/data
-  - /_base/trainer
-  - /_base/logging
+  - /_foundation/core
+  - /_foundation/model
+  - /_foundation/data
+  - /_foundation/trainer
+  - /_foundation/logging
   - /paths: default
   - /evaluation: metrics
   - /callbacks: default

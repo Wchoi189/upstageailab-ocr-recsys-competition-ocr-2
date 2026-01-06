@@ -1,5 +1,5 @@
 import torch.nn as nn
-from ocr.models.core.base_classes import BaseHead
+from ocr.core.base_classes import BaseHead
 
 class PARSeqHead(BaseHead):
     def __init__(self, in_channels: int, out_channels: int, **kwargs):

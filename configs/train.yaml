@@ -1,9 +1,9 @@
 defaults:
   - _self_
   - base                   # Base config includes paths, evaluation, logger, callbacks
-  - /_base/model           # Model defaults
-  - /_base/data            # Data + transforms + dataloaders
-  - /_base/trainer         # Lightning trainer settings
+  - /_foundation/model           # Model defaults
+  - /_foundation/data            # Data + transforms + dataloaders
+  - /_foundation/trainer         # Lightning trainer settings
 
 seed: 42
 exp_name: "ocr_training_b"

@@ -163,7 +163,7 @@ def _architecture_default_component(architecture_name: str | None, component: st
     if not architecture_name:
         return ""
     try:
-        from ocr.models.core import registry as _registry
+        from ocr.core import registry as _registry
 
         mapping = _registry.get_architecture(str(architecture_name))
     except Exception:

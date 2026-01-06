@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ocr.models.core import registry
+from ocr.core import registry
 from ocr.models.decoder.craft_decoder import CraftDecoder
 from ocr.models.encoder.craft_vgg import CraftVGGEncoder
 from ocr.models.head.craft_head import CraftHead

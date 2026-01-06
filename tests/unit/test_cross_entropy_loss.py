@@ -59,7 +59,7 @@ class TestCrossEntropyLoss:
 
     def test_loss_registered_in_registry(self):
         """Test that cross_entropy is registered in the component registry."""
-        from ocr.models.core import registry
+        from ocr.core import registry
 
         losses = registry.list_losses()
         assert "cross_entropy" in losses

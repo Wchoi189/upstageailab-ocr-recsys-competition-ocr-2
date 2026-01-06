@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ..core import BaseDecoder
+from ocr.core import BaseDecoder
 
 
 def _conv_bn_relu(in_channels: int, out_channels: int, kernel_size: int, stride: int = 1) -> nn.Sequential:

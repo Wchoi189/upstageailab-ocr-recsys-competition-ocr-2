@@ -23,7 +23,7 @@ class LMDBRecognitionDataset(Dataset):
         num-samples -> total count
 
     Usage:
-        from ocr.data.tokenizer import KoreanOCRTokenizer
+        from ocr.recognition.data.tokenizer import KoreanOCRTokenizer
 
         tokenizer = KoreanOCRTokenizer("ocr/data/charset.json")
         dataset = LMDBRecognitionDataset(

@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from ocr.models.core import registry
+from ocr.core import registry
 from ocr.models.decoder.dbpp_decoder import DBPPDecoder
 from ocr.models.encoder.timm_backbone import TimmBackbone
 from ocr.models.head.db_head import DBHead
