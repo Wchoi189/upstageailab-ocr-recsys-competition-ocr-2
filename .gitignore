@@ -168,3 +168,13 @@ data/datasets/
 !/data/export/
 logs/
 .hydra/hydra.log
+
+
+AgentQMS/standards/tier3-agents/claude/debug
+AgentQMS/standards/tier3-agents/claude/plugins
+AgentQMS/standards/tier3-agents/claude/shell-snapshots
+AgentQMS/standards/tier3-agents/claude/statsig
+AgentQMS/standards/tier3-agents/claude/todos
+AgentQMS/standards/tier3-agents/claude/.claude.json.backup
+AgentQMS/standards/tier3-agents/claude/telemetry
+AgentQMS/standards/tier3-agents/claude/projects

@@ -179,6 +179,117 @@ def create_app() -> "typer.Typer":
 
         _output_report(report, output)
 
+    @app.command("analyze-dependencies")
+    def analyze_dependencies(
+        path: str = Argument(..., help="Path to Python file or directory to analyze"),
+        output: str = Option(
+            "json", "--output", "-o", help="Output format: json, markdown, or mermaid"
+        ),
+        include_stdlib: bool = Option(
+            False, "--include-stdlib", help="Include standard library imports"
+        ),
+        detect_cycles: bool = Option(
+            True, "--detect-cycles/--no-cycles", help="Detect circular dependencies"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
+    ) -> None:
+        """
+        Build module dependency graph.
+
+        Traces imports, class inheritance, and function calls to map dependencies.
+        """
+        from agent_debug_toolkit.analyzers.dependency_graph import DependencyGraphAnalyzer
+
+        analyzer = DependencyGraphAnalyzer(include_stdlib=include_stdlib)
+        target = Path(path)
+
+        if target.is_file():
+            report = analyzer.analyze_file(target)
+        elif target.is_dir():
+            report = analyzer.analyze_directory(target, recursive=recursive)
+        else:
+            typer.echo(f"Error: Path not found: {path}", err=True)
+            raise typer.Exit(1)
+
+        if output == "mermaid":
+            typer.echo(analyzer.to_mermaid())
+        else:
+            _output_report(report, output)
+
+    @app.command("analyze-imports")
+    def analyze_imports(
+        path: str = Argument(..., help="Path to Python file or directory to analyze"),
+        output: str = Option(
+            "json", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        show_unused: bool = Option(
+            True, "--show-unused/--no-unused", help="Show potentially unused imports"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
+    ) -> None:
+        """
+        Categorize and analyze imports.
+
+        Groups imports by stdlib, third-party, and local. Detects potentially unused.
+        """
+        from agent_debug_toolkit.analyzers.import_tracker import ImportTracker
+
+        analyzer = ImportTracker()
+        target = Path(path)
+
+        if target.is_file():
+            report = analyzer.analyze_file(target)
+        elif target.is_dir():
+            report = analyzer.analyze_directory(target, recursive=recursive)
+        else:
+            typer.echo(f"Error: Path not found: {path}", err=True)
+            raise typer.Exit(1)
+
+        if not show_unused and "unused_imports" in report.summary:
+            del report.summary["unused_imports"]
+
+        _output_report(report, output)
+
+    @app.command("analyze-complexity")
+    def analyze_complexity(
+        path: str = Argument(..., help="Path to Python file or directory to analyze"),
+        output: str = Option(
+            "json", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        threshold: int = Option(
+            10, "--threshold", "-t", help="Complexity threshold for warnings"
+        ),
+        sort_by: str = Option(
+            "complexity", "--sort-by", "-s", help="Sort by: complexity, nesting, loc"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
+    ) -> None:
+        """
+        Calculate code complexity metrics.
+
+        Measures cyclomatic complexity, nesting depth, LOC, and parameter count.
+        """
+        from agent_debug_toolkit.analyzers.complexity_metrics import ComplexityMetricsAnalyzer
+
+        analyzer = ComplexityMetricsAnalyzer(complexity_threshold=threshold)
+        target = Path(path)
+
+        if target.is_file():
+            report = analyzer.analyze_file(target)
+        elif target.is_dir():
+            report = analyzer.analyze_directory(target, recursive=recursive)
+        else:
+            typer.echo(f"Error: Path not found: {path}", err=True)
+            raise typer.Exit(1)
+
+        _output_report(report, output)
+
     @app.command("full-analysis")
     def full_analysis(
         path: str = Argument(..., help="Path to Python file or directory to analyze"),
@@ -192,12 +303,16 @@ def create_app() -> "typer.Typer":
         """
         Run all analyzers and produce a comprehensive report.
 
-        Combines config access, merge tracking, Hydra usage, and instantiation analysis.
+        Combines config access, merge tracking, Hydra usage, instantiation,
+        dependency graph, import tracking, and complexity analysis.
         """
         from agent_debug_toolkit.analyzers.config_access import ConfigAccessAnalyzer
         from agent_debug_toolkit.analyzers.merge_order import MergeOrderTracker
         from agent_debug_toolkit.analyzers.hydra_usage import HydraUsageAnalyzer
         from agent_debug_toolkit.analyzers.instantiation import ComponentInstantiationTracker
+        from agent_debug_toolkit.analyzers.dependency_graph import DependencyGraphAnalyzer
+        from agent_debug_toolkit.analyzers.import_tracker import ImportTracker
+        from agent_debug_toolkit.analyzers.complexity_metrics import ComplexityMetricsAnalyzer
 
         target = Path(path)
         is_file = target.is_file()
@@ -212,6 +327,9 @@ def create_app() -> "typer.Typer":
             MergeOrderTracker(),
             HydraUsageAnalyzer(),
             ComponentInstantiationTracker(),
+            DependencyGraphAnalyzer(),
+            ImportTracker(),
+            ComplexityMetricsAnalyzer(),
         ]
 
         all_reports = []
@@ -244,6 +362,7 @@ def create_app() -> "typer.Typer":
             typer.echo(f"\nTotal: {len(report.results)} findings")
 
     return app
+
 
 
 # Create the app instance for entry point

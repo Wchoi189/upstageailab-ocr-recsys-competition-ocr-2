@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-07 00:54:05
-**Total Artifacts**: 14
+**Last Updated**: 2026-01-07 04:48:39
+**Total Artifacts**: 18
 
-## Active (11)
+## Active (15)
 
 - [Implementation Plan: AgentQMS Architecture Consolidation](2025-11-29_1800_implementation_plan_architecture-consolidation.md) (📅 2025-11-29 18:00 (KST), 📄 implementation_plan) - > **Context**: Converging `.agentqms/`, `.ai-instructions/`, and `AgentQMS/` into a single `AgentQMS
 - [Phase 1: Core Recognition Implementation](2025-12-25_0410_implementation_plan_phase1-core-recognition.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Replace the current `StubRecognizer` with a production-ready `PaddleOCRRecognizer` backend using Pad
@@ -15,9 +15,13 @@ Active implementation plans and development roadmaps.
 - [Master Architecture Refactoring Plan "Project Polaris](2026-01-05_1750_implementation_plan_master-refactoring.md) (📅 2026-01-05 17:50 (KST), 📄 implementation_plan) - **Date:** 2026-01-05 17:50 (KST)
 - [Implementation Plan - Github Sync Extension](2026-01-05_1854_implementation_plan_github-sync-extension.md) (📅 2026-01-05 18:54 (KST), 📄 implementation_plan) - This plan outlines the steps to extend the `sync_github_projects.py` script to support comprehensive
 - [MCP Sharing Implementation Plan](2026-01-05_2049_implementation_plan_mcp-sharing-plan.md) (📅 2026-01-05 20:49 (KST), 📄 implementation_plan) - The goal is to centralize MCP (Model Context Protocol) server definitions into a shared directory wi
-- [Refactor Phase 1 & 2: Core Foundation & Data Pivot](2026-01-07_0054_implementation_plan_refactor-phase1-core-data.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Execute the foundational restructuring of the 'ocr' package and 'configs' directory, establishing 'o
-- [Refactor Phase 3: Recognition Feature Migration](2026-01-07_0054_implementation_plan_refactor-phase3-recognition.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Migrate PARSeq and recognition-specific components to 'ocr/recognition/models' and 'configs/model/re
-- [Refactor Phase 4: Detection & KIE Feature Migration](2026-01-07_0054_implementation_plan_refactor-phase4-detection-kie.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Migrate DBNet, CRAFT, and KIE models to their respective feature directories.
+- [Refactor Phase 1 & 2: Core Foundation & Data Pivot](2026-01-07_0054_implementation_plan_refactor-phase1-core-data.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Establish the 'Feature-First' architecture foundation by creating `ocr/core`, `configs/_foundation` 
+- [Refactor Phase 3: Recognition Feature Migration](2026-01-07_0054_implementation_plan_refactor-phase3-recognition.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Fully isolate the **Recognition** domain by moving PARSeq models, encoders, and decoders into `ocr/r
+- [Refactor Phase 4: Detection & KIE Feature Migration](2026-01-07_0054_implementation_plan_refactor-phase4-detection-kie.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Isolate the **Detection** and **KIE** domains into their own feature packages.
+- [Implementation Plan for Codebase Analysis and Debugging Tools](2026-01-07_0423_implementation_plan_codebase-analysis-tools-implementation.md) (📅 2026-01-07 04:23 (KST), 📄 implementation_plan) - Implement a suite of tools for systematic analysis and debugging of a large, complex codebase. Focus
+- [AST Analyzer Phase 1: Low Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase1-low-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Description of the artifact.
+- [AST Analyzer Phase 2: Medium Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase2-medium-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Description of the artifact.
+- [AST Analyzer Phase 3: Conceptual Plan for Automated Refactoring](2026-01-07_0448_implementation_plan_ast-analyzer-phase3-conceptual.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Description of the artifact.
 
 ## Completed (1)
 
@@ -32,7 +36,7 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 11 |
+| Active | 15 |
 | Completed | 1 |
 | Other | 2 |
 

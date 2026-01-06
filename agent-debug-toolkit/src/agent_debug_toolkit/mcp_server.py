@@ -11,6 +11,9 @@ Tools exposed:
 - find_hydra_usage: Find Hydra framework patterns (@hydra.main, instantiate)
 - find_component_instantiations: Track component factory patterns
 - explain_config_flow: Generate high-level config flow summary
+- analyze_dependency_graph: Build module dependency graphs (Phase 1)
+- analyze_imports: Categorize and track imports (Phase 1)
+- analyze_complexity: Calculate code complexity metrics (Phase 1)
 """
 
 import asyncio
@@ -140,6 +143,81 @@ TOOLS = [
                 "file": {"type": "string", "description": "Path to Python file to analyze"}
             },
             "required": ["file"],
+        },
+    },
+    {
+        "name": "analyze_dependency_graph",
+        "description": "Build module dependency graph showing imports, class inheritance, and call relationships. Detects circular dependencies. Outputs JSON, markdown, or Mermaid diagram.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Path to Python file or directory to analyze",
+                },
+                "include_stdlib": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Include standard library imports in graph",
+                },
+                "output": {
+                    "type": "string",
+                    "enum": ["json", "markdown", "mermaid"],
+                    "default": "json",
+                    "description": "Output format",
+                },
+            },
+            "required": ["path"],
+        },
+    },
+    {
+        "name": "analyze_imports",
+        "description": "Categorize imports as stdlib, third-party, or local. Detects potentially unused imports. Useful for dependency auditing and dead code detection.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Path to Python file or directory to analyze",
+                },
+                "show_unused": {
+                    "type": "boolean",
+                    "default": True,
+                    "description": "Include potentially unused imports in output",
+                },
+                "output": {
+                    "type": "string",
+                    "enum": ["json", "markdown"],
+                    "default": "json",
+                    "description": "Output format",
+                },
+            },
+            "required": ["path"],
+        },
+    },
+    {
+        "name": "analyze_complexity",
+        "description": "Calculate code complexity metrics: cyclomatic complexity, nesting depth, LOC, parameter count. Identifies functions exceeding thresholds for refactoring candidates.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Path to Python file or directory to analyze",
+                },
+                "threshold": {
+                    "type": "integer",
+                    "default": 10,
+                    "description": "Complexity threshold for warnings",
+                },
+                "output": {
+                    "type": "string",
+                    "enum": ["json", "markdown"],
+                    "default": "json",
+                    "description": "Output format",
+                },
+            },
+            "required": ["path"],
         },
     },
 ]
@@ -319,6 +397,65 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             summary_parts.append("")
 
         content = "\n".join(summary_parts)
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "analyze_dependency_graph":
+        from agent_debug_toolkit.analyzers.dependency_graph import DependencyGraphAnalyzer
+
+        path = resolve_path(arguments.get("path", ""))
+        include_stdlib = arguments.get("include_stdlib", False)
+        output_format = arguments.get("output", "json")
+
+        analyzer = DependencyGraphAnalyzer(include_stdlib=include_stdlib)
+        if path.is_file():
+            report = analyzer.analyze_file(path)
+        elif path.is_dir():
+            report = analyzer.analyze_directory(path)
+        else:
+            raise FileNotFoundError(f"Path not found: {path}")
+
+        if output_format == "mermaid":
+            content = analyzer.to_mermaid()
+        elif output_format == "json":
+            content = report.to_json()
+        else:
+            content = report.to_markdown()
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "analyze_imports":
+        from agent_debug_toolkit.analyzers.import_tracker import ImportTracker
+
+        path = resolve_path(arguments.get("path", ""))
+        show_unused = arguments.get("show_unused", True)
+        output_format = arguments.get("output", "json")
+
+        report = run_analyzer(ImportTracker, path)
+
+        if not show_unused and "unused_imports" in report.summary:
+            del report.summary["unused_imports"]
+
+        content = report.to_json() if output_format == "json" else report.to_markdown()
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "analyze_complexity":
+        from agent_debug_toolkit.analyzers.complexity_metrics import ComplexityMetricsAnalyzer
+
+        path = resolve_path(arguments.get("path", ""))
+        threshold = arguments.get("threshold", 10)
+        output_format = arguments.get("output", "json")
+
+        analyzer = ComplexityMetricsAnalyzer(complexity_threshold=threshold)
+        if path.is_file():
+            report = analyzer.analyze_file(path)
+        elif path.is_dir():
+            report = analyzer.analyze_directory(path)
+        else:
+            raise FileNotFoundError(f"Path not found: {path}")
+
+        content = report.to_json() if output_format == "json" else report.to_markdown()
 
         return [TextContent(type="text", text=content)]
 

@@ -63,6 +63,7 @@
     "/workspaces/upstageailab-ocr-recsys-competition-ocr-2": {
       "allowedTools": [],
       "mcpContextUris": [],
+<<<<<<< HEAD
       "mcpServers": {
         "unified_project": {
           "type": "stdio",
@@ -120,4 +121,43 @@
 },
 "officialMarketplaceAutoInstallAttempted": true,
 "officialMarketplaceAutoInstalled": true
+=======
+      "mcpServers": {},
+      "enabledMcpjsonServers": [],
+      "disabledMcpjsonServers": [],
+      "hasTrustDialogAccepted": true,
+      "projectOnboardingSeenCount": 1,
+      "hasClaudeMdExternalIncludesApproved": false,
+      "hasClaudeMdExternalIncludesWarningShown": false,
+      "reactVulnerabilityCache": {
+        "detected": false,
+        "package": null,
+        "packageName": null,
+        "version": null,
+        "packageManager": null
+      },
+      "exampleFiles": [
+        "effective.yaml",
+        "plugins.yaml",
+        "engine.py",
+        "pyproject.toml",
+        "README.md"
+      ],
+      "exampleFilesGeneratedAt": 1767715710287,
+      "reactVulnerabilityWarningCount": 2
+    }
+  },
+  "lastReleaseNotesSeen": "2.0.76",
+  "hasShownOpus45Notice": {
+    "ab7b4f8c-45df-439f-9a8d-6eb939e819f3": true
+  },
+  "s1mAccessCache": {
+    "ab7b4f8c-45df-439f-9a8d-6eb939e819f3": {
+      "hasAccess": false,
+      "timestamp": 1767715687038
+    }
+  },
+  "officialMarketplaceAutoInstallAttempted": true,
+  "officialMarketplaceAutoInstalled": true
+>>>>>>> 314dfb2 (Phase 4 & 5 Complete - Full Refactoring Done (untested))
 }
