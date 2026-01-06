@@ -69,7 +69,9 @@ jobs:
         with:
           python-version: "3.11"
       - uses: astral-sh/setup-uv@v1
-      - run: |
+      - name: Install dependencies and validate
+        run: |
+          export PYTHONPATH=$GITHUB_WORKSPACE
           cd AgentQMS/bin
-          pip install -r requirements.txt
+          uv pip install -r requirements.txt --system
           make validate
