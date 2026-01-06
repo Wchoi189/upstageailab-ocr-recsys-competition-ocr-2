@@ -11,6 +11,7 @@ class TestCrossEntropyLoss:
     def loss_fn(self):
         """Create a CrossEntropyLoss instance."""
         from ocr.models.loss.cross_entropy_loss import CrossEntropyLoss
+
         return CrossEntropyLoss(ignore_index=0)
 
     def test_forward_basic(self, loss_fn):

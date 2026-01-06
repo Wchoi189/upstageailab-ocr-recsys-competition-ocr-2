@@ -75,11 +75,11 @@ class TestHydraUsageAnalyzer:
 
     def test_no_hydra_usage(self):
         """Should handle files without Hydra usage."""
-        code = '''
+        code = """
 def regular_function():
     x = 1 + 2
     return x
-'''
+"""
         analyzer = HydraUsageAnalyzer()
         report = analyzer.analyze_source(code, "regular.py")
 

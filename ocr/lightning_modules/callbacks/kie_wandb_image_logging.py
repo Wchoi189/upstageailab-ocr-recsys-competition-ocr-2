@@ -9,6 +9,7 @@ import wandb
 
 logger = logging.getLogger(__name__)
 
+
 class WandBKeyInformationExtractionImageLogger(pl.Callback):
     """
     Callback to log KIE predictions to WandB during validation.
@@ -71,7 +72,7 @@ class WandBKeyInformationExtractionImageLogger(pl.Callback):
             n = min(len(image_paths), self.num_samples)
 
             # Storage for intermediate images
-            display_data = [] # List of (image, caption)
+            display_data = []  # List of (image, caption)
 
             for i in range(n):
                 img_path = image_paths[i]
@@ -91,7 +92,7 @@ class WandBKeyInformationExtractionImageLogger(pl.Callback):
                 batch_labels = labels[i]
                 batch_preds = predictions[i]
 
-                for box, label, pred in zip(batch_boxes, batch_labels, batch_preds):
+                for box, label, pred in zip(batch_boxes, batch_labels, batch_preds, strict=False):
                     # Skip padding
                     if label == -100:
                         continue
@@ -107,21 +108,21 @@ class WandBKeyInformationExtractionImageLogger(pl.Callback):
                     pred_name = self.label_list[pred.item()] if self.label_list else str(pred.item())
 
                     # Draw GT (Green) if not 'O' or background
-                    if label_name != 'O':
-                        draw.rectangle([x1, y1, x2, y2], outline="green", width=2)
+                    if label_name != "O":
+                        draw.rectangle((x1, y1, x2, y2), outline="green", width=2)
 
                     # Draw Pred (Red) if mismatch or important
-                    if pred_name != 'O':
-                        color = "red" if pred_name != label_name else "blue" # Blue if correct, Red if wrong
+                    if pred_name != "O":
+                        color = "red" if pred_name != label_name else "blue"  # Blue if correct, Red if wrong
                         # Offset slightly to see both
-                        draw.rectangle([x1-2, y1-2, x2+2, y2+2], outline=color, width=2)
+                        draw.rectangle((x1 - 2, y1 - 2, x2 + 2, y2 + 2), outline=color, width=2)
 
                         # Add text
                         text = f"P:{pred_name} (T:{label_name})"
                         draw.text((x1, y1), text, fill=color)
 
                 # Resize image for logging if too large
-                max_dim = 768 # Reduced from 1024 as requested
+                max_dim = 768  # Reduced from 1024 as requested
                 if width > max_dim or height > max_dim:
                     image.thumbnail((max_dim, max_dim))
 
@@ -140,7 +141,7 @@ class WandBKeyInformationExtractionImageLogger(pl.Callback):
                         img = new_img
 
                     # Log as JPEG using standard file_type support
-                    images_to_log.append(wandb.Image(img, caption=caption, file_type="jpg"))
+                    images_to_log.append(wandb.Image(img, caption=caption, file_type="jpg"))  # type: ignore[attr-defined]
 
             if images_to_log:
                 trainer.logger.experiment.log({"validation/predictions": images_to_log})

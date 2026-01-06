@@ -53,7 +53,7 @@ jobs:
       - name: Validate and save JSON
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
-          python AgentQMS/tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2>&1 || true
+          python AgentQMS/tools/compliance/validate_artifacts.py --all --json --output /tmp/validation.json || true
           cat /tmp/validation.json | jq 'length' || echo "No results"
 
       - name: Run Autofix

@@ -1,0 +1,29 @@
+# Grok Linter Configuration
+# High-risk paths that should NEVER be auto-fixed by AI
+
+# Exclusions - paths containing these patterns will be skipped
+exclusions:
+  # Core OCR pipeline - indentation and loop sensitive
+  # Cosmetic fixes have caused catastrophic failures in the past
+  - "ocr/"
+  - "ocr-etl-pipeline/"
+  - "tests/ocr/"
+
+  # Training runners - complex logic
+  - "runners/"
+
+  # Add more high-risk paths as needed
+  # - "path/to/sensitive/code/"
+
+# Cost limits (optional)
+max_cost_per_run: 1.00  # USD - will warn if exceeded
+max_files_per_run: 10   # Maximum files to process in one run
+
+# API settings
+model: "grok-4-1-fast-non-reasoning"  # Grok-4 for cost efficiency
+temperature: 0.1  # Low temperature for consistent fixes
+max_retries: 3    # Retry attempts on API errors
+
+# Logging
+save_cost_report: true
+cost_report_path: "/tmp/grok_linter_cost_report.json"

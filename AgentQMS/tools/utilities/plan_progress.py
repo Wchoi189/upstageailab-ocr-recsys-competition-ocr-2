@@ -208,8 +208,7 @@ class PlanProgressTracker:
         completed = len(re.findall(r"- \[x\]\s+\*\*Task \d+\.\d+:", self.content))
         total = len(
             re.findall(
-                r"- \[ \]\s+\*\*Task \d+\.\d+:|"
-                r"- \[x\]\s+\*\*Task \d+\.\d+:",
+                r"- \[ \]\s+\*\*Task \d+\.\d+:|" r"- \[x\]\s+\*\*Task \d+\.\d+:",
                 self.content,
             )
         )

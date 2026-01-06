@@ -142,12 +142,14 @@ async def _get_active_experiments() -> str:
                 if manifest_path.exists():
                     try:
                         manifest = json.loads(manifest_path.read_text())
-                        experiments.append({
-                            "id": exp_dir.name,
-                            "name": manifest.get("name", exp_dir.name),
-                            "status": manifest.get("status", "unknown"),
-                            "created": manifest.get("created_at", "unknown"),
-                        })
+                        experiments.append(
+                            {
+                                "id": exp_dir.name,
+                                "name": manifest.get("name", exp_dir.name),
+                                "status": manifest.get("status", "unknown"),
+                                "created": manifest.get("created_at", "unknown"),
+                            }
+                        )
                     except:
                         # Skip malformed manifests
                         pass
@@ -277,21 +279,27 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 return [
                     TextContent(
                         type="text",
-                        text=json.dumps({
-                            "success": True,
-                            "experiment_id": exp_name,
-                            "output": result.stdout,
-                        }, indent=2)
+                        text=json.dumps(
+                            {
+                                "success": True,
+                                "experiment_id": exp_name,
+                                "output": result.stdout,
+                            },
+                            indent=2,
+                        ),
                     )
                 ]
             else:
                 return [
                     TextContent(
                         type="text",
-                        text=json.dumps({
-                            "success": False,
-                            "error": result.stderr,
-                        }, indent=2)
+                        text=json.dumps(
+                            {
+                                "success": False,
+                                "error": result.stderr,
+                            },
+                            indent=2,
+                        ),
                     )
                 ]
 
@@ -311,10 +319,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "success": result.returncode == 0,
-                        "output": result.stdout if result.returncode == 0 else result.stderr,
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "success": result.returncode == 0,
+                            "output": result.stdout if result.returncode == 0 else result.stderr,
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -336,10 +347,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "success": result.returncode == 0,
-                        "output": result.stdout if result.returncode == 0 else result.stderr,
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "success": result.returncode == 0,
+                            "output": result.stdout if result.returncode == 0 else result.stderr,
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -347,8 +361,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             insight = arguments["insight"]
             log_type = arguments.get("type", "insight")
 
-            cmd = ["uv", "run", "python3", "-m", "etk.factory", "log",
-                   "--msg", insight, "--type", log_type]
+            cmd = ["uv", "run", "python3", "-m", "etk.factory", "log", "--msg", insight, "--type", log_type]
 
             result = subprocess.run(
                 cmd,
@@ -360,10 +373,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "success": result.returncode == 0,
-                        "output": result.stdout if result.returncode == 0 else result.stderr,
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "success": result.returncode == 0,
+                            "output": result.stdout if result.returncode == 0 else result.stderr,
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -383,10 +399,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "success": result.returncode == 0,
-                        "output": result.stdout if result.returncode == 0 else result.stderr,
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "success": result.returncode == 0,
+                            "output": result.stdout if result.returncode == 0 else result.stderr,
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -394,9 +413,12 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "error": f"Unknown tool: {name}",
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "error": f"Unknown tool: {name}",
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -404,10 +426,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         return [
             TextContent(
                 type="text",
-                text=json.dumps({
-                    "error": str(e),
-                    "tool": name,
-                }, indent=2)
+                text=json.dumps(
+                    {
+                        "error": str(e),
+                        "tool": name,
+                    },
+                    indent=2,
+                ),
             )
         ]
 

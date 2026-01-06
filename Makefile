@@ -80,10 +80,16 @@ help:
 	@echo "💅 CODE QUALITY"
 	@echo "  lint                - Run linting checks"
 	@echo "  lint-fix            - Run linting checks and auto-fix issues"
+	@echo "  lint-check-json     - Output ruff results as JSON for AI processing"
+	@echo "  lint-fix-ai         - Run AI-powered linting fixes using Grok (requires XAI_API_KEY)"
+	@echo "  lint-fix-ai-dry-run - Preview AI-powered fixes without applying"
 	@echo "  format              - Format code with black and isort"
 	@echo "  quality-check       - Run comprehensive code quality checks"
 	@echo "  quality-fix         - Auto-fix code quality issues"
 	@echo "  pre-commit          - Install and run pre-commit hooks"
+	@echo "  pre-commit-install  - Install pre-commit hooks only"
+	@echo "  pre-commit-run      - Run pre-commit on all files"
+	@echo "  pre-commit-update   - Update pre-commit hook versions"
 	@echo ""
 	@echo "📚 DOCUMENTATION"
 	@echo "  docs-build          - Build MkDocs documentation"
@@ -98,9 +104,7 @@ help:
 	@echo "  diagrams-update-specific - Update specific diagrams (use DIAGRAMS=...)"
 	@echo ""
 	@echo "🧭 NEXT.JS CONSOLE"
-	@echo "  console-dev        - Start Next.js App Router dev server (apps/playground-console)"
-	@echo "  console-build      - Build the Next.js console for production deploys"
-	@echo "  console-lint       - Run console linting (see docs/maintainers/coding_standards.md)"
+	@echo "  See 'playground-console-*' targets below."
 	@echo ""
 	@echo "🔍 OCR INFERENCE CONSOLE"
 	@echo "  serve-ocr-console       - Start frontend only (port 5173)"
@@ -180,6 +184,25 @@ lint:
 lint-fix:
 	uv run ruff check --fix .
 
+lint-check-json:  ## Output ruff results as JSON for AI processing
+	uv run ruff check . --output-format=json
+
+lint-fix-ai:  ## Run AI-powered linting fixes using Grok
+	@echo "🤖 Running AI-powered linting fixes..."
+	@uv run ruff check . --output-format=json > /tmp/lint_errors.json || true
+	@ERROR_COUNT=$$(cat /tmp/lint_errors.json | python3 -c "import sys, json; print(len(json.load(sys.stdin)))"); \
+	if [ "$$ERROR_COUNT" -eq "0" ]; then \
+		echo "✅ No linting errors found!"; \
+	else \
+		echo "Found $$ERROR_COUNT errors. Running Grok fixer..."; \
+		python AgentQMS/tools/utilities/grok_linter.py --input /tmp/lint_errors.json --limit 5 --verbose; \
+	fi
+
+lint-fix-ai-dry-run:  ## Preview AI-powered linting fixes without applying
+	@echo "🤖 Running AI-powered linting fixes (DRY RUN)..."
+	@uv run ruff check . --output-format=json > /tmp/lint_errors.json || true
+	@python AgentQMS/tools/utilities/grok_linter.py --input /tmp/lint_errors.json --dry-run --verbose
+
 format:
 	uv run ruff format .
 
@@ -194,6 +217,17 @@ quality-fix:
 pre-commit:
 	pre-commit install
 	pre-commit run --all-files
+
+pre-commit-install:  ## Install pre-commit hooks
+	pre-commit install
+	@echo "✅ Pre-commit hooks installed"
+	@echo "Run 'git commit' to trigger automatic checks"
+
+pre-commit-run:  ## Run pre-commit on all files
+	pre-commit run --all-files
+
+pre-commit-update:  ## Update pre-commit hook versions
+	pre-commit autoupdate
 
 # ============================================================================
 # CLEANUP
@@ -247,35 +281,11 @@ diagrams-update-specific:
 	uv run python scripts/generate_diagrams.py --update $(DIAGRAMS)
 
 # ============================================================================
-# UI APPLICATIONS (Parameterized)
-# ============================================================================
-
-# Friendly aliases (Legacy removed)
-# cb, eval, infer, prep, monitor, ua removed
-# frontend-dev, fe, sfe, frontend-stop - removed (deprecated legacy Vite app)
-# See apps/playground-console or apps/ocr-inference-console for current frontend apps
-
-console-dev:
-	npm run dev:console
-
-console-build:
-	npm run build:console
-
-console-lint:
-	npm run lint:console
-
-ocr-console-dev:
-	cd apps/ocr-inference-console && VITE_API_URL=$(if $(VITE_API_URL),$(VITE_API_URL),http://127.0.0.1:8002/api) npm run dev -- --host $(FRONTEND_HOST) --port $(FRONTEND_PORT)
-
-# backend-dev, backend-ocr - removed (deprecated unified backend)
-# Use domain-specific backends instead:
-#   - apps/playground-console/backend for playground-specific features
-#   - apps/ocr_inference_console/backend for OCR inference
-#   - apps/shared/backend_shared for shared InferenceEngine
-
-# ============================================================================
 # DOMAIN-DRIVEN APP SERVERS
 # ============================================================================
+
+# These are the canonical targets for running the applications.
+# Legacy console-* and ocr-console-dev targets have been removed to avoid confusion.
 
 # OCR Inference Console with auto-detected checkpoint
 serve-ocr-console:
@@ -395,13 +405,6 @@ kill-ports:
 	fi
 
 # ============================================================================
-# UI APPLICATIONS (Legacy - Archived)
-# ============================================================================
-
-# Note: Streamlit apps have been archived to docs/archive/legacy_ui_code/
-# Use 'frontend-dev' or 'console-dev' instead.
-
-# ============================================================================
 # CHECKPOINT MANAGEMENT
 # ============================================================================
 
@@ -462,65 +465,65 @@ frontend-ci:
 	npm run build:spa
 
 console-ci:
-	npm run lint:console
-	npm run build:console
+	cd apps/playground-console && npm run lint
+	cd apps/playground-console && npm run build
 
 # ============================================================================
 # AgentQMS – Quality Management Shortcuts
 # ============================================================================
 
 qms-plan:
-	@cd AgentQMS/interface && make create-plan NAME=$(if $(NAME),$(NAME),my-plan) TITLE="$(if $(TITLE),$(TITLE),Implementation Plan)"
+	@make -C AgentQMS/bin create-plan NAME=$(if $(NAME),$(NAME),my-plan) TITLE="$(if $(TITLE),$(TITLE),Implementation Plan)"
 
 qms-bug:
-	@cd AgentQMS/interface && make create-bug-report NAME=$(if $(NAME),$(NAME),my-bug) TITLE="$(if $(TITLE),$(TITLE),Bug Report)"
+	@make -C AgentQMS/bin create-bug-report NAME=$(if $(NAME),$(NAME),my-bug) TITLE="$(if $(TITLE),$(TITLE),Bug Report)"
 
 debug-session:
-	@uv run python AgentQMS/agent_tools/utilities/init_debug_session.py \
+	@uv run python AgentQMS/tools/utilities/init_debug_session.py \
 		--id $(BUG_ID) --title "$(TITLE)" $(if $(SEVERITY),--severity $(SEVERITY),)
 
 qms-validate:
-	@cd AgentQMS/interface && make validate
+	@make -C AgentQMS/bin validate
 
 qms-compliance:
-	@cd AgentQMS/interface && make compliance
+	@make -C AgentQMS/bin compliance
 
 qms-boundary:
-	@cd AgentQMS/interface && make boundary
+	@make -C AgentQMS/bin boundary
 
 qms-context:
-	@cd AgentQMS/interface && make context $(if $(TASK),TASK="$(TASK)",)
+	@make -C AgentQMS/bin context $(if $(TASK),TASK="$(TASK)",)
 
 qms-context-dev:
-	@cd AgentQMS/interface && make context-development
+	@make -C AgentQMS/bin context-development
 
 qms-context-docs:
-	@cd AgentQMS/interface && make context-docs
+	@make -C AgentQMS/bin context-docs
 
 qms-context-debug:
-	@cd AgentQMS/interface && make context-debug
+	@make -C AgentQMS/bin context-debug
 
 qms-context-plan:
-	@cd AgentQMS/interface && make context-plan
+	@make -C AgentQMS/bin context-plan
 
 qms-validate-staged:
-	@cd AgentQMS/interface && python ../agent_tools/compliance/validate_artifacts.py --staged
+	@uv run python AgentQMS/tools/compliance/validate_artifacts.py --staged
 
 qms-validate-new:
-	@cd AgentQMS/interface && python ../agent_tools/compliance/validate_artifacts.py --staged
+	@uv run python AgentQMS/tools/compliance/validate_artifacts.py --staged
 
 qms-context-suggest:
-	@cd AgentQMS/interface && python ../agent_tools/utilities/suggest_context.py $(if $(TASK),--task "$(TASK)",)
+	@uv run python AgentQMS/tools/utilities/suggest_context.py $(if $(TASK),--task "$(TASK)",)
 
 qms-plan-progress:
-	@cd AgentQMS/interface && python ../agent_tools/utilities/plan_progress.py $(if $(PLAN),--plan "$(PLAN)",) $(if $(TASK),--task "$(TASK)",)
+	@uv run python AgentQMS/tools/utilities/plan_progress.py $(if $(PLAN),--plan "$(PLAN)",) $(if $(TASK),--task "$(TASK)",)
 
 qms-migrate-legacy:
-	@cd AgentQMS/interface && python ../agent_tools/utilities/legacy_migrator.py $(if $(LIMIT),--limit $(LIMIT),--limit 20) $(if $(DRY_RUN),--dry-run,) $(if $(AUTOFIX),--autofix,)
+	@uv run python AgentQMS/tools/utilities/legacy_migrator.py $(if $(LIMIT),--limit $(LIMIT),--limit 20) $(if $(DRY_RUN),--dry-run,) $(if $(AUTOFIX),--autofix,)
 
 qms-tracking-repair:
-	@cd AgentQMS/interface && python ../agent_tools/utilities/tracking_repair.py $(if $(DRY_RUN),--dry-run,)
+	@uv run python AgentQMS/tools/utilities/tracking_repair.py $(if $(DRY_RUN),--dry-run,)
 
-# Wildcard pattern for extensibility: make agentqms-<target> delegates to AgentQMS/interface
+# Wildcard pattern for extensibility: make agentqms-<target> delegates to AgentQMS/bin
 agentqms-%:
-	@cd AgentQMS/interface && make $*
+	@make -C AgentQMS/bin $*

@@ -55,7 +55,7 @@ interface CardGalleryProps {
 
 export function CardGallery({ items, selectedId, onSelect }: CardGalleryProps): React.JSX.Element {
   return (
-    <Stack direction={{ base: "column", md: "row" }} spacing={4} overflowX={{ base: "visible", md: "auto" }}>
+    <Stack direction={{ base: "column", md: "row" }} gap={4} overflowX={{ base: "visible", md: "auto" }}>
       {items.map((item) => (
         <Box
           key={item.id}

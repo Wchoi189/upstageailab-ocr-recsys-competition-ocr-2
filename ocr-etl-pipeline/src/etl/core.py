@@ -1,5 +1,3 @@
-import os
-import io
 import json
 import lmdb
 import cv2
@@ -7,21 +5,22 @@ import numpy as np
 import logging
 from concurrent.futures import ProcessPoolExecutor, as_completed
 from pathlib import Path
-from typing import List, Tuple, Dict, Optional, Any
-import hashlib
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
 
 class CropData:
     """container for single crop data"""
-    def __init__(self, image_bytes: bytes, label: str, metadata: Dict):
+
+    def __init__(self, image_bytes: bytes, label: str, metadata: dict):
         self.image_bytes = image_bytes
         self.label = label
         self.metadata = metadata
 
-def infer_image_path(json_path: Path, input_root: Path) -> Optional[Path]:
+
+def infer_image_path(json_path: Path, input_root: Path) -> Path | None:
     """
     Infers the image path from the JSON path assuming AI Hub structure.
     JSON: .../labels/01.라벨링데이터(Json)/...
@@ -53,29 +52,29 @@ def infer_image_path(json_path: Path, input_root: Path) -> Optional[Path]:
         try:
             lbl_idx = -1
             for i, p in enumerate(new_parts):
-                 if "01.라벨링데이터(Json)" in p:
-                     lbl_idx = i
-                     break
+                if "01.라벨링데이터(Json)" in p:
+                    lbl_idx = i
+                    break
 
             if lbl_idx != -1:
                 new_parts[lbl_idx] = "02.원천데이터(Jpg)"
                 # Also check parent if 'labels' exists
-                if lbl_idx > 0 and new_parts[lbl_idx-1] == 'labels':
-                    new_parts[lbl_idx-1] = 'images'
+                if lbl_idx > 0 and new_parts[lbl_idx - 1] == "labels":
+                    new_parts[lbl_idx - 1] = "images"
             else:
                 # Fallback: strictly replace 'labels' with 'images' if 01... not found
                 # This might happen if user simplified path
-                new_parts = [p.replace('labels', 'images') for p in new_parts]
+                new_parts = [p.replace("labels", "images") for p in new_parts]
 
         except Exception:
-            pass # fallback to simple replacement
+            pass  # fallback to simple replacement
 
         # Reconstruct
-        potential_path = Path(*new_parts).with_suffix('.jpg')
+        potential_path = Path(*new_parts).with_suffix(".jpg")
         if potential_path.exists():
             return potential_path
 
-        potential_path_upper = Path(*new_parts).with_suffix('.JPG')
+        potential_path_upper = Path(*new_parts).with_suffix(".JPG")
         if potential_path_upper.exists():
             return potential_path_upper
 
@@ -85,7 +84,8 @@ def infer_image_path(json_path: Path, input_root: Path) -> Optional[Path]:
         logger.debug(f"Path inference failed for {json_path}: {e}")
         return None
 
-def process_single_json(json_path: str, input_root_str: str) -> List[Tuple[bytes, str, Dict]]:
+
+def process_single_json(json_path: str, input_root_str: str) -> list[tuple[bytes, str, dict]]:
     """
     Worker function to process a single JSON file.
     Returns a list of (jpeg_bytes, label, metadata).
@@ -101,7 +101,7 @@ def process_single_json(json_path: str, input_root_str: str) -> List[Tuple[bytes
 
     try:
         # Load JSON (using standard json as orjson might not be strictly necessary here and strict dependency management in workers is easier)
-        with open(json_path, 'r', encoding='utf-8') as f:
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
 
         # Load Image
@@ -116,12 +116,12 @@ def process_single_json(json_path: str, input_root_str: str) -> List[Tuple[bytes
 
         # Iterate annotations
         # Adjust based on the schema seen: data['annotations'] is a list
-        annotations = data.get('annotations', [])
+        annotations = data.get("annotations", [])
 
         for ann in annotations:
             # bbox: [x, y, w, h] as seen in user's file
-            bbox = ann.get('annotation.bbox')
-            text = ann.get('annotation.text') # Key from user file: "annotation.text"
+            bbox = ann.get("annotation.bbox")
+            text = ann.get("annotation.text")  # Key from user file: "annotation.text"
 
             if not bbox or not text:
                 continue
@@ -133,18 +133,18 @@ def process_single_json(json_path: str, input_root_str: str) -> List[Tuple[bytes
                 continue
 
             # Clamp to image
-            x = max(0, min(w-1, x))
-            y = max(0, min(h-1, y))
+            x = max(0, min(w - 1, x))
+            y = max(0, min(h - 1, y))
             bw = min(bw, w - x)
             bh = min(bh, h - y)
 
-            if bw <= 4 or bh <= 4: # Too small
+            if bw <= 4 or bh <= 4:  # Too small
                 continue
 
-            crop = img[y:y+bh, x:x+bw]
+            crop = img[y : y + bh, x : x + bw]
 
             # Encode
-            success, encoded_img = cv2.imencode('.jpg', crop, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
+            success, encoded_img = cv2.imencode(".jpg", crop, [int(cv2.IMWRITE_JPEG_QUALITY), 95])
             if not success:
                 continue
 
@@ -157,6 +157,7 @@ def process_single_json(json_path: str, input_root_str: str) -> List[Tuple[bytes
 
     return results
 
+
 class LMDBConverter:
     def __init__(self, input_dir: str, output_dir: str, num_workers: int = 4, batch_size: int = 1000, limit: int = None):
         self.input_dir = Path(input_dir)
@@ -167,7 +168,7 @@ class LMDBConverter:
         self.state_file = self.output_dir / "state.json"
 
         self.processed_files = set()
-        self.current_index = 1 # 1-based index for LMDB image-%09d
+        self.current_index = 1  # 1-based index for LMDB image-%09d
 
         # Initialize output
         self.output_dir.mkdir(parents=True, exist_ok=True)
@@ -175,22 +176,19 @@ class LMDBConverter:
     def load_state(self):
         if self.state_file.exists():
             try:
-                with open(self.state_file, 'r') as f:
+                with open(self.state_file) as f:
                     state = json.load(f)
-                    self.processed_files = set(state.get('processed_files', []))
-                    self.current_index = state.get('current_index', 1)
+                    self.processed_files = set(state.get("processed_files", []))
+                    self.current_index = state.get("current_index", 1)
                 logger.info(f"Resumed state: {len(self.processed_files)} files processed, Next Index: {self.current_index}")
             except Exception as e:
                 logger.warning(f"Could not load state file: {e}")
 
     def save_state(self):
-        temp_file = self.state_file.with_suffix('.tmp')
-        with open(temp_file, 'w') as f:
-            json.dump({
-                'processed_files': list(self.processed_files),
-                'current_index': self.current_index
-            }, f)
-        temp_file.replace(self.state_file) # Atomic move
+        temp_file = self.state_file.with_suffix(".tmp")
+        with open(temp_file, "w") as f:
+            json.dump({"processed_files": list(self.processed_files), "current_index": self.current_index}, f)
+        temp_file.replace(self.state_file)  # Atomic move
 
     def run(self):
         self.load_state()
@@ -202,7 +200,7 @@ class LMDBConverter:
         # Filter
         to_process = [f for f in all_files if f not in self.processed_files]
         if self.limit:
-            to_process = to_process[:self.limit]
+            to_process = to_process[: self.limit]
 
         logger.info(f"Found {len(all_files)} total files. {len(to_process)} to process.")
 
@@ -221,7 +219,7 @@ class LMDBConverter:
             chunk_size = self.batch_size * 2
 
             for i in range(0, len(to_process), chunk_size):
-                chunk_files = to_process[i:i+chunk_size]
+                chunk_files = to_process[i : i + chunk_size]
                 futures = {executor.submit(process_single_json, f, str(self.input_dir)): f for f in chunk_files}
 
                 for future in as_completed(futures):
@@ -239,7 +237,9 @@ class LMDBConverter:
                             self._write_batch(env, buffer_ops)
                             buffer_ops = []
                             self.save_state()
-                            logger.info(f"Processed {len(self.processed_files)}/{len(to_process)} files. Current samples: {self.current_index-1}")
+                            logger.info(
+                                f"Processed {len(self.processed_files)}/{len(to_process)} files. Current samples: {self.current_index-1}"
+                            )
 
                     except Exception as e:
                         logger.error(f"Worker failed for {fname}: {e}")
@@ -251,7 +251,7 @@ class LMDBConverter:
 
         # Finalize
         with env.begin(write=True) as txn:
-            txn.put('num-samples'.encode(), str(self.current_index - 1).encode())
+            txn.put(b"num-samples", str(self.current_index - 1).encode())
 
         env.close()
         logger.info("Conversion Complete.")
@@ -259,10 +259,10 @@ class LMDBConverter:
     def _write_batch(self, env, ops):
         with env.begin(write=True) as txn:
             for img_bytes, label in ops:
-                image_key = f'image-{self.current_index:09d}'.encode()
-                label_key = f'label-{self.current_index:09d}'.encode()
+                image_key = f"image-{self.current_index:09d}".encode()
+                label_key = f"label-{self.current_index:09d}".encode()
 
                 txn.put(image_key, img_bytes)
-                txn.put(label_key, label.encode('utf-8'))
+                txn.put(label_key, label.encode("utf-8"))
 
                 self.current_index += 1

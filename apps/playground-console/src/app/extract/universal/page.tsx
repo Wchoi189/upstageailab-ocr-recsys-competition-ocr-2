@@ -23,8 +23,8 @@ export const metadata: Metadata = {
 export default function UniversalExtractionPage(): React.JSX.Element {
   return (
     <AppShell>
-      <Stack spacing={8}>
-        <Stack spacing={3}>
+      <Stack gap={8}>
+        <Stack gap={3}>
           <Text textTransform="uppercase" fontSize="sm" color="text.muted">
             Extract /
           </Text>
@@ -33,19 +33,19 @@ export default function UniversalExtractionPage(): React.JSX.Element {
             Upload any document and configure the OCR + layout pipeline. Use this space to iterate on pre-processing
             params before pushing to production.
           </Text>
-          <HStack spacing={3}>
+          <HStack gap={3}>
             <Button colorScheme="brand">Run extraction</Button>
             <Button variant="outline">Download JSON</Button>
           </HStack>
         </Stack>
 
         <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="start">
-          <Stack spacing={5}>
+          <Stack gap={5}>
             <Box border="1px solid" borderColor="border.subtle" borderRadius="lg" p={5} bg="surface.panel">
               <Heading size="sm" mb={4}>
                 Document sources
               </Heading>
-              <Stack spacing={3}>
+              <Stack gap={3}>
                 <Input type="file" accept="image/*,.pdf" />
                 <Input placeholder="or paste a URL" />
                 <Textarea placeholder="Add notes for this run" rows={3} />

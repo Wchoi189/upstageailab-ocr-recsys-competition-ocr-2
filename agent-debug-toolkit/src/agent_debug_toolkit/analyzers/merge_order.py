@@ -32,6 +32,7 @@ class MergeOperation:
         priority: Merge priority (later = higher priority for same keys)
         code: Full source code of the merge statement
     """
+
     line: int
     operation: str
     sources: list[str]
@@ -140,10 +141,7 @@ class MergeOrderTracker(BaseAnalyzer):
         self.generic_visit(node)
 
     def _check_omegaconf_call(
-        self,
-        call_node: ast.Call,
-        target: str | None,
-        parent_node: ast.AST
+        self, call_node: ast.Call, target: str | None, parent_node: ast.AST
     ) -> None:
         """
         Check if a Call node is an OmegaConf operation.
@@ -198,7 +196,7 @@ class MergeOrderTracker(BaseAnalyzer):
                 sources=sources,
                 target=target or "<inline>",
                 priority=self._priority_counter,
-                code=self._get_code_snippet(parent_node.lineno, context_lines=0).strip()
+                code=self._get_code_snippet(parent_node.lineno, context_lines=0).strip(),
             )
 
             self._merge_operations.append(merge_op)
@@ -233,11 +231,7 @@ class MergeOrderTracker(BaseAnalyzer):
         category = f"omegaconf_{op.operation}"
 
         self._add_result(
-            node=node,
-            pattern=str(op),
-            context=context,
-            category=category,
-            metadata=metadata
+            node=node, pattern=str(op), context=context, category=category, metadata=metadata
         )
 
     def _get_full_call_name(self, node: ast.Call) -> str:
@@ -304,7 +298,9 @@ class MergeOrderTracker(BaseAnalyzer):
             if merge_ops:
                 final_merge = max(merge_ops, key=lambda x: x.priority)
                 lines.append(f"> **Highest Priority**: The last merge at line {final_merge.line}")
-                lines.append(f"> wins for any conflicting keys. Source: `{final_merge.sources[-1] if final_merge.sources else 'unknown'}`")
+                lines.append(
+                    f"> wins for any conflicting keys. Source: `{final_merge.sources[-1] if final_merge.sources else 'unknown'}`"
+                )
                 lines.append("")
 
         return "\n".join(lines)
@@ -327,7 +323,7 @@ class MergeOrderTracker(BaseAnalyzer):
             base_summary["highest_priority_merge"] = {
                 "line": highest.line,
                 "sources": highest.sources,
-                "winner": highest.sources[-1] if highest.sources else None
+                "winner": highest.sources[-1] if highest.sources else None,
             }
 
         return base_summary

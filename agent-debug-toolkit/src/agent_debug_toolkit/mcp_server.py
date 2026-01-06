@@ -49,21 +49,21 @@ TOOLS = [
             "properties": {
                 "path": {
                     "type": "string",
-                    "description": "Path to Python file or directory to analyze (relative to project root or absolute)"
+                    "description": "Path to Python file or directory to analyze (relative to project root or absolute)",
                 },
                 "component": {
                     "type": "string",
-                    "description": "Optional: Filter results by component name (e.g., 'decoder', 'encoder')"
+                    "description": "Optional: Filter results by component name (e.g., 'decoder', 'encoder')",
                 },
                 "output": {
                     "type": "string",
                     "enum": ["json", "markdown"],
                     "default": "json",
-                    "description": "Output format"
-                }
+                    "description": "Output format",
+                },
             },
-            "required": ["path"]
-        }
+            "required": ["path"],
+        },
     },
     {
         "name": "trace_merge_order",
@@ -71,24 +71,21 @@ TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "file": {
-                    "type": "string",
-                    "description": "Path to Python file to analyze"
-                },
+                "file": {"type": "string", "description": "Path to Python file to analyze"},
                 "explain": {
                     "type": "boolean",
                     "default": True,
-                    "description": "Include detailed precedence explanation"
+                    "description": "Include detailed precedence explanation",
                 },
                 "output": {
                     "type": "string",
                     "enum": ["json", "markdown"],
                     "default": "markdown",
-                    "description": "Output format"
-                }
+                    "description": "Output format",
+                },
             },
-            "required": ["file"]
-        }
+            "required": ["file"],
+        },
     },
     {
         "name": "find_hydra_usage",
@@ -98,17 +95,17 @@ TOOLS = [
             "properties": {
                 "path": {
                     "type": "string",
-                    "description": "Path to Python file or directory to analyze"
+                    "description": "Path to Python file or directory to analyze",
                 },
                 "output": {
                     "type": "string",
                     "enum": ["json", "markdown"],
                     "default": "json",
-                    "description": "Output format"
-                }
+                    "description": "Output format",
+                },
             },
-            "required": ["path"]
-        }
+            "required": ["path"],
+        },
     },
     {
         "name": "find_component_instantiations",
@@ -118,21 +115,21 @@ TOOLS = [
             "properties": {
                 "path": {
                     "type": "string",
-                    "description": "Path to Python file or directory to analyze"
+                    "description": "Path to Python file or directory to analyze",
                 },
                 "component": {
                     "type": "string",
-                    "description": "Optional: Filter by component type (e.g., 'decoder', 'encoder', 'head')"
+                    "description": "Optional: Filter by component type (e.g., 'decoder', 'encoder', 'head')",
                 },
                 "output": {
                     "type": "string",
                     "enum": ["json", "markdown"],
                     "default": "json",
-                    "description": "Output format"
-                }
+                    "description": "Output format",
+                },
             },
-            "required": ["path"]
-        }
+            "required": ["path"],
+        },
     },
     {
         "name": "explain_config_flow",
@@ -140,14 +137,11 @@ TOOLS = [
         "inputSchema": {
             "type": "object",
             "properties": {
-                "file": {
-                    "type": "string",
-                    "description": "Path to Python file to analyze"
-                }
+                "file": {"type": "string", "description": "Path to Python file to analyze"}
             },
-            "required": ["file"]
-        }
-    }
+            "required": ["file"],
+        },
+    },
 ]
 
 
@@ -155,11 +149,7 @@ TOOLS = [
 async def list_tools() -> list[Tool]:
     """List all available tools."""
     return [
-        Tool(
-            name=tool["name"],
-            description=tool["description"],
-            inputSchema=tool["inputSchema"]
-        )
+        Tool(name=tool["name"], description=tool["description"], inputSchema=tool["inputSchema"])
         for tool in TOOLS
     ]
 
@@ -252,7 +242,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         # Filter by component if specified
         if component:
             report.results = [
-                r for r in report.results
+                r
+                for r in report.results
                 if component.lower() in (r.metadata.get("component_type") or "").lower()
                 or component.lower() in r.pattern.lower()
             ]
@@ -295,11 +286,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         # Merge precedence explanation
         if merge_report.results:
-            summary_parts.extend([
-                "## Merge Precedence",
-                merge_tracker.explain_precedence(),
-                "",
-            ])
+            summary_parts.extend(
+                [
+                    "## Merge Precedence",
+                    merge_tracker.explain_precedence(),
+                    "",
+                ]
+            )
 
         # Entry points
         entry_points = [r for r in hydra_report.results if r.category == "entry_point"]

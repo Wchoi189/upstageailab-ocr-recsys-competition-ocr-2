@@ -5,13 +5,10 @@ import pandas as pd
 
 # Configuration
 EXPORT_DIR = "aws-batch-processor/data/export"
-DATA_CATALOG = {
-    "train": "data/datasets/images/train",
-    "val": "data/datasets/images_val_canonical",
-    "test": "data/datasets/images/test"
-}
+DATA_CATALOG = {"train": "data/datasets/images/train", "val": "data/datasets/images_val_canonical", "test": "data/datasets/images/test"}
 
 S3_PREFIX = "s3://ocr-batch-processing/images/"
+
 
 def fix_paths(file_path):
     print(f"Processing {file_path}...")
@@ -83,11 +80,10 @@ def fix_paths(file_path):
     df.to_parquet(file_path)
     print(f"Updated {file_path}")
 
+
 def main():
     # Find all parquet files in export dir
-    patterns = [
-        os.path.join(EXPORT_DIR, "**", "*.parquet")
-    ]
+    patterns = [os.path.join(EXPORT_DIR, "**", "*.parquet")]
     files = []
     for pattern in patterns:
         files.extend(glob.glob(pattern, recursive=True))
@@ -96,6 +92,7 @@ def main():
 
     for f in files:
         fix_paths(f)
+
 
 if __name__ == "__main__":
     main()

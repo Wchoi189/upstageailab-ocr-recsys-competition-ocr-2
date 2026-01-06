@@ -43,11 +43,11 @@ def view_parquet(filepath, n_rows=5):
             value = row[col]
 
             # Special handling for array/list columns
-            if col == 'polygons' and isinstance(value, (list, np.ndarray)):
+            if col == "polygons" and isinstance(value, (list, np.ndarray)):
                 print(f"  {col}: {len(value)} polygons")
                 if len(value) > 0:
                     print(f"    First: {format_polygon(value[0])}")
-            elif col == 'texts' and isinstance(value, (list, np.ndarray)):
+            elif col == "texts" and isinstance(value, (list, np.ndarray)):
                 print(f"  {col}: {len(value)} texts")
                 if len(value) > 0:
                     print(f"    First: {value[0][:50] if len(value[0]) > 50 else value[0]}")

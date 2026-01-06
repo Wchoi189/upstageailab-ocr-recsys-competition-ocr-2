@@ -13,6 +13,7 @@ CLAUDE_CONFIG_PATH = CLAUDE_CONFIG_DIR / "config.json"
 QWEN_CONFIG_PATH = WORKSPACE_ROOT / ".qwen/settings.json"
 ENV_LOCAL_PATH = WORKSPACE_ROOT / ".env.local"
 
+
 def load_env_local():
     """Load variables from .env.local into os.environ."""
     if not ENV_LOCAL_PATH.exists():
@@ -21,13 +22,14 @@ def load_env_local():
     with open(ENV_LOCAL_PATH) as f:
         for line in f:
             line = line.strip()
-            if not line or line.startswith('#'):
+            if not line or line.startswith("#"):
                 continue
-            if '=' in line:
-                key, value = line.split('=', 1)
+            if "=" in line:
+                key, value = line.split("=", 1)
                 # Remove quotes if present
                 value = value.strip().strip('"').strip("'")
                 os.environ[key.strip()] = value
+
 
 def expand_env_vars(obj):
     """Recursively expand environment variables in a dictionary/list."""
@@ -36,12 +38,14 @@ def expand_env_vars(obj):
         def replace(match):
             var_name = match.group(1)
             return os.environ.get(var_name, match.group(0))
-        return re.sub(r'\$\{([^}]+)\}', replace, obj)
+
+        return re.sub(r"\$\{([^}]+)\}", replace, obj)
     elif isinstance(obj, dict):
         return {k: expand_env_vars(v) for k, v in obj.items()}
     elif isinstance(obj, list):
         return [expand_env_vars(i) for i in obj]
     return obj
+
 
 def load_json(path):
     if not path.exists():
@@ -53,14 +57,16 @@ def load_json(path):
         print(f"Error loading {path}: {e}")
         return {}
 
+
 def save_json(path, data):
     try:
         path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, 'w') as f:
+        with open(path, "w") as f:
             json.dump(data, f, indent=2)
         print(f"Successfully updated {path}")
     except Exception as e:
         print(f"Error saving {path}: {e}")
+
 
 def main():
     shared_config = load_json(SHARED_CONFIG_PATH)
@@ -93,7 +99,7 @@ def main():
     # Update Qwen Config (Project level)
     qwen_config = load_json(QWEN_CONFIG_PATH)
     if not qwen_config:
-        qwen_config = {"$version": 2} # Default structure if missing
+        qwen_config = {"$version": 2}  # Default structure if missing
     if "mcpServers" not in qwen_config:
         qwen_config["mcpServers"] = {}
 
@@ -102,6 +108,7 @@ def main():
         qwen_config["mcpServers"][server_name] = server_config
 
     save_json(QWEN_CONFIG_PATH, qwen_config)
+
 
 if __name__ == "__main__":
     main()

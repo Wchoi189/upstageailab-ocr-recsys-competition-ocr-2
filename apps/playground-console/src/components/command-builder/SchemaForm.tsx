@@ -45,7 +45,7 @@ export function SchemaForm({ schema, values, onChange, errors = {} }: SchemaForm
   );
 
   return (
-    <VStack align="stretch" spacing={5} maxW="640px">
+    <VStack align="stretch" gap={5} maxW="640px">
       {visibleElements.map((element) => (
         <FieldRenderer
           key={element.key}
@@ -202,7 +202,7 @@ function SliderField(props: FieldRendererProps & { tooltip?: string }): React.JS
 
   return (
     <Wrapper element={element} error={error} tooltip={tooltip}>
-      <Tooltip.Root content={String(sliderValue)} positioning={{ placement: "top" }}>
+      <Tooltip.Root positioning={{ placement: "top" }}>
         <Tooltip.Trigger>
           <Slider.Root
             value={[sliderValue]}

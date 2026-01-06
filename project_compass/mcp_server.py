@@ -124,20 +124,14 @@ async def list_tools() -> list[Tool]:
                     "action": {
                         "type": "string",
                         "enum": ["export", "import", "list", "new"],
-                        "description": "Action to perform on the session."
+                        "description": "Action to perform on the session.",
                     },
-                    "session_name": {
-                        "type": "string",
-                        "description": "Name of the session to import (required for import action)."
-                    },
-                    "note": {
-                        "type": "string",
-                        "description": "Note to attach to the session (optional for export)."
-                    }
+                    "session_name": {"type": "string", "description": "Name of the session to import (required for import action)."},
+                    "note": {"type": "string", "description": "Note to attach to the session (optional for export)."},
                 },
-                "required": ["action"]
+                "required": ["action"],
             },
-        )
+        ),
     ]
 
 
@@ -145,19 +139,11 @@ async def list_tools() -> list[Tool]:
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute a tool."""
     if name == "get_server_info":
-        return [
-            TextContent(
-                type="text",
-                text=json.dumps({
-                    "name": "project_compass",
-                    "version": "0.1.0",
-                    "status": "running"
-                }, indent=2)
-            )
-        ]
+        return [TextContent(type="text", text=json.dumps({"name": "project_compass", "version": "0.1.0", "status": "running"}, indent=2))]
 
     if name == "manage_session":
         import subprocess
+
         action = arguments.get("action")
         session_name = arguments.get("session_name")
         note = arguments.get("note")
@@ -203,12 +189,7 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
     # Read and return content wrapped in proper MCP types
     content = path.read_text(encoding="utf-8")
 
-    return [
-        ReadResourceContents(
-            content=content,
-            mime_type=resource["mimeType"]
-        )
-    ]
+    return [ReadResourceContents(content=content, mime_type=resource["mimeType"])]
 
 
 async def main():

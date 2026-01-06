@@ -1,0 +1,50 @@
+# Project Compass MCP Server Schema
+# Machine-parseable reference for AI agents
+
+server:
+  name: project_compass
+  path: project_compass/mcp_server.py
+  description: Project state, session management, configuration access
+
+resources:
+  - uri: compass://compass.json
+    name: Main Project State
+    description: Current phase, health status, handoff reference, UV constraints
+    mime_type: application/json
+
+  - uri: compass://session_handover.md
+    name: Current Session Handover
+    description: Recent accomplishments, current state, next steps, blockers
+    mime_type: text/markdown
+
+  - uri: compass://current_session.yml
+    name: Active Session Context
+    description: Session ID, timestamps, objective, active pipeline, env lock
+    mime_type: application/x-yaml
+
+  - uri: compass://uv_lock_state.yml
+    name: Environment Lock State
+    description: UV binary, Python version, CUDA config, Torch version
+    mime_type: application/x-yaml
+
+  - uri: compass://agents.yaml
+    name: Agent Configuration
+    description: AI agent rules, entry points, schema root, consumption metrics
+    mime_type: application/x-yaml
+
+# Tools: Currently resource-only server (no tools)
+tools: []
+
+# Implementation details
+implementation:
+  location: project_compass/mcp_server.py
+  protocol: MCP stdio
+  dependencies:
+    - mcp
+  auto_discovery: searches upward for project_compass/ directory
+
+# Error handling
+error_handling:
+  - Unknown URI returns error
+  - Missing file returns clear error
+  - Validates paths within project_compass directory

@@ -1,0 +1,58 @@
+# MCP Server Configuration Schema
+# Machine-parseable configuration for AI agents
+
+servers:
+  - name: agentqms
+    path: AgentQMS/mcp_server.py
+    description: Artifact workflow, validation, compliance
+    resources:
+      - agentqms://standards/index
+      - agentqms://standards/artifact_types
+      - agentqms://standards/workflows
+      - agentqms://templates/list
+      - agentqms://config/settings
+    tools:
+      - create_artifact
+      - validate_artifact
+      - list_artifact_templates
+      - check_compliance
+      - get_standard
+
+  - name: project_compass
+    path: project_compass/mcp_server.py
+    description: Project state, session management, navigation
+    resources:
+      - compass://state/current
+      - compass://session/handover
+      - compass://config/settings
+    tools:
+      - get_project_state
+      - manage_session
+      - update_compass
+
+  - name: experiments
+    path: experiment_manager/mcp_server.py
+    description: Experiment tracking, insights, task management
+    resources:
+      - experiments://current/metadata
+      - experiments://history/list
+    tools:
+      - init_experiment
+      - add_task
+      - log_insight
+      - sync_experiment
+
+# Startup command template
+command_template: "uv run --directory ${workspaceFolder} python {path}"
+
+# Environment compatibility
+environments:
+  local: true
+  codespaces: true
+  devcontainer: true
+
+# Cloud-specific notes
+cloud_requirements:
+  - uv_installed: true
+  - python_version: ">=3.11"
+  - workspace_variable: "${workspaceFolder}"

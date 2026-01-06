@@ -84,7 +84,6 @@ class ArtifactTemplates:
 ### Manual Verification
 - [ ] Verify ...""",
             },
-
             "walkthrough": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_walkthrough_{name}.md",
                 "directory": "walkthroughs/",
@@ -109,7 +108,6 @@ class ArtifactTemplates:
 - [ ] Verify result
 """,
             },
-
             "assessment": {
                 "filename_pattern": "YYYY-MM-DD_HHMM_assessment-{name}.md",
                 "directory": "assessments/",

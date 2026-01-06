@@ -1,10 +1,23 @@
 {
-    "name": "OCR RecSys Development (Codespaces)",
+    "name": "OCR RecSys Development (Local GPU)",
+    // MCP servers: see mcp_servers.yaml for schema, mcp_config.json for agent config
+    // Local GPU-optimized: Requires Docker Desktop + NVIDIA GPU
+    // For cloud development, use: .devcontainer/devcontainer.json (default)
+    // Use pre-built image for faster startup
     "image": "ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest",
+    // Fallback to build if image not available (for local development)
+    // "build": {
+    //     "dockerfile": "../docker/Dockerfile",
+    //     "context": "..",
+    //     "target": "development"
+    // },
+    // Codespaces-specific resource requirements
+    // Optimized for free tier: 4 CPUs (30 hours/month free), 15GB storage (free tier limit)
     "hostRequirements": {
         "cpus": 4,
         "memory": "16gb",
-        "storage": "15gb"
+        "storage": "15gb" // Free tier limit (reduced from 32gb to avoid storage overage)
+        // "gpu": true  // Uncomment if GPU support needed (expensive: ~$1-2/hour)
     },
     "customizations": {
         "vscode": {
@@ -16,8 +29,7 @@
                 "charliermarsh.ruff",
                 "ms-azuretools.vscode-docker",
                 "mhutchie.git-graph",
-                "GitHub.copilot",
-                "saoudrizwan.claude-dev"
+                "GitHub.copilot"
             ],
             "settings": {
                 "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
@@ -31,10 +43,22 @@
         }
     },
     "remoteUser": "vscode",
-    "onCreateCommand": "echo '✅ Codespace created'",
+    // GPU support (only works in local Docker, not Codespaces)
+    "runArgs": [
+        "--gpus",
+        "all",
+        "--shm-size=8gb"
+    ],
+    // Data mount (for local development)
+    "mounts": [
+        "source=${localWorkspaceFolder}/data,target=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data,type=bind"
+    ],
+    // Lifecycle commands
+    "onCreateCommand": "echo '✅ Container created'",
     "updateContentCommand": "uv sync --frozen",
     "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validate_environment.py",
-    "postStartCommand": "bash .devcontainer/scripts/start-mcp-servers.sh",
+    "postStartCommand": "python scripts/validate_environment.py",
+    // Port forwarding
     "forwardPorts": [
         8000,
         8501,
@@ -54,6 +78,7 @@
             "onAutoForward": "silent"
         }
     },
+    // Additional features
     "features": {
         "ghcr.io/devcontainers/features/github-cli:1": {}
     }

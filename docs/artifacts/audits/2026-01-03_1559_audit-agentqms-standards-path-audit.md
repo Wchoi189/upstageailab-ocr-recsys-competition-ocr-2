@@ -3,6 +3,7 @@ type: "audit"
 category: "compliance"
 status: "draft"
 version: "1.0"
+ads_version: "1.0"
 related_artifacts: []
 generated_artifacts: []
 tags: ['audit']

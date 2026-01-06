@@ -1,8 +1,8 @@
 ---
 ads_version: "1.0"
 type: implementation_plan
-category: strategy
-status: active
+category: architecture
+status: draft
 version: "1.0"
 tags: refactoring, architecture, hydra, ocr
 title: Master Architecture Refactoring Plan "Project Polaris"

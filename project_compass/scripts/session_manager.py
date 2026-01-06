@@ -13,7 +13,7 @@ COMPASS_DIR = PROJECT_ROOT / "project_compass"
 ACTIVE_CONTEXT_DIR = COMPASS_DIR / "active_context"
 HISTORY_DIR = COMPASS_DIR / "history"
 SESSIONS_DIR = HISTORY_DIR / "sessions"
-TASK_FILE = PROJECT_ROOT / "task.md" # Assuming task.md is in root for agent use, but artifacts might be elsewhere.
+TASK_FILE = PROJECT_ROOT / "task.md"  # Assuming task.md is in root for agent use, but artifacts might be elsewhere.
 # Re-checking task.md location: The user has artifacts in ~/.gemini/.../brain/.../task.md
 # BUT, usually agents act on files in the workspace. The task.md artifact is a special case.
 # Wait, the user's `task.md` in the context of "Project Compass" usually refers to a file AI Agents use.
@@ -23,6 +23,7 @@ TASK_FILE = PROJECT_ROOT / "task.md" # Assuming task.md is in root for agent use
 # Let's assume for now we only manage `active_context` files and maybe a `task.md` if it exists in a known location.
 # Current session files: active_context/current_session.yml, active_context/blockers.yml.
 # We will focus on `active_context` first.
+
 
 def get_current_session_id():
     session_file = ACTIVE_CONTEXT_DIR / "current_session.yml"
@@ -34,6 +35,7 @@ def get_current_session_id():
             return data.get("session_id")
     except Exception:
         return None
+
 
 def export_session(note=None):
     """Archives the current active context to history/sessions."""
@@ -62,16 +64,13 @@ def export_session(note=None):
         shutil.copy2(handover_file, dest_dir / "session_handover.md")
 
     # 3. Manifest
-    manifest = {
-        "original_session_id": session_id,
-        "exported_at": timestamp,
-        "note": note or ""
-    }
+    manifest = {"original_session_id": session_id, "exported_at": timestamp, "note": note or ""}
     with open(dest_dir / "manifest.json", "w") as f:
         json.dump(manifest, f, indent=2)
 
     print(f"Session exported to: {dest_dir}")
     return dest_dir
+
 
 def list_sessions():
     if not SESSIONS_DIR.exists():
@@ -94,6 +93,7 @@ def list_sessions():
                     pass
             print(f"{sess.name:<40} {note}")
 
+
 def import_session(session_folder_name):
     """Restores a session from history/sessions to active_context."""
     src_dir = SESSIONS_DIR / session_folder_name
@@ -112,7 +112,8 @@ def import_session(session_folder_name):
     # Or just overwrite. Overwrite is safer to keep untracked files, but technically we want a clean state.
     # Let's clean ACTIVE_CONTEXT_DIR first to avoid mixing.
     for item in ACTIVE_CONTEXT_DIR.iterdir():
-        if item.name == ".gitkeep": continue
+        if item.name == ".gitkeep":
+            continue
         if item.is_dir():
             shutil.rmtree(item)
         else:
@@ -132,6 +133,7 @@ def import_session(session_folder_name):
         shutil.copy2(src_handover, COMPASS_DIR / "session_handover.md")
         print("Restored session_handover.md")
 
+
 def new_session(session_id=None):
     """Clears active context for a fresh start."""
     # Auto-export current before clearing
@@ -142,7 +144,8 @@ def new_session(session_id=None):
 
     print("Clearing active context...")
     for item in ACTIVE_CONTEXT_DIR.iterdir():
-        if item.name == ".gitkeep": continue
+        if item.name == ".gitkeep":
+            continue
         if item.is_dir():
             shutil.rmtree(item)
         else:
@@ -163,6 +166,7 @@ def new_session(session_id=None):
         # Let's look for templates/session.yml
 
     print("Session cleared. Ready for new context.")
+
 
 def main():
     parser = argparse.ArgumentParser(description="Project Compass Session Manager")
@@ -192,6 +196,7 @@ def main():
         import_session(args.session_name)
     elif args.command == "new":
         new_session()
+
 
 if __name__ == "__main__":
     main()

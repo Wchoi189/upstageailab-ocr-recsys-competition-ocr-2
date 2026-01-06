@@ -20,17 +20,22 @@ logging.getLogger("PIL").setLevel(logging.WARNING)
 
 logger = logging.getLogger(__name__)
 
+
 def draw_boxes(image, boxes, labels, label_map):
     import cv2
-    for box, label_id in zip(boxes, labels):
-        if label_id == -100: continue
+
+    for box, label_id in zip(boxes, labels, strict=False):
+        if label_id == -100:
+            continue
         label_text = label_map.get(label_id, "O")
-        if label_text == "O": continue
+        if label_text == "O":
+            continue
 
         x1, y1, x2, y2 = box
         cv2.rectangle(image, (int(x1), int(y1)), (int(x2), int(y2)), (0, 255, 0), 2)
-        cv2.putText(image, label_text, (int(x1), int(y1)-10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+        cv2.putText(image, label_text, (int(x1), int(y1) - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
     return image
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -70,7 +75,7 @@ def main():
         processor = LayoutLMv3Processor.from_pretrained(args.model_name, apply_ocr=False)
     else:
         # LiLT
-        tokenizer = AutoTokenizer.from_pretrained(args.model_name)
+        _tokenizer = AutoTokenizer.from_pretrained(args.model_name)
 
     # 2. Load Model
     logger.info(f"Loading model from {args.checkpoint}...")
@@ -93,11 +98,11 @@ def main():
 
     # If wrapped in PL, keys might have 'model.' prefix
     if classifier_weight is None:
-         # Try matching any key ending in classifier.weight
-         for k in state_dict.keys():
-             if k.endswith("classifier.weight"):
-                 classifier_weight = state_dict[k]
-                 break
+        # Try matching any key ending in classifier.weight
+        for k in state_dict.keys():
+            if k.endswith("classifier.weight"):
+                classifier_weight = state_dict[k]
+                break
 
     if classifier_weight is not None:
         num_labels = classifier_weight.shape[0]
@@ -126,7 +131,7 @@ def main():
     new_state_dict = {}
     for k, v in state_dict.items():
         if k.startswith("model."):
-            new_state_dict[k[6:]] = v # Remove "model." prefix
+            new_state_dict[k[6:]] = v  # Remove "model." prefix
         else:
             new_state_dict[k] = v
 
@@ -150,7 +155,7 @@ def main():
     # 4. Inference Loop
     # FIXME: Load from config/artifact
     label_list = ["O", "B-HEADER", "I-HEADER", "B-QUESTION", "I-QUESTION", "B-ANSWER", "I-ANSWER"]
-    id2label = {i: l for i, l in enumerate(label_list)}
+    id2label = dict(enumerate(label_list))
 
     logger.info("Starting inference...")
     for idx, row in tqdm(df.iterrows(), total=len(df)):
@@ -178,13 +183,7 @@ def main():
         # Preprocess
         # Be careful with max_length
         encoding = processor(
-            images=image,
-            text=words,
-            boxes=formatted_boxes,
-            return_tensors="pt",
-            padding="max_length",
-            truncation=True,
-            max_length=512
+            images=image, text=words, boxes=formatted_boxes, return_tensors="pt", padding="max_length", truncation=True, max_length=512
         )
 
         # Move to device
@@ -195,7 +194,7 @@ def main():
             outputs = model(**encoding, return_loss=False)
 
         logits = outputs["logits"]
-        pred_ids = torch.argmax(logits, dim=2)[0] # (seq_len,)
+        pred_ids = torch.argmax(logits, dim=2)[0]  # (seq_len,)
 
         # Visualize
         # Map tokens to words
@@ -204,7 +203,8 @@ def main():
         # Create a map for word_index -> majority label
         word_labels = {}
         for i, word_idx in enumerate(word_ids):
-            if word_idx is None: continue
+            if word_idx is None:
+                continue
             if word_idx not in word_labels:
                 word_labels[word_idx] = []
             word_labels[word_idx].append(pred_ids[i].item())
@@ -212,20 +212,20 @@ def main():
         # Resolve majority vote
         final_labels = []
         for i in range(len(words)):
-             if i in word_labels:
-                 # Majority vote
-                 ids = word_labels[i]
-                 majority = max(set(ids), key=ids.count)
-                 final_labels.append(majority)
-             else:
-                 final_labels.append(0) # O
+            if i in word_labels:
+                # Majority vote
+                ids = word_labels[i]
+                majority = max(set(ids), key=ids.count)
+                final_labels.append(majority)
+            else:
+                final_labels.append(0)  # O
 
         # Draw on image
         # Use opencv
         cv_img = cv2.imread(str(image_path))
         if cv_img is None:
-             cv_img = np.array(image)
-             cv_img = cv_img[:, :, ::-1].copy()
+            cv_img = np.array(image)
+            cv_img = cv_img[:, :, ::-1].copy()
 
         res_img = draw_boxes(cv_img, formatted_boxes, final_labels, id2label)
 
@@ -233,6 +233,7 @@ def main():
         cv2.imwrite(str(save_path), res_img)
 
     logger.info(f"Results saved to {output_dir}")
+
 
 if __name__ == "__main__":
     main()

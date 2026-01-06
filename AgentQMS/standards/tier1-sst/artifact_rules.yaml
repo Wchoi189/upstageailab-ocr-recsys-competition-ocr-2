@@ -105,6 +105,24 @@ artifact_types:
     description: "VLM (Vision Language Model) analysis reports"
     example: "2025-12-06_1200_vlm_report_inference-analysis.md"
 
+  guide:
+    prefix: "guide-"
+    separator: "-"
+    case: "lowercase"
+    directory: "guides/"
+    frontmatter_type: "guide"
+    description: "Guides and educational material"
+    example: "2025-11-29_1800_guide-my-tutorial.md"
+
+  walkthrough:
+    prefix: "walkthrough-"
+    separator: "-"
+    case: "lowercase"
+    directory: "walkthroughs/"
+    frontmatter_type: "walkthrough"
+    description: "Walkthroughs and proof-of-work documentation"
+    example: "2025-11-29_1800_walkthrough-my-experiment.md"
+
 # Frontmatter requirements
 frontmatter:
   required_fields:
@@ -148,7 +166,7 @@ error_templates:
   missing_type:
     code: "E002"
     message: "Missing artifact type prefix after timestamp"
-    expected: "Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_"
+    expected: "Expected one of: implementation_plan_, assessment-, audit-, design-, research-, template-, BUG_, SESSION_, guide-, walkthrough-"
     hint: "Add the appropriate artifact type prefix after the timestamp"
 
   invalid_format:

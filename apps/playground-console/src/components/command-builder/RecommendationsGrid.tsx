@@ -21,7 +21,7 @@ export function RecommendationsGrid({
   }
 
   return (
-    <Stack spacing={4}>
+    <Stack gap={4}>
       {recommendations.map((rec) => {
         const isSelected = rec.id === selectedId;
         return (
@@ -34,7 +34,7 @@ export function RecommendationsGrid({
             bg="surface.panel"
           >
             <Stack direction="row" justify="space-between" align="center">
-              <Stack spacing={0}>
+              <Stack gap={0}>
                 <Text fontWeight="semibold">{rec.title}</Text>
                 <Text fontSize="sm" color="text.muted">
                   {rec.description}

@@ -107,7 +107,7 @@ export function CommandBuilderClient(): React.JSX.Element {
   };
 
   return (
-    <Stack spacing={8}>
+    <Stack gap={8}>
       <Box>
         <Text textTransform="uppercase" fontSize="sm" color="text.muted">
           Build /
@@ -123,7 +123,7 @@ export function CommandBuilderClient(): React.JSX.Element {
       <Tabs.Root
         colorScheme="brand"
         value={activeTab}
-        onValueChange={handleTabChange}
+        onValueChange={(details) => handleTabChange(details.value)}
       >
         <Tabs.List>
           {tabOptions.map((tab) => (
@@ -153,7 +153,7 @@ export function CommandBuilderClient(): React.JSX.Element {
                   <SchemaForm schema={schema} values={values} onChange={setValues} />
                 </GridItem>
                 <GridItem>
-                  <Stack spacing={6}>
+                  <Stack gap={6}>
                     {commandResult ? (
                       <CommandDisplay
                         command={commandResult.command}
@@ -170,7 +170,7 @@ export function CommandBuilderClient(): React.JSX.Element {
                       <CommandDiffViewer before={previousCommand} after={commandResult.command} />
                     )}
 
-                    <Stack spacing={3}>
+                    <Stack gap={3}>
                       <Flex justify="space-between" align="center">
                         <Text fontWeight="semibold">Recommended configs</Text>
                         <Button variant="ghost" size="sm" onClick={() => setShowRecommendations((val) => !val)}>
@@ -201,7 +201,7 @@ export function CommandBuilderClient(): React.JSX.Element {
 
 function PlaceholderCard(): React.JSX.Element {
   return (
-    <Stack spacing={4} border="1px dashed" borderColor="border.subtle" borderRadius="lg" p={5} bg="surface.panel">
+    <Stack gap={4} border="1px dashed" borderColor="border.subtle" borderRadius="lg" p={5} bg="surface.panel">
       <Text fontWeight="semibold">Command output</Text>
       <Text fontSize="sm" color="text.muted">
         Fill out the form to generate a command preview with overrides and validation details.

@@ -30,7 +30,9 @@ class TestComponentInstantiationTracker:
         report = tracker.analyze_source(SAMPLE_COMPONENT_INSTANTIATION, "test.py")
 
         # Registry calls are categorized as factory_call
-        registry_results = [r for r in report.results if "create_architecture_components" in r.pattern]
+        registry_results = [
+            r for r in report.results if "create_architecture_components" in r.pattern
+        ]
         assert len(registry_results) >= 1
 
         patterns = [r.pattern for r in registry_results]
@@ -53,8 +55,7 @@ class TestComponentInstantiationTracker:
 
         # Find decoder factory call
         decoder_results = [
-            r for r in report.results
-            if r.metadata.get("component_type") == "decoder"
+            r for r in report.results if r.metadata.get("component_type") == "decoder"
         ]
         assert len(decoder_results) >= 1
 
@@ -128,11 +129,11 @@ class TestComponentInstantiationTracker:
 
     def test_no_instantiations(self):
         """Should handle files without instantiation patterns."""
-        code = '''
+        code = """
 def regular_function():
     x = 1 + 2
     return x
-'''
+"""
         tracker = ComponentInstantiationTracker()
         report = tracker.analyze_source(code, "regular.py")
 
@@ -147,14 +148,12 @@ def regular_function():
 
     def test_additional_factories(self):
         """Should support custom factory function names."""
-        code = '''
+        code = """
 class CustomModel:
     def setup(self, cfg):
         self.backbone = create_custom_backbone(cfg.backbone)
-'''
-        tracker = ComponentInstantiationTracker(
-            additional_factories=["create_custom_backbone"]
-        )
+"""
+        tracker = ComponentInstantiationTracker(additional_factories=["create_custom_backbone"])
         report = tracker.analyze_source(code, "test.py")
 
         # Should find the custom factory call

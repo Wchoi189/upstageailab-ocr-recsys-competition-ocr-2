@@ -20,6 +20,7 @@ import yaml
 # Optional jsonschema for validation
 try:
     import jsonschema
+
     HAS_JSONSCHEMA = True
 except ImportError:
     HAS_JSONSCHEMA = False
@@ -107,10 +108,7 @@ def atomic_yaml_write(data: dict[str, Any], target_path: Path, header_comment: s
         yaml_content = header_comment + "\n" + yaml_content
 
     # Atomic write: write to temp file, then replace
-    fd, temp_path = tempfile.mkstemp(
-        suffix=".yml.tmp",
-        dir=target_path.parent
-    )
+    fd, temp_path = tempfile.mkstemp(suffix=".yml.tmp", dir=target_path.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(yaml_content)
@@ -129,10 +127,7 @@ def atomic_json_write(data: dict[str, Any], target_path: Path) -> None:
     target_path.parent.mkdir(parents=True, exist_ok=True)
     json_content = json.dumps(data, indent=2, ensure_ascii=False)
 
-    fd, temp_path = tempfile.mkstemp(
-        suffix=".json.tmp",
-        dir=target_path.parent
-    )
+    fd, temp_path = tempfile.mkstemp(suffix=".json.tmp", dir=target_path.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8") as f:
             f.write(json_content)
@@ -199,12 +194,7 @@ class EnvironmentChecker:
             return
 
         try:
-            result = subprocess.run(
-                ["which", "uv"],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
+            result = subprocess.run(["which", "uv"], capture_output=True, text=True, timeout=5)
             actual_path = result.stdout.strip()
 
             if result.returncode != 0:
@@ -214,7 +204,7 @@ class EnvironmentChecker:
                     f"UV path mismatch:\n"
                     f"  Expected: {expected_path}\n"
                     f"  Actual:   {actual_path}\n"
-                    f"  Fix: export PATH=\"{Path(expected_path).parent}:$PATH\""
+                    f'  Fix: export PATH="{Path(expected_path).parent}:$PATH"'
                 )
         except subprocess.TimeoutExpired:
             self.errors.append("Timeout checking UV binary")
@@ -229,22 +219,13 @@ class EnvironmentChecker:
             return
 
         try:
-            result = subprocess.run(
-                ["python", "--version"],
-                capture_output=True,
-                text=True,
-                timeout=5
-            )
+            result = subprocess.run(["python", "--version"], capture_output=True, text=True, timeout=5)
             # Output: "Python X.Y.Z"
             actual_version = result.stdout.strip().replace("Python ", "")
 
             if not actual_version.startswith(expected_version.rsplit(".", 1)[0]):
                 # Compare major.minor at minimum
-                self.errors.append(
-                    f"Python version mismatch:\n"
-                    f"  Expected: {expected_version}\n"
-                    f"  Actual:   {actual_version}"
-                )
+                self.errors.append(f"Python version mismatch:\n" f"  Expected: {expected_version}\n" f"  Actual:   {actual_version}")
         except subprocess.TimeoutExpired:
             self.errors.append("Timeout checking Python version")
         except FileNotFoundError:
@@ -296,11 +277,7 @@ class SessionManager:
     def __init__(self, paths: CompassPaths | None = None):
         self.paths = paths or CompassPaths()
 
-    def init_session(
-        self,
-        objective: str,
-        active_pipeline: str = "kie"
-    ) -> tuple[bool, str]:
+    def init_session(self, objective: str, active_pipeline: str = "kie") -> tuple[bool, str]:
         """
         Initialize or update the current session.
 
@@ -336,10 +313,7 @@ class SessionManager:
         }
 
         # Validate against schema
-        is_valid, error_msg = validate_against_schema(
-            new_session,
-            self.paths.session_schema
-        )
+        is_valid, error_msg = validate_against_schema(new_session, self.paths.session_schema)
         if not is_valid:
             return False, f"Session data failed schema validation: {error_msg}"
 
@@ -397,6 +371,7 @@ class SessionManager:
         # Check GPU requirement
         try:
             import torch
+
             is_gpu_required = torch.cuda.is_available()
         except ImportError:
             is_gpu_required = False

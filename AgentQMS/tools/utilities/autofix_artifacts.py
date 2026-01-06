@@ -369,7 +369,12 @@ def main():
     # Run validation to get current state
     if args.validation_json and Path(args.validation_json).exists():
         with open(args.validation_json) as f:
-            violations = json.load(f)
+            try:
+                violations = json.load(f)
+            except json.JSONDecodeError as e:
+                print(f"⚠️  Invalid validation JSON at {args.validation_json}: {e}")
+                print("   Falling back to fresh validation run...")
+                violations = run_validation()
     else:
         print("🔍 Running validation...")
         violations = run_validation()

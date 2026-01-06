@@ -20,6 +20,7 @@ def load_model(model_name: str):
     processor = AutoProcessor.from_pretrained(model_name)
     return model, processor
 
+
 def run_inference(model, processor, image_path: Path):
     """Run inference on a single image."""
     print(f"Processing image: {image_path}")
@@ -34,6 +35,7 @@ def run_inference(model, processor, image_path: Path):
     # Placeholder for output processing
     print(f"Inference results: {outputs}")
     return outputs
+
 
 def main():
     parser = argparse.ArgumentParser(description="Run HF model inference on images")
@@ -51,6 +53,7 @@ def main():
         # Run on all webp in samples dir
         for img_path in Path(args.samples_dir).glob("*.webp"):
             run_inference(model, processor, img_path)
+
 
 if __name__ == "__main__":
     main()

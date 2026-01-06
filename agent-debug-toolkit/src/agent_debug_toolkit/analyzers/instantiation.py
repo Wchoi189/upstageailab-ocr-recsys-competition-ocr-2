@@ -19,26 +19,46 @@ from agent_debug_toolkit.analyzers.base import BaseAnalyzer
 
 # Common factory function patterns
 FACTORY_PATTERNS = [
-    re.compile(r"get_(\w+)_by_cfg"),      # get_encoder_by_cfg, get_decoder_by_cfg
-    re.compile(r"create_(\w+)"),          # create_encoder, create_model
-    re.compile(r"build_(\w+)"),           # build_encoder, build_loss
-    re.compile(r"make_(\w+)"),            # make_optimizer
-    re.compile(r"(\w+)_from_cfg"),        # encoder_from_cfg
-    re.compile(r"(\w+)_factory"),         # model_factory
+    re.compile(r"get_(\w+)_by_cfg"),  # get_encoder_by_cfg, get_decoder_by_cfg
+    re.compile(r"create_(\w+)"),  # create_encoder, create_model
+    re.compile(r"build_(\w+)"),  # build_encoder, build_loss
+    re.compile(r"make_(\w+)"),  # make_optimizer
+    re.compile(r"(\w+)_from_cfg"),  # encoder_from_cfg
+    re.compile(r"(\w+)_factory"),  # model_factory
 ]
 
 # Registry method patterns
-REGISTRY_METHODS = frozenset({
-    "get", "create", "register", "create_architecture_components",
-    "list_encoders", "list_decoders", "list_heads", "list_losses",
-})
+REGISTRY_METHODS = frozenset(
+    {
+        "get",
+        "create",
+        "register",
+        "create_architecture_components",
+        "list_encoders",
+        "list_decoders",
+        "list_heads",
+        "list_losses",
+    }
+)
 
 # Component type names
-COMPONENT_TYPES = frozenset({
-    "encoder", "decoder", "head", "loss", "backbone",
-    "optimizer", "scheduler", "model", "architecture",
-    "transform", "augmentation", "dataset", "dataloader",
-})
+COMPONENT_TYPES = frozenset(
+    {
+        "encoder",
+        "decoder",
+        "head",
+        "loss",
+        "backbone",
+        "optimizer",
+        "scheduler",
+        "model",
+        "architecture",
+        "transform",
+        "augmentation",
+        "dataset",
+        "dataloader",
+    }
+)
 
 
 class ComponentInstantiationTracker(BaseAnalyzer):
@@ -123,10 +143,7 @@ class ComponentInstantiationTracker(BaseAnalyzer):
         self.generic_visit(node)
 
     def _check_component_call(
-        self,
-        call_node: ast.Call,
-        target: str | None,
-        parent_node: ast.AST
+        self, call_node: ast.Call, target: str | None, parent_node: ast.AST
     ) -> None:
         """Check if a call creates a component."""
         call_name = self._get_call_name(call_node)
@@ -181,7 +198,7 @@ class ComponentInstantiationTracker(BaseAnalyzer):
                 category=category,
                 component_type=component_type,
                 config_source=config_source,
-                target=target
+                target=target,
             )
 
     def _record_instantiation(
@@ -191,7 +208,7 @@ class ComponentInstantiationTracker(BaseAnalyzer):
         category: str,
         component_type: str | None,
         config_source: str | None,
-        target: str | None
+        target: str | None,
     ) -> None:
         """Record a component instantiation finding."""
         context_parts = []
@@ -230,20 +247,18 @@ class ComponentInstantiationTracker(BaseAnalyzer):
         }
 
         self._add_result(
-            node=node,
-            pattern=pattern,
-            context=context,
-            category=category,
-            metadata=metadata
+            node=node, pattern=pattern, context=context, category=category, metadata=metadata
         )
 
         # Track order
-        self._instantiation_order.append({
-            "line": node.lineno,
-            "component": component_type,
-            "source": config_source,
-            "target": target,
-        })
+        self._instantiation_order.append(
+            {
+                "line": node.lineno,
+                "component": component_type,
+                "source": config_source,
+                "target": target,
+            }
+        )
 
     def _looks_like_component_class(self, name: str) -> bool:
         """Check if a name looks like a component class (e.g., FPNDecoder, ResNetEncoder)."""
@@ -302,12 +317,14 @@ class ComponentInstantiationTracker(BaseAnalyzer):
         for result in self._results:
             comp_type = result.metadata.get("component_type", "")
             if comp_type and component_lower in comp_type.lower():
-                results.append({
-                    "line": result.line,
-                    "pattern": result.pattern,
-                    "config_source": result.metadata.get("config_source"),
-                    "function": result.metadata.get("function"),
-                })
+                results.append(
+                    {
+                        "line": result.line,
+                        "pattern": result.pattern,
+                        "config_source": result.metadata.get("config_source"),
+                        "function": result.metadata.get("function"),
+                    }
+                )
 
         return results
 

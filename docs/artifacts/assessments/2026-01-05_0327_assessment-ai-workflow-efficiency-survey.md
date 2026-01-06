@@ -1,10 +1,15 @@
-# AI Workflow Efficiency Survey
-
-**Date:** 2026-01-05
-**Type:** Assessment
-**Tags:** optimization, documentation, ai-agents
-
 ---
+title: assessment-AI Workflow Efficiency Survey
+type: assessment
+date: 2026-01-05 10:00 (KST)
+tags: [optimization, documentation, ai-agents]
+category: code_quality
+status: completed
+version: 1.0.0
+ads_version: 1.0.0
+---
+
+# AI Workflow Efficiency Survey
 
 ## Documentation Effectiveness
 
@@ -34,8 +39,6 @@
 | **Data format specs**       | LMDB schema only in code, not docs   |
 | **Config precedence rules** | Caused BUG_003                       |
 
----
-
 ## Project Organization
 
 ### 4. Tiered Schema Assessment
@@ -61,8 +64,6 @@
 2. **Archive pollution** → `archive/` appears in search results
 3. **Scattered configs** → `model/architectures/` vs `model/` inconsistent
 
----
-
 ## Improvement Priorities
 
 ### 7. Top 3 Workflow Pain Points
@@ -84,8 +85,6 @@
 
 > [!IMPORTANT]
 > **Recommended:** Create `ocr/data/schemas/` with Pydantic models for all data contracts (LMDB, detection, KIE). This eliminates the "data format not documented" gap.
-
----
 
 ## Actionable Recommendations
 

@@ -1,4 +1,3 @@
-
 import json
 import os
 from datetime import datetime
@@ -52,11 +51,7 @@ class ExperimentReconciler:
                 temp_path.unlink()
             raise OSError(f"Failed to save manifest: {e}")
 
-        return {
-            "status": "success",
-            "artifacts_count": len(found_artifacts),
-            "last_reconciled": manifest_data["last_reconciled"]
-        }
+        return {"status": "success", "artifacts_count": len(found_artifacts), "last_reconciled": manifest_data["last_reconciled"]}
 
     def _scan_artifacts(self) -> list[dict[str, Any]]:
         """
@@ -95,7 +90,7 @@ class ExperimentReconciler:
             if content.startswith("---"):
                 parts = content.split("---", 2)
                 if len(parts) >= 3:
-                     return yaml.safe_load(parts[1])
+                    return yaml.safe_load(parts[1])
         except Exception as e:
             print(f"Warning: Failed to parse frontmatter for {file_path}: {e}")
 

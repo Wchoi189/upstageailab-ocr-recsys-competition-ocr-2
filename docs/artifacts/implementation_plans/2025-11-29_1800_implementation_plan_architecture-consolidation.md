@@ -1,3 +1,13 @@
+---
+category: planning
+status: active
+type: implementation_plan
+title: Implementation Plan: AgentQMS Architecture Consolidation
+version: 1.0.0
+ads_version: 1.0.0
+date: 2025-11-29 18:00 (KST)
+---
+
 # Implementation Plan: AgentQMS Architecture Consolidation
 
 > **Context**: Converging `.agentqms/`, `.ai-instructions/`, and `AgentQMS/` into a single `AgentQMS/` root directory to creates a single source of truth for the project.
@@ -31,7 +41,7 @@ Consolidate architecture to improve discoverability, reduce maintenance burden, 
 
 5.  [ ] **Task 2.2: Path Updates**
     -   Update `AGENTS.md` to point to `AgentQMS/standards/INDEX.yaml`
-    -   Update Python imports (bulk replace `AgentQMS.agent_tools` → `AgentQMS.tools`)
+    -   Update Python imports (bulk replace `AgentQMS.agent_tools` → `AgentQMS/tools`)
     -   Update `AgentQMS/bin/Makefile` paths
     -   Update `INDEX.yaml` relative paths (if any)
 

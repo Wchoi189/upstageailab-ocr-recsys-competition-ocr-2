@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Extract charset from LMDB label data for Korean OCR tokenizer."""
+
 import argparse
 import json
 import logging
@@ -12,12 +13,7 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 # Basic safety charset: digits, punctuation, space, common Latin
-SAFETY_CHARSET = set(
-    "0123456789"
-    "abcdefghijklmnopqrstuvwxyz"
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-    " .,!?:;-()[]{}'\"/\\@#$%&*+=<>~`"
-)
+SAFETY_CHARSET = set("0123456789" "abcdefghijklmnopqrstuvwxyz" "ABCDEFGHIJKLMNOPQRSTUVWXYZ" " .,!?:;-()[]{}'\"/\\@#$%&*+=<>~`")
 
 
 def extract_charset(lmdb_path: str, sample_limit: int | None = None) -> dict:

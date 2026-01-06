@@ -56,6 +56,28 @@ class SnapshotWriter:
 
         snapshot = self._build_snapshot(registry, discovery_paths)
 
+        # Check if we actually need to write
+        if self.snapshot_path.exists():
+            try:
+                with self.snapshot_path.open("r", encoding="utf-8") as f:
+                    existing = yaml.safe_load(f)
+
+                # Standardize new data for comparison (handles Path objects etc)
+                comparable_new = yaml.safe_load(yaml.safe_dump(snapshot))
+
+                # Check everything except metadata.generated_at
+                existing_data = {k: v for k, v in existing.items() if k != "metadata"}
+                new_data = {k: v for k, v in comparable_new.items() if k != "metadata"}
+
+                # Also check metadata fields except timestamp
+                existing_meta = {k: v for k, v in existing.get("metadata", {}).items() if k != "generated_at"}
+                new_meta = {k: v for k, v in comparable_new.get("metadata", {}).items() if k != "generated_at"}
+
+                if existing_data == new_data and existing_meta == new_meta:
+                    return self.snapshot_path
+            except Exception:
+                pass
+
         with self.snapshot_path.open("w", encoding="utf-8") as f:
             yaml.safe_dump(snapshot, f, sort_keys=False, default_flow_style=False)
 

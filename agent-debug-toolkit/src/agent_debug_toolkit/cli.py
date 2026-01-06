@@ -15,6 +15,7 @@ from typing import Optional
 try:
     import typer
     from typer import Argument, Option
+
     HAS_TYPER = True
 except ImportError:
     HAS_TYPER = False
@@ -38,9 +39,15 @@ def create_app() -> "typer.Typer":
     @app.command("analyze-config")
     def analyze_config(
         path: str = Argument(..., help="Path to Python file or directory to analyze"),
-        component: Optional[str] = Option(None, "--component", "-c", help="Filter by component name"),
-        output: str = Option("json", "--output", "-o", help="Output format: json, markdown, or text"),
-        recursive: bool = Option(True, "--recursive/--no-recursive", "-r", help="Recurse into directories"),
+        component: Optional[str] = Option(
+            None, "--component", "-c", help="Filter by component name"
+        ),
+        output: str = Option(
+            "json", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
     ) -> None:
         """
         Analyze configuration access patterns in Python code.
@@ -70,8 +77,12 @@ def create_app() -> "typer.Typer":
     @app.command("trace-merges")
     def trace_merges(
         file: str = Argument(..., help="Path to Python file to analyze"),
-        output: str = Option("markdown", "--output", "-o", help="Output format: json, markdown, or text"),
-        explain: bool = Option(True, "--explain/--no-explain", help="Include precedence explanation"),
+        output: str = Option(
+            "markdown", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        explain: bool = Option(
+            True, "--explain/--no-explain", help="Include precedence explanation"
+        ),
     ) -> None:
         """
         Trace OmegaConf.merge() operations and their precedence.
@@ -98,8 +109,12 @@ def create_app() -> "typer.Typer":
     @app.command("find-hydra")
     def find_hydra(
         path: str = Argument(..., help="Path to Python file or directory to analyze"),
-        output: str = Option("json", "--output", "-o", help="Output format: json, markdown, or text"),
-        recursive: bool = Option(True, "--recursive/--no-recursive", "-r", help="Recurse into directories"),
+        output: str = Option(
+            "json", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
     ) -> None:
         """
         Find Hydra framework usage patterns.
@@ -124,9 +139,15 @@ def create_app() -> "typer.Typer":
     @app.command("find-instantiations")
     def find_instantiations(
         path: str = Argument(..., help="Path to Python file or directory to analyze"),
-        component: Optional[str] = Option(None, "--component", "-c", help="Filter by component type"),
-        output: str = Option("json", "--output", "-o", help="Output format: json, markdown, or text"),
-        recursive: bool = Option(True, "--recursive/--no-recursive", "-r", help="Recurse into directories"),
+        component: Optional[str] = Option(
+            None, "--component", "-c", help="Filter by component type"
+        ),
+        output: str = Option(
+            "json", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
     ) -> None:
         """
         Find component instantiation sites.
@@ -149,7 +170,8 @@ def create_app() -> "typer.Typer":
         # Filter by component if specified
         if component:
             report.results = [
-                r for r in report.results
+                r
+                for r in report.results
                 if component.lower() in (r.metadata.get("component_type") or "").lower()
                 or component.lower() in r.pattern.lower()
             ]
@@ -160,8 +182,12 @@ def create_app() -> "typer.Typer":
     @app.command("full-analysis")
     def full_analysis(
         path: str = Argument(..., help="Path to Python file or directory to analyze"),
-        output: str = Option("markdown", "--output", "-o", help="Output format: json, markdown, or text"),
-        recursive: bool = Option(True, "--recursive/--no-recursive", "-r", help="Recurse into directories"),
+        output: str = Option(
+            "markdown", "--output", "-o", help="Output format: json, markdown, or text"
+        ),
+        recursive: bool = Option(
+            True, "--recursive/--no-recursive", "-r", help="Recurse into directories"
+        ),
     ) -> None:
         """
         Run all analyzers and produce a comprehensive report.
@@ -197,10 +223,7 @@ def create_app() -> "typer.Typer":
             all_reports.append(report)
 
         if output == "json":
-            combined = {
-                "target": str(target),
-                "reports": [r.to_dict() for r in all_reports]
-            }
+            combined = {"target": str(target), "reports": [r.to_dict() for r in all_reports]}
             typer.echo(json.dumps(combined, indent=2))
         else:
             for report in all_reports:

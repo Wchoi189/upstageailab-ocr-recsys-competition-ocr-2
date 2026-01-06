@@ -61,7 +61,7 @@ ENV LC_CTYPE=en_US.UTF-8
 
 # Install uv system-wide
 RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
-ENV PATH="/opt/uv/bin:$PATH"
+ENV PATH="/opt/uv:$PATH"
 
 # Create vscode user
 RUN groupadd -g 1000 vscode && \
@@ -129,8 +129,8 @@ RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
 
 # Create startup script that starts SSH as root and keeps container running
 RUN sudo sh -c 'echo "#!/bin/bash\n\
-sudo /usr/sbin/sshd -D & \n\
-sleep infinity" > /usr/local/bin/start.sh' && \
+    sudo /usr/sbin/sshd -D & \n\
+    sleep infinity" > /usr/local/bin/start.sh' && \
     sudo chmod +x /usr/local/bin/start.sh
 
 # Expose ports for development services

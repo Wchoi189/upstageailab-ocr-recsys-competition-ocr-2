@@ -21,6 +21,7 @@ import requests
 # Try to load .env.local if available
 try:
     from dotenv import load_dotenv
+
     load_dotenv(".env.local")
 except ImportError:
     pass
@@ -30,26 +31,21 @@ PERPLEXITY_API_KEY = os.getenv("PERPLEXITY_API_KEY")
 DEFAULT_MODEL = "sonar"
 API_URL = "https://api.perplexity.ai/chat/completions"
 
+
 def query_perplexity(query: str, model: str = DEFAULT_MODEL) -> str:
     if not PERPLEXITY_API_KEY:
         raise ValueError("PERPLEXITY_API_KEY environment variable is not set. Please check .env.local")
 
-    headers = {
-        "Authorization": f"Bearer {PERPLEXITY_API_KEY}",
-        "Content-Type": "application/json"
-    }
+    headers = {"Authorization": f"Bearer {PERPLEXITY_API_KEY}", "Content-Type": "application/json"}
 
     payload = {
         "model": model,
         "messages": [
             {
                 "role": "system",
-                "content": "You are a helpful and precise research assistant. Provide detailed, well-cited answers in Markdown format."
+                "content": "You are a helpful and precise research assistant. Provide detailed, well-cited answers in Markdown format.",
             },
-            {
-                "role": "user",
-                "content": query
-            }
+            {"role": "user", "content": query},
         ],
         "temperature": 0.2,
         "top_p": 0.9,
@@ -70,9 +66,10 @@ def query_perplexity(query: str, model: str = DEFAULT_MODEL) -> str:
 
     except requests.exceptions.RequestException as e:
         print(f"Error querying Perplexity API: {e}", file=sys.stderr)
-        if hasattr(e, 'response') and e.response is not None:
+        if hasattr(e, "response") and e.response is not None:
             print(f"Details: {e.response.text}", file=sys.stderr)
         sys.exit(1)
+
 
 def save_research(query: str, content: str, output_dir: str = "data/research"):
     """Saves the research result to a markdown file."""
@@ -94,6 +91,7 @@ def save_research(query: str, content: str, output_dir: str = "data/research"):
 
     return filepath
 
+
 def main():
     parser = argparse.ArgumentParser(description="Query Perplexity API for research.")
     parser.add_argument("-q", "--query", required=True, help="The research question to ask.")
@@ -106,13 +104,14 @@ def main():
 
     result = query_perplexity(args.query, args.model)
 
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
     print(result)
-    print("\n" + "="*80 + "\n")
+    print("\n" + "=" * 80 + "\n")
 
     if not args.no_save:
         filepath = save_research(args.query, result)
         print(f"📝 Result saved to: {filepath}", file=sys.stderr)
+
 
 if __name__ == "__main__":
     main()

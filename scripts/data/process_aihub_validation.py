@@ -6,19 +6,19 @@ import pandas as pd
 from tqdm import tqdm
 
 # Configure logging
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
 
+
 def process_aihub_validation(
-    root_dir: str = "data/raw/external/aihub_public_admin_doc/validation",
-    output_path: str = "data/processed/aihub_validation.parquet"
+    root_dir: str = "data/raw/external/aihub_public_admin_doc/validation", output_path: str = "data/processed/aihub_validation.parquet"
 ):
     """
     Processes AI Hub Public Administration Documents (Validation) into a KIE-compatible Parquet file.
     """
     root_path = Path(root_dir)
     labels_dir = root_path / "labels"
-    images_dir = root_path / "images" # Assumes images are unpacked here
+    images_dir = root_path / "images"  # Assumes images are unpacked here
 
     if not labels_dir.exists():
         raise FileNotFoundError(f"Labels directory not found: {labels_dir}")
@@ -32,7 +32,7 @@ def process_aihub_validation(
 
     for json_file in tqdm(json_files, desc="Processing JSON files"):
         try:
-            with open(json_file, encoding='utf-8') as f:
+            with open(json_file, encoding="utf-8") as f:
                 content = json.load(f)
 
             # AI Hub format usually has 'images' and 'annotations'
@@ -49,36 +49,32 @@ def process_aihub_validation(
 
             # Map image_id to valid image info
             image_map = {}
-            images_list = content.get('images', [])
+            images_list = content.get("images", [])
 
             # If no ID in images, assign synthetic IDs
             # If plain list of images, usually 1 file per JSON in this dataset
             for idx, img in enumerate(images_list):
                 # Try to get ID or use idx+1
-                img_id = img.get('id', idx + 1)
+                img_id = img.get("id", idx + 1)
 
                 # Try to find file_name
-                file_name = img.get('file_name') or img.get('image.file.name')
+                file_name = img.get("file_name") or img.get("image.file.name")
                 if not file_name:
                     # Fallback or skip?
                     continue
 
-                width = img.get('width') or img.get('image.width')
-                height = img.get('height') or img.get('image.height')
+                width = img.get("width") or img.get("image.width")
+                height = img.get("height") or img.get("image.height")
 
-                image_map[img_id] = {
-                    'file_name': file_name,
-                    'width': width,
-                    'height': height
-                }
+                image_map[img_id] = {"file_name": file_name, "width": width, "height": height}
 
             # Group annotations by image_id
             anns_by_image = {}
-            annotations_list = content.get('annotations', [])
+            annotations_list = content.get("annotations", [])
 
             for ann in annotations_list:
                 # Try to get image_id
-                img_id = ann.get('image_id')
+                img_id = ann.get("image_id")
 
                 # If missing, and we have only 1 image, assign to that image
                 if img_id is None:
@@ -94,7 +90,7 @@ def process_aihub_validation(
 
             # Create records
             for img_id, img_info in image_map.items():
-                file_name = img_info['file_name']
+                file_name = img_info["file_name"]
                 # Search for the image file in the images directory (recursive or direct?)
                 # Assuming flattening or preserving structure.
                 # Let's assume relative path from images_dir matches structure or just filename.
@@ -129,8 +125,8 @@ def process_aihub_validation(
                 record_image_path = str(rel_image_dir / file_name)
 
                 if not expected_image_path.exists():
-                     # Log warning but maybe it's just not unzipped yet?
-                     pass
+                    # Log warning but maybe it's just not unzipped yet?
+                    pass
 
                 # Collect texts and boxes
                 texts = []
@@ -140,8 +136,8 @@ def process_aihub_validation(
                 current_anns = anns_by_image.get(img_id, [])
 
                 for ann in current_anns:
-                    text = ann.get('annotation.text', '')
-                    bbox = ann.get('annotation.bbox', []) # [x, y, w, h]
+                    text = ann.get("annotation.text", "")
+                    bbox = ann.get("annotation.bbox", [])  # [x, y, w, h]
 
                     if not bbox or len(bbox) != 4:
                         continue
@@ -152,19 +148,19 @@ def process_aihub_validation(
 
                     texts.append(text)
                     polygons.append([x1, y1, x2, y2])
-                    labels.append("text") # Default label
+                    labels.append("text")  # Default label
 
                 if not texts:
                     continue
 
                 record = {
                     "image_path": record_image_path,
-                    "width": img_info['width'],
-                    "height": img_info['height'],
+                    "width": img_info["width"],
+                    "height": img_info["height"],
                     "texts": texts,
                     "polygons": polygons,
                     "labels": labels,
-                    "kie_labels": labels
+                    "kie_labels": labels,
                 }
                 data_records.append(record)
 
@@ -181,6 +177,7 @@ def process_aihub_validation(
     output_path.parent.mkdir(parents=True, exist_ok=True)
     df.to_parquet(output_path)
     logger.info(f"Saved to {output_path}")
+
 
 if __name__ == "__main__":
     process_aihub_validation()

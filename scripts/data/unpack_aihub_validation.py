@@ -11,9 +11,11 @@ TEMP_DIR = RAW_DIR / "temp_unpack"
 LABEL_TAR = RAW_DIR / "[라벨]validation_32mb.zip.tar"
 SOURCE_TAR = RAW_DIR / "[원천]validation_7.47gb.zip.tar"
 
+
 def run_command(cmd, shell=False):
     print(f"Running: {cmd}")
     subprocess.check_call(cmd, shell=shell)
+
 
 def main():
     if TARGET_DIR.exists():
@@ -81,10 +83,11 @@ def main():
             source_zip.unlink()
 
     finally:
-         # Cleanup Temp
-         # print("Cleaning up temp files...")
-         # shutil.rmtree(TEMP_DIR)
-         pass
+        # Cleanup Temp
+        # print("Cleaning up temp files...")
+        # shutil.rmtree(TEMP_DIR)
+        pass
+
 
 if __name__ == "__main__":
     main()

@@ -10,6 +10,7 @@ from ocr.utils.config_utils import ensure_dict
 # Import data contracts
 # from ocr.core.kie_validation import KIEDataItem
 
+
 class KIEDataPLModule(pl.LightningDataModule):
     def __init__(self, train_dataset, val_dataset, test_dataset=None, predict_dataset=None, batch_size=8, num_workers=4):
         super().__init__()
@@ -21,19 +22,27 @@ class KIEDataPLModule(pl.LightningDataModule):
         self.num_workers = num_workers
 
     def train_dataloader(self):
-        return DataLoader(self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers, collate_fn=self.collate_fn)
+        return DataLoader(
+            self.train_dataset, batch_size=self.batch_size, shuffle=True, num_workers=self.num_workers, collate_fn=self.collate_fn
+        )
 
     def val_dataloader(self):
-        return DataLoader(self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, collate_fn=self.collate_fn)
+        return DataLoader(
+            self.val_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, collate_fn=self.collate_fn
+        )
 
     def test_dataloader(self):
         if self.test_dataset:
-            return DataLoader(self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, collate_fn=self.collate_fn)
+            return DataLoader(
+                self.test_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, collate_fn=self.collate_fn
+            )
         return None
 
     def predict_dataloader(self):
         if self.predict_dataset:
-            return DataLoader(self.predict_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, collate_fn=self.collate_fn)
+            return DataLoader(
+                self.predict_dataset, batch_size=self.batch_size, shuffle=False, num_workers=self.num_workers, collate_fn=self.collate_fn
+            )
         return None
 
     def collate_fn(self, batch):
@@ -47,14 +56,14 @@ class KIEDataPLModule(pl.LightningDataModule):
 
         keys = batch[0].keys()
         for k in keys:
-             # Stack tensors
-             items = [item[k] for item in batch]
-             if isinstance(items[0], torch.Tensor):
-                 batch_out[k] = torch.stack(items)
-             elif isinstance(items[0], (int, float)):
-                 batch_out[k] = torch.tensor(items)
-             else:
-                 batch_out[k] = items # Keep as list (e.g. image_path)
+            # Stack tensors
+            items = [item[k] for item in batch]
+            if isinstance(items[0], torch.Tensor):
+                batch_out[k] = torch.stack(items)
+            elif isinstance(items[0], int | float):
+                batch_out[k] = torch.tensor(items)
+            else:
+                batch_out[k] = items  # Keep as list (e.g. image_path)
 
         return batch_out
 
@@ -77,18 +86,18 @@ class KIEPLModule(pl.LightningModule):
 
     def training_step(self, batch, batch_idx):
         # Validate batch existence usually covered by collate, but double check keys
-        if not batch: # Handle empty batch from collate_fn
-             return None
+        if not batch:  # Handle empty batch from collate_fn
+            return None
 
         required_keys = {"input_ids", "attention_mask", "bbox", "labels"}
         if not all(k in batch for k in required_keys):
-             # Try to see if it's just missing some keys or completely empty
-             if not batch:
-                 return None
-             # If keys are missing but batch exists, strict error or skip?
-             # Skip to be robust
-             print(f"Warning: Batch missing required keys: {required_keys - batch.keys()}. Skipping.")
-             return None
+            # Try to see if it's just missing some keys or completely empty
+            if not batch:
+                return None
+            # If keys are missing but batch exists, strict error or skip?
+            # Skip to be robust
+            print(f"Warning: Batch missing required keys: {required_keys - batch.keys()}. Skipping.")
+            return None
 
         outputs = self.model(**batch)
         loss = outputs["loss"]
@@ -102,12 +111,12 @@ class KIEPLModule(pl.LightningModule):
         self.validation_step_outputs = []
 
     def validation_step(self, batch, batch_idx):
-        if not batch: # Handle empty batch
-             return None
+        if not batch:  # Handle empty batch
+            return None
 
         required_keys = {"input_ids", "attention_mask", "bbox", "labels"}
         if not all(k in batch for k in required_keys):
-             return None
+            return None
 
         outputs_model = self.model(**batch)
         loss = outputs_model["loss"]
@@ -119,12 +128,12 @@ class KIEPLModule(pl.LightningModule):
         labels = batch["labels"]
 
         true_predictions = [
-            [self.label_list[p.item()] for (p, l) in zip(prediction, label) if l.item() != -100]
-            for prediction, label in zip(predictions, labels)
+            [self.label_list[p.item()] for (p, l) in zip(prediction, label, strict=False) if l.item() != -100]
+            for prediction, label in zip(predictions, labels, strict=False)
         ]
         true_labels = [
-            [self.label_list[l.item()] for (p, l) in zip(prediction, label) if l.item() != -100]
-            for prediction, label in zip(predictions, labels)
+            [self.label_list[l.item()] for (p, l) in zip(prediction, label, strict=False) if l.item() != -100]
+            for prediction, label in zip(predictions, labels, strict=False)
         ]
 
         self.validation_step_outputs.append({"predictions": true_predictions, "labels": true_labels})
@@ -144,7 +153,7 @@ class KIEPLModule(pl.LightningModule):
 
                 # Only generate classification report if there are actual entities
                 try:
-                    report = classification_report(labels, preds)
+                    _ = classification_report(labels, preds)
                     # Log classification report (optional, can print for debugging)
                     # print("\n" + report)
                 except ValueError:
@@ -163,27 +172,18 @@ class KIEPLModule(pl.LightningModule):
         # Safe optimizer access
         optimizers = self.model.get_optimizers()
         if not optimizers or not optimizers[0]:
-             # Fallback
-             optimizer = torch.optim.AdamW(self.parameters(), lr=self.config.get("lr", 5e-5))
+            # Fallback
+            optimizer = torch.optim.AdamW(self.parameters(), lr=self.config.get("lr", 5e-5))
         else:
-             optimizer = optimizers[0][0]
+            optimizer = optimizers[0][0]
 
         if self.trainer.estimated_stepping_batches:
-             num_training_steps = self.trainer.estimated_stepping_batches
+            num_training_steps = self.trainer.estimated_stepping_batches
         else:
-             num_training_steps = 1000
+            num_training_steps = 1000
 
         scheduler = get_linear_schedule_with_warmup(
-            optimizer,
-            num_warmup_steps=self.config.get("warmup_steps", 0),
-            num_training_steps=num_training_steps
+            optimizer, num_warmup_steps=self.config.get("warmup_steps", 0), num_training_steps=num_training_steps
         )
 
-        return {
-            "optimizer": optimizer,
-            "lr_scheduler": {
-                "scheduler": scheduler,
-                "interval": "step",
-                "frequency": 1
-            }
-        }
+        return {"optimizer": optimizer, "lr_scheduler": {"scheduler": scheduler, "interval": "step", "frequency": 1}}

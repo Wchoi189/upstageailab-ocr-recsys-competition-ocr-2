@@ -1,7 +1,7 @@
 ---
 ads_version: "1.0"
 type: implementation_plan
-category: cleanup
+category: code_quality
 status: active
 version: "1.0"
 tags: cleanup, refactoring, data, schemas

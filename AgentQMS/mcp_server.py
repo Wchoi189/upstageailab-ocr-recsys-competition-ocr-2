@@ -125,12 +125,7 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
     # Handle dynamic template list
     if uri == "agentqms://templates/list":
         content = await _get_template_list()
-        return [
-            ReadResourceContents(
-                content=content,
-                mime_type="application/json"
-            )
-        ]
+        return [ReadResourceContents(content=content, mime_type="application/json")]
 
     # Handle file-based resources
     path: Path = resource["path"]
@@ -140,12 +135,7 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
 
     content = path.read_text(encoding="utf-8")
 
-    return [
-        ReadResourceContents(
-            content=content,
-            mime_type=resource["mimeType"]
-        )
-    ]
+    return [ReadResourceContents(content=content, mime_type=resource["mimeType"])]
 
 
 async def _get_template_list() -> str:
@@ -275,21 +265,19 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             if "tags" in arguments:
                 kwargs["tags"] = arguments["tags"]
 
-            file_path = workflow.create_artifact(
-                artifact_type,
-                art_name,
-                title,
-                **kwargs
-            )
+            file_path = workflow.create_artifact(artifact_type, art_name, title, **kwargs)
 
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "success": True,
-                        "file_path": file_path,
-                        "message": f"Created {artifact_type}: {file_path}",
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "success": True,
+                            "file_path": file_path,
+                            "message": f"Created {artifact_type}: {file_path}",
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -299,10 +287,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 return [
                     TextContent(
                         type="text",
-                        text=json.dumps({
-                            "success": success,
-                            "message": "Validation complete. Check output above.",
-                        }, indent=2)
+                        text=json.dumps(
+                            {
+                                "success": success,
+                                "message": "Validation complete. Check output above.",
+                            },
+                            indent=2,
+                        ),
                     )
                 ]
             elif "file_path" in arguments:
@@ -311,19 +302,25 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 return [
                     TextContent(
                         type="text",
-                        text=json.dumps({
-                            "success": success,
-                            "file_path": file_path,
-                        }, indent=2)
+                        text=json.dumps(
+                            {
+                                "success": success,
+                                "file_path": file_path,
+                            },
+                            indent=2,
+                        ),
                     )
                 ]
             else:
                 return [
                     TextContent(
                         type="text",
-                        text=json.dumps({
-                            "error": "Must specify either file_path or validate_all=true",
-                        }, indent=2)
+                        text=json.dumps(
+                            {
+                                "error": "Must specify either file_path or validate_all=true",
+                            },
+                            indent=2,
+                        ),
                     )
                 ]
 
@@ -332,20 +329,18 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "templates": templates,
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "templates": templates,
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
         elif name == "check_compliance":
             report = workflow.check_compliance()
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(report, indent=2)
-                )
-            ]
+            return [TextContent(type="text", text=json.dumps(report, indent=2))]
 
         elif name == "get_standard":
             query = arguments["name"].lower()
@@ -360,31 +355,17 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                             matches.append(path)
 
             if not matches:
-                return [
-                    TextContent(
-                        type="text",
-                        text=json.dumps({"error": f"No standards found matching '{query}'"}, indent=2)
-                    )
-                ]
+                return [TextContent(type="text", text=json.dumps({"error": f"No standards found matching '{query}'"}, indent=2))]
 
             if len(matches) == 1:
-                 content = matches[0].read_text(encoding="utf-8")
-                 return [
-                     TextContent(
-                         type="text",
-                         text=f"Standard: {matches[0].name}\nLocation: {matches[0]}\n\n{content}"
-                     )
-                 ]
+                content = matches[0].read_text(encoding="utf-8")
+                return [TextContent(type="text", text=f"Standard: {matches[0].name}\nLocation: {matches[0]}\n\n{content}")]
 
             # Multiple matches
             names = [str(p.relative_to(standards_dir)) for p in matches]
             return [
                 TextContent(
-                    type="text",
-                    text=json.dumps({
-                        "message": "Multiple matches found. Please specify:",
-                        "matches": names
-                    }, indent=2)
+                    type="text", text=json.dumps({"message": "Multiple matches found. Please specify:", "matches": names}, indent=2)
                 )
             ]
 
@@ -392,9 +373,12 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [
                 TextContent(
                     type="text",
-                    text=json.dumps({
-                        "error": f"Unknown tool: {name}",
-                    }, indent=2)
+                    text=json.dumps(
+                        {
+                            "error": f"Unknown tool: {name}",
+                        },
+                        indent=2,
+                    ),
                 )
             ]
 
@@ -402,10 +386,13 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         return [
             TextContent(
                 type="text",
-                text=json.dumps({
-                    "error": str(e),
-                    "tool": name,
-                }, indent=2)
+                text=json.dumps(
+                    {
+                        "error": str(e),
+                        "tool": name,
+                    },
+                    indent=2,
+                ),
             )
         ]
 

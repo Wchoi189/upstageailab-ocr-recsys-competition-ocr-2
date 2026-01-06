@@ -1,4 +1,3 @@
-
 import glob
 import os
 
@@ -7,6 +6,7 @@ import pandas as pd
 
 def normalize_filename(path):
     return os.path.basename(str(path))
+
 
 def recover_data():
     split_dir = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/aws-batch-processor/data/archive/output/splits_train"
@@ -18,8 +18,8 @@ def recover_data():
         try:
             df = pd.read_parquet(f)
             # Add implicit filename column if checking is needed
-            if 'image_path' in df.columns:
-                df['filename'] = df['image_path'].apply(normalize_filename)
+            if "image_path" in df.columns:
+                df["filename"] = df["image_path"].apply(normalize_filename)
             dfs.append(df)
         except Exception as e:
             print(f"Error reading {f}: {e}")
@@ -28,8 +28,8 @@ def recover_data():
     print(f"Total raw rows: {len(full_df)}")
 
     # Deduplicate by filename
-    if 'filename' in full_df.columns:
-        dedup_df = full_df.drop_duplicates(subset=['filename'])
+    if "filename" in full_df.columns:
+        dedup_df = full_df.drop_duplicates(subset=["filename"])
         print(f"Deduplicated count: {len(dedup_df)}")
 
         # Check if missing images are present
@@ -47,6 +47,7 @@ def recover_data():
 
     else:
         print("Could not deduplicate, 'filename' extraction failed.")
+
 
 if __name__ == "__main__":
     recover_data()

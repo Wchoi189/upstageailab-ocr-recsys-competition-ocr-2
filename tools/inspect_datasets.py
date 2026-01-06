@@ -1,4 +1,3 @@
-
 import os
 
 import pandas as pd
@@ -16,10 +15,10 @@ def inspect_parquet(path, name):
 
     # Try to find an image identifier column
     id_col = None
-    if 'image_path' in df.columns:
-        id_col = 'image_path'
-    elif 'id' in df.columns:
-        id_col = 'id'
+    if "image_path" in df.columns:
+        id_col = "image_path"
+    elif "id" in df.columns:
+        id_col = "id"
 
     if id_col:
         # Normalize paths to just filenames for comparison
@@ -30,6 +29,7 @@ def inspect_parquet(path, name):
     else:
         print("No obvious ID column found ('image_path' or 'id')")
         return df, set()
+
 
 def main():
     kie_path = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/aws-batch-processor/data/export/baseline_kie/train.parquet"
@@ -42,9 +42,10 @@ def main():
         intersection = kie_files.intersection(dp_files)
         print(f"\nIntersection count: {len(intersection)}")
         if len(intersection) < 10 and len(intersection) > 0:
-             print(f"Overlapping files: {list(intersection)}")
+            print(f"Overlapping files: {list(intersection)}")
         elif len(intersection) == 0:
-             print("NO OVERLAP FOUND.")
+            print("NO OVERLAP FOUND.")
+
 
 if __name__ == "__main__":
     main()

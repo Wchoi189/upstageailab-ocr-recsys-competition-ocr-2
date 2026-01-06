@@ -1,12 +1,12 @@
 ---
 ads_version: "1.0"
 type: "guide"
-category: "infrastructure"
+category: "reference"
 status: "active"
 version: "1.0"
 tags: ['ci', 'workflows', 'secrets', 'github-actions']
-title: "Guide: Disabled Workflows & Required Secrets"
-date: "2025-12-29 11:43"
+title: "guide-2025-12-29_1143: Guide: Disabled Workflows & Required Secrets"
+date: "2025-12-29 11:43 (KST)"
 branch: "main"
 ---
 

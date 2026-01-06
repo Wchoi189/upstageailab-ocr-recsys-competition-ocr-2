@@ -1,4 +1,3 @@
-
 import os
 
 import pandas as pd
@@ -6,6 +5,7 @@ import pandas as pd
 
 def normalize_filename(path):
     return os.path.basename(str(path))
+
 
 def find_in_archive(filenames, archive_root):
     found = {}
@@ -16,6 +16,7 @@ def find_in_archive(filenames, archive_root):
             if file in filenames:
                 found[file] = os.path.join(root, file)
     return found
+
 
 def main():
     kie_path = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/aws-batch-processor/data/export/baseline_kie/train.parquet"
@@ -28,8 +29,8 @@ def main():
     df_dp = pd.read_parquet(dp_path)
 
     # Get Filenames
-    kie_filenames = set(df_kie['image_path'].apply(normalize_filename))
-    dp_filenames = set(df_dp['image_path'].apply(normalize_filename))
+    kie_filenames = set(df_kie["image_path"].apply(normalize_filename))
+    dp_filenames = set(df_dp["image_path"].apply(normalize_filename))
 
     print(f"KIE Count: {len(kie_filenames)}")
     print(f"DP Count: {len(dp_filenames)}")
@@ -66,6 +67,7 @@ def main():
     if missing_in_dp:
         print("\n--- Investigating images missing from DP ---")
         print(f"Sample missing files: {list(missing_in_dp)[:5]}")
+
 
 if __name__ == "__main__":
     main()

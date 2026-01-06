@@ -1,7 +1,11 @@
 ---
 title: "LayoutLMv3 KIE Training on Receipt Data"
 author: "AI Agent"
-date: "2026-01-03"
+date: "2026-01-03 00:00 (KST)"
+type: "assessment"
+category: "troubleshooting"
+version: "1.0"
+ads_version: "1.0"
 status: "completed"
 tags: ["kie", "layoutlmv3", "receipt", "document-parse", "failure-analysis"]
 severity: "blocker"

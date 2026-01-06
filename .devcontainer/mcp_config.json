@@ -5,7 +5,7 @@
             "args": [
                 "run",
                 "--directory",
-                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "${workspaceFolder}",
                 "python",
                 "project_compass/mcp_server.py"
             ]
@@ -15,7 +15,7 @@
             "args": [
                 "run",
                 "--directory",
-                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "${workspaceFolder}",
                 "python",
                 "AgentQMS/mcp_server.py"
             ]
@@ -25,7 +25,7 @@
             "args": [
                 "run",
                 "--directory",
-                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "${workspaceFolder}",
                 "python",
                 "experiment_manager/mcp_server.py"
             ]

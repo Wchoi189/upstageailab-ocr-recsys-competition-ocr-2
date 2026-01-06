@@ -5,11 +5,11 @@ author: "AI Assistant (Antigravity)"
 timestamp: "2026-01-03 19:37 (KST)"
 branch: "main"
 type: "bug_report"
-category: "infrastructure"
-status: closed
+category: "troubleshooting"
+status: "completed"
 severity: high
 version: "1.0"
-date: "2026-01-03 19:37"
+date: "2026-01-03 19:37 (KST)"
 created: 2026-01-03 19:37
 closed: 2026-01-03 20:05
 tags: [mcp, agentqms, project_compass, bug, resolved]

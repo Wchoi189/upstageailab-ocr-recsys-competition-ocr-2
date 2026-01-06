@@ -1,8 +1,8 @@
 ---
 ads_version: "1.0"
 type: "bug_report"
-category: "training"
-status: "resolved"
+category: "troubleshooting"
+status: "completed"
 severity: "critical"
 version: "1.0"
 tags: ['hydra', 'configuration', 'initialization', 'startup']

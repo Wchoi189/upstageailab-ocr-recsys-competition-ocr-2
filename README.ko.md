@@ -1,63 +1,63 @@
-# OCR Text Recognition & Layout Analysis System
+# OCR 텍스트 인식 및 레이아웃 분석 시스템
 
-**Document intelligence pipeline with agentic observability and high-performance data engineering**
+**에이전트 관측 가능성과 고성능 데이터 엔지니어링을 갖춘 문서 인텔리전스 파이프라인**
 
-**Languages:** [English](README.md) · [한국어](README.ko.md)
+**언어:** [English](README.ko.md) · [한국어](README.ko.md)
 
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20HF%20Model-v1.0-FFD21E.svg)](https://huggingface.co/wchoi189/receipt-text-detection_kr-pan_resnet18) [![Environment](https://img.shields.io/badge/Env-UV-blue.svg)](https://github.com/astral-sh/uv) [![Architecture](https://img.shields.io/badge/Arch-MCP%20Compatible-green.svg)](#project-compass-ai-navigation)
 
 ---
 
-## Table of Contents
+## 목차
 
-**I. Introduction**
-[Overview](#overview) · [Project Status](#project-status) · [System Architecture](#system-architecture)
+**I. 소개**
+[개요](#overview) · [프로젝트 상태](#project-status) · [시스템 아키텍처](#system-architecture)
 
-**II. Technical Implementation**
-[Core Infrastructure](#core-infrastructure) · [Data Engineering](#data-engineering) · [Model Training](#model-training)
+**II. 기술 구현**
+[핵심 인프라](#core-infrastructure) · [데이터 엔지니어링](#data-engineering) · [모델 훈련](#model-training)
 
-**III. Research & Development**
-[Research Methodology](#research-methodology) · [Key Findings](#key-findings) · [Technical Pivots](#technical-pivots)
+**III. 연구 및 개발**
+[연구 방법론](#research-methodology) · [주요 발견](#key-findings) · [기술적 전환](#technical-pivots)
 
-**IV. Appendix**
-[Demonstrations](#demonstrations) · [Technology Stack](#technology-stack) · [References](#references)
-
----
-
-## Overview
-
-This system represents a production-grade pipeline for Korean text recognition and layout analysis, evolved from the Upstage AI Bootcamp OCR competition. The project prioritizes **agentic observability**, **test-driven development**, and **data contract enforcement** to ensure high-quality data flows into high-performance models.
-
-### Design Philosophy
-
-Modern AI development faces a critical challenge: **cognitive load management** for both human developers and AI agents. This repository addresses this through:
-
-- **Explicit state management** via Project Compass (MCP)
-- **Automated configuration debugging** via AST Debug Toolkit
-- **Structured artifact generation** via AgentQMS
-- **Schema-driven experiment tracking** via Experiment Manager
-
-The result is an environment where AI agents can autonomously navigate, debug, and extend complex deep learning systems without manual context loading.
+**IV. 부록**
+[데모](#demonstrations) · [기술 스택](#technology-stack) · [참조](#references)
 
 ---
 
-## Project Status
+## 개요
 
-| Phase                               | Status   | Completion |
+이 시스템은 한국어 텍스트 인식 및 레이아웃 분석을 위한 프로덕션급 파이프라인으로, Upstage AI 부트캠프 OCR 경연에서 발전했습니다. 이 프로젝트는 **에이전트 관측 가능성**, **테스트 주도 개발**, **데이터 계약 강제**를 우선시하여 고품질 데이터가 고성능 모델로 흐르도록 보장합니다.
+
+### 설계 철학
+
+현대 AI 개발은 인간 개발자와 AI 에이전트 모두의 **인지 부하 관리**라는 중요한 문제에 직면해 있습니다. 이 저장소는 다음을 통해 이를 해결합니다:
+
+- **명시적 상태 관리**를 위한 프로젝트 컴패스(MCP)
+- **자동 구성 디버깅**을 위한 AST 디버그 툴킷
+- **구조화된 아티팩트 생성**을 위한 AgentQMS
+- **스키마 기반 실험 추적**을 위한 실험 관리자
+
+결과적으로 AI 에이전트가 수동 컨텍스트 로딩 없이도 복잡한 딥러닝 시스템을 자율적으로 탐색, 디버깅, 확장할 수 있는 환경이 구축됩니다.
+
+---
+
+## 프로젝트 상태
+
+| 단계                               | 상태   | 완료율 |
 | :---------------------------------- | :------- | :--------- |
-| **Phase 1-4:** Core Development     | Complete | 100%       |
-| **Phase 5:** Data Refinement & ETL  | Active   | 90%        |
-| **Phase 6:** Architectural Upgrades | Planned  | 0%         |
+| **단계 1-4:** 핵심 개발     | 완료 | 100%       |
+| **단계 5:** 데이터 정제 및 ETL  | 진행 중   | 90%        |
+| **단계 6:** 아키텍처 업그레이드 | 계획 중  | 0%         |
 
-**Overall Progress:** 85%
+**전체 진행률:** 85%
 
-**Current Focus:** Training PARSeq/CRNN text recognition models on the AI Hub 공공행정문서 dataset (616,366 samples, LMDB-optimized).
+**현재 집중 분야:** AI Hub 공공행정문서 데이터셋(616,366개 샘플, LMDB 최적화)에서 PARSeq/CRNN 텍스트 인식 모델 훈련.
 
 ---
 
-## System Architecture
+## 시스템 아키텍처
 
-The system employs a three-tier architecture: an **agentic control layer** orchestrating distinct pipelines for data engineering and model training.
+이 시스템은 세 계층 아키텍처를 사용합니다: 데이터 엔지니어링과 모델 훈련을 위한 별도의 파이프라인을 조율하는 **에이전트 제어 계층**.
 
 ```mermaid
 graph TD
@@ -68,25 +68,25 @@ graph TD
     classDef artifact fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#000;
 
     %% Orchestration Layer
-    subgraph Orchestration["Agentic Control Layer"]
+    subgraph Orchestration["에이전트 제어 계층"]
         direction LR
-        Agent["AI Agent / Developer<br/>(MCP Interface)"]:::agent
-        State["Session State &<br/>Manifest Files"]:::storage
-        Agent <--> |Reads/Updates Context| State
+        Agent["AI 에이전트 / 개발자<br/>(MCP 인터페이스)"]:::agent
+        State["세션 상태 &<br/>매니페스트 파일"]:::storage
+        Agent <--> |컨텍스트 읽기/업데이트| State
     end
 
     %% Data Engineering Layer
-    subgraph DataOps["Data Engineering & ETL Pipelines"]
-        RawData["Raw Images<br/>(Receipts / AI Hub)"]:::storage
+    subgraph DataOps["데이터 엔지니어링 및 ETL 파이프라인"]
+        RawData["원본 이미지<br/>(영수증 / AI Hub)"]:::storage
 
-        subgraph LocalPipe["High-Performance Local ETL"]
-            ETLProc["ocr-etl-pipeline<br/>(Multi-core / RemBG / Cropping)"]:::process
-            LMDB[("LMDB<br/>Memory-Mapped<br/>Serialization")]:::storage
+        subgraph LocalPipe["고성능 로컬 ETL"]
+            ETLProc["ocr-etl-pipeline<br/>(멀티코어 / RemBG / 크롭핑)"]:::process
+            LMDB[("LMDB<br/>메모리 매핑<br/>직렬화")]:::storage
         end
 
-        subgraph CloudPipe["Cloud-Native Batch"]
-            AWSBatch["aws-batch-processor<br/>(AWS Fargate Serverless)"]:::process
-            S3Parquet[("S3 Bucket<br/>Parquet Annotations")]:::storage
+        subgraph CloudPipe["클라우드 네이티브 배치"]
+            AWSBatch["aws-batch-processor<br/>(AWS Fargate 서버리스)"]:::process
+            S3Parquet[("S3 버킷<br/>Parquet 주석")]:::storage
         end
 
         RawData ==> ETLProc
@@ -96,63 +96,63 @@ graph TD
     end
 
     %% ML Core Layer
-    subgraph MLCore["AI Model Training Core"]
-        Hydra["Hydra Configs"]:::storage
-        Trainer["PyTorch Lightning Trainer<br/>(PARSeq / CRNN Architectures)"]:::process
-        WandB["W&B Logging"]:::process
-        FinalModel["Hugging Face<br/>Model Registry"]:::artifact
+    subgraph MLCore["AI 모델 훈련 코어"]
+        Hydra["Hydra 구성"]:::storage
+        Trainer["PyTorch Lightning 트레이너<br/>(PARSeq / CRNN 아키텍처)"]:::process
+        WandB["W&B 로깅"]:::process
+        FinalModel["Hugging Face<br/>모델 레지스트리"]:::artifact
 
-        LMDB =="High-Speed I/O"==> Trainer
+        LMDB =="고속 I/O"==> Trainer
         S3Parquet -.-> Trainer
         Hydra -.-> Trainer
         Trainer --> WandB
-        Trainer ==>|Exports| FinalModel
+        Trainer ==>|내보내기| FinalModel
     end
 
-    %% Control Flow
-    Agent -.-|Triggers & Monitors| ETLProc
-    Agent -.-|Orchestrates| AWSBatch
-    Agent -.-|Manages Experiments| Trainer
+    %% 제어 흐름
+    Agent -.-|트리거 및 모니터링| ETLProc
+    Agent -.-|오케스트레이션| AWSBatch
+    Agent -.-|실험 관리| Trainer
 ```
 
 ---
 
-## Core Infrastructure
+## 핵심 인프라
 
-### Project Compass: AI Navigation
+### 프로젝트 컴패스: AI 내비게이션
 
-**Problem:** AI agents require extensive context to navigate complex codebases, leading to inefficient token usage and hallucinations.
+**문제:** AI 에이전트는 복잡한 코드베이스를 탐색하기 위해 광범위한 컨텍스트가 필요하며, 이는 비효율적인 토큰 사용과 환각(hallucination)을 초래합니다.
 
-**Solution:** A centralized state management system exposed via **Model Context Protocol (MCP)**, acting as the project's "central nervous system."
+**해결책:** **모델 컨텍스트 프로토콜(MCP)**을 통해 노출된 중앙 집중식 상태 관리 시스템으로, 프로젝트의 "중추 신경계" 역할을 합니다.
 
-**Key Features:**
-- **Active Context:** [Current Session](project_compass/active_context/current_session.yml), [Blocker Registry](project_compass/active_context/blockers.yml)
-- **Environment Ledger:** [Dataset Registry](project_compass/environments/dataset_registry.yml)
-- **Agentic Tools:** `env_check`, `session_init`, `reconcile`, `ocr_convert`, `ocr_inspect`
+**주요 기능:**
+- **활성 컨텍스트:** [현재 세션](project_compass/active_context/current_session.yml), [블로커 레지스트리](project_compass/active_context/blockers.yml)
+- **환경 원장:** [데이터셋 레지스트리](project_compass/environments/dataset_registry.yml)
+- **에이전트 도구:** `env_check`, `session_init`, `reconcile`, `ocr_convert`, `ocr_inspect`
 
-**Impact:** Reduced context-loading overhead in multi-session workflows:
-- Initial file reads: ~50 files → ~8 curated state files (84% reduction)
-- Eliminated ~15 clarifying questions per session through explicit state management
-- Enabled agents to start productive work in ~3 minutes vs. ~10 minutes baseline
+**영향:** 다중 세션 워크플로우에서 컨텍스트 로딩 오버헤드 감소:
+- 초기 파일 읽기: ~50개 파일 → ~8개 선별된 상태 파일 (84% 감소)
+- 명시적 상태 관리를 통해 세션당 ~15개의 명확화 질문 제거
+- 에이전트가 ~3분 내에 생산적인 작업 시작 가능 (기존 ~10분 대비)
 
-### AST Debug Toolkit (ADT)
+### AST 디버그 툴킷 (ADT)
 
-**Problem:** Debugging Hydra configuration precedence in multi-architecture deep learning projects is notoriously unreliable.
+**문제:** 다중 아키텍처 딥러닝 프로젝트에서 Hydra 구성 우선순위를 디버깅하는 것은 악명 높게 신뢰할 수 없습니다.
 
-**Solution:** Static analysis of Python AST to trace OmegaConf merge operations, providing "X-ray vision" into configuration flows.
+**해결책:** Python AST의 정적 분석을 통해 OmegaConf 병합 작업을 추적하여 구성 흐름에 대한 "X-레이 비전"을 제공합니다.
 
-**Capabilities:**
-- `trace-merges`: Identify configuration precedence order
-- `analyze-config`: Detect conflicting overrides
-- `find-instantiations`: Locate Hydra instantiation calls
+**기능:**
+- `trace-merges`: 구성 우선순위 순서 식별
+- `analyze-config`: 충돌하는 오버라이드 감지
+- `find-instantiations`: Hydra 인스턴스화 호출 위치 찾기
 
-**Example Output:**
+**예시 출력:**
 
 ```bash
 adt trace-merges ocr/models/architecture.py --output markdown
 ```
 
-| Priority | Line | Operation | Winner on Conflict            |
+| 우선순위 | 라인 | 작업 | 충돌 시 승자            |
 | -------- | ---- | --------- | ----------------------------- |
 | P1       | 122  | `create`  | `{}`                          |
 | P2       | 128  | `merge`   | `arch_overrides`              |
@@ -160,279 +160,279 @@ adt trace-merges ocr/models/architecture.py --output markdown
 | P4       | 162  | `merge`   | `direct_overrides`            |
 | P5       | 175  | `merge`   | **`filtered_user_overrides`** |
 
-*Analysis confirms user-defined overrides at L175 maintain highest precedence.*
+*분석 결과 L175의 사용자 정의 오버라이드가 가장 높은 우선순위를 유지함을 확인.*
 
-**Impact:** Reduced configuration debugging time from hours to minutes. See [BUG_003](docs/artifacts/bug_reports/2026-01-04_1730_BUG_003_config-precedence-leak.md) for a real-world resolution case.
-
----
-
-## Data Engineering
-
-### High-Performance Local ETL
-
-**Module:** `ocr-etl-pipeline`
-
-**Problem:** Processing 600K+ high-resolution images with JSON annotations creates filesystem bottlenecks and prevents efficient random access during training.
-
-**Solution:** Multi-threaded LMDB conversion with resumable checkpointing.
-
-**Performance Metrics:**
-- **Throughput:** 5,468 high-resolution images (~2.4K×3.4K) processed in ~60 seconds, extracting 616,366 text region samples
-- **Processing Speed:** ~91 images/second with 8-core multiprocessing
-- **Storage Efficiency:** 1 LMDB file (4.3GB) vs. 600K+ individual files (99.9% reduction in filesystem overhead)
-- **I/O Optimization:** Memory-mapped reads eliminate deserialization overhead during training
-
-**Technical Implementation:**
-- **Multiprocessing:** CPU-bound image decoding parallelized across all cores
-- **Resumability:** JSON state file tracks progress for long-running jobs
-- **Data Integrity:** Atomic writes with transaction-level consistency
-
-### Cloud-Native Batch Processing
-
-**Module:** `aws-batch-processor`
-
-**Problem:** Document Parse API rate limits (free tier) prevent large-scale synchronous processing.
-
-**Solution:** Serverless AWS Fargate architecture for asynchronous batch jobs.
-
-**Architecture:**
-- **Compute:** AWS Fargate (serverless containers)
-- **Storage:** S3 data lake + Parquet annotations
-- **Orchestration:** AWS Batch job queues
-
-**Impact:** Processed 5,000+ documents overnight without local machine uptime requirements.
+**영향:** 구성 디버깅 시간을 수시간에서 수분으로 단축. 실제 해결 사례는 [BUG_003](docs/artifacts/bug_reports/2026-01-04_1730_BUG_003_config-precedence-leak.ko.md) 참조.
 
 ---
 
-## Model Training
+## 데이터 엔지니어링
 
-### Supported Architectures
+### 고성능 로컬 ETL
 
-| Architecture    | Task             | Status                                                                                        |
+**모듈:** `ocr-etl-pipeline`
+
+**문제:** JSON 주석과 함께 600K+ 고해상도 이미지를 처리하면 파일 시스템 병목 현상이 발생하고 훈련 중 효율적인 임의 접근이 불가능합니다.
+
+**해결책:** 재개 가능한 체크포인팅과 함께 멀티쓰레드 LMDB 변환.
+
+**성능 지표:**
+- **처리량:** ~60초 동안 5,468개의 고해상도 이미지(~2.4K×3.4K) 처리, 616,366개의 텍스트 영역 샘플 추출
+- **처리 속도:** 8코어 멀티프로세싱으로 초당 ~91개 이미지
+- **저장 효율성:** 1개의 LMDB 파일(4.3GB) vs. 600K+ 개별 파일(파일 시스템 오버헤드 99.9% 감소)
+- **I/O 최적화:** 메모리 매핑 읽기로 훈련 중 역직렬화 오버헤드 제거
+
+**기술 구현:**
+- **멀티프로세싱:** CPU 바운드 이미지 디코딩을 모든 코어에 병렬화
+- **재개 가능성:** JSON 상태 파일이 장기 작업 진행 상황 추적
+- **데이터 무결성:** 트랜잭션 수준 일관성을 갖춘 원자적 쓰기
+
+### 클라우드 네이티브 배치 처리
+
+**모듈:** `aws-batch-processor`
+
+**문제:** Document Parse API 요금 제한(무료 티어)으로 인해 대규모 동기식 처리가 불가능합니다.
+
+**해결책:** 비동기식 배치 작업을 위한 서버리스 AWS Fargate 아키텍처.
+
+**아키텍처:**
+- **컴퓨팅:** AWS Fargate (서버리스 컨테이너)
+- **저장소:** S3 데이터 레이크 + Parquet 주석
+- **오케스트레이션:** AWS 배치 작업 큐
+
+**영향:** 로컬 머신 가동 시간 요구 없이 하룻밤 동안 5,000+ 문서 처리.
+
+---
+
+## 모델 훈련
+
+### 지원 아키텍처
+
+| 아키텍처    | 작업             | 상태                                                                                        |
 | :-------------- | :--------------- | :-------------------------------------------------------------------------------------------- |
-| **PARSeq**      | Text Recognition | Active Development                                                                            |
-| **CRNN**        | Text Recognition | Planned                                                                                       |
-| **DBNet + PAN** | Text Detection   | Deployed ([HF Model](https://huggingface.co/wchoi189/receipt-text-detection_kr-pan_resnet18)) |
+| **PARSeq**      | 텍스트 인식 | 활성 개발                                                                            |
+| **CRNN**        | 텍스트 인식 | 계획 중                                                                                       |
+| **DBNet + PAN** | 텍스트 감지   | 배포됨 ([HF 모델](https://huggingface.co/wchoi189/receipt-text-detection_kr-pan_resnet18)) |
 
-### Training Infrastructure
+### 훈련 인프라
 
-- **Framework:** PyTorch Lightning + Hydra
-- **Logging:** Weights & Biases
-- **Configuration:** Compositional Hydra configs with architecture-specific overrides
-- **Quality Assurance:** Automated bug reporting via AgentQMS
-
----
-
-## Research Methodology
-
-### Experiment Tracking
-
-**Problem:** Rapid iteration generates high volumes of artifacts (scripts, configs, outputs) that become unmanageable without systematic organization.
-
-**Solution:** Schema-driven experiment manager with standardized artifact templates.
-
-**Key Artifacts:**
-- [Baseline Metrics Report](archive/artifacts/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md)
-- [Perspective Correction Data Loss Incident](archive/artifacts/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md)
-
-**Impact:** Enables AI agents to autonomously locate and analyze historical experiments without human intervention.
-
-### Quality Assurance
-
-**Structured Bug Reporting:** All critical incidents documented with:
-- Root cause analysis
-- Reproduction steps
-- Verification strategy
-- Resolution timeline
-
-[View Bug Report Collection](docs/artifacts/bug_reports/)
+- **프레임워크:** PyTorch Lightning + Hydra
+- **로깅:** Weights & Biases
+- **구성:** 아키텍처별 오버라이드가 있는 구성형 Hydra 구성
+- **품질 보증:** AgentQMS를 통한 자동화된 버그 보고
 
 ---
 
-## Key Findings
+## 연구 방법론
 
-### Finding 1: Document Parse API Mismatch for Receipts
+### 실험 추적
 
-**Context:** Initial approach used LayoutLMv3 for Key Information Extraction (KIE) on receipts, merging Upstage KIE API entity labels with Document Parse API bounding boxes.
+**문제:** 빠른 반복으로 인해 대량의 아티팩트(스크립트, 구성, 출력)가 생성되며 체계적인 조직 없이는 관리하기 어려워집니다.
 
-**Observation:** In some samples,Document Parse API treats receipts as single-table structures, returning oversized bounding boxes (96.5% × 98.5% of image) instead of individual text blocks.
+**해결책:** 표준화된 아티팩트 템플릿을 갖춘 스키마 기반 실험 관리자.
 
-**Evidence:**
-- ~40% of validation samples had <5 text blocks (expected: 20-50+)
-- HTML artifacts in text fields from uncleaned API output
-- Final validation F1: 0.623 after 10 epochs (insufficient for production)
+**주요 아티팩트:**
+- [기준 메트릭 보고서](archive/artifacts/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.ko.md)
+- [투영 보정 데이터 손실 사고](archive/artifacts/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.ko.md)
 
-**Conclusion:** Document Parse API is optimized for structured documents (forms, reports), not semi-linear text streams like receipts.
+**영향:** AI 에이전트가 인간 개입 없이 과거 실험을 자율적으로 찾고 분석할 수 있음.
 
-**Reference:** [Assessment: LayoutLMv3 KIE Receipt Failure](docs/artifacts/assessments/2026-01-03_1200_assessment-layoutlmv3-kie-receipt-failure.md)
+### 품질 보증
 
-### Finding 2: Configuration Precedence Leaks
+**구조화된 버그 보고:** 모든 중대한 사고는 다음을 포함하여 문서화됩니다:
+- 근본 원인 분석
+- 재현 단계
+- 검증 전략
+- 해결 일정
 
-**Context:** PARSeq training incorrectly instantiated `FPNDecoder` (from legacy DBNet config) instead of `PARSeqDecoder`.
-
-**Root Cause:** Hydra's compositional config system merged legacy defaults (`train_v2` → `_base/model` → `dbnet`) with higher precedence than architecture-specific overrides.
-
-**Resolution:** Implemented `_filter_architecture_conflicts()` method to remove legacy components when they conflict with architecture definitions.
-
-**Verification:** AST Debug Toolkit confirmed correct precedence order after fix.
-
-**Reference:** [BUG_003: Config Precedence Leak](docs/artifacts/bug_reports/2026-01-04_1730_BUG_003_config-precedence-leak.md)
+[버그 보고서 모음 보기](docs/artifacts/bug_reports/)
 
 ---
 
-## Technical Pivots
+## 주요 발견
 
-### Pivot 1: LayoutLM → PARSeq/CRNN
+### 발견 1: 영수증에 대한 Document Parse API 불일치
 
-**Rationale:** Receipts are semi-linear text streams. LayoutLM's 2D spatial embeddings are "overkill" for this domain.
+**컨텍스트:** 초기 접근 방식은 영수증에 대해 LayoutLMv3를 사용하여 키 정보 추출(KIE)을 수행하고 Upstage KIE API 엔티티 레이블과 Document Parse API 경계 상자를 병합했습니다.
 
-**Results:**
-- 15% reduction in inference latency
-- Higher character-level accuracy for Korean text
-- Simplified training pipeline (no layout annotations required)
+**관찰:** 일부 샘플에서 Document Parse API는 영수증을 단일 테이블 구조로 처리하여 개별 텍스트 블록 대신 과도한 경계 상자(이미지의 96.5% × 98.5%)를 반환합니다.
 
-### Pivot 2: Synchronous → Asynchronous Batch Processing
+**증거:**
+- 검증 샘플의 ~40%가 <5개의 텍스트 블록(기대: 20-50+)
+- 정리되지 않은 API 출력에서 HTML 아티팩트가 텍스트 필드에 존재
+- 10에폭 후 최종 검증 F1: 0.623(프로덕션에 부적합)
 
-**Rationale:** Document Parse API rate limits prevented large-scale synchronous processing.
+**결론:** Document Parse API는 영수증과 같은 반선형 텍스트 스트림이 아닌 구조화된 문서(양식, 보고서)에 최적화되어 있습니다.
 
-**Results:**
-- Processed 5,000+ documents overnight vs. days of local processing
-- Eliminated local machine uptime requirements
-- Enabled cost-effective scaling via serverless compute
+**참조:** [평가: LayoutLMv3 KIE 영수증 실패](docs/artifacts/assessments/2026-01-03_1200_assessment-layoutlmv3-kie-receipt-failure.ko.md)
+
+### 발견 2: 구성 우선순위 누출
+
+**컨텍스트:** PARSeq 훈련이 `FPNDecoder`(레거시 DBNet 구성에서)를 `PARSeqDecoder` 대신 잘못 인스턴스화했습니다.
+
+**근본 원인:** Hydra의 구성형 구성 시스템이 아키텍처 특정 오버라이드보다 레거시 기본값(`train_v2` → `_base/model` → `dbnet`)을 더 높은 우선순위로 병합했습니다.
+
+**해결책:** 아키텍처 정의와 충돌할 때 레거시 구성 요소를 제거하기 위해 `_filter_architecture_conflicts()` 메서드 구현.
+
+**검증:** AST 디버그 툴킷이 수정 후 올바른 우선순위 순서를 확인.
+
+**참조:** [BUG_003: 구성 우선순위 누출](docs/artifacts/bug_reports/2026-01-04_1730_BUG_003_config-precedence-leak.ko.md)
 
 ---
 
-## Experimental Findings
+## 기술적 전환
 
-The following discoveries emerged from systematic ablation studies documented in `experiment_manager/experiments/*/`. These findings demonstrate the evolution from brittle heuristic approaches to production-ready deep learning pipelines.
+### 전환 1: LayoutLM → PARSeq/CRNN
 
-### Finding 1: The Brittleness of Heuristic-Based Preprocessing
+**근거:** 영수증은 반선형 텍스트 스트림입니다. LayoutLM의 2D 공간 임베딩은 이 도메인에 "과도한" 기능입니다.
 
-**Problem:** Initial attempts using `cv2` edge/corner detection with manual heuristics proved unreliable. Minor variations in background or document positioning required complex conditional logic, leading to frequent failures in perspective correction.
+**결과:**
+- 추론 지연 시간 15% 감소
+- 한국어 텍스트에 대한 더 높은 문자 수준 정확도
+- 레이아웃 주석이 필요 없는 단순화된 훈련 파이프라인
 
-**Evidence:**
-- Initial 200-image test: **73% success rate** (146/200)
-- Failure mode: "Area loss too large" (detected regions <50% of image)
-- Root cause: `min_area_ratio=0.1` was too permissive, detecting text blocks instead of document boundaries
+### 전환 2: 동기식 → 비동기식 배치 처리
 
-**Insight:** Traditional computer vision techniques struggle with real-world ambiguity. Even a 27% failure rate in corner detection cascaded into complete OCR pipeline failures, proving that robust abstraction-based approaches were necessary.
+**근거:** Document Parse API 요금 제한으로 인해 대규모 동기식 처리가 불가능했습니다.
 
-**Reference:** [200-Image Test Results](experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.md)
+**결과:**
+- 하룻밤 동안 5,000+ 문서 처리 vs. 로컬 처리 시 며칠 소요
+- 로컬 머신 가동 시간 요구 제거
+- 서버리스 컴퓨팅을 통한 비용 효율적인 확장 가능
 
-### Finding 2: The Sepia Discovery – Empirical Optimization
+---
 
-**Finding:** While investigating normalization impact on text detection, standard grayscale preprocessing was helpful, but **sepia color filters with adaptive contrast (CLAHE)** yielded the most significant performance boost in low-confidence regions.
+## 실험적 발견
 
-**Evidence:**
-- **Edge improvement:** +164.0% over baseline (0% → 164%)
-- **Contrast boost:** +8.2 points over baseline
-- **Critical nuance:** Correct reddish tint mapping was essential; initial greenish tints provided 23% less edge clarity
+다음 발견들은 `experiment_manager/experiments/*/`에 문서화된 체계적인 제거 연구에서 도출되었습니다. 이 발견들은 취약한 휴리스틱 접근법에서 프로덕션 준비 완료 딥러닝 파이프라인으로의 진화를 보여줍니다.
 
-**Technical Insight:** This was an empirical discovery. While most literature focuses on binary or grayscale thresholding, the specific contrast ratios provided by sepia filters acted as superior noise-reducers for the model's feature extractor, outperforming standard normalization techniques.
+### 발견 1: 휴리스틱 기반 전처리의 취약성
 
-**Reference:** [Sepia Enhancement Study](experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.md)
+**문제:** `cv2` 엣지/코너 감지와 수동 휴리스틱을 사용한 초기 시도는 신뢰성이 낮았습니다. 배경이나 문서 위치의 미세한 변화는 복잡한 조건부 로직을 필요로 하여 투영 보정에서 빈번한 실패를 초래했습니다.
 
-### Finding 3: Hybrid DL-Geometric Approach – Production-Ready Pipeline
+**증거:**
+- 초기 200개 이미지 테스트: **73% 성공률**(146/200)
+- 실패 모드: "영역 손실이 너무 큼"(감지된 영역이 이미지의 <50%)
+- 근본 원인: `min_area_ratio=0.1`이 너무 허용적이어서 문서 경계 대신 텍스트 블록을 감지
 
-**Solution:** Replaced raw edge detection with a hybrid pipeline: **RemBG (Deep Learning)** for initial document masking followed by geometric validation for corner fitting.
+**통찰:** 전통적인 컴퓨터 비전 기법은 실제 모호성에 어려움을 겪습니다. 코너 감지에서 27% 실패율이 전체 OCR 파이프라인 실패로 이어졌으며, 견고한 추상화 기반 접근법이 필요함을 증명했습니다.
 
-**Implementation:**
-- **Stage 1:** RemBG generates binary mask to isolate document from background noise
-- **Stage 2:** Custom edge detection validates corners based on parallelism, opposite-side symmetry, and angular sums
-- **Stage 3:** Perspective transformation using Max-Edge rule with Lanczos4 interpolation
+**참조:** [200개 이미지 테스트 결과](experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.ko.md)
 
-**Results:**
-- **Success rate:** 100% (25/25) on worst-performing images
-- **Reliability:** Zero failures on images that previously failed with heuristic methods
-- **Production-ready:** No manual intervention required
+### 발견 2: 세피아 발견 – 경험적 최적화
 
-**Impact:** By using DL-based binary masking to abstract away background noise, the pipeline achieved perfect reliability on the test set, ensuring correctly rectified images for the OCR engine every time.
+**발견:** 정규화가 텍스트 감지에 미치는 영향을 조사하는 동안 표준 그레이스케일 전처리는 도움이 되었지만, **적응형 대비(CLAHE)를 갖춘 세피아 색상 필터**가 저신뢰 영역에서 가장 큰 성능 향상을 제공했습니다.
 
-**Reference:** [Worst Performers Test](experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.md)
+**증거:**
+- **엣지 개선:** 기준 대비 +164.0%(0% → 164%)
+- **대비 향상:** 기준 대비 +8.2 포인트
+- **중요한 뉘앙스:** 올바른 적색 색조 매핑이 필수적이었으며, 초기 녹색 색조는 엣지 선명도가 23% 낮았습니다
 
-### Ablation Study Summary
+**기술적 통찰:** 이는 경험적 발견이었습니다. 대부분의 문헌이 이진 또는 그레이스케일 임계값 조정에 초점을 맞추는 반면, 세피아 필터가 제공하는 특정 대비 비율은 모델의 특징 추출기에 우수한 노이즈 감소제로 작용하여 표준 정규화 기법을 능가했습니다.
 
-| Method                                  | Edge Detection Success | Avg Contrast | Reliability                        |
+**참조:** [세피아 향상 연구](experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.ko.md)
+
+### 발견 3: 하이브리드 DL-기하학적 접근법 – 프로덕션 준비 완료 파이프라인
+
+**해결책:** 원시 엣지 감지를 하이브리드 파이프라인으로 교체: **RemBG(딥러닝)**를 사용한 초기 문서 마스킹 후 코너 피팅을 위한 기하학적 검증.
+
+**구현:**
+- **단계 1:** RemBG가 배경 노이즈에서 문서를 분리하는 이진 마스크 생성
+- **단계 2:** 사용자 정의 엣지 감지가 평행성, 반대쪽 대칭성, 각도 합을 기반으로 코너 검증
+- **단계 3:** Max-Edge 규칙과 Lanczos4 보간을 사용한 투영 변환
+
+**결과:**
+- **성공률:** 100%(25/25) 최악의 성능 이미지
+- **신뢰성:** 휴리스틱 방법으로 이전에 실패한 이미지에서 실패 없음
+- **프로덕션 준비:** 수동 개입 불필요
+
+**영향:** DL 기반 이진 마스킹을 사용하여 배경 노이즈를 추상화함으로써 파이프라인은 테스트 세트에서 완벽한 신뢰성을 달성하여 OCR 엔진에 항상 올바르게 정규화된 이미지를 보장합니다.
+
+**참조:** [최악의 성능자 테스트](experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.ko.md)
+
+### 제거 연구 요약
+
+| 방법                                  | 엣지 감지 성공률 | 평균 대비 | 신뢰성                        |
 | :-------------------------------------- | :--------------------- | :----------- | :--------------------------------- |
-| **Heuristics (cv2)**                    | 73% (146/200)          | 36.1         | Low (fails on complex backgrounds) |
-| **DL Masking (RemBG)**                  | ~98%                   | 44.3*        | High                               |
-| **Hybrid (RemBG + Dominant Extension)** | **100%** (25/25)       | **44.3**     | **Production-Ready**               |
+| **휴리스틱 (cv2)**                    | 73% (146/200)          | 36.1         | 낮음 (복잡한 배경에서 실패) |
+| **DL 마스킹 (RemBG)**                  | ~98%                   | 44.3*        | 높음                               |
+| **하이브리드 (RemBG + 주 확장)** | **100%** (25/25)       | **44.3**     | **프로덕션 준비 완료**               |
 
-*Sepia filters improved edge detection over grayscale but sepia+CLAHE was ultimately removed. Contrast improvements from RemBG masking.
+*세피아 필터는 그레이스케일보다 엣지 감지를 개선했지만, 세피아+CLAHE는 최종적으로 제거됨. RemBG 마스킹으로 인한 대비 개선.
 
 ---
 
-## Demonstrations
+## 데모
 
-### OCR Inference Console
+### OCR 추론 콘솔
 
-Frontend proof-of-concept inspired by the Upstage Document OCR Console.
+Upstage 문서 OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명.
 
 <div align="center">
-  <img src="docs/assets/images/demo/my-app.webp" alt="OCR Inference Console" width="850px" style="border-radius: 8px; border: 1px solid #ddd;" />
-  <p><em>UI design patterns inspired by the Upstage Console playground.</em></p>
+  <img src="docs/assets/images/demo/my-app.webp" alt="OCR 추론 콘솔" width="850px" style="border-radius: 8px; border: 1px solid #ddd;" />
+  <p><em>Upstage 콘솔 플레이그라운드에서 영감을 받은 UI 디자인 패턴.</em></p>
 </div>
 
-### Perspective Correction & Warping
+### 투영 보정 및 왜곡
 
 <div align="center">
 
-|                               Fitted Corners (CV Math)                                |                                                                                          Corrected Output                                                                                           |
+|                               피팅된 코너 (CV 수학)                                |                                                                                          보정된 출력                                                                                           |
 | :-----------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="400px" /> | <img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="180px" /> |
-|                               *Identifying boundaries*                                |                                                                                     *Final normalized geometry*                                                                                     |
+|                               *경계 식별*                                |                                                                                     *최종 정규화된 기하학*                                                                                     |
 
 </div>
 
-### Low Prediction Resolution
+### 낮은 예측 해상도
 
 <div align="center">
 
-|                                                                Before: Persistent Low Predictions                                                                |                                                                        Internal Process                                                                        |                                                                   After: Successful Detection                                                                    |
+|                                                                이전: 지속적인 낮은 예측                                                                |                                                                        내부 프로세스                                                                        |                                                                   이후: 성공적인 감지                                                                    |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | [<img src="docs/assets/images/demo/inference-persistent-empties-before.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-before.webp) | [<img src="docs/assets/images/demo/inference-persistent-empties-after.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-after.webp) | [<img src="docs/assets/images/demo/inference-persistent-empties-after2.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-after2.webp) |
-|                                                                         *Empty patches*                                                                          |                                                                      *Filter application*                                                                      |                                                                      *Normalized geometry*                                                                       |
+|                                                                         *빈 패치*                                                                          |                                                                      *필터 적용*                                                                      |                                                                      *정규화된 기하학*                                                                       |
 
-*(Click images to enlarge)*
+*(이미지 클릭 시 확대)*
 
 </div>
 
 ---
 
-## Technology Stack
+## 기술 스택
 
-| Category          | Technologies                              |
+| 범주          | 기술                              |
 | :---------------- | :---------------------------------------- |
 | **ML/DL**         | PyTorch, PyTorch Lightning, Hydra         |
-| **Engineering**   | UV (required), AWS Fargate, LMDB, Parquet |
-| **Frontend**      | React 19, Next.js 16, Chakra UI           |
-| **Observability** | W&B, AgentQMS, Project Compass (MCP)      |
+| **엔지니어링**   | UV (필수), AWS Fargate, LMDB, Parquet |
+| **프론트엔드**   | React 19, Next.js 16, Chakra UI           |
+| **관측 가능성** | W&B, AgentQMS, 프로젝트 컴패스 (MCP)      |
 
 ---
 
-## References
+## 참조
 
-### Documentation
+### 문서
 
-- [System Architecture](AgentQMS/standards/tier1-sst/system-architecture.yaml)
-- [API Contracts](AgentQMS/standards/tier2-framework/api-contracts.yaml)
-- [File Placement Rules](AgentQMS/standards/tier1-sst/file-placement-rules.yaml)
+- [시스템 아키텍처](AgentQMS/standards/tier1-sst/system-architecture.yaml)
+- [API 계약](AgentQMS/standards/tier2-framework/api-contracts.yaml)
+- [파일 배치 규칙](AgentQMS/standards/tier1-sst/file-placement-rules.yaml)
 
-### Artifacts
+### 아티팩트
 
-- [Bug Reports](docs/artifacts/bug_reports/)
-- [Assessments](docs/artifacts/assessments/)
-- [Design Documents](docs/artifacts/design_documents/)
+- [버그 보고서](docs/artifacts/bug_reports/)
+- [평가](docs/artifacts/assessments/)
+- [설계 문서](docs/artifacts/design_documents/)
 
-### External Links
+### 외부 링크
 
-- [GitHub Repository](https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2/)
-- [Hugging Face Models](https://huggingface.co/wchoi189/)
+- [GitHub 저장소](https://github.com/Wchoi189/upstageailab-ocr-recsys-competition-ocr-2/)
+- [Hugging Face 모델](https://huggingface.co/wchoi189/)
 
 ---
 
 <div align="center">
 
-**© 2026 Woong Bi Choi**
+**© 2026 최웅비**
 
 </div>

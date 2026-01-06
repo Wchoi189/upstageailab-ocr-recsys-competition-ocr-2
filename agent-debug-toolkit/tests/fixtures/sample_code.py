@@ -6,7 +6,7 @@ should be able to detect.
 """
 
 # Sample code that uses configuration patterns
-SAMPLE_CONFIG_ACCESS = '''
+SAMPLE_CONFIG_ACCESS = """
 from omegaconf import OmegaConf, DictConfig
 
 class OCRModel:
@@ -48,9 +48,9 @@ class OCRModel:
             merged_config = OmegaConf.merge(merged_config, cfg.component_overrides)
 
         return merged_config
-'''
+"""
 
-SAMPLE_HYDRA_USAGE = '''
+SAMPLE_HYDRA_USAGE = """
 import hydra
 from hydra.utils import instantiate
 from omegaconf import DictConfig
@@ -74,9 +74,9 @@ def main(cfg: DictConfig):
 
 if __name__ == "__main__":
     main()
-'''
+"""
 
-SAMPLE_COMPONENT_INSTANTIATION = '''
+SAMPLE_COMPONENT_INSTANTIATION = """
 from ocr.models.encoder import get_encoder_by_cfg
 from ocr.models.decoder import get_decoder_by_cfg
 from ocr.models.head import get_head_by_cfg
@@ -102,4 +102,4 @@ class ModelFactory:
         loss = FPNLoss(in_channels=256)
 
         return components
-'''
+"""

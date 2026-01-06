@@ -29,6 +29,7 @@ class AnalysisResult:
         code_snippet: The actual source code around the finding
         metadata: Additional analyzer-specific data
     """
+
     file: str
     line: int
     column: int
@@ -62,6 +63,7 @@ class AnalysisReport:
         results: List of analysis findings
         summary: Summary statistics and insights
     """
+
     analyzer_name: str
     target_path: str
     results: list[AnalysisResult] = field(default_factory=list)
@@ -173,13 +175,13 @@ class BaseAnalyzer(ABC):
             return AnalysisReport(
                 analyzer_name=self.name,
                 target_path=str(path),
-                summary={"error": f"Syntax error: {e}"}
+                summary={"error": f"Syntax error: {e}"},
             )
         except FileNotFoundError:
             return AnalysisReport(
                 analyzer_name=self.name,
                 target_path=str(path),
-                summary={"error": f"File not found: {path}"}
+                summary={"error": f"File not found: {path}"},
             )
 
         # Run the visitor
@@ -189,16 +191,13 @@ class BaseAnalyzer(ABC):
             analyzer_name=self.name,
             target_path=str(path),
             results=self._results.copy(),
-            summary=self._generate_summary()
+            summary=self._generate_summary(),
         )
 
         return report
 
     def analyze_directory(
-        self,
-        directory: str | Path,
-        pattern: str = "*.py",
-        recursive: bool = True
+        self, directory: str | Path, pattern: str = "*.py", recursive: bool = True
     ) -> AnalysisReport:
         """
         Analyze all Python files in a directory.
@@ -234,7 +233,7 @@ class BaseAnalyzer(ABC):
                 "files_analyzed": files_analyzed,
                 "total_findings": len(all_results),
                 "errors": errors,
-            }
+            },
         )
 
     def analyze_source(self, source: str, filename: str = "<string>") -> AnalysisReport:
@@ -258,7 +257,7 @@ class BaseAnalyzer(ABC):
             return AnalysisReport(
                 analyzer_name=self.name,
                 target_path=filename,
-                summary={"error": f"Syntax error: {e}"}
+                summary={"error": f"Syntax error: {e}"},
             )
 
         self.visit(tree)
@@ -267,7 +266,7 @@ class BaseAnalyzer(ABC):
             analyzer_name=self.name,
             target_path=filename,
             results=self._results.copy(),
-            summary=self._generate_summary()
+            summary=self._generate_summary(),
         )
 
     @abstractmethod
@@ -291,7 +290,7 @@ class BaseAnalyzer(ABC):
         pattern: str,
         context: str = "",
         category: str = "general",
-        metadata: dict[str, Any] | None = None
+        metadata: dict[str, Any] | None = None,
     ) -> None:
         """Add an analysis result for an AST node."""
         line = getattr(node, "lineno", 0)
@@ -308,7 +307,7 @@ class BaseAnalyzer(ABC):
             context=context,
             category=category,
             code_snippet=snippet,
-            metadata=metadata or {}
+            metadata=metadata or {},
         )
         self._results.append(result)
 

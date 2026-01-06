@@ -1,4 +1,3 @@
-
 import glob
 import os
 
@@ -23,6 +22,7 @@ def count_splits():
 
     print(f"\nTotal rows in splits: {total_rows}")
     print("Expected (KIE train var): 3125")
+
 
 if __name__ == "__main__":
     count_splits()

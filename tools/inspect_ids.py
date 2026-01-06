@@ -1,5 +1,3 @@
-
-
 import pandas as pd
 
 
@@ -7,11 +5,12 @@ def inspect_ids(path, name):
     print(f"\n--- Inspecting {name} IDs ---")
     df = pd.read_parquet(path)
 
-    if 'id' in df.columns:
+    if "id" in df.columns:
         print("Sample IDs:")
-        print(df['id'].head(5).values)
+        print(df["id"].head(5).values)
     else:
         print("No 'id' column found/.")
+
 
 def main():
     kie_path = "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/aws-batch-processor/data/export/baseline_kie/train.parquet"
@@ -19,6 +18,7 @@ def main():
 
     inspect_ids(kie_path, "baseline_kie")
     inspect_ids(dp_path, "baseline_dp")
+
 
 if __name__ == "__main__":
     main()

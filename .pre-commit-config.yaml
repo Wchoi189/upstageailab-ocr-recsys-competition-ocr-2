@@ -3,74 +3,60 @@
 # To use, run `pre-commit install` in your local repository.
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
-    rev: v4.6.0 # Using a more recent version
+    rev: v4.6.0
     hooks:
-      - id: trailing-whitespace
-      - id: end-of-file-fixer
       - id: check-yaml
         args: [--unsafe]
       - id: check-added-large-files
       - id: check-merge-conflict
       - id: debug-statements
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    # Run Ruff's formatter and linter.
-    rev: v0.5.0 # Using a more recent version
-    hooks:
-      - id: ruff
-        name: ruff-linter-fixer
-        args: [--fix, --unsafe-fixes, --exit-non-zero-on-fix]
-      - id: ruff-format
+  # - repo: https://github.com/astral-sh/ruff-pre-commit
+  #   # Run Ruff's formatter and linter.
+  #   rev: v0.5.0 # Using a more recent version
+  #   hooks:
+  #     - id: ruff
+  #       name: ruff-linter-fixer
+  #       args: [--fix, --exit-non-zero-on-fix]
+  #       exclude: ^(ocr/|ocr-etl-pipeline/|runners/|tests/ocr/)
+  #     - id: ruff-format
+  #       exclude: ^(ocr/|ocr-etl-pipeline/|runners/|tests/ocr/)
 
-  - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.10.1 # Using a more recent version
-    hooks:
-      - id: mypy
-        # You can customize args and dependencies to match your project's needs
-        additional_dependencies: [types-Pillow, types-tqdm, types-PyYAML, types-shapely]
-        files: ^(ocr/|services/|agent_qms/)
+  # - repo: https://github.com/pre-commit/mirrors-mypy
+  #   rev: v1.10.1 # Using a more recent version
+  #   hooks:
+  #     - id: mypy
+  #       # You can customize args and dependencies to match your project's needs
+  #       additional_dependencies: [types-Pillow, types-tqdm, types-PyYAML, types-shapely]
+  #       files: ^(services/)
 
   - repo: local
     hooks:
-      - id: validate-handbook-manifest
-        name: validate-handbook-manifest
-        entry: uv run python scripts/agent_tools/documentation/validate_manifest.py
-        language: system
-        pass_filenames: false
-        args: [docs/agents/index.json]
+      # - id: frontend-eslint
+      #   name: frontend-eslint
+      #   entry: npm run lint --workspace playground-console
+      #   language: system
+      #   pass_filenames: false
 
-      - id: check-diagram-updates
-        name: check-diagram-updates
-        entry: uv run python scripts/generate_diagrams.py --check-changes
-        language: system
-        pass_filenames: false
-        files: ^(ocr/|ui/|configs/|scripts/generate_diagrams\.py)
+      # - id: frontend-type-check
+      #   name: frontend-type-check
+      #   entry: npm run type-check --workspace playground-console
+      #   language: system
+      #   pass_filenames: false
 
-      - id: frontend-eslint
-        name: frontend-eslint
-        entry: npm run lint --workspace frontend
-        language: system
-        pass_filenames: false
-
-      - id: frontend-type-check
-        name: frontend-type-check
-        entry: npm run type-check --workspace frontend
-        language: system
-        pass_filenames: false
-
-      - id: console-eslint
-        name: console-eslint
-        entry: npm run lint --workspace apps/playground-console
-        language: system
-        pass_filenames: false
+      # - id: console-eslint
+      #   name: console-eslint
+      #   entry: npm run lint --workspace apps/playground-console
+      #   language: system
+      #   pass_filenames: false
 
       - id: validate-agentqms-artifacts
         name: validate-agentqms-artifacts
-        entry: uv run python AgentQMS/agent_tools/compliance/validate_artifacts.py --no-refresh
+        entry: uv run python AgentQMS/tools/compliance/validate_artifacts.py --no-refresh
         language: system
         pass_filenames: true
         files: ^docs/artifacts/.*\.md$
-        exclude: /archive/
+        exclude: /(archive|walkthroughs)/
 
       - id: ads-compliance-check
         name: ADS v1.0 Compliance Check

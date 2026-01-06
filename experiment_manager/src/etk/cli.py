@@ -93,31 +93,18 @@ Examples:
     # ===== PROJECT COMPASS COMMANDS =====
 
     # check-env command (Environment Guard)
-    check_env_parser = subparsers.add_parser(
-        "check-env",
-        help="Validate environment against Project Compass lock state"
-    )
-    check_env_parser.add_argument(
-        "--strict",
-        action="store_true",
-        help="Treat warnings as errors"
-    )
+    check_env_parser = subparsers.add_parser("check-env", help="Validate environment against Project Compass lock state")
+    check_env_parser.add_argument("--strict", action="store_true", help="Treat warnings as errors")
 
     # session-init command (Session Management)
-    session_init_parser = subparsers.add_parser(
-        "session-init",
-        help="Initialize or update current session context"
-    )
+    session_init_parser = subparsers.add_parser("session-init", help="Initialize or update current session context")
+    session_init_parser.add_argument("--objective", "-o", required=True, help="Primary goal for this session")
     session_init_parser.add_argument(
-        "--objective", "-o",
-        required=True,
-        help="Primary goal for this session"
-    )
-    session_init_parser.add_argument(
-        "--pipeline", "-p",
+        "--pipeline",
+        "-p",
         default="kie",
         choices=["text_detection", "text_recognition", "layout_analysis", "kie"],
-        help="Active pipeline (default: kie)"
+        help="Active pipeline (default: kie)",
     )
 
     args = parser.parse_args()
@@ -228,7 +215,7 @@ Examples:
                 # Scan filesystem directly to bypass empty DB
                 for item in tracker.experiments_dir.iterdir():
                     if item.is_dir() and not item.name.startswith("."):
-                         experiments.append(item.name)
+                        experiments.append(item.name)
 
                 if not experiments:
                     print("No experiments found in filesystem.")
@@ -329,7 +316,7 @@ Examples:
                 print("\n🔧 Path Restoration Instructions:")
                 print("   1. Ensure you are using the correct UV binary")
                 print("   2. Run: uv sync")
-                print("   3. Verify with: uv run python -c \"import torch; print(torch.__version__)\"")
+                print('   3. Verify with: uv run python -c "import torch; print(torch.__version__)"')
                 sys.exit(1)
             else:
                 print("✅ Environment validated against Compass lock state")
@@ -341,10 +328,7 @@ Examples:
         elif args.command == "session-init":
             print("📋 Session Management: Initializing session...\n")
             manager = SessionManager()
-            success, message = manager.init_session(
-                objective=args.objective,
-                active_pipeline=args.pipeline
-            )
+            success, message = manager.init_session(objective=args.objective, active_pipeline=args.pipeline)
 
             if success:
                 print(f"✅ {message}")

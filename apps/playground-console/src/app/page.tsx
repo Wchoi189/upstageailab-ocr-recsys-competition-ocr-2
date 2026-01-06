@@ -27,8 +27,8 @@ const cards = [
 export default function Home(): React.JSX.Element {
   return (
     <AppShell>
-      <Stack spacing={10}>
-        <Stack spacing={4}>
+      <Stack gap={10}>
+        <Stack gap={4}>
           <Text textTransform="uppercase" fontSize="sm" color="text.muted">
             Digitize / Command Builder
           </Text>
@@ -37,7 +37,7 @@ export default function Home(): React.JSX.Element {
             Switch between Command Builder, Universal Extraction, and Prebuilt Extraction tools
             within a unified Upstage-branded console that mirrors the production playground.
           </Text>
-          <Stack direction={{ base: "column", sm: "row" }} spacing={3}>
+          <Stack direction={{ base: "column", sm: "row" }} gap={3}>
             <Button colorScheme="brand">Start Command Builder</Button>
             <Button variant="outline">View API Reference</Button>
           </Stack>

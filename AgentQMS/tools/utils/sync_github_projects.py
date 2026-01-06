@@ -14,6 +14,7 @@ from pathlib import Path
 
 COMPASS_SESSION_PATH = Path("project_compass/active_context/current_session.yml")
 
+
 class GitHubManager:
     def __init__(self, dry_run=False):
         self.dry_run = dry_run
@@ -60,19 +61,19 @@ class GitHubManager:
 
         success, output = self.run_command(cmd, check=False)
         if not success and not self.dry_run:
-             # Fallback or specific error handling
-             return None
+            # Fallback or specific error handling
+            return None
 
         if self.dry_run:
-            return None # Simulate not found for init
+            return None  # Simulate not found for init
 
         try:
             projects = json.loads(output)
             # projects is a list of dicts: { "title": "...", "number": 1, ... }
-            for p in projects.get('projects', []): # gh project list output structure varies by version, usually direct list or dict
+            for p in projects.get("projects", []):  # gh project list output structure varies by version, usually direct list or dict
                 # Adjust based on actual gh cli output for 'project list --format json' which is usually a list under 'projects' key or direct list
                 # Actually `gh project list --format json` output is `{"projects": [...]}`
-                if p.get('title') == title:
+                if p.get("title") == title:
                     return p
             return None
         except json.JSONDecodeError:
@@ -82,7 +83,7 @@ class GitHubManager:
     def find_issue_by_title(self, title):
         """Check if an issue with the given title exists to avoid duplicates."""
         # Using gh issue list --search
-        cmd = ["gh", "issue", "list", "--search",f"{title} in:title", "--json", "title,url", "--limit", "1"]
+        cmd = ["gh", "issue", "list", "--search", f"{title} in:title", "--json", "title,url", "--limit", "1"]
         success, output = self.run_command(cmd, check=False)
 
         if self.dry_run:
@@ -142,7 +143,7 @@ class GitHubManager:
             try:
                 labels = json.loads(output)
                 for l in labels:
-                    if l['name'] == name:
+                    if l["name"] == name:
                         exists = True
                         break
             except json.JSONDecodeError:
@@ -168,8 +169,8 @@ class GitHubManager:
         self.run_command(cmd)
 
     def sync(self, init=False, roadmap_path=None):
-        session_id = self.session_data.get('session_id', 'Session')
-        objective = self.session_data.get('objective', 'Objective')
+        session_id = self.session_data.get("session_id", "Session")
+        objective = self.session_data.get("objective", "Objective")
         project_title = f"{session_id} - {objective}"
 
         project = None
@@ -184,7 +185,7 @@ class GitHubManager:
             self.publish_roadmap(roadmap_path, session_id)
 
         # Sync Tasks
-        tasks = self.session_data.get('active_tasks', [])
+        tasks = self.session_data.get("active_tasks", [])
         print(f"Syncing {len(tasks)} tasks...")
         for task in tasks:
             # Check for generic duplicates? Or just create
@@ -196,11 +197,7 @@ class GitHubManager:
                 print(f"Skipping existing issue: {issue_title}")
                 continue
 
-            self.create_issue(
-                title=issue_title,
-                body=f"Task from Project Compass Session: {session_id}",
-                labels=["compass-task"]
-            )
+            self.create_issue(title=issue_title, body=f"Task from Project Compass Session: {session_id}", labels=["compass-task"])
 
     def publish_roadmap(self, roadmap_path, session_id):
         path = Path(roadmap_path)
@@ -220,11 +217,8 @@ class GitHubManager:
             return
 
         print(f"Publishing Roadmap from {roadmap_path}")
-        self.create_issue(
-            title=title,
-            body=content,
-            labels=["roadmap", "compass-plan"]
-        )
+        self.create_issue(title=title, body=content, labels=["roadmap", "compass-plan"])
+
 
 def main():
     parser = argparse.ArgumentParser(description="Sync Compass tasks to GitHub")
@@ -237,6 +231,6 @@ def main():
     manager = GitHubManager(dry_run=args.dry_run)
     manager.sync(init=args.init, roadmap_path=args.roadmap)
 
+
 if __name__ == "__main__":
     main()
-

@@ -217,10 +217,7 @@ class TestCollateIntegration:
         cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
         image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
         config = DatasetConfig(
-            image_path=Path(img_dir),
-            annotation_path=Path(ann_path),
-            cache_config=cache_config,
-            image_loading_config=image_loading_config
+            image_path=Path(img_dir), annotation_path=Path(ann_path), cache_config=cache_config, image_loading_config=image_loading_config
         )
         dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
@@ -263,10 +260,7 @@ class TestCollateIntegration:
         cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
         image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
         config = DatasetConfig(
-            image_path=Path(img_dir),
-            annotation_path=Path(ann_path),
-            cache_config=cache_config,
-            image_loading_config=image_loading_config
+            image_path=Path(img_dir), annotation_path=Path(ann_path), cache_config=cache_config, image_loading_config=image_loading_config
         )
         dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 
@@ -304,10 +298,7 @@ class TestCollateIntegration:
         cache_config = CacheConfig(cache_transformed_tensors=False, cache_images=False, cache_maps=False)
         image_loading_config = ImageLoadingConfig(use_turbojpeg=False, turbojpeg_fallback=False)
         config = DatasetConfig(
-            image_path=Path(img_dir),
-            annotation_path=Path(ann_path),
-            cache_config=cache_config,
-            image_loading_config=image_loading_config
+            image_path=Path(img_dir), annotation_path=Path(ann_path), cache_config=cache_config, image_loading_config=image_loading_config
         )
         dataset = ValidatedOCRDataset(config=config, transform=mock_transform)
 

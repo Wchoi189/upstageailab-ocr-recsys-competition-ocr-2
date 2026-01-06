@@ -17,18 +17,40 @@ from agent_debug_toolkit.analyzers.base import BaseAnalyzer
 
 
 # Common configuration variable names to look for
-CONFIG_VAR_NAMES = frozenset({
-    "cfg", "config", "conf", "settings", "opts", "options",
-    "architecture_config", "architecture_config_obj", "arch_config",
-    "model_config", "component_config", "overrides",
-    "merged_config", "base_config", "default_config",
-})
+CONFIG_VAR_NAMES = frozenset(
+    {
+        "cfg",
+        "config",
+        "conf",
+        "settings",
+        "opts",
+        "options",
+        "architecture_config",
+        "architecture_config_obj",
+        "arch_config",
+        "model_config",
+        "component_config",
+        "overrides",
+        "merged_config",
+        "base_config",
+        "default_config",
+    }
+)
 
 # Component names that are particularly interesting
-COMPONENT_NAMES = frozenset({
-    "encoder", "decoder", "head", "loss", "backbone",
-    "model", "architecture", "optimizer", "scheduler",
-})
+COMPONENT_NAMES = frozenset(
+    {
+        "encoder",
+        "decoder",
+        "head",
+        "loss",
+        "backbone",
+        "model",
+        "architecture",
+        "optimizer",
+        "scheduler",
+    }
+)
 
 
 class ConfigAccessAnalyzer(BaseAnalyzer):
@@ -156,12 +178,7 @@ class ConfigAccessAnalyzer(BaseAnalyzer):
 
         self.generic_visit(node)
 
-    def _record_config_access(
-        self,
-        node: ast.AST,
-        pattern: str,
-        category: str
-    ) -> None:
+    def _record_config_access(self, node: ast.AST, pattern: str, category: str) -> None:
         """Record a configuration access finding."""
         # Determine if this accesses a known component
         final_category = category
@@ -190,11 +207,7 @@ class ConfigAccessAnalyzer(BaseAnalyzer):
             metadata["component"] = accessed_component
 
         self._add_result(
-            node=node,
-            pattern=pattern,
-            context=context,
-            category=final_category,
-            metadata=metadata
+            node=node, pattern=pattern, context=context, category=final_category, metadata=metadata
         )
 
     def _get_attribute_chain(self, node: ast.Attribute) -> list[str]:

@@ -107,7 +107,7 @@ class MarkdownReporter:
 
         # Code snippet
         if self.include_code_snippets and result.code_snippet:
-            snippet_lines = result.code_snippet.split("\n")[:self.max_snippet_lines]
+            snippet_lines = result.code_snippet.split("\n")[: self.max_snippet_lines]
             if snippet_lines:
                 lines.append("  ```python")
                 for line in snippet_lines:

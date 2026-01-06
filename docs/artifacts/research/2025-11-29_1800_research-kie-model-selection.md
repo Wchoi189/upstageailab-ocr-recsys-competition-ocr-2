@@ -1,3 +1,13 @@
+---
+category: research
+status: draft
+type: research
+title: KIE Model Selection Strategy
+version: 1.0
+ads_version: 1.0
+date: 2025-11-29 18:00 (KST)
+---
+
 # Research: KIE Model Selection Strategy
 
 ## 1. Introduction

@@ -89,7 +89,7 @@ class TestMergeOrderTrackerRealWorld:
 
     def test_three_priority_merge_pattern(self):
         """Should correctly identify the 3-priority merge pattern."""
-        code = '''
+        code = """
 def _prepare_component_configs(self, cfg):
     merged_config = OmegaConf.create({})
 
@@ -106,7 +106,7 @@ def _prepare_component_configs(self, cfg):
         merged_config = OmegaConf.merge(merged_config, cfg.component_overrides)
 
     return merged_config
-'''
+"""
         analyzer = MergeOrderTracker()
         report = analyzer.analyze_source(code, "test.py")
 

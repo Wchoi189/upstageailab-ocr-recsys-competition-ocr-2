@@ -243,6 +243,7 @@ class TestOCRModel:
             assert model.head is head
             assert model.loss is loss
             from unittest.mock import ANY
+
             # When no component overrides are provided, only config keys are set
             registry_mock.create_architecture_components.assert_called_once_with(
                 "craft",

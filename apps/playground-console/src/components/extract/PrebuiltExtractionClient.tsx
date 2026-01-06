@@ -43,8 +43,8 @@ export function PrebuiltExtractionClient(): React.JSX.Element {
   }, [selectedCard]);
 
   return (
-    <Stack spacing={8}>
-      <Stack spacing={3}>
+    <Stack gap={8}>
+      <Stack gap={3}>
         <Text textTransform="uppercase" fontSize="sm" color="text.muted">
           Extract /
         </Text>
@@ -58,7 +58,7 @@ export function PrebuiltExtractionClient(): React.JSX.Element {
         </Button>
       </Stack>
 
-      <Stack spacing={6}>
+      <Stack gap={6}>
         <CardGallery items={cards} selectedId={selectedCard} onSelect={setSelectedCard} />
         <SimpleGrid columns={{ base: 1, lg: 2 }} gap={8} alignItems="start">
           <Box>

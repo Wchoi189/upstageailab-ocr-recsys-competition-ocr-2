@@ -14,11 +14,7 @@ from ocr.utils.api_usage_tracker import get_tracker
 
 def main():
     parser = argparse.ArgumentParser(description="View Upstage API usage statistics")
-    parser.add_argument(
-        "--since",
-        type=str,
-        help="Show usage since date (ISO format: YYYY-MM-DD)"
-    )
+    parser.add_argument("--since", type=str, help="Show usage since date (ISO format: YYYY-MM-DD)")
     args = parser.parse_args()
 
     tracker = get_tracker()

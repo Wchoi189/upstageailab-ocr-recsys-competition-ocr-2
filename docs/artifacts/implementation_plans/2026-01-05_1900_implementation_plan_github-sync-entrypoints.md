@@ -1,12 +1,12 @@
 ---
 ads_version: "1.0"
 type: implementation_plan
-category: feature
+category: planning
 status: approved
 version: "1.0"
 tags: github, sync, entrypoints, vscode, agents
 title: Implementation Plan - GitHub Sync Entrypoints
-date: "2026-01-05 18:54"
+date: "2026-01-05 18:54 (KST)"
 branch: main
 ---
 

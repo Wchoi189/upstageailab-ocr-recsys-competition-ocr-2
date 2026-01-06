@@ -1,18 +1,17 @@
 import math
 import torch
 import torch.nn as nn
-import math
-import torch
-import torch.nn as nn
 from ocr.models.core.base_classes import BaseDecoder
+
 
 class PARSeqDecoder(BaseDecoder):
     """
     Transformer Decoder capable of Autoregressive decoding.
     """
+
     def __init__(
         self,
-        in_channels, # From BaseDecoder signature
+        in_channels,  # From BaseDecoder signature
         d_model=384,
         nhead=12,
         num_layers=12,
@@ -23,7 +22,7 @@ class PARSeqDecoder(BaseDecoder):
         pad_token_id=0,
         bos_token_id=1,
         eos_token_id=2,
-        **kwargs # Accept extra kwargs
+        **kwargs,  # Accept extra kwargs
     ):
         super().__init__(in_channels=in_channels)
         self.d_model = d_model
@@ -34,12 +33,7 @@ class PARSeqDecoder(BaseDecoder):
 
         # Transformer Decoder
         decoder_layer = nn.TransformerDecoderLayer(
-            d_model=d_model,
-            nhead=nhead,
-            dim_feedforward=dim_feedforward,
-            dropout=dropout,
-            activation='gelu',
-            batch_first=True
+            d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, dropout=dropout, activation="gelu", batch_first=True
         )
         self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
 
@@ -72,7 +66,7 @@ class PARSeqDecoder(BaseDecoder):
         # Handle BaseDecoder contract: features is list[torch.Tensor]
         if isinstance(features, list):
             # Take the last feature map
-            visual_feat = features[-1] # [B, C, H, W]
+            visual_feat = features[-1]  # [B, C, H, W]
             # Flatten: [B, C, H, W] -> [B, S, C]
             memory = visual_feat.permute(0, 2, 3, 1).flatten(1, 2)
         else:
@@ -108,14 +102,9 @@ class PARSeqDecoder(BaseDecoder):
             tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
 
             # Padding Mask
-            tgt_key_padding_mask = (targets == self.pad_token_id)
+            tgt_key_padding_mask = targets == self.pad_token_id
 
-            output = self.decoder(
-                tgt,
-                memory,
-                tgt_mask=tgt_mask,
-                tgt_key_padding_mask=tgt_key_padding_mask
-            )
+            output = self.decoder(tgt, memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask)
 
             return self.norm(output)
 
@@ -133,7 +122,7 @@ class PARSeqDecoder(BaseDecoder):
 
         for i in range(self.max_len):
             tgt_emb = self.embed_tokens(tgt_tokens) * math.sqrt(self.d_model)
-            pos_emb = self.pos_encoder[:, :tgt_tokens.size(1), :]
+            pos_emb = self.pos_encoder[:, : tgt_tokens.size(1), :]
             tgt = tgt_emb + pos_emb
 
             output = self.decoder(tgt, memory)

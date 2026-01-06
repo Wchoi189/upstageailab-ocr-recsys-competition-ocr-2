@@ -1,0 +1,101 @@
+# AgentQMS MCP Server Schema
+# Machine-parseable reference for AI agents
+
+server:
+  name: agentqms
+  path: AgentQMS/mcp_server.py
+  description: Artifact workflow, validation, standards enforcement
+
+resources:
+  - uri: agentqms://standards/index
+    name: Standards Index
+    description: 4-tier standards hierarchy (SST, Framework, Agents, Workflows)
+    mime_type: application/x-yaml
+
+  - uri: agentqms://standards/artifact_types
+    name: Artifact Types
+    description: Allowed types, locations, naming conventions
+    mime_type: application/x-yaml
+
+  - uri: agentqms://standards/workflows
+    name: Workflow Requirements
+    description: Validation protocols and requirements
+    mime_type: application/x-yaml
+
+  - uri: agentqms://templates/list
+    name: Template Catalog
+    description: Available artifact templates (dynamic)
+    mime_type: application/json
+
+  - uri: agentqms://config/settings
+    name: QMS Settings
+    description: Framework config, paths, validation rules
+    mime_type: application/x-yaml
+
+tools:
+  - name: create_artifact
+    description: Create artifact with auto-validation, indexing, tracking
+    required_params:
+      - artifact_type  # enum: assessment, audit, bug_report, design_document, implementation_plan, walkthrough, completed_plan, vlm_report
+      - name           # kebab-case identifier
+      - title          # human-readable title
+    optional_params:
+      - description
+      - tags           # comma-separated
+    returns:
+      success: boolean
+      file_path: string
+      message: string
+
+  - name: validate_artifact
+    description: Validate artifact against naming and structure standards
+    params:
+      - file_path      # optional: specific artifact path
+      - validate_all   # optional: boolean, validate all artifacts
+    returns:
+      success: boolean
+
+  - name: list_artifact_templates
+    description: List available artifact templates
+    params: []
+    returns:
+      templates: array
+
+  - name: check_compliance
+    description: Check overall compliance status
+    params: []
+    returns:
+      total_files: integer
+      valid_files: integer
+      invalid_files: integer
+      compliance_rate: float
+      violations: array
+
+  - name: get_standard
+    description: Retrieve project standard by name (fuzzy match)
+    required_params:
+      - name  # standard name (e.g., 'naming-conventions', 'artifact-types')
+    returns:
+      content: string  # or error/matches array
+
+# Implementation details
+implementation:
+  location: AgentQMS/mcp_server.py
+  dependencies:
+    - mcp
+    - AgentQMS.tools.core.artifact_workflow
+  auto_discovery: finds project root via AgentQMS/ directory
+
+# Error handling
+error_handling:
+  - Unknown resources return clear error messages
+  - Missing files reported with specific paths
+  - Tool errors return structured JSON with error details
+
+# Benefits
+benefits:
+  - No path memorization (MCP discoverable)
+  - Standards enforced automatically
+  - Single tool call artifact creation
+  - Auto-indexing and tracking
+  - Low memory footprint

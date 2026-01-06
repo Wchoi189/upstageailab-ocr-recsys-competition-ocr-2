@@ -1,12 +1,12 @@
 ---
 ads_version: "1.0"
 type: implementation_plan
-category: feature
+category: planning
 status: active
 version: "1.0"
 tags: github, sync, extension
 title: Implementation Plan - Github Sync Extension
-date: "2026-01-05 18:54"
+date: "2026-01-05 18:54 (KST)"
 branch: main
 ---
 

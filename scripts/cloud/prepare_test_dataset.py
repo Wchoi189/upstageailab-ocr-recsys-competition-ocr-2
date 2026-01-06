@@ -23,7 +23,7 @@ def create_test_subset(input_parquet: Path, output_parquet: Path, n_samples: int
     test_df = df.head(n_samples)
 
     print(f"Creating test subset: {len(test_df)} images")
-    test_df.to_parquet(output_parquet, engine='pyarrow', index=False)
+    test_df.to_parquet(output_parquet, engine="pyarrow", index=False)
 
     print(f"✓ Saved test dataset to {output_parquet}")
     return test_df
@@ -31,7 +31,7 @@ def create_test_subset(input_parquet: Path, output_parquet: Path, n_samples: int
 
 def upload_images_to_s3(df: pd.DataFrame, s3_bucket: str, local_base: Path):
     """Upload images referenced in dataframe to S3."""
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client("s3")
 
     print(f"\nUploading {len(df)} images to s3://{s3_bucket}/images/...")
 
@@ -40,7 +40,7 @@ def upload_images_to_s3(df: pd.DataFrame, s3_bucket: str, local_base: Path):
     failed = 0
 
     for idx, row in tqdm(df.iterrows(), total=len(df)):
-        local_path = Path(row['image_path'])
+        local_path = Path(row["image_path"])
         image_name = local_path.name
         s3_key = f"images/{image_name}"
 
@@ -59,12 +59,7 @@ def upload_images_to_s3(df: pd.DataFrame, s3_bucket: str, local_base: Path):
                 failed += 1
                 continue
 
-            s3_client.upload_file(
-                str(local_path),
-                s3_bucket,
-                s3_key,
-                ExtraArgs={'StorageClass': 'INTELLIGENT_TIERING'}
-            )
+            s3_client.upload_file(str(local_path), s3_bucket, s3_key, ExtraArgs={"StorageClass": "INTELLIGENT_TIERING"})
             uploaded += 1
         except Exception as e:
             print(f"❌ Failed to upload {image_name}: {e}")
@@ -80,7 +75,7 @@ def upload_images_to_s3(df: pd.DataFrame, s3_bucket: str, local_base: Path):
 
 def upload_parquet_to_s3(local_file: Path, s3_bucket: str, s3_key: str):
     """Upload parquet metadata file to S3."""
-    s3_client = boto3.client('s3')
+    s3_client = boto3.client("s3")
 
     print(f"\nUploading {local_file} to s3://{s3_bucket}/{s3_key}...")
     s3_client.upload_file(str(local_file), s3_bucket, s3_key)
@@ -110,12 +105,12 @@ def main():
             print("Run: export S3_BUCKET=your-bucket-name")
             return 1
 
-    print("="*60)
+    print("=" * 60)
     print("AWS Batch Test Dataset Creator")
-    print("="*60)
+    print("=" * 60)
     print(f"S3 Bucket: {s3_bucket}")
     print(f"Test samples: {n_samples}")
-    print("="*60)
+    print("=" * 60)
 
     # Step 1: Create test subset
     test_df = create_test_subset(input_parquet, output_parquet, n_samples)
@@ -127,22 +122,18 @@ def main():
         print("⚠️  Some images failed to upload")
 
     # Step 3: Upload parquet to S3
-    upload_parquet_to_s3(
-        output_parquet,
-        s3_bucket,
-        "data/processed/test_50.parquet"
-    )
+    upload_parquet_to_s3(output_parquet, s3_bucket, "data/processed/test_50.parquet")
 
-    print("\n" + "="*60)
+    print("\n" + "=" * 60)
     print("✅ Test dataset ready!")
-    print("="*60)
+    print("=" * 60)
     print("\nS3 Locations:")
     print(f"  Images:  s3://{s3_bucket}/images/ ({len(test_df)} files)")
     print(f"  Parquet: s3://{s3_bucket}/data/processed/test_50.parquet")
     print("\nNext steps:")
     print("  1. Build and push Docker image (see docs/aws-batch-quickref.md)")
     print("  2. Run test job with dataset: test_50")
-    print("="*60)
+    print("=" * 60)
 
     return 0
 

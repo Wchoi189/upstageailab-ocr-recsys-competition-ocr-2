@@ -120,6 +120,8 @@ class ArtifactValidator:
         "template-": "templates/",
         "BUG_": "bug_reports/",
         "SESSION_": "completed_plans/completion_summaries/session_notes/",
+        "guide-": "guides/",
+        "walkthrough-": "walkthroughs/",
     }
 
     _BUILTIN_TYPES: list[str] = [
@@ -131,6 +133,8 @@ class ArtifactValidator:
         "bug_report",
         "session_note",
         "completion_summary",
+        "guide",
+        "walkthrough",
     ]
 
     _BUILTIN_CATEGORIES: list[str] = [
@@ -416,7 +420,11 @@ class ArtifactValidator:
                 return (False, msg)
 
         # Check for kebab-case in descriptive part
-        descriptive_part = after_timestamp[len(matched_type) : -3]  # Remove .md
+        # Handle extensions (e.g., .md, .ko.md)
+        if filename.endswith(".ko.md"):
+            descriptive_part = after_timestamp[len(matched_type) : -6]
+        else:
+            descriptive_part = after_timestamp[len(matched_type) : -3]  # Remove .md
         type_details = self.artifact_type_details.get(matched_type, {})
         expected_case = type_details.get("case", "lowercase")
 
@@ -684,7 +692,17 @@ class ArtifactValidator:
 
             file_path = file_path.resolve()
 
-        result: dict[str, Any] = {"file": str(file_path), "valid": True, "errors": []}
+        # Try to make path relative to project root for portability in reports
+        try:
+            from AgentQMS.tools.utils.paths import get_project_root
+
+            project_root = get_project_root()
+            report_path = str(file_path.relative_to(project_root))
+        except (ValueError, ImportError):
+            # Fallback to absolute path if relative calculation fails
+            report_path = str(file_path)
+
+        result: dict[str, Any] = {"file": report_path, "valid": True, "errors": []}
 
         # Skip INDEX.md files
         if file_path.name == "INDEX.md":
@@ -1092,6 +1110,9 @@ def main():
         print(f"Report written to {args.output}")
     else:
         print(output)
+
+    # Flush stdout to ensure redirection captures all output
+    sys.stdout.flush()
 
     # Exit with error code if violations found
     if any(not r["valid"] for r in results):

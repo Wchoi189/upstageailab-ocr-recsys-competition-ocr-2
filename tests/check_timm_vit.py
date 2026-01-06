@@ -1,6 +1,6 @@
-
 import timm
 import torch
+
 
 def check_vit():
     model_name = "vit_small_patch16_224"
@@ -23,6 +23,7 @@ def check_vit():
     print(f"embed_dim: {getattr(model, 'embed_dim', 'N/A')}")
     print(f"num_features: {getattr(model, 'num_features', 'N/A')}")
     print(f"feature_info: {getattr(model, 'feature_info', 'N/A')}")
+
 
 if __name__ == "__main__":
     check_vit()

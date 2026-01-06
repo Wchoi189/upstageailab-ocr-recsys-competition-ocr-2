@@ -1,10 +1,18 @@
-# GitHub Sync Roadmap & Project Initialization Assessment
-
-**Date:** 2026-01-05
-**Type:** Assessment
-**Tags:** github-integration, roadmap, automation
-
 ---
+title: assessment-2026-01-05 10:00 (KST) GitHub Sync Roadmap & Project Initialization Assessment
+date: 2026-01-05 10:00 (KST)
+type: assessment
+status: active
+category: planning
+tags:
+  - github-integration
+  - roadmap
+  - automation
+version: 1.0.0
+ads_version: 1.0.0
+---
+
+# GitHub Sync Roadmap & Project Initialization Assessment
 
 ## Requirement Assessment
 
@@ -34,8 +42,6 @@ The user objective is to extend the `sync_github_projects.py` script to support:
 3. **Conditional Execution Flow:**
    - Logic: `if not project_exists: create_project()`.
    - Logic: `if not roadmap_issue_exists: create_issue() else: update_issue()`.
-
----
 
 ## Technical Considerations
 
@@ -68,8 +74,6 @@ graph TD
 | **Add Item to Project**  | `gh project item-add [project-id] --url [issue-url]`           |
 | **Post Issue with Body** | `gh issue create --title "..." --body-file [path-to-artifact]` |
 
----
-
 ## Recommendations & Roadmap
 
 ### Phase 1: Robust Identification (Immediate)
@@ -85,8 +89,6 @@ graph TD
 
 > [!IMPORTANT]
 > **Key Decision:** Use GitHub "Draft Issues" for initial project items if they don't need to be full issues yet, but for "Roadmap", a full Issue is better for comments and history.
-
----
 
 ## Actionable Process
 

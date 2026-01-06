@@ -1,0 +1,94 @@
+# Experiment Manager MCP Server Schema
+# Machine-parseable reference for AI agents
+
+server:
+  name: experiments
+  path: experiment_manager/mcp_server.py
+  description: Experiment lifecycle management, tracking, insights
+
+resources:
+  - uri: experiments://agent_interface
+    name: Agent Interface Commands
+    description: Complete ETK command reference with usage examples
+    mime_type: application/x-yaml
+
+  - uri: experiments://active_list
+    name: Active Experiments
+    description: List of current experiments (dynamic)
+    mime_type: application/json
+
+  - uri: experiments://schemas/manifest
+    name: Manifest Schema
+    description: Experiment manifest JSON schema
+    mime_type: application/json
+
+  - uri: experiments://schemas/artifact
+    name: Artifact Schema
+    description: Experiment artifact JSON schema
+    mime_type: application/json
+
+tools:
+  - name: init_experiment
+    description: Initialize new experiment with standardized directory structure
+    required_params:
+      - name  # slug format (e.g., 'baseline-kie-v2')
+    optional_params:
+      - description
+      - tags  # comma-separated
+    returns:
+      success: boolean
+      experiment_id: string
+      output: string
+
+  - name: get_experiment_status
+    description: Get detailed status of current or specific experiment
+    optional_params:
+      - experiment_id  # uses current if not specified
+    returns:
+      success: boolean
+      output: string
+
+  - name: add_task
+    description: Add task to active experiment plan
+    required_params:
+      - description
+    optional_params:
+      - experiment_id  # uses current if not specified
+    returns:
+      success: boolean
+      output: string
+
+  - name: log_insight
+    description: Log key finding, decision, or failure
+    required_params:
+      - insight
+    optional_params:
+      - type  # enum: insight, decision, failure (default: insight)
+      - experiment_id  # uses current if not specified
+    returns:
+      success: boolean
+      output: string
+
+  - name: sync_experiment
+    description: Sync artifacts and metadata to database
+    optional_params:
+      - experiment_id  # uses current if not specified
+    returns:
+      success: boolean
+      output: string
+
+# Implementation details
+implementation:
+  location: experiment_manager/mcp_server.py
+  protocol: MCP stdio
+  dependencies:
+    - mcp
+    - etk.factory (experiment toolkit)
+  auto_discovery: searches upward for experiment_manager/ directory
+
+# Error handling
+error_handling:
+  - Unknown URI returns error
+  - Missing file returns clear error
+  - Tool errors return structured JSON with error details
+  - Subprocess failures captured in output

@@ -27,18 +27,19 @@ def check_module_level_mocking(filepath: Path) -> list[str]:
         if isinstance(node, ast.Assign):
             for target in node.targets:
                 if isinstance(target, ast.Subscript):
-                    if (isinstance(target.value, ast.Attribute) and
-                        isinstance(target.value.value, ast.Name) and
-                        target.value.value.id == 'sys' and
-                        target.value.attr == 'modules'):
+                    if (
+                        isinstance(target.value, ast.Attribute)
+                        and isinstance(target.value.value, ast.Name)
+                        and target.value.value.id == "sys"
+                        and target.value.attr == "modules"
+                    ):
                         has_sys_modules_mock = True
 
         # Check for cleanup fixture
         if isinstance(node, ast.FunctionDef):
             for decorator in node.decorator_list:
                 if isinstance(decorator, ast.Call):
-                    if (isinstance(decorator.func, ast.Attribute) and
-                        decorator.func.attr == 'fixture'):
+                    if isinstance(decorator.func, ast.Attribute) and decorator.func.attr == "fixture":
                         # Has a fixture, check if it has cleanup (yield)
                         for stmt in ast.walk(node):
                             if isinstance(stmt, ast.Expr) and isinstance(stmt.value, ast.Yield):

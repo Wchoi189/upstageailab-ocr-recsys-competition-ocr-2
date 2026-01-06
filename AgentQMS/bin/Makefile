@@ -285,8 +285,12 @@ track-status: ## Show tracking database status
 compliance: plugins-snapshot ## Check compliance status
 	uv run python ../tools/compliance/monitor_artifacts.py --check
 
-compliance-fix: ## Fix compliance issues automatically (DEPRECATED)
-	@echo "⚠️  compliance-fix is deprecated. No automated fixer is available." && exit 0
+compliance-fix: ## Fix compliance issues automatically (Legacy)
+	@echo "⚠️  compliance-fix is deprecated. Use 'make fix' for standard fixes or 'make compliance-fix-ai' for AI fixes."
+
+compliance-fix-ai: ## Fix compliance issues using Grok AI (usage: make compliance-fix-ai LIMIT=5)
+	uv run python ../tools/utilities/grok_fixer.py $(if $(LIMIT),--limit $(LIMIT),) $(if $(DRY_RUN),--dry-run,)
+
 
 compliance-dashboard: ## Open enhanced compliance dashboard (DEPRECATED)
 	@echo "⚠️  compliance-dashboard is deprecated. Use 'make compliance' for checks." && exit 0

@@ -17,15 +17,29 @@ from agent_debug_toolkit.analyzers.base import BaseAnalyzer
 
 
 # Hydra-related import names
-HYDRA_IMPORTS = frozenset({
-    "hydra", "hydra.main", "hydra.utils", "hydra.core",
-    "omegaconf", "OmegaConf", "DictConfig", "ListConfig",
-})
+HYDRA_IMPORTS = frozenset(
+    {
+        "hydra",
+        "hydra.main",
+        "hydra.utils",
+        "hydra.core",
+        "omegaconf",
+        "OmegaConf",
+        "DictConfig",
+        "ListConfig",
+    }
+)
 
 # Hydra utility functions
-HYDRA_UTILS = frozenset({
-    "instantiate", "call", "get_class", "get_method", "get_object",
-})
+HYDRA_UTILS = frozenset(
+    {
+        "instantiate",
+        "call",
+        "get_class",
+        "get_method",
+        "get_object",
+    }
+)
 
 
 class HydraUsageAnalyzer(BaseAnalyzer):
@@ -71,10 +85,11 @@ class HydraUsageAnalyzer(BaseAnalyzer):
 
                 self._add_result(
                     node=node,
-                    pattern=f"import {module_name}" + (f" as {alias.asname}" if alias.asname else ""),
+                    pattern=f"import {module_name}"
+                    + (f" as {alias.asname}" if alias.asname else ""),
                     context="Hydra framework import",
                     category="import",
-                    metadata={"module": module_name, "local_name": local_name}
+                    metadata={"module": module_name, "local_name": local_name},
                 )
 
         self.generic_visit(node)
@@ -89,10 +104,11 @@ class HydraUsageAnalyzer(BaseAnalyzer):
 
                 self._add_result(
                     node=node,
-                    pattern=f"from {node.module} import {name}" + (f" as {alias.asname}" if alias.asname else ""),
+                    pattern=f"from {node.module} import {name}"
+                    + (f" as {alias.asname}" if alias.asname else ""),
                     context="Hydra/OmegaConf import",
                     category="import",
-                    metadata={"module": node.module, "name": name, "local_name": local_name}
+                    metadata={"module": node.module, "name": name, "local_name": local_name},
                 )
 
         self.generic_visit(node)
@@ -156,7 +172,7 @@ class HydraUsageAnalyzer(BaseAnalyzer):
                 pattern=pattern,
                 context="".join(context_parts) + " - Hydra structured config pattern",
                 category="config_pattern",
-                metadata={"hydra_keys": hydra_keys}
+                metadata={"hydra_keys": hydra_keys},
             )
 
         self.generic_visit(node)
@@ -195,7 +211,7 @@ class HydraUsageAnalyzer(BaseAnalyzer):
             pattern=pattern,
             context="Hydra application entry point",
             category="entry_point",
-            metadata=metadata
+            metadata=metadata,
         )
 
     def _is_instantiate_call(self, call_name: str) -> bool:
@@ -255,7 +271,7 @@ class HydraUsageAnalyzer(BaseAnalyzer):
             pattern=pattern,
             context="".join(context_parts) + " - Creates object from config",
             category="instantiation",
-            metadata=metadata
+            metadata=metadata,
         )
 
     def _record_hydra_util_call(self, node: ast.Call, call_name: str) -> None:
@@ -268,7 +284,7 @@ class HydraUsageAnalyzer(BaseAnalyzer):
             pattern=pattern,
             context="Hydra utility function",
             category="hydra_util",
-            metadata={"call_name": call_name}
+            metadata={"call_name": call_name},
         )
 
     def _get_full_call_name(self, node: ast.Call) -> str:

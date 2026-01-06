@@ -15,7 +15,7 @@ def link_dataset(parquet_path, optimized_dir, output_path):
     optimized_dir_path = Path(optimized_dir)
 
     for idx, row in tqdm(df.iterrows(), total=len(df)):
-        orig_path = Path(row['image_path'])
+        orig_path = Path(row["image_path"])
         filename = orig_path.name
 
         # Look for the file in the optimized directory
@@ -43,11 +43,12 @@ def link_dataset(parquet_path, optimized_dir, output_path):
         print("This suggests `processed/baseline_train.parquet` was incomplete or splits differ.")
 
     # Update df
-    df['image_path'] = new_paths
-    df = df.dropna(subset=['image_path'])
+    df["image_path"] = new_paths
+    df = df.dropna(subset=["image_path"])
 
     df.to_parquet(output_path)
     print(f"Saved to {output_path}")
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

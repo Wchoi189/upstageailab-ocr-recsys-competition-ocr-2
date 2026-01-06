@@ -212,6 +212,23 @@ class ConfigLoader:
             "resolved": config,
         }
 
+        # Check if we actually need to write
+        if runtime_config.exists():
+            try:
+                with runtime_config.open("r", encoding="utf-8") as handle:
+                    existing = yaml.safe_load(handle)
+
+                # Standardize payload for comparison (handles Path objects etc)
+                # safe_dump -> safe_load is a heavy but sure way to get comparable types
+                comparable_payload = yaml.safe_load(yaml.safe_dump(payload))
+
+                if existing and existing.get("resolved") == comparable_payload["resolved"] and \
+                   existing.get("layers") == comparable_payload["layers"] and \
+                   existing.get("metadata", {}).get("schema_version") == comparable_payload["metadata"]["schema_version"]:
+                    return
+            except Exception:
+                pass
+
         with runtime_config.open("w", encoding="utf-8") as handle:
             yaml.safe_dump(payload, handle, sort_keys=False)
 

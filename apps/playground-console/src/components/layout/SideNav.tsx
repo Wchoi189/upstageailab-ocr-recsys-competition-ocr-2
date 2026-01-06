@@ -55,21 +55,22 @@ export function SideNav(): React.JSX.Element {
           >
             {section.label}
           </Text>
-          <VStack spacing={2} align="stretch">
+          <VStack gap={2} align="stretch">
             {section.items.map((item) => {
               const isActive = pathname === item.href;
               return (
                 <Button
                   key={item.label}
-                  as={Link}
-                  href={item.href}
+                  asChild
                   justifyContent="flex-start"
                   variant="ghost"
                   bg={isActive ? "brand.50" : undefined}
                   fontWeight={isActive ? "semibold" : "medium"}
                   _hover={{ bg: "gray.100" }}
                 >
-                  {item.label}
+                  <Link href={item.href}>
+                    {item.label}
+                  </Link>
                 </Button>
               );
             })}

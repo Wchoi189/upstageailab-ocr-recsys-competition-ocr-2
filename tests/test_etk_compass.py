@@ -45,38 +45,22 @@ def temp_compass_dir():
 
         # Create minimal lock state
         lock_state = {
-            "uv_binary": {
-                "expected_path": "/opt/uv/bin/uv",
-                "version": "0.9.11"
-            },
-            "python": {
-                "version": "3.11.14",
-                "venv_path": ".venv"
-            },
-            "cuda": {
-                "enabled": True,
-                "torch_version": "2.6.0+cu124"
-            }
+            "uv_binary": {"expected_path": "/opt/uv/bin/uv", "version": "0.9.11"},
+            "python": {"version": "3.11.14", "venv_path": ".venv"},
+            "cuda": {"enabled": True, "torch_version": "2.6.0+cu124"},
         }
-        (compass / "environments" / "uv_lock_state.yml").write_text(
-            yaml.dump(lock_state), encoding="utf-8"
-        )
+        (compass / "environments" / "uv_lock_state.yml").write_text(yaml.dump(lock_state), encoding="utf-8")
 
         # Create minimal session schema
         session_schema = {
             "$schema": "http://json-schema.org/draft-07/schema#",
             "type": "object",
             "required": ["session_id", "objective", "env_lock"],
-            "properties": {
-                "session_id": {"type": "string"},
-                "objective": {"type": "object"},
-                "env_lock": {"type": "object"}
-            }
+            "properties": {"session_id": {"type": "string"}, "objective": {"type": "object"}, "env_lock": {"type": "object"}},
         }
         import json
-        (compass / ".config" / "schemas" / "session.schema.json").write_text(
-            json.dumps(session_schema), encoding="utf-8"
-        )
+
+        (compass / ".config" / "schemas" / "session.schema.json").write_text(json.dumps(session_schema), encoding="utf-8")
 
         yield root
 
@@ -102,10 +86,7 @@ class TestEnvironmentChecker:
     @patch("etk.compass.EnvironmentChecker._check_cuda")
     def test_check_uv_path_match(self, mock_cuda, mock_run, temp_compass_dir):
         """Test UV path check passes when paths match."""
-        mock_run.return_value = MagicMock(
-            returncode=0,
-            stdout="/opt/uv/bin/uv\n"
-        )
+        mock_run.return_value = MagicMock(returncode=0, stdout="/opt/uv/bin/uv\n")
         mock_cuda.return_value = None
 
         paths = CompassPaths(temp_compass_dir)
@@ -117,10 +98,7 @@ class TestEnvironmentChecker:
     @patch("subprocess.run")
     def test_check_uv_path_mismatch(self, mock_run, temp_compass_dir):
         """Test UV path check fails when paths differ."""
-        mock_run.return_value = MagicMock(
-            returncode=0,
-            stdout="/tmp/bin/uv\n"
-        )
+        mock_run.return_value = MagicMock(returncode=0, stdout="/tmp/bin/uv\n")
 
         paths = CompassPaths(temp_compass_dir)
         checker = EnvironmentChecker(paths)
@@ -132,10 +110,7 @@ class TestEnvironmentChecker:
     @patch("subprocess.run")
     def test_check_python_version(self, mock_run, temp_compass_dir):
         """Test Python version check."""
-        mock_run.return_value = MagicMock(
-            returncode=0,
-            stdout="Python 3.11.14\n"
-        )
+        mock_run.return_value = MagicMock(returncode=0, stdout="Python 3.11.14\n")
 
         paths = CompassPaths(temp_compass_dir)
         checker = EnvironmentChecker(paths)
@@ -173,13 +148,10 @@ class TestSessionManager:
                 "uv_path": "/opt/uv/bin/uv",
                 "python_version": "3.11.14",
                 "is_gpu_required": False,
-                "verified_at": "2026-01-01 10:00 (KST)"
+                "verified_at": "2026-01-01 10:00 (KST)",
             }
 
-            success, message = manager.init_session(
-                objective="Test session",
-                active_pipeline="kie"
-            )
+            success, message = manager.init_session(objective="Test session", active_pipeline="kie")
 
         assert success
         assert "session_01" in message
@@ -246,6 +218,7 @@ class TestAtomicWrites:
 
             assert target.exists()
             import json
+
             content = json.loads(target.read_text())
             assert content["key"] == "value"
             assert content["list"] == [1, 2, 3]

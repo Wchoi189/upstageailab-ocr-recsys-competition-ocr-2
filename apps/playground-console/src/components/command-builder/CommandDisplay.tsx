@@ -15,7 +15,7 @@ export function CommandDisplay(props: CommandDisplayProps): React.JSX.Element {
   const { command, overrides, constantOverrides, validationError, onCopy } = props;
 
   return (
-    <Stack spacing={4} border="1px solid" borderColor="border.subtle" borderRadius="xl" p={6} bg="surface.panel">
+    <Stack gap={4} border="1px solid" borderColor="border.subtle" borderRadius="xl" p={6} bg="surface.panel">
       <Flex justify="space-between" align="center">
         <Text fontWeight="semibold">Generated command</Text>
         <Button size="sm" onClick={onCopy}>
@@ -31,7 +31,7 @@ export function CommandDisplay(props: CommandDisplayProps): React.JSX.Element {
         </Text>
       )}
       <Separator />
-      <Stack spacing={2}>
+      <Stack gap={2}>
         <Text fontSize="sm" color="text.muted">
           Overrides
         </Text>

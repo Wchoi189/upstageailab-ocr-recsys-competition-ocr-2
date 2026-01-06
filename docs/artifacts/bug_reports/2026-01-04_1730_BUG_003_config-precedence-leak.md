@@ -1,8 +1,8 @@
 ---
 ads_version: "1.0"
 type: "bug_report"
-category: "training"
-status: "resolved"
+category: "architecture"
+status: "completed"
 severity: "critical"
 version: "1.0"
 tags: ['configuration', 'hydra', 'legacy', 'precedence']

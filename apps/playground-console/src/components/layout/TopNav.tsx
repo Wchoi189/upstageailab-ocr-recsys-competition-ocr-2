@@ -28,7 +28,7 @@ export function TopNav(): React.JSX.Element {
       <Text fontWeight="semibold" fontSize="lg" color="brand.500">
         Upstage Console
       </Text>
-      <HStack spacing={6} display={{ base: "none", md: "flex" }}>
+      <HStack gap={6} display={{ base: "none", md: "flex" }}>
         {navLinks.map((link) => (
           <ChakraLink
             key={link.label}

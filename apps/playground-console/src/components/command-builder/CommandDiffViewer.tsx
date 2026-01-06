@@ -10,9 +10,9 @@ interface CommandDiffViewerProps {
 
 export function CommandDiffViewer({ before, after }: CommandDiffViewerProps): React.JSX.Element {
   return (
-    <Stack spacing={3} border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4} bg="surface.panel">
+    <Stack gap={3} border="1px solid" borderColor="border.subtle" borderRadius="lg" p={4} bg="surface.panel">
       <Text fontWeight="semibold">Command diff</Text>
-      <Stack direction={{ base: "column", md: "row" }} spacing={4} align="stretch">
+      <Stack direction={{ base: "column", md: "row" }} gap={4} align="stretch">
         <DiffPanel label="Previous" value={before} />
         <DiffPanel label="Current" value={after} />
       </Stack>

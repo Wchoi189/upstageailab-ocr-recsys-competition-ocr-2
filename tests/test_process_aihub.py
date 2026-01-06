@@ -16,6 +16,7 @@ sys.path.append(os.path.abspath("scripts/data"))
 # So I'll just write a test that acts like the script or uses logic copied from it?
 # Better: Make the script importable. I'll assume scripts/data/__init__.py exists or create it.
 
+
 class TestProcessAIHub(unittest.TestCase):
     def setUp(self):
         self.test_dir = tempfile.mkdtemp()
@@ -27,28 +28,11 @@ class TestProcessAIHub(unittest.TestCase):
 
         # Create a sample JSON
         self.sample_json = {
-            "images": [
-                {
-                    "id": 1,
-                    "width": 1000,
-                    "height": 1000,
-                    "file_name": "test_image.jpg"
-                }
-            ],
+            "images": [{"id": 1, "width": 1000, "height": 1000, "file_name": "test_image.jpg"}],
             "annotations": [
-                {
-                    "id": 101,
-                    "image_id": 1,
-                    "annotation.bbox": [10, 10, 100, 50],
-                    "annotation.text": "Hello"
-                },
-                 {
-                    "id": 102,
-                    "image_id": 1,
-                    "annotation.bbox": [200, 200, 50, 20],
-                    "annotation.text": "World"
-                }
-            ]
+                {"id": 101, "image_id": 1, "annotation.bbox": [10, 10, 100, 50], "annotation.text": "Hello"},
+                {"id": 102, "image_id": 1, "annotation.bbox": [200, 200, 50, 20], "annotation.text": "World"},
+            ],
         }
 
         # Save JSON
@@ -67,33 +51,32 @@ class TestProcessAIHub(unittest.TestCase):
 
         # Dynamic import
         import importlib.util
+
         spec = importlib.util.spec_from_file_location("process_aihub_validation", "scripts/data/process_aihub_validation.py")
         module = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(module)
 
         output_parquet = self.root_path / "output.parquet"
 
-        module.process_aihub_validation(
-            root_dir=str(self.root_path),
-            output_path=str(output_parquet)
-        )
+        module.process_aihub_validation(root_dir=str(self.root_path), output_path=str(output_parquet))
 
         self.assertTrue(output_parquet.exists())
 
         df = pd.read_parquet(output_parquet)
         self.assertEqual(len(df), 1)
         row = df.iloc[0]
-        self.assertEqual(row['width'], 1000)
-        self.assertEqual(row['height'], 1000)
-        self.assertEqual(len(row['texts']), 2)
-        self.assertEqual(row['texts'][0], "Hello")
+        self.assertEqual(row["width"], 1000)
+        self.assertEqual(row["height"], 1000)
+        self.assertEqual(len(row["texts"]), 2)
+        self.assertEqual(row["texts"][0], "Hello")
         # Check coordinates: [x, y, w, h] -> [x, y, x+w, y+h]
         # [10, 10, 100, 50] -> [10, 10, 110, 60]
         # Convert likely numpy array to list for comparison
-        poly = row['polygons'][0]
-        if hasattr(poly, 'tolist'):
+        poly = row["polygons"][0]
+        if hasattr(poly, "tolist"):
             poly = poly.tolist()
         self.assertEqual(poly, [10, 10, 110, 60])
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     unittest.main()

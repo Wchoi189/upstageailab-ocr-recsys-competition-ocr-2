@@ -14,6 +14,7 @@ TARGET_EXPERIMENTS = [
     "20251128_220100_perspective_correction",
 ]
 
+
 def patch_frontmatter(file_path, experiment_id, artifact_type):
     """Adds or updates EDS v1.0 frontmatter to a markdown file."""
     if not file_path.exists():
@@ -39,16 +40,18 @@ def patch_frontmatter(file_path, experiment_id, artifact_type):
         body = content
 
     # Standardize frontmatter
-    fm.update({
-        "ads_version": "1.0",
-        "type": artifact_type,
-        "experiment_id": experiment_id,
-        "status": fm.get("status", "complete"),
-        "created": fm.get("created", now),
-        "updated": now,
-        "tags": fm.get("tags", []),
-        "title": fm.get("title", title),
-    })
+    fm.update(
+        {
+            "ads_version": "1.0",
+            "type": artifact_type,
+            "experiment_id": experiment_id,
+            "status": fm.get("status", "complete"),
+            "created": fm.get("created", now),
+            "updated": now,
+            "tags": fm.get("tags", []),
+            "title": fm.get("title", title),
+        }
+    )
 
     # Add type-specific defaults if missing
     if artifact_type == "assessment":
@@ -63,6 +66,7 @@ def patch_frontmatter(file_path, experiment_id, artifact_type):
     new_content = "---\n" + yaml.dump(fm, sort_keys=False) + "---\n" + body
     file_path.write_text(new_content, encoding="utf-8")
 
+
 def migrate_experiment(exp_id):
     print(f"Migrating {exp_id}...")
     exp_path = EXPERIMENTS_ROOT / exp_id
@@ -74,12 +78,7 @@ def migrate_experiment(exp_id):
     meta_path = exp_path / ".metadata"
     meta_path.mkdir(exist_ok=True)
 
-    mapping = {
-        "assessments": "assessments",
-        "incident_reports": "reports",
-        "scripts": "scripts",
-        "logs": "logs"
-    }
+    mapping = {"assessments": "assessments", "incident_reports": "reports", "scripts": "scripts", "logs": "logs"}
 
     for old_name, new_name in mapping.items():
         old_dir = exp_path / old_name
@@ -110,7 +109,7 @@ def migrate_experiment(exp_id):
             "intention": state.get("intention", ""),
             "tasks": [],
             "insights": [],
-            "artifacts": []
+            "artifacts": [],
         }
 
         # Convert artifacts
@@ -125,16 +124,14 @@ def migrate_experiment(exp_id):
                 parts[0] = f".metadata/{mapping[parts[0]]}"
                 art_path = "/".join(parts)
 
-            manifest["artifacts"].append({
-                "path": art_path,
-                "type": art.get("type", "other"),
-                "timestamp": art.get("timestamp", datetime.now().isoformat())
-            })
+            manifest["artifacts"].append(
+                {"path": art_path, "type": art.get("type", "other"), "timestamp": art.get("timestamp", datetime.now().isoformat())}
+            )
 
             # Patch metadata if it's a markdown file
             full_path = exp_path / art_path
-            if full_path.suffix == ".md" and "artifacts" in art_path: # Legacy artifacts folder
-                 pass # We'll handle this in the recursive walk
+            if full_path.suffix == ".md" and "artifacts" in art_path:  # Legacy artifacts folder
+                pass  # We'll handle this in the recursive walk
 
         with open(manifest_file, "w") as f:
             json.dump(manifest, f, indent=2)
@@ -158,6 +155,7 @@ def migrate_experiment(exp_id):
 
         print(f"  Patching {rel_path} as {art_type}")
         patch_frontmatter(md_file, exp_id, art_type)
+
 
 if __name__ == "__main__":
     for exp_id in TARGET_EXPERIMENTS:

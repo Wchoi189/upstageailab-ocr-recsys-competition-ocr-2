@@ -7,6 +7,7 @@ import pandas as pd
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("verifier")
 
+
 def verify_parquet(parquet_path: str):
     path = Path(parquet_path)
     if not path.exists():
@@ -41,14 +42,14 @@ def verify_parquet(parquet_path: str):
     # Root is data/raw/external/aihub_public_admin_doc/validation/images
 
     root_images = Path("data/raw/external/aihub_public_admin_doc/validation/images")
-    img_path = root_images / row['image_path']
+    img_path = root_images / row["image_path"]
     if img_path.exists():
         logger.info(f"Verified image file exists: {img_path}")
     else:
         logger.warning(f"Image file NOT found: {img_path} (Check path mapping)")
 
     # Check polygon shape
-    polys = row['polygons']
+    polys = row["polygons"]
     if len(polys) > 0:
         p = polys[0]
         logger.info(f"Sample polygon: {p}, type: {type(p)}")
@@ -56,6 +57,7 @@ def verify_parquet(parquet_path: str):
             logger.info("Polygon format appears correct [x1, y1, x2, y2]")
         else:
             logger.warning(f"Polygon format check failed or unexpected: {p}")
+
 
 if __name__ == "__main__":
     verify_parquet("data/processed/aihub_validation.parquet")

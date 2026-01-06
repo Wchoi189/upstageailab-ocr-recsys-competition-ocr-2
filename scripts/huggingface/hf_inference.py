@@ -28,7 +28,7 @@ def visualize_detection(image_path: Path, outputs: dict, save_path: Path = None)
     img_array = np.array(image)
 
     # Get binary map
-    binary_map = outputs['binary_map'].squeeze(0).squeeze(0).cpu().numpy()  # (640, 640)
+    binary_map = outputs["binary_map"].squeeze(0).squeeze(0).cpu().numpy()  # (640, 640)
 
     # Resize to original image size
     h, w = img_array.shape[:2]
@@ -49,8 +49,8 @@ def visualize_detection(image_path: Path, outputs: dict, save_path: Path = None)
     # Save or return
     if save_path:
         # Change extension to jpg for smaller size
-        save_path = save_path.with_suffix('.jpg')
-        Image.fromarray(img_with_contours).save(save_path, 'JPEG', quality=90)
+        save_path = save_path.with_suffix(".jpg")
+        Image.fromarray(img_with_contours).save(save_path, "JPEG", quality=90)
         print(f"Visualization saved to {save_path}")
     else:
         # Display (but since script, just print)
@@ -73,7 +73,7 @@ def load_model(model_name: str):
 
     # Load config from HF if available
     config = None
-    config_files = [f for f in files if f.endswith('.config.json')]
+    config_files = [f for f in files if f.endswith(".config.json")]
     if config_files:
         config_file = config_files[0]  # Take the first one
         try:
@@ -123,6 +123,7 @@ def load_model(model_name: str):
 
     return model
 
+
 def run_inference(model, image_path: Path):
     """Run inference on a single image."""
     print(f"Processing image: {image_path}")
@@ -150,6 +151,7 @@ def run_inference(model, image_path: Path):
 
     return outputs
 
+
 def main():
     parser = argparse.ArgumentParser(description="Run HF model inference on images")
     parser.add_argument("--model", default="wchoi189/receipt-text-detection_kr-pan_resnet18", help="HF model name")
@@ -165,6 +167,7 @@ def main():
     else:
         for img_path in Path(args.samples_dir).glob("*.webp"):
             run_inference(model, img_path)
+
 
 if __name__ == "__main__":
     main()

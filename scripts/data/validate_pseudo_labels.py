@@ -23,11 +23,9 @@ import pandas as pd
 from tqdm import tqdm
 
 # Setup logging
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
 logger = logging.getLogger(__name__)
+
 
 def draw_polygons(image, polygons, texts=None, color=(0, 255, 0), thickness=2):
     """Draw polygons on the image."""
@@ -48,12 +46,12 @@ def draw_polygons(image, polygons, texts=None, color=(0, 255, 0), thickness=2):
                 text = str(texts[i])
                 # Basic text display - can be improved for better visibility
                 if len(pts) > 0:
-                     cv2.putText(image, text[:15], (int(pts[0][0][0]), int(pts[0][0][1]) - 5),
-                                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+                    cv2.putText(image, text[:15], (int(pts[0][0][0]), int(pts[0][0][1]) - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
         except Exception:
             # logger.warning(f"Failed to draw polygon {i}: {e}")
             pass
     return image
+
 
 def validate_parquet(input_file: str, images_dir: str, output_dir: str, sample_size: int = 10):
     """
@@ -80,7 +78,7 @@ def validate_parquet(input_file: str, images_dir: str, output_dir: str, sample_s
     logger.info(f"Total rows: {total_rows}")
 
     # Check for expected columns
-    expected_cols = ["id", "image_path", "polygons", "texts"] # Minimum expected
+    expected_cols = ["id", "image_path", "polygons", "texts"]  # Minimum expected
     missing_cols = [col for col in expected_cols if col not in df.columns]
     if missing_cols:
         logger.error(f"Missing columns: {missing_cols}")
@@ -152,6 +150,7 @@ def validate_parquet(input_file: str, images_dir: str, output_dir: str, sample_s
     logger.info(f"Validation complete. Samples saved to {sample_dir}")
     return True
 
+
 def main():
     parser = argparse.ArgumentParser(description="Validate Pseudo-Label Parquet")
     parser.add_argument("--input", required=True, help="Path to input parquet file")
@@ -162,6 +161,7 @@ def main():
     args = parser.parse_args()
 
     validate_parquet(args.input, args.images_dir, args.output_dir, args.sample_size)
+
 
 if __name__ == "__main__":
     main()

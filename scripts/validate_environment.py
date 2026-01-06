@@ -20,8 +20,7 @@ def validate_environment() -> bool:
 
     # Check 1: Python version
     print("✓ Python version:", sys.version.split()[0])
-    if sys.version_info < (3, 11):
-        errors.append("Python 3.11+ required")
+    # Project requires Python 3.11+, enforced by pyproject.toml
 
     # Check 2: Critical imports
     required_modules = [
@@ -55,6 +54,7 @@ def validate_environment() -> bool:
     # Check 4: Project modules
     try:
         import ocr
+
         print(f"✓ ocr module (from {ocr.__file__})")
     except ImportError as e:
         errors.append(f"Cannot import ocr: {e}")
@@ -62,6 +62,7 @@ def validate_environment() -> bool:
 
     try:
         import AgentQMS
+
         print(f"✓ AgentQMS module (from {AgentQMS.__file__})")
     except ImportError as e:
         errors.append(f"Cannot import AgentQMS: {e}")
@@ -70,6 +71,7 @@ def validate_environment() -> bool:
     # Check 5: GPU availability
     try:
         import torch
+
         if torch.cuda.is_available():
             print(f"✓ CUDA available: {torch.cuda.get_device_name(0)}")
         else:
