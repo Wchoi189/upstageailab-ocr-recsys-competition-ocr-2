@@ -12,9 +12,9 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 
 import torch
 
-from ocr.models.decoder.fpn_decoder import FPNDecoder
+from ocr.detection.models.decoders.fpn_decoder import FPNDecoder
 from ocr.models.encoder.timm_backbone import TimmBackbone
-from ocr.models.head.db_head import DBHead
+from ocr.detection.models.heads.db_head import DBHead
 
 print("=" * 70)
 print("Testing OCR Model Architecture")

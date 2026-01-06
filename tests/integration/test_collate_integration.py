@@ -20,7 +20,7 @@ from torch.utils.data import DataLoader
 from ocr.datasets.base import ValidatedOCRDataset
 from ocr.datasets.db_collate_fn import DBCollateFN
 from ocr.datasets.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
-from ocr.models.head.db_head import DBHead
+from ocr.detection.models.heads.db_head import DBHead
 from ocr.models.loss.db_loss import DBLoss
 
 

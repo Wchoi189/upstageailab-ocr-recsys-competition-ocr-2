@@ -3,7 +3,7 @@
 from ocr.core import registry
 from ocr.models.decoder.unet import UNetDecoder
 from ocr.models.encoder.timm_backbone import TimmBackbone
-from ocr.models.head.db_head import DBHead
+from ocr.detection.models.heads.db_head import DBHead
 from ocr.models.loss.db_loss import DBLoss
 
 

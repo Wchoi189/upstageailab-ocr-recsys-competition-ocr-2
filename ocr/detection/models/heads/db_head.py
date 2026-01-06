@@ -18,7 +18,7 @@ import torch
 import torch.nn as nn
 
 from ocr.core import BaseHead
-from .db_postprocess import DBPostProcessor
+from ocr.detection.models.postprocess.db_postprocess import DBPostProcessor
 
 
 class DBHead(BaseHead):

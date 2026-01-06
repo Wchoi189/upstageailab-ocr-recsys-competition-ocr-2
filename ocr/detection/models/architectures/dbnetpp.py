@@ -3,9 +3,9 @@
 from __future__ import annotations
 
 from ocr.core import registry
-from ocr.models.decoder.dbpp_decoder import DBPPDecoder
+from ocr.detection.models.decoders.dbpp_decoder import DBPPDecoder
 from ocr.models.encoder.timm_backbone import TimmBackbone
-from ocr.models.head.db_head import DBHead
+from ocr.detection.models.heads.db_head import DBHead
 from ocr.models.loss.db_loss import DBLoss
 
 

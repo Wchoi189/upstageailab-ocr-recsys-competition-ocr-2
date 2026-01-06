@@ -53,10 +53,10 @@ def main(config: DictConfig):
     from torch.utils.data import ConcatDataset
     from transformers import AutoTokenizer, LayoutLMv3Processor
 
-    from ocr.data.datasets.kie_dataset import KIEDataset
+    from ocr.kie.data import KIEDataset
     from ocr.lightning_modules.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
-    from ocr.lightning_modules.kie_pl import KIEDataPLModule, KIEPLModule
-    from ocr.models.kie_models import LayoutLMv3Wrapper, LiLTWrapper
+    from ocr.kie.trainer import KIEDataPLModule, KIEPLModule
+    from ocr.kie.models import LayoutLMv3Wrapper, LiLTWrapper
 
     # === END LAZY IMPORTS ===
     # Import config utils

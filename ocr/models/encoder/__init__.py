@@ -1,6 +1,5 @@
 from hydra.utils import instantiate
 
-from .craft_vgg import CraftVGGEncoder  # noqa: F401
 from .timm_backbone import TimmBackbone  # noqa: F401
 
 
