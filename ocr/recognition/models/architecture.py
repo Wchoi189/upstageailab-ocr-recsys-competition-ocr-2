@@ -1,8 +1,8 @@
 import torch
 from ocr.core.architecture import OCRModel
 from ocr.core import registry
-from ocr.models.decoder.parseq_decoder import PARSeqDecoder
-from ocr.models.head.parseq_head import PARSeqHead
+from ocr.recognition.models.decoder import PARSeqDecoder
+from ocr.recognition.models.head import PARSeqHead
 from ocr.models.encoder.timm_backbone import TimmBackbone
 from ocr.models.loss.cross_entropy_loss import CrossEntropyLoss
 

@@ -1,10 +1,11 @@
 from . import architectures as _architectures  # noqa: F401
-from ocr.core.architecture import OCRModel
 
 
 def get_model_by_cfg(config):
+    from ocr.core.architecture import OCRModel
+
     arch_name = getattr(config, "architecture_name", None) or getattr(config, "architectures", None)
     if arch_name == "parseq":
-        from .architectures.parseq import PARSeq
+        from ocr.recognition.models import PARSeq
         return PARSeq(config)
     return OCRModel(config)
