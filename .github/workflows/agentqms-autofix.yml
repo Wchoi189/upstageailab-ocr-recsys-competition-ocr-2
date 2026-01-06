@@ -33,7 +33,7 @@ jobs:
       UPDATE_LINKS: ${{ github.event.inputs.update_links || 'true' }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
