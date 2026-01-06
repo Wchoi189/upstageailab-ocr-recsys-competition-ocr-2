@@ -1,0 +1,86 @@
+{
+    "name": "OCR RecSys Development (Cloud-Optimized)",
+
+    // Use pre-built image for fast startup
+    "image": "ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest",
+
+    // Fallback: Build from Dockerfile if image unavailable
+    "build": {
+        "dockerfile": "../docker/Dockerfile",
+        "context": "..",
+        "target": "development"
+    },
+
+    // Cloud-friendly resource requirements (no GPU)
+    "hostRequirements": {
+        "cpus": 4,
+        "memory": "16gb",
+        "storage": "15gb"
+        // NO gpu requirement - won't work in Codespaces
+    },
+
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "ms-python.python",
+                "ms-python.vscode-pylance",
+                "ms-python.mypy-type-checker",
+                "ms-toolsai.jupyter",
+                "charliermarsh.ruff",
+                "ms-azuretools.vscode-docker",
+                "mhutchie.git-graph",
+                "GitHub.copilot",
+                "saoudrizwan.claude-dev"
+            ],
+            "settings": {
+                "python.defaultInterpreterPath": "${workspaceFolder}/.venv/bin/python",
+                "python.analysis.typeCheckingMode": "basic",
+                "editor.formatOnSave": true,
+                "editor.codeActionsOnSave": {
+                    "source.fixAll.ruff": "explicit",
+                    "source.organizeImports.ruff": "explicit"
+                }
+            }
+        }
+    },
+
+    "remoteUser": "vscode",
+
+    // NO runArgs - remove GPU settings for cloud compatibility
+    // NO mounts - cloud environments don't have local filesystem access
+
+    // Optimized lifecycle commands (prevent timeouts)
+    "onCreateCommand": "echo '✅ Container created. Image: ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest'",
+
+    // Use --no-install for faster sync, dependencies should be in image
+    "updateContentCommand": "uv sync --no-install || uv sync",
+
+    // Split into faster steps
+    "postCreateCommand": "uv sync && uv pip install -e . --no-deps",
+
+    // Quick validation + MCP setup
+    "postStartCommand": "bash .devcontainer/scripts/start-mcp-servers.sh && python scripts/validate_environment.py || echo '⚠️ Validation incomplete'",
+
+    // Port forwarding
+    "forwardPorts": [8000, 8501, 6006],
+
+    "portsAttributes": {
+        "8000": {
+            "label": "API Server",
+            "onAutoForward": "notify"
+        },
+        "8501": {
+            "label": "Streamlit",
+            "onAutoForward": "notify"
+        },
+        "6006": {
+            "label": "TensorBoard",
+            "onAutoForward": "silent"
+        }
+    },
+
+    // Additional features
+    "features": {
+        "ghcr.io/devcontainers/features/github-cli:1": {}
+    }
+}

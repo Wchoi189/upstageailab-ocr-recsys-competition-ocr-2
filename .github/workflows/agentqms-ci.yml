@@ -28,7 +28,7 @@ jobs:
       violations: ${{ steps.validate.outputs.violations }}
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -46,6 +46,7 @@ jobs:
       - name: Validate artifacts
         id: validate
         run: |
+          export PYTHONPATH=$GITHUB_WORKSPACE
           cd AgentQMS/bin
           python ../tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
 
@@ -85,7 +86,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -102,6 +103,7 @@ jobs:
 
       - name: Reindex artifacts
         run: |
+          export PYTHONPATH=$GITHUB_WORKSPACE
           cd AgentQMS/bin
           make reindex
 
@@ -113,7 +115,7 @@ jobs:
       contents: read
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -130,6 +132,7 @@ jobs:
 
       - name: Check links
         run: |
+          export PYTHONPATH=$GITHUB_WORKSPACE
           cd AgentQMS/bin
           make check-links
         continue-on-error: true  # Allow warnings for now, will be enforced later

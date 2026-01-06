@@ -1,3 +1,5 @@
+---
+ads_version: "1.0"
 title: "MCP Server resource/read Returns 'Unknown resource URI' Despite Correct Implementation"
 author: "AI Assistant (Antigravity)"
 timestamp: "2026-01-03 19:37 (KST)"
@@ -6,6 +8,8 @@ type: "bug_report"
 category: "infrastructure"
 status: closed
 severity: high
+version: "1.0"
+date: "2026-01-03 19:37"
 created: 2026-01-03 19:37
 closed: 2026-01-03 20:05
 tags: [mcp, agentqms, project_compass, bug, resolved]

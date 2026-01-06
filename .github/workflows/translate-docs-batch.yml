@@ -108,14 +108,29 @@ jobs:
 
       - name: Commit translation
         if: steps.check.outputs.should_translate == 'true'
+        env:
+          FILE_PATH: ${{ matrix.file }}
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add "*.ko.md" "*.ko.md.meta"
+
+          # Add the specific translated files (unquoted for glob expansion)
+          git add *.ko.md *.ko.md.meta 2>/dev/null || true
 
           if ! git diff --staged --quiet; then
-            git commit -m "docs: add Korean translation for ${{ matrix.file }} [skip ci]"
-            git push
+            git commit -m "docs: add Korean translation for ${FILE_PATH} [skip ci]"
+
+            # Retry push with pull in case of concurrent updates
+            for i in {1..5}; do
+              if git push; then
+                echo "✅ Push successful"
+                break
+              else
+                echo "⚠️ Push failed, attempt $i/5. Pulling and retrying..."
+                git pull --rebase origin main
+                sleep $((i * 2))
+              fi
+            done
           else
             echo "No changes to commit"
           fi
