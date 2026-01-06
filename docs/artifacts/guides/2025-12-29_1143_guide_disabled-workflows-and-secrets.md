@@ -1,3 +1,15 @@
+---
+ads_version: "1.0"
+type: "guide"
+category: "infrastructure"
+status: "active"
+version: "1.0"
+tags: ['ci', 'workflows', 'secrets', 'github-actions']
+title: "Guide: Disabled Workflows & Required Secrets"
+date: "2025-12-29 11:43"
+branch: "main"
+---
+
 # Guide: Disabled Workflows & Required Secrets
 
 The following workflows have been temporarily disabled to reduce CI noise and stabilize the quality gate. They can be re-enabled by renaming them from `.yml.disabled` to `.yml` and ensuring the required secrets are configured.
@@ -19,6 +31,10 @@ The following workflows have been temporarily disabled to reduce CI noise and st
 **Purpose:** Validates artifact compliance.
 **Status:** This workflow is redundant with `agentqms-ci.yml`, which provides a more comprehensive validation suite. It should remain disabled unless a lightweight check is specifically needed.
 
----
-**Last Updated:** 2025-12-29
-**Status:** Disabled for CI Stabilization
+## How to Re-enable
+1. Rename the file (remove `.disabled` extension)
+2. Configure the required secrets in GitHub repo settings
+3. Push the change to enable the workflow
+
+## Current Status
+All workflows are intentionally disabled. Enable only when needed and secrets are available.
