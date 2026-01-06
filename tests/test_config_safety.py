@@ -1,14 +1,37 @@
 import sys
 from unittest.mock import MagicMock
-
-# Mock dependencies to avoid importing heavy model libraries
-mock_registry = MagicMock()
-sys.modules["ocr.models.core"] = MagicMock()
-sys.modules["ocr.models.core.registry"] = mock_registry
+import pytest
 
 from omegaconf import OmegaConf
 
 from ocr.utils.config_utils import ensure_dict, is_config
+
+
+@pytest.fixture(scope="module", autouse=True)
+def mock_heavy_imports():
+    """Mock dependencies to avoid importing heavy model libraries."""
+    # Store original modules
+    original_modules = {}
+    modules_to_mock = ["ocr.models.core", "ocr.models.core.registry"]
+
+    for module_name in modules_to_mock:
+        if module_name in sys.modules:
+            original_modules[module_name] = sys.modules[module_name]
+
+    # Apply mocks
+    mock_registry = MagicMock()
+    sys.modules["ocr.models.core"] = MagicMock()
+    sys.modules["ocr.models.core.registry"] = mock_registry
+
+    yield
+
+    # Cleanup: restore original modules
+    for module_name in modules_to_mock:
+        if module_name in original_modules:
+            sys.modules[module_name] = original_modules[module_name]
+        else:
+            sys.modules.pop(module_name, None)
+
 
 
 def test_is_config():
