@@ -59,11 +59,15 @@ agent_debug_toolkit:
     find_hydra: "uv run adt find-hydra <path>"
     find_instantiations: "uv run adt find-instantiations <path> [--component <type>]"
     full_analysis: "uv run adt full-analysis <path>"
+    context_tree: "uv run adt context-tree <path> [--depth N] [--output markdown|json]"
+    intelligent_search: "uv run adt intelligent-search <query> [--root <path>] [--fuzzy] [--threshold 0.6]"
   use_cases:
     - "Debug config precedence issues (e.g., legacy defaults overriding architecture)"
     - "Trace OmegaConf.merge() call order to identify override winners"
     - "Find all Hydra entry points and instantiate() calls"
     - "Track component factory patterns (get_*_by_cfg, registry.create)"
+    - "Generate annotated directory trees with semantic context (docstrings, exports)"
+    - "Find symbol definitions by name or qualified path with fuzzy matching"
 
 agent_configurations:
   gemini: "AgentQMS/standards/tier3-agents/gemini/config.yaml"

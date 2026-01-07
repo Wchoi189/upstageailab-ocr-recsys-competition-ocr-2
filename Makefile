@@ -58,7 +58,7 @@ PORT ?= 8501
 FRONTEND_HOST ?= 0.0.0.0
 FRONTEND_PORT ?= 5173
 
-.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci context-log-start context-log-summarize quick-fix-log start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console ocr-console-backend ocr-console-stack playground-console-dev playground-console-backend playground-console-stack kill-ports
+.PHONY: help install dev-install test test-cov lint lint-fix format quality-check quality-fix clean docs-build docs-serve docs-deploy diagrams-check diagrams-update diagrams-force-update diagrams-validate diagrams-update-specific serve-% stop-% status-% logs-% clear-logs-% list-ui-processes stop-all-ui pre-commit setup-dev ci frontend-ci console-ci start stop cb eval infer prep monitor ua stop-cb stop-eval stop-infer stop-prep stop-monitor stop-ua console-dev console-build console-lint checkpoint-metadata checkpoint-metadata-dry-run checkpoint-index-rebuild checkpoint-index-rebuild-all checkpoint-index-verify qms-plan qms-bug qms-validate qms-compliance qms-boundary qms-context qms-context-dev qms-context-docs qms-context-debug qms-context-plan serve-ocr-console ocr-console-backend ocr-console-stack playground-console-dev playground-console-backend playground-console-stack kill-ports
 
 # ============================================================================
 # HELP
@@ -134,9 +134,7 @@ help:
 	@echo "🔧 DEVELOPMENT WORKFLOW"
 	@echo "  clean               - Clean up cache files and build artifacts"
 	@echo "  ci                  - Run CI checks (quality + tests)"
-	@echo "  context-log-start   - Create context log (use LABEL=...)"
-	@echo "  context-log-summarize - Summarize context log (use LOG=...)"
-	@echo "  quick-fix-log       - Log quick fix (use TYPE= TITLE= ISSUE= FIX= FILES=)"
+
 	@echo ""
 	@echo "🧩 AgentQMS (Quality Management)"
 	@echo "  qms-plan            - Create implementation plan artifact"
@@ -433,25 +431,6 @@ checkpoint-index-verify:
 # ============================================================================
 # DEVELOPMENT WORKFLOW
 # ============================================================================
-
-context-log-start:
-	uv run python scripts/agent_tools/utilities/context_log.py start $(if $(LABEL),--label "$(LABEL)")
-
-context-log-summarize:
-	@if [ -z "$(LOG)" ]; then \
-		echo "Usage: make context-log-summarize LOG=logs/agent_runs/<file>.jsonl"; \
-		exit 1; \
-	fi
-	uv run python scripts/agent_tools/utilities/context_log.py summarize --log-file $(LOG)
-
-quick-fix-log:
-	@if [ -z "$(TYPE)" ] || [ -z "$(TITLE)" ] || [ -z "$(ISSUE)" ] || [ -z "$(FIX)" ] || [ -z "$(FILES)" ]; then \
-		echo "Usage: make quick-fix-log TYPE=<type> TITLE=\"<title>\" ISSUE=\"<issue>\" FIX=\"<fix>\" FILES=\"<files>\" [IMPACT=<impact>] [TEST=<test>]"; \
-		echo "Types: bug, compat, config, dep, doc, perf, sec, ui"; \
-		echo "Example: make quick-fix-log TYPE=bug TITLE=\"Pydantic compatibility\" ISSUE=\"replace() error\" FIX=\"Use model_copy\" FILES=\"ui/state.py\""; \
-		exit 1; \
-	fi
-	uv run python scripts/agent_tools/utilities/quick_fix_log.py $(TYPE) "$(TITLE)" --issue "$(ISSUE)" --fix "$(FIX)" --files "$(FILES)" $(if $(IMPACT),--impact $(IMPACT)) $(if $(TEST),--test $(TEST))
 
 # ============================================================================
 # CI SIMULATION

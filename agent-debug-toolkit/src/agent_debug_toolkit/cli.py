@@ -348,6 +348,86 @@ def create_app() -> "typer.Typer":
                 typer.echo(report.to_markdown())
                 typer.echo("\n---\n")
 
+    @app.command("context-tree")
+    def context_tree(
+        path: str = Argument(..., help="Directory to analyze"),
+        depth: int = Option(3, "--depth", "-d", help="Maximum directory depth to traverse"),
+        output: str = Option(
+            "markdown", "--output", "-o", help="Output format: json, markdown, or tree"
+        ),
+    ):
+        """
+        Generate annotated directory tree with semantic context.
+
+        Extracts docstrings, exports, and key definitions to provide
+        rich context for AI agents navigating the codebase.
+        """
+        from pathlib import Path
+
+        path_obj = Path(path)
+        if not path_obj.exists():
+            typer.echo(f"Error: Path not found: {path}", err=True)
+            raise typer.Exit(1)
+        if not path_obj.is_dir():
+            typer.echo(f"Error: Not a directory: {path}", err=True)
+            raise typer.Exit(1)
+
+        from agent_debug_toolkit.analyzers.context_tree import ContextTreeAnalyzer, format_tree_markdown
+
+        analyzer = ContextTreeAnalyzer(max_depth=depth)
+        report = analyzer.analyze_directory(path)
+
+        if "error" in report.summary:
+            typer.echo(f"Error: {report.summary['error']}", err=True)
+            raise typer.Exit(1)
+
+        if output == "markdown":
+            typer.echo(format_tree_markdown(report))
+        else:
+            _output_report(report, output)
+
+    @app.command("intelligent-search")
+    def intelligent_search(
+        path: str = Argument(..., help="Symbol name or qualified path to search for"),
+        root: str = Option(".", "--root", "-r", help="Root directory to search within"),
+        fuzzy: bool = Option(True, "--fuzzy/--no-fuzzy", help="Enable fuzzy matching for typos"),
+        threshold: float = Option(0.6, "--threshold", "-t", help="Minimum similarity for fuzzy matches (0.0-1.0)"),
+        output: str = Option(
+            "markdown", "--output", "-o", help="Output format: json or markdown"
+        ),
+    ):
+        """
+        Search for symbols by name or qualified path.
+
+        Supports:
+        - Qualified path resolution (ocr.models.X → file location)
+        - Reverse lookup (class name → all import paths)
+        - Fuzzy matching for typos (default: enabled)
+        """
+        from pathlib import Path
+
+        root_obj = Path(root)
+        if not root_obj.exists():
+            typer.echo(f"Error: Root path not found: {root}", err=True)
+            raise typer.Exit(1)
+
+        from agent_debug_toolkit.analyzers.intelligent_search import (
+            IntelligentSearcher,
+            format_search_results_markdown,
+        )
+
+        # Use current directory as module root (heuristic)
+        module_root = root_obj.resolve()
+        searcher = IntelligentSearcher(root_obj, module_root)
+
+        results = searcher.search(path, fuzzy=fuzzy, threshold=threshold)
+
+        if output == "json":
+            import json
+            typer.echo(json.dumps([r.to_dict() for r in results], indent=2))
+        else:
+            typer.echo(format_search_results_markdown(results, path))
+
     def _output_report(report, output_format: str) -> None:
         """Output a report in the specified format."""
         if output_format == "json":

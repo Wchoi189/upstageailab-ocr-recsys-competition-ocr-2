@@ -45,7 +45,7 @@ enforce_tags: True
 print_config: True
 
 dataset_module: ocr.datasets
-dataset_config_module: ocr.datasets.schemas
+dataset_config_module: ocr.core.validation
 
 # Model and component paths
 dataset_path: ${dataset_module}

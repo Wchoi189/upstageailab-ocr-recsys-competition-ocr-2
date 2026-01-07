@@ -1,0 +1,64 @@
+---
+# MCP Tools Configuration
+# Controls which tool groups are enabled in the unified MCP server
+
+# Enable/disable tool groups
+enabled_groups:
+  - compass          # Project Compass navigation tools
+  - agentqms         # AgentQMS artifact workflow tools
+  # - etk              # Experiment Manager tools
+  - adt_core         # Core ADT analysis tools
+  - adt_phase1       # Phase 1 ADT tools (dependencies, imports, complexity)
+  - adt_phase3       # Phase 3.2 ADT tools (context_tree, intelligent_search)
+
+# Tool group definitions
+tool_groups:
+  compass:
+    description: "Project Compass navigation and session management"
+    tools:
+      - get_server_info
+      - project_compass
+      - manage_session
+      - env_check
+      - get_standard
+
+  agentqms:
+    description: "AgentQMS artifact workflow and quality management"
+    tools:
+      - create_artifact
+      - validate_artifact
+      - list_artifact_templates
+      - check_compliance
+
+  etk:
+    description: "Experiment Manager (ETK) lifecycle tools"
+    tools:
+      - init_experiment
+      - log_insight
+
+  adt_core:
+    description: "Core Agent Debug Toolkit configuration analysis"
+    tools:
+      - analyze_config_access
+      - trace_merge_order
+      - find_hydra_usage
+      - find_component_instantiations
+      - explain_config_flow
+
+  adt_phase1:
+    description: "Phase 1 ADT code quality analyzers"
+    tools:
+      - analyze_dependency_graph
+      - analyze_imports
+      - analyze_complexity
+
+  adt_phase3:
+    description: "Phase 3.2 ADT navigation and search tools"
+    tools:
+      - context_tree
+      - intelligent_search
+
+# Notes:
+# - Disabled groups will not load their tools
+# - Handlers for disabled tools will not be registered
+# - Reduces memory footprint and startup time for unused features

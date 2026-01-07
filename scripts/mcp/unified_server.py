@@ -12,6 +12,7 @@ import asyncio
 import json
 import subprocess
 import sys
+import yaml
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +46,42 @@ if DEBUG_TOOLKIT_SRC.exists() and str(DEBUG_TOOLKIT_SRC) not in sys.path:
     sys.path.insert(0, str(DEBUG_TOOLKIT_SRC))
 
 app = Server("unified_project")
+
+# --- Load Tool Groups Configuration ---
+
+def load_tool_groups_config() -> dict[str, Any]:
+    """Load tool groups configuration from YAML file."""
+    config_path = Path(__file__).parent / "mcp_tools_config.yaml"
+    if not config_path.exists():
+        # Default: enable all groups
+        return {
+            "enabled_groups": ["compass", "agentqms", "etk", "adt_core", "adt_phase1", "adt_phase3"],
+            "tool_groups": {}
+        }
+
+    with open(config_path) as f:
+        return yaml.safe_load(f)
+
+
+TOOLS_CONFIG = load_tool_groups_config()
+ENABLED_GROUPS = set(TOOLS_CONFIG.get("enabled_groups", []))
+
+
+def is_tool_enabled(tool_name: str) -> bool:
+    """Check if a tool is enabled based on group configuration."""
+    tool_groups = TOOLS_CONFIG.get("tool_groups", {})
+
+    for group_name, group_config in tool_groups.items():
+        if group_name in ENABLED_GROUPS:
+            if tool_name in group_config.get("tools", []):
+                return True
+
+    # If no groups defined or tool not in any group, enable by default
+    if not tool_groups:
+        return True
+
+    return False
+
 
 # --- Resources Definitions ---
 
@@ -176,7 +213,8 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    return [
+    """List all enabled tools based on tool groups configuration."""
+    all_tools = [
         Tool(
             name="get_server_info",
             description="Get information about the Unified Project MCP server",
@@ -334,7 +372,39 @@ async def list_tools() -> list[Tool]:
                 "required": ["file"],
             },
         ),
+        Tool(
+            name="context_tree",
+            description="Generate annotated directory tree with semantic context. Extracts docstrings, exports, and key definitions for AI navigation.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Directory path to analyze"},
+                    "depth": {"type": "integer", "description": "Maximum directory depth (default: 3)"},
+                    "output": {"type": "string", "enum": ["json", "markdown"], "description": "Output format"},
+                },
+                "required": ["path"],
+            },
+        ),
+        Tool(
+            name="intelligent_search",
+            description="Search for symbols by name or qualified path with fuzzy matching. Resolves Hydra _target_ paths and finds class definitions.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "query": {"type": "string", "description": "Symbol name or qualified path"},
+                    "root": {"type": "string", "description": "Root directory to search (default: project root)"},
+                    "fuzzy": {"type": "boolean", "description": "Enable fuzzy matching (default: true)"},
+                    "threshold": {"type": "number", "description": "Min similarity 0.0-1.0 (default: 0.6)"},
+                },
+                "required": ["query"],
+            },
+        ),
     ]
+
+    # Filter tools based on enabled groups
+    enabled_tools = [tool for tool in all_tools if is_tool_enabled(tool.name)]
+
+    return enabled_tools
 
 
 @app.call_tool()
@@ -346,7 +416,17 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [TextContent(type="text", text=res.stdout + res.stderr)]
 
         if name == "get_server_info":
-            return [TextContent(type="text", text=json.dumps({"name": "project_compass", "version": "1.0.0", "status": "running", "components": ["Compass", "AgentQMS", "ETK", "ADT"]}, indent=2))]
+            info = {
+                "name": "unified_project",
+                "version": "1.0.0",
+                "status": "running",
+                "components": ["Compass", "AgentQMS", "ETK", "ADT"],
+                "tool_groups": {
+                    "enabled": list(ENABLED_GROUPS),
+                    "available": list(TOOLS_CONFIG.get("tool_groups", {}).keys()),
+                },
+            }
+            return [TextContent(type="text", text=json.dumps(info, indent=2))]
 
         if name == "project_compass":
             entrypoint_path = COMPASS_DIR / "AI_ENTRYPOINT.md"
@@ -517,6 +597,43 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             if mreport.results: summary.extend(["", "## Precedence", mtracker.explain_precedence()])
 
             return [TextContent(type="text", text="\n".join(summary))]
+
+        if name == "context_tree":
+            from agent_debug_toolkit.analyzers.context_tree import ContextTreeAnalyzer, format_tree_markdown
+            path = resolve_adt_path(arguments["path"])
+
+            if not path.exists():
+                return [TextContent(type="text", text=f"Error: Path not found: {path}")]
+            if not path.is_dir():
+                return [TextContent(type="text", text=f"Error: Not a directory: {path}")]
+
+            depth = arguments.get("depth", 3)
+            analyzer = ContextTreeAnalyzer(max_depth=depth)
+            report = analyzer.analyze_directory(str(path))
+
+            if "error" in report.summary:
+                return [TextContent(type="text", text=f"Error: {report.summary['error']}")]
+
+            if arguments.get("output") == "json":
+                return [TextContent(type="text", text=report.to_json())]
+            else:
+                return [TextContent(type="text", text=format_tree_markdown(report))]
+
+        if name == "intelligent_search":
+            from agent_debug_toolkit.analyzers.intelligent_search import IntelligentSearcher, format_search_results_markdown
+
+            query = arguments["query"]
+            root = resolve_adt_path(arguments.get("root", PROJECT_ROOT))
+            fuzzy = arguments.get("fuzzy", True)
+            threshold = arguments.get("threshold", 0.6)
+
+            searcher = IntelligentSearcher(str(root), str(PROJECT_ROOT))
+            results = searcher.search(query, fuzzy=fuzzy, threshold=threshold)
+
+            if arguments.get("output") == "json":
+                return [TextContent(type="text", text=json.dumps([r.to_dict() for r in results], indent=2))]
+            else:
+                return [TextContent(type="text", text=format_search_results_markdown(results, query))]
 
         raise ValueError(f"Unknown tool: {name}")
     except Exception as e:

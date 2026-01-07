@@ -1,5 +1,5 @@
 # Agent Debug Toolkit (ADT) Usage Guide for AI Agents
-# Version: 1.0 (Phase 2.5)
+# Version: 1.1 (Phase 3.2)
 
 tools:
   resolve_hydra_configs:
@@ -53,6 +53,43 @@ tools:
        threshold: Int (default 10)
     example: |
        adt analyze-complexity src/ -t 15
+
+  context_tree:
+    desc: Generate annotated directory tree with docstrings and semantic labels.
+    args:
+       path: Directory to analyze
+       depth: Max depth to traverse (default 3)
+       output: Format - markdown (default), json, tree
+    example: |
+       adt context-tree ocr/recognition --depth 2
+       adt context-tree agent-debug-toolkit/src --output json
+    features:
+       - Extracts module docstrings and __all__ exports
+       - Detects special directories (tests, configs, models, data)
+       - Lists key classes and functions with their docstrings
+       - Provides rich context for AI agent navigation
+
+  intelligent_search:
+    desc: Search for symbols by name or qualified path with fuzzy matching.
+    args:
+      query: Symbol name or qualified path (e.g., "TimmBackbone" or "ocr.models.encoder.TimmBackbone")
+      root: "Root directory to search (default: current directory)"
+      fuzzy: "Enable fuzzy matching for typos (default: true)"
+      threshold: "Minimum similarity 0.0-1.0 (default: 0.6)"
+    example: |
+       # Find by class name
+       adt intelligent-search "ContextTreeAnalyzer" --root src/
+
+       # Resolve qualified path
+       adt intelligent-search "agent_debug_toolkit.analyzers.context_tree.ContextTreeAnalyzer"
+
+       # Fuzzy search (handles typos)
+       adt intelligent-search "ContextTreeAnalyer" --threshold 0.7
+    features:
+       - Resolves Hydra _target_ paths to file locations
+       - Reverse lookup: find all import paths for a class
+       - Fuzzy matching for typo correction (using difflib)
+       - JSON or markdown output
 
 concepts:
   symbol_table: "Internal service mapping definitions across files."

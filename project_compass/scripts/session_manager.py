@@ -38,7 +38,12 @@ def get_current_session_id():
 
 
 def export_session(note=None):
-    """Archives the current active context to history/sessions."""
+    """Archives the current active context to history/sessions.
+
+    CRITICAL FIX (2026-01-08): Creates timestamped copy of session_handover.md
+    to preserve session-specific state. Previous implementation lost data by
+    copying from a single overwritten file.
+    """
     session_id = get_current_session_id()
     if not session_id:
         print("Error: No active session found in active_context/current_session.yml")
@@ -58,10 +63,23 @@ def export_session(note=None):
     # 1. Copy active_context
     shutil.copytree(ACTIVE_CONTEXT_DIR, dest_dir / "active_context", dirs_exist_ok=True)
 
-    # 2. Copy session_handover.md
+    # 2. CRITICAL FIX: Create timestamped copy of session_handover.md
+    # This preserves the exact state at export time
     handover_file = COMPASS_DIR / "session_handover.md"
     if handover_file.exists():
+        # Copy to timestamped filename to preserve this session's state
+        timestamped_handover = dest_dir / f"session_handover_{timestamp}.md"
+        shutil.copy2(handover_file, timestamped_handover)
+
+        # Also copy to standard name for backwards compatibility
         shutil.copy2(handover_file, dest_dir / "session_handover.md")
+
+        print(f"✓ Preserved session handover: session_handover_{timestamp}.md")
+    else:
+        print("Warning: No session_handover.md found. Creating placeholder.")
+        placeholder = dest_dir / "session_handover.md"
+        with open(placeholder, "w") as f:
+            f.write(f"# Session Handover\n\nSession ID: {session_id}\nExported: {timestamp}\n\nNo handover document was created for this session.\n")
 
     # 3. Manifest
     manifest = {"original_session_id": session_id, "exported_at": timestamp, "note": note or ""}

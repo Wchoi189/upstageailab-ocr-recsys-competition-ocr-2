@@ -121,6 +121,17 @@
         "-m",
         "agent_debug_toolkit.mcp_server"
       ]
+    },
+    "perplexity": {
+      "command": "npx",
+      "args": [
+        "-y",
+        "perplexity-mcp"
+      ],
+      "env": {
+        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
+      },
+      "disabled": true
     }
   }
 }

@@ -14,6 +14,8 @@ Tools exposed:
 - analyze_dependency_graph: Build module dependency graphs (Phase 1)
 - analyze_imports: Categorize and track imports (Phase 1)
 - analyze_complexity: Calculate code complexity metrics (Phase 1)
+- context_tree: Generate annotated directory tree with semantic context (Phase 3.2)
+- intelligent_search: Search symbols by name or qualified path with fuzzy matching (Phase 3.2)
 """
 
 import asyncio
@@ -218,6 +220,65 @@ TOOLS = [
                 },
             },
             "required": ["path"],
+        },
+    },
+    {
+        "name": "context_tree",
+        "description": "Generate annotated directory tree with semantic context. Extracts module docstrings, __all__ exports, and key class/function definitions for rich AI navigation.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Directory path to analyze",
+                },
+                "depth": {
+                    "type": "integer",
+                    "default": 3,
+                    "description": "Maximum directory depth to traverse",
+                },
+                "output": {
+                    "type": "string",
+                    "enum": ["json", "markdown"],
+                    "default": "markdown",
+                    "description": "Output format",
+                },
+            },
+            "required": ["path"],
+        },
+    },
+    {
+        "name": "intelligent_search",
+        "description": "Search for symbols by name or qualified path with fuzzy matching. Resolves Hydra _target_ paths, finds class definitions, and suggests corrections for typos.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "query": {
+                    "type": "string",
+                    "description": "Symbol name or qualified path (e.g., 'TimmBackbone' or 'ocr.models.encoder.TimmBackbone')",
+                },
+                "root": {
+                    "type": "string",
+                    "description": "Root directory to search (default: project root)",
+                },
+                "fuzzy": {
+                    "type": "boolean",
+                    "default": True,
+                    "description": "Enable fuzzy matching for typos",
+                },
+                "threshold": {
+                    "type": "number",
+                    "default": 0.6,
+                    "description": "Minimum similarity for fuzzy matches (0.0-1.0)",
+                },
+                "output": {
+                    "type": "string",
+                    "enum": ["json", "markdown"],
+                    "default": "markdown",
+                    "description": "Output format",
+                },
+            },
+            "required": ["query"],
         },
     },
 ]
@@ -456,6 +517,52 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             raise FileNotFoundError(f"Path not found: {path}")
 
         content = report.to_json() if output_format == "json" else report.to_markdown()
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "context_tree":
+        from agent_debug_toolkit.analyzers.context_tree import ContextTreeAnalyzer, format_tree_markdown
+
+        path = resolve_path(arguments.get("path", ""))
+        depth = arguments.get("depth", 3)
+        output_format = arguments.get("output", "markdown")
+
+        if not path.is_dir():
+            raise ValueError(f"Path must be a directory: {path}")
+
+        analyzer = ContextTreeAnalyzer(max_depth=depth)
+        report = analyzer.analyze_directory(str(path))
+
+        if "error" in report.summary:
+            raise RuntimeError(f"Analysis error: {report.summary['error']}")
+
+        if output_format == "markdown":
+            content = format_tree_markdown(report)
+        else:
+            content = report.to_json()
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "intelligent_search":
+        from agent_debug_toolkit.analyzers.intelligent_search import (
+            IntelligentSearcher,
+            format_search_results_markdown,
+        )
+
+        query = arguments.get("query", "")
+        root = resolve_path(arguments.get("root", get_project_root()))
+        fuzzy = arguments.get("fuzzy", True)
+        threshold = arguments.get("threshold", 0.6)
+        output_format = arguments.get("output", "markdown")
+
+        searcher = IntelligentSearcher(str(root), str(get_project_root()))
+        results = searcher.search(query, fuzzy=fuzzy, threshold=threshold)
+
+        if output_format == "json":
+            import json
+            content = json.dumps([r.to_dict() for r in results], indent=2)
+        else:
+            content = format_search_results_markdown(results, query)
 
         return [TextContent(type="text", text=content)]
 

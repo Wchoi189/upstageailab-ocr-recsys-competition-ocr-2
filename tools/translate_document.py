@@ -84,23 +84,6 @@ class DocumentTranslator:
             return file_path
 
         return file_path.with_stem(normalized_stem)
-        links = []
-        for match in self.link_pattern.finditer(content):
-            link_path = match.group(2)
-            # Ignore absolute links or URLs
-            if link_path.startswith(("http", "https", "/")):
-                continue
-
-            # Resolve path relative to the file
-            target_path = (base_path.parent / link_path).resolve()
-
-            # Skip if it's already a Korean translation or not a file
-            if target_path.name.endswith(".ko.md"):
-                continue
-
-            if target_path.exists() and target_path.is_file():
-                links.append(target_path)
-        return links
 
     def update_links(self, content: str) -> str:
         """Update links in translated content to point to .ko.md files."""
