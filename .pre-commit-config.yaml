@@ -60,15 +60,15 @@ repos:
 
       - id: ads-compliance-check
         name: ADS v1.0 Compliance Check
-        entry: uv run python .ai-instructions/schema/compliance-checker.py
+        entry: uv run python AgentQMS/standards/schemas/compliance-checker.py
         language: system
         # Validate tier1-sst and tier2-framework only (pure YAML)
         # Exclude: DEPRECATED/, tier3-agents/*.yaml (hybrid), tier4-workflows/ (hybrid docs)
-        files: ^\.ai-instructions/(tier1-sst|tier2-framework)/.*\.yaml$
+        files: ^\AgentQMS/standards/(tier1-sst|tier2-framework)/.*\.yaml$
         pass_filenames: true
 
       - id: forbid-pip-install
         name: forbid-pip-install
         entry: uv run python scripts/ci/forbid_pip_install.py
         language: system
-        files: ^(scripts/.*\.(sh|py)|AgentQMS/interface/Makefile)$
+        files: ^(scripts/.*\.(sh|py)|AgentQMS/bin/Makefile)$

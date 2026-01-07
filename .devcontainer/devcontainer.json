@@ -36,6 +36,14 @@
         }
     },
     "remoteUser": "vscode",
+    "remoteEnv": {
+        "CLAUDE_CONFIG_DIR": "${containerWorkspaceFolder}/AgentQMS/standards/tier3-agents/claude",
+        "DISABLE_TELEMETRY": "1",
+        "DISABLE_ERROR_REPORTING": "1",
+        "DISABLE_AUTOUPDATER": "1",
+        "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
+        "DEBUG": ""
+    },
     "onCreateCommand": "echo '✅ Container created (cloud-optimized)'",
     "updateContentCommand": "uv sync --no-install || uv sync",
     "postCreateCommand": "uv sync && uv pip install -e . --no-deps",

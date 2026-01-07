@@ -34,7 +34,7 @@ def count_files(pattern: str) -> int:
 
 def check_ads_compliance() -> dict:
     """Check ADS v1.0 compliance for all YAML files"""
-    yaml_files = list(Path(ROOT / ".ai-instructions").rglob("*.yaml"))
+    yaml_files = list(Path(ROOT / "AgentQMS/standards").rglob("*.yaml"))
 
     results = {"total": len(yaml_files), "passed": 0, "failed": 0, "warnings": 0, "details": []}
 
@@ -100,7 +100,7 @@ def check_agent_configs() -> dict:
     results = {"total_agents": len(agents), "complete": 0, "missing": [], "details": []}
 
     for agent in agents:
-        agent_dir = ROOT / ".ai-instructions" / "tier3-agents" / agent
+        agent_dir = ROOT / "AgentQMS/standards" / "tier3-agents" / agent
         required_files = ["config.yaml", "quick-reference.yaml", "validation.sh"]
 
         missing = []
@@ -128,7 +128,7 @@ def check_agent_configs() -> dict:
 
 def calculate_token_footprint() -> dict:
     """Estimate token footprint of AI documentation"""
-    yaml_files = list(Path(ROOT / ".ai-instructions").rglob("*.yaml"))
+    yaml_files = list(Path(ROOT / "AgentQMS/standards").rglob("*.yaml"))
 
     total_lines = 0
     tier_breakdown = defaultdict(int)
@@ -310,7 +310,7 @@ def main():
         print(report)
 
         # Write to file
-        report_file = ROOT / ".ai-instructions" / "tier4-workflows" / "compliance-reporting" / "latest-report.txt"
+        report_file = ROOT / "AgentQMS/standards" / "tier4-workflows" / "compliance-reporting" / "latest-report.txt"
         report_file.parent.mkdir(parents=True, exist_ok=True)
         report_file.write_text(report)
 

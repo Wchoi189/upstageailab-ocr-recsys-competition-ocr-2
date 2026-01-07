@@ -12,7 +12,7 @@ Use this guide as the single entry point for all project documentation. It group
 | **VLM Reports** | Reviewing Vision Language Model evaluation results. | `docs/vlm_reports/` | `ls docs/vlm_reports` |
 | **Guides** | Setup and usage guides. | `docs/guides/` | `ls docs/guides` |
 | **Archive** | Accessing historical code, docs, and legacy UI. | `docs/archive/` | `ls -R docs/archive` |
-| **System Source of Truth** | Core instructions and framework guidance. | `.ai-instructions/` | `ls -R .ai-instructions` |
+| **System Source of Truth** | Core instructions and framework guidance. | `AgentQMS/standards/` | `ls -R AgentQMS/standards` |
 
 ## Artifact Categories
 
@@ -44,7 +44,7 @@ Use this guide as the single entry point for all project documentation. It group
   ```
 - Search through all active instructions:
   ```bash
-  rg "TODO" .ai-instructions
+  rg "TODO" experiment_manager/.ai-instructions
   ```
 
 ## Naming Conventions
@@ -58,8 +58,9 @@ Use this guide as the single entry point for all project documentation. It group
 | Location | Status | Contents |
 |----------|--------|----------|
 | `docs/archive/` | ⚠️ ARCHIVED | Historical code/docs, do not update |
-| `docs/archive/user_docs/` | ⚠️ LEGACY | Former user-facing documentation |
-| `.ai-instructions/DEPRECATED/` | ⚠️ DEPRECATED | Legacy agent configs |
+| `archive/user_docs/` | ⚠️ LEGACY | Former user-facing documentation |
+| `docs/changelog/_deprecated/` | ⚠️ DEPRECATED | Deprecated changelog entries |
+<!-- | `.ai-instructions/DEPRECATED/` | ⚠️ DEPRECATED | Legacy agent configs | -->
 
 > **Note**: Stale references in archived files are NOT corrected.
 
