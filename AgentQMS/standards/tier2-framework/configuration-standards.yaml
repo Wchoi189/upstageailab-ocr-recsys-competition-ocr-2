@@ -25,22 +25,22 @@ rules:
       - "isinstance(cfg, dict)"
       - "if type(cfg) is dict:"
     good_patterns:
-      - "from ocr.utils.config_utils import is_config; is_config(cfg)"
+      - "from ocr.core.utils.config_utils import is_config; is_config(cfg)"
 
   - id: use-is-config
     severity: critical
     description: >-
-      ALWAYS use `ocr.utils.config_utils.is_config(obj)` to check for
+      ALWAYS use `ocr.core.utils.config_utils.is_config(obj)` to check for
       dictionary-like config objects.
     example: |
-      from ocr.utils.config_utils import is_config
+      from ocr.core.utils.config_utils import is_config
       if is_config(cfg):
           process(cfg)
 
   - id: use-ensure-dict
     severity: critical
     description: >-
-      ALWAYS use `ocr.utils.config_utils.ensure_dict(obj)` when you need a
+      ALWAYS use `ocr.core.utils.config_utils.ensure_dict(obj)` when you need a
       native Python dictionary.
     bad_patterns:
       - "dict(cfg)"
@@ -48,7 +48,7 @@ rules:
     good_patterns:
       - "ensure_dict(cfg)"
     example: |
-      from ocr.utils.config_utils import ensure_dict
+      from ocr.core.utils.config_utils import ensure_dict
       native_dict = ensure_dict(cfg)
 
 utilities:

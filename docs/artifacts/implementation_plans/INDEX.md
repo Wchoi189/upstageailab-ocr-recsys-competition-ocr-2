@@ -2,8 +2,8 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-08 03:02:43
-**Total Artifacts**: 20
+**Last Updated**: 2026-01-08 03:59:43
+**Total Artifacts**: 22
 
 ## Active (16)
 
@@ -28,11 +28,13 @@ Active implementation plans and development roadmaps.
 
 - [Model Head Signature Fix - LSP Violation Resolution](2025-12-27_0610_implementation_plan_model-head-signature-fix.md) (📅 2025-12-27 06:10 (KST), 📄 implementation_plan) - **Type:** Liskov Substitution Principle (LSP) Violation - HIGH RISK
 
-## Other (3)
+## Other (5)
 
 - [Phase 2-3: Pipeline Integration + VLM + Optimization](2025-12-25_0410_implementation_plan_phase2-pipeline-integration.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Integrate the recognition, layout, and extraction modules into a unified end-to-end pipeline with hy
 - [Implementation Plan - GitHub Sync Entrypoints](2026-01-05_1900_implementation_plan_github-sync-entrypoints.md) (📅 2026-01-05 18:54 (KST), 📄 implementation_plan) - This plan outlines the steps to expose the new GitHub Sync features (`--init`, `--roadmap`) via VS C
 - [AST Analyzer Phase 3: Conceptual Plan for Automated Refactoring](2026-01-07_0448_implementation_plan_ast-analyzer-phase3-conceptual.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - > "I have a very big code base... bloat, inconsistencies, obsolete, deprecated, broken, outdated, su
+- [Cleanup & Organization Implementation Plan](2026-01-08_0340_implementation_plan_cleanup-organization-plan.md) (📅 2026-01-08, 📄 implementation_plan) - Implement the "Future Recommendations" (1-3) from the Refactor Audit Survey to reduce bloat, improve
+- [2026-01-08_0359_implementation_plan_hydra-config-restructuring](2026-01-08_0359_implementation_plan_hydra-config-restructuring.md) (📅 , 📄 ) - **Objective**: Map all Hydra entry points and config access patterns before making changes.
 
 ## Summary
 
@@ -40,7 +42,7 @@ Active implementation plans and development roadmaps.
 |--------|-------|
 | Active | 16 |
 | Completed | 1 |
-| Other | 3 |
+| Other | 5 |
 
 ---
 

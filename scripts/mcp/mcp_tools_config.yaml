@@ -6,7 +6,7 @@
 enabled_groups:
   - compass          # Project Compass navigation tools
   - agentqms         # AgentQMS artifact workflow tools
-  # - etk              # Experiment Manager tools
+  - etk              # Experiment Manager tools
   - adt_core         # Core ADT analysis tools
   - adt_phase1       # Phase 1 ADT tools (dependencies, imports, complexity)
   - adt_phase3       # Phase 3.2 ADT tools (context_tree, intelligent_search)

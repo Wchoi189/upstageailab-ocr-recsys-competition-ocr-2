@@ -1,11 +1,25 @@
 {
-	// "servers": {
-	// 	"copilot-memory-sqlite": {
-	// 		"command": "node",
-	// 		"args": [
-	// 			"./node_modules/kiranbjm.copilot-memory-sqlite/index-sqlite.js"
-	// 		],
-	// 		"env": {}
-	// 	}
-	// }
+	"servers": {
+	"perplexity": {
+		"command": "npx",
+		"args": [
+			"-y",
+			"perplexity-mcp"
+		],
+		"env": {
+			"PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
+		},
+		"disabled": true
+	},
+	"unified_project": {
+		"command": "uv",
+		"args": [
+			"run",
+			"--directory",
+			"/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+			"python",
+			"scripts/mcp/unified_server.py"
+		]
+	}
+	}
 }

@@ -108,7 +108,8 @@ COPY --chown=vscode:vscode README.md ./
 
 # Install dependencies into the user's cache or a dummy venv
 # This populates the uv cache at /home/vscode/.cache/uv
-RUN uv sync --frozen --no-dev || uv sync --frozen
+RUN uv sync --frozen --no-dev || uv sync --frozen \
+    && rm -rf /home/vscode/.cache/uv /root/.cache/uv
 
 # === DEVELOPMENT IMAGE ===
 FROM dependencies AS development

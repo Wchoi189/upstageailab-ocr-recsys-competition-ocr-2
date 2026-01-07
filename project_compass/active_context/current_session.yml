@@ -1,17 +1,109 @@
-session_id: "2026-01-08-Phase_3_2_Complete"
-objective: "Implement Phase 3.2: Intelligent Search Analyzer & MCP Tool Groups"
-status: "completed"
-completed_date: "2026-01-08 03:00 (KST)"
-context_files:
-  - "docs/project_compass/active_context/session_handover.md"
-completed_tasks:
-  - "✅ Intelligent Search Analyzer (fuzzy matching, reverse lookup)"
-  - "✅ MCP Tool Groups (config-based toggling)"
-  - "✅ Audit of Session Workflow (Fixed stale context issue)"
-next_phase: "Phase 3.3: AST Visualization"
-current_phase: "Phase 3.2"
-notes: "Phase 3.2 completed. Fixed session export workflow. Ready for visualization implementation."
-git_state:
-  branch: "feature/audit-session-workflow"
-  last_commit: "HEAD"
-  status: "clean"
+---
+# Project Compass Active Session
+session_id: "2026-01-08-Hydra-Config-Restructure"
+status: "active"
+started_date: "2026-01-08"
+completed_date: null
+
+objective: |
+  Hydra Configuration Architecture Restructuring: Restructure from 107 YAML files/37
+  directories to ~50 files/15 directories with domain-first organization.
+
+implementation_plan: "docs/artifacts/implementation_plans/2026-01-08_0359_implementation_plan_hydra-config-restructuring.md"
+source_walkthrough: "docs/artifacts/walkthroughs/2026-01-05_0441_Hydra-Config-Architecture-Restructuring.md"
+
+phases:
+  phase_0_discovery:
+    status: "pending"
+    description: "Analyze current configuration dependencies using Agent Debug Toolkit"
+    tasks:
+      - "Map all Hydra entry points"
+      - "Generate config flow documentation"
+      - "Create baseline snapshot"
+
+  phase_1_foundation:
+    status: "pending"
+    description: "Non-breaking foundation changes"
+    tasks:
+      - "Create new directory structure"
+      - "Rename _base/ to _foundation/"
+      - "Create _foundation/defaults.yaml"
+      - "Update README.md"
+
+  phase_2_domain:
+    status: "pending"
+    description: "Domain unification"
+    tasks:
+      - "Create domain configs (detection, recognition, kie, layout)"
+      - "Verify domain configs compose"
+
+  phase_3_entrypoints:
+    status: "pending"
+    description: "Entry point simplification"
+    tasks:
+      - "Update train.yaml with domain composition"
+      - "Rename test.yaml to eval.yaml"
+      - "Archive KIE variant configs"
+
+  phase_4_infrastructure:
+    status: "pending"
+    description: "Infrastructure reorganization"
+    tasks:
+      - "Move training infrastructure (callbacks, logger)"
+      - "Merge UI directories"
+      - "Move examples and benchmarks"
+
+  phase_5_scripts:
+    status: "pending"
+    description: "Script updates"
+    tasks:
+      - "Find all Hydra entry points"
+      - "Update runner scripts"
+      - "Update test/evaluation scripts"
+      - "Update performance benchmark scripts"
+
+  phase_6_verification:
+    status: "pending"
+    description: "Verification and validation"
+    tasks:
+      - "Hydra composition tests"
+      - "Smoke test training"
+      - "Validate with AgentQMS"
+      - "Compare before/after metrics"
+
+  phase_7_documentation:
+    status: "pending"
+    description: "Documentation and cleanup"
+    tasks:
+      - "Update main documentation"
+      - "Create migration cheatsheet"
+      - "Remove old base.yaml"
+
+  phase_8_cicd:
+    status: "pending"
+    description: "CI/CD updates"
+    tasks:
+      - "Update GitHub Actions"
+      - "Update Docker configs"
+
+current_task: "Phase 0: Discovery & Analysis"
+
+blockers: []
+
+notes:
+  - "Requires stakeholder approval before execution"
+  - "Breaking changes to config entry points"
+  - "Git branch: refactor/hydra (already exists)"
+
+tools_required:
+  - "Agent Debug Toolkit (ADT)"
+  - "AgentQMS CLI"
+  - "uv package manager"
+
+success_criteria:
+  - "Total YAML files < 60"
+  - "Directory count < 20"
+  - "Root-level configs ≤ 5"
+  - "All compositions pass"
+  - "Smoke tests pass"
+  - "AgentQMS validation passes"

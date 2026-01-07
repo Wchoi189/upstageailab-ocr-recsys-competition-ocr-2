@@ -140,10 +140,10 @@ pydantic_validation_rules:
 
   reference_implementations:
     core_validation: "ocr/core/validation.py"  # ← Primary (all models/schemas)
-    schemas_shim: "ocr/datasets/schemas.py"  # ← Deprecated shim (imports from core)
-    validation_shim: "ocr/validation/models.py"  # ← Deprecated shim (imports from core)
-    contracts: "ocr/datasets/preprocessing/contracts.py"
-    transforms: "ocr/datasets/transforms.py"
+    schemas_shim: "ocr/recognition/data/schemas.py"  # ← Recognition specific
+    validation_shim: "ocr/core/validation.py"  # ← Consolidated
+    contracts: "ocr/recognition/data/contracts.py" # (verify path)
+    transforms: "ocr/recognition/data/transforms.py"
 
 # Tier 2 - Coding Standards: Error Handling
 
@@ -151,7 +151,7 @@ error_handling_rules:
   exception_hierarchy:
     base: "Use domain-specific exception classes"
     locations:
-      - "ocr/exceptions.py for OCR-specific errors"
+      - "ocr/core/exceptions.py if exists, else standard Python exceptions"
       - "Inherit from built-in exceptions (ValueError, TypeError)"
 
   required_patterns:

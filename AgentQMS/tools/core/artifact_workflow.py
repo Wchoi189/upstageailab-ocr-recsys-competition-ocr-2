@@ -82,6 +82,7 @@ class ArtifactWorkflow:
         auto_validate: bool = True,
         auto_update_indexes: bool = True,
         track: bool = True,
+        content: str | None = None,
         **kwargs,
     ) -> str:
         """Create a new artifact following project standards.
@@ -96,6 +97,7 @@ class ArtifactWorkflow:
             auto_validate: Automatically validate after creation (default: True)
             auto_update_indexes: Automatically update indexes after creation (default: True)
             track: Auto-register in tracking DB (default: True for trackable types)
+            content: Optional content to write to the artifact file immediately (overwrites template default)
             **kwargs: Additional arguments passed to create_artifact
         """
         self._log(f"🚀 Creating {artifact_type} artifact: {name}")
@@ -103,6 +105,36 @@ class ArtifactWorkflow:
         try:
             # Create the artifact
             file_path: str = create_artifact(artifact_type, name, title, str(self.artifacts_root), quiet=self.quiet, **kwargs)
+
+            # Write content if provided
+            if content is not None:
+                try:
+                    # Read the generated file to preserve frontmatter
+                    generated_text = Path(file_path).read_text(encoding="utf-8")
+
+                    if generated_text.startswith("---"):
+                        # Find the end of frontmatter (searching for second delimiter)
+                        # We search from index 3 to skip the first '---'
+                        end_fm_idx = generated_text.find("\n---\n", 3)
+                        if end_fm_idx != -1:
+                            # Extract frontmatter including the closing delimiter
+                            frontmatter = generated_text[:end_fm_idx+5]
+                            # Combine frontmatter with new content
+                            # Check if content has its own frontmatter to avoid duplication
+                            if content.strip().startswith("---"):
+                                # Trust the provided content fully if it has valid-looking frontmatter
+                                full_new_content = content
+                            else:
+                                full_new_content = frontmatter + "\n" + content
+                        else:
+                            full_new_content = content
+                    else:
+                        full_new_content = content
+
+                    Path(file_path).write_text(full_new_content, encoding="utf-8")
+                    self._log("📝 Wrote provided content to artifact")
+                except Exception as write_err:
+                    self._log(f"⚠️  Failed to write content to artifact: {write_err}")
 
             self._log(f"✅ Created artifact: {file_path}")
 
