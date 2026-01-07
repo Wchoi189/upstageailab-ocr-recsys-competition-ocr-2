@@ -23,7 +23,7 @@ Active bug reports and development roadmaps.
 
 - [001 Startup Latency SLA Violation](2025-12-23_0900_BUG_001_startup-latency.md) (📅 2025-12-23 09:00 (KST), 📄 bug_report) - **Date Detected:** 2025-12-23
 - [001 Metadata Callback ModuleNotFoundError](2025-12-24_1000_BUG_001_metadata-callback-import-error.md) (📅 2025-12-24 10:00 (KST), 📄 bug_report) - **Date Detected:** 2025-12-24
-- [Silent Configuration Failures via isinstance(dict)](2025-12-27_2124_BUG_001-config-silent-failure.md) (📅 2025-12-27 21:24 (KST), 📄 bug_report) - The issue was pervasive across `ocr/models`, `ocr/inference`, `ocr/datasets`, and `ocr/utils`. By re
+- [Silent Configuration Failures via isinstance(dict)](2025-12-27_2124_BUG_001_config-silent-failure.md) (📅 2025-12-27 21:24 (KST), 📄 bug_report) - The issue was pervasive across `ocr/models`, `ocr/inference`, `ocr/datasets`, and `ocr/utils`. By re
 - [Coordinate Inverse Orientation Mapping for Test Verification](2026-01-03_1812_BUG_002_coordinate-inverse-orientation-mapping.md) (📅 2026-01-03 18:12 (KST), 📄 bug_report) - Bug ID: BUG-2026-002
 - [MCP Server resource/read Returns 'Unknown resource URI' Despite Correct Implementation](2026-01-03_1937_BUG_003_mcp-server-resource-reading-failure.md) (📅 2026-01-03 19:37 (KST), 📄 bug_report) - Bug ID: BUG-003
 - [OCRModel Crash on Hydra Composition with DictConfig](2026-01-04_1700_BUG_001_hydra-composition-crash.md) (📅 2026-01-04 17:00 (KST), 📄 bug_report) - When running `uv run python runners/train.py --config-name train_parseq`, the training failed immedi

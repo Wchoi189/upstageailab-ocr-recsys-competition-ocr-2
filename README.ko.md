@@ -2,7 +2,7 @@
 
 **에이전트 관측 가능성과 고성능 데이터 엔지니어링을 갖춘 문서 인텔리전스 파이프라인**
 
-**언어:** [English](README.ko.md) · [한국어](README.ko.md)
+**언어:** [English](README.md) · [한국어](README.ko.md)
 
 [![Hugging Face](https://img.shields.io/badge/%F0%9F%A4%97%20HF%20Model-v1.0-FFD21E.svg)](https://huggingface.co/wchoi189/receipt-text-detection_kr-pan_resnet18) [![Environment](https://img.shields.io/badge/Env-UV-blue.svg)](https://github.com/astral-sh/uv) [![Architecture](https://img.shields.io/badge/Arch-MCP%20Compatible-green.svg)](#project-compass-ai-navigation)
 
@@ -11,16 +11,16 @@
 ## 목차
 
 **I. 소개**
-[개요](#overview) · [프로젝트 상태](#project-status) · [시스템 아키텍처](#system-architecture)
+[개요](#개요) · [프로젝트 상태](#프로젝트-상태) · [시스템 아키텍처](#시스템-아키텍처)
 
 **II. 기술 구현**
-[핵심 인프라](#core-infrastructure) · [데이터 엔지니어링](#data-engineering) · [모델 훈련](#model-training)
+[핵심 인프라](#핵심-인프라) · [데이터 엔지니어링](#데이터-엔지니어링) · [모델 훈련](#모델-훈련)
 
 **III. 연구 및 개발**
-[연구 방법론](#research-methodology) · [주요 발견](#key-findings) · [기술적 전환](#technical-pivots)
+[연구 방법론](#연구-방법론) · [주요 발견](#주요-발견) · [기술적 전환](#기술적-전환)
 
 **IV. 부록**
-[데모](#demonstrations) · [기술 스택](#technology-stack) · [참조](#references)
+[데모](#데모) · [기술 스택](#기술-스택) · [참조](#참조)
 
 ---
 

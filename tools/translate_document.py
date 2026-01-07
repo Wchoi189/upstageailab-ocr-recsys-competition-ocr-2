@@ -35,8 +35,55 @@ class DocumentTranslator:
         self.visited: set[Path] = set()
         self.link_pattern = re.compile(r"\[([^\]]+)\]\(([^)]+\.md)\)")
 
-    def extract_links(self, content: str, base_path: Path) -> list[Path]:
-        """Extract local markdown file links from content."""
+    def normalize_artifact_name(self, file_path: Path) -> Path:
+        """Normalize artifact filenames to match AgentQMS conventions.
+
+        AgentQMS uses underscores as separators throughout artifact filenames.
+        The descriptive part uses hyphens for word separation (kebab-case).
+
+        Pattern: YYYY-MM-DD_HHMM_TYPE_ID_descriptive-name
+        - Underscores separate structural parts (date, time, type, ID)
+        - Hyphens separate words within the descriptive name
+
+        Examples:
+            - 2026-01-04_1730_BUG_003_config_precedence_leak.md
+              -> 2026-01-04_1730_BUG_003_config-precedence-leak.md
+            - 2026-01-03_1200_assessment_my_long_name.md
+              -> 2026-01-03_1200_assessment_my-long-name.md
+        """
+        # Only normalize if this is an artifact file (in docs/artifacts/)
+        if "docs/artifacts" not in str(file_path):
+            return file_path
+
+        # Parse the filename
+        stem = file_path.stem
+
+        # Split by underscores to find structural parts
+        parts = stem.split("_")
+
+        # Need at least: date, time, type
+        if len(parts) < 3:
+            return file_path
+
+        date_part = parts[0]  # YYYY-MM-DD
+        time_part = parts[1]  # HHMM
+        type_part = parts[2]  # BUG, assessment, etc.
+
+        # For bug reports: YYYY-MM-DD_HHMM_BUG_NNN_description
+        if len(parts) >= 5 and type_part.upper() == "BUG" and parts[3].isdigit():
+            bug_id = parts[3]
+            # Everything after BUG_NNN: convert underscores to hyphens
+            descriptive = "-".join(parts[4:])
+            normalized_stem = f"{date_part}_{time_part}_{type_part}_{bug_id}_{descriptive}"
+        # For other artifacts: YYYY-MM-DD_HHMM_type_description
+        elif len(parts) >= 4:
+            # Everything after type: convert underscores to hyphens
+            descriptive = "-".join(parts[3:])
+            normalized_stem = f"{date_part}_{time_part}_{type_part}_{descriptive}"
+        else:
+            return file_path
+
+        return file_path.with_stem(normalized_stem)
         links = []
         for match in self.link_pattern.finditer(content):
             link_path = match.group(2)
@@ -103,9 +150,11 @@ class DocumentTranslator:
             "Strictly follow these rules:\n"
             "1. Preserve ALL Markdown formatting, links, image tags, and code blocks exactly.\n"
             "2. Do NOT translate code inside code blocks.\n"
-            "3. Do NOT translate frontmatter keys (e.g., 'title:', 'date:'), only translate values if they are text.\n"
-            "4. Output ONLY the translated content, no conversational filler.\n"
-            "5. Maintain a professional, clear tone."
+            "3. Do NOT translate URLs, file paths, or link targets in markdown links [text](URL). Only translate the link text.\n"
+            "4. Do NOT translate frontmatter keys (e.g., 'title:', 'date:'), only translate values if they are text.\n"
+            "5. Do NOT translate file names, directory names, or paths.\n"
+            "6. Output ONLY the translated content, no conversational filler.\n"
+            "7. Maintain a professional, clear tone."
         )
 
         try:
@@ -149,7 +198,7 @@ class DocumentTranslator:
                 if child.name == "README.md":
                     child_output = child.parent / "README.ko.md"
                 else:
-                    child_output = child.with_suffix(".ko.md")
+                    child_output = self.normalize_artifact_name(child.with_suffix(".ko.md"))
 
                 self.translate_file(child, child_output)
 
@@ -192,7 +241,7 @@ def main():
         if file_path.name == "README.md":
             output_path = file_path.parent / "README.ko.md"
         else:
-            output_path = file_path.with_suffix(".ko.md")
+            output_path = translator.normalize_artifact_name(file_path.with_suffix(".ko.md"))
 
         translator.translate_file(file_path, output_path)
 

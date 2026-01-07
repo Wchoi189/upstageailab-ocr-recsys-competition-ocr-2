@@ -109,7 +109,7 @@ class ArtifactTemplates:
 """,
             },
             "assessment": {
-                "filename_pattern": "YYYY-MM-DD_HHMM_assessment-{name}.md",
+                "filename_pattern": "YYYY-MM-DD_HHMM_assessment_{name}.md",
                 "directory": "assessments/",
                 "frontmatter": {
                     "ads_version": "1.0",
@@ -144,7 +144,7 @@ Evaluate {subject} and provide recommendations.
 """,
             },
             "design": {
-                "filename_pattern": "YYYY-MM-DD_HHMM_design-{name}.md",
+                "filename_pattern": "YYYY-MM-DD_HHMM_design_{name}.md",
                 "directory": "design_documents/",
                 "frontmatter": {
                     "ads_version": "1.0",
@@ -183,7 +183,7 @@ graph TD
 """,
             },
             "research": {
-                "filename_pattern": "YYYY-MM-DD_HHMM_research-{name}.md",
+                "filename_pattern": "YYYY-MM-DD_HHMM_research_{name}.md",
                 "directory": "research/",
                 "frontmatter": {
                     "ads_version": "1.0",
@@ -414,8 +414,20 @@ Summary of the analysis.
         if template_type == "bug_report":
             # Extract bug ID from name or generate one
             if "_" in name:
-                bug_id = name.split("_")[0]
-                descriptive_name = normalized_name.replace(bug_id + "-", "").strip("-")
+                # Extract bug ID from original name (e.g., "BUG_001_description" -> "001")
+                parts = name.split("_")
+                bug_id = parts[0] if parts[0].upper() == "BUG" and len(parts) > 1 else parts[0]
+                # If pattern is "BUG_NNN_description", extract NNN
+                if len(parts) >= 2 and parts[1].isdigit():
+                    bug_id = parts[1]
+                    # Descriptive part starts from index 2
+                    descriptive_parts = parts[2:]
+                else:
+                    # Otherwise assume first part is bug ID
+                    bug_id = parts[0]
+                    descriptive_parts = parts[1:]
+                # Normalize descriptive parts: convert underscores to hyphens
+                descriptive_name = "-".join(p.lower().replace(" ", "-") for p in descriptive_parts)
             else:
                 bug_id = "001"  # Default bug ID
                 descriptive_name = normalized_name
