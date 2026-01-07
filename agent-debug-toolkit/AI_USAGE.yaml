@@ -1,0 +1,63 @@
+# Agent Debug Toolkit (ADT) Usage Guide for AI Agents
+# Version: 1.0 (Phase 2.5)
+
+tools:
+  resolve_hydra_configs:
+    desc: Map Hydra config _target_ keys to Python files.
+    args:
+      config_dir: Path to config root (e.g., "configs")
+      module_root: Path to module root (e.g., ".")
+    example: |
+      adt resolve-configs configs --module-root .
+
+  analyze_config_access:
+    desc: Find code using cfg.X or config['X'].
+    args:
+      path: File or directory path
+    example: |
+      adt analyze-config src/model.py
+
+  trace_merge_order:
+    desc: Debug OmegaConf.merge() precedence.
+    args:
+      file: Path to python file
+    example: |
+      adt trace-merges src/train.py
+
+  find_hydra_usage:
+    desc: Find @hydra.main, instantiate(), etc.
+    args:
+      path: File or directory path
+    example: |
+      adt find-hydra src/
+
+  find_component_instantiations:
+    desc: Track factory patterns like get_X_by_cfg().
+    args:
+      path: File or directory
+      component: Optional filter (e.g., "encoder")
+    example: |
+      adt find-instantiations src/ --component encoder
+
+  analyze_dependencies:
+    desc: Build dependency graph (imports/calls).
+    args:
+       path: File or directory
+    example: |
+       adt analyze-dependencies src/
+
+  analyze_complexity:
+    desc: Check cyclomatic complexity/nesting.
+    args:
+       path: File/dir
+       threshold: Int (default 10)
+    example: |
+       adt analyze-complexity src/ -t 15
+
+concepts:
+  symbol_table: "Internal service mapping definitions across files."
+  resolution_status:
+    RESOLVED: "Static match found."
+    UNRESOLVED_DYNAMIC: "Interpolation detected (${...})."
+    UNRESOLVED_RELATIVE: "Relative path not fully resolved."
+    NOT_FOUND: "Symbol not in scanned codebase."
