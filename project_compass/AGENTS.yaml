@@ -5,6 +5,7 @@
 rules:
   - "Environment: Only use UV. Never overwrite Torch 2.6.0+cu124."
   - "State: manifest.json is the SSoT for experiments. compass.json is SSoT for strategy."
+  - "Protocol: Follow [Session Lifecycle] in AI_ENTRYPOINT.md. MUST update active_context/current_session.yml BEFORE export."
   - "Nomenclature: Use [Compass:X] tags in dialogue to refer to project state."
 
 entry_points:

@@ -2,15 +2,17 @@
 
 Active assessments and development roadmaps.
 
-**Last Updated**: 2026-01-07 04:48:39
-**Total Artifacts**: 7
+**Last Updated**: 2026-01-08 03:02:43
+**Total Artifacts**: 9
 
-## Active (4)
+## Active (6)
 
 - [Text Recognition Integration Strategy Assessment](2025-12-25_0330_assessment-text-recognition-integration-strategy.md) (📅 2025-12-25 04:10 (KST), 📄 assessment) - > [!NOTE]
 - [AgentQMS Usability and Consolidation Assessment](2026-01-03_1637_assessment-agentqms-usability-and-consolidation.md) (📅 2026-01-03 16:37 (KST), 📄 assessment) - To assess the usability of AgentQMS for AI Agents, resolve architecture overlaps, and fix environmen
 - [assessment-2026-01-05 10:00 (KST) GitHub Sync Roadmap & Project Initialization Assessment](2026-01-05_1811_assessment-github-sync-roadmap-extension.md) (📅 2026-01-05 10:00 (KST), 📄 assessment) - The user objective is to extend the `sync_github_projects.py` script to support:
 - [Assessment of Tools for Large Codebase Analysis and Debugging](2026-01-07_0423_assessment-codebase-analysis-tools-assessment.md) (📅 2026-01-07 04:23 (KST), 📄 assessment) - Assess the current state of a large, complex codebase with significant bloat, inconsistencies, obsol
+- [Refactor Audit & AI Agent Survey](2026-01-07_1733_assessment-refactor-audit-survey.md) (📅 2026-01-07 17:33 (KST), 📄 assessment) - - **Estimate**: The audit and refactor session was highly resource-intensive, likely exceeding **100
+- [AST Analyzer Phase 3 Feasibility Review & Research Requirements](2026-01-07_1821_assessment-ast-analyzer-phase3-feasibility-review.md) (📅 2026-01-07 18:21 (KST), 📄 assessment) - Evaluate the Phase 3 conceptual implementation plan, assess the research requirements to transform i
 
 ## Completed (3)
 
@@ -22,7 +24,7 @@ Active assessments and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 4 |
+| Active | 6 |
 | Completed | 3 |
 
 ---

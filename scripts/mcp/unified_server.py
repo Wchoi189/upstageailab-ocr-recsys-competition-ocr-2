@@ -266,6 +266,7 @@ async def list_tools() -> list[Tool]:
                     "title": {"type": "string"},
                     "description": {"type": "string"},
                     "tags": {"type": "string"},
+                    "content": {"type": "string", "description": "Markdown content to write to the file immediately"},
                 },
                 "required": ["artifact_type", "name", "title"],
             },
@@ -480,7 +481,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                     name=arguments["name"],
                     title=arguments["title"],
                     description=arguments.get("description"),
-                    tags=arguments.get("tags")
+                    tags=arguments.get("tags"),
+                    content=arguments.get("content")
                 )
                 return [TextContent(type="text", text=result)]
             except Exception as e:

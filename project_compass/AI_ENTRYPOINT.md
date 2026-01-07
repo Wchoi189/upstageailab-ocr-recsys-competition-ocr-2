@@ -32,3 +32,16 @@ Agents are prohibited from manual YAML editing. Use the following internal CLI p
 * **NO PIP/PYTHON**: All execution must be prefixed with uv run.
 * **NO PROSE**: Status updates must be numeric or enum-based indicators in YAML shards.
 * **NO DATA MIXING**: KIE and Layout Analysis data paths must remain strictly isolated.
+
+## **5. Session Lifecycle Protocol**
+
+Adhere to this cycle to ensure correct history tracking and prevent stale session artifacts.
+
+1.  **INIT**: `uv run python -m etk.factory session-init --objective "{objective}"`
+2.  **WORK**: Execute tasks. Update `task.md` and `implementation_plan.md`.
+3.  **UPDATE CONTEXT (CRITICAL)**:
+    *   **Target**: `active_context/current_session.yml`
+    *   **Action**: Change `session_id`, set `status="completed"`, update `completed_date`, and add `notes`.
+    *   **Constraint**: *Must* be done **BEFORE** export.
+4.  **EXPORT**: `uv run python -m etk.factory reconcile`
+

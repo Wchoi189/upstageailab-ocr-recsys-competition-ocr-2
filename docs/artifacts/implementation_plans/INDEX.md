@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-07 04:48:39
-**Total Artifacts**: 18
+**Last Updated**: 2026-01-08 03:02:43
+**Total Artifacts**: 20
 
-## Active (15)
+## Active (16)
 
 - [Implementation Plan: AgentQMS Architecture Consolidation](2025-11-29_1800_implementation_plan_architecture-consolidation.md) (📅 2025-11-29 18:00 (KST), 📄 implementation_plan) - > **Context**: Converging `.agentqms/`, `.ai-instructions/`, and `AgentQMS/` into a single `AgentQMS
 - [Phase 1: Core Recognition Implementation](2025-12-25_0410_implementation_plan_phase1-core-recognition.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Replace the current `StubRecognizer` with a production-ready `PaddleOCRRecognizer` backend using Pad
@@ -19,26 +19,28 @@ Active implementation plans and development roadmaps.
 - [Refactor Phase 3: Recognition Feature Migration](2026-01-07_0054_implementation_plan_refactor-phase3-recognition.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Fully isolate the **Recognition** domain by moving PARSeq models, encoders, and decoders into `ocr/r
 - [Refactor Phase 4: Detection & KIE Feature Migration](2026-01-07_0054_implementation_plan_refactor-phase4-detection-kie.md) (📅 2026-01-07 00:54 (KST), 📄 implementation_plan) - Isolate the **Detection** and **KIE** domains into their own feature packages.
 - [Implementation Plan for Codebase Analysis and Debugging Tools](2026-01-07_0423_implementation_plan_codebase-analysis-tools-implementation.md) (📅 2026-01-07 04:23 (KST), 📄 implementation_plan) - Implement a suite of tools for systematic analysis and debugging of a large, complex codebase. Focus
-- [AST Analyzer Phase 1: Low Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase1-low-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Description of the artifact.
-- [AST Analyzer Phase 2: Medium Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase2-medium-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Description of the artifact.
-- [AST Analyzer Phase 3: Conceptual Plan for Automated Refactoring](2026-01-07_0448_implementation_plan_ast-analyzer-phase3-conceptual.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Description of the artifact.
+- [AST Analyzer Phase 1: Low Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase1-low-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Extend `agent-debug-toolkit` with foundational analysis capabilities for AI agent codebase navigatio
+- [AST Analyzer Phase 2: Medium Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase2-medium-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Implement advanced analyzers requiring deeper AST traversal, scope tracking, and heuristic matching.
+- [AST Analyzer Phase 2.5: Hydra Config Resolver](2026-01-07_1918_implementation_plan_ast-analyzer-phase2-5-config-resolver.md) (📅 2026-01-07 19:18 (KST), 📄 implementation_plan) - Implement the **Hydra Config Resolver** tool ("Phase 2.5") to statically map Hydra configuration `_t
+- [Consolidate Session Protocol Documentation](2026-01-08_0302_implementation_plan_consolidate-session-docs.md) (📅 2026-01-08 03:02 (KST), 📄 implementation_plan) - Plan to consolidate session protocol documentation into existing AI-optimized files.
 
 ## Completed (1)
 
 - [Model Head Signature Fix - LSP Violation Resolution](2025-12-27_0610_implementation_plan_model-head-signature-fix.md) (📅 2025-12-27 06:10 (KST), 📄 implementation_plan) - **Type:** Liskov Substitution Principle (LSP) Violation - HIGH RISK
 
-## Other (2)
+## Other (3)
 
 - [Phase 2-3: Pipeline Integration + VLM + Optimization](2025-12-25_0410_implementation_plan_phase2-pipeline-integration.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Integrate the recognition, layout, and extraction modules into a unified end-to-end pipeline with hy
 - [Implementation Plan - GitHub Sync Entrypoints](2026-01-05_1900_implementation_plan_github-sync-entrypoints.md) (📅 2026-01-05 18:54 (KST), 📄 implementation_plan) - This plan outlines the steps to expose the new GitHub Sync features (`--init`, `--roadmap`) via VS C
+- [AST Analyzer Phase 3: Conceptual Plan for Automated Refactoring](2026-01-07_0448_implementation_plan_ast-analyzer-phase3-conceptual.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - > "I have a very big code base... bloat, inconsistencies, obsolete, deprecated, broken, outdated, su
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 15 |
+| Active | 16 |
 | Completed | 1 |
-| Other | 2 |
+| Other | 3 |
 
 ---
 

@@ -2,7 +2,7 @@
 
 Active bug reports and development roadmaps.
 
-**Last Updated**: 2026-01-07 04:48:40
+**Last Updated**: 2026-01-08 03:02:43
 **Total Artifacts**: 20
 
 ## Active (11)
@@ -28,7 +28,7 @@ Active bug reports and development roadmaps.
 - [MCP Server resource/read Returns 'Unknown resource URI' Despite Correct Implementation](2026-01-03_1937_BUG_003_mcp-server-resource-reading-failure.md) (📅 2026-01-03 19:37 (KST), 📄 bug_report) - Bug ID: BUG-003
 - [OCRModel Crash on Hydra Composition with DictConfig](2026-01-04_1700_BUG_001_hydra-composition-crash.md) (📅 2026-01-04 17:00 (KST), 📄 bug_report) - When running `uv run python runners/train.py --config-name train_parseq`, the training failed immedi
 - [TimmBackbone Failure with ViT Models (features_only support)](2026-01-04_1715_BUG_002_timm-vit-features-only.md) (📅 2026-01-04 17:15 (KST), 📄 bug_report) - When using `vit_small_patch16_224` as the encoder backbone:
-- [레거시 구성이 아키텍처 구성 요소를 덮어쓰는 문제](2026-01-04_1730_BUG_003-config-precedence-leak.ko.md) (📅 2026-01-04 17:30 (KST), 📄 bug_report) - PARSeq에 대해 `fast_dev_run` 실행 시:
+- [레거시 구성이 아키텍처 구성 요소를 덮어쓰는 문제](2026-01-04_1730_BUG_003_config-precedence-leak.ko.md) (📅 2026-01-04 17:30 (KST), 📄 bug_report) - PARSeq에 대해 `fast_dev_run` 실행 시:
 - [Legacy Config Leaks Override Architecture Components](2026-01-04_1730_BUG_003_config-precedence-leak.md) (📅 2026-01-04 17:30 (KST), 📄 bug_report) - When running `fast_dev_run` for PARSeq:
 
 ## Summary

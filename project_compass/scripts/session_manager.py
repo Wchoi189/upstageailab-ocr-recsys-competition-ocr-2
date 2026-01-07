@@ -37,7 +37,31 @@ def get_current_session_id():
         return None
 
 
-def export_session(note=None):
+def get_last_exported_session_id():
+    """Retrieves the original_session_id from the most recent export."""
+    if not SESSIONS_DIR.exists():
+        return None
+
+    sessions = [d for d in SESSIONS_DIR.iterdir() if d.is_dir()]
+    if not sessions:
+        return None
+
+    # Sort by name (timestamped) to get latest
+    latest_session = max(sessions, key=lambda p: p.name)
+
+    manifest_path = latest_session / "manifest.json"
+    if not manifest_path.exists():
+        return None
+
+    try:
+        with open(manifest_path) as f:
+            data = json.load(f)
+            return data.get("original_session_id")
+    except Exception:
+        return None
+
+
+def export_session(note=None, force=False):
     """Archives the current active context to history/sessions.
 
     CRITICAL FIX (2026-01-08): Creates timestamped copy of session_handover.md
@@ -48,6 +72,15 @@ def export_session(note=None):
     if not session_id:
         print("Error: No active session found in active_context/current_session.yml")
         sys.exit(1)
+
+    if not force:
+        last_id = get_last_exported_session_id()
+        if last_id and last_id == session_id:
+            print(f"❌ BLOCKING EXPORT: Stale Session ID detected ('{session_id}').")
+            print("   This session ID matches the last exported session.")
+            print("   Protocol Violation: You MUST update 'active_context/current_session.yml' before exporting.")
+            print("   Use --force to override this check.")
+            sys.exit(1)
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     # Folder name: YYYYMMDD_HHMMSS_session_id
@@ -193,6 +226,7 @@ def main():
     # Export
     export_parser = subparsers.add_parser("export", help="Archive current session")
     export_parser.add_argument("--note", "-n", help="Note for the manifest")
+    export_parser.add_argument("--force", "-f", action="store_true", help="Bypass stale session check")
 
     # Import
     import_parser = subparsers.add_parser("import", help="Restore a session")
@@ -207,7 +241,7 @@ def main():
     args = parser.parse_args()
 
     if args.command == "export":
-        export_session(args.note)
+        export_session(args.note, args.force)
     elif args.command == "list":
         list_sessions()
     elif args.command == "import":
