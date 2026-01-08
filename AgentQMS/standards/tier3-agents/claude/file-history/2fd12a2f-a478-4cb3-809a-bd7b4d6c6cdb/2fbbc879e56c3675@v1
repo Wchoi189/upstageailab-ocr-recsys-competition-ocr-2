@@ -1,11 +1,5 @@
 # Hydra Configuration Guide
 
-> [!WARNING]
-> **Migration In Progress**: The configuration system is being restructured.
-> - `_base/` → `_foundation/` (renamed)
-> - `base.yaml` → `_foundation/defaults.yaml` (relocated)
-> - Multiple KIE configs → unified `domain/kie.yaml` (consolidated)
-
 This directory contains Hydra configuration files for the OCR project. This guide explains the configuration architecture, override patterns, and how to use configs effectively.
 
 ---
@@ -21,37 +15,13 @@ This directory contains Hydra configuration files for the OCR project. This guid
 
 ---
 
-## New Structure (Post-Migration)
-
-```
-configs/
-├── train.yaml              # Universal training entry
-├── eval.yaml               # Testing/evaluation
-├── predict.yaml            # Inference
-├── _foundation/            # Core composition fragments
-│   ├── defaults.yaml       # Base defaults (replaces base.yaml)
-│   ├── core.yaml          # Core experiment settings
-│   ├── data.yaml          # Data composition defaults
-│   ├── model.yaml         # Model composition defaults
-│   ├── trainer.yaml       # Lightning trainer settings
-│   ├── logging.yaml       # Logger configuration
-│   └── preprocessing.yaml # Preprocessing settings
-├── domain/                 # Multi-domain configs (detection, recognition, kie, layout)
-├── model/                  # Architecture components
-├── data/                   # Dataset configs
-├── training/               # Training infrastructure (callbacks, logger, profiling)
-└── __EXTENDED__/           # Edge cases, experiments
-```
-
----
-
 ## Configuration Architecture
 
 The project uses a **two-tier configuration system**:
 
 ### New Architecture (Primary)
 
-**Foundation Layer**: `configs/_foundation/`
+**Foundation Layer**: `configs/_base/`
 - `core.yaml` - Core experiment settings
 - `data.yaml` - Data composition defaults
 - `model.yaml` - Model composition defaults

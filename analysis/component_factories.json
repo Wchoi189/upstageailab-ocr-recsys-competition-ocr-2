@@ -1,0 +1,20 @@
+{
+  "analyzer_name": "ComponentInstantiationTracker",
+  "target_path": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr",
+  "total_findings": 814,
+  "key_factories": [
+    "get_encoder_by_cfg",
+    "get_decoder_by_cfg",
+    "get_head_by_cfg",
+    "get_loss_by_cfg",
+    "get_datasets_by_cfg",
+    "get_model_by_cfg",
+    "registry.create_architecture_components"
+  ],
+  "summary": {
+    "files_analyzed": 295,
+    "total_findings": 814,
+    "direct_instantiations": 120,
+    "factory_calls": 694
+  }
+}

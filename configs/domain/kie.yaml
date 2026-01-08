@@ -1,0 +1,46 @@
+# @package _global_
+
+# Key Information Extraction (KIE) Domain Configuration
+# Use with: python runners/train.py +domain=kie
+
+defaults:
+  - /extraction: default
+  - _self_
+
+task: kie
+
+model:
+  type: kie
+  use_ocr_features: true
+  use_layout_features: true
+  # LayoutLMv3 configuration
+  pretrained_model_name_or_path: "microsoft/layoutlmv3-base"
+  num_labels: 32  # 31 entities + 1 (O) - simple format, not BIO
+  max_length: 512
+
+data:
+  task_type: kie
+  include_relations: true
+  # Default paths - can be overridden via CLI
+  train_path: "data/processed/aligned/baseline_kie_dp_train.parquet"
+  val_path: "data/processed/aligned/baseline_kie_dp_val.parquet"
+  image_dir: "."
+  # Label list: O + 31 entity types
+  label_list: [
+    "O",
+    "approval_code", "branch_name", "card_payment_price", "cash_payment_price",
+    "cc_code", "cc_expiry", "cc_number", "change", "charged_price",
+    "coupon_payment_price", "group_0", "installment", "payment_price",
+    "product_name", "store_address", "store_name", "store_phone_number",
+    "store_registration_number", "subtotal_price", "tax_price", "tip_price",
+    "transaction_date", "unit_product_code", "unit_product_discounted_price",
+    "unit_product_discounted_reason", "unit_product_order", "unit_product_price",
+    "unit_product_quantity", "unit_product_total_price_after_discount",
+    "unit_product_total_price_before_discount", "voucher_payment_price"
+  ]
+
+train:
+  batch_size: 12
+  num_workers: 8
+  max_epochs: 15
+  warmup_steps: 100

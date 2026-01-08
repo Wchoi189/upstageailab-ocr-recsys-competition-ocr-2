@@ -44,7 +44,7 @@ import os
 os.chdir('/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2')
 from hydra import compose, initialize_config_dir
 initialize_config_dir(config_dir='configs')
-cfg = compose(config_name='performance_test')
+cfg = compose(config_name='training/profiling/performance_test')
 print('Config loaded successfully')
         """,
         ]
@@ -73,7 +73,7 @@ import os
 os.chdir('/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2')
 from hydra import compose, initialize_config_dir
 initialize_config_dir(config_dir='configs')
-cfg = compose(config_name='performance_test', overrides=['data.polygon_cache.enabled=true'])
+cfg = compose(config_name='training/profiling/performance_test', overrides=['data.polygon_cache.enabled=true'])
 print('Polygon cache config loaded successfully')
         """,
         ]

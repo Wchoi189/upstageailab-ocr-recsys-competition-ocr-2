@@ -1,0 +1,150 @@
+configs/
+├── base.yaml
+├── benchmark
+│   └── decoder.yaml
+├── cache_performance_test.yaml
+├── callbacks
+│   ├── default.yaml
+│   ├── early_stopping.yaml
+│   ├── metadata.yaml
+│   ├── model_checkpoint.yaml
+│   ├── model_summary.yaml
+│   ├── performance_profiler.yaml
+│   ├── rich_progress_bar.yaml
+│   └── wandb_image_logging.yaml
+├── data
+│   ├── base.yaml
+│   ├── canonical.yaml
+│   ├── craft.yaml
+│   ├── dataloaders
+│   │   ├── default.yaml
+│   │   └── rtx3060_16core.yaml
+│   ├── datasets
+│   │   ├── db.yaml
+│   │   ├── preprocessing_camscanner.yaml
+│   │   ├── preprocessing_docTR_demo.yaml
+│   │   └── preprocessing.yaml
+│   ├── default.yaml
+│   ├── performance_preset
+│   │   ├── balanced.yaml
+│   │   ├── memory_efficient.yaml
+│   │   ├── minimal.yaml
+│   │   ├── none.yaml
+│   │   ├── README.md
+│   │   └── validation_optimized.yaml
+│   ├── recognition.yaml
+│   └── transforms
+│       ├── background_removal.yaml
+│       ├── base.yaml
+│       ├── recognition.yaml
+│       └── with_background_removal.yaml
+├── debug
+│   └── default.yaml
+├── evaluation
+│   └── metrics.yaml
+├── examples
+│   ├── predict_full_enhancement.yaml
+│   ├── predict_with_perspective.yaml
+│   └── README.md
+├── extraction
+│   ├── default.yaml
+│   └── hybrid.yaml
+├── _foundation
+│   ├── core.yaml
+│   ├── data.yaml
+│   ├── logging.yaml
+│   ├── model.yaml
+│   ├── preprocessing.yaml
+│   └── trainer.yaml
+├── hydra
+│   ├── default.yaml
+│   └── disabled.yaml
+├── layout
+│   └── default.yaml
+├── __LEGACY__
+│   ├── data
+│   │   └── preprocessing.yaml
+│   ├── model
+│   │   └── optimizer.yaml
+│   └── README.md
+├── logger
+│   ├── consolidated.yaml
+│   ├── csv.yaml
+│   ├── default.yaml
+│   └── wandb.yaml
+├── model
+│   ├── architectures
+│   │   ├── craft.yaml
+│   │   ├── dbnetpp.yaml
+│   │   └── dbnet.yaml
+│   ├── decoder
+│   │   ├── craft_decoder.yaml
+│   │   ├── dbpp_decoder.yaml
+│   │   ├── fpn.yaml
+│   │   ├── pan.yaml
+│   │   └── unet.yaml
+│   ├── default.yaml
+│   ├── encoder
+│   │   ├── craft_vgg.yaml
+│   │   └── timm_backbone.yaml
+│   ├── head
+│   │   ├── craft_head.yaml
+│   │   ├── db_head.yaml
+│   │   └── dbpp_head.yaml
+│   ├── lightning_modules
+│   │   └── base.yaml
+│   ├── loss
+│   │   ├── craft_loss.yaml
+│   │   └── db_loss.yaml
+│   ├── optimizers
+│   │   ├── adamw.yaml
+│   │   └── adam.yaml
+│   ├── presets
+│   │   ├── craft.yaml
+│   │   ├── dbnetpp.yaml
+│   │   └── model_example.yaml
+│   └── recognition
+│       └── parseq.yaml
+├── paths
+│   └── default.yaml
+├── performance_test.yaml
+├── predict_shadow_removal.yaml
+├── predict.yaml
+├── README.md
+├── recognition
+│   ├── default.yaml
+│   └── paddleocr.yaml
+├── synthetic.yaml
+├── test.yaml
+├── trainer
+│   ├── default.yaml
+│   ├── fp16_safe.yaml
+│   ├── hardware_rtx3060_12gb_i5_16core.yaml
+│   └── rtx3060_12gb.yaml
+├── train_kie_aihub_only.yaml
+├── train_kie_aihub_production.yaml
+├── train_kie_aihub.yaml
+├── train_kie_baseline_optimized_v2.yaml
+├── train_kie_merged_3090_10ep.yaml
+├── train_kie.yaml
+├── train_parseq.yaml
+├── train_v2.yaml
+├── train.yaml
+├── ui
+│   ├── inference.yaml
+│   ├── modes
+│   │   ├── comparison.yaml
+│   │   ├── inference.yaml
+│   │   └── preprocessing.yaml
+│   └── unified_app.yaml
+└── ui_meta
+    ├── architectures
+    │   ├── craft.yaml
+    │   ├── dbnetpp.yaml
+    │   └── dbnet.yaml
+    ├── optimizers
+    │   ├── adamw.yaml
+    │   └── adam.yaml
+    └── preprocessing_profiles.yaml
+
+36 directories, 111 files

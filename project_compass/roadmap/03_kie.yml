@@ -40,5 +40,5 @@ notes: |
 
   Artifacts Preserved:
   - WandB Run: https://wandb.ai/ocr-team2/ocr-kie/runs/e7l6f9k4
-  - Alignment Script: tools/align_kie_dp.py
+  - Alignment Script: scripts/data/align_kie_dp.py
   - Assessment: /home/vscode/.gemini/antigravity/brain/ff1e2aa9-0a2a-4b92-baee-4c9e31fea213/assessment_kie_dp_failure.md.resolved

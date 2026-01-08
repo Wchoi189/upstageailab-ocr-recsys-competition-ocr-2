@@ -1,16 +1,9 @@
 defaults:
   - _self_
   - base                   # Base config includes paths, evaluation, logger, callbacks
-  - optional domain: detection      # Default domain (override with domain=recognition|kie|layout)
   - /_foundation/model           # Model defaults
   - /_foundation/data            # Data + transforms + dataloaders
   - /_foundation/trainer         # Lightning trainer settings
-
-# Domain switching enabled via CLI:
-# python runners/train.py domain=detection (default)
-# python runners/train.py domain=recognition
-# python runners/train.py domain=kie
-# python runners/train.py domain=layout
 
 seed: 42
 exp_name: "ocr_training_b"

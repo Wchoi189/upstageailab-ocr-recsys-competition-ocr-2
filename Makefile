@@ -8,10 +8,9 @@ config-validate:  ## Validate configuration system for errors
 
 .PHONY: config-archive
 config-archive:   ## Archive legacy configs to .deprecated/
-	mkdir -p configs/.deprecated/schemas configs/.deprecated/benchmark configs/.deprecated/tools
+	mkdir -p configs/.deprecated/schemas configs/.deprecated/benchmark
 	mv configs/schemas/*.yaml configs/.deprecated/schemas/ 2>/dev/null || true
 	mv configs/benchmark/*.yaml configs/.deprecated/benchmark/ 2>/dev/null || true
-	mv configs/tools/* configs/.deprecated/tools/ 2>/dev/null || true
 	@echo "✅ Legacy configs archived to configs/.deprecated/"
 
 .PHONY: config-show-structure

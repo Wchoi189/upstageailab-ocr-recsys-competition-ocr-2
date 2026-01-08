@@ -72,3 +72,10 @@ repos:
         entry: uv run python scripts/ci/forbid_pip_install.py
         language: system
         files: ^(scripts/.*\.(sh|py)|AgentQMS/bin/Makefile)$
+
+      - id: validate-feature-first-architecture
+        name: Validate Feature-First Architecture
+        entry: uv run python scripts/hooks/validate_architecture.py
+        language: system
+        files: ^ocr/.*\.py$
+        pass_filenames: true

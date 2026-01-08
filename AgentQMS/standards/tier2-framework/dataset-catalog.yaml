@@ -135,7 +135,7 @@ datasets:
       image_value: JPEG bytes
       label_value: UTF-8 Korean text
     status: available
-    created_by: ocr-etl-pipeline
+    created_by: archive/ocr-etl-pipeline
     issues: no train/val split (single LMDB)
     use_case: text recognition (PARSeq)
     integration_priority: critical

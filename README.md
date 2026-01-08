@@ -66,6 +66,7 @@ graph TD
     classDef process fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#000;
     classDef agent fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#000;
     classDef artifact fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#000;
+    classDef archived fill:#f3f4f6,stroke:#9ca3af,stroke-width:2px,color:#6b7280,stroke-dasharray: 3 3;
 
     %% Orchestration Layer
     subgraph Orchestration["Agentic Control Layer"]
@@ -80,12 +81,12 @@ graph TD
         RawData["Raw Images<br/>(Receipts / AI Hub)"]:::storage
 
         subgraph LocalPipe["High-Performance Local ETL"]
-            ETLProc["ocr-etl-pipeline<br/>(Multi-core / RemBG / Cropping)"]:::process
+            ETLProc["ocr-etl-pipeline<br/>(Multi-core / RemBG / Cropping)<br/>[ARCHIVED]"]:::archived
             LMDB[("LMDB<br/>Memory-Mapped<br/>Serialization")]:::storage
         end
 
         subgraph CloudPipe["Cloud-Native Batch"]
-            AWSBatch["aws-batch-processor<br/>(AWS Fargate Serverless)"]:::process
+            AWSBatch["aws-batch-processor<br/>(AWS Fargate Serverless)<br/>[ARCHIVED]"]:::archived
             S3Parquet[("S3 Bucket<br/>Parquet Annotations")]:::storage
         end
 

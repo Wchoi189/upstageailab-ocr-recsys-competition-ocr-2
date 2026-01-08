@@ -8,8 +8,9 @@
   "cachedStatsigGates": {
     "tengu_tool_pear": false,
     "tengu_disable_bypass_permissions_mode": false,
-    "tengu_prompt_suggestion": true,
-    "tengu_year_end_2025_campaign_promo": false
+    "tengu_prompt_suggestion": false,
+    "tengu_year_end_2025_campaign_promo": false,
+    "tengu_vscode_review_upsell": false
   },
   "cachedDynamicConfigs": {
     "tengu_1p_event_batch_config": {
@@ -76,7 +77,13 @@
       "projectOnboardingSeenCount": 2,
       "hasClaudeMdExternalIncludesApproved": false,
       "hasClaudeMdExternalIncludesWarningShown": false,
-      "exampleFiles": [],
+      "exampleFiles": [
+        "effective.yaml",
+        "plugins.yaml",
+        "engine.py",
+        "pyproject.toml",
+        "README.md"
+      ],
       "lastCost": 0,
       "lastAPIDuration": 0,
       "lastToolDuration": 0,
@@ -97,7 +104,8 @@
         "packageManager": null
       },
       "lastAPIDurationWithoutRetries": 0,
-      "lastModelUsage": {}
+      "lastModelUsage": {},
+      "exampleFilesGeneratedAt": 1767849354600
     }
   },
   "hasOpusPlanDefault": false,
@@ -111,5 +119,12 @@
   },
   "hasShownOpus45Notice": {
     "ab7b4f8c-45df-439f-9a8d-6eb939e819f3": true
+  },
+  "s1mAccessCache": {
+    "ab7b4f8c-45df-439f-9a8d-6eb939e819f3": {
+      "hasAccess": false,
+      "hasAccessNotAsDefault": false,
+      "timestamp": 1767859836056
+    }
   }
 }

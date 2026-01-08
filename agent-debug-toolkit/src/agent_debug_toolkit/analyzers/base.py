@@ -168,7 +168,16 @@ class BaseAnalyzer(ABC):
         self._results = []
 
         try:
-            source = path.read_text(encoding="utf-8")
+            # Try UTF-8 first, fall back to latin-1 with ignore on encoding errors
+            try:
+                source = path.read_text(encoding="utf-8")
+            except UnicodeDecodeError:
+                # Skip files with encoding issues (e.g., test files with special encodings)
+                return AnalysisReport(
+                    analyzer_name=self.name,
+                    target_path=str(path),
+                    summary={"skipped": "Encoding error (non-UTF-8 file)"},
+                )
             self._source_lines = source.splitlines()
             tree = ast.parse(source, filename=str(path))
         except SyntaxError as e:
@@ -213,17 +222,28 @@ class BaseAnalyzer(ABC):
         dir_path = Path(directory).resolve()
         glob_method = dir_path.rglob if recursive else dir_path.glob
 
+        # Directories to exclude from analysis
+        excluded_dirs = {".venv", "venv", "__pycache__", ".git", "node_modules", ".mypy_cache", ".pytest_cache", "build", "dist", ".tox"}
+
         all_results: list[AnalysisResult] = []
         files_analyzed = 0
         errors = 0
+        skipped = 0
 
         for py_file in sorted(glob_method(pattern)):
+            # Skip files in excluded directories
+            if any(excluded in py_file.parts for excluded in excluded_dirs):
+                skipped += 1
+                continue
+
             if py_file.is_file():
                 report = self.analyze_file(py_file)
                 all_results.extend(report.results)
                 files_analyzed += 1
                 if "error" in report.summary:
                     errors += 1
+                elif "skipped" in report.summary:
+                    skipped += 1
 
         return AnalysisReport(
             analyzer_name=self.name,
@@ -233,6 +253,7 @@ class BaseAnalyzer(ABC):
                 "files_analyzed": files_analyzed,
                 "total_findings": len(all_results),
                 "errors": errors,
+                "skipped": skipped,
             },
         )
 

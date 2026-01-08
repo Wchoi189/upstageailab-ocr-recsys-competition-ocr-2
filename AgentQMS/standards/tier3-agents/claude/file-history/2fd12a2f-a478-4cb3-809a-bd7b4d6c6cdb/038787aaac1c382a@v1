@@ -28,9 +28,9 @@ defaults:
   - data: default           # Override: data=canonical, data=craft (no + needed)
   - evaluation: metrics     # Override: evaluation=X
   - paths: default          # Override: paths=X
-  - training/logger: consolidated    # Override: training/logger=wandb, training/logger=csv
+  - logger: consolidated    # Override: logger=wandb, logger=csv (no + needed)
   - trainer: default        # Override: trainer=fp16_safe, trainer=rtx3060_12gb (no + needed)
-  - training/callbacks: default      # Override: training/callbacks=X
+  - callbacks: default      # Override: callbacks=X
   - debug: default          # Override: debug=X
   # NOTE: hydra config moved inline above - config groups don't work with @package in version_base=None
 

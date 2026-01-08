@@ -61,63 +61,36 @@ phases:
       Pre-existing issues in test.yaml and predict.yaml noted for future resolution.
 
   phase_2_domain:
-    status: "completed"
-    completed_date: "2026-01-08"
+    status: "pending"
     description: "Domain unification"
     tasks:
-      - "✅ Create configs/domain/detection.yaml (text detection with DBNet)"
-      - "✅ Create configs/domain/recognition.yaml (text recognition with PARSeq)"
-      - "✅ Create configs/domain/kie.yaml (key information extraction with LayoutLMv3)"
-      - "✅ Create configs/domain/layout.yaml (layout analysis)"
-      - "✅ Verify all domain configs compose correctly"
-    deliverables:
-      - "configs/domain/detection.yaml"
-      - "configs/domain/recognition.yaml"
-      - "configs/domain/kie.yaml"
-      - "configs/domain/layout.yaml"
-    validation:
-      - "✅ domain=detection composes successfully (task: detection)"
-      - "✅ domain=recognition composes successfully (task: recognition)"
-      - "✅ domain=kie composes successfully (task: kie)"
-      - "✅ domain=layout composes successfully (task: layout_analysis)"
-    notes: |
-      All domain configs created and tested successfully.
-      Each domain config uses Hydra defaults composition to unify model and data settings.
-      Domain switching enabled via CLI: python runners/train.py +domain=X
+      - "Create domain configs (detection, recognition, kie, layout)"
+      - "Verify domain configs compose"
 
   phase_3_entrypoints:
-    status: "completed"
-    completed_date: "2026-01-08"
-    description: "Entry point simplification (BREAKING CHANGES)"
+    status: "pending"
+    description: "Entry point simplification"
     tasks:
-      - "✅ Renamed test.yaml → eval.yaml"
-      - "✅ Archived all train_kie*.yaml to __EXTENDED__/kie_variants/"
-      - "✅ Updated train.yaml with domain composition"
-    notes: "All breaking changes executed successfully."
+      - "Update train.yaml with domain composition"
+      - "Rename test.yaml to eval.yaml"
+      - "Archive KIE variant configs"
 
   phase_4_infrastructure:
-    status: "completed"
-    completed_date: "2026-01-08"
+    status: "pending"
     description: "Infrastructure reorganization"
     tasks:
-      - "✅ Moved callbacks/ → training/callbacks/"
-      - "✅ Moved logger/ → training/logger/"
-      - "✅ Merged ui/ and ui_meta/ → training/logger/"
-      - "✅ Archived examples/ → __EXTENDED__/examples/"
-      - "✅ Archived benchmark/ → __EXTENDED__/benchmarks/"
-      - "✅ Moved performance configs → training/profiling/"
-    notes: "All infrastructure consolidated under training/ and __EXTENDED__/"
+      - "Move training infrastructure (callbacks, logger)"
+      - "Merge UI directories"
+      - "Move examples and benchmarks"
 
   phase_5_scripts:
-    status: "completed"
-    completed_date: "2026-01-08"
+    status: "pending"
     description: "Script updates"
     tasks:
-      - "✅ Updated runners/test.py: test → eval"
-      - "✅ Updated runners/train_kie.py: train_kie → train"
-      - "✅ Updated scripts/performance/benchmark_optimizations.py"
-      - "✅ Updated scripts/performance/quick_performance_validation.py"
-    notes: "All runner and benchmark scripts updated with new config paths."
+      - "Find all Hydra entry points"
+      - "Update runner scripts"
+      - "Update test/evaluation scripts"
+      - "Update performance benchmark scripts"
 
   phase_6_verification:
     status: "pending"
@@ -143,21 +116,14 @@ phases:
       - "Update GitHub Actions"
       - "Update Docker configs"
 
-current_task: "Nuclear Refactor Complete - Phase 6: Verification"
+current_task: "Phase 2: Domain Unification"
 
 notes: |
   Session handover documentation moved to: project_compass/session_handover.md
 
-  🔥 NUCLEAR REFACTOR EXECUTED 🔥
-
-  Phase 0 Complete ✅ - Discovery with MCP tools
-  Phase 1 Complete ✅ - Foundation structure created
-  Phase 2 Complete ✅ - Domain configs created and validated
-  Phase 3 Complete ✅ - Entry points simplified (BREAKING)
-  Phase 4 Complete ✅ - Infrastructure reorganized
-  Phase 5 Complete ✅ - All scripts updated
-
-  Current Status: All major restructuring complete. Ready for final verification.
+  Phase 0 Complete ✅ - All discovery tasks finished using MCP tools.
+  Phase 1 Complete ✅ - Foundation directory structure created, README updated.
+  Ready to begin Phase 2 (domain unification).
 
 references:
   - "AGENTS.yaml - Root-level project resource index"

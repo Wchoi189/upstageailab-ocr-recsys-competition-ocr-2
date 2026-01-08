@@ -43,11 +43,11 @@
 
 ## 프로젝트 상태
 
-| 단계                               | 상태   | 완료율 |
-| :---------------------------------- | :------- | :--------- |
-| **단계 1-4:** 핵심 개발     | 완료 | 100%       |
-| **단계 5:** 데이터 정제 및 ETL  | 진행 중   | 90%        |
-| **단계 6:** 아키텍처 업그레이드 | 계획 중  | 0%         |
+| 단계                            | 상태    | 완료율 |
+| :------------------------------ | :------ | :----- |
+| **단계 1-4:** 핵심 개발         | 완료    | 100%   |
+| **단계 5:** 데이터 정제 및 ETL  | 진행 중 | 90%    |
+| **단계 6:** 아키텍처 업그레이드 | 계획 중 | 0%     |
 
 **전체 진행률:** 85%
 
@@ -66,6 +66,7 @@ graph TD
     classDef process fill:#dbeafe,stroke:#2563eb,stroke-width:2px,color:#000;
     classDef agent fill:#fef3c7,stroke:#d97706,stroke-width:2px,color:#000;
     classDef artifact fill:#dcfce7,stroke:#16a34a,stroke-width:2px,color:#000;
+    classDef archived fill:#f3f4f6,stroke:#9ca3af,stroke-width:2px,color:#6b7280,stroke-dasharray: 3 3;
 
     %% Orchestration Layer
     subgraph Orchestration["에이전트 제어 계층"]
@@ -80,12 +81,12 @@ graph TD
         RawData["원본 이미지<br/>(영수증 / AI Hub)"]:::storage
 
         subgraph LocalPipe["고성능 로컬 ETL"]
-            ETLProc["ocr-etl-pipeline<br/>(멀티코어 / RemBG / 크롭핑)"]:::process
+            ETLProc["ocr-etl-pipeline<br/>(멀티코어 / RemBG / 크롭핑)<br/>[보관됨]"]:::archived
             LMDB[("LMDB<br/>메모리 매핑<br/>직렬화")]:::storage
         end
 
         subgraph CloudPipe["클라우드 네이티브 배치"]
-            AWSBatch["aws-batch-processor<br/>(AWS Fargate 서버리스)"]:::process
+            AWSBatch["aws-batch-processor<br/>(AWS Fargate 서버리스)<br/>[보관됨]"]:::archived
             S3Parquet[("S3 버킷<br/>Parquet 주석")]:::storage
         end
 
@@ -152,13 +153,13 @@ graph TD
 adt trace-merges ocr/models/architecture.py --output markdown
 ```
 
-| 우선순위 | 라인 | 작업 | 충돌 시 승자            |
-| -------- | ---- | --------- | ----------------------------- |
-| P1       | 122  | `create`  | `{}`                          |
-| P2       | 128  | `merge`   | `arch_overrides`              |
-| P3       | 158  | `merge`   | `filtered_top_level`          |
-| P4       | 162  | `merge`   | `direct_overrides`            |
-| P5       | 175  | `merge`   | **`filtered_user_overrides`** |
+| 우선순위 | 라인 | 작업     | 충돌 시 승자                  |
+| -------- | ---- | -------- | ----------------------------- |
+| P1       | 122  | `create` | `{}`                          |
+| P2       | 128  | `merge`  | `arch_overrides`              |
+| P3       | 158  | `merge`  | `filtered_top_level`          |
+| P4       | 162  | `merge`  | `direct_overrides`            |
+| P5       | 175  | `merge`  | **`filtered_user_overrides`** |
 
 *분석 결과 L175의 사용자 정의 오버라이드가 가장 높은 우선순위를 유지함을 확인.*
 
@@ -208,11 +209,11 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 ### 지원 아키텍처
 
-| 아키텍처    | 작업             | 상태                                                                                        |
-| :-------------- | :--------------- | :-------------------------------------------------------------------------------------------- |
-| **PARSeq**      | 텍스트 인식 | 활성 개발                                                                            |
-| **CRNN**        | 텍스트 인식 | 계획 중                                                                                       |
-| **DBNet + PAN** | 텍스트 감지   | 배포됨 ([HF 모델](https://huggingface.co/wchoi189/receipt-text-detection_kr-pan_resnet18)) |
+| 아키텍처        | 작업        | 상태                                                                                       |
+| :-------------- | :---------- | :----------------------------------------------------------------------------------------- |
+| **PARSeq**      | 텍스트 인식 | 활성 개발                                                                                  |
+| **CRNN**        | 텍스트 인식 | 계획 중                                                                                    |
+| **DBNet + PAN** | 텍스트 감지 | 배포됨 ([HF 모델](https://huggingface.co/wchoi189/receipt-text-detection_kr-pan_resnet18)) |
 
 ### 훈련 인프라
 
@@ -352,11 +353,11 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 ### 제거 연구 요약
 
-| 방법                                  | 엣지 감지 성공률 | 평균 대비 | 신뢰성                        |
-| :-------------------------------------- | :--------------------- | :----------- | :--------------------------------- |
-| **휴리스틱 (cv2)**                    | 73% (146/200)          | 36.1         | 낮음 (복잡한 배경에서 실패) |
-| **DL 마스킹 (RemBG)**                  | ~98%                   | 44.3*        | 높음                               |
-| **하이브리드 (RemBG + 주 확장)** | **100%** (25/25)       | **44.3**     | **프로덕션 준비 완료**               |
+| 방법                             | 엣지 감지 성공률 | 평균 대비 | 신뢰성                      |
+| :------------------------------- | :--------------- | :-------- | :-------------------------- |
+| **휴리스틱 (cv2)**               | 73% (146/200)    | 36.1      | 낮음 (복잡한 배경에서 실패) |
+| **DL 마스킹 (RemBG)**            | ~98%             | 44.3*     | 높음                        |
+| **하이브리드 (RemBG + 주 확장)** | **100%** (25/25) | **44.3**  | **프로덕션 준비 완료**      |
 
 *세피아 필터는 그레이스케일보다 엣지 감지를 개선했지만, 세피아+CLAHE는 최종적으로 제거됨. RemBG 마스킹으로 인한 대비 개선.
 
@@ -377,10 +378,10 @@ Upstage 문서 OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명.
 
 <div align="center">
 
-|                               피팅된 코너 (CV 수학)                                |                                                                                          보정된 출력                                                                                           |
+|                                 피팅된 코너 (CV 수학)                                 |                                                                                             보정된 출력                                                                                             |
 | :-----------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | <img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="400px" /> | <img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="180px" /> |
-|                               *경계 식별*                                |                                                                                     *최종 정규화된 기하학*                                                                                     |
+|                                      *경계 식별*                                      |                                                                                       *최종 정규화된 기하학*                                                                                        |
 
 </div>
 
@@ -388,10 +389,10 @@ Upstage 문서 OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명.
 
 <div align="center">
 
-|                                                                이전: 지속적인 낮은 예측                                                                |                                                                        내부 프로세스                                                                        |                                                                   이후: 성공적인 감지                                                                    |
+|                                                                     이전: 지속적인 낮은 예측                                                                     |                                                                         내부 프로세스                                                                          |                                                                       이후: 성공적인 감지                                                                        |
 | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: | :------------------------------------------------------------------------------------------------------------------------------------------------------------: | :--------------------------------------------------------------------------------------------------------------------------------------------------------------: |
 | [<img src="docs/assets/images/demo/inference-persistent-empties-before.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-before.webp) | [<img src="docs/assets/images/demo/inference-persistent-empties-after.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-after.webp) | [<img src="docs/assets/images/demo/inference-persistent-empties-after2.webp" width="250px" />](docs/assets/images/demo/inference-persistent-empties-after2.webp) |
-|                                                                         *빈 패치*                                                                          |                                                                      *필터 적용*                                                                      |                                                                      *정규화된 기하학*                                                                       |
+|                                                                            *빈 패치*                                                                             |                                                                          *필터 적용*                                                                           |                                                                        *정규화된 기하학*                                                                         |
 
 *(이미지 클릭 시 확대)*
 
@@ -401,12 +402,12 @@ Upstage 문서 OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명.
 
 ## 기술 스택
 
-| 범주          | 기술                              |
-| :---------------- | :---------------------------------------- |
-| **ML/DL**         | PyTorch, PyTorch Lightning, Hydra         |
-| **엔지니어링**   | UV (필수), AWS Fargate, LMDB, Parquet |
-| **프론트엔드**   | React 19, Next.js 16, Chakra UI           |
-| **관측 가능성** | W&B, AgentQMS, 프로젝트 컴패스 (MCP)      |
+| 범주            | 기술                                  |
+| :-------------- | :------------------------------------ |
+| **ML/DL**       | PyTorch, PyTorch Lightning, Hydra     |
+| **엔지니어링**  | UV (필수), AWS Fargate, LMDB, Parquet |
+| **프론트엔드**  | React 19, Next.js 16, Chakra UI       |
+| **관측 가능성** | W&B, AgentQMS, 프로젝트 컴패스 (MCP)  |
 
 ---
 

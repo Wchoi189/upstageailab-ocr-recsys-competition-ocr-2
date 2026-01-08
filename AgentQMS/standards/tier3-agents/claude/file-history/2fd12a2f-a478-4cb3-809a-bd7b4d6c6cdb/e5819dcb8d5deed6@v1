@@ -37,9 +37,7 @@ warnings.filterwarnings("ignore", category=FutureWarning, message="The `device` 
 # Suppress LR Scheduler warning (common false positive in PL)
 warnings.filterwarnings("ignore", category=UserWarning, module="torch.optim.lr_scheduler")
 
-@hydra.main(config_path="../configs", config_name="train", version_base=None)
-# NOTE: Use CLI override for KIE domain: python runners/train_kie.py +domain=kie
-# Or better yet, use: python runners/train.py +domain=kie
+@hydra.main(config_path="../configs", config_name="train_kie", version_base=None)
 def main(config: DictConfig):
     """
     Train a KIE model using the provided configuration.
