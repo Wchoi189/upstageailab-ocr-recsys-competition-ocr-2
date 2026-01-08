@@ -12,4 +12,4 @@ defaults:
   - _self_
 
 wandb_completion:
-  _target_: ocr.lightning_modules.callbacks.wandb_completion.WandbCompletionCallback
+  _target_: ocr.core.lightning.callbacks.wandb_completion.WandbCompletionCallback

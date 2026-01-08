@@ -9,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from ocr.inference.crop_extractor import CropConfig, CropExtractor, CropResult
+from ocr.core.inference.crop_extractor import CropConfig, CropExtractor, CropResult
 
 
 class TestCropConfig:

@@ -7,7 +7,7 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from ocr.datasets.preprocessing.intelligent_brightness import (
+from ocr.data.datasets.preprocessing.intelligent_brightness import (
     BrightnessConfig,
     BrightnessMethod,
     BrightnessQuality,

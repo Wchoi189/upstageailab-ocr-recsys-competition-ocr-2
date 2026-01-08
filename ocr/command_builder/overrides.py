@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from ocr.utils.config import ConfigParser
+from ocr.core.utils.config import ConfigParser
 
 
 def build_additional_overrides(values: dict[str, Any], config_parser: ConfigParser | None = None) -> list[str]:

@@ -56,7 +56,7 @@ def validate_variables():
     """Check for undefined variable references."""
     # Load base config to get defined variables
     try:
-        from ocr.utils.config_utils import load_config
+        from ocr.core.utils.config_utils import load_config
 
         load_config("train")
         # If this succeeds, variables are resolved

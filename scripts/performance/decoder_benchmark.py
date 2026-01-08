@@ -24,8 +24,8 @@ from hydra.utils import get_original_cwd
 from lightning.pytorch.callbacks import Callback
 from omegaconf import DictConfig, OmegaConf
 
-from ocr.lightning_modules import get_pl_modules_by_cfg
-from ocr.utils.path_utils import get_path_resolver
+from ocr.core.lightning import get_pl_modules_by_cfg
+from ocr.core.utils.path_utils import get_path_resolver
 
 
 @dataclass(slots=True)
@@ -248,7 +248,7 @@ def _initialise_wandb_logger(
             "Install wandb to enable logging or disable it in the benchmark configuration."
         ) from exc
 
-    from ocr.utils.wandb_utils import generate_run_name, load_env_variables
+    from ocr.core.utils.wandb_utils import generate_run_name, load_env_variables
 
     load_env_variables()
 
@@ -290,7 +290,7 @@ def _initialise_wandb_logger(
     max_images = int(logger_cfg.get("image_log_max_images", 8))
     if image_log_every > 0 and max_images > 0:
         try:
-            from ocr.lightning_modules.callbacks.wandb_image_logging import (
+            from ocr.core.lightning.callbacks.wandb_image_logging import (
                 WandbImageLoggingCallback,
             )
 

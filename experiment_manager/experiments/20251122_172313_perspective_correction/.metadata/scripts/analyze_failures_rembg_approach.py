@@ -60,7 +60,7 @@ except ImportError:
 workspace_root = tracker_root.parent
 sys.path.insert(0, str(workspace_root))
 try:
-    from ocr.utils.path_utils import get_path_resolver
+    from ocr.core.utils.path_utils import get_path_resolver
 
     OCR_RESOLVER = get_path_resolver()
 except ImportError:
@@ -69,7 +69,7 @@ except ImportError:
 
 # Import perspective correction
 try:
-    from ocr.datasets.preprocessing.perspective import PerspectiveCorrector
+    from ocr.data.datasets.preprocessing.perspective import PerspectiveCorrector
 
     PERSPECTIVE_AVAILABLE = True
 except ImportError:

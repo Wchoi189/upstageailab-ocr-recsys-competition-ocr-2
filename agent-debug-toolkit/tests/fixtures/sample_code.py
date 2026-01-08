@@ -77,9 +77,9 @@ if __name__ == "__main__":
 """
 
 SAMPLE_COMPONENT_INSTANTIATION = """
-from ocr.models.encoder import get_encoder_by_cfg
-from ocr.models.decoder import get_decoder_by_cfg
-from ocr.models.head import get_head_by_cfg
+from ocr.core.models.encoder import get_encoder_by_cfg
+from ocr.core.models.decoder import get_decoder_by_cfg
+from ocr.core.models.head import get_head_by_cfg
 from ocr.core import get_registry
 
 class ModelFactory:

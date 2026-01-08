@@ -9,7 +9,7 @@ Usage:
 import argparse
 from datetime import datetime
 
-from ocr.utils.api_usage_tracker import get_tracker
+from ocr.core.utils.api_usage_tracker import get_tracker
 
 
 def main():

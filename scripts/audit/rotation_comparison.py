@@ -21,10 +21,10 @@ sys.path.insert(0, str(project_root))
 
 # Import orientation utilities
 try:
-    from ocr.utils.orientation import get_exif_orientation, normalize_pil_image
-    from ocr.utils.orientation_constants import EXIF_ORIENTATION_TAG
+    from ocr.core.utils.orientation import get_exif_orientation, normalize_pil_image
+    from ocr.core.utils.orientation_constants import EXIF_ORIENTATION_TAG
 except ImportError:
-    print("Warning: Could not import ocr.utils.orientation, using basic PIL methods")
+    print("Warning: Could not import ocr.core.utils.orientation, using basic PIL methods")
     get_exif_orientation = None
     normalize_pil_image = None
     EXIF_ORIENTATION_TAG = 274  # Standard EXIF orientation tag

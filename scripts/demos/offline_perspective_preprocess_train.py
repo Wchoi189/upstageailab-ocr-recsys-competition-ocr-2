@@ -20,8 +20,8 @@ from pathlib import Path
 
 import cv2
 
-from ocr.utils.path_utils import get_path_resolver
-from ocr.utils.perspective_correction import (
+from ocr.core.utils.path_utils import get_path_resolver
+from ocr.core.utils.perspective_correction import (
     correct_perspective_from_mask,
     remove_background_and_mask,
 )

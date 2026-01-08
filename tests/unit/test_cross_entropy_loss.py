@@ -10,7 +10,7 @@ class TestCrossEntropyLoss:
     @pytest.fixture
     def loss_fn(self):
         """Create a CrossEntropyLoss instance."""
-        from ocr.models.loss.cross_entropy_loss import CrossEntropyLoss
+        from ocr.core.models.loss.cross_entropy_loss import CrossEntropyLoss
 
         return CrossEntropyLoss(ignore_index=0)
 
@@ -42,7 +42,7 @@ class TestCrossEntropyLoss:
 
     def test_label_smoothing(self):
         """Test that label smoothing is applied when specified."""
-        from ocr.models.loss.cross_entropy_loss import CrossEntropyLoss
+        from ocr.core.models.loss.cross_entropy_loss import CrossEntropyLoss
 
         loss_no_smooth = CrossEntropyLoss(ignore_index=0, label_smoothing=0.0)
         loss_with_smooth = CrossEntropyLoss(ignore_index=0, label_smoothing=0.1)

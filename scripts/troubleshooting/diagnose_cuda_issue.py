@@ -17,7 +17,7 @@ from omegaconf import OmegaConf
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from ocr.utils.path_utils import setup_project_paths
+from ocr.core.utils.path_utils import setup_project_paths
 
 
 def parse_args() -> argparse.Namespace:
@@ -157,7 +157,7 @@ def test_data_loading(args: argparse.Namespace):
         from hydra.utils import instantiate
         from torch.utils.data import DataLoader
 
-        from ocr.datasets import get_datasets_by_cfg
+        from ocr.data.datasets import get_datasets_by_cfg
 
         cfg = _compose_config(args)
 
@@ -259,7 +259,7 @@ def test_model_forward(args: argparse.Namespace):
 
         # Create model
         print("Creating model...")
-        from ocr.models import get_model_by_cfg
+        from ocr.core.models import get_model_by_cfg
 
         model = get_model_by_cfg(cfg.model)
         model = model.cuda()

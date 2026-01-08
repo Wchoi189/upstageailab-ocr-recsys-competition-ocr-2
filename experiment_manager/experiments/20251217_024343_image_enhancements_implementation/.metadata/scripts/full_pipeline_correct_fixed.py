@@ -27,7 +27,7 @@ import numpy as np
 workspace_root = Path(__file__).resolve().parents[4]
 sys.path.insert(0, str(workspace_root))
 
-from ocr.utils.perspective_correction import remove_background_and_mask
+from ocr.core.utils.perspective_correction import remove_background_and_mask
 
 # Import enhancement modules from experiment scripts
 experiment_scripts = Path(__file__).parent

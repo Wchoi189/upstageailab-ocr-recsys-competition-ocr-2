@@ -3,7 +3,7 @@ from pathlib import Path
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
-from ocr.utils.path_utils import get_path_resolver, setup_project_paths
+from ocr.core.utils.path_utils import get_path_resolver, setup_project_paths
 
 setup_project_paths()
 

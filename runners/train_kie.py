@@ -55,15 +55,15 @@ def main(config: DictConfig):
     from torch.utils.data import ConcatDataset
     from transformers import AutoTokenizer, LayoutLMv3Processor
 
-    from ocr.kie.data import KIEDataset
-    from ocr.lightning_modules.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
-    from ocr.kie.trainer import KIEDataPLModule, KIEPLModule
-    from ocr.kie.models import LayoutLMv3Wrapper, LiLTWrapper
+    from ocr.features.kie.data import KIEDataset
+    from ocr.core.lightning.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
+    from ocr.features.kie.trainer import KIEDataPLModule, KIEPLModule
+    from ocr.features.kie.models import LayoutLMv3Wrapper, LiLTWrapper
 
     # === END LAZY IMPORTS ===
     # Import config utils
-    from ocr.utils.config_utils import ensure_dict
-    from ocr.utils.path_utils import ensure_output_dirs
+    from ocr.core.utils.config_utils import ensure_dict
+    from ocr.core.utils.path_utils import ensure_output_dirs
 
     pl.seed_everything(config.get("seed", 42), workers=True)
 

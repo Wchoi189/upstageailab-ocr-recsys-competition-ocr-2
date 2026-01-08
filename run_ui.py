@@ -8,7 +8,7 @@ This script provides convenient commands to run the Streamlit UI applications.
 import subprocess
 import sys
 
-from ocr.utils.path_utils import get_path_resolver, setup_project_paths
+from ocr.core.utils.path_utils import get_path_resolver, setup_project_paths
 
 setup_project_paths()
 

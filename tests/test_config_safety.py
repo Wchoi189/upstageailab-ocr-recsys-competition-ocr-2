@@ -4,7 +4,7 @@ import pytest
 
 from omegaconf import OmegaConf
 
-from ocr.utils.config_utils import ensure_dict, is_config
+from ocr.core.utils.config_utils import ensure_dict, is_config
 
 
 @pytest.fixture(scope="module", autouse=True)
@@ -12,7 +12,7 @@ def mock_heavy_imports():
     """Mock dependencies to avoid importing heavy model libraries."""
     # Store original modules
     original_modules = {}
-    modules_to_mock = ["ocr.models.core", "ocr.models.core.registry"]
+    modules_to_mock = ["ocr.core.models.core", "ocr.core.models.core.registry"]
 
     for module_name in modules_to_mock:
         if module_name in sys.modules:
@@ -20,8 +20,8 @@ def mock_heavy_imports():
 
     # Apply mocks
     mock_registry = MagicMock()
-    sys.modules["ocr.models.core"] = MagicMock()
-    sys.modules["ocr.models.core.registry"] = mock_registry
+    sys.modules["ocr.core.models.core"] = MagicMock()
+    sys.modules["ocr.core.models.core.registry"] = mock_registry
 
     yield
 

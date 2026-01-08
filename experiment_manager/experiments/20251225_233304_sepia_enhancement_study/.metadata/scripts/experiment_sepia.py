@@ -7,7 +7,7 @@ from pathlib import Path
 import aiohttp
 import cv2
 
-from ocr.utils.sepia_enhancement import enhance_sepia
+from ocr.core.utils.sepia_enhancement import enhance_sepia
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

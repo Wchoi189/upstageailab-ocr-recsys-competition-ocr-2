@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 from ocr.core.validation import CacheConfig, DatasetConfig
-from ocr.datasets.base import ValidatedOCRDataset
+from ocr.data.datasets.base import ValidatedOCRDataset
 
 
 class TestValidatedOCRDatasetIntegration:
@@ -69,7 +69,7 @@ class TestValidatedOCRDatasetIntegration:
         """Test the complete pipeline from config to final output."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         tmp_path, annotation_file = setup_test_environment
 
@@ -126,7 +126,7 @@ class TestValidatedOCRDatasetIntegration:
         """Test integration between dataset and cache manager."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         tmp_path, annotation_file = setup_test_environment
 
@@ -167,7 +167,7 @@ class TestValidatedOCRDatasetIntegration:
         """Test that data validation occurs throughout the pipeline."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         tmp_path, annotation_file = setup_test_environment
 
@@ -210,7 +210,7 @@ class TestValidatedOCRDatasetIntegration:
         """Test performance improvement with caching enabled."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         tmp_path, annotation_file = setup_test_environment
 
@@ -261,7 +261,7 @@ class TestValidatedOCRDatasetIntegration:
         """Test memory usage patterns with and without caching."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         tmp_path, annotation_file = setup_test_environment
 
@@ -324,7 +324,7 @@ class TestEndToEndPipeline:
         """Test complete end-to-end processing from raw image to final output."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         # Create annotation file
         annotation_file = tmp_path / "annotations.json"
@@ -395,7 +395,7 @@ class TestPipelineRobustness:
         """Test pipeline with various edge case images."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         # Create annotation file
         annotation_file = tmp_path / "annotations.json"

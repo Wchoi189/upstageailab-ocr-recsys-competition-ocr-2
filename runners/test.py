@@ -2,9 +2,9 @@ import warnings
 
 import hydra
 
-from ocr.utils.callbacks import build_callbacks
-from ocr.utils.logger_factory import create_logger
-from ocr.utils.path_utils import get_path_resolver, setup_project_paths
+from ocr.core.utils.callbacks import build_callbacks
+from ocr.core.utils.logger_factory import create_logger
+from ocr.core.utils.path_utils import get_path_resolver, setup_project_paths
 
 setup_project_paths()
 
@@ -23,7 +23,7 @@ except ImportError:
     # Pydantic v1 doesn't have this warning class
     pass
 
-from ocr.lightning_modules import get_pl_modules_by_cfg  # noqa: E402
+from ocr.core.lightning import get_pl_modules_by_cfg  # noqa: E402
 
 
 @hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="eval", version_base=None)

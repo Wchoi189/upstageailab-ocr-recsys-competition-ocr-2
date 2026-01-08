@@ -61,7 +61,7 @@ def main():
     from tqdm import tqdm
     from transformers import AutoTokenizer, LayoutLMv3Processor
 
-    from ocr.kie.models import LayoutLMv3Wrapper, LiLTWrapper
+    from ocr.features.kie.models import LayoutLMv3Wrapper, LiLTWrapper
 
     device = torch.device(args.device if torch.cuda.is_available() else "cpu")
     logger.info(f"Using device: {device}")

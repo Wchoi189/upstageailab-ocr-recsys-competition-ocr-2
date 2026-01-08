@@ -1,6 +1,6 @@
 """Unit tests for checkpoint_utils module."""
 
-from ocr.lightning_modules.utils.checkpoint_utils import CheckpointHandler
+from ocr.core.lightning.utils.checkpoint_utils import CheckpointHandler
 
 
 class DummyModule:

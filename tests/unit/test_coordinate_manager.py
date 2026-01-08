@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from ocr.inference.coordinate_manager import (
+from ocr.core.inference.coordinate_manager import (
     CoordinateTransformationManager,
     calculate_transform_metadata,
     compute_forward_scales,

@@ -10,8 +10,8 @@ from typing import Any
 import numpy as np
 from PIL import Image
 
-from ocr.datasets.base import ValidatedOCRDataset as OCRDataset
-from ocr.utils.orientation import normalize_pil_image, remap_polygons
+from ocr.data.datasets.base import ValidatedOCRDataset as OCRDataset
+from ocr.core.utils.orientation import normalize_pil_image, remap_polygons
 
 # The EXIF orientation tag constant
 EXIF_ORIENTATION_TAG = 274

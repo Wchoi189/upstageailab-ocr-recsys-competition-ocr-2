@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from ocr.utils.image_loading import get_image_loader_info, load_image_optimized
+from ocr.core.utils.image_loading import get_image_loader_info, load_image_optimized
 
 
 class TestTurboJPEGIntegration:
@@ -51,7 +51,7 @@ class TestTurboJPEGIntegration:
         test_image.save(jpeg_path, "JPEG")
 
         # Mock TurboJPEG to fail
-        with patch("ocr.utils.image_loading.TurboJPEG") as mock_turbo:
+        with patch("ocr.core.utils.image_loading.TurboJPEG") as mock_turbo:
             mock_instance = MagicMock()
             mock_instance.decode.side_effect = Exception("TurboJPEG failed")
             mock_turbo.return_value = mock_instance

@@ -1,5 +1,5 @@
 from ocr.data.datasets import get_datasets_by_cfg
-from ocr.models import get_model_by_cfg
+from ocr.core.models import get_model_by_cfg
 
 from .ocr_pl import OCRDataPLModule, OCRPLModule
 

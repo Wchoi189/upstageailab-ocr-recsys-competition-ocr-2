@@ -9,8 +9,8 @@ import cv2
 import numpy as np
 from rembg import remove
 
-from ocr.inference.preprocessing_pipeline import apply_optional_perspective_correction
-from ocr.utils.sepia_enhancement import enhance_sepia
+from ocr.core.inference.preprocessing_pipeline import apply_optional_perspective_correction
+from ocr.core.utils.sepia_enhancement import enhance_sepia
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

@@ -16,8 +16,8 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-from ocr.datasets.preprocessing import DocumentPreprocessor
-from ocr.utils.logging import logger
+from ocr.data.datasets.preprocessing import DocumentPreprocessor
+from ocr.core.utils.logging import logger
 
 
 class OfflineSampleGenerator:

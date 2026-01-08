@@ -7,8 +7,8 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from ocr.datasets.base import Dataset as OCRDataset
-from ocr.datasets.schemas import DatasetConfig
+from ocr.data.datasets.base import Dataset as OCRDataset
+from ocr.data.datasets.schemas import DatasetConfig
 
 
 class TestOCRDataset:

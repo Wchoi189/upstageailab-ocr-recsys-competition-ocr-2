@@ -1,6 +1,6 @@
 import numpy as np
 
-from ocr.lightning_modules.callbacks.wandb_image_logging import WandbImageLoggingCallback
+from ocr.core.lightning.callbacks.wandb_image_logging import WandbImageLoggingCallback
 
 
 def test_normalise_polygons_converts_sequences_to_arrays():

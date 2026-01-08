@@ -129,7 +129,7 @@ class PerformanceTester:
             "runners/train.py",
             f"--config-name={self.base_config}",
             "performance_test.polygon_cache=false",
-            "callbacks.throughput_monitor=ocr.lightning_modules.callbacks.throughput_monitor.ThroughputMonitor",
+            "callbacks.throughput_monitor=ocr.core.lightning.callbacks.throughput_monitor.ThroughputMonitor",
         ]
 
         result = self.run_command(cmd)
@@ -163,7 +163,7 @@ class PerformanceTester:
             "runners/train.py",
             f"--config-name={self.base_config}",
             "performance_test.polygon_cache=false",
-            "callbacks.profiler=ocr.lightning_modules.callbacks.profiler.ProfilerCallback",
+            "callbacks.profiler=ocr.core.lightning.callbacks.profiler.ProfilerCallback",
         ]
 
         result = self.run_command(cmd)

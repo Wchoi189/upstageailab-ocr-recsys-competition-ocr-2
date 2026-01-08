@@ -25,12 +25,12 @@ except ImportError:
 
 # wandb imported lazily inside train() to avoid slow imports
 
-from ocr.utils.callbacks import build_callbacks
-from ocr.utils.path_utils import ensure_output_dirs, setup_project_paths
+from ocr.core.utils.callbacks import build_callbacks
+from ocr.core.utils.path_utils import ensure_output_dirs, setup_project_paths
 
 setup_project_paths()
 
-# ocr.lightning_modules imported inside train() to avoid loading models/datasets at module level
+# ocr.core.lightning imported inside train() to avoid loading models/datasets at module level
 
 # PyTorch Lightning handles SIGINT/SIGTERM gracefully by default
 # No custom signal handlers needed (and they cause threading issues in Streamlit)
@@ -83,7 +83,7 @@ def train(config: DictConfig):
     from lightning.pytorch.callbacks import LearningRateMonitor
 
     import wandb
-    from ocr.lightning_modules import get_pl_modules_by_cfg
+    from ocr.core.lightning import get_pl_modules_by_cfg
     # === END LAZY IMPORTS ===
 
     # Clean up any lingering W&B session to prevent warnings
@@ -107,7 +107,7 @@ def train(config: DictConfig):
     ensure_output_dirs(output_dirs)
 
     # Create appropriate logger (W&B or TensorBoard) based on configuration
-    from ocr.utils.logger_factory import create_logger
+    from ocr.core.utils.logger_factory import create_logger
 
     logger = create_logger(config)
 
@@ -138,7 +138,7 @@ def train(config: DictConfig):
 
     # Finalize wandb run if wandb was used
     if config.logger.wandb:
-        from ocr.utils.wandb_utils import finalize_run
+        from ocr.core.utils.wandb_utils import finalize_run
 
         metrics: dict[str, float] = {}
 

@@ -400,7 +400,7 @@ def create_app() -> "typer.Typer":
         Search for symbols by name or qualified path.
 
         Supports:
-        - Qualified path resolution (ocr.models.X → file location)
+        - Qualified path resolution (ocr.core.models.X → file location)
         - Reverse lookup (class name → all import paths)
         - Fuzzy matching for typos (default: enabled)
         """

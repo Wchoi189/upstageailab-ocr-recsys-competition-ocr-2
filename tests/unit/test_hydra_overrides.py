@@ -15,7 +15,7 @@ import hydra
 
 # Setup project paths
 sys.path.insert(0, str(Path(__file__).parent.parent))
-from ocr.utils.path_utils import setup_project_paths
+from ocr.core.utils.path_utils import setup_project_paths
 
 setup_project_paths()
 

@@ -66,7 +66,7 @@ datasets:
     _target_: ${dataset_path}.ValidatedOCRDataset
     config:
       _target_: ${dataset_config_path}.DatasetConfig
-      image_path: ${dataset_base_path}images/val
+      image_path: ${dataset_base_path}images_val_canonical
       annotation_path: ${dataset_base_path}jsons/val.json
       enable_background_normalization: false  # Disabled for test to match training
     transform: ${transforms.test_transform}

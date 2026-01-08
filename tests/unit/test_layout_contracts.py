@@ -9,7 +9,7 @@ from __future__ import annotations
 import pytest
 from pydantic import ValidationError
 
-from ocr.inference.layout.contracts import (
+from ocr.core.inference.layout.contracts import (
     BoundingBox,
     LayoutResult,
     TextBlock,

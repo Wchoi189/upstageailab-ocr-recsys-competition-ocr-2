@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from ocr.datasets.preprocessing.contracts import (
+from ocr.data.datasets.preprocessing.contracts import (
     ContractEnforcer,
     DetectionResultContract,
     ImageInputContract,

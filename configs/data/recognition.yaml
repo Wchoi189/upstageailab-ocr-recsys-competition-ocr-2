@@ -6,17 +6,17 @@ defaults:
 
 # Tokenizer
 tokenizer:
-  _target_: ocr.recognition.data.tokenizer.KoreanOCRTokenizer
+  _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
   charset_path: ${paths.data_root}/ocr/data/charset.json
   max_len: 25
 
 # Dataset
 dataset:
-  _target_: ocr.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+  _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
   lmdb_path: ${paths.data_root}/data/processed/aihub_lmdb_validation
   tokenizer: ${tokenizer}
   max_len: ${tokenizer.max_len}
 
 # Collate
 collate_fn:
-  _target_: ocr.datasets.recognition_collate_fn.recognition_collate_fn
+  _target_: ocr.data.datasets.recognition_collate_fn.recognition_collate_fn

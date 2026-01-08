@@ -9,7 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
-from ocr.inference.recognizer import (
+from ocr.features.recognition.inference.recognizer import (
     RecognitionInput,
     RecognitionOutput,
     RecognizerBackend,

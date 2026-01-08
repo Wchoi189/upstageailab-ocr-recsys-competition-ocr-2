@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 
-from ocr.evaluation.evaluator import CLEvalEvaluator
+from ocr.core.evaluation.evaluator import CLEvalEvaluator
 from ocr.validation.models import LightningStepPrediction
 
 
@@ -90,7 +90,7 @@ class TestCLEvalEvaluator:
             {"boxes": [np.array([[2, 2], [3, 2], [3, 3], [2, 3]])], "orientation": 0, "raw_size": (100, 100)},
         ]
 
-        with patch("ocr.evaluation.evaluator.validate_predictions") as mock_validate:
+        with patch("ocr.core.evaluation.evaluator.validate_predictions") as mock_validate:
             # Mock the validation to return LightningStepPrediction objects
             mock_validate.return_value = [
                 LightningStepPrediction(boxes=[np.array([[0, 0], [1, 0], [1, 1], [0, 1]])], orientation=0, raw_size=(100, 100)),
@@ -140,7 +140,7 @@ class TestCLEvalEvaluator:
 
         assert len(evaluator.predictions) == 0
 
-    @patch("ocr.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
+    @patch("ocr.core.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
     def test_compute_with_predictions_and_ground_truth(self):
         """Test compute method with predictions and ground truth data."""
         # Create mock dataset with annotations
@@ -176,7 +176,7 @@ class TestCLEvalEvaluator:
             mock_image.size = (100, 100)
             mock_image_open.return_value.__enter__.return_value = mock_image
 
-            with patch("ocr.evaluation.evaluator.remap_polygons") as mock_remap:
+            with patch("ocr.core.evaluation.evaluator.remap_polygons") as mock_remap:
                 mock_remap.return_value = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)]
 
                 results = evaluator.compute()
@@ -188,7 +188,7 @@ class TestCLEvalEvaluator:
         assert abs(results["val/precision"] - 0.8) < 0.01
         assert abs(results["val/hmean"] - 0.85) < 0.01
 
-    @patch("ocr.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
+    @patch("ocr.core.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
     def test_compute_with_no_predictions(self):
         """Test compute method when no predictions have been made."""
         annotations = {"img1.jpg": [{"polygon": [[0, 0], [10, 0], [10, 10], [0, 10]], "text": "test"}]}
@@ -204,7 +204,7 @@ class TestCLEvalEvaluator:
         assert results["val/precision"] == 0.0
         assert results["val/hmean"] == 0.0
 
-    @patch("ocr.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
+    @patch("ocr.core.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
     def test_compute_with_subset_dataset(self):
         """Test compute method with a subset dataset (has indices)."""
         base_annotations = {
@@ -241,7 +241,7 @@ class TestCLEvalEvaluator:
             mock_image.size = (100, 100)
             mock_image_open.return_value.__enter__.return_value = mock_image
 
-            with patch("ocr.evaluation.evaluator.remap_polygons") as mock_remap:
+            with patch("ocr.core.evaluation.evaluator.remap_polygons") as mock_remap:
                 mock_remap.return_value = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)]
 
                 results = evaluator.compute()
@@ -258,7 +258,7 @@ class TestCLEvalEvaluator:
         filenames = ["img1.jpg"]
         predictions = [{"boxes": [np.array([[0, 0], [1, 0], [1, 1], [0, 1]])], "orientation": 0, "raw_size": (100, 100)}]
 
-        with patch("ocr.evaluation.evaluator.validate_predictions") as mock_validate:
+        with patch("ocr.core.evaluation.evaluator.validate_predictions") as mock_validate:
             mock_validate.return_value = [
                 LightningStepPrediction(boxes=[np.array([[0, 0], [1, 0], [1, 1], [0, 1]])], orientation=0, raw_size=(100, 100))
             ]
@@ -276,13 +276,13 @@ class TestCLEvalEvaluator:
         filenames = ["img1.jpg"]
         predictions = [{"boxes": [np.array([[0, 0], [1, 0], [1, 1], [0, 1]])], "orientation": 0, "raw_size": (100, 100)}]
 
-        with patch("ocr.evaluation.evaluator.validate_predictions") as mock_validate:
+        with patch("ocr.core.evaluation.evaluator.validate_predictions") as mock_validate:
             evaluator.update(filenames, predictions)
 
         # Verify that validation was not called
         mock_validate.assert_not_called()
 
-    @patch("ocr.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
+    @patch("ocr.core.evaluation.evaluator.CLEvalMetric", MockCLEvalMetric)
     def test_compute_with_empty_detection_boxes(self):
         """Test compute method with empty detection boxes."""
         annotations = {"img1.jpg": [{"polygon": [[0, 0], [10, 0], [10, 10], [0, 10]], "text": "test"}]}
@@ -301,7 +301,7 @@ class TestCLEvalEvaluator:
             mock_image.size = (100, 100)
             mock_image_open.return_value.__enter__.return_value = mock_image
 
-            with patch("ocr.evaluation.evaluator.remap_polygons") as mock_remap:
+            with patch("ocr.core.evaluation.evaluator.remap_polygons") as mock_remap:
                 mock_remap.return_value = [np.array([[0, 0], [10, 0], [10, 10], [0, 10]], dtype=np.float32)]
 
                 results = evaluator.compute()

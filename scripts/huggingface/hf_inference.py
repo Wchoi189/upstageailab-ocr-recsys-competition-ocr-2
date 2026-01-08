@@ -17,8 +17,8 @@ from omegaconf import OmegaConf
 from PIL import Image
 
 # Import from project
-from ocr.inference.model_loader import instantiate_model, load_state_dict, register_safe_globals
-from ocr.utils.config_utils import load_config
+from ocr.core.inference.model_loader import instantiate_model, load_state_dict, register_safe_globals
+from ocr.core.utils.config_utils import load_config
 
 
 def visualize_detection(image_path: Path, outputs: dict, save_path: Path = None):

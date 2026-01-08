@@ -1,0 +1,45 @@
+version: "1.0"
+title: "Source Code Refactoring 2.0: Feature-First & Strict Hierarchies"
+status: "active"
+goals:
+  - "Eliminate root-level bloat in `ocr/`"
+  - "Enforce strict Feature-First architecture (Move domains to `ocr/features/`)"
+  - "Decouple Inference (Split `ocr/inference` into Core and Features)"
+  - "Consolidate shared resources (Kill `ocr/dataset`, `ocr/metrics`, `ocr/models` duplicates)"
+
+phases:
+  - name: "Phase 1: Cleanup Duplicates"
+    status: "pending"
+    items:
+      - "Delete `ocr/lightning_modules` (Duplicate of `ocr/core/lightning`)"
+      - "Delete `ocr/metrics` (Duplicate of `ocr/core/metrics`)"
+      - "Delete `ocr/datasets` (Superseded by `ocr/data/datasets`)"
+
+  - name: "Phase 2: Feature Containerization"
+    status: "pending"
+    items:
+      - "Create `ocr/features/` container"
+      - "Move `ocr/detection` -> `ocr/features/detection`"
+      - "Move `ocr/recognition` -> `ocr/features/recognition`"
+      - "Move `ocr/kie` -> `ocr/features/kie`"
+      - "Update all imports to reflect new paths"
+
+  - name: "Phase 3: Deep Inference Refactor"
+    status: "pending"
+    items:
+      - "Split `ocr/inference` into `ocr/core/inference` and `ocr/features/{domain}/inference`"
+      - "Move `recognizer.py` & Backends to `features/recognition`"
+      - "Move `engine.py`, `orchestrator.py` to `core/inference`"
+
+  - name: "Phase 4: Consolidation"
+    status: "pending"
+    items:
+      - "Merge `ocr/utils` into `ocr/core/utils`"
+      - "Move shared logic from `ocr/models` to `ocr/core/models`"
+      - "Delete `ocr/models` root dir"
+
+  - name: "Phase 5: Final Polish"
+    status: "pending"
+    items:
+      - "Move `ocr/evaluation`, `ocr/analysis` to `ocr/core/`"
+      - "Verify system integrity via tests"

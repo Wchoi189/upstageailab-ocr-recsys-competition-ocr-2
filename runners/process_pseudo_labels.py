@@ -25,7 +25,7 @@ import requests
 from PIL import Image
 from tqdm import tqdm
 
-from ocr.utils.api_usage_tracker import get_tracker
+from ocr.core.utils.api_usage_tracker import get_tracker
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")

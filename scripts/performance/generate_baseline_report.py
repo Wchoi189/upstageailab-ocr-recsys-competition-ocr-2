@@ -382,7 +382,7 @@ def generate_markdown_report(
                 "```yaml",
                 "callbacks:",
                 "  performance_profiler:",
-                "    _target_: ocr.lightning_modules.callbacks.performance_profiler.PerformanceProfilerCallback",
+                "    _target_: ocr.core.lightning.callbacks.performance_profiler.PerformanceProfilerCallback",
                 "    enabled: true",
                 "    log_interval: 10",
                 "```",

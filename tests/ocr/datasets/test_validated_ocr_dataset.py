@@ -8,8 +8,8 @@ import numpy as np
 import pytest
 
 # Import the refactored dataset class and schemas
-from ocr.datasets.base import ValidatedOCRDataset
-from ocr.datasets.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
+from ocr.data.datasets.base import ValidatedOCRDataset
+from ocr.data.datasets.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
 
 
 def create_mock_dataset_config(image_path, annotation_path=None, cache_transformed_tensors=False):
@@ -119,7 +119,7 @@ class TestValidatedOCRDatasetGetItem:
         """Test that __getitem__ returns a valid sample with expected structure."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         # Mock the _load_image_data method to return a pre-built ImageData object
         with patch.object(ValidatedOCRDataset, "_load_image_data") as mock_load_image_data:
@@ -153,7 +153,7 @@ class TestValidatedOCRDatasetGetItem:
         """Test that __getitem__ works with tensor caching enabled."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         # Create config with caching enabled
         config = create_mock_dataset_config(mock_config_with_single_image.image_path, cache_transformed_tensors=True)
@@ -258,7 +258,7 @@ class TestValidatedOCRDatasetCaching:
         """Test that tensor caching works correctly."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         # Mock the _load_image_data method to return a pre-built ImageData object
         with patch.object(ValidatedOCRDataset, "_load_image_data") as mock_load_image_data:

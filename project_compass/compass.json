@@ -1,15 +1,15 @@
 {
   "$schema": ".config/schemas/compass.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-01-08 04:06 (UTC)",
+  "last_updated": "2026-01-08 23:55 (KST)",
   "active_handoff": "active_context/current_session.yml",
   "uv_constraints": {
     "min_version": "0.9.0",
     "required_path": ""
   },
   "project_status": {
-    "current_phase": "hydra_config_restructure",
+    "current_phase": "source_code_refactoring_2",
     "overall_health": "healthy",
-    "note": "Hydra Configuration Architecture Restructuring - 107 files/37 dirs → ~50 files/15 dirs"
+    "note": "Refactor Rescue: Feature-First & Strict Hierarchies. See project_compass/roadmap/00_source_code_refactoring2.yaml"
   }
 }

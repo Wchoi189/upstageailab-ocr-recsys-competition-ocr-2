@@ -255,7 +255,7 @@ TOOLS = [
             "properties": {
                 "query": {
                     "type": "string",
-                    "description": "Symbol name or qualified path (e.g., 'TimmBackbone' or 'ocr.models.encoder.TimmBackbone')",
+                    "description": "Symbol name or qualified path (e.g., 'TimmBackbone' or 'ocr.core.models.encoder.TimmBackbone')",
                 },
                 "root": {
                     "type": "string",

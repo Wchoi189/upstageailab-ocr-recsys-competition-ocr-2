@@ -10,7 +10,7 @@ from pydantic import ValidationError
 from torch.utils.data import DataLoader
 
 from ocr.core.validation import CollateOutput, ValidatedTensorData
-from ocr.evaluation import CLEvalEvaluator
+from ocr.core.evaluation import CLEvalEvaluator
 from ocr.core.lightning.loggers import WandbProblemLogger
 from ocr.core.lightning.utils import CheckpointHandler, extract_metric_kwargs, extract_normalize_stats, format_predictions
 from ocr.core.metrics import CLEvalMetric

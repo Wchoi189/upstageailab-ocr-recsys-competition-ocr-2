@@ -9,7 +9,7 @@ import cv2
 import numpy as np
 from rembg import remove
 
-from ocr.inference.preprocessing_pipeline import apply_optional_perspective_correction
+from ocr.core.inference.preprocessing_pipeline import apply_optional_perspective_correction
 
 # Setup logging
 logging.basicConfig(level=logging.INFO)

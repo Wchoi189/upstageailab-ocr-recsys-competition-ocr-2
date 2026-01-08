@@ -23,7 +23,7 @@ from typing import Any
 import hydra
 from omegaconf import DictConfig
 
-from ocr.datasets import ValidatedOCRDataset
+from ocr.data.datasets import ValidatedOCRDataset
 
 log = logging.getLogger(__name__)
 

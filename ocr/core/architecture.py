@@ -6,13 +6,13 @@ from omegaconf import OmegaConf
 import torch.nn as nn
 from hydra.utils import instantiate
 
-from ocr.utils.config_utils import ensure_dict, is_config
+from ocr.core.utils.config_utils import ensure_dict, is_config
 
 from ocr.core import get_registry
-from ocr.models.decoder import get_decoder_by_cfg
-from ocr.models.encoder import get_encoder_by_cfg
-from ocr.models.head import get_head_by_cfg
-from ocr.models.loss import get_loss_by_cfg
+from ocr.core.models.decoder import get_decoder_by_cfg
+from ocr.core.models.encoder import get_encoder_by_cfg
+from ocr.core.models.head import get_head_by_cfg
+from ocr.core.models.loss import get_loss_by_cfg
 
 logger = logging.getLogger(__name__)
 

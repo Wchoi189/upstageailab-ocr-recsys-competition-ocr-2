@@ -121,7 +121,7 @@ class ConfigParser:
         """Get available architecture presets from the registry for UI selection."""
         # Lazy import to avoid blocking during module import
         # Ensure architectures are registered by importing the module
-        from ocr.models import architectures  # noqa: F401
+        from ocr.core.models import architectures  # noqa: F401
         from ocr.core import registry
 
         return registry.list_architectures()

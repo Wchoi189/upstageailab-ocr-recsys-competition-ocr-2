@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from ocr.utils.polygon_utils import filter_degenerate_polygons
+from ocr.core.utils.polygon_utils import filter_degenerate_polygons
 
 
 class TestPolygonFiltering:
@@ -37,7 +37,7 @@ class TestPolygonFiltering:
         """Test filtering of None polygons."""
         polygons = [None, None, None]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons)
 
@@ -48,7 +48,7 @@ class TestPolygonFiltering:
         empty_poly = np.array([], dtype=np.float32)
         polygons = [empty_poly]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons)
 
@@ -64,7 +64,7 @@ class TestPolygonFiltering:
 
         polygons = [single_point, two_points]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons)
 
@@ -80,7 +80,7 @@ class TestPolygonFiltering:
 
         polygons = [small_triangle, small_quad]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons, min_side=2.0)
 
@@ -96,7 +96,7 @@ class TestPolygonFiltering:
 
         polygons = [horizontal_line, vertical_line]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons)
 
@@ -115,7 +115,7 @@ class TestPolygonFiltering:
 
         polygons = [valid, too_small, none_poly]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons, min_side=5.0)
 
@@ -132,7 +132,7 @@ class TestPolygonFiltering:
 
         polygons = [shape_n2, shape_1n2]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered = filter_degenerate_polygons(polygons)
 
@@ -144,14 +144,14 @@ class TestPolygonFiltering:
         medium_poly = np.array([[0, 0], [5, 0], [5, 5], [0, 5]], dtype=np.float32)
 
         # Test with min_side = 10 (should be filtered)
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered_strict = filter_degenerate_polygons([medium_poly], min_side=10.0)
 
         assert len(filtered_strict) == 0
 
         # Test with min_side = 2 (should be kept)
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger.return_value.isEnabledFor.return_value = True
             filtered_lenient = filter_degenerate_polygons([medium_poly], min_side=2.0)
 
@@ -168,7 +168,7 @@ class TestPolygonFiltering:
             np.array([[0, 0], [100, 0], [100, 100], [0, 100]], dtype=np.float32),  # valid
         ]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger_instance = mock_logger.return_value
             mock_logger_instance.isEnabledFor.return_value = True
 
@@ -193,7 +193,7 @@ class TestPolygonFiltering:
         """Test that no logging occurs when logging level is below INFO."""
         polygons = [None, np.array([[10, 10]], dtype=np.float32)]
 
-        with patch("ocr.datasets.base.logging.getLogger") as mock_logger:
+        with patch("ocr.data.datasets.base.logging.getLogger") as mock_logger:
             mock_logger_instance = mock_logger.return_value
             mock_logger_instance.isEnabledFor.return_value = False  # Logging disabled
 

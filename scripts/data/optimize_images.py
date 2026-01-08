@@ -16,10 +16,10 @@ sys.path.insert(0, str(project_root))
 
 # Import orientation utilities
 try:
-    from ocr.utils.orientation import normalize_pil_image
+    from ocr.core.utils.orientation import normalize_pil_image
 except ImportError:
     logger = logging.getLogger(__name__)
-    logger.warning("Could not import ocr.utils.orientation, EXIF normalization will be skipped")
+    logger.warning("Could not import ocr.core.utils.orientation, EXIF normalization will be skipped")
     normalize_pil_image = None
 
 # Configure logging

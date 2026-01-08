@@ -101,7 +101,7 @@ def test_throughput_callback_import():
 import os
 os.chdir('/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2')
 try:
-    from ocr.lightning_modules.callbacks import PerformanceProfilerCallback
+    from ocr.core.lightning.callbacks import PerformanceProfilerCallback
     print('PerformanceProfilerCallback imported successfully')
 except ImportError as e:
     print(f'Import failed: {e}')
@@ -129,7 +129,7 @@ def test_performance_callback():
             "python",
             "runners/train.py",
             "--config-name=performance_test",
-            "+callbacks.performance_profiler=ocr.lightning_modules.callbacks.PerformanceProfilerCallback",
+            "+callbacks.performance_profiler=ocr.core.lightning.callbacks.PerformanceProfilerCallback",
             "trainer.max_epochs=1",
             "trainer.limit_train_batches=2",
             "trainer.limit_val_batches=1",

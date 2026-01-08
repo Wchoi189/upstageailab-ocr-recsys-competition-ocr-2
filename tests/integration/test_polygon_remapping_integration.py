@@ -9,8 +9,8 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from ocr.datasets.schemas import ValidatedPolygonData
-from ocr.utils.orientation import polygons_in_canonical_frame, remap_polygons
+from ocr.data.datasets.schemas import ValidatedPolygonData
+from ocr.core.utils.orientation import polygons_in_canonical_frame, remap_polygons
 
 
 class TestPolygonRemappingIntegration:

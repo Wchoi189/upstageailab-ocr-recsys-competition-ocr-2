@@ -7,8 +7,8 @@ import logging
 import numpy as np
 import pytest
 
-from ocr.datasets.schemas import CacheConfig, DataItem, ImageData, ImageMetadata, MapData
-from ocr.utils.cache_manager import CacheManager
+from ocr.data.datasets.schemas import CacheConfig, DataItem, ImageData, ImageMetadata, MapData
+from ocr.core.utils.cache_manager import CacheManager
 
 
 @pytest.fixture

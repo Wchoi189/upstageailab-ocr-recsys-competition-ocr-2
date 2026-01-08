@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image
 
 # Import preprocessing components
-from ocr.datasets.preprocessing.pipeline import DocumentPreprocessor
+from ocr.data.datasets.preprocessing.pipeline import DocumentPreprocessor
 
 
 class PreprocessingTester:

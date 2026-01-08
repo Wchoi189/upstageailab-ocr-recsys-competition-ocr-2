@@ -8,7 +8,7 @@ class TestInferenceOrchestratorInit:
 
     def test_init_with_default_device(self):
         """Test orchestrator initialization with auto-detected device."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator()
         assert orchestrator.model_manager is not None
@@ -19,14 +19,14 @@ class TestInferenceOrchestratorInit:
 
     def test_init_with_explicit_device(self):
         """Test orchestrator initialization with explicit device."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator(device="cpu")
         assert orchestrator.model_manager.device == "cpu"
 
     def test_context_manager(self):
         """Test orchestrator as context manager."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         with InferenceOrchestrator() as orchestrator:
             assert orchestrator is not None
@@ -41,8 +41,8 @@ class TestInferenceOrchestratorLoadModel:
     def test_load_model_fails_without_ocr_modules(self, monkeypatch):
         """Test that load_model fails gracefully without OCR modules."""
         # Mock OCR_MODULES_AVAILABLE
-        import ocr.inference.model_manager as mm_module
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        import ocr.core.inference.model_manager as mm_module
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         monkeypatch.setattr(mm_module, "OCR_MODULES_AVAILABLE", False)
 
@@ -55,7 +55,7 @@ class TestInferenceOrchestratorLoadModel:
 
     def test_load_model_with_nonexistent_checkpoint(self):
         """Test loading from nonexistent checkpoint."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator()
         result = orchestrator.load_model("/nonexistent/checkpoint.pth")
@@ -68,7 +68,7 @@ class TestInferenceOrchestratorPredict:
 
     def test_predict_without_loaded_model(self):
         """Test that predict fails without loaded model."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator()
         image = np.zeros((100, 100, 3), dtype=np.uint8)
@@ -79,7 +79,7 @@ class TestInferenceOrchestratorPredict:
 
     def test_predict_without_pipelines(self, monkeypatch):
         """Test that predict fails without initialized pipelines."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator()
         # Mock model as loaded but pipelines not initialized
@@ -96,7 +96,7 @@ class TestInferenceOrchestratorUpdateParams:
 
     def test_update_params_without_pipeline(self):
         """Test updating parameters without initialized pipeline."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator()
         # Should not raise, just log warning
@@ -104,8 +104,8 @@ class TestInferenceOrchestratorUpdateParams:
 
     def test_update_params_without_settings(self):
         """Test updating parameters when pipeline has no settings."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         orchestrator = InferenceOrchestrator()
         orchestrator.postprocessing_pipeline = PostprocessingPipeline()  # No settings
@@ -119,7 +119,7 @@ class TestInferenceOrchestratorCleanup:
 
     def test_cleanup(self):
         """Test cleanup method."""
-        from ocr.inference.orchestrator import InferenceOrchestrator
+        from ocr.core.inference.orchestrator import InferenceOrchestrator
 
         orchestrator = InferenceOrchestrator()
         orchestrator.cleanup()

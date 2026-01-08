@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 
 pytest.skip("Module not implemented", allow_module_level=True)
-from ocr.datasets.preprocessing.geometric_document_modeling import (
+from ocr.data.datasets.preprocessing.geometric_document_modeling import (
     GeometricDocumentModeler,
     GeometricModel,
     GeometricModelConfig,
@@ -124,7 +124,7 @@ class TestGeometricDocumentModeler:
 class TestGeometryValidation:
     def test_validate_geometry_valid(self):
         """Test validation of valid document geometry."""
-        from ocr.datasets.preprocessing.geometric_document_modeling import DocumentGeometry
+        from ocr.data.datasets.preprocessing.geometric_document_modeling import DocumentGeometry
 
         geometry = DocumentGeometry(
             corners=np.array([[10, 10], [90, 10], [90, 90], [10, 90]]),
@@ -140,7 +140,7 @@ class TestGeometryValidation:
 
     def test_validate_geometry_too_small(self):
         """Test validation fails for too small geometry."""
-        from ocr.datasets.preprocessing.geometric_document_modeling import DocumentGeometry
+        from ocr.data.datasets.preprocessing.geometric_document_modeling import DocumentGeometry
 
         geometry = DocumentGeometry(
             corners=np.array([[45, 45], [55, 45], [55, 55], [45, 55]]),
@@ -156,7 +156,7 @@ class TestGeometryValidation:
 
     def test_validate_geometry_out_of_bounds(self):
         """Test validation fails for out-of-bounds geometry."""
-        from ocr.datasets.preprocessing.geometric_document_modeling import DocumentGeometry
+        from ocr.data.datasets.preprocessing.geometric_document_modeling import DocumentGeometry
 
         geometry = DocumentGeometry(
             corners=np.array(

@@ -15,7 +15,7 @@
 #   (Index-based numbering for easy sorting and to avoid overlaps)
 
 model_checkpoint:
-  _target_: ocr.lightning_modules.callbacks.unique_checkpoint.UniqueModelCheckpoint
+  _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
   dirpath: ${paths.checkpoint_dir} # directory to save the model file
 
   # Experiment identification

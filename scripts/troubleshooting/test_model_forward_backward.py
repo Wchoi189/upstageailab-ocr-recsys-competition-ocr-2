@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")
 import torch
 
 from ocr.detection.models.decoders.fpn_decoder import FPNDecoder
-from ocr.models.encoder.timm_backbone import TimmBackbone
+from ocr.core.models.encoder.timm_backbone import TimmBackbone
 from ocr.detection.models.heads.db_head import DBHead
 
 print("=" * 70)

@@ -15,7 +15,7 @@ except ImportError:
     ALBUMENTATIONS_AVAILABLE = False
     A = None
 
-from ocr.utils.logging import logger
+from ocr.core.utils.logging import logger
 
 from .dataset import SyntheticDatasetGenerator
 

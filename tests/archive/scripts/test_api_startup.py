@@ -15,7 +15,7 @@ def test_imports():
     steps = [
         ("Basic imports", lambda: __import__("yaml")),
         ("FastAPI", lambda: __import__("fastapi")),
-        ("Path utils", lambda: __import__("ocr.utils.path_utils")),
+        ("Path utils", lambda: __import__("ocr.core.utils.path_utils")),
         ("ConfigParser", lambda: __import__("ui.utils.config_parser")),
         ("Command builder services", lambda: __import__("ui.apps.command_builder.services.overrides")),
         ("Command utils", lambda: __import__("ui.utils.command")),

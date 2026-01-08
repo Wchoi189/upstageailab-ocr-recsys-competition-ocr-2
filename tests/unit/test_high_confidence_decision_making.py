@@ -9,7 +9,7 @@ import numpy as np
 import pytest
 
 pytest.skip("Module not implemented", allow_module_level=True)
-from ocr.datasets.preprocessing.high_confidence_decision_making import (
+from ocr.data.datasets.preprocessing.high_confidence_decision_making import (
     ConfidenceLevel,
     ContourBasedDetectionStrategy,
     DecisionConfig,
@@ -51,7 +51,7 @@ class TestDetectionStrategies:
         assert result.uncertainty < 1.0
         assert len(result.corners) == 4
 
-    @patch("ocr.datasets.preprocessing.high_confidence_decision_making.DoctrDetectionStrategy.detect")
+    @patch("ocr.data.datasets.preprocessing.high_confidence_decision_making.DoctrDetectionStrategy.detect")
     def test_doctr_strategy_placeholder(self, mock_detect, sample_image):
         """Test doctr strategy (mocked since doctr may not be available)."""
         mock_detect.return_value = DetectionHypothesis(
@@ -207,7 +207,7 @@ class TestHighConfidenceDecisionMaker:
 class TestGroundTruthFramework:
     def test_ground_truth_framework_creation(self):
         """Test ground truth validation framework setup."""
-        from ocr.datasets.preprocessing.high_confidence_decision_making import create_ground_truth_validation_framework
+        from ocr.data.datasets.preprocessing.high_confidence_decision_making import create_ground_truth_validation_framework
 
         result = create_ground_truth_validation_framework()
 

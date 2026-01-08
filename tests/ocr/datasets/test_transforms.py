@@ -11,8 +11,8 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from ocr.datasets.schemas import ImageMetadata, PolygonData, TransformInput
-from ocr.datasets.transforms import DBTransforms
+from ocr.data.datasets.schemas import ImageMetadata, PolygonData, TransformInput
+from ocr.data.datasets.transforms import DBTransforms
 
 
 class TestPolygonShapeHandling:

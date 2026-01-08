@@ -27,7 +27,7 @@ from etk.utils.path_utils import setup_script_paths
 # Setup OCR project paths
 workspace_root = tracker_root.parent.parent
 sys.path.insert(0, str(workspace_root))
-from ocr.utils.path_utils import get_path_resolver
+from ocr.core.utils.path_utils import get_path_resolver
 
 # Auto-detect experiment context
 TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)

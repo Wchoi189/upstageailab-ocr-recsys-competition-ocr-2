@@ -23,13 +23,13 @@ enforce_tags: true
 print_config: true
 
 # Module paths
-dataset_module: ocr.datasets
+dataset_module: ocr.data.datasets
 dataset_config_module: ocr.core.validation
 dataset_path: ${dataset_module}
 dataset_config_path: ${dataset_config_module}
-model_path: ocr.models
-encoder_path: ocr.models.encoder
-decoder_path: ocr.models.decoder
-head_path: ocr.models.head
-loss_path: ocr.models.loss
-lightning_path: ocr.lightning_modules
+model_path: ocr.core.models
+encoder_path: ocr.core.models.encoder
+decoder_path: ocr.core.models.decoder
+head_path: ocr.core.models.head
+loss_path: ocr.core.models.loss
+lightning_path: ocr.core.lightning

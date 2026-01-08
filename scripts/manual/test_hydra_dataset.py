@@ -6,9 +6,9 @@ Simple script to test dataset instantiation.
 from pathlib import Path
 from unittest.mock import Mock
 
-from ocr.datasets.base import ValidatedOCRDataset
-from ocr.datasets.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
-from ocr.utils.path_utils import setup_project_paths
+from ocr.data.datasets.base import ValidatedOCRDataset
+from ocr.data.datasets.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
+from ocr.core.utils.path_utils import setup_project_paths
 
 setup_project_paths()
 

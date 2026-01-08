@@ -6,7 +6,7 @@ from typing import cast
 import pytest
 import torch
 
-from ocr.metrics.cleval_metric import CLEvalMetric
+from ocr.core.metrics.cleval_metric import CLEvalMetric
 
 
 def test_calculate_rph_handles_zero_totals() -> None:

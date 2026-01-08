@@ -25,7 +25,7 @@ from pathlib import Path
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from ocr.utils.path_utils import setup_project_paths
+from ocr.core.utils.path_utils import setup_project_paths
 
 setup_project_paths()
 

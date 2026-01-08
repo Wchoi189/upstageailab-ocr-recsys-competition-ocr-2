@@ -10,10 +10,10 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 # Import our preprocessing module
-from ocr.utils.path_utils import setup_project_paths
+from ocr.core.utils.path_utils import setup_project_paths
 
 setup_project_paths()
-from ocr.datasets.preprocessing import DocumentPreprocessor
+from ocr.data.datasets.preprocessing import DocumentPreprocessor
 
 
 def test_office_lens_scanner(image_path):

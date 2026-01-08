@@ -15,7 +15,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from ocr.utils.orientation import (
+from ocr.core.utils.orientation import (
     get_exif_orientation,
     orientation_requires_rotation,
     polygons_in_canonical_frame,

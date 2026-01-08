@@ -38,8 +38,8 @@ imports_to_test = [
     ("lightning.pytorch.callbacks", "from lightning.pytorch.callbacks import LearningRateMonitor"),
     ("omegaconf", "from omegaconf import DictConfig"),
     ("wandb", "import wandb"),
-    ("ocr.utils.path_utils", "from ocr.utils.path_utils import get_path_resolver, setup_project_paths"),
-    ("ocr.lightning_modules", "from ocr.lightning_modules import get_pl_modules_by_cfg"),
+    ("ocr.core.utils.path_utils", "from ocr.core.utils.path_utils import get_path_resolver, setup_project_paths"),
+    ("ocr.core.lightning", "from ocr.core.lightning import get_pl_modules_by_cfg"),
 ]
 
 print("[DEBUG] Starting import tests...")

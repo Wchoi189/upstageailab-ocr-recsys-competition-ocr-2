@@ -22,7 +22,7 @@ from rembg import remove
 from tqdm.asyncio import tqdm
 
 from ocr.data.schemas.storage import OCRStorageItem
-from ocr.inference.preprocessing_pipeline import apply_optional_perspective_correction
+from ocr.core.inference.preprocessing_pipeline import apply_optional_perspective_correction
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

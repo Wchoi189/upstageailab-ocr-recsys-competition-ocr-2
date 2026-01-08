@@ -12,7 +12,7 @@ import pytest
 import torch
 import torch.nn as nn
 
-from ocr.detection.models.postprocess.db_postprocess import DBPostProcessor
+from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
 
 
 class MockDBModel(nn.Module):

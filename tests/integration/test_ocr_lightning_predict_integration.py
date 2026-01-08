@@ -7,7 +7,7 @@ import pytest
 import torch
 from omegaconf import OmegaConf
 
-from ocr.lightning_modules.ocr_pl import OCRPLModule
+from ocr.core.lightning.ocr_pl import OCRPLModule
 
 
 class MockModel:
@@ -83,7 +83,7 @@ def test_ocr_lightning_module_predict_step_happy_path(mock_config, mock_batch):
     # Setup
     model = MockModel()
     dataset = {"predict": MockDataset("predict")}
-    metric_cfg = OmegaConf.create({"_target_": "ocr.metrics.CLEvalMetric", "case_sensitive": False})
+    metric_cfg = OmegaConf.create({"_target_": "ocr.core.metrics.CLEvalMetric", "case_sensitive": False})
 
     module = OCRPLModule(model, dataset, mock_config, metric_cfg)
 
@@ -111,7 +111,7 @@ def test_ocr_lightning_module_on_predict_epoch_end_creates_submission(mock_confi
     # Setup
     model = MockModel()
     dataset = {"predict": MockDataset("predict")}
-    metric_cfg = OmegaConf.create({"_target_": "ocr.metrics.CLEvalMetric", "case_sensitive": False})
+    metric_cfg = OmegaConf.create({"_target_": "ocr.core.metrics.CLEvalMetric", "case_sensitive": False})
 
     module = OCRPLModule(model, dataset, mock_config, metric_cfg)
 
@@ -143,7 +143,7 @@ def test_ocr_lightning_module_predict_loop_integration(mock_config, mock_batch):
     # Setup
     model = MockModel()
     dataset = {"predict": MockDataset("predict")}
-    metric_cfg = OmegaConf.create({"_target_": "ocr.metrics.CLEvalMetric", "case_sensitive": False})
+    metric_cfg = OmegaConf.create({"_target_": "ocr.core.metrics.CLEvalMetric", "case_sensitive": False})
 
     module = OCRPLModule(model, dataset, mock_config, metric_cfg)
 
@@ -186,7 +186,7 @@ def test_ocr_lightning_module_predict_without_confidence(mock_config, mock_batch
     # Setup
     model = MockModel()
     dataset = {"predict": MockDataset("predict")}
-    metric_cfg = OmegaConf.create({"_target_": "ocr.metrics.CLEvalMetric", "case_sensitive": False})
+    metric_cfg = OmegaConf.create({"_target_": "ocr.core.metrics.CLEvalMetric", "case_sensitive": False})
 
     module = OCRPLModule(model, dataset, mock_config, metric_cfg)
 
@@ -214,7 +214,7 @@ def test_ocr_lightning_module_predict_with_evaluator_integration(mock_config, mo
     # Setup with evaluator
     model = MockModel()
     dataset = {"predict": MockDataset("predict")}
-    metric_cfg = OmegaConf.create({"_target_": "ocr.metrics.CLEvalMetric", "case_sensitive": False})
+    metric_cfg = OmegaConf.create({"_target_": "ocr.core.metrics.CLEvalMetric", "case_sensitive": False})
 
     module = OCRPLModule(model, dataset, mock_config, metric_cfg)
 

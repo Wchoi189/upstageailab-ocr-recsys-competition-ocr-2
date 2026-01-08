@@ -15,17 +15,17 @@ import numpy as np
 import pytest
 
 # Import all Phase 2 enhancement modules
-from ocr.datasets.preprocessing.advanced_noise_elimination import (
+from ocr.data.datasets.preprocessing.advanced_noise_elimination import (
     AdvancedNoiseEliminator,
     NoiseEliminationConfig,
     NoiseReductionMethod,
 )
-from ocr.datasets.preprocessing.document_flattening import (
+from ocr.data.datasets.preprocessing.document_flattening import (
     DocumentFlattener,
     FlatteningConfig,
     FlatteningMethod,
 )
-from ocr.datasets.preprocessing.intelligent_brightness import (
+from ocr.data.datasets.preprocessing.intelligent_brightness import (
     BrightnessConfig,
     BrightnessMethod,
     IntelligentBrightnessAdjuster,
@@ -462,9 +462,9 @@ class TestPhase2QualityMetrics:
 
     def test_quality_metrics_established(self):
         """Verify that quality metrics are established for all features."""
-        from ocr.datasets.preprocessing.advanced_noise_elimination import NoiseEliminationMetrics
-        from ocr.datasets.preprocessing.document_flattening import FlatteningMetrics
-        from ocr.datasets.preprocessing.intelligent_brightness import BrightnessMetrics
+        from ocr.data.datasets.preprocessing.advanced_noise_elimination import NoiseEliminationMetrics
+        from ocr.data.datasets.preprocessing.document_flattening import FlatteningMetrics
+        from ocr.data.datasets.preprocessing.intelligent_brightness import BrightnessMetrics
 
         # Check that metrics classes exist and have required fields
 
@@ -503,21 +503,21 @@ class TestPhase2QualityMetrics:
         test_img = np.ones((200, 300), dtype=np.uint8) * 150
 
         # Test noise elimination metrics
-        from ocr.datasets.preprocessing.advanced_noise_elimination import AdvancedNoiseEliminator
+        from ocr.data.datasets.preprocessing.advanced_noise_elimination import AdvancedNoiseEliminator
 
         noise_eliminator = AdvancedNoiseEliminator()
         noise_result = noise_eliminator.eliminate_noise(test_img)
         assert noise_result.quality_metrics.overall_quality >= 0.0
 
         # Test flattening metrics
-        from ocr.datasets.preprocessing.document_flattening import DocumentFlattener
+        from ocr.data.datasets.preprocessing.document_flattening import DocumentFlattener
 
         flattener = DocumentFlattener()
         flatten_result = flattener.flatten_document(test_img)
         assert flatten_result.quality_metrics.overall_quality >= 0.0
 
         # Test brightness metrics
-        from ocr.datasets.preprocessing.intelligent_brightness import IntelligentBrightnessAdjuster
+        from ocr.data.datasets.preprocessing.intelligent_brightness import IntelligentBrightnessAdjuster
 
         brightness_adjuster = IntelligentBrightnessAdjuster()
         brightness_result = brightness_adjuster.adjust_brightness(test_img)

@@ -18,7 +18,7 @@
 #     python runners/train.py +callbacks/metadata=default
 
 metadata:
-  _target_: ocr.lightning_modules.callbacks.MetadataCallback
+  _target_: ocr.core.lightning.callbacks.MetadataCallback
   exp_name: ${exp_name}  # From main config
   outputs_dir: ${paths.output_dir}  # From paths config
   training_phase: "training"  # Can override for finetuning

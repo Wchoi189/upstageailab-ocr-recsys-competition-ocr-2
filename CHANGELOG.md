@@ -8,6 +8,13 @@
 
 ## [Unreleased]
 
+- **[2026-01-08 22:30] Post-Refactor Stabilization COMPLETE**:
+    - **Refactor**: "Nuclear" source code refactor completed. Models moved to `ocr.core`.
+    - **Hydra Configs**: Complete restructuring. Defined `domain/`, `task/`, `model/` hierarchies. Decoupled configurations.
+    - **Fixes**: Resolved `CrossEntropyLoss` registration issues. Fixed `images_val_canonical` pathing in `base.yaml`.
+    - **Data**: Linked raw data to `data/datasets` to resolve `Annotation file not found` errors.
+    - **UI**: Reverted to standard `RichProgressBar` to fix console output gaps.
+
 - **[2025-12-29 12:00] CI Workflow Optimization**: Streamlined ci.yml, disabled redundant actions, and added mypy analyzer.
 
 - **[2025-12-24 16:00] Phase 3: Validation Module Consolidation COMPLETE**: Merged `ocr.validation.models` + `ocr.datasets.schemas` into `ocr.core.validation` with zero breaking changes. **-3,632 LOC removed, 1 circular import eliminated, 104/104 tests passing**. Implementation complete:

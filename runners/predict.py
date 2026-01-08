@@ -4,7 +4,7 @@ import hydra
 from omegaconf import DictConfig
 
 # Setup project paths automatically
-from ocr.utils.path_utils import get_path_resolver, setup_project_paths
+from ocr.core.utils.path_utils import get_path_resolver, setup_project_paths
 
 setup_project_paths()
 
@@ -23,8 +23,8 @@ except ImportError:
     # Pydantic v1 doesn't have this warning class
     pass
 
-from ocr.utils.callbacks import build_callbacks
-from ocr.utils.logger_factory import create_logger
+from ocr.core.utils.callbacks import build_callbacks
+from ocr.core.utils.logger_factory import create_logger
 
 
 @hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="predict", version_base=None)
@@ -38,8 +38,8 @@ def predict(config: DictConfig):
     # Lazy imports to keep startup light for config validation
     import lightning.pytorch as pl
 
-    from ocr.lightning_modules import get_pl_modules_by_cfg
-    from ocr.lightning_modules.utils.model_utils import load_state_dict_with_fallback
+    from ocr.core.lightning import get_pl_modules_by_cfg
+    from ocr.core.lightning.utils.model_utils import load_state_dict_with_fallback
 
     pl.seed_everything(config.get("seed", 42), workers=True)
 

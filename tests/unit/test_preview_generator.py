@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pytest
 
-from ocr.inference.preview_generator import PreviewGenerator, create_preview_with_metadata
+from ocr.core.inference.preview_generator import PreviewGenerator, create_preview_with_metadata
 
 
 class TestPreviewGeneratorInit:

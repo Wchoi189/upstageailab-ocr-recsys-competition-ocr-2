@@ -2,7 +2,7 @@
 
 import pytest
 
-from ocr.inference.preprocessing_metadata import (
+from ocr.core.inference.preprocessing_metadata import (
     calculate_padding,
     calculate_resize_dimensions,
     create_preprocessing_metadata,

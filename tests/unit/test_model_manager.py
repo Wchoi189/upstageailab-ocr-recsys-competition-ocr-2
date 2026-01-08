@@ -6,7 +6,7 @@ class TestModelManagerInit:
 
     def test_init_with_default_device(self):
         """Test manager initialization with auto-detected device."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager()
         assert manager.device in ("cuda", "cpu")
@@ -16,14 +16,14 @@ class TestModelManagerInit:
 
     def test_init_with_explicit_device(self):
         """Test manager initialization with explicit device."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager(device="cpu")
         assert manager.device == "cpu"
 
     def test_init_with_cuda_device(self):
         """Test manager initialization with CUDA device."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager(device="cuda")
         assert manager.device == "cuda"
@@ -34,21 +34,21 @@ class TestModelManagerState:
 
     def test_is_loaded_initially_false(self):
         """Test that manager starts with no model loaded."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager()
         assert manager.is_loaded() is False
 
     def test_get_current_checkpoint_initially_none(self):
         """Test that initially no checkpoint is loaded."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager()
         assert manager.get_current_checkpoint() is None
 
     def test_get_config_bundle_initially_none(self):
         """Test that initially no config bundle exists."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager()
         assert manager.get_config_bundle() is None
@@ -59,7 +59,7 @@ class TestModelManagerCleanup:
 
     def test_cleanup_when_no_model(self):
         """Test cleanup works when no model is loaded."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager()
         manager.cleanup()  # Should not raise
@@ -71,7 +71,7 @@ class TestModelManagerCleanup:
 
     def test_context_manager_cleanup(self):
         """Test context manager calls cleanup on exit."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         with ModelManager() as manager:
             assert manager is not None
@@ -86,8 +86,8 @@ class TestModelManagerLoadModel:
     def test_load_model_without_ocr_modules(self, monkeypatch):
         """Test that load fails gracefully when OCR modules unavailable."""
         # Mock OCR_MODULES_AVAILABLE to False
-        import ocr.inference.model_manager as mm_module
-        from ocr.inference.model_manager import ModelManager
+        import ocr.core.inference.model_manager as mm_module
+        from ocr.core.inference.model_manager import ModelManager
 
         monkeypatch.setattr(mm_module, "OCR_MODULES_AVAILABLE", False)
 
@@ -99,7 +99,7 @@ class TestModelManagerLoadModel:
 
     def test_load_model_with_nonexistent_checkpoint(self):
         """Test loading from nonexistent checkpoint."""
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.model_manager import ModelManager
 
         manager = ModelManager()
         result = manager.load_model("/nonexistent/checkpoint.pth")
@@ -114,8 +114,8 @@ class TestModelManagerExtractModelConfig:
 
     def test_extract_model_config_with_model_section(self):
         """Test extracting config when 'model' section exists."""
-        from ocr.inference.config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
+        from ocr.core.inference.model_manager import ModelManager
 
         # Create mock config with 'model' attribute
         class MockConfig:
@@ -140,8 +140,8 @@ class TestModelManagerExtractModelConfig:
 
     def test_extract_model_config_without_model_section(self):
         """Test extracting config when no 'model' section (Hydra-style)."""
-        from ocr.inference.config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
+        from ocr.core.inference.model_manager import ModelManager
 
         # Create mock config with model attributes at root
         class MockConfig:
@@ -168,8 +168,8 @@ class TestModelManagerExtractModelConfig:
 
     def test_extract_model_config_invalid(self):
         """Test extracting config fails when neither format is present."""
-        from ocr.inference.config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
-        from ocr.inference.model_manager import ModelManager
+        from ocr.core.inference.config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
+        from ocr.core.inference.model_manager import ModelManager
 
         # Create mock config with no model-related attributes
         class MockConfig:

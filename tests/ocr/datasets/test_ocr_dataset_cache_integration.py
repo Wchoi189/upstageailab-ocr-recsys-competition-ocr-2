@@ -13,9 +13,9 @@ import pytest
 import torch
 from pydantic import ValidationError
 
-from ocr.datasets.base import ValidatedOCRDataset
-from ocr.datasets.schemas import CacheConfig, DataItem, DatasetConfig
-from ocr.utils.cache_manager import CacheManager
+from ocr.data.datasets.base import ValidatedOCRDataset
+from ocr.data.datasets.schemas import CacheConfig, DataItem, DatasetConfig
+from ocr.core.utils.cache_manager import CacheManager
 
 
 class TestOCRDatasetCacheIntegration:
@@ -63,7 +63,7 @@ class TestOCRDatasetCacheIntegration:
         """Test the complete data flow from DatasetConfig to final DataItem."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -142,7 +142,7 @@ class TestOCRDatasetCacheIntegration:
         """Test cache effectiveness and hit/miss statistics."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -209,7 +209,7 @@ class TestOCRDatasetCacheIntegration:
         """Test performance improvement with caching enabled."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -274,7 +274,7 @@ class TestOCRDatasetCacheIntegration:
         """Test memory usage patterns with and without caching."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -328,7 +328,7 @@ class TestOCRDatasetCacheIntegration:
         """Test that data validation occurs throughout the pipeline."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -406,7 +406,7 @@ class TestOCRDatasetCacheIntegration:
         """Test that cache statistics are properly logged."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -454,7 +454,7 @@ class TestOCRDatasetCacheIntegration:
         """Test that dataset works correctly when caching is disabled."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -505,7 +505,7 @@ class TestOCRDatasetCacheIntegration:
         """Test that DataItem validation works correctly in the pipeline."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_test_environment
 
@@ -607,7 +607,7 @@ class TestPerformanceBenchmarks:
         """Test performance with a larger dataset."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_large_test_environment
 
@@ -670,7 +670,7 @@ class TestPerformanceBenchmarks:
         """Benchmark memory usage with and without caching."""
         import numpy as np
 
-        from ocr.datasets.schemas import ImageData
+        from ocr.data.datasets.schemas import ImageData
 
         temp_dir, annotation_file = setup_large_test_environment
 
@@ -738,7 +738,7 @@ def test_cache_manager_direct_integration():
     cache_manager = CacheManager(config=cache_config)
 
     # Test image caching
-    from ocr.datasets.schemas import ImageData
+    from ocr.data.datasets.schemas import ImageData
 
     test_image_data = ImageData(
         image_array=np.random.rand(224, 224, 3).astype(np.float32), raw_width=224, raw_height=224, orientation=1, is_normalized=False
@@ -752,7 +752,7 @@ def test_cache_manager_direct_integration():
     assert np.array_equal(cached_image.image_array, test_image_data.image_array)
 
     # Test tensor caching
-    from ocr.datasets.schemas import DataItem
+    from ocr.data.datasets.schemas import DataItem
 
     test_data_item = DataItem(
         image=torch.rand(3, 224, 224),

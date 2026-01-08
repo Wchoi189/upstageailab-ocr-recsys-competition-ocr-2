@@ -13,7 +13,7 @@ import numpy as np
 
 # Import our preprocessing module
 sys.path.append("ocr")
-from ocr.datasets.preprocessing import DocumentPreprocessor
+from ocr.data.datasets.preprocessing import DocumentPreprocessor
 
 
 def get_sample_images(num_samples=10):

@@ -3,7 +3,7 @@
 import numpy as np
 from omegaconf import OmegaConf
 
-from ocr.lightning_modules.utils.config_utils import extract_metric_kwargs, extract_normalize_stats
+from ocr.core.lightning.utils.config_utils import extract_metric_kwargs, extract_normalize_stats
 
 
 class TestExtractMetricKwargs:

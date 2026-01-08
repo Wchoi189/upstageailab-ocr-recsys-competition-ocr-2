@@ -43,8 +43,8 @@ def _lazy_import_training_deps():
     from lightning.pytorch.loggers import Logger, TensorBoardLogger, WandbLogger
 
     import wandb  # noqa: F401
-    from ocr.lightning_modules import get_pl_modules_by_cfg
-    from ocr.utils.wandb_utils import (
+    from ocr.core.lightning import get_pl_modules_by_cfg
+    from ocr.core.utils.wandb_utils import (
         finalize_run,
         generate_run_name,
         load_env_variables,
@@ -76,7 +76,7 @@ def setup_logging(cfg: DictConfig) -> None:
 
 def setup_paths() -> None:
     """Setup project paths - lightweight operation."""
-    from ocr.utils.path_utils import setup_project_paths
+    from ocr.core.utils.path_utils import setup_project_paths
 
     setup_project_paths()
 

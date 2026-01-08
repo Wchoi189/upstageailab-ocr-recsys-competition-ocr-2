@@ -5,7 +5,7 @@ Tests for Microsoft Lens-style document preprocessing.
 import numpy as np
 import pytest
 
-from ocr.datasets.preprocessing import DOCTR_AVAILABLE, DocumentPreprocessor, LensStylePreprocessorAlbumentations
+from ocr.data.datasets.preprocessing import DOCTR_AVAILABLE, DocumentPreprocessor, LensStylePreprocessorAlbumentations
 
 
 class TestDocumentPreprocessor:

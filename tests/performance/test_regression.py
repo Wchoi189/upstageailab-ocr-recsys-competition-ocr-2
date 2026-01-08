@@ -26,7 +26,7 @@ import yaml
 from lightning.pytorch import LightningModule, Trainer
 from torch.utils.data import DataLoader, TensorDataset
 
-from ocr.lightning_modules.callbacks import PerformanceProfilerCallback
+from ocr.core.lightning.callbacks import PerformanceProfilerCallback
 
 
 def load_thresholds() -> dict[str, Any]:

@@ -76,8 +76,8 @@ if not logger.handlers:
     logger.addHandler(file_handler)
     logger.addHandler(stream_handler)
 
-    # Also set DEBUG for ocr.inference logger
-    inference_logger = logging.getLogger("ocr.inference")
+    # Also set DEBUG for ocr.core.inference logger
+    inference_logger = logging.getLogger("ocr.core.inference")
     inference_logger.setLevel(logging.DEBUG)
 
 API_PREFIX = "/api"

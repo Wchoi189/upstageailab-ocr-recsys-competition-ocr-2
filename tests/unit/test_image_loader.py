@@ -6,7 +6,7 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from ocr.inference.image_loader import ImageLoader, LoadedImage
+from ocr.core.inference.image_loader import ImageLoader, LoadedImage
 
 
 class TestImageLoaderFromPath:

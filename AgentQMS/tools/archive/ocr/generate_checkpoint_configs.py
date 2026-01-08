@@ -144,7 +144,7 @@ def extract_model_config(config_path: Path) -> dict | None:
 
                 # Create minimal but valid model config
                 model_config = {
-                    "_target_": "ocr.models.architecture.OCRModel",
+                    "_target_": "ocr.core.models.architecture.OCRModel",
                     "architectures": parsed_args.get("model/architectures", "dbnet"),
                     "encoder": {
                         "model_name": parsed_args.get("model.encoder.model_name", "resnet18"),
@@ -235,7 +235,7 @@ def create_default_model_config() -> dict:
     """Create a default model config for checkpoints without wandb data."""
     return {
         "model": {
-            "_target_": "ocr.models.architecture.OCRModel",
+            "_target_": "ocr.core.models.architecture.OCRModel",
             "architectures": "dbnet",
             "encoder": {
                 "model_name": "resnet18",

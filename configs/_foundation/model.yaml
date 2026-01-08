@@ -6,7 +6,7 @@ defaults:
   - /model/optimizers: adam
   - _self_
 
-_target_: ocr.models.architecture.OCRModel
+_target_: ocr.core.models.architecture.OCRModel
 
 # Optional component overrides
 component_overrides: {}

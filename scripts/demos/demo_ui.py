@@ -7,7 +7,7 @@ from configuration dictionaries.
 """
 
 # Setup project paths automatically
-from ocr.utils.path_utils import setup_project_paths
+from ocr.core.utils.path_utils import setup_project_paths
 
 setup_project_paths()
 

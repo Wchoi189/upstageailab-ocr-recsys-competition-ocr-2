@@ -6,7 +6,7 @@ import cv2
 import numpy as np
 import pytest
 
-from ocr.datasets.preprocessing.advanced_noise_elimination import (
+from ocr.data.datasets.preprocessing.advanced_noise_elimination import (
     AdvancedNoiseEliminator,
     NoiseEliminationConfig,
     NoiseEliminationQualityMetrics,

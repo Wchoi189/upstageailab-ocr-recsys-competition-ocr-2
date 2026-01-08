@@ -34,7 +34,7 @@ import pandas as pd
 from tqdm.asyncio import tqdm
 
 from ocr.data.schemas.storage import OCRStorageItem
-from ocr.utils.api_usage_tracker import get_tracker
+from ocr.core.utils.api_usage_tracker import get_tracker
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)

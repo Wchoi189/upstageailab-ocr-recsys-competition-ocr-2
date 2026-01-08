@@ -5,11 +5,11 @@ import albumentations as A
 import numpy as np
 from PIL import Image
 
-from ocr.datasets.base import EXIF_ORIENTATION
-from ocr.datasets.base import ValidatedOCRDataset as Dataset
-from ocr.datasets.schemas import DatasetConfig
-from ocr.datasets.transforms import DBTransforms
-from ocr.utils.orientation import remap_polygons
+from ocr.data.datasets.base import EXIF_ORIENTATION
+from ocr.data.datasets.base import ValidatedOCRDataset as Dataset
+from ocr.data.datasets.schemas import DatasetConfig
+from ocr.data.datasets.transforms import DBTransforms
+from ocr.core.utils.orientation import remap_polygons
 
 RAW_POLYGON_POINTS = [
     [10, 20],

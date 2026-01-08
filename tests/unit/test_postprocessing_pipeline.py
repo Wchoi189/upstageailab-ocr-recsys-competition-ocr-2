@@ -3,7 +3,7 @@
 import numpy as np
 import pytest
 
-from ocr.inference.config_loader import PostprocessSettings
+from ocr.core.inference.config_loader import PostprocessSettings
 
 
 @pytest.fixture
@@ -63,21 +63,21 @@ class TestPostprocessingPipelineInit:
 
     def test_init_with_settings(self, sample_settings):
         """Test pipeline initialization with settings."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         pipeline = PostprocessingPipeline(settings=sample_settings)
         assert pipeline._settings is sample_settings
 
     def test_init_without_settings(self):
         """Test pipeline initialization without settings."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         pipeline = PostprocessingPipeline()
         assert pipeline._settings is None
 
     def test_set_settings(self, sample_settings):
         """Test setting settings after initialization."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         pipeline = PostprocessingPipeline()
         pipeline.set_settings(sample_settings)
@@ -89,7 +89,7 @@ class TestPostprocessingPipelineProcess:
 
     def test_process_with_head_success(self, sample_settings, sample_predictions, mock_model_with_head):
         """Test processing with successful head-based decoding."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         pipeline = PostprocessingPipeline(settings=sample_settings)
         processed_tensor = np.zeros((1, 3, 640, 640))
@@ -110,7 +110,7 @@ class TestPostprocessingPipelineProcess:
 
     def test_process_fallback_when_no_head(self, sample_settings, sample_predictions, mock_model_without_head):
         """Test fallback to contour-based processing when no head."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         pipeline = PostprocessingPipeline(settings=sample_settings)
         processed_tensor = np.zeros((1, 3, 640, 640))
@@ -131,7 +131,7 @@ class TestPostprocessingPipelineProcess:
 
     def test_process_fails_without_settings_for_fallback(self, sample_predictions, mock_model_without_head):
         """Test that fallback fails gracefully without settings."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingPipeline
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingPipeline
 
         pipeline = PostprocessingPipeline()  # No settings
         processed_tensor = np.zeros((1, 3, 640, 640))
@@ -153,7 +153,7 @@ class TestPostprocessingResult:
 
     def test_postprocessing_result_attributes(self):
         """Test PostprocessingResult dataclass attributes."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingResult
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingResult
 
         result = PostprocessingResult(
             polygons="10 20 30 20 30 40 10 40",
@@ -169,7 +169,7 @@ class TestPostprocessingResult:
 
     def test_postprocessing_result_with_multiple_detections(self):
         """Test PostprocessingResult with multiple detections."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingResult
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingResult
 
         result = PostprocessingResult(
             polygons="10 20 30 20 30 40 10 40|50 60 70 60 70 80 50 80",
@@ -185,7 +185,7 @@ class TestPostprocessingResult:
 
     def test_postprocessing_result_empty_detections(self):
         """Test PostprocessingResult with no detections."""
-        from ocr.inference.postprocessing_pipeline import PostprocessingResult
+        from ocr.core.inference.postprocessing_pipeline import PostprocessingResult
 
         result = PostprocessingResult(
             polygons="",

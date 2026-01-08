@@ -8,7 +8,7 @@ double-remapping that causes out-of-bounds coordinates.
 
 import numpy as np
 
-from ocr.utils.orientation import polygons_in_canonical_frame
+from ocr.core.utils.orientation import polygons_in_canonical_frame
 
 
 class TestPolygonsInCanonicalFrameTolerance:
@@ -18,7 +18,7 @@ class TestPolygonsInCanonicalFrameTolerance:
         """Verify default tolerance is 3.0 pixels (BUG-20251116-001)."""
         import inspect
 
-        from ocr.utils.orientation import polygons_in_canonical_frame
+        from ocr.core.utils.orientation import polygons_in_canonical_frame
 
         sig = inspect.signature(polygons_in_canonical_frame)
         default_tolerance = sig.parameters["tolerance"].default

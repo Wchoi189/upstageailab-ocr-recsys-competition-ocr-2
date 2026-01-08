@@ -17,8 +17,8 @@ import numpy as np
 import pytest
 from PIL import Image
 
-from ocr.datasets.base import Dataset as OCRDataset
-from ocr.datasets.schemas import DatasetConfig, MapData
+from ocr.data.datasets.base import Dataset as OCRDataset
+from ocr.data.datasets.schemas import DatasetConfig, MapData
 
 
 class TestMapLoadingCaching:
@@ -139,7 +139,7 @@ class TestMapLoadingCaching:
             json.dump(annotations, f)
 
         # Create dataset with preload_maps=True
-        from ocr.datasets.schemas import CacheConfig
+        from ocr.data.datasets.schemas import CacheConfig
 
         cache_config = CacheConfig(cache_maps=True)
         config = DatasetConfig(
@@ -242,7 +242,7 @@ class TestMapLoadingCaching:
         np.testing.assert_array_equal(item["prob_map"], cache_prob_map)
         np.testing.assert_array_equal(item["thresh_map"], cache_thresh_map)
 
-    @patch("ocr.datasets.base.np.load")
+    @patch("ocr.data.datasets.base.np.load")
     def test_numpy_load_exception_handling(self, mock_np_load, temp_dataset_structure, simple_transform):
         """Test that numpy load exceptions are caught and handled."""
         tmpdir, images_dir, maps_dir, anno_file = temp_dataset_structure
@@ -357,7 +357,7 @@ class TestMapLoadingCaching:
         sample = dataset[0]
 
         # Generate maps using collate function
-        from ocr.datasets.db_collate_fn import DBCollateFN
+        from ocr.data.datasets.db_collate_fn import DBCollateFN
 
         collate_fn = DBCollateFN()
         # Remove batch dimension for make_prob_thresh_map

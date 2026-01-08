@@ -6,7 +6,7 @@ from typing import Dict, Optional
 @dataclass
 class SymbolDefinition:
     name: str          # "ResNet"
-    full_name: str     # "ocr.models.encoders.ResNet"
+    full_name: str     # "ocr.core.models.encoders.ResNet"
     file_path: str     # "/abs/path/ocr/models/encoders.py"
     line_number: int   # 45
     kind: str          # "class" | "function"

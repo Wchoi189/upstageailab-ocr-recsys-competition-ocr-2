@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from omegaconf import OmegaConf
 
-from ocr.utils.wandb_utils import generate_run_name
+from ocr.core.utils.wandb_utils import generate_run_name
 
 
 @pytest.fixture(autouse=True)
@@ -18,7 +18,7 @@ def test_generate_run_name_full_descriptor(monkeypatch: pytest.MonkeyPatch):
     monkeypatch.setenv("WANDB_USER", "tester")
 
     # Ensure architecture components are registered for fallback defaults
-    import ocr.models.architectures.dbnet  # noqa: F401
+    import ocr.core.models.architectures.dbnet  # noqa: F401
 
     cfg = OmegaConf.create(
         {
@@ -33,8 +33,8 @@ def test_generate_run_name_full_descriptor(monkeypatch: pytest.MonkeyPatch):
                 },
                 "encoder": {"model_name": "resnet18"},
                 "decoder": {"name": "unet"},
-                "head": {"_target_": "ocr.models.head.db_head.DBHead"},
-                "loss": {"_target_": "ocr.models.loss.db_loss.DBLoss"},
+                "head": {"_target_": "ocr.core.models.head.db_head.DBHead"},
+                "loss": {"_target_": "ocr.core.models.loss.db_loss.DBLoss"},
             },
         }
     )
@@ -56,8 +56,8 @@ def test_generate_run_name_without_architecture():
             "dataloaders": {"train_dataloader": {"batch_size": 8}},
             "model": {
                 "optimizer": {"lr": 0.01},
-                "encoder": {"_target_": "ocr.models.encoder.custom.CustomEncoder"},
-                "decoder": {"_target_": "ocr.models.decoder.custom.CustomDecoder"},
+                "encoder": {"_target_": "ocr.core.models.encoder.custom.CustomEncoder"},
+                "decoder": {"_target_": "ocr.core.models.decoder.custom.CustomDecoder"},
             },
         }
     )

@@ -34,7 +34,7 @@ from pathlib import Path
 import numpy as np
 from PIL import Image
 
-from ocr.utils.orientation import (
+from ocr.core.utils.orientation import (
     EXIF_ORIENTATION_TAG,
     get_exif_orientation,
     normalize_pil_image,

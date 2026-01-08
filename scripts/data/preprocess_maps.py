@@ -33,7 +33,7 @@ import torch
 from omegaconf import DictConfig
 from tqdm import tqdm
 
-from ocr.datasets import ValidatedOCRDataset
+from ocr.data.datasets import ValidatedOCRDataset
 
 logging.basicConfig(level=logging.INFO)
 

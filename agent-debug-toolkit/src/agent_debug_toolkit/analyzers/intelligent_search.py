@@ -23,7 +23,7 @@ class SearchResult:
 
     Attributes:
         name: Simple name (e.g., "TimmBackbone")
-        full_name: Fully qualified path (e.g., "ocr.models.encoder.TimmBackbone")
+        full_name: Fully qualified path (e.g., "ocr.core.models.encoder.TimmBackbone")
         file_path: Absolute path to definition file
         line_number: Line where symbol is defined
         kind: "class" or "function"
@@ -59,7 +59,7 @@ class IntelligentSearcher(BaseAnalyzer):
     Search for symbols using qualified paths, class names, and fuzzy matching.
 
     Leverages SymbolTable for indexing and provides multiple search modes:
-    - Qualified path resolution (ocr.models.X → file location)
+    - Qualified path resolution (ocr.core.models.X → file location)
     - Reverse lookup (class name → all import paths)
     - Fuzzy matching (typo correction)
     - Cross-reference detection (usage sites)
@@ -133,7 +133,7 @@ class IntelligentSearcher(BaseAnalyzer):
         Resolve a fully qualified path to its definition.
 
         Args:
-            path: Qualified path (e.g., "ocr.models.encoder.TimmBackbone")
+            path: Qualified path (e.g., "ocr.core.models.encoder.TimmBackbone")
 
         Returns:
             SearchResult if found, None otherwise
@@ -227,8 +227,8 @@ class IntelligentSearcher(BaseAnalyzer):
         """
         Find alternative import paths for a symbol.
 
-        For example, if symbol is at ocr.models.encoder.backbone.TimmBackbone,
-        it might also be importable as ocr.models.encoder.TimmBackbone if
+        For example, if symbol is at ocr.core.models.encoder.backbone.TimmBackbone,
+        it might also be importable as ocr.core.models.encoder.TimmBackbone if
         __init__.py exports it.
 
         Args:

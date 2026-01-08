@@ -8,9 +8,9 @@ import numpy as np
 import torch
 from PIL import Image
 
-from ocr.datasets.base import Dataset as OCRDataset
-from ocr.datasets.db_collate_fn import DBCollateFN
-from ocr.datasets.schemas import DatasetConfig
+from ocr.data.datasets.base import Dataset as OCRDataset
+from ocr.data.datasets.db_collate_fn import DBCollateFN
+from ocr.data.datasets.schemas import DatasetConfig
 
 
 def test_ocr_dataset_initialization():

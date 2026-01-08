@@ -4,7 +4,7 @@ from collections.abc import Iterable
 from dataclasses import dataclass
 from typing import Any
 
-from ocr.utils.config import ConfigParser
+from ocr.core.utils.config import ConfigParser
 
 from .models import UseCaseRecommendation
 

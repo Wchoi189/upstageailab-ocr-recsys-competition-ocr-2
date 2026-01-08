@@ -5,7 +5,7 @@ import pytest
 import torch
 from pydantic import ValidationError
 
-from ocr.datasets.schemas import ValidatedPolygonData
+from ocr.data.datasets.schemas import ValidatedPolygonData
 from ocr.validation.models import (
     BatchSample,
     CollateOutput,

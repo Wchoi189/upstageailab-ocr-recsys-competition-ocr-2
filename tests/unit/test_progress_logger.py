@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from types import SimpleNamespace
 
-from ocr.utils import logging as logging_utils
+from ocr.core.utils import logging as logging_utils
 
 
 def test_get_rich_console_handles_missing_dependency(monkeypatch):

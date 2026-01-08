@@ -2,7 +2,7 @@
 
 Consolidates:
 - ocr.validation.models (runtime validation)
-- ocr.datasets.schemas (dataset contracts)
+- ocr.data.datasets.schemas (dataset contracts)
 
 This module provides a single source of truth for all validation models.
 

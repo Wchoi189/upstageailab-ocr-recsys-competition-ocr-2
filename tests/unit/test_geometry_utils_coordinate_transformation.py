@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import numpy as np
 
-from ocr.utils.geometry_utils import calculate_cropbox, calculate_inverse_transform
+from ocr.core.utils.geometry_utils import calculate_cropbox, calculate_inverse_transform
 
 
 class TestCoordinateTransformationCorrectness:

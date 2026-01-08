@@ -5,7 +5,7 @@
 
 metrics:
   eval:
-    _target_: ocr.metrics.cleval_metric.CLEvalMetric
+    _target_: ocr.core.metrics.cleval_metric.CLEvalMetric
     dist_sync_on_step: false
     case_sensitive: true
     recall_gran_penalty: 1.0

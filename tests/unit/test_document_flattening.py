@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 from pydantic import ValidationError
 
-from ocr.datasets.preprocessing.document_flattening import (
+from ocr.data.datasets.preprocessing.document_flattening import (
     DocumentFlattener,
     FlatteningConfig,
     FlatteningMethod,

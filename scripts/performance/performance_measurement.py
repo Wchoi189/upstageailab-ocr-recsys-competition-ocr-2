@@ -65,13 +65,13 @@ def main():
         {"overrides": [], "description": "Baseline (no optimizations)"},
         {"overrides": ["data.polygon_cache.enabled=true"], "description": "Polygon cache enabled"},
         {
-            "overrides": ["+callbacks.performance_profiler=ocr.lightning_modules.callbacks.PerformanceProfilerCallback"],
+            "overrides": ["+callbacks.performance_profiler=ocr.core.lightning.callbacks.PerformanceProfilerCallback"],
             "description": "Performance profiler callback",
         },
         {
             "overrides": [
                 "data.polygon_cache.enabled=true",
-                "+callbacks.performance_profiler=ocr.lightning_modules.callbacks.PerformanceProfilerCallback",
+                "+callbacks.performance_profiler=ocr.core.lightning.callbacks.PerformanceProfilerCallback",
             ],
             "description": "Both optimizations enabled",
         },

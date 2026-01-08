@@ -1,0 +1,26 @@
+---
+# Project Compass Active Session
+session_id: "2026-01-08-Refactor-Rescue-Preparation"
+status: "active"
+started_date: "2026-01-08"
+completed_date: null
+
+objective: |
+  Prepare and execute "Source Code Refactoring 2.0".
+  1. Clean up duplicate directories.
+  2. Implement Feature-First containerization (`features/`).
+  3. Decouple Inference logic.
+
+implementation_plan: "project_compass/roadmap/00_source_code_refactoring2.yaml"
+source_walkthrough: null
+
+phases:
+  phase_1_cleanup:
+    status: "pending"
+    description: "Delete duplicates"
+  phase_2_features:
+    status: "pending"
+    description: "Move domains to features/"
+  phase_3_inference:
+    status: "pending"
+    description: "Split inference"

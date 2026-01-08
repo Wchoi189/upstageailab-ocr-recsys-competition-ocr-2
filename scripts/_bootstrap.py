@@ -38,9 +38,9 @@ def setup_project_paths():
 
 
 def get_path_resolver():
-    """Get path resolver from ocr.utils.path_utils if available."""
+    """Get path resolver from ocr.core.utils.path_utils if available."""
     try:
-        from ocr.utils.path_utils import get_path_resolver as _get_path_resolver
+        from ocr.core.utils.path_utils import get_path_resolver as _get_path_resolver
 
         return _get_path_resolver()
     except ImportError:

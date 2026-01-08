@@ -18,7 +18,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from ocr.utils.perspective_correction import (
+from ocr.core.utils.perspective_correction import (
     correct_perspective_from_mask,
     remove_background_and_mask,
 )

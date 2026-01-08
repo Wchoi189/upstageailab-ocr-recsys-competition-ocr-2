@@ -28,10 +28,10 @@ class TestOCRModel:
         """Create sample input tensor."""
         return torch.randn(2, 3, 224, 224)  # batch_size=2, channels=3, height=224, width=224
 
-    @patch("ocr.models.architecture.get_encoder_by_cfg")
-    @patch("ocr.models.architecture.get_decoder_by_cfg")
-    @patch("ocr.models.architecture.get_head_by_cfg")
-    @patch("ocr.models.architecture.get_loss_by_cfg")
+    @patch("ocr.core.architecture.get_encoder_by_cfg")
+    @patch("ocr.core.architecture.get_decoder_by_cfg")
+    @patch("ocr.core.architecture.get_head_by_cfg")
+    @patch("ocr.core.architecture.get_loss_by_cfg")
     def test_model_initialization(self, mock_loss, mock_head, mock_decoder, mock_encoder, mock_config):
         """Test that OCRModel initializes correctly with mocked components."""
         # Setup mocks
@@ -59,10 +59,10 @@ class TestOCRModel:
     def test_forward_pass_with_loss(self, mock_config, sample_input):
         """Test forward pass that includes loss calculation."""
         with (
-            patch("ocr.models.architecture.get_encoder_by_cfg") as mock_enc,
-            patch("ocr.models.architecture.get_decoder_by_cfg") as mock_dec,
-            patch("ocr.models.architecture.get_head_by_cfg") as mock_head,
-            patch("ocr.models.architecture.get_loss_by_cfg") as mock_loss_func,
+            patch("ocr.core.architecture.get_encoder_by_cfg") as mock_enc,
+            patch("ocr.core.architecture.get_decoder_by_cfg") as mock_dec,
+            patch("ocr.core.architecture.get_head_by_cfg") as mock_head,
+            patch("ocr.core.architecture.get_loss_by_cfg") as mock_loss_func,
         ):
             # Setup component mocks
             mock_encoder = Mock()
@@ -101,10 +101,10 @@ class TestOCRModel:
     def test_forward_pass_without_loss(self, mock_config, sample_input):
         """Test forward pass without loss calculation."""
         with (
-            patch("ocr.models.architecture.get_encoder_by_cfg") as mock_enc,
-            patch("ocr.models.architecture.get_decoder_by_cfg") as mock_dec,
-            patch("ocr.models.architecture.get_head_by_cfg") as mock_head,
-            patch("ocr.models.architecture.get_loss_by_cfg") as mock_loss_func,
+            patch("ocr.core.architecture.get_encoder_by_cfg") as mock_enc,
+            patch("ocr.core.architecture.get_decoder_by_cfg") as mock_dec,
+            patch("ocr.core.architecture.get_head_by_cfg") as mock_head,
+            patch("ocr.core.architecture.get_loss_by_cfg") as mock_loss_func,
         ):
             # Setup component mocks
             mock_encoder = Mock()
@@ -134,14 +134,14 @@ class TestOCRModel:
             assert "loss" not in result
             assert "loss_dict" not in result
 
-    @patch("ocr.models.architecture.instantiate")
+    @patch("ocr.core.architecture.instantiate")
     def test_get_optimizers_without_scheduler(self, mock_instantiate, mock_config):
         """Test optimizer creation without scheduler."""
         with (
-            patch("ocr.models.architecture.get_encoder_by_cfg"),
-            patch("ocr.models.architecture.get_decoder_by_cfg"),
-            patch("ocr.models.architecture.get_head_by_cfg"),
-            patch("ocr.models.architecture.get_loss_by_cfg"),
+            patch("ocr.core.architecture.get_encoder_by_cfg"),
+            patch("ocr.core.architecture.get_decoder_by_cfg"),
+            patch("ocr.core.architecture.get_head_by_cfg"),
+            patch("ocr.core.architecture.get_loss_by_cfg"),
         ):
             mock_optimizer = Mock()
             mock_instantiate.return_value = mock_optimizer
@@ -158,14 +158,14 @@ class TestOCRModel:
             assert args[0] == mock_config.optimizer
             assert "params" in kwargs
 
-    @patch("ocr.models.architecture.instantiate")
+    @patch("ocr.core.architecture.instantiate")
     def test_get_optimizers_with_scheduler(self, mock_instantiate, mock_config):
         """Test optimizer and scheduler creation."""
         with (
-            patch("ocr.models.architecture.get_encoder_by_cfg"),
-            patch("ocr.models.architecture.get_decoder_by_cfg"),
-            patch("ocr.models.architecture.get_head_by_cfg"),
-            patch("ocr.models.architecture.get_loss_by_cfg"),
+            patch("ocr.core.architecture.get_encoder_by_cfg"),
+            patch("ocr.core.architecture.get_decoder_by_cfg"),
+            patch("ocr.core.architecture.get_head_by_cfg"),
+            patch("ocr.core.architecture.get_loss_by_cfg"),
         ):
             mock_optimizer = Mock()
             mock_scheduler = Mock()
@@ -188,10 +188,10 @@ class TestOCRModel:
     def test_get_polygons_from_maps(self, mock_config):
         """Test polygon extraction from prediction maps."""
         with (
-            patch("ocr.models.architecture.get_encoder_by_cfg"),
-            patch("ocr.models.architecture.get_decoder_by_cfg"),
-            patch("ocr.models.architecture.get_head_by_cfg") as mock_head,
-            patch("ocr.models.architecture.get_loss_by_cfg"),
+            patch("ocr.core.architecture.get_encoder_by_cfg"),
+            patch("ocr.core.architecture.get_decoder_by_cfg"),
+            patch("ocr.core.architecture.get_head_by_cfg") as mock_head,
+            patch("ocr.core.architecture.get_loss_by_cfg"),
         ):
             mock_head_comp = Mock()
             mock_head.return_value = mock_head_comp
@@ -210,11 +210,11 @@ class TestOCRModel:
 
     def test_model_initialization_with_registry(self, mock_config):
         with (
-            patch("ocr.models.architecture.get_registry") as mock_get_registry,
-            patch("ocr.models.architecture.get_decoder_by_cfg"),
-            patch("ocr.models.architecture.get_encoder_by_cfg"),
-            patch("ocr.models.architecture.get_head_by_cfg"),
-            patch("ocr.models.architecture.get_loss_by_cfg"),
+            patch("ocr.core.architecture.get_registry") as mock_get_registry,
+            patch("ocr.core.architecture.get_decoder_by_cfg"),
+            patch("ocr.core.architecture.get_encoder_by_cfg"),
+            patch("ocr.core.architecture.get_head_by_cfg"),
+            patch("ocr.core.architecture.get_loss_by_cfg"),
         ):
             encoder = Mock()
             decoder = Mock()
@@ -254,7 +254,7 @@ class TestOCRModel:
             )
 
     def test_component_override_with_decoder_name(self, mock_config):
-        with patch("ocr.models.architecture.get_registry") as mock_get_registry:
+        with patch("ocr.core.architecture.get_registry") as mock_get_registry:
             encoder = Mock(name="encoder")
             decoder = Mock(name="decoder")
             head = Mock(name="head")
@@ -291,7 +291,7 @@ class TestOCRModel:
             assert kwargs["decoder_config"]["out_channels"] == 128
 
     def test_dbnet_architecture_passes_postprocess_config(self):
-        with patch("ocr.models.architecture.get_registry") as mock_get_registry:
+        with patch("ocr.core.architecture.get_registry") as mock_get_registry:
             encoder = Mock(name="encoder")
             decoder = Mock(name="decoder")
             head = Mock(name="head")

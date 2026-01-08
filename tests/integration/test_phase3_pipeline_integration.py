@@ -7,9 +7,9 @@ a modular, configurable preprocessing pipeline.
 import numpy as np
 import pytest
 
-from ocr.datasets.preprocessing.advanced_noise_elimination import NoiseReductionMethod
-from ocr.datasets.preprocessing.document_flattening import FlatteningMethod
-from ocr.datasets.preprocessing.enhanced_pipeline import (
+from ocr.data.datasets.preprocessing.advanced_noise_elimination import NoiseReductionMethod
+from ocr.data.datasets.preprocessing.document_flattening import FlatteningMethod
+from ocr.data.datasets.preprocessing.enhanced_pipeline import (
     EnhancedDocumentPreprocessor,
     EnhancedPipelineConfig,
     EnhancementStage,
@@ -17,7 +17,7 @@ from ocr.datasets.preprocessing.enhanced_pipeline import (
     create_fast_preprocessor,
     create_office_lens_preprocessor,
 )
-from ocr.datasets.preprocessing.intelligent_brightness import BrightnessMethod
+from ocr.data.datasets.preprocessing.intelligent_brightness import BrightnessMethod
 
 
 class TestEnhancedPipelineIntegration:

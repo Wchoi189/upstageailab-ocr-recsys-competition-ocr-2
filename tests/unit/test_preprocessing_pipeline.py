@@ -43,7 +43,7 @@ class TestPreprocessingPipelineInit:
 
     def test_init_with_defaults(self, sample_transform):
         """Test pipeline initialization with defaults."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform)
         assert pipeline._transform is sample_transform
@@ -51,14 +51,14 @@ class TestPreprocessingPipelineInit:
 
     def test_init_with_custom_target_size(self, sample_transform):
         """Test pipeline initialization with custom target size."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform, target_size=512)
         assert pipeline._target_size == 512
 
     def test_set_transform(self, sample_transform):
         """Test setting transform after initialization."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline()
         pipeline.set_transform(sample_transform)
@@ -66,7 +66,7 @@ class TestPreprocessingPipelineInit:
 
     def test_set_target_size(self, sample_transform):
         """Test setting target size after initialization."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform)
         pipeline.set_target_size(512)
@@ -78,7 +78,7 @@ class TestPreprocessingPipelineProcess:
 
     def test_process_basic(self, sample_transform, sample_image_bgr):
         """Test basic preprocessing without perspective correction."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform, target_size=640)
         result = pipeline.process(sample_image_bgr)
@@ -94,7 +94,7 @@ class TestPreprocessingPipelineProcess:
 
     def test_process_with_metadata(self, sample_transform, sample_image_bgr):
         """Test that metadata is correctly generated."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform, target_size=640)
         result = pipeline.process(sample_image_bgr)
@@ -110,7 +110,7 @@ class TestPreprocessingPipelineProcess:
 
     def test_process_without_transform_fails(self, sample_image_bgr):
         """Test that processing without transform fails gracefully."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline()  # No transform
         result = pipeline.process(sample_image_bgr)
@@ -119,7 +119,7 @@ class TestPreprocessingPipelineProcess:
 
     def test_process_with_custom_target_size(self, sample_transform, sample_image_bgr):
         """Test preprocessing with custom target size."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform, target_size=512)
         result = pipeline.process(sample_image_bgr)
@@ -134,7 +134,7 @@ class TestPreprocessingPipelineOriginalDisplay:
 
     def test_process_for_original_display(self, sample_transform, sample_image_bgr):
         """Test preprocessing original image for display."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline(transform=sample_transform, target_size=640)
         result = pipeline.process_for_original_display(sample_image_bgr)
@@ -147,7 +147,7 @@ class TestPreprocessingPipelineOriginalDisplay:
 
     def test_process_for_original_display_without_transform(self, sample_image_bgr):
         """Test that original display fails without transform."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingPipeline
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingPipeline
 
         pipeline = PreprocessingPipeline()
         result = pipeline.process_for_original_display(sample_image_bgr)
@@ -160,7 +160,7 @@ class TestPreprocessingResult:
 
     def test_preprocessing_result_attributes(self):
         """Test PreprocessingResult dataclass attributes."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingResult
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingResult
 
         batch = np.zeros((1, 3, 640, 640))
         preview = np.zeros((640, 640, 3), dtype=np.uint8)
@@ -183,7 +183,7 @@ class TestPreprocessingResult:
 
     def test_preprocessing_result_with_perspective(self):
         """Test PreprocessingResult with perspective correction data."""
-        from ocr.inference.preprocessing_pipeline import PreprocessingResult
+        from ocr.core.inference.preprocessing_pipeline import PreprocessingResult
 
         batch = np.zeros((1, 3, 640, 640))
         preview = np.zeros((640, 640, 3), dtype=np.uint8)

@@ -11,7 +11,7 @@ import numpy as np
 import pytest
 import torch
 
-from ocr.datasets.transforms import DBTransforms
+from ocr.data.datasets.transforms import DBTransforms
 
 
 class TestTransformPipelineContracts:

@@ -120,6 +120,10 @@ def export_session(note=None, force=False):
         json.dump(manifest, f, indent=2)
 
     print(f"Session exported to: {dest_dir}")
+
+    # Auto-clear workspace after export
+    _reset_workspace()
+
     return dest_dir
 
 
@@ -185,6 +189,50 @@ def import_session(session_folder_name):
         print("Restored session_handover.md")
 
 
+def _reset_workspace():
+    """Clears active context and initializes a fresh template."""
+    print("Clearing active context...")
+    if ACTIVE_CONTEXT_DIR.exists():
+        for item in ACTIVE_CONTEXT_DIR.iterdir():
+            if item.name == ".gitkeep":
+                continue
+            if item.is_dir():
+                shutil.rmtree(item)
+            else:
+                item.unlink()
+    else:
+        ACTIVE_CONTEXT_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Clear session_handover.md
+    handover_file = COMPASS_DIR / "session_handover.md"
+    with open(handover_file, "w") as f:
+        f.write("# Session Handover\n\nNo active session.\n")
+
+    # Create template files
+    session_file = ACTIVE_CONTEXT_DIR / "current_session.yml"
+    today = datetime.date.today().isoformat()
+    template = f"""---
+# Project Compass Active Session
+session_id: "new-session-{datetime.datetime.now().strftime('%H%M%S')}"
+status: "active"
+started_date: "{today}"
+completed_date: null
+
+objective: |
+  [Enter objective here]
+
+implementation_plan: null
+source_walkthrough: null
+
+phases: {{}}
+"""
+    with open(session_file, "w") as f:
+        f.write(template)
+
+    print(f"Created fresh session template at {session_file}")
+    print("Session cleared. Ready for new context.")
+
+
 def new_session(session_id=None):
     """Clears active context for a fresh start."""
     # Auto-export current before clearing
@@ -192,31 +240,9 @@ def new_session(session_id=None):
     if current_id:
         print(f"Auto-exporting current session {current_id}...")
         export_session(note="Auto-save before new session")
-
-    print("Clearing active context...")
-    for item in ACTIVE_CONTEXT_DIR.iterdir():
-        if item.name == ".gitkeep":
-            continue
-        if item.is_dir():
-            shutil.rmtree(item)
-        else:
-            item.unlink()
-
-    # Clear session_handover.md
-    handover_file = COMPASS_DIR / "session_handover.md"
-    if handover_file.exists():
-        with open(handover_file, "w") as f:
-            f.write("# Session Handover\n\nNo active session.\n")
-
-    # Create template files
-    # We might want to read valid schemas or templates but for now let's just create placeholder
-    if session_id:
-        # Create minimal current_session.yml
-        pass
-        # Actually better to copy from a template...
-        # Let's look for templates/session.yml
-
-    print("Session cleared. Ready for new context.")
+    else:
+        # If no session, just reset
+        _reset_workspace()
 
 
 def main():
