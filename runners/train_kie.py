@@ -56,7 +56,7 @@ def main(config: DictConfig):
     from transformers import AutoTokenizer, LayoutLMv3Processor
 
     from ocr.features.kie.data import KIEDataset
-    from ocr.core.lightning.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
+    from ocr.features.kie.lightning.callbacks.kie_wandb_image_logging import WandBKeyInformationExtractionImageLogger
     from ocr.features.kie.trainer import KIEDataPLModule, KIEPLModule
     from ocr.features.kie.models import LayoutLMv3Wrapper, LiLTWrapper
 

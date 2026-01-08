@@ -252,7 +252,7 @@ workflow_triggers:
     keywords: ["analyze image", "vlm", "vision", "defect", "visual inspection", "image quality"]
     action: "Use: VLM tools (see vlm_commands section)"
 
-## VLM Image Analysis Commands
+## VLM Image Analysis Commands (Currently archived in /archive/__TEMP__/vlm)
 
 vlm_commands:
   analyze_defects:

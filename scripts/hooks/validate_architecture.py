@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # Allowed patterns
-CORE_DOMAINS = {"models", "data", "utils", "transforms", "metrics", "losses"}
+CORE_DOMAINS = {"models", "data", "utils", "transforms", "metrics", "losses", "inference"}
 ALLOWED_CORE_PATHS = {f"ocr/core/{domain}" for domain in CORE_DOMAINS}
 
 # Known features
@@ -23,6 +23,7 @@ KNOWN_FEATURES = {
     "perspective",
     "kie",
     "layout",
+    "features",  # Features parent directory
     "core",  # Core infrastructure
 }
 

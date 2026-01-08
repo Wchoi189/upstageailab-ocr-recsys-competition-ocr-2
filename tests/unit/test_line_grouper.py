@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import pytest
 
-from ocr.core.inference.layout.grouper import (
+from ocr.features.layout.inference.grouper import (
     LineGrouper,
     LineGrouperConfig,
     create_text_element,

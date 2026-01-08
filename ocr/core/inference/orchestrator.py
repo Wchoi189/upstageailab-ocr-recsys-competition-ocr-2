@@ -28,9 +28,10 @@ from .preprocessing_pipeline import PreprocessingPipeline
 from .preview_generator import PreviewGenerator
 
 if TYPE_CHECKING:
+    from ocr.features.kie.inference.extraction.field_extractor import ReceiptFieldExtractor
+    from ocr.features.layout.inference.grouper import LineGrouper
+
     from .crop_extractor import CropExtractor
-    from .extraction.field_extractor import ReceiptFieldExtractor
-    from .layout.grouper import LineGrouper
     from .recognizer import TextRecognizer
 
 LOGGER = logging.getLogger(__name__)
@@ -129,8 +130,8 @@ class InferenceOrchestrator:
         to enable full receipt extraction functionality.
         """
         try:
-            from .extraction.field_extractor import ExtractorConfig, ReceiptFieldExtractor
-            from .layout.grouper import LineGrouper, LineGrouperConfig
+            from ocr.features.kie.inference.extraction.field_extractor import ExtractorConfig, ReceiptFieldExtractor
+            from ocr.features.layout.inference.grouper import LineGrouper, LineGrouperConfig
 
             self._enable_layout = True
             self._enable_extraction = True
@@ -462,7 +463,7 @@ class InferenceOrchestrator:
         # Type narrowing for optional components
         assert self._layout_grouper is not None
 
-        from .layout.contracts import BoundingBox, TextElement
+        from ocr.features.layout.inference.contracts import BoundingBox, TextElement
 
         elements = []
         for i, (poly, text, conf) in enumerate(
@@ -588,7 +589,7 @@ class InferenceOrchestrator:
             import cv2
             from PIL import Image
 
-            from .extraction.vlm_extractor import VLMExtractor
+            from ocr.features.kie.inference.extraction.vlm_extractor import VLMExtractor
 
             vlm = VLMExtractor()
             if not vlm.is_server_healthy():

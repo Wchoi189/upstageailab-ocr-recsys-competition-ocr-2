@@ -11,18 +11,18 @@ from decimal import Decimal
 import pytest
 from pydantic import ValidationError
 
-from ocr.core.inference.extraction.field_extractor import (
+from ocr.features.kie.inference.extraction.field_extractor import (
     ExtractorConfig,
     ReceiptFieldExtractor,
 )
-from ocr.core.inference.extraction.normalizers import (
+from ocr.features.kie.inference.extraction.normalizers import (
     normalize_business_number,
     normalize_currency,
     normalize_date,
     normalize_phone,
     normalize_time,
 )
-from ocr.core.inference.extraction.receipt_schema import (
+from ocr.features.kie.inference.extraction.receipt_schema import (
     LineItem,
     ReceiptData,
     ReceiptMetadata,

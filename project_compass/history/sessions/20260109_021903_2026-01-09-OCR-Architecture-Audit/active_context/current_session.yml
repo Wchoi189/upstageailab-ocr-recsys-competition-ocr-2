@@ -1,0 +1,19 @@
+---
+# Project Compass Active Session
+session_id: "2026-01-09-OCR-Architecture-Audit"
+status: "active"
+started_date: "2026-01-09"
+completed_date: null
+
+objective: |
+  Conduct architectural audit of the OCR pipeline to evaluate logical organization
+  and separation of concerns between detection, recognition, and KIE features.
+
+implementation_plan: null
+source_walkthrough: null
+
+deliverables:
+  audit:
+    status: "completed"
+    path: "docs/artifacts/audits/2026-01-09_0217_audit-2026-01-09-0214-ocr-architecture-audit.md"
+    description: "Comprehensive boundary analysis identifying core vs. feature violations"

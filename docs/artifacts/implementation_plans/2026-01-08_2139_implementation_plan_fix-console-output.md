@@ -1,8 +1,11 @@
 ---
+title: "Console Output Polish Plan"
 category: planning
 status: active
 type: implementation_plan
 date: 2024-10-01 10:00 (KST)
+version: "1.0"
+ads_version: "v1.0"
 ---
 
 # Console Output Polish Plan

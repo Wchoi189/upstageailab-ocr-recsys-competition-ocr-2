@@ -1,0 +1,278 @@
+version: "3.0"
+title: "OCR Architecture Refactoring 3.0: Boundary Enforcement"
+status: "active"
+audit_reference: "docs/artifacts/audits/2026-01-09_0217_audit-2026-01-09-0214-ocr-architecture-audit.md"
+goals:
+  - "Enforce strict core/feature boundaries based on audit findings"
+  - "Move all domain-specific code from ocr/core/ to ocr/features/"
+  - "Establish layout detection as standalone feature"
+  - "Document and enforce feature isolation principles"
+
+phases:
+  - name: "Phase 1: KIE Code Migration"
+    priority: "critical"
+    status: "pending"
+    description: "Move KIE-specific code from ocr/core/ to ocr/features/kie/"
+    items:
+      - action: "move_directory"
+        source: "ocr/core/inference/extraction/"
+        destination: "ocr/features/kie/inference/extraction/"
+        reason: "Receipt field extraction is KIE-specific (425 lines of domain logic)"
+        impact: "high"
+        affected_imports:
+          - "ocr/core/inference/orchestrator.py"
+          - "ocr/features/kie/**/*.py"
+
+      - action: "move_file"
+        source: "ocr/core/kie_validation.py"
+        destination: "ocr/features/kie/validation.py"
+        reason: "KIE-specific validation schemas (KIEDataItem)"
+        impact: "low"
+        affected_imports:
+          - "ocr/features/kie/data/*.py"
+          - "ocr/features/kie/trainer.py"
+
+      - action: "move_file"
+        source: "ocr/core/lightning/callbacks/kie_wandb_image_logging.py"
+        destination: "ocr/features/kie/lightning/callbacks/kie_wandb_image_logging.py"
+        reason: "KIE-specific WandB logging callback"
+        impact: "low"
+        affected_imports:
+          - "Training configs using this callback"
+
+      - action: "update_imports"
+        scope: "workspace"
+        pattern: "from ocr\\.core\\.inference\\.extraction"
+        replacement: "from ocr.features.kie.inference.extraction"
+
+      - action: "update_imports"
+        scope: "workspace"
+        pattern: "from ocr\\.core\\.kie_validation"
+        replacement: "from ocr.features.kie.validation"
+
+  - name: "Phase 2: Layout Feature Extraction"
+    priority: "critical"
+    status: "pending"
+    description: "Extract layout detection from infrastructure to standalone feature"
+    items:
+      - action: "create_directory"
+        path: "ocr/features/layout/"
+        reason: "Layout detection is a feature with specialized algorithms"
+
+      - action: "move_directory"
+        source: "ocr/core/inference/layout/"
+        destination: "ocr/features/layout/inference/"
+        reason: "Line grouping and layout contracts are layout-specific (15KB of code)"
+        impact: "high"
+        affected_imports:
+          - "ocr/core/inference/extraction/**/*.py"
+          - "ocr/core/inference/orchestrator.py"
+
+      - action: "create_file"
+        path: "ocr/features/layout/__init__.py"
+        purpose: "Feature package initialization with exports"
+
+      - action: "create_file"
+        path: "ocr/features/layout/README.md"
+        purpose: "Document layout detection as a feature with clear boundaries"
+
+      - action: "update_imports"
+        scope: "workspace"
+        pattern: "from ocr\\.core\\.inference\\.layout"
+        replacement: "from ocr.features.layout.inference"
+
+      - action: "define_interface"
+        path: "ocr/core/interfaces/layout.py"
+        purpose: "Create LayoutDetector interface in core for feature to implement"
+
+  - name: "Phase 3: Detection Metrics Migration"
+    priority: "medium"
+    status: "skipped"
+    completed_date: "2026-01-09"
+    skip_reason: "CLEval is shared infrastructure used by core training module (OCRPLModule) for all features, not detection-specific"
+    decision: "Keep in ocr/core/metrics/ per architecture principles (used by 2+ features)"
+    description: "Move detection-heavy metrics from core to detection feature"
+    items:
+      - action: "analyze_usage"
+        target: "ocr/core/metrics/"
+        question: "Is CLEval used by recognition or KIE features?"
+        decision: "If detection-only, move to ocr/features/detection/metrics/"
+
+      - action: "move_directory"
+        source: "ocr/core/metrics/"
+        destination: "ocr/features/detection/metrics/"
+        reason: "CLEval is detection-centric (text detection box evaluation)"
+        impact: "medium"
+        condition: "Only if CLEval is detection-specific"
+        affected_imports:
+          - "ocr/core/lightning/**/*.py"
+          - "Training and evaluation scripts"
+
+      - action: "update_imports"
+        scope: "workspace"
+        pattern: "from ocr\\.core\\.metrics"
+        replacement: "from ocr.features.detection.metrics"
+
+  - name: "Phase 4: Orchestrator Refactoring"
+    priority: "medium"
+    status: "pending"
+    description: "Refactor orchestrator to use plugin/registry pattern for features"
+    dependencies:
+      - "Phase 1"
+      - "Phase 2"
+    items:
+      - action: "create_interface"
+        path: "ocr/core/interfaces/feature_stage.py"
+        purpose: "Define FeatureStage interface for pluggable pipeline stages"
+        content: |
+          BaseFeatureStage with methods:
+          - execute(input) -> output
+          - get_name() -> str
+          - validate_config(cfg) -> bool
+
+      - action: "extract_logic"
+        source: "ocr/core/inference/orchestrator.py"
+        targets:
+          - feature: "detection"
+            destination: "ocr/features/detection/inference/detection_stage.py"
+            logic: "Detection-specific thresholds, postprocessing"
+
+          - feature: "recognition"
+            destination: "ocr/features/recognition/inference/recognition_stage.py"
+            logic: "Crop extraction, recognition-specific orchestration"
+
+      - action: "refactor_orchestrator"
+        path: "ocr/core/inference/orchestrator.py"
+        changes:
+          - "Replace hardcoded detection/recognition logic with registry lookup"
+          - "Use FeatureStage interface for pipeline building"
+          - "Remove domain-specific parameters (min_detection_size, etc.)"
+
+      - action: "update_configs"
+        scope: "configs/"
+        reason: "Update Hydra configs to use new orchestrator API"
+
+  - name: "Phase 5: Core Documentation & Guardrails"
+    priority: "low"
+    status: "pending"
+    description: "Document core principles and add enforcement tooling"
+    dependencies:
+      - "Phase 1"
+      - "Phase 2"
+      - "Phase 3"
+    items:
+      - action: "create_file"
+        path: "ocr/core/README.md"
+        purpose: "Define strict core inclusion criteria"
+        content: |
+          Core Inclusion Rules:
+          1. Code must be domain-agnostic (no "detection", "recognition", "KIE" in logic)
+          2. Provides mechanisms (base classes, registries), not policies
+          3. Zero business logic, only infrastructure
+          4. Used by 2+ features or truly shared
+
+      - action: "create_file"
+        path: "ocr/features/README.md"
+        purpose: "Define feature structure standards"
+        content: |
+          Standard feature structure:
+          - models/: Feature-specific models
+          - data/: Feature-specific datasets
+          - inference/: Feature-specific inference
+          - lightning/: Feature-specific trainers
+          - metrics/: Feature-specific evaluation
+
+      - action: "create_script"
+        path: "scripts/validate_architecture.py"
+        purpose: "Pre-commit hook to enforce boundaries"
+        checks:
+          - "No domain keywords in ocr/core/ code (regex scan)"
+          - "No cross-feature imports (AST analysis)"
+          - "All features follow standard structure"
+
+      - action: "update_precommit"
+        path: ".pre-commit-config.yaml"
+        hook: "architecture-validation"
+        command: "python scripts/validate_architecture.py"
+
+  - name: "Phase 6: Verification & Testing"
+    priority: "critical"
+    status: "pending"
+    description: "Comprehensive testing after all migrations"
+    dependencies:
+      - "Phase 1"
+      - "Phase 2"
+      - "Phase 3"
+      - "Phase 4"
+    items:
+      - action: "verify_imports"
+        command: "python -c 'import ocr.core; import ocr.features.detection; import ocr.features.recognition; import ocr.features.kie; import ocr.features.layout'"
+        reason: "Ensure all imports resolve correctly"
+
+      - action: "run_unit_tests"
+        command: "uv run pytest tests/ -v"
+        reason: "Verify no test breakage from refactoring"
+
+      - action: "verify_configs"
+        command: "python scripts/validate_hydra_configs.py"
+        reason: "Ensure all Hydra configs resolve with new structure"
+
+      - action: "test_pipelines"
+        pipelines:
+          - name: "detection_only"
+            config: "configs/experiments/detection/craft.yaml"
+          - name: "detection_recognition"
+            config: "configs/experiments/end_to_end/craft_parseq.yaml"
+          - name: "kie"
+            config: "configs/experiments/kie/layoutlmv3.yaml"
+        reason: "Verify all pipeline modes work end-to-end"
+
+      - action: "boundary_check"
+        command: "grep -r 'from ocr.features.detection' ocr/features/recognition/ ocr/features/kie/"
+        expected: "No results (zero cross-feature imports)"
+
+      - action: "purity_check"
+        command: "grep -rE '(detection|recognition|kie|receipt|layout)' ocr/core/ --include='*.py' | grep -v '# Example:' | grep -v 'docstring'"
+        expected: "Minimal results (only generic references, no logic)"
+
+migration_strategy:
+  approach: "Incremental with feature flags"
+  rollback_plan: "Git branches for each phase, merge only after verification"
+  testing_requirement: "All existing tests must pass before merge"
+  documentation_requirement: "Update README.md in affected directories"
+
+estimated_impact:
+  files_modified: "30-40"
+  lines_of_code: "~4000-5000 LOC"
+  test_coverage_target: "Maintain current coverage (no regressions)"
+  breaking_changes: "Import paths only (internal refactor)"
+
+success_criteria:
+  - criterion: "Zero domain-specific code in ocr/core/"
+    verification: "grep -rE 'receipt|kie-specific|detection-only' ocr/core/ returns empty"
+
+  - criterion: "All features are self-contained"
+    verification: "Each feature has own models/, inference/, data/ directories"
+
+  - criterion: "Zero cross-feature dependencies"
+    verification: "AST analysis shows no 'from ocr.features.X import' in feature Y"
+
+  - criterion: "All tests pass"
+    verification: "pytest exits with code 0"
+
+  - criterion: "All configs resolve"
+    verification: "Hydra can instantiate all experiment configs"
+
+  - criterion: "Architectural guardrails enforced"
+    verification: "Pre-commit hook prevents future violations"
+
+notes: |
+  This roadmap implements the recommendations from the 2026-01-09 OCR Architecture Audit.
+  The audit identified critical boundary violations where KIE-specific code, layout detection,
+  and detection-heavy metrics were incorrectly classified as "core" infrastructure.
+
+  The refactor enforces the principle: "Core = Shared Infrastructure, Features = Domain Logic"
+
+  Priority is given to high-impact migrations (KIE, layout) that have clear boundaries.
+  Medium-term phases (orchestrator refactoring) require more design work and are deferred.
+  Long-term improvements (guardrails) are nice-to-have but not blocking.
