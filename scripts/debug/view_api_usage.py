@@ -2,8 +2,8 @@
 """View Upstage API usage statistics.
 
 Usage:
-    python scripts/view_api_usage.py
-    python scripts/view_api_usage.py --since 2025-12-01
+    python scripts/debug/view_api_usage.py
+    python scripts/debug/view_api_usage.py --since 2025-12-01
 """
 
 import argparse

@@ -88,7 +88,7 @@ Key configuration:
     "memory": "16gb",
     "storage": "15gb"
   },
-  "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validate_environment.py"
+  "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validation/validate_environment.py"
 }
 ```
 
@@ -154,7 +154,7 @@ Checks:
 
 2. Validate environment:
    ```bash
-   python scripts/validate_environment.py
+   python scripts/validation/validate_environment.py
    ```
 
 3. Test imports:
@@ -186,7 +186,7 @@ Causes:
 Solutions:
 1. Run: `uv sync --frozen`
 2. Install package: `uv pip install -e .`
-3. Re-run validation: `python scripts/validate_environment.py`
+3. Re-run validation: `python scripts/validation/validate_environment.py`
 
 ### Container build workflow fails
 
@@ -252,8 +252,8 @@ Modify lifecycle hooks in `devcontainer.json`:
 {
   "onCreateCommand": "echo 'Container created'",
   "updateContentCommand": "uv sync --frozen",
-  "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validate_environment.py",
-  "postStartCommand": "python scripts/validate_environment.py"
+  "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validation/validate_environment.py",
+  "postStartCommand": "python scripts/validation/validate_environment.py"
 }
 ```
 
@@ -320,7 +320,7 @@ To manually trigger rebuild:
 - Environment Setup Feedback: `docs/artifacts/assessments/ENVIRONMENT_SETUP_FEEDBACK.md`
 - Usage Analysis: `docs/guides/codespaces-usage-analysis.md`
 - Docker Setup: `docker/README.md`
-- Environment Validation: `scripts/validate_environment.py`
+- Environment Validation: `scripts/validation/validate_environment.py`
 - Setup Scripts: `scripts/setup/`
 
 ## Reference

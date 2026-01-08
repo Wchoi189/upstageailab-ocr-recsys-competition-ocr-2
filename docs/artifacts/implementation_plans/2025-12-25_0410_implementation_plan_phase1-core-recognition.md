@@ -222,7 +222,7 @@ print(f'VRAM: {torch.cuda.memory_allocated() / 1e9:.2f} GB')
 "
 
 # 4. Throughput benchmark (must be ≤400ms for batch=32)
-uv run python scripts/benchmark_recognition.py --backend paddleocr --batch-size 32
+uv run python scripts/performance/benchmark_recognition.py --backend paddleocr --batch-size 32
 ```
 
 ### Manual Verification
@@ -260,7 +260,7 @@ uv run python scripts/benchmark_recognition.py --backend paddleocr --batch-size 
   - [ ] Fix any failures
 
 - [ ] **Day 7: Benchmarking & Documentation**
-  - [ ] Create `scripts/benchmark_recognition.py`
+  - [ ] Create `scripts/performance/benchmark_recognition.py`
   - [ ] Measure VRAM and throughput
   - [ ] Update docstrings
   - [ ] Create PR with results

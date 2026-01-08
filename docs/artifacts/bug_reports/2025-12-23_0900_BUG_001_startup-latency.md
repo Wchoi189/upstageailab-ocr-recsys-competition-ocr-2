@@ -34,7 +34,7 @@ Refactored the inference architecture to implement **Lazy Loading**:
 3.  **`ocr/inference/preprocess.py` & `postprocess.py`**: Moved usage of `torch` and `transforms` inside functional scopes.
 
 ## Verification
-- **Profiler Results**: `scripts/profile_checks.py` shows `apps.ocr_inference_console.backend.main` now imports in **~0.17s** (down from >14s) without triggering `torch` load.
+- **Profiler Results**: `scripts/performance/profile_checks.py` shows `apps.ocr_inference_console.backend.main` now imports in **~0.17s** (down from >14s) without triggering `torch` load.
 - **Benchmarks**: Verified that inference still functions correctly despite the deferred imports.
 
 ## Future Work

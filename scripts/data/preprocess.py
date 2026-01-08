@@ -8,7 +8,7 @@ by the training and inference pipelines.
 
 Usage example (processing the training split):
 
-    uv run python scripts/preprocess_data.py dataset_key=train_dataset limit=100
+    uv run python scripts/data/preprocess_data.py dataset_key=train_dataset limit=100
 
 The script will iterate through the requested dataset, materialising any cache
 artifacts configured in ``DatasetConfig.cache_config`` (e.g., tensor cache,

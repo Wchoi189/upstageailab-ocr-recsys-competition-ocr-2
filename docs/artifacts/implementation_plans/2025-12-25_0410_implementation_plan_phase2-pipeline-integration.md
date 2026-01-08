@@ -414,7 +414,7 @@ if __name__ == "__main__":
 
 ### Phase 3B: Optimization (Days 12-14)
 
-#### [NEW] `scripts/benchmark_pipeline.py`
+#### [NEW] `scripts/performance/benchmark_pipeline.py`
 
 End-to-end throughput benchmark.
 
@@ -566,7 +566,7 @@ uv run python scripts/evaluate_accuracy.py \
     --split test
 
 # 5. Throughput benchmark (target: 100+ pages/min)
-uv run python scripts/benchmark_pipeline.py \
+uv run python scripts/performance/benchmark_pipeline.py \
     --images-dir data/test_receipts \
     --num-iterations 100
 ```
