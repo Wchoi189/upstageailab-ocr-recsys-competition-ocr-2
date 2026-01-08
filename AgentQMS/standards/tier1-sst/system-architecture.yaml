@@ -40,9 +40,22 @@ inference_engine:
 
 config_system:
   tool: hydra
-  file_count: 106
+  architecture: domain_first
+  file_count: 112
+  directory_count: 41
+  root_configs: 5
+  restructure_date: "2026-01-08"
   locations:
-    base: "configs/_base/"
+    entry_points: "configs/*.yaml"
+    foundation: "configs/_foundation/"
+    domains: "configs/domain/"
     model: "configs/model/"
     data: "configs/data/"
-    trainer: "configs/trainer/"
+    training: "configs/training/"
+    extended: "configs/__EXTENDED__/"
+    legacy: "configs/__LEGACY__/"
+  documentation: "AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml"
+  domain_switching:
+    enabled: true
+    domains: [detection, recognition, kie, layout]
+    syntax: "python runners/train.py domain=X"

@@ -2,12 +2,12 @@ defaults:
   - _self_
   - base                  # Keep for other settings
   - _foundation/preprocessing   # Include preprocessing config
-  - override data: base   # Override data config from base.yaml
   - data/performance_preset: none  # Default performance preset (no optimizations)
   - data/transforms: base      # Compose transforms group
   - data/dataloaders: default  # Compose dataloaders group
   - /model/presets/model_example
   - /model/lightning_modules/base
+  - override data: base   # Override data config from base.yaml
 
 # Override callbacks to match the checkpoint
 callbacks:

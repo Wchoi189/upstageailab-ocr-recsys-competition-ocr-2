@@ -41,6 +41,7 @@ glob_patterns:
   - pattern: "configs/**/*.yaml"
     instructions:
       - "AgentQMS/standards/tier2-framework/configuration-standards.yaml"
+      - "AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml"
 
 tier1_sst:
   architecture: "AgentQMS/standards/tier1-sst/system-architecture.yaml"
@@ -60,6 +61,7 @@ tier2_framework:
   debugging: "AgentQMS/standards/tier2-framework/debugging-sessions.yaml"
   coding_standards: "AgentQMS/standards/tier2-framework/coding-standards.yaml"
   configuration_standards: "AgentQMS/standards/tier2-framework/configuration-standards.yaml"
+  hydra_architecture: "AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml"
   git_conventions: "AgentQMS/standards/tier2-framework/git-conventions.yaml"
   datasets: "AgentQMS/standards/tier2-framework/dataset-catalog.yaml"
   ocr_components:

@@ -170,16 +170,9 @@ logs/
 .hydra/hydra.log
 
 
-# Claude Code - Runtime directories (intentionally in AgentQMS)
-AgentQMS/standards/tier3-agents/claude/debug
-AgentQMS/standards/tier3-agents/claude/plugins
-AgentQMS/standards/tier3-agents/claude/shell-snapshots
-AgentQMS/standards/tier3-agents/claude/statsig
-AgentQMS/standards/tier3-agents/claude/todos
-AgentQMS/standards/tier3-agents/claude/.claude.json.backup
-AgentQMS/standards/tier3-agents/claude/telemetry
-AgentQMS/standards/tier3-agents/claude/projects
-
-# Claude Code - Incorrectly generated directories (should NOT be in root)
-.ai-instructions/
-.claude/
+# Claude Code - Runtime directories
+AgentQMS/standards/tier3-agents/claude/*
+AgentQMS/standards/tier3-agents/claude/.claude.json
+!AgentQMS/standards/tier3-agents/claude/config.yaml
+!AgentQMS/standards/tier3-agents/claude/validation.sh
+!AgentQMS/standards/tier3-agents/claude/quick-reference.yaml

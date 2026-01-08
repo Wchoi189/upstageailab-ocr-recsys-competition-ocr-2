@@ -1,12 +1,12 @@
 defaults:
   - _self_
   - base                  # Keep for other settings
-  - override data: base            # Compose data group
   - data/performance_preset: none  # Default performance preset (no optimizations)
   - data/transforms: base      # Compose transforms group
   - data/dataloaders: default  # Compose dataloaders group
   - /model/presets/model_example
   - /model/lightning_modules/base
+  - override data: base            # Compose data group
   - override hydra/hydra_logging: disabled
   - override hydra/job_logging: disabled
 
