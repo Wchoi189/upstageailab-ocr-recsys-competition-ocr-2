@@ -1,0 +1,365 @@
+# Example Artifact Type Plugin
+# This is a complete example demonstrating all available features
+# of the AgentQMS artifact plugin system.
+#
+# **NOTE:** This plugin will NOT load in production because "example_artifact"
+# is not in the canonical types list (.agentqms/schemas/artifact_type_validation.yaml).
+# This is intentional - it serves as a reference/template only.
+#
+# To use this as a template for your own plugin:
+# 1. Copy this file to a new name (e.g., my_artifact.yaml)
+# 2. Change 'name' to a canonical type OR add your type to canonical_types list
+# 3. Customize the metadata, validation, and template sections
+# 4. Test with: python -c "from AgentQMS.tools.core.plugins import get_plugin_registry; ..."
+#
+# Schema: AgentQMS/standards/schemas/plugin_artifact_type.json
+# Validation: .agentqms/schemas/artifact_type_validation.yaml
+
+name: example_artifact
+version: "1.0"
+description: |
+  Example artifact type demonstrating all plugin features including:
+  - Rich frontmatter with custom fields
+  - Comprehensive validation rules
+  - Template with variables and structured sections
+  - Best practices for metadata organization
+  
+  Use this as a reference when creating your own artifact types.
+
+# Optional: Inherit from another plugin
+# extends: base_document
+
+# Scope for namespace conflict prevention
+scope: project  # Options: builtin, org_*, project
+
+metadata:
+  # Pattern for generating filenames
+  # Available variables: {date}, {time}, {name}, {id}, {type}
+  filename_pattern: "{date}_{time}_example_{name}.md"
+  
+  # Output directory relative to docs/artifacts/
+  directory: "examples/"
+  
+  # Default frontmatter for artifacts of this type
+  frontmatter:
+    # REQUIRED: ADS v1.0 compliance
+    ads_version: "1.0"
+    
+    # REQUIRED: Matches plugin name
+    type: example_artifact
+    
+    # REQUIRED: Classification category
+    category: documentation
+    
+    # REQUIRED: Initial status
+    status: draft
+    
+    # REQUIRED: Artifact version
+    version: "1.0"
+    
+    # Recommended: Descriptive tags
+    tags: [example, reference, plugin]
+    
+    # CUSTOM FIELDS: Add domain-specific metadata
+    
+    # Priority classification
+    priority: "medium"  # low, medium, high, critical
+    
+    # Ownership tracking
+    author: ""
+    reviewer: ""
+    approver: ""
+    
+    # Lifecycle tracking
+    created_date: "{date}"
+    updated_date: ""
+    reviewed_date: ""
+    approved_date: ""
+    
+    # Impact assessment
+    complexity: "medium"  # low, medium, high
+    effort_estimate: ""   # e.g., "2 days", "1 week"
+    risk_level: "low"     # low, medium, high, critical
+    
+    # Dependencies and relationships
+    related_artifacts: []
+    depends_on: []
+    blocks: []
+    
+    # Project context
+    project_phase: ""
+    sprint: ""
+    milestone: ""
+    
+    # Compliance and standards
+    compliance_frameworks: []
+    security_classification: "internal"
+    data_sensitivity: "none"
+    
+    # Workflow and approvals
+    workflow_state: "draft"
+    requires_review: true
+    requires_approval: false
+    
+    # Metrics and tracking
+    stakeholders: []
+    estimated_completion: ""
+    actual_completion: ""
+    success_metrics: []
+
+validation:
+  # Frontmatter fields that MUST be present
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+    - author
+    - priority
+    - complexity
+  
+  # Markdown sections (headers) that MUST exist
+  required_sections:
+    - "## Overview"
+    - "## Purpose"
+    - "## Content"
+    - "## Impact Assessment"
+    - "## References"
+  
+  # Enforce filename prefix for easy filtering
+  filename_prefix: "example_"
+  
+  # Valid status values for workflow state machine
+  allowed_statuses:
+    - draft          # Initial state
+    - in_review      # Under review
+    - needs_revision # Requires changes
+    - approved       # Approved by reviewer
+    - active         # Currently in use
+    - completed      # Finished/delivered
+    - archived       # No longer active
+    - deprecated     # Superseded by another artifact
+  
+  # Custom Python validators (advanced feature)
+  # custom_validators:
+  #   - name: "Risk Validation"
+  #     module: "my_org.validators.risk"
+  #     function: "validate_risk_assessment"
+  #     config:
+  #       max_high_risks: 3
+  #       require_mitigation: true
+
+# Markdown template with variable placeholders
+template: |
+  # {title}
+  
+  **Type:** Example Artifact  
+  **Priority:** {priority}  
+  **Complexity:** {complexity}  
+  **Author:** {author}  
+  **Date:** {date}  
+  
+  ---
+  
+  ## Overview
+  
+  ### Quick Summary
+  {quick_summary}
+  
+  ### Context
+  {context}
+  
+  ## Purpose
+  
+  ### Objectives
+  1. {objective_1}
+  2. {objective_2}
+  3. {objective_3}
+  
+  ### Success Criteria
+  - [ ] {success_criterion_1}
+  - [ ] {success_criterion_2}
+  - [ ] {success_criterion_3}
+  
+  ## Content
+  
+  ### Section 1: {section_1_title}
+  {section_1_content}
+  
+  **Key Points:**
+  - Point 1
+  - Point 2
+  - Point 3
+  
+  ### Section 2: {section_2_title}
+  {section_2_content}
+  
+  ```{code_block_language}
+  # Example code or configuration
+  {code_block_content}
+  ```
+  
+  ### Section 3: Data/Diagram
+  
+  #### Data Table
+  | Column 1 | Column 2 | Column 3 |
+  |----------|----------|----------|
+  | Data 1   | Data 2   | Data 3   |
+  
+  #### Architecture Diagram
+  ```mermaid
+  graph TD
+      A[Component A] --> B[Component B]
+      B --> C[Component C]
+      C --> D[Component D]
+  ```
+  
+  ## Impact Assessment
+  
+  ### Stakeholders
+  - **Primary:** {primary_stakeholders}
+  - **Secondary:** {secondary_stakeholders}
+  
+  ### Dependencies
+  - **Upstream:** {upstream_dependencies}
+  - **Downstream:** {downstream_dependencies}
+  
+  ### Risks and Mitigations
+  | Risk | Impact | Probability | Mitigation |
+  |------|--------|-------------|------------|
+  | {risk_1} | {impact_1} | {prob_1} | {mitigation_1} |
+  | {risk_2} | {impact_2} | {prob_2} | {mitigation_2} |
+  
+  ### Resource Requirements
+  - **Time:** {time_estimate}
+  - **People:** {people_required}
+  - **Budget:** {budget_estimate}
+  - **Tools:** {tools_required}
+  
+  ## Implementation Notes
+  
+  ### Approach
+  {implementation_approach}
+  
+  ### Milestones
+  1. **{milestone_1}** - {milestone_1_date}
+     - Deliverable: {milestone_1_deliverable}
+  2. **{milestone_2}** - {milestone_2_date}
+     - Deliverable: {milestone_2_deliverable}
+  3. **{milestone_3}** - {milestone_3_date}
+     - Deliverable: {milestone_3_deliverable}
+  
+  ### Testing Strategy
+  {testing_strategy}
+  
+  ## References
+  
+  ### Related Artifacts
+  - [Related Document 1]({related_doc_1})
+  - [Related Document 2]({related_doc_2})
+  
+  ### External References
+  - [Reference 1]({external_ref_1})
+  - [Reference 2]({external_ref_2})
+  
+  ### Standards and Guidelines
+  - {standard_1}
+  - {standard_2}
+  
+  ---
+  
+  ## Appendix A: Detailed Specifications
+  {appendix_a_content}
+  
+  ## Appendix B: Glossary
+  | Term | Definition |
+  |------|------------|
+  | {term_1} | {definition_1} |
+  | {term_2} | {definition_2} |
+  
+  ## Change Log
+  | Date | Version | Author | Changes |
+  |------|---------|--------|---------|
+  | {date} | 1.0 | {author} | Initial version |
+
+# Default values for template variables
+# These provide guidance and can be overridden at creation time
+template_variables:
+  # Overview
+  quick_summary: "[Brief 1-2 sentence summary]"
+  context: "[Background context and motivation]"
+  
+  # Purpose
+  objective_1: "First objective"
+  objective_2: "Second objective"
+  objective_3: "Third objective"
+  success_criterion_1: "First success criterion"
+  success_criterion_2: "Second success criterion"
+  success_criterion_3: "Third success criterion"
+  
+  # Content sections
+  section_1_title: "Background"
+  section_1_content: "[Background information]"
+  section_2_title: "Proposal"
+  section_2_content: "[Proposed solution or approach]"
+  
+  # Code example
+  code_block_language: "python"
+  code_block_content: "# Add code example here"
+  
+  # Impact assessment
+  primary_stakeholders: "[List primary stakeholders]"
+  secondary_stakeholders: "[List secondary stakeholders]"
+  upstream_dependencies: "[List upstream dependencies]"
+  downstream_dependencies: "[List downstream dependencies]"
+  
+  # Risks
+  risk_1: "[Risk description]"
+  impact_1: "Medium"
+  prob_1: "Low"
+  mitigation_1: "[Mitigation strategy]"
+  risk_2: "[Risk description]"
+  impact_2: "Low"
+  prob_2: "Medium"
+  mitigation_2: "[Mitigation strategy]"
+  
+  # Resources
+  time_estimate: "[Estimated time]"
+  people_required: "[Number and roles]"
+  budget_estimate: "[Budget if applicable]"
+  tools_required: "[Required tools/software]"
+  
+  # Implementation
+  implementation_approach: "[Describe approach]"
+  milestone_1: "Phase 1 Complete"
+  milestone_1_date: "[Date]"
+  milestone_1_deliverable: "[Deliverable description]"
+  milestone_2: "Phase 2 Complete"
+  milestone_2_date: "[Date]"
+  milestone_2_deliverable: "[Deliverable description]"
+  milestone_3: "Final Delivery"
+  milestone_3_date: "[Date]"
+  milestone_3_deliverable: "[Deliverable description]"
+  testing_strategy: "[Testing approach]"
+  
+  # References
+  related_doc_1: "[Link to related document]"
+  related_doc_2: "[Link to related document]"
+  external_ref_1: "[External reference URL]"
+  external_ref_2: "[External reference URL]"
+  standard_1: "[Applicable standard]"
+  standard_2: "[Applicable standard]"
+  
+  # Appendices
+  appendix_a_content: "[Detailed specifications]"
+  term_1: "[Term]"
+  definition_1: "[Definition]"
+  term_2: "[Term]"
+  definition_2: "[Definition]"
+  
+  # Metadata
+  priority: "medium"
+  complexity: "medium"
+  author: "[Your Name]"
