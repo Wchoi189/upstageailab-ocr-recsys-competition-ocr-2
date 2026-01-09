@@ -77,8 +77,8 @@ fi
 echo ""
 echo "🧪 Test Quality Checks"
 echo "----------------------"
-if [ -f "scripts/check_test_isolation.py" ]; then
-    run_check "Test isolation (mock cleanup)" "python3 scripts/check_test_isolation.py"
+if [ -f "scripts/ci/check_test_isolation.py" ]; then
+    run_check "Test isolation (mock cleanup)" "python3 scripts/ci/check_test_isolation.py"
 fi
 
 # 5. Quick Test Run (if --full mode)

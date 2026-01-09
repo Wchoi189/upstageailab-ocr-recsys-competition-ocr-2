@@ -21,7 +21,7 @@ package_management:
 
 environment_tools:
   validate_environment:
-    command: "uv run python scripts/validate_environment.py"
+    command: "uv run python scripts/validation/validate_environment.py"
     when: "After `uv sync` or environment changes"
 
   agent_qms:

@@ -101,13 +101,13 @@ echo ""
 
 # Check environment validation script
 echo "✅ Checking environment validation..."
-if [ -f "scripts/validate_environment.py" ]; then
+if [ -f "scripts/validation/validate_environment.py" ]; then
     echo -e "${GREEN}✓ Environment validation script exists${NC}"
 
     # Try to run it if in Codespaces
     if [ -n "${CODESPACES}" ]; then
         echo "  Running validation..."
-        if python scripts/validate_environment.py; then
+        if python scripts/validation/validate_environment.py; then
             echo -e "${GREEN}✓ Environment validation passed${NC}"
         else
             echo -e "${YELLOW}⚠️  Environment validation had issues${NC}"
@@ -131,7 +131,7 @@ if [ -n "${CODESPACES}" ]; then
     echo "Next steps:"
     echo "  1. Verify container image is accessible"
     echo "  2. Check that dependencies are pre-installed"
-    echo "  3. Run: python scripts/validate_environment.py"
+    echo "  3. Run: python scripts/validation/validate_environment.py"
     echo "  4. Start developing!"
 else
     echo -e "${YELLOW}ℹ️  Local development environment${NC}"
