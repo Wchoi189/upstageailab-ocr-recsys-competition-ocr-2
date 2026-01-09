@@ -176,3 +176,9 @@ AgentQMS/standards/tier3-agents/claude/.claude.json
 !AgentQMS/standards/tier3-agents/claude/config.yaml
 !AgentQMS/standards/tier3-agents/claude/validation.sh
 !AgentQMS/standards/tier3-agents/claude/quick-reference.yaml
+
+
+# AgentQMS generated state files
+AgentQMS/.agentqms/state/
+.agentqms/state/
+.agentqms/effective.yaml

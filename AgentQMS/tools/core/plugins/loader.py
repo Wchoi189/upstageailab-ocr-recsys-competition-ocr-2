@@ -97,6 +97,25 @@ class PluginLoader:
             raise ValueError(f"Invalid YAML format (expected dict): {path}")
         return data
 
+    def _to_relative_path(self, path: Path) -> str:
+        """
+        Convert absolute path to relative path for portability.
+
+        This ensures paths work consistently across different environments
+        (local dev, CI/CD, deployments).
+
+        Args:
+            path: Absolute or relative path.
+
+        Returns:
+            Relative path string from project root, or absolute if not convertible.
+        """
+        try:
+            return str(path.relative_to(self.project_root))
+        except ValueError:
+            # Fallback to absolute if paths don't share common root
+            return str(path)
+
     def _load_artifact_types(self, registry: PluginRegistry, plugins: list[DiscoveredPlugin]) -> None:
         """Load and merge artifact type plugins."""
         for plugin in plugins:
@@ -109,7 +128,7 @@ class PluginLoader:
                     for error in errors:
                         registry.add_validation_error(
                             PluginValidationError(
-                                plugin_path=str(plugin.path),
+                                plugin_path=self._to_relative_path(plugin.path),
                                 plugin_type="artifact_type",
                                 error_message=error,
                                 schema_path=str(self.validator.get_schema_path("artifact_type")),
@@ -129,7 +148,7 @@ class PluginLoader:
                             name=name,
                             version=data.get("version", "1.0"),
                             source=plugin.source,
-                            path=str(plugin.path),
+                            path=self._to_relative_path(plugin.path),
                             plugin_type="artifact_type",
                             scope=data.get("scope", "project"),
                             description=data.get("description", ""),
@@ -139,7 +158,7 @@ class PluginLoader:
             except Exception as e:
                 registry.add_validation_error(
                     PluginValidationError(
-                        plugin_path=str(plugin.path),
+                        plugin_path=self._to_relative_path(plugin.path),
                         plugin_type="artifact_type",
                         error_message=str(e),
                     )
@@ -167,7 +186,7 @@ class PluginLoader:
                     for error in errors:
                         registry.add_validation_error(
                             PluginValidationError(
-                                plugin_path=str(plugin.path),
+                                plugin_path=self._to_relative_path(plugin.path),
                                 plugin_type="validators",
                                 error_message=error,
                                 schema_path=str(self.validator.get_schema_path("validators")),
@@ -184,7 +203,7 @@ class PluginLoader:
                         name="validators",
                         version=data.get("version", "1.0"),
                         source=plugin.source,
-                        path=str(plugin.path),
+                        path=self._to_relative_path(plugin.path),
                         plugin_type="validator",
                         description=data.get("description", ""),
                     )
@@ -215,7 +234,7 @@ class PluginLoader:
                     for error in errors:
                         registry.add_validation_error(
                             PluginValidationError(
-                                plugin_path=str(plugin.path),
+                                plugin_path=self._to_relative_path(plugin.path),
                                 plugin_type="context_bundle",
                                 error_message=error,
                                 schema_path=str(self.validator.get_schema_path("context_bundle")),
@@ -235,7 +254,7 @@ class PluginLoader:
                             name=name,
                             version=data.get("version", "1.0"),
                             source=plugin.source,
-                            path=str(plugin.path),
+                            path=self._to_relative_path(plugin.path),
                             plugin_type="context_bundle",
                             scope=data.get("scope", "project"),
                             description=data.get("description", ""),

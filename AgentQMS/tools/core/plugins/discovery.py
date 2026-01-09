@@ -149,8 +149,25 @@ class PluginDiscovery:
         return plugins
 
     def get_discovery_paths(self) -> dict[str, str]:
-        """Return the discovery paths for debugging/logging."""
+        """
+        Return the discovery paths for debugging/logging.
+
+        Returns relative paths from project root for portability across
+        different environments (local development, CI/CD, deployments).
+
+        Returns:
+            Dictionary with relative paths to framework and project plugin dirs.
+        """
+        try:
+            # Use relative paths for portability
+            framework_rel = self.framework_plugins_dir.relative_to(self.project_root)
+            project_rel = self.project_plugins_dir.relative_to(self.project_root)
+        except ValueError:
+            # Fallback to absolute if paths don't share common root
+            framework_rel = self.framework_plugins_dir
+            project_rel = self.project_plugins_dir
+
         return {
-            "framework": str(self.framework_plugins_dir),
-            "project": str(self.project_plugins_dir),
+            "framework": str(framework_rel),
+            "project": str(project_rel),
         }
