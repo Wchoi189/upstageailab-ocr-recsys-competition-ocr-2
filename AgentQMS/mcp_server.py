@@ -85,6 +85,13 @@ RESOURCES = [
         "mimeType": "application/json",
     },
     {
+        "uri": "agentqms://plugins/artifact_types",
+        "name": "Plugin Artifact Types",
+        "description": "Discoverable artifact types with complete metadata (hardcoded, plugins, and standards)",
+        "path": None,  # Dynamic content
+        "mimeType": "application/json",
+    },
+    {
         "uri": "agentqms://config/settings",
         "name": "QMS Settings",
         "description": "Framework configuration, paths, validation rules, tool mappings",
@@ -127,6 +134,11 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
         content = await _get_template_list()
         return [ReadResourceContents(content=content, mime_type="application/json")]
 
+    # Handle dynamic plugin artifact types
+    if uri == "agentqms://plugins/artifact_types":
+        content = await _get_plugin_artifact_types()
+        return [ReadResourceContents(content=content, mime_type="application/json")]
+
     # Handle file-based resources
     path: Path = resource["path"]
 
@@ -139,17 +151,191 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
 
 
 async def _get_template_list() -> str:
-    """Get list of available artifact templates."""
+    """Get list of available artifact templates with source metadata."""
     try:
-        from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+        from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
 
-        workflow = ArtifactWorkflow(quiet=True)
-        templates = workflow.get_available_templates()
+        templates_obj = ArtifactTemplates()
+        templates_with_metadata = templates_obj.get_available_templates_with_metadata()
 
-        # Return as JSON
-        return json.dumps({"templates": templates}, indent=2)
+        # Return as JSON with enhanced metadata
+        return json.dumps(
+            {
+                "templates": templates_with_metadata,
+                "summary": {
+                    "total": len(templates_with_metadata),
+                    "hardcoded": sum(1 for t in templates_with_metadata if t["source"] == "hardcoded"),
+                    "plugin": sum(1 for t in templates_with_metadata if t["source"] == "plugin"),
+                    "with_conflicts": sum(1 for t in templates_with_metadata if t.get("has_conflict", False)),
+                },
+            },
+            indent=2,
+        )
     except Exception as e:
         return json.dumps({"error": str(e)}, indent=2)
+
+
+async def _get_plugin_artifact_types() -> str:
+    """Get all artifact types with comprehensive metadata including source, validation, and template info.
+
+    Returns JSON with structure:
+    {
+        "artifact_types": [
+            {
+                "name": "audit",
+                "source": "plugin",
+                "description": "...",
+                "metadata": {...},
+                "validation": {...},
+                "frontmatter": {...},
+                "template_preview": {...},
+                "plugin_info": {...},
+                "conflicts": {...}
+            },
+            ...
+        ],
+        "summary": {
+            "total": 11,
+            "sources": {"hardcoded": 8, "plugin": 3},
+            "validation_enabled": true,
+            "last_updated": "2026-01-10T..."
+        },
+        "metadata": {
+            "version": "1.0",
+            "plugin_discovery_enabled": true,
+            "conflict_detection": true
+        }
+    }
+    """
+    try:
+        from datetime import datetime
+        from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
+
+        templates_obj = ArtifactTemplates()
+        types_dict = templates_obj._get_available_artifact_types()
+
+        artifact_types_list = []
+
+        for type_name, type_info in sorted(types_dict.items()):
+            template = type_info.get("template") or {}
+            validation = type_info.get("validation")
+
+            # Build template preview
+            template_content = template.get("content_template", "")
+            first_300 = template_content[:300] if template_content else ""
+            sections = []
+
+            # Extract markdown sections from template
+            for line in template_content.split("\n"):
+                if line.startswith("#"):
+                    sections.append(line.strip())
+
+            artifact_type_obj = {
+                "name": type_name,
+                "source": type_info.get("source", "unknown"),
+                "description": type_info.get("description", ""),
+                "category": template.get("frontmatter", {}).get("category", "development"),
+                "version": template.get("frontmatter", {}).get("version", "1.0"),
+                "metadata": {
+                    "filename_pattern": template.get("filename_pattern", ""),
+                    "directory": template.get("directory", ""),
+                    "template_variables": template.get("_plugin_variables", {}),
+                },
+                "validation": validation,
+                "frontmatter": template.get("frontmatter", {}),
+                "template_preview": {
+                    "first_300_chars": first_300,
+                    "line_count": len(template_content.split("\n")),
+                    "sections": sections[:5],  # First 5 sections
+                },
+                "plugin_info": {},
+                "conflicts": {
+                    "exists_in_multiple_sources": type_info.get("conflict", False),
+                    "conflict_sources": type_info.get("_conflict_note", []),
+                },
+            }
+
+            # Add plugin info if from plugin
+            if type_info.get("source") == "plugin":
+                # Try to find plugin path
+                plugin_path = ".agentqms/plugins/artifact_types/"
+                plugin_files = {
+                    "audit": "audit.yaml",
+                    "change_request": "change_request.yaml",
+                    "ocr_experiment_report": "ocr_experiment.yaml",
+                }
+                plugin_file = plugin_files.get(type_name, f"{type_name}.yaml")
+
+                artifact_type_obj["plugin_info"] = {
+                    "plugin_name": type_name,
+                    "plugin_path": f"{plugin_path}{plugin_file}",
+                    "plugin_scope": "project",
+                }
+
+            artifact_types_list.append(artifact_type_obj)
+
+        # Build summary statistics
+        summary = {
+            "total": len(artifact_types_list),
+            "sources": {
+                "hardcoded": sum(1 for t in artifact_types_list if t["source"] == "hardcoded"),
+                "plugin": sum(1 for t in artifact_types_list if t["source"] == "plugin"),
+                "hardcoded_with_plugin": sum(1 for t in artifact_types_list if t["source"] == "hardcoded (plugin available)"),
+            },
+            "validation_enabled": True,
+            "last_updated": datetime.utcnow().isoformat() + "Z",
+        }
+
+        response = {
+            "artifact_types": artifact_types_list,
+            "summary": summary,
+            "metadata": {
+                "version": "1.0",
+                "plugin_discovery_enabled": True,
+                "conflict_detection": True,
+                "schema_url": "docs/artifacts/design_documents/2026-01-10_design_plugin_artifact_types_mcp_resource.md",
+            },
+        }
+
+        return json.dumps(response, indent=2)
+
+    except Exception as e:
+        import traceback
+
+        return json.dumps(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+                "artifact_types": [],
+                "summary": {"total": 0},
+            },
+            indent=2,
+        )
+
+
+async def _get_available_artifact_types() -> list[str]:
+    """Get list of available artifact types dynamically from templates and plugins."""
+    try:
+        from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
+
+        templates_obj = ArtifactTemplates()
+        types_dict = templates_obj._get_available_artifact_types()
+        return sorted(list(types_dict.keys()))
+    except Exception:
+        # Fallback to hardcoded list if discovery fails
+        return [
+            "assessment",
+            "audit",
+            "bug_report",
+            "change_request",
+            "design",
+            "implementation_plan",
+            "ocr_experiment",
+            "research",
+            "template",
+            "walkthrough",
+            "vlm_report",
+        ]
 
 
 @app.list_tools()

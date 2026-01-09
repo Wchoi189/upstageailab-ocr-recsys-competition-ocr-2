@@ -12,6 +12,7 @@ import asyncio
 import json
 import subprocess
 import sys
+import os
 import yaml
 from pathlib import Path
 from typing import Any
@@ -24,11 +25,19 @@ from mcp.server.lowlevel.helper_types import ReadResourceContents
 
 # Auto-discover project root
 def find_project_root() -> Path:
+    # First, check environment variable
+    env_root = os.environ.get("PROJECT_ROOT")
+    if env_root:
+        return Path(env_root)
+
+    # Second, traverse up from this file to find project_compass marker
     current = Path(__file__).resolve().parent
     for parent in current.parents:
         if (parent / "project_compass").exists():
             return parent
-    return Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
+
+    # Fallback to current working directory (portable)
+    return Path.cwd()
 
 
 PROJECT_ROOT = find_project_root()
@@ -136,6 +145,13 @@ RESOURCES_CONFIG = [
         "mimeType": "application/x-yaml",
     },
     {
+        "uri": "agentqms://plugins/artifact_types",
+        "name": "Plugin Artifact Types",
+        "description": "Discoverable artifact types with complete metadata",
+        "mimeType": "application/json",
+        "path": None,
+    },
+    {
         "uri": "agentqms://standards/workflows",
         "name": "Workflow Requirements",
         "path": AGENTQMS_DIR / "standards" / "tier1-sst" / "workflow-requirements.yaml",
@@ -189,6 +205,19 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
             ]
         except:
             return [ReadResourceContents(content=json.dumps({"error": "Failed to load templates"}), mime_type="application/json")]
+
+    if uri == "agentqms://plugins/artifact_types":
+        try:
+            from AgentQMS.mcp_server import _get_plugin_artifact_types
+
+            content = await _get_plugin_artifact_types()
+            return [ReadResourceContents(content=content, mime_type="application/json")]
+        except Exception as e:
+            return [
+                ReadResourceContents(
+                    content=json.dumps({"error": f"Failed to load plugin artifact types: {e}"}), mime_type="application/json"
+                )
+            ]
 
     if uri == "experiments://active_list":
         try:
@@ -398,6 +427,90 @@ async def list_tools() -> list[Tool]:
                     "threshold": {"type": "number", "description": "Min similarity 0.0-1.0 (default: 0.6)"},
                 },
                 "required": ["query"],
+            },
+        ),
+        # --- Meta-Tools (Router Pattern) ---
+        Tool(
+            name="adt_meta_query",
+            description="Unified analysis tool. Routes based on 'kind': config_access, merge_order, hydra_usage, component_instantiations, config_flow, dependency_graph, imports, complexity, context_tree, symbol_search",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "kind": {"type": "string", "enum": ["config_access", "merge_order", "hydra_usage", "component_instantiations", "config_flow", "dependency_graph", "imports", "complexity", "context_tree", "symbol_search"]},
+                    "target": {"type": "string", "description": "Target path or query"},
+                    "options": {"type": "object", "additionalProperties": True},
+                },
+                "required": ["kind", "target"],
+            },
+        ),
+        Tool(
+            name="adt_meta_edit",
+            description="Unified edit tool. Routes based on 'kind': apply_diff, smart_edit, read_slice, format",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "kind": {"type": "string", "enum": ["apply_diff", "smart_edit", "read_slice", "format"]},
+                    "target": {"type": "string", "description": "Target file or diff content"},
+                    "options": {"type": "object", "additionalProperties": True},
+                },
+                "required": ["kind", "target"],
+            },
+        ),
+        # --- Edit Tools ---
+        Tool(
+            name="apply_unified_diff",
+            description="Apply a unified diff with fuzzy matching. Handles whitespace drift. Returns detailed hunk report.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "diff": {"type": "string", "description": "Unified diff text (git diff format)"},
+                    "strategy": {"type": "string", "enum": ["exact", "whitespace_insensitive", "fuzzy"], "default": "fuzzy"},
+                    "dry_run": {"type": "boolean", "default": False},
+                },
+                "required": ["diff"],
+            },
+        ),
+        Tool(
+            name="smart_edit",
+            description="Intelligent search/replace with exact, regex, or fuzzy matching.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file": {"type": "string", "description": "Path to file"},
+                    "search": {"type": "string", "description": "Text or pattern to find"},
+                    "replace": {"type": "string", "description": "Replacement text"},
+                    "mode": {"type": "string", "enum": ["exact", "regex", "fuzzy"], "default": "exact"},
+                    "all_occurrences": {"type": "boolean", "default": False},
+                    "dry_run": {"type": "boolean", "default": False},
+                },
+                "required": ["file", "search", "replace"],
+            },
+        ),
+        Tool(
+            name="read_file_slice",
+            description="Read specific line range from a file for targeted editing.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "file": {"type": "string", "description": "Path to file"},
+                    "start_line": {"type": "integer", "description": "Start line (1-indexed)"},
+                    "end_line": {"type": "integer", "description": "End line (inclusive)"},
+                    "context_lines": {"type": "integer", "default": 0},
+                },
+                "required": ["file", "start_line", "end_line"],
+            },
+        ),
+        Tool(
+            name="format_code",
+            description="Format code using black, ruff, or isort.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Path to file or directory"},
+                    "style": {"type": "string", "enum": ["black", "ruff", "isort"], "default": "black"},
+                    "check_only": {"type": "boolean", "default": False},
+                },
+                "required": ["path"],
             },
         ),
     ]
@@ -636,6 +749,45 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 return [TextContent(type="text", text=json.dumps([r.to_dict() for r in results], indent=2))]
             else:
                 return [TextContent(type="text", text=format_search_results_markdown(results, query))]
+
+        # --- Edit Tools ---
+        if name == "apply_unified_diff":
+            from agent_debug_toolkit.edits import apply_unified_diff
+            diff = arguments.get("diff", "")
+            strategy = arguments.get("strategy", "fuzzy")
+            dry_run = arguments.get("dry_run", False)
+            report = apply_unified_diff(diff=diff, strategy=strategy, project_root=PROJECT_ROOT, dry_run=dry_run)
+            return [TextContent(type="text", text=report.to_json())]
+
+        if name == "smart_edit":
+            from agent_debug_toolkit.edits import smart_edit
+            path = resolve_adt_path(arguments.get("file", ""))
+            report = smart_edit(
+                file=path,
+                search=arguments.get("search", ""),
+                replace=arguments.get("replace", ""),
+                mode=arguments.get("mode", "exact"),
+                all_occurrences=arguments.get("all_occurrences", False),
+                dry_run=arguments.get("dry_run", False),
+            )
+            return [TextContent(type="text", text=report.to_json())]
+
+        if name == "read_file_slice":
+            from agent_debug_toolkit.edits import read_file_slice
+            path = resolve_adt_path(arguments.get("file", ""))
+            content = read_file_slice(
+                path,
+                int(arguments.get("start_line", 1)),
+                int(arguments.get("end_line", 50)),
+                int(arguments.get("context_lines", 0)),
+            )
+            return [TextContent(type="text", text=content)]
+
+        if name == "format_code":
+            from agent_debug_toolkit.edits import format_code
+            path = resolve_adt_path(arguments.get("path", ""))
+            report = format_code(path, style=arguments.get("style", "black"), check_only=arguments.get("check_only", False))
+            return [TextContent(type="text", text=report.to_json())]
 
         raise ValueError(f"Unknown tool: {name}")
     except Exception as e:

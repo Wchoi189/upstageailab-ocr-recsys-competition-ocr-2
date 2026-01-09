@@ -1,0 +1,98 @@
+# Documentation Update Context Bundle Plugin
+# Context files for updating project documentation and standards
+
+name: documentation-update
+title: Documentation & Standards Update
+version: "1.0"
+scope: project
+description: |
+  Context files for updating project documentation, standards, and artifact management.
+  Includes AgentQMS standards, documentation tools, and artifact templates.
+
+tags:
+  - documentation
+  - standards
+  - artifact
+  - compliance
+  - validate
+
+triggers:
+  keywords:
+    - doc
+    - documentation
+    - standard
+    - artifact
+    - compliance
+    - validate
+    - guide
+    - readme
+    - changelog
+
+tiers:
+  tier1:
+    name: Documentation Essentials
+    description: Core documentation standards and tools
+    max_files: 8
+    files:
+      - path: AgentQMS/standards/INDEX.yaml
+        priority: critical
+        description: Standards index and navigation
+      - path: AgentQMS/standards/tier1-sst/artifact-types.yaml
+        priority: critical
+        description: Artifact type definitions
+      - path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+        priority: critical
+        description: Naming conventions for artifacts and files
+      - path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+        priority: high
+        description: File organization rules
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: high
+        description: Available documentation tools and commands
+
+  tier2:
+    name: Documentation Framework
+    description: Documentation structure and validation tools
+    max_files: 10
+    files:
+      - path: docs/index.md
+        priority: high
+        description: Documentation index
+      - path: README.md
+        priority: high
+        description: Project README
+      - path: CHANGELOG.md
+        priority: high
+        description: Project changelog
+      - path: CONTRIBUTING.md
+        priority: medium
+        description: Contribution guidelines
+      - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
+        priority: medium
+        description: Git and commit conventions
+      - path: AgentQMS/tools/documentation/auto_generate_index.py
+        priority: medium
+        description: Documentation index generator
+      - path: AgentQMS/tools/compliance/validate_artifacts.py
+        priority: medium
+        description: Artifact validation tool
+
+  tier3:
+    name: Extended Documentation
+    description: Additional documentation resources and templates
+    max_files: 8
+    files:
+      - path: docs/_templates/artifact-template.md
+        priority: medium
+        description: Artifact template
+        optional: true
+      - path: AgentQMS/standards/tier2-framework/quickstart.yaml
+        priority: medium
+        description: Quick start guide for new developers
+      - path: docs/guides/
+        priority: low
+        description: User guides directory
+        optional: true
+      - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+        priority: low
+        description: Workflow requirements

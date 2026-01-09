@@ -1,0 +1,74 @@
+# ADT Router Pattern & Edit Tools Enhancement
+# Roadmap: 00_adt_router_and_edits.yaml
+
+version: "1.0"
+status: in_progress
+started: "2026-01-09"
+
+objective: |
+  Implement Option B (Router/Meta-Tool Pattern) and adt_edits module for the
+  agent-debug-toolkit to reduce tool proliferation while adding reliable editing
+  capabilities for AI agents.
+
+assessment_ref: docs/artifacts/assessments/2026-01-09_2216_assessment_ast-grep-tree-sitter-integration.md
+
+phases:
+  phase1_adt_edits:
+    name: "Add adt_edits Module"
+    status: complete
+    priority: high
+    description: |
+      Create the core editing tools that solve the failed-edit problem:
+      - apply_unified_diff: Fuzzy diff application
+      - smart_edit: Search/replace with multiple modes
+      - read_file_slice: Line-range reading
+      - format_code: Post-edit formatting
+    deliverables:
+      - agent_debug_toolkit/edits.py (new module)
+      - Test suite for edit operations
+      - Integration into mcp_server.py
+
+  phase2_router_pattern:
+    name: "Implement Router/Meta-Tool Pattern"
+    status: complete
+    priority: high
+    description: |
+      Refactor tool exposure to use meta-tools:
+      - adt_meta_query: Dispatches to analysis tools
+      - adt_meta_edit: Dispatches to edit tools
+      This reduces visible tool count from 15+ to 2-3.
+    deliverables:
+      - Router implementation in mcp_server.py
+      - Updated tool schema with 'kind' parameter
+      - Sync changes to unified_server.py
+
+  phase3_astgrep_integration:
+    name: "Integrate ast-grep MCP (Optional)"
+    status: not_started
+    priority: medium
+    description: |
+      Add ast-grep structural search capabilities:
+      - sg_search: Pattern-based code search
+      - sg_lint: YAML rule-based linting
+      - sg_rewrite: Structural code rewrites
+    deliverables:
+      - ast-grep tool wrappers
+      - Integration into router pattern
+    dependencies:
+      - phase1_adt_edits
+      - phase2_router_pattern
+
+  phase4_treesitter_foundation:
+    name: "Tree-Sitter Foundation (Optional)"
+    status: not_started
+    priority: low
+    description: |
+      Add tree-sitter for multi-language support if needed.
+    dependencies:
+      - phase3_astgrep_integration
+
+success_criteria:
+  - Edit tools reduce failed-edit rate significantly
+  - Tool count visible to model stays under 10
+  - Both mcp_server.py and unified_server.py stay in sync
+  - All existing tests continue to pass

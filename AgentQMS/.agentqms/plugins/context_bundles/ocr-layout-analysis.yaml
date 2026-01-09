@@ -1,0 +1,80 @@
+# OCR Layout Analysis Context Bundle Plugin
+
+name: ocr-layout-analysis
+title: OCR Layout Analysis
+version: "1.0"
+scope: project
+description: |
+  Context for layout analysis and structure extraction including page structure
+  detection, reading order analysis, and layout-related inference.
+
+tags:
+  - layout
+  - structure
+  - reading-order
+  - page-segmentation
+  - document-structure
+
+triggers:
+  keywords:
+    - layout
+    - structure
+    - reading-order
+    - page-segmentation
+    - document-structure
+    - segmentation
+
+tiers:
+  tier1:
+    name: Layout Code
+    description: Core layout feature implementation
+    max_files: 5
+    files:
+      - path: ocr/features/layout/*.py
+        priority: critical
+        description: Layout analysis feature implementation
+      - path: configs/domain/layout.yaml
+        priority: critical
+        description: Layout-specific configuration
+      - path: configs/layout/
+        priority: high
+        description: Layout configuration parameters
+      - path: ocr/core/inference/pipeline.py
+        priority: high
+        description: Inference pipeline orchestration
+
+  tier2:
+    name: Analysis & Utilities
+    description: Analysis tools, visualization, and utilities
+    max_files: 6
+    files:
+      - path: ocr/core/analysis/*.py
+        priority: high
+        description: Layout analysis utilities and helpers
+      - path: ocr/core/utils/*.py
+        priority: high
+        description: Shared utility functions
+      - path: ocr/core/models/__init__.py
+        priority: medium
+        description: Model loading and management
+      - path: configs/base.yaml
+        priority: medium
+        description: Base configuration template
+      - path: ocr/core/visualization/
+        priority: low
+        description: Visualization components for layout
+        optional: true
+
+  tier3:
+    name: Examples & Tests
+    description: Examples, tests, and visualization outputs
+    max_files: 3
+    files:
+      - path: tests/test_layout.py
+        priority: low
+        description: Layout analysis tests
+        optional: true
+      - path: data/debug_samples/
+        priority: low
+        description: Sample images for debugging layout analysis
+        optional: true

@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-09 15:18:29
-**Total Artifacts**: 26
+**Last Updated**: 2026-01-09 23:42:40
+**Total Artifacts**: 30
 
-## Active (21)
+## Active (22)
 
 - [Implementation Plan: AgentQMS Architecture Consolidation](2025-11-29_1800_implementation_plan_architecture-consolidation.md) (📅 2025-11-29 18:00 (KST), 📄 implementation_plan) - > **Context**: Converging `.agentqms/`, `.ai-instructions/`, and `AgentQMS/` into a single `AgentQMS
 - [Phase 1: Core Recognition Implementation](2025-12-25_0410_implementation_plan_phase1-core-recognition.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Replace the current `StubRecognizer` with a production-ready `PaddleOCRRecognizer` backend using Pad
@@ -28,25 +28,29 @@ Active implementation plans and development roadmaps.
 - [Cleanup & Consolidation Implementation Plan](2026-01-08_1800_implementation_plan_refactor-rescue.md) (📅 2025-11-29 18:00 (KST), 📄 implementation_plan) - **Goal**: Organize `ocr/` into a clean, strictly hierarchical structure by removing duplicates and c
 - [Console Output Polish Plan](2026-01-08_2139_implementation_plan_fix-console-output.md) (📅 2024-10-01 10:00 (KST), 📄 implementation_plan) - Fix the "huge gap" in the training console output reported by the user. The current configuration us
 - [AgentQMS Path Portability Implementation Completed](2026-01-09_1508_implementation_plan_agentqms-path-portability-completed.md) (📅 2026-01-09 15:08 (KST), 📄 implementation_plan) - **Status**: ✅ COMPLETED
+- [ADT Router Pattern and Edit Tools Implementation](2026-01-09_2313_implementation_plan_adt-router-and-edits.md) (📅 2026-01-09 23:13 (KST), 📄 implementation_plan) - Implement Option B (Router/Meta-Tool Pattern) and `adt_edits` module for the agent-debug-toolkit to:
 
-## Completed (2)
+## Completed (4)
 
 - [Model Head Signature Fix - LSP Violation Resolution](2025-12-27_0610_implementation_plan_model-head-signature-fix.md) (📅 2025-12-27 06:10 (KST), 📄 implementation_plan) - **Type:** Liskov Substitution Principle (LSP) Violation - HIGH RISK
 - [Post-Refactor Stabilization Plan](2026-01-08_2010_implementation_plan_stabilization-plan.md) (📅 2024-10-01 10:00 (KST), 📄 implementation_plan) - The goal is to return the system to normal operations following the "nuclear" refactor of source cod
+- [Context System Consolidation - Implementation Roadmap](2026-01-09_2020_implementation_plan_context-system-consolidation-completed.md) (📅 2026-01-09 20:20 (KST), 📄 implementation_plan) - **Objective**: Consolidate three fragmented context systems into unified plugin-based architecture (
+- [Domain-Specialized Context Bundles - Implementation Complete](2026-01-09_2035_implementation_plan_domain-specialized-context-bundles-completed.md) (📅 2026-01-09 20:35 (KST), 📄 implementation_plan) - ✅ **5 new domain-specialized context bundles created and validated**
 
-## Other (3)
+## Other (4)
 
 - [Phase 2-3: Pipeline Integration + VLM + Optimization](2025-12-25_0410_implementation_plan_phase2-pipeline-integration.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Integrate the recognition, layout, and extraction modules into a unified end-to-end pipeline with hy
 - [Implementation Plan - GitHub Sync Entrypoints](2026-01-05_1900_implementation_plan_github-sync-entrypoints.md) (📅 2026-01-05 18:54 (KST), 📄 implementation_plan) - This plan outlines the steps to expose the new GitHub Sync features (`--init`, `--roadmap`) via VS C
 - [AST Analyzer Phase 3: Conceptual Plan for Automated Refactoring](2026-01-07_0448_implementation_plan_ast-analyzer-phase3-conceptual.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - > "I have a very big code base... bloat, inconsistencies, obsolete, deprecated, broken, outdated, su
+- [2026-01-09_2205_implementation_plan_phases-5-7-complete](2026-01-09_2205_implementation_plan_phases-5-7-complete.md) (📅 , 📄 ) - **File**: `AgentQMS/tools/utilities/context_inspector.py`
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 21 |
-| Completed | 2 |
-| Other | 3 |
+| Active | 22 |
+| Completed | 4 |
+| Other | 4 |
 
 ---
 

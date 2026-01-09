@@ -1,0 +1,86 @@
+# OCR Text Recognition Context Bundle Plugin
+
+name: ocr-text-recognition
+title: OCR Text Recognition
+version: "1.0"
+scope: project
+description: |
+  Context for text recognition tasks including OCR models, recognition feature code,
+  and infrastructure. Optimized for low memory footprint.
+
+tags:
+  - recognition
+  - character
+  - text
+  - ocr
+  - charset
+
+triggers:
+  keywords:
+    - recognition
+    - character
+    - text
+    - ocr
+    - charset
+    - parseq
+    - paddleocr
+
+tiers:
+  tier1:
+    name: Recognition Code
+    description: Core text recognition feature implementation
+    max_files: 5
+    files:
+      - path: ocr/features/recognition/*.py
+        priority: critical
+        description: Text recognition feature implementation
+      - path: configs/domain/recognition.yaml
+        priority: critical
+        description: Recognition-specific configuration
+      - path: configs/model/recognition/
+        priority: high
+        description: Recognition model configurations (parseq, paddleocr)
+      - path: ocr/core/inference/pipeline.py
+        priority: high
+        description: Inference pipeline orchestration
+
+  tier2:
+    name: Models & Core Components
+    description: Recognition models and shared training/evaluation infrastructure
+    max_files: 8
+    files:
+      - path: ocr/core/models/__init__.py
+        priority: high
+        description: Model loading and management
+      - path: ocr/core/lightning/*.py
+        priority: high
+        description: PyTorch Lightning training components
+      - path: ocr/core/metrics/*.py
+        priority: medium
+        description: Character-level and sequence evaluation metrics
+      - path: configs/base.yaml
+        priority: medium
+        description: Base configuration template
+      - path: configs/data/
+        priority: medium
+        description: Data configuration (character sets, encoding)
+      - path: configs/data/recognition.yaml
+        priority: medium
+        description: Recognition-specific data configuration
+      - path: data/data_catalog.yaml
+        priority: low
+        description: Dataset specifications and catalogs
+
+  tier3:
+    name: Examples & Tests
+    description: Testing resources and reference implementations
+    max_files: 3
+    files:
+      - path: tests/test_recognition.py
+        priority: low
+        description: Recognition unit and integration tests
+        optional: true
+      - path: configs/recognition/
+        priority: low
+        description: Recognition configuration examples
+        optional: true

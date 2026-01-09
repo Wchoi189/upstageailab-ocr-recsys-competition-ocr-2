@@ -1,0 +1,77 @@
+# Hydra Configuration Context Bundle Plugin
+
+name: hydra-configuration
+title: Hydra Configuration Framework
+version: "1.0"
+scope: project
+description: |
+  Context for understanding and working with Hydra configuration system
+  including configuration architecture, best practices, examples, and
+  schema definitions.
+
+tags:
+  - hydra
+  - configuration
+  - config
+  - experiment
+  - yaml
+
+triggers:
+  keywords:
+    - hydra
+    - configuration
+    - config
+    - experiment
+    - yaml
+    - compose
+
+tiers:
+  tier1:
+    name: Hydra Architecture
+    description: Hydra configuration fundamentals and architecture
+    max_files: 4
+    files:
+      - path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+        priority: critical
+        description: Hydra architecture design and patterns
+      - path: configs/base.yaml
+        priority: critical
+        description: Base configuration example
+      - path: pyproject.toml
+        priority: high
+        description: Project dependencies and Hydra setup
+
+  tier2:
+    name: Configuration Details
+    description: Detailed configuration specifications and standards
+    max_files: 6
+    files:
+      - path: configs/
+        priority: high
+        description: All configuration files (base, train, eval, etc.)
+      - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+        priority: high
+        description: Configuration standards and best practices
+      - path: configs/_foundation/
+        priority: medium
+        description: Foundation configuration defaults
+        optional: true
+      - path: configs/debug/
+        priority: low
+        description: Debug configurations
+        optional: true
+
+  tier3:
+    name: Examples & Tools
+    description: Configuration examples and experiment management tools
+    max_files: 3
+    files:
+      - path: experiment_manager/etk.py
+        priority: medium
+        description: Experiment manager with Hydra config integration
+      - path: README.md
+        priority: low
+        description: Project documentation with config examples
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: low
+        description: Available tools including config management

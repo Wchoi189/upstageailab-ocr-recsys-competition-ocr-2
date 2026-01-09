@@ -1,0 +1,64 @@
+# VLM Report Artifact Type Plugin
+# Migrated from hardcoded artifact_templates.py
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: vlm_report
+version: "1.0"
+description: |
+  Vision-Language Model (VLM) analysis report for documenting
+  visual analysis results, findings, and conclusions.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_vlm_report_{name}.md"
+  directory: ../vlm_reports/
+  frontmatter:
+    ads_version: "1.0"
+    type: vlm_report
+    category: evaluation
+    status: active
+    version: "1.0"
+    tags: [vlm, report, analysis]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  required_sections:
+    - "## Overview"
+    - "## Analysis Result"
+    - "## Findings"
+    - "## Conclusion"
+  filename_prefix: "vlm_report_"
+  allowed_statuses:
+    - draft
+    - active
+    - completed
+    - archived
+
+template: |
+  # {title}
+
+  ## Overview
+  Brief description of the VLM analysis.
+
+  ## Analysis Result
+  <!-- Paste analysis results here -->
+
+  ## Findings
+  - Finding 1
+  - Finding 2
+
+  ## Conclusion
+  Summary of the analysis.
+
+  ---
+
+  *This VLM report follows the project's standardized format for VLM analysis.*
+
+template_variables: {}

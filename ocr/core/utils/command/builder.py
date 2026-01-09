@@ -8,6 +8,7 @@ from pathlib import Path
 
 from .models import CommandParams, PredictCommandParams, TestCommandParams, TrainCommandParams
 from .quoting import quote_override
+from ocr.core.utils.path_utils import PROJECT_ROOT
 
 
 class CommandBuilder:
@@ -17,7 +18,7 @@ class CommandBuilder:
         """Initialize with project root."""
         if project_root is None:
             # Default to project root relative to this file
-            self.project_root = Path(__file__).resolve().parent.parent.parent.parent
+            self.project_root = PROJECT_ROOT
         else:
             self.project_root = Path(project_root)
 

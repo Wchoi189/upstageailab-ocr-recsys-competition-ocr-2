@@ -1,0 +1,423 @@
+# AgentQMS Artifact Template System Consolidation & Migration
+# Roadmap: 00_agentqms_artifact_consolidation.yaml
+
+version: "1.0"
+status: in_progress
+started: "2026-01-10"
+target_completion: "2026-02-15"
+
+objective: |
+  Consolidate overlapping artifact template management systems into a single
+  plugin-based architecture while integrating with MCP for dynamic discovery.
+  This reduces technical debt, improves extensibility, and eliminates context
+  burden for contributors managing artifact type definitions.
+
+assessment_refs:
+  - docs/artifacts/assessments/2026-01-09_2342_assessment_artifact-template-overlap-analysis.md
+
+key_metrics:
+  - Reduce artifact template codebase by ~40% (400-500 LOC removal)
+  - Consolidate 3 parallel systems into 1 source-of-truth
+  - Enable fully dynamic MCP schema based on available plugins
+  - Support user-defined artifact types without code changes
+
+phases:
+  phase1_mcp_plugin_integration:
+    name: "MCP + Plugin System Integration"
+    status: not_started
+    priority: high
+    duration_sprints: 1.5
+    description: |
+      Integrate plugin system with MCP to expose artifact types dynamically.
+      Make MCP schema aware of plugin registry without breaking existing workflows.
+
+    deliverables:
+      - _get_available_artifact_types() function in mcp_server.py
+      - Enhanced agentqms://templates/list resource with plugin metadata
+      - New agentqms://plugins/artifact_types resource for plugin inspection
+      - MCP tool schema supports dynamic artifact_type enum
+      - Update mcp_schema.yaml documentation
+
+    dependencies: []
+
+    tasks:
+      - Read mcp_server.py and understand current tool schema
+      - Create _get_available_artifact_types() to query plugin registry
+      - Enhance _get_template_list() to include source metadata
+      - Add plugin inspection resource handler
+      - Write tests for dynamic type discovery
+      - Update mcp_schema.yaml with new resources
+
+    success_criteria:
+      - MCP clients can discover available artifact types dynamically
+      - Plugin source is visible via agentqms://plugins/artifact_types
+      - All existing MCP tools continue to work unchanged
+      - No breaking changes to artifact_workflow.py
+      - All MCP tests pass
+
+    acceptance_tests:
+      - "MCP tool artifact_type enum returns all hardcoded + plugin types"
+      - "agentqms://plugins/artifact_types lists audit, change_request, ocr_experiment"
+      - "Can create artifact with plugin-sourced type via MCP"
+      - "Artifact metadata shows source (hardcoded vs plugin)"
+
+  phase2_migrate_hardcoded_templates:
+    name: "Migrate Hardcoded Templates to Plugins"
+    status: completed
+    completed_date: "2026-01-10"
+    priority: high
+    duration_sprints: 2
+    description: |
+      Convert 8 hardcoded artifact types to plugin format. Create plugin YAML
+      files for each type and verify they work identically to hardcoded versions.
+
+    deliverables:
+      - implementation_plan.yaml plugin
+      - walkthrough.yaml plugin
+      - assessment.yaml plugin
+      - design_document.yaml plugin
+      - research.yaml plugin
+      - template.yaml plugin
+      - bug_report.yaml plugin
+      - vlm_report.yaml plugin
+      - Comprehensive test suite comparing hardcoded vs plugin outputs
+      - Migration guide for users
+
+    dependencies:
+      - phase1_mcp_plugin_integration
+
+    subtasks:
+      - "Analyze artifact_templates.py hardcoded dictionary structure"
+      - "Design plugin YAML schema based on existing plugins (audit.yaml, etc.)"
+      - "Create implementation_plan.yaml with exact hardcoded definition"
+      - "Create walkthrough.yaml"
+      - "Create assessment.yaml (note: conflicts with standards YAML)"
+      - "Create design_document.yaml (note: conflicts with design)"
+      - "Create research.yaml (note: conflicts with standards YAML)"
+      - "Create template.yaml"
+      - "Create bug_report.yaml"
+      - "Create vlm_report.yaml"
+      - "Write integration tests: hardcoded vs plugin output must match"
+      - "Test all artifact creation workflows with new plugins"
+      - "Create migration guide documenting changes"
+
+    success_criteria:
+      - All 8 plugins created with identical functionality to hardcoded
+      - Plugin-based artifacts generate identical output to hardcoded
+      - No regression in artifact creation workflows
+      - All existing tests still pass
+      - Schema validation works for all plugin types
+
+    acceptance_tests:
+      - "Create assessment via plugin produces identical output to hardcoded"
+      - "Frontmatter fields match between sources"
+      - "Template content renders identically"
+      - "MCP tool returns both sources when querying templates"
+
+  phase3_standardize_plugin_definitions:
+    name: "Standardize & Enhance Plugin Validation"
+    status: not_started
+    priority: high
+    duration_sprints: 1.5
+    description: |
+      Integrate standards YAML as centralized validation schema. Update
+      PluginValidator to enforce rules. Resolve naming conflicts (assessment,
+      design, research appear in multiple systems).
+
+    deliverables:
+      - .agentqms/schemas/artifact_type_validation.yaml (centralized rules)
+      - Updated PluginValidator with centralized enforcement
+      - Resolved naming conflicts (standardized naming)
+      - Updated tier1-sst/artifact-types.yaml as reference/index
+      - Documentation of validation rules and artifact naming
+
+    dependencies:
+      - phase2_migrate_hardcoded_templates
+
+    subtasks:
+      - "Analyze tier1-sst/artifact-types.yaml for validation rules"
+      - "Create artifact_type_validation.yaml with centralized rules"
+      - "Update PluginValidator.validate() to check rules"
+      - "Resolve naming conflicts: assessment (hardcoded vs plugin vs standards)"
+      - "Resolve naming conflicts: design vs design_document"
+      - "Resolve naming conflicts: research (hardcoded vs standards)"
+      - "Document canonical artifact type names"
+      - "Update tier1-sst/artifact-types.yaml to reference plugins"
+      - "Create validation test suite"
+
+    success_criteria:
+      - Single source of truth for validation rules
+      - No naming conflicts between sources
+      - PluginValidator enforces all rules at load time
+      - Standards YAML becomes index/reference document
+      - All existing validation continues to work
+
+    acceptance_tests:
+      - "PluginValidator rejects plugins with invalid names"
+      - "Prohibited types are enforced at load time"
+      - "assessment artifact type has single definition"
+      - "Validation errors are clear and actionable"
+
+  phase4_remove_hardcoded_templates:
+    name: "Remove Hardcoded Templates (Deprecation Phase)"
+    status: not_started
+    priority: medium
+    duration_sprints: 2
+    description: |
+      After plugin migration is stable and tested, remove hardcoded template
+      dictionary from artifact_templates.py. Convert ArtifactTemplates to pure
+      plugin loader wrapper. Archive legacy code.
+
+    deliverables:
+      - Simplified ArtifactTemplates class (<100 LOC)
+      - Archived legacy code in AgentQMS/tools/archive/
+      - Deprecation guide for extension developers
+      - Final migration checklist
+
+    dependencies:
+      - phase3_standardize_plugin_definitions
+
+    subtasks:
+      - "Add deprecation warnings to hardcoded template access"
+      - "Refactor ArtifactTemplates.__init__() to load only from plugins"
+      - "Remove hardcoded template dictionary"
+      - "Archive artifact_templates_legacy.py with migration notes"
+      - "Update all imports to use plugin registry directly"
+      - "Test full artifact workflow with plugins only"
+      - "Create extension developer migration guide"
+      - "Update documentation to remove hardcoded references"
+
+    success_criteria:
+      - ArtifactTemplates is pure plugin wrapper
+      - No hardcoded templates in production code
+      - Legacy code archived with clear migration path
+      - All tests pass with plugin-only system
+      - No performance regression
+
+    acceptance_tests:
+      - "ArtifactTemplates is <100 LOC"
+      - "All artifact creation uses plugins"
+      - "create_artifact() still works identically"
+      - "No hardcoded template definitions exist in source"
+
+  phase5_dynamic_mcp_schema:
+    name: "Make MCP Schema Fully Dynamic"
+    status: not_started
+    priority: medium
+    duration_sprints: 1
+    description: |
+      Update MCP schema to truly reflect available plugins dynamically.
+      Remove artifact_type enum hardcoding. Schema becomes self-documenting
+      based on plugin registry at runtime.
+
+    deliverables:
+      - Dynamic artifact_type enum generation in create_artifact tool
+      - Schema documentation reflecting plugin system
+      - Updated mcp_schema.yaml as reference
+      - Integration tests for dynamic schema
+
+    dependencies:
+      - phase1_mcp_plugin_integration
+      - phase4_remove_hardcoded_templates
+
+    subtasks:
+      - "Implement dynamic enum generation in list_tools()"
+      - "Update create_artifact tool schema to use dynamic enum"
+      - "Test schema changes with MCP clients"
+      - "Update mcp_schema.yaml documentation"
+      - "Add schema generation tests"
+      - "Document for extension developers"
+
+    success_criteria:
+      - MCP schema reflects actual available types
+      - No hardcoded enums in tool definitions
+      - Schema self-updates when plugins added/removed
+      - All MCP tools continue to work
+
+    acceptance_tests:
+      - "Adding new plugin auto-updates MCP schema"
+      - "artifact_type enum includes all plugin types"
+      - "MCP clients receive updated schema on reconnect"
+
+  phase6_extension_developer_guide:
+    name: "Create Extension Developer Documentation"
+    status: not_started
+    priority: low
+    duration_sprints: 0.5
+    description: |
+      Write comprehensive guide for developers creating custom artifact types
+      via plugins. Include examples, best practices, validation rules, templates.
+
+    deliverables:
+      - AgentQMS/docs/guides/creating-artifact-type-plugins.md
+      - Example plugin: custom_artifact.yaml
+      - Plugin schema documentation
+      - Troubleshooting guide
+
+    dependencies:
+      - phase4_remove_hardcoded_templates
+
+    tasks:
+      - Write plugin creation guide
+      - Create example plugin with all features
+      - Document schema format
+      - Document validation requirements
+      - Create troubleshooting FAQ
+      - Add link to guide from standards
+
+success_criteria:
+  - All 6 phases completed
+  - 40% codebase reduction (artifact templates)
+  - Single source of truth for artifact definitions
+  - Fully extensible plugin system for users
+  - MCP schema dynamically reflects plugin registry
+  - Zero breaking changes to artifact creation workflow
+  - Clear migration path for existing extensions
+
+overall_risks:
+  - risk: "Breaking existing artifact creation workflows"
+    probability: "low"
+    mitigation: "Phased rollout, comprehensive testing, backward compatibility"
+
+  - risk: "Plugin validation failures in production"
+    probability: "medium"
+    mitigation: "Comprehensive test suite, schema validation, staging environment"
+
+  - risk: "Performance regression in plugin loading"
+    probability: "low"
+    mitigation: "Benchmark before/after, cache plugin registry"
+
+  - risk: "User confusion during transition"
+    probability: "medium"
+    mitigation: "Clear communication, migration guides, examples"
+
+dependencies:
+  - AgentQMS/tools/core/plugins/ (already exists)
+  - AgentQMS/tools/core/artifact_workflow.py (existing)
+  - AgentQMS/mcp_server.py (existing)
+
+integration_points:
+  - AgentQMS/tools/core/artifact_templates.py (primary)
+  - AgentQMS/mcp_server.py (MCP integration)
+  - AgentQMS/tools/core/plugins/__init__.py (plugin registry)
+  - AgentQMS/standards/tier1-sst/artifact-types.yaml (validation)
+
+documentation:
+  - Assessment: docs/artifacts/assessments/2026-01-09_2342_assessment_artifact-template-overlap-analysis.md
+  - Roadmap: project_compass/roadmap/00_agentqms_artifact_consolidation.yaml (this file)
+  - Architecture Decision: To be created - ADR_artifact_plugin_consolidation.md
+  - Implementation Plan: To be created - implementation_plan_artifact_consolidation.md
+  - Developer Guide: To be created - docs/guides/creating-artifact-type-plugins.md
+
+session_planning:
+  # Sessions are organized by phase + priority
+
+  session_1_mcp_integration_phase1:
+    focus: "Understand MCP architecture and create plugin discovery functions"
+    estimated_duration: "2-3 hours"
+    key_deliverables:
+      - _get_available_artifact_types() implementation
+      - Enhanced template listing with metadata
+    hands_on_tasks:
+      - Read and analyze mcp_server.py
+      - Create plugin discovery function
+      - Test dynamic type listing
+
+  session_2_mcp_resources:
+    focus: "Add new MCP resources for plugin inspection"
+    estimated_duration: "2-3 hours"
+    key_deliverables:
+      - New agentqms://plugins/artifact_types resource
+      - Resource handler and tests
+    hands_on_tasks:
+      - Implement plugin inspection resource
+      - Write output schema
+      - Create resource tests
+
+  session_3_plugin_migration_1:
+    focus: "Create first 3 plugin files (implementation_plan, walkthrough, assessment)"
+    estimated_duration: "3-4 hours"
+    key_deliverables:
+      - 3 plugin YAML files with complete definitions
+      - Comparison tests vs hardcoded
+    hands_on_tasks:
+      - Extract hardcoded definitions
+      - Create plugin YAML structure
+      - Run comparison tests
+
+  session_4_plugin_migration_2:
+    focus: "Create remaining 5 plugins (design, research, template, bug_report, vlm_report)"
+    estimated_duration: "3-4 hours"
+    key_deliverables:
+      - 5 plugin YAML files
+      - Integration test suite
+    hands_on_tasks:
+      - Create remaining plugins
+      - Write comprehensive tests
+      - Verify no regressions
+
+  session_5_validation_schema:
+    focus: "Create centralized validation schema and resolve naming conflicts"
+    estimated_duration: "3-4 hours"
+    key_deliverables:
+      - artifact_type_validation.yaml
+      - Updated PluginValidator
+      - Naming conflict resolution
+    hands_on_tasks:
+      - Design validation schema
+      - Update validator code
+      - Document canonical names
+
+  session_6_hardcoded_removal:
+    focus: "Remove hardcoded templates and archive legacy code"
+    estimated_duration: "2-3 hours"
+    key_deliverables:
+      - Simplified ArtifactTemplates class
+      - Archived legacy code
+      - Deprecation guide
+    hands_on_tasks:
+      - Refactor ArtifactTemplates
+      - Archive legacy code
+      - Run full test suite
+
+  session_7_dynamic_mcp:
+    focus: "Make MCP schema fully dynamic based on plugin registry"
+    estimated_duration: "2-3 hours"
+    key_deliverables:
+      - Dynamic enum generation
+      - Updated schema tests
+    hands_on_tasks:
+      - Implement dynamic enum
+      - Test schema changes
+      - Document for extensions
+
+  session_8_documentation:
+    focus: "Create developer guide and finalize documentation"
+    estimated_duration: "2-3 hours"
+    key_deliverables:
+      - Plugin creation guide
+      - Example plugin
+      - Migration guide
+    hands_on_tasks:
+      - Write guides
+      - Create examples
+      - Final documentation polish
+
+estimated_total_effort:
+  - Development: ~20-24 hours (across 8 sessions)
+  - Testing: ~8-10 hours (integrated into sessions)
+  - Documentation: ~4-5 hours (session 8)
+  - Review & Refinement: ~3-4 hours
+  - Total: ~35-43 hours over 3-4 weeks
+
+notes: |
+  This roadmap is designed to be completed across multiple sessions (8 planned).
+  Each session is self-contained with clear deliverables, allowing for context
+  switches and feedback collection between sessions.
+
+  The phased approach ensures that each phase builds on prior work without
+  breaking existing functionality. Comprehensive testing at each phase catches
+  regressions early.
+
+  The session planning section provides a template for session preparation and
+  handoff documentation between sessions.

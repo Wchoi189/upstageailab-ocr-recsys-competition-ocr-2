@@ -1,0 +1,102 @@
+# OCR Experiment Context Bundle Plugin
+# Context files for running and managing OCR experiments
+
+name: ocr-experiment
+title: OCR Experiment Management
+version: "1.0"
+scope: project
+description: |
+  Context files for running, tracking, and analyzing OCR experiments.
+  Includes experiment tracking tools, configuration, and OCR components.
+
+tags:
+  - experiment
+  - ocr
+  - tracker
+  - run
+  - trial
+  - etk
+
+triggers:
+  keywords:
+    - experiment
+    - etk
+    - tracker
+    - run
+    - trial
+    - wandb
+    - training
+    - evaluation
+
+tiers:
+  tier1:
+    name: Experiment Essentials
+    description: Core experiment tracking and management tools
+    max_files: 8
+    files:
+      - path: experiment_manager/etk.py
+        priority: critical
+        description: Experiment Tracker Kernel - main experiment management
+      - path: experiment_manager/agent_interface.yaml
+        priority: critical
+        description: Agent interface configuration for experiment tools
+      - path: experiment_manager/AGENTS.yaml
+        priority: high
+        description: Agent configurations for experiment workflows
+      - path: pyproject.toml
+        priority: high
+        description: Project dependencies including experiment tools
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: medium
+        description: Available tools including experiment commands
+
+  tier2:
+    name: Configuration & OCR
+    description: Configuration management and OCR pipeline components
+    max_files: 10
+    files:
+      - path: configs/base.yaml
+        priority: high
+        description: Base configuration for all experiments
+      - path: configs/train.yaml
+        priority: high
+        description: Training configuration
+      - path: configs/eval.yaml
+        priority: high
+        description: Evaluation configuration
+      - path: configs/_foundation/defaults.yaml
+        priority: medium
+        description: Default configuration values
+        optional: true
+      - path: ocr/inference/pipeline.py
+        priority: high
+        description: OCR inference pipeline
+      - path: ocr/models/__init__.py
+        priority: medium
+        description: OCR model management
+      - path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+        priority: medium
+        description: Hydra configuration architecture guide
+
+  tier3:
+    name: Extended Context
+    description: Additional resources for comprehensive experiment context
+    max_files: 8
+    files:
+      - path: README.md
+        priority: medium
+        description: Project overview and setup
+      - path: experiment_manager/docs/README.md
+        priority: medium
+        description: Experiment manager documentation
+        optional: true
+      - path: data/data_catalog.yaml
+        priority: medium
+        description: Data catalog for experiments
+      - path: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
+        priority: medium
+        description: Dataset catalog and specifications
+      - path: tests/test_inference.py
+        priority: low
+        description: Inference testing examples
+        optional: true

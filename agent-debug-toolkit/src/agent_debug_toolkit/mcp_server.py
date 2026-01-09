@@ -45,7 +45,59 @@ def get_project_root() -> Path:
 
 
 # Define available tools
+# Meta-tools are listed first (recommended for reduced context)
+# Individual tools follow for backward compatibility
 TOOLS = [
+    # --- Meta-Tools (Router Pattern) ---
+    {
+        "name": "adt_meta_query",
+        "description": "Unified analysis tool for code understanding. Routes to specialized analyzers based on 'kind' parameter. Kinds: config_access, merge_order, hydra_usage, component_instantiations, config_flow, dependency_graph, imports, complexity, context_tree, symbol_search",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "enum": ["config_access", "merge_order", "hydra_usage", "component_instantiations", "config_flow", "dependency_graph", "imports", "complexity", "context_tree", "symbol_search"],
+                    "description": "Type of analysis to perform",
+                },
+                "target": {
+                    "type": "string",
+                    "description": "Target path or search query",
+                },
+                "options": {
+                    "type": "object",
+                    "description": "Kind-specific options (output, component, depth, threshold, fuzzy, etc.)",
+                    "additionalProperties": True,
+                },
+            },
+            "required": ["kind", "target"],
+        },
+    },
+    {
+        "name": "adt_meta_edit",
+        "description": "Unified edit tool for code modification. Routes to specialized editors based on 'kind' parameter. Kinds: apply_diff (fuzzy unified diff), smart_edit (search/replace), read_slice (line range), format (code formatting)",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "kind": {
+                    "type": "string",
+                    "enum": ["apply_diff", "smart_edit", "read_slice", "format"],
+                    "description": "Type of edit to perform",
+                },
+                "target": {
+                    "type": "string",
+                    "description": "Target file path or diff content",
+                },
+                "options": {
+                    "type": "object",
+                    "description": "Kind-specific options (diff, search, replace, mode, strategy, dry_run, etc.)",
+                    "additionalProperties": True,
+                },
+            },
+            "required": ["kind", "target"],
+        },
+    },
+    # --- Individual Analysis Tools (backward compatibility) ---
     {
         "name": "analyze_config_access",
         "description": "Analyze Python code for configuration access patterns (cfg.X, self.cfg.X, config['key']). Essential for understanding how configuration flows through the codebase.",
@@ -281,12 +333,129 @@ TOOLS = [
             "required": ["query"],
         },
     },
+    # --- Edit Tools ---
+    {
+        "name": "apply_unified_diff",
+        "description": "Apply a unified diff to files with fuzzy matching. Handles whitespace drift and minor code changes. Returns detailed report of applied/failed hunks.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "diff": {
+                    "type": "string",
+                    "description": "Unified diff text (git diff format)",
+                },
+                "strategy": {
+                    "type": "string",
+                    "enum": ["exact", "whitespace_insensitive", "fuzzy"],
+                    "default": "fuzzy",
+                    "description": "Matching strategy for finding content to replace",
+                },
+                "dry_run": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "If true, show what would change without modifying files",
+                },
+            },
+            "required": ["diff"],
+        },
+    },
+    {
+        "name": "smart_edit",
+        "description": "Intelligent search/replace in a file. Supports exact, regex, and fuzzy matching modes with fallback.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string",
+                    "description": "Path to file to edit",
+                },
+                "search": {
+                    "type": "string",
+                    "description": "Text or pattern to search for",
+                },
+                "replace": {
+                    "type": "string",
+                    "description": "Replacement text",
+                },
+                "mode": {
+                    "type": "string",
+                    "enum": ["exact", "regex", "fuzzy"],
+                    "default": "exact",
+                    "description": "Matching mode",
+                },
+                "all_occurrences": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Replace all matches (default: first only)",
+                },
+                "dry_run": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Preview changes without modifying",
+                },
+            },
+            "required": ["file", "search", "replace"],
+        },
+    },
+    {
+        "name": "read_file_slice",
+        "description": "Read a specific line range from a file. Use this for targeted editing of large files instead of reading the entire file.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "file": {
+                    "type": "string",
+                    "description": "Path to file",
+                },
+                "start_line": {
+                    "type": "integer",
+                    "description": "Starting line number (1-indexed)",
+                },
+                "end_line": {
+                    "type": "integer",
+                    "description": "Ending line number (1-indexed, inclusive)",
+                },
+                "context_lines": {
+                    "type": "integer",
+                    "default": 0,
+                    "description": "Additional lines to include before/after range",
+                },
+            },
+            "required": ["file", "start_line", "end_line"],
+        },
+    },
+    {
+        "name": "format_code",
+        "description": "Format code using black, ruff, or isort. Normalizes code style after edits.",
+        "inputSchema": {
+            "type": "object",
+            "properties": {
+                "path": {
+                    "type": "string",
+                    "description": "Path to file or directory to format",
+                },
+                "style": {
+                    "type": "string",
+                    "enum": ["black", "ruff", "isort"],
+                    "default": "black",
+                    "description": "Formatter to use",
+                },
+                "check_only": {
+                    "type": "boolean",
+                    "default": False,
+                    "description": "Only check, don't modify",
+                },
+            },
+            "required": ["path"],
+        },
+    },
 ]
 
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
     """List all available tools."""
+    # Return meta-tools first for prominence
     return [
         Tool(name=tool["name"], description=tool["description"], inputSchema=tool["inputSchema"])
         for tool in TOOLS
@@ -315,6 +484,38 @@ def run_analyzer(analyzer_class, path: Path, recursive: bool = True):
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute a tool."""
+
+    # --- Meta-Tool Handlers (Router Pattern) ---
+
+    if name == "adt_meta_query":
+        from agent_debug_toolkit.router import route_query
+
+        kind = arguments.get("kind", "")
+        target = arguments.get("target", "")
+        options = arguments.get("options", {})
+
+        try:
+            routing = route_query(kind, target, options)
+            # Recursively call the routed tool
+            return await call_tool(routing["tool_name"], routing["arguments"])
+        except ValueError as e:
+            return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+    elif name == "adt_meta_edit":
+        from agent_debug_toolkit.router import route_edit
+
+        kind = arguments.get("kind", "")
+        target = arguments.get("target", "")
+        options = arguments.get("options", {})
+
+        try:
+            routing = route_edit(kind, target, options)
+            # Recursively call the routed tool
+            return await call_tool(routing["tool_name"], routing["arguments"])
+        except ValueError as e:
+            return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+    # --- Individual Tool Handlers (backward compatibility) ---
 
     if name == "analyze_config_access":
         from agent_debug_toolkit.analyzers.config_access import ConfigAccessAnalyzer
@@ -565,6 +766,68 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             content = format_search_results_markdown(results, query)
 
         return [TextContent(type="text", text=content)]
+
+    # --- Edit Tools ---
+
+    elif name == "apply_unified_diff":
+        from agent_debug_toolkit.edits import apply_unified_diff
+
+        diff = arguments.get("diff", "")
+        strategy = arguments.get("strategy", "fuzzy")
+        dry_run = arguments.get("dry_run", False)
+
+        report = apply_unified_diff(
+            diff=diff,
+            strategy=strategy,
+            project_root=get_project_root(),
+            dry_run=dry_run,
+        )
+
+        return [TextContent(type="text", text=report.to_json())]
+
+    elif name == "smart_edit":
+        from agent_debug_toolkit.edits import smart_edit
+
+        path = resolve_path(arguments.get("file", ""))
+        search = arguments.get("search", "")
+        replace = arguments.get("replace", "")
+        mode = arguments.get("mode", "exact")
+        all_occurrences = arguments.get("all_occurrences", False)
+        dry_run = arguments.get("dry_run", False)
+
+        report = smart_edit(
+            file=path,
+            search=search,
+            replace=replace,
+            mode=mode,
+            all_occurrences=all_occurrences,
+            dry_run=dry_run,
+        )
+
+        return [TextContent(type="text", text=report.to_json())]
+
+    elif name == "read_file_slice":
+        from agent_debug_toolkit.edits import read_file_slice
+
+        path = resolve_path(arguments.get("file", ""))
+        start_line = int(arguments.get("start_line", 1))
+        end_line = int(arguments.get("end_line", start_line + 50))
+        context_lines = int(arguments.get("context_lines", 0))
+
+        content = read_file_slice(path, start_line, end_line, context_lines)
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "format_code":
+        from agent_debug_toolkit.edits import format_code
+
+        path = resolve_path(arguments.get("path", ""))
+        style = arguments.get("style", "black")
+        check_only = arguments.get("check_only", False)
+
+        report = format_code(path, style=style, check_only=check_only)
+
+        return [TextContent(type="text", text=report.to_json())]
 
     raise ValueError(f"Unknown tool: {name}")
 

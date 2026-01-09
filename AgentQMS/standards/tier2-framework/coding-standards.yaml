@@ -140,10 +140,10 @@ pydantic_validation_rules:
 
   reference_implementations:
     core_validation: "ocr/core/validation.py"  # ← Primary (all models/schemas)
-    schemas_shim: "ocr/recognition/data/schemas.py"  # ← Recognition specific
+    schemas_shim: "ocr/data/datasets/schemas.py"  # ← Recognition specific
     validation_shim: "ocr/core/validation.py"  # ← Consolidated
-    contracts: "ocr/recognition/data/contracts.py" # (verify path)
-    transforms: "ocr/recognition/data/transforms.py"
+    contracts: "ocr/data/datasets/preprocessing/contracts.py" # (verify path)
+    transforms: "ocr/data/datasets/transforms.py"
 
 # Tier 2 - Coding Standards: Error Handling
 
@@ -298,6 +298,38 @@ async_patterns_rules:
     network_calls: "MUST use async clients (httpx, aiohttp) instead of sync (requests)"
     file_io: "Prefer aiofiles for large files, or run_in_executor for pathlib ops"
     database: "Use async drivers (asyncpg, motor) where possible"
+
+# Tier 2 - Coding Standards: Path Resolution
+
+path_resolution_rules:
+  objective: "Ensure robust path resolution independent of file location"
+
+  required_patterns:
+    - "Use ocr.core.utils.path_utils.PROJECT_ROOT for root-relative paths"
+    - "Use simple / operator for path joining"
+
+  prohibited_patterns:
+    - "Chained .parent calls (more than 2) to find root"
+    - "Hardcoded relative paths assuming directory depth"
+
+  patterns:
+    prohibited:
+      description: "Fragile parent traversal"
+      example: |
+        # BAD: Breaks if file is moved
+        ROOT = Path(__file__).resolve().parent.parent.parent
+
+    required:
+      description: "Robust root import"
+      example: |
+        # GOOD: Works anywhere
+        from ocr.core.utils.path_utils import PROJECT_ROOT
+        data_file = PROJECT_ROOT / "data" / "file.txt"
+
+  enforcement:
+    detection: "grep for excessive parent chaining"
+    command: |
+      grep -rn "\.parent\.parent\.parent" .
 
 # Tier 2 - Coding Standards: Deprecation Protocol
 

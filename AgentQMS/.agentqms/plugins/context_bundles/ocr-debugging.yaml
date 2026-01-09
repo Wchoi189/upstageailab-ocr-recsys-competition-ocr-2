@@ -1,0 +1,135 @@
+name: ocr-debugging
+title: OCR Debugging & AST Analysis
+version: "1.0"
+scope: project
+
+description: |
+  AST-based debugging context bundle integrating agent-debug-toolkit analyzers.
+
+  Provides deep code analysis capabilities for debugging configuration issues,
+  tracing component instantiation, and understanding data flow through complex systems.
+  Reduces debugging time by 60-80% compared to text-based grep approaches.
+
+tags:
+  - debugging
+  - ast-analysis
+  - configuration
+  - refactoring
+  - code-analysis
+  - hydra
+  - component-tracking
+  - data-flow
+  - troubleshooting
+
+triggers:
+  keywords:
+    - debug
+    - troubleshoot
+    - refactor
+    - audit
+    - analyze
+    - trace
+    - merge
+    - configuration-issue
+    - component
+    - instantiation
+    - merge-order
+    - hydra
+    - config-access
+    - data-flow
+    - ast
+
+tiers:
+  tier1:
+    name: AST Analyzers & Tools
+    description: Essential AST-based debugging tools
+    max_files: 8
+    files:
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
+        priority: critical
+        description: Config access pattern analyzer
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
+        priority: critical
+        description: OmegaConf merge order tracer
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
+        priority: critical
+        description: Hydra pattern detector
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
+        priority: critical
+        description: Component instantiation tracker
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/explain.py
+        priority: high
+        description: Config flow explanation generator
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/cli.py
+        priority: high
+        description: AST debugging CLI interface
+      - path: agent-debug-toolkit/README.md
+        priority: high
+        description: Debugging toolkit documentation
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: high
+        description: Tool catalog and usage patterns
+
+  tier2:
+    name: Extended Debugging Context
+    description: Configuration files and component mappings
+    max_files: 10
+    files:
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/__init__.py
+        priority: high
+        description: Analyzer module initialization
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/mcp_server.py
+        priority: high
+        description: MCP server integration
+      - path: configs/hydra/*.yaml
+        priority: high
+        description: Hydra configuration files
+      - path: configs/_foundation/*.yaml
+        priority: high
+        description: Foundation configuration patterns
+      - path: ocr/__init__.py
+        priority: medium
+        description: OCR module structure
+      - path: ocr/core/__init__.py
+        priority: medium
+        description: Core module organization
+      - path: ocr/features/detection/__init__.py
+        priority: medium
+        description: Detection feature structure
+      - path: ocr/features/recognition/__init__.py
+        priority: medium
+        description: Recognition feature structure
+      - path: ocr/features/layout/__init__.py
+        priority: medium
+        description: Layout feature structure
+      - path: ocr/features/kie/__init__.py
+        priority: medium
+        description: KIE feature structure
+
+  tier3:
+    name: Reference Implementations
+    description: Test cases and usage examples
+    max_files: 7
+    files:
+      - path: agent-debug-toolkit/tests/test_config_access.py
+        priority: low
+        description: Config access analyzer tests
+      - path: agent-debug-toolkit/tests/test_merge_order.py
+        priority: low
+        description: Merge order tracer tests
+      - path: agent-debug-toolkit/tests/test_hydra_usage.py
+        priority: low
+        description: Hydra usage analyzer tests
+      - path: ocr/core/inference/__init__.py
+        priority: low
+        description: Component factory examples
+      - path: ocr/core/models/__init__.py
+        priority: low
+        description: Model management examples
+      - path: ocr/core/lightning/__init__.py
+        priority: low
+        description: Lightning training examples
+      - path: configs/train.yaml
+        priority: low
+        description: Training configuration reference
+

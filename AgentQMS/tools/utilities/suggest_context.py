@@ -1,34 +1,122 @@
 #!/usr/bin/env python3
 """
-Context Suggestion Tool for AgentQMS
+Context Suggestion Tool for AgentQMS with AST-Based Analysis
 
 Analyzes task descriptions and suggests appropriate context bundles
-based on keyword matching against workflow-triggers.yaml.
+based on keyword matching and AST-based code pattern analysis.
+
+Features:
+- Keyword-based bundle suggestion (traditional)
+- AST pattern detection for debugging bundles (new)
+- Debugging context detection (debug, refactor, audit tasks)
+- Dynamic bundle prioritization based on task type
 
 Usage:
     python suggest_context.py "implement new feature for OCR"
     python suggest_context.py --file task_description.txt
     python suggest_context.py --json "debug memory leak"
+    python suggest_context.py --analyze-patterns "debug config merge issue"
 """
 
 from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 from typing import Any
 
-import yaml
 
+from AgentQMS.tools.core.plugins import get_plugin_registry
 from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 
 
+class DebugPatternAnalyzer:
+    """Analyzes task descriptions for debugging patterns and AST integration needs."""
+
+    # Patterns that indicate debugging-related tasks
+    DEBUG_PATTERNS = [
+        r"\bdebug(?:ging)?\b",
+        r"\btroubleshoot(?:ing)?\b",
+        r"\brefactor(?:ing)?\b",
+        r"\b(?:code\s+)?audit\b",
+        r"\btrace\b.*(?:merge|flow|path)",
+        r"\bwhy\b.*(?:override|fail|not work)",
+        r"\b(?:find|search)\b.*(?:config|component|instantiat)",
+        r"\b(?:analyze|understand)\b.*(?:flow|precedence|order)",
+        r"\bmerge.*order\b",
+        r"\bconfig.*access\b",
+        r"\bhydra.*(?:pattern|issue)\b",
+    ]
+
+    # Patterns indicating AST/code analysis would be helpful
+    AST_BENEFICIAL_PATTERNS = [
+        r"\bmerge\b",
+        r"\boverride\b",
+        r"\binstantiata\b",
+        r"\bfactory\b",
+        r"\bcomponent\b",
+        r"\bconfig\b.*(?:precedence|order|flow)",
+    ]
+
+    @classmethod
+    def is_debugging_task(cls, task_description: str) -> bool:
+        """Check if task is debugging-related.
+
+        Args:
+            task_description: Task description to analyze
+
+        Returns:
+            True if task appears to be debugging-related
+        """
+        task_lower = task_description.lower()
+        for pattern in cls.DEBUG_PATTERNS:
+            if re.search(pattern, task_lower):
+                return True
+        return False
+
+    @classmethod
+    def needs_ast_analysis(cls, task_description: str) -> bool:
+        """Check if task would benefit from AST analysis.
+
+        Args:
+            task_description: Task description to analyze
+
+        Returns:
+            True if AST-based debugging would be helpful
+        """
+        task_lower = task_description.lower()
+        for pattern in cls.AST_BENEFICIAL_PATTERNS:
+            if re.search(pattern, task_lower):
+                return True
+        return False
+
+    @classmethod
+    def detect_analysis_type(cls, task_description: str) -> str:
+        """Detect what kind of analysis is needed.
+
+        Returns: One of 'config_access', 'merge_order', 'hydra_usage', 'instantiation', 'general'
+        """
+        task_lower = task_description.lower()
+
+        if re.search(r"\b(?:cfg\.|config\[|access)\b", task_lower):
+            return "config_access"
+        if re.search(r"\bmerge.*order\b|\bprecedence\b", task_lower):
+            return "merge_order"
+        if re.search(r"\bhydra\b|\b@hydra\b", task_lower):
+            return "hydra_usage"
+        if re.search(r"\binstantiata\b|\bfactory\b|\bget_.*_by\b", task_lower):
+            return "instantiation"
+
+        return "general"
+
+
 class ContextSuggester:
-    """Suggests context bundles based on task keywords."""
+    """Suggests context bundles based on task keywords and AST pattern analysis."""
 
     def __init__(self, project_root: Path | None = None):
         """Initialize the context suggester.
@@ -40,28 +128,47 @@ class ContextSuggester:
             project_root = get_project_root()
 
         self.project_root = Path(project_root)
-        self.triggers_file = self.project_root / ".copilot" / "context" / "workflow-triggers.yaml"
+        self._bundles: dict[str, Any] = {}
+        self._debug_analyzer = DebugPatternAnalyzer()
+        self._load_bundles_from_registry()
 
-        self._task_types: dict[str, Any] = {}
-        self._load_triggers()
-
-    def _load_triggers(self) -> None:
-        """Load workflow triggers configuration."""
-        if not self.triggers_file.exists():
-            raise FileNotFoundError(f"Workflow triggers file not found: {self.triggers_file}")
-
+    def _load_bundles_from_registry(self) -> None:
+        """Load context bundles from plugin registry."""
         try:
-            with open(self.triggers_file, encoding="utf-8") as f:
-                config = yaml.safe_load(f) or {}
-                self._task_types = config.get("task_types", {})
-        except Exception as e:
-            raise RuntimeError(f"Failed to load workflow triggers: {e}") from e
+            registry = get_plugin_registry()
+            raw_bundles = registry.get_context_bundles()
 
-    def suggest(self, task_description: str) -> dict[str, Any]:
+            # Transform plugin bundles into task type format for scoring
+            for bundle_name, bundle_config in raw_bundles.items():
+                # Extract keywords from tags and triggers
+                keywords = []
+
+                # Get tags (always present)
+                if "tags" in bundle_config:
+                    keywords.extend(bundle_config["tags"])
+
+                # Get trigger keywords if defined
+                if "triggers" in bundle_config:
+                    trigger_keywords = bundle_config["triggers"].get("keywords", [])
+                    keywords.extend(trigger_keywords)
+
+                # Store bundle with metadata
+                self._bundles[bundle_name] = {
+                    "keywords": keywords,
+                    "context_bundle": bundle_name,
+                    "description": bundle_config.get("description", ""),
+                    "title": bundle_config.get("title", bundle_name),
+                }
+
+        except Exception as e:
+            raise RuntimeError(f"Failed to load context bundles from plugin registry: {e}") from e
+
+    def suggest(self, task_description: str, include_debugging: bool = True) -> dict[str, Any]:
         """Suggest context bundles for a task description.
 
         Args:
             task_description: Description of the task
+            include_debugging: If True, automatically include debugging bundles for debug tasks
 
         Returns:
             Dictionary with suggested bundles and ranking
@@ -69,9 +176,15 @@ class ContextSuggester:
         task_lower = task_description.lower()
         scores: dict[str, int] = {}
         matched_keywords: dict[str, list[str]] = {}
+        analysis_metadata: dict[str, Any] = {}
 
-        # Score each task type based on keyword matches
-        for task_type, config in self._task_types.items():
+        # Check if this is a debugging task
+        is_debug_task = include_debugging and self._debug_analyzer.is_debugging_task(task_description)
+        needs_ast = self._debug_analyzer.needs_ast_analysis(task_description)
+        analysis_type = self._debug_analyzer.detect_analysis_type(task_description) if needs_ast else None
+
+        # Score each bundle based on keyword matches
+        for bundle_name, config in self._bundles.items():
             keywords = config.get("keywords", [])
             matches = []
 
@@ -82,38 +195,63 @@ class ContextSuggester:
             if matches:
                 # Weight: number of matches + length of matched keywords
                 score = len(matches) + sum(len(k.split()) for k in matches)
-                scores[task_type] = score
-                matched_keywords[task_type] = matches
+                scores[bundle_name] = score
+                matched_keywords[bundle_name] = matches
+
+        # Boost debugging bundle if this is a debugging task
+        if is_debug_task and "ocr-debugging" in self._bundles:
+            # Add base score if not already matched
+            if "ocr-debugging" not in scores:
+                scores["ocr-debugging"] = 5
+            else:
+                # Boost existing score
+                scores["ocr-debugging"] = int(scores["ocr-debugging"] * 1.5)
+
+            # Add analysis metadata
+            analysis_metadata["is_debug_task"] = True
+            analysis_metadata["ast_beneficial"] = needs_ast
+            analysis_metadata["analysis_type"] = analysis_type
+            analysis_metadata["recommended_tools"] = self._get_recommended_ast_tools(analysis_type)
 
         # Sort by score (descending)
         ranked = sorted(scores.items(), key=lambda x: x[1], reverse=True)
 
         # Build suggestions
         suggestions = []
-        for task_type, score in ranked:
-            config = self._task_types[task_type]
-            suggestions.append(
-                {
-                    "task_type": task_type,
-                    "score": score,
-                    "context_bundle": config.get("context_bundle"),
-                    "matched_keywords": matched_keywords.get(task_type, []),
-                    "suggested_workflows": config.get("suggested_workflows", []),
-                    "suggested_tools": config.get("suggested_tools", []),
-                }
-            )
+        for i, (bundle_name, score) in enumerate(ranked):
+            config = self._bundles[bundle_name]
+            is_primary = i == 0
 
-        # Always include general as fallback if nothing matched
+            suggestion = {
+                "task_type": bundle_name,
+                "score": score,
+                "context_bundle": bundle_name,
+                "title": config.get("title", bundle_name),
+                "description": config.get("description", ""),
+                "matched_keywords": matched_keywords.get(bundle_name, []),
+                "is_primary": is_primary,
+            }
+
+            # Add AST tool recommendations for debugging bundle
+            if bundle_name == "ocr-debugging" and analysis_metadata:
+                suggestion["debug_context"] = {
+                    "is_debug_task": analysis_metadata.get("is_debug_task"),
+                    "recommended_tools": analysis_metadata.get("recommended_tools", []),
+                }
+
+            suggestions.append(suggestion)
+
+        # Include fallback message if nothing matched
         if not suggestions:
-            config = self._task_types.get("general", {})
             suggestions.append(
                 {
-                    "task_type": "general",
+                    "task_type": "none",
                     "score": 0,
-                    "context_bundle": config.get("context_bundle"),
+                    "context_bundle": None,
+                    "title": "No matching bundles",
+                    "description": "Consider creating a custom context bundle for this task",
                     "matched_keywords": [],
-                    "suggested_workflows": config.get("suggested_workflows", []),
-                    "suggested_tools": config.get("suggested_tools", []),
+                    "is_primary": False,
                 }
             )
 
@@ -121,14 +259,50 @@ class ContextSuggester:
             "task_description": task_description,
             "suggestions": suggestions,
             "primary_bundle": suggestions[0]["context_bundle"] if suggestions else None,
+            "is_debugging_task": is_debug_task,
+            "analysis_metadata": analysis_metadata if analysis_metadata else None,
         }
 
-    def format_output(self, result: dict[str, Any], json_format: bool = False) -> str:
+    def _get_recommended_ast_tools(self, analysis_type: str | None) -> list[str]:
+        """Get recommended AST tools for the analysis type.
+
+        Args:
+            analysis_type: Type of analysis (config_access, merge_order, etc.)
+
+        Returns:
+            List of recommended tool commands
+        """
+        tools = {
+            "config_access": [
+                "adt analyze-config <file>",
+                "adt analyze-config <file> --component <name>",
+            ],
+            "merge_order": [
+                "adt trace-merges <file> --output markdown",
+                "adt trace-merges <file> --output json",
+            ],
+            "hydra_usage": [
+                "adt find-hydra <path>",
+                "adt full-analysis <path>",
+            ],
+            "instantiation": [
+                "adt find-instantiations <path> --component <type>",
+                "adt full-analysis <path>",
+            ],
+            "general": [
+                "adt full-analysis <path>",
+                "adt context-tree <path>",
+            ],
+        }
+        return tools.get(analysis_type or "general", tools["general"])
+
+    def format_output(self, result: dict[str, Any], json_format: bool = False, verbose: bool = False) -> str:
         """Format suggestion result for display.
 
         Args:
             result: Suggestion result from suggest()
             json_format: If True, return JSON; otherwise return human-readable text
+            verbose: If True, include additional details
 
         Returns:
             Formatted output string
@@ -140,25 +314,48 @@ class ContextSuggester:
         lines = []
         lines.append(f"📋 Task: {result['task_description']}")
         lines.append("")
+
+        # Show debugging context if available
+        if result.get("is_debugging_task"):
+            lines.append("🔍 DEBUGGING TASK DETECTED")
+            if result.get("analysis_metadata"):
+                meta = result["analysis_metadata"]
+                if meta.get("recommended_tools"):
+                    lines.append("   Recommended AST tools:")
+                    for tool in meta["recommended_tools"][:3]:
+                        lines.append(f"   • {tool}")
+            lines.append("")
+
         lines.append("Suggested Context Bundles:")
         lines.append("-" * 50)
 
         for i, suggestion in enumerate(result["suggestions"], 1):
             bundle = suggestion["context_bundle"]
             task_type = suggestion["task_type"]
+            title = suggestion.get("title", bundle)
             matched = suggestion["matched_keywords"]
-            workflows = suggestion["suggested_workflows"]
+            is_primary = suggestion.get("is_primary", False)
 
-            lines.append(f"{i}. {bundle.upper()} (type: {task_type}, score: {suggestion['score']})")
+            if bundle:
+                primary_marker = " ⭐ PRIMARY" if is_primary else ""
+                lines.append(f"{i}. {bundle.upper()} - {title} (score: {suggestion['score']}){primary_marker}")
+            else:
+                lines.append(f"{i}. {title}")
 
             if matched:
                 lines.append(f"   📌 Matched keywords: {', '.join(matched)}")
 
-            if workflows:
-                workflow_cmds = [f"make {w}" for w in workflows]
-                lines.append(f"   💡 Try: {' | '.join(workflow_cmds)}")
+            # Show debug context if available
+            if suggestion.get("debug_context"):
+                debug = suggestion["debug_context"]
+                if debug.get("recommended_tools"):
+                    lines.append("   🛠️  AST Tools:")
+                    for tool in debug["recommended_tools"][:2]:
+                        lines.append(f"      $ {tool}")
 
-            lines.append(f'   🔧 Usage: make context TASK="{result["task_description"]}"')
+            if bundle:
+                lines.append(f'   🔧 Usage: python suggest_context.py --analyze-patterns "{result["task_description"]}"')
+
             lines.append("")
 
         return "\n".join(lines)
@@ -167,7 +364,7 @@ class ContextSuggester:
 def main() -> int:
     """Command-line interface for context suggestion."""
     parser = argparse.ArgumentParser(
-        description="Suggest context bundles for AgentQMS tasks",
+        description="Suggest context bundles for AgentQMS tasks with AST analysis",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
@@ -179,6 +376,12 @@ Examples:
 
   # JSON output
   %(prog)s --json "debug memory leak"
+
+  # Analyze patterns and show AST tools
+  %(prog)s --analyze-patterns "debug config merge issue"
+
+  # Verbose output with debug context
+  %(prog)s -v "trace OmegaConf.merge precedence"
         """,
     )
 
@@ -198,6 +401,18 @@ Examples:
         "-j",
         action="store_true",
         help="Output result as JSON",
+    )
+    parser.add_argument(
+        "--analyze-patterns",
+        "-a",
+        action="store_true",
+        help="Enable pattern analysis and show AST tool recommendations",
+    )
+    parser.add_argument(
+        "--verbose",
+        "-v",
+        action="store_true",
+        help="Show verbose output including debug context",
     )
     parser.add_argument(
         "--project-root",
@@ -225,7 +440,7 @@ Examples:
     try:
         suggester = ContextSuggester(project_root=args.project_root)
         result = suggester.suggest(task_description)
-        output = suggester.format_output(result, json_format=args.json)
+        output = suggester.format_output(result, json_format=args.json, verbose=args.verbose or args.analyze_patterns)
         print(output)
         return 0
     except Exception as e:

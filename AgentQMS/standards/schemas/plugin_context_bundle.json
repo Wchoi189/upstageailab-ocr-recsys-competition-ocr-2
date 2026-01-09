@@ -43,6 +43,28 @@
             "items": {"type": "string"},
             "description": "Tags for categorization and discovery"
         },
+        "triggers": {
+            "type": "object",
+            "description": "Trigger conditions for auto-suggesting this bundle",
+            "additionalProperties": false,
+            "properties": {
+                "keywords": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Keywords that suggest this bundle (matched against task descriptions)"
+                },
+                "patterns": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "Regex patterns for advanced matching (optional)"
+                },
+                "file_patterns": {
+                    "type": "array",
+                    "items": {"type": "string"},
+                    "description": "File glob patterns that suggest this bundle when files match (optional)"
+                }
+            }
+        },
         "tiers": {
             "type": "object",
             "description": "Tiered file organization (tier1 = most critical)",

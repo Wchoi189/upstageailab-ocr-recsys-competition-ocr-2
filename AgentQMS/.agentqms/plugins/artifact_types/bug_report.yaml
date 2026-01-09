@@ -1,0 +1,85 @@
+# Bug Report Artifact Type Plugin
+# Migrated from hardcoded artifact_templates.py
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: bug_report
+version: "1.0"
+description: |
+  Structured bug report for tracking issues with environment details,
+  reproduction steps, and impact assessment.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_BUG_NNN_{name}.md"
+  directory: bug_reports/
+  frontmatter:
+    ads_version: "1.0"
+    type: bug_report
+    category: troubleshooting
+    status: active
+    severity: medium
+    version: "1.0"
+    tags: [bug, issue, troubleshooting]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - severity
+    - version
+  required_sections:
+    - "## Summary"
+    - "## Environment"
+    - "## Reproduction"
+    - "## Comparison"
+    - "## Logs"
+    - "## Impact"
+  filename_prefix: "BUG_"
+  allowed_statuses:
+    - draft
+    - active
+    - investigating
+    - resolved
+    - wontfix
+    - archived
+
+template: |
+  # Bug Report - {title}
+  Bug ID: BUG-{bug_id}
+
+  ## Summary
+  {summary}
+
+  ## Environment
+  - **OS/Env**: {os_info}
+  - **Dependencies**: {dependencies}
+
+  ## Reproduction
+  {reproduction_steps}
+
+  ## Comparison
+  **Expected**: {expected_behavior}
+  **Actual**: {actual_behavior}
+
+  ## Logs
+  ```
+  {error_messages}
+  ```
+
+  ## Impact
+  {impact}
+
+template_variables:
+  bug_id: "XXX"
+  summary: "[Brief description]"
+  os_info: "[OS/Environment details]"
+  dependencies: "[Relevant dependencies]"
+  reproduction_steps: "[Steps to reproduce]"
+  expected_behavior: "[What should happen]"
+  actual_behavior: "[What actually happens]"
+  error_messages: "[Error logs]"
+  impact: "[Impact description]"

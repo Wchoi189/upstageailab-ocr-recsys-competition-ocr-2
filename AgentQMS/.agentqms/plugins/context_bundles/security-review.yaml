@@ -15,6 +15,17 @@ tags:
   - security
   - review
   - compliance
+  - audit
+
+triggers:
+  keywords:
+    - security
+    - vulnerability
+    - audit
+    - compliance
+    - review
+    - threat
+    - validation
 
 tiers:
   tier1:
@@ -22,25 +33,30 @@ tiers:
     description: Core security documentation and policies
     max_files: 5
     files:
-      - path: AgentQMS/internal_docs/agent/system.md
+      - path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
         priority: critical
-        description: Agent guidelines for security awareness
+        description: Validation protocols including security checks
+      - path: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+        priority: critical
+        description: Prohibited actions for safety and security
       - path: AgentQMS/.agentqms/plugins/validators.yaml
         priority: high
         description: Validation rules including security checks
-        optional: true
 
   tier2:
     name: Review Guidelines
     description: Security review process documentation
     max_files: 5
     files:
-      - path: AgentQMS/internal_docs/protocols/governance/artifact_rules.md
+      - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
         priority: high
-        description: Artifact governance rules
-      - path: AgentQMS/conventions/audit_framework/README.md
+        description: Git conventions for secure commit practices
+      - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
+        priority: high
+        description: Coding standards including security patterns
+      - path: AgentQMS/standards/tier2-framework/api-contracts.yaml
         priority: medium
-        description: Audit framework for systematic review
+        description: API contracts for secure interfaces
 
   tier3:
     name: Project Context
@@ -50,6 +66,9 @@ tiers:
       - path: README.md
         priority: medium
         description: Project overview
-      - path: AgentQMS/.agentqms/state/architecture.yaml
+      - path: AgentQMS/standards/tier1-sst/system-architecture.yaml
         priority: medium
         description: System architecture for threat surface analysis
+      - path: AgentQMS/standards/INDEX.yaml
+        priority: low
+        description: Standards index for comprehensive context

@@ -1,0 +1,100 @@
+# Agent Configuration Context Bundle Plugin
+# Context files for configuring AI agents and tools
+
+name: agent-configuration
+title: Agent Configuration & Settings
+version: "1.0"
+scope: project
+description: |
+  Context files for configuring AI agents including Claude, Copilot, Cursor,
+  Gemini, and custom agent settings.
+
+tags:
+  - agent
+  - configuration
+  - settings
+  - copilot
+  - claude
+
+triggers:
+  keywords:
+    - agent
+    - config
+    - configuration
+    - claude
+    - copilot
+    - cursor
+    - gemini
+    - qwen
+    - settings
+    - ai
+
+tiers:
+  tier1:
+    name: Agent Configuration Essentials
+    description: Core agent configuration and standards
+    max_files: 8
+    files:
+      - path: AGENTS.yaml
+        priority: critical
+        description: Agent definitions and configurations
+      - path: AgentQMS/standards/tier3-agents/copilot/config.yaml
+        priority: high
+        description: GitHub Copilot configuration
+      - path: AgentQMS/standards/tier3-agents/claude/config.yaml
+        priority: high
+        description: Claude configuration
+      - path: AgentQMS/standards/tier3-agents/cursor/config.yaml
+        priority: high
+        description: Cursor configuration
+        optional: true
+      - path: AgentQMS/standards/tier3-agents/gemini/config.yaml
+        priority: medium
+        description: Gemini configuration
+        optional: true
+      - path: .github/copilot-instructions.md
+        priority: high
+        description: Copilot instructions for this project
+
+  tier2:
+    name: Agent Framework
+    description: Agent framework and tool integration
+    max_files: 8
+    files:
+      - path: AgentQMS/standards/INDEX.yaml
+        priority: high
+        description: Standards index including agent tier
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: high
+        description: Available tools for agents
+      - path: AgentQMS/mcp_server.py
+        priority: medium
+        description: Model Context Protocol server
+        optional: true
+      - path: AgentQMS/mcp_schema.yaml
+        priority: medium
+        description: MCP schema definition
+        optional: true
+      - path: experiment_manager/agent_interface.yaml
+        priority: medium
+        description: Agent interface for experiment tools
+        optional: true
+
+  tier3:
+    name: Extended Configuration
+    description: Additional agent resources and documentation
+    max_files: 6
+    files:
+      - path: AgentQMS/standards/tier2-framework/quickstart.yaml
+        priority: medium
+        description: Quick start guide for agents
+      - path: README.md
+        priority: medium
+        description: Project overview
+      - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+        priority: low
+        description: Workflow requirements
+      - path: .qwen/settings.json
+        priority: low
+        description: Qwen VLM settings
+        optional: true

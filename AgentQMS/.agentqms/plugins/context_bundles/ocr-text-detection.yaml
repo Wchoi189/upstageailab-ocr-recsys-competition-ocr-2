@@ -1,0 +1,81 @@
+# OCR Text Detection Context Bundle Plugin
+
+name: ocr-text-detection
+title: OCR Text Detection
+version: "1.0"
+scope: project
+description: |
+  Context for text detection tasks including feature code, inference pipeline,
+  model management, and configuration. Optimized for low memory footprint.
+
+tags:
+  - detection
+  - text
+  - bbox
+  - localization
+  - region
+
+triggers:
+  keywords:
+    - detection
+    - text
+    - bbox
+    - localization
+    - region
+    - bounding-box
+    - localize
+
+tiers:
+  tier1:
+    name: Detection Code
+    description: Core text detection feature implementation
+    max_files: 5
+    files:
+      - path: ocr/features/detection/*.py
+        priority: critical
+        description: Text detection feature implementation
+      - path: configs/domain/detection.yaml
+        priority: critical
+        description: Detection-specific configuration
+      - path: ocr/core/inference/pipeline.py
+        priority: high
+        description: Inference pipeline orchestration
+      - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+        priority: high
+        description: Inference framework design patterns
+
+  tier2:
+    name: Shared Components
+    description: Core components and utilities shared with detection
+    max_files: 6
+    files:
+      - path: ocr/core/models/__init__.py
+        priority: high
+        description: Model loading and management
+      - path: ocr/core/utils/*.py
+        priority: high
+        description: Utility functions and helpers
+      - path: ocr/core/analysis/*.py
+        priority: medium
+        description: Analysis utilities for detection
+      - path: configs/base.yaml
+        priority: medium
+        description: Base configuration template
+      - path: configs/model/
+        priority: low
+        description: Model configurations
+        optional: true
+
+  tier3:
+    name: Examples & Tests
+    description: Testing resources and reference implementations
+    max_files: 3
+    files:
+      - path: tests/test_detection.py
+        priority: medium
+        description: Detection unit and integration tests
+        optional: true
+      - path: apps/ocr_inference_console/
+        priority: low
+        description: Inference console examples
+        optional: true

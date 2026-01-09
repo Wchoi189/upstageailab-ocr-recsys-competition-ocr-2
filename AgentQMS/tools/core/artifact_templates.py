@@ -397,6 +397,138 @@ Summary of the analysis.
         """Get list of available template types."""
         return list(self.templates.keys())
 
+    def _get_available_artifact_types(self) -> dict[str, Any]:
+        """
+        Get all available artifact types with source metadata.
+
+        Returns comprehensive information about all artifact types including:
+        - Type name and description
+        - Source (hardcoded, plugin, or standards)
+        - Validation rules if available
+        - Template metadata
+
+        Returns:
+            dict mapping artifact type name to info dict with keys:
+            - name: artifact type name
+            - source: "hardcoded", "plugin", or "standards"
+            - description: human-readable description
+            - validation: validation rules from plugin/standards if available
+            - template: template configuration
+            - conflict: bool, True if defined in multiple sources
+
+        Example:
+            types = artifacts._get_available_artifact_types()
+            for name, info in types.items():
+                print(f"{name}: {info['source']}")
+        """
+        artifact_types: dict[str, dict[str, Any]] = {}
+        sources_seen: dict[str, list[str]] = {}  # Track which sources define each type
+
+        # 1. Collect hardcoded types (base layer)
+        hardcoded_names = {
+            "implementation_plan": "Implementation plan for features and changes",
+            "walkthrough": "Code walkthrough and explanation",
+            "assessment": "Technical assessment and analysis",
+            "design": "Design document for architecture",
+            "research": "Research findings and documentation",
+            "template": "Template for standardized processes",
+            "bug_report": "Bug report with reproduction steps",
+            "vlm_report": "VLM analysis and evaluation report",
+        }
+
+        for name, description in hardcoded_names.items():
+            if name not in artifact_types:
+                artifact_types[name] = {
+                    "name": name,
+                    "source": "hardcoded",
+                    "description": description,
+                    "template": self.templates.get(name),
+                    "validation": None,
+                    "conflict": False,
+                }
+                sources_seen[name] = ["hardcoded"]
+            else:
+                sources_seen[name].append("hardcoded")
+
+        # 2. Collect plugin types (adds or overrides)
+        if PLUGINS_AVAILABLE:
+            try:
+                registry = get_plugin_registry()
+                plugin_types = registry.get_artifact_types()
+
+                for name, plugin_def in plugin_types.items():
+                    if name not in artifact_types:
+                        artifact_types[name] = {
+                            "name": name,
+                            "source": "plugin",
+                            "description": plugin_def.get("description", f"Plugin artifact type: {name}"),
+                            "template": self._convert_plugin_to_template(name, plugin_def),
+                            "validation": plugin_def.get("validation"),
+                            "conflict": False,
+                        }
+                        sources_seen[name] = ["plugin"]
+                    else:
+                        # Type defined in multiple sources
+                        sources_seen[name].append("plugin")
+                        if artifact_types[name]["source"] == "hardcoded":
+                            artifact_types[name]["source"] = "hardcoded (plugin available)"
+                        artifact_types[name]["conflict"] = True
+
+            except Exception:
+                # Plugin loading failed - continue with hardcoded only
+                pass
+
+        # 3. Mark naming conflicts and inconsistencies
+        # Known duplicates in our system: "assessment" in hardcoded and potentially plugins
+        # Note: These are documented in the assessment artifact
+        conflict_groups = {
+            "assessment": ["hardcoded", "potential plugin"],
+            "design": ["hardcoded", "possible design_document variant"],
+            "research": ["hardcoded", "potential duplicate in standards"],
+        }
+
+        for type_name in conflict_groups:
+            if type_name in artifact_types:
+                artifact_types[type_name]["_conflict_note"] = conflict_groups[type_name]
+
+        return artifact_types
+
+    def get_available_templates_with_metadata(self) -> list[dict[str, Any]]:
+        """
+        Get list of available templates with source and validation metadata.
+
+        Enhanced version of get_available_templates() that includes information
+        about artifact source (hardcoded vs plugin), validation rules, and conflicts.
+
+        Returns:
+            List of dicts with keys:
+            - name: template name
+            - source: "hardcoded" or "plugin"
+            - description: brief description
+            - has_validation: bool
+            - has_conflict: bool
+
+        Example:
+            templates = artifacts.get_available_templates_with_metadata()
+            for t in templates:
+                print(f"{t['name']}: {t['source']}")
+        """
+        types = self._get_available_artifact_types()
+
+        result = []
+        for name, info in types.items():
+            result.append(
+                {
+                    "name": name,
+                    "source": info["source"],
+                    "description": info.get("description", ""),
+                    "has_validation": info.get("validation") is not None,
+                    "has_conflict": info.get("conflict", False),
+                }
+            )
+
+        return sorted(result, key=lambda x: x["name"])
+
     def create_filename(self, template_type: str, name: str) -> str:
         """Create a properly formatted filename for an artifact."""
         template = self.get_template(template_type)

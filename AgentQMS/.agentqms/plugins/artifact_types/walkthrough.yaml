@@ -1,0 +1,57 @@
+# Walkthrough Artifact Type Plugin
+# Migrated from hardcoded artifact_templates.py
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: walkthrough
+version: "1.0"
+description: |
+  Step-by-step walkthrough documentation for guiding users through
+  processes, workflows, or feature demonstrations.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_walkthrough_{name}.md"
+  directory: walkthroughs/
+  frontmatter:
+    ads_version: "1.0"
+    type: walkthrough
+    category: documentation
+    status: active
+    version: "1.0"
+    tags: [walkthrough, documentation, guide]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  required_sections:
+    - "## Goal"
+    - "## Steps"
+    - "## Verification"
+  filename_prefix: "walkthrough_"
+  allowed_statuses:
+    - draft
+    - active
+    - completed
+    - archived
+
+template: |
+  # Walkthrough - {title}
+
+  ## Goal
+  {description}
+
+  ## Steps
+  1. Step 1
+  2. Step 2
+
+  ## Verification
+  - [ ] Verify result
+
+template_variables:
+  description: "[Enter goal/objective here]"

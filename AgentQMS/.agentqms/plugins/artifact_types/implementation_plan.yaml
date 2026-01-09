@@ -1,0 +1,66 @@
+# Implementation Plan Artifact Type Plugin
+# Migrated from hardcoded artifact_templates.py
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: implementation_plan
+version: "1.0"
+description: |
+  Structured implementation plan for tracking development work with
+  proposed changes, verification steps, and completion criteria.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_implementation_plan_{name}.md"
+  directory: implementation_plans/
+  frontmatter:
+    ads_version: "1.0"
+    type: implementation_plan
+    category: development
+    status: active
+    version: "1.0"
+    tags: [implementation, plan, development]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  required_sections:
+    - "## Goal"
+    - "## Proposed Changes"
+    - "## Verification Plan"
+  filename_prefix: "implementation_plan_"
+  allowed_statuses:
+    - draft
+    - active
+    - completed
+    - archived
+
+template: |
+  # Implementation Plan - {title}
+
+  ## Goal
+  {description}
+
+  ## Proposed Changes
+
+  ### Configuration
+  - [ ] Change 1
+
+  ### Code
+  - [ ] Change 1
+
+  ## Verification Plan
+
+  ### Automated Tests
+  - [ ] `pytest ...`
+
+  ### Manual Verification
+  - [ ] Verify ...
+
+template_variables:
+  description: "[Enter goal/objective here]"

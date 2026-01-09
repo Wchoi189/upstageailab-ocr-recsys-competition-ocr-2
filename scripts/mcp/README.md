@@ -30,6 +30,21 @@ Instead of running multiple separate MCP servers, we use a single **Unified Serv
 - **Standardization**: All agents have access to the exact same tools and resources.
 - **Portability**: Config is stored in the repo, not hidden in agent-specific home directories.
 
+### AgentQMS: Plugin Artifact Types Resource
+
+The unified server exposes dynamic artifact type discovery from AgentQMS plugins:
+
+- **URI**: agentqms://plugins/artifact_types
+- **MIME**: application/json
+- **Purpose**: Lists all discoverable artifact types (hardcoded + plugins) with metadata, summary counts, and validation info.
+
+Example usage via MCP client:
+
+1. List resources and confirm the URI exists.
+2. Read the resource and parse JSON fields: `artifact_types`, `summary`, `metadata`.
+
+This resource mirrors the AgentQMS MCP handler and ensures consistent discovery through the unified server.
+
 ## Adding a New Server
 1. Add the server definition to `scripts/mcp/shared_config.json`.
 2. Run `python3 scripts/mcp/sync_configs.py`.

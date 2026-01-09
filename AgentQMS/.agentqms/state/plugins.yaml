@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-09T06:17:21.770490+00:00'
+  generated_at: '2026-01-09T17:14:32.688933+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -7,33 +7,147 @@ discovery_paths:
   project: .agentqms/plugins
 plugins_loaded:
   artifact_types:
+  - assessment
   - audit
+  - bug_report
   - change_request
+  - design_document
+  - implementation_plan
   - ocr_experiment_report
+  - research
+  - template
+  - vlm_report
+  - walkthrough
   validators: true
   context_bundles:
+  - agent-configuration
+  - compliance-check
+  - documentation-update
+  - hydra-configuration
+  - ocr-debugging
+  - ocr-experiment
+  - ocr-information-extraction
+  - ocr-layout-analysis
+  - ocr-text-detection
+  - ocr-text-recognition
+  - pipeline-development
   - security-review
 plugin_metadata:
+- name: assessment
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml
 - name: audit
   type: artifact_type
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
+- name: bug_report
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml
 - name: change_request
   type: artifact_type
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
+- name: design_document
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/design_document.yaml
+- name: implementation_plan
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
 - name: ocr_experiment_report
   type: artifact_type
   version: '1.1'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+- name: research
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/research.yaml
+- name: template
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/template.yaml
+- name: vlm_report
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/vlm_report.yaml
+- name: walkthrough
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/walkthrough.yaml
 - name: validators
   type: validator
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/validators.yaml
+- name: agent-configuration
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/agent-configuration.yaml
+- name: compliance-check
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/compliance-check.yaml
+- name: documentation-update
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/documentation-update.yaml
+- name: hydra-configuration
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml
+- name: ocr-debugging
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/ocr-debugging.yaml
+- name: ocr-experiment
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/ocr-experiment.yaml
+- name: ocr-information-extraction
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/ocr-information-extraction.yaml
+- name: ocr-layout-analysis
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/ocr-layout-analysis.yaml
+- name: ocr-text-detection
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/ocr-text-detection.yaml
+- name: ocr-text-recognition
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/ocr-text-recognition.yaml
+- name: pipeline-development
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/pipeline-development.yaml
 - name: security-review
   type: context_bundle
   version: '1.0'
@@ -42,6 +156,89 @@ plugin_metadata:
 validation_errors: []
 resolved:
   artifact_types:
+    assessment:
+      name: assessment
+      version: '1.0'
+      description: 'Evaluation and analysis document with findings, recommendations,
+
+        and implementation plans for specific subjects or systems.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_assessment_{name}.md'
+        directory: assessments/
+        frontmatter:
+          ads_version: '1.0'
+          type: assessment
+          category: evaluation
+          status: active
+          version: '1.0'
+          tags:
+          - assessment
+          - evaluation
+          - analysis
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Purpose'
+        - '## Findings'
+        - '## Analysis'
+        - '## Recommendations'
+        - '## Implementation Plan'
+        filename_prefix: assessment_
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: '# Assessment - {title}
+
+
+        ## Purpose
+
+        Evaluate {subject} and provide recommendations.
+
+
+        ## Findings
+
+
+        ### Key Observations
+
+        1. Observation 1
+
+        2. Observation 2
+
+
+        ## Analysis
+
+        - **Area 1**: Status/Issues
+
+        - **Area 2**: Status/Issues
+
+
+        ## Recommendations
+
+        1. **Action Item** (Priority: High)
+
+        2. **Action Item** (Priority: Medium)
+
+
+        ## Implementation Plan
+
+        - [ ] Immediate Action
+
+        - [ ] Long-term Action
+
+        '
+      template_variables:
+        subject: '[system/component/feature]'
     audit:
       name: audit
       version: '1.0'
@@ -115,6 +312,106 @@ resolved:
         category: compliance
         status: draft
         auditor: AI Agent
+    bug_report:
+      name: bug_report
+      version: '1.0'
+      description: 'Structured bug report for tracking issues with environment details,
+
+        reproduction steps, and impact assessment.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_BUG_NNN_{name}.md'
+        directory: bug_reports/
+        frontmatter:
+          ads_version: '1.0'
+          type: bug_report
+          category: troubleshooting
+          status: active
+          severity: medium
+          version: '1.0'
+          tags:
+          - bug
+          - issue
+          - troubleshooting
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - severity
+        - version
+        required_sections:
+        - '## Summary'
+        - '## Environment'
+        - '## Reproduction'
+        - '## Comparison'
+        - '## Logs'
+        - '## Impact'
+        filename_prefix: BUG_
+        allowed_statuses:
+        - draft
+        - active
+        - investigating
+        - resolved
+        - wontfix
+        - archived
+      template: '# Bug Report - {title}
+
+        Bug ID: BUG-{bug_id}
+
+
+        ## Summary
+
+        {summary}
+
+
+        ## Environment
+
+        - **OS/Env**: {os_info}
+
+        - **Dependencies**: {dependencies}
+
+
+        ## Reproduction
+
+        {reproduction_steps}
+
+
+        ## Comparison
+
+        **Expected**: {expected_behavior}
+
+        **Actual**: {actual_behavior}
+
+
+        ## Logs
+
+        ```
+
+        {error_messages}
+
+        ```
+
+
+        ## Impact
+
+        {impact}
+
+        '
+      template_variables:
+        bug_id: XXX
+        summary: '[Brief description]'
+        os_info: '[OS/Environment details]'
+        dependencies: '[Relevant dependencies]'
+        reproduction_steps: '[Steps to reproduce]'
+        expected_behavior: '[What should happen]'
+        actual_behavior: '[What actually happens]'
+        error_messages: '[Error logs]'
+        impact: '[Impact description]'
     change_request:
       name: change_request
       version: '1.0'
@@ -281,6 +578,132 @@ resolved:
         requester: AI Agent
         approver: '[Pending Assignment]'
         priority: Medium
+    design_document:
+      name: design_document
+      version: '1.0'
+      description: 'Architecture and design specification document with component
+
+        descriptions, design decisions, and implementation requirements.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_design_{name}.md'
+        directory: design_documents/
+        frontmatter:
+          ads_version: '1.0'
+          type: design
+          category: architecture
+          status: active
+          version: '1.0'
+          tags:
+          - design
+          - architecture
+          - specification
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Overview'
+        - '## Goals'
+        - '## Architecture'
+        - '## Design Decisions'
+        - '## Implementation'
+        filename_prefix: design_
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: "# Design - {title}\n\n## Overview\nDesign for {component_system}.\n\
+        \n## Goals\n- Goal 1\n- Goal 2\n\n## Architecture\n```mermaid\ngraph TD\n\
+        \    A[Component A] --> B[Component B]\n```\n\n### Components\n- **Component\
+        \ 1**: Responsibility\n- **Component 2**: Responsibility\n\n## Design Decisions\n\
+        - **Decision 1**: Rationale...\n- **Decision 2**: Rationale...\n\n## Implementation\n\
+        - [ ] Requirement 1\n- [ ] Requirement 2\n"
+      template_variables:
+        component_system: '[component/system]'
+    implementation_plan:
+      name: implementation_plan
+      version: '1.0'
+      description: 'Structured implementation plan for tracking development work with
+
+        proposed changes, verification steps, and completion criteria.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_implementation_plan_{name}.md'
+        directory: implementation_plans/
+        frontmatter:
+          ads_version: '1.0'
+          type: implementation_plan
+          category: development
+          status: active
+          version: '1.0'
+          tags:
+          - implementation
+          - plan
+          - development
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Goal'
+        - '## Proposed Changes'
+        - '## Verification Plan'
+        filename_prefix: implementation_plan_
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: '# Implementation Plan - {title}
+
+
+        ## Goal
+
+        {description}
+
+
+        ## Proposed Changes
+
+
+        ### Configuration
+
+        - [ ] Change 1
+
+
+        ### Code
+
+        - [ ] Change 1
+
+
+        ## Verification Plan
+
+
+        ### Automated Tests
+
+        - [ ] `pytest ...`
+
+
+        ### Manual Verification
+
+        - [ ] Verify ...
+
+        '
+      template_variables:
+        description: '[Enter goal/objective here]'
     ocr_experiment_report:
       name: ocr_experiment_report
       version: '1.1'
@@ -441,6 +864,282 @@ resolved:
         date: '2025-12-06'
         status: draft
         intention: '[Experiment objective and goal]'
+    research:
+      name: research
+      version: '1.0'
+      description: 'Research document for investigation, analysis, and answering
+
+        technical questions with findings, analysis, and references.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_research_{name}.md'
+        directory: research/
+        frontmatter:
+          ads_version: '1.0'
+          type: research
+          category: research
+          status: active
+          version: '1.0'
+          tags:
+          - research
+          - investigation
+          - analysis
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Objective'
+        - '## Findings'
+        - '## Analysis'
+        - '## Conclusion'
+        - '## References'
+        filename_prefix: research_
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: '# Research - {title}
+
+
+        ## Objective
+
+        Answer: {title}?
+
+
+        ## Findings
+
+        - Finding 1
+
+        - Finding 2
+
+
+        ## Analysis
+
+        Details of the investigation.
+
+
+        ## Conclusion
+
+        Summary of the answer.
+
+
+        ## References
+
+        - [Link]
+
+        '
+      template_variables: {}
+    template:
+      name: template
+      version: '1.0'
+      description: 'Standard template definition for documenting reusable document
+
+        formats, structures, and guidelines.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_template-{name}.md'
+        directory: templates/
+        frontmatter:
+          ads_version: '1.0'
+          type: template
+          category: reference
+          status: active
+          version: '1.0'
+          tags:
+          - template
+          - reference
+          - guidelines
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Purpose'
+        - '## Structure'
+        - '## Guidelines'
+        filename_prefix: template-
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: '# Template - {title}
+
+
+        ## Purpose
+
+        Standard format for {purpose}.
+
+
+        ## Structure
+
+        ```markdown
+
+        # Title
+
+        ## Section 1
+
+        ```
+
+
+        ## Guidelines
+
+        1. Guideline 1
+
+        2. Guideline 2
+
+        '
+      template_variables:
+        purpose: '[purpose description]'
+    vlm_report:
+      name: vlm_report
+      version: '1.0'
+      description: 'Vision-Language Model (VLM) analysis report for documenting
+
+        visual analysis results, findings, and conclusions.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_vlm_report_{name}.md'
+        directory: ../vlm_reports/
+        frontmatter:
+          ads_version: '1.0'
+          type: vlm_report
+          category: evaluation
+          status: active
+          version: '1.0'
+          tags:
+          - vlm
+          - report
+          - analysis
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Overview'
+        - '## Analysis Result'
+        - '## Findings'
+        - '## Conclusion'
+        filename_prefix: vlm_report_
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: '# {title}
+
+
+        ## Overview
+
+        Brief description of the VLM analysis.
+
+
+        ## Analysis Result
+
+        <!-- Paste analysis results here -->
+
+
+        ## Findings
+
+        - Finding 1
+
+        - Finding 2
+
+
+        ## Conclusion
+
+        Summary of the analysis.
+
+
+        ---
+
+
+        *This VLM report follows the project''s standardized format for VLM analysis.*
+
+        '
+      template_variables: {}
+    walkthrough:
+      name: walkthrough
+      version: '1.0'
+      description: 'Step-by-step walkthrough documentation for guiding users through
+
+        processes, workflows, or feature demonstrations.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_walkthrough_{name}.md'
+        directory: walkthroughs/
+        frontmatter:
+          ads_version: '1.0'
+          type: walkthrough
+          category: documentation
+          status: active
+          version: '1.0'
+          tags:
+          - walkthrough
+          - documentation
+          - guide
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - category
+        - status
+        - version
+        required_sections:
+        - '## Goal'
+        - '## Steps'
+        - '## Verification'
+        filename_prefix: walkthrough_
+        allowed_statuses:
+        - draft
+        - active
+        - completed
+        - archived
+      template: '# Walkthrough - {title}
+
+
+        ## Goal
+
+        {description}
+
+
+        ## Steps
+
+        1. Step 1
+
+        2. Step 2
+
+
+        ## Verification
+
+        - [ ] Verify result
+
+        '
+      template_variables:
+        description: '[Enter goal/objective here]'
   validators:
     prefixes:
       CR_: change_requests/
@@ -472,6 +1171,1016 @@ resolved:
     custom_validators: []
     disabled_validators: []
   context_bundles:
+    agent-configuration:
+      name: agent-configuration
+      title: Agent Configuration & Settings
+      version: '1.0'
+      scope: project
+      description: 'Context files for configuring AI agents including Claude, Copilot,
+        Cursor,
+
+        Gemini, and custom agent settings.
+
+        '
+      tags:
+      - agent
+      - configuration
+      - settings
+      - copilot
+      - claude
+      triggers:
+        keywords:
+        - agent
+        - config
+        - configuration
+        - claude
+        - copilot
+        - cursor
+        - gemini
+        - qwen
+        - settings
+        - ai
+      tiers:
+        tier1:
+          name: Agent Configuration Essentials
+          description: Core agent configuration and standards
+          max_files: 8
+          files:
+          - path: AGENTS.yaml
+            priority: critical
+            description: Agent definitions and configurations
+          - path: AgentQMS/standards/tier3-agents/copilot/config.yaml
+            priority: high
+            description: GitHub Copilot configuration
+          - path: AgentQMS/standards/tier3-agents/claude/config.yaml
+            priority: high
+            description: Claude configuration
+          - path: AgentQMS/standards/tier3-agents/cursor/config.yaml
+            priority: high
+            description: Cursor configuration
+            optional: true
+          - path: AgentQMS/standards/tier3-agents/gemini/config.yaml
+            priority: medium
+            description: Gemini configuration
+            optional: true
+          - path: .github/copilot-instructions.md
+            priority: high
+            description: Copilot instructions for this project
+        tier2:
+          name: Agent Framework
+          description: Agent framework and tool integration
+          max_files: 8
+          files:
+          - path: AgentQMS/standards/INDEX.yaml
+            priority: high
+            description: Standards index including agent tier
+          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+            priority: high
+            description: Available tools for agents
+          - path: AgentQMS/mcp_server.py
+            priority: medium
+            description: Model Context Protocol server
+            optional: true
+          - path: AgentQMS/mcp_schema.yaml
+            priority: medium
+            description: MCP schema definition
+            optional: true
+          - path: experiment_manager/agent_interface.yaml
+            priority: medium
+            description: Agent interface for experiment tools
+            optional: true
+        tier3:
+          name: Extended Configuration
+          description: Additional agent resources and documentation
+          max_files: 6
+          files:
+          - path: AgentQMS/standards/tier2-framework/quickstart.yaml
+            priority: medium
+            description: Quick start guide for agents
+          - path: README.md
+            priority: medium
+            description: Project overview
+          - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+            priority: low
+            description: Workflow requirements
+          - path: .qwen/settings.json
+            priority: low
+            description: Qwen VLM settings
+            optional: true
+    compliance-check:
+      name: compliance-check
+      title: Compliance & Validation Check
+      version: '1.0'
+      scope: project
+      description: 'Context files for running compliance checks, artifact validation,
+
+        and framework boundary validation.
+
+        '
+      tags:
+      - compliance
+      - validation
+      - check
+      - audit
+      - verify
+      triggers:
+        keywords:
+        - compliance
+        - validate
+        - validation
+        - check
+        - audit
+        - verify
+        - boundary
+        - standard
+      tiers:
+        tier1:
+          name: Compliance Essentials
+          description: Core compliance standards and rules
+          max_files: 8
+          files:
+          - path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
+            priority: critical
+            description: Validation protocols and procedures
+          - path: AgentQMS/standards/tier1-sst/artifact-types.yaml
+            priority: critical
+            description: Artifact type definitions
+          - path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+            priority: critical
+            description: Naming conventions to validate
+          - path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+            priority: high
+            description: File placement rules
+          - path: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+            priority: high
+            description: Prohibited actions list
+        tier2:
+          name: Validation Tools
+          description: Compliance checking and validation tools
+          max_files: 10
+          files:
+          - path: AgentQMS/tools/compliance/validate_artifacts.py
+            priority: critical
+            description: Artifact validation tool
+          - path: AgentQMS/tools/compliance/validate_boundaries.py
+            priority: high
+            description: Framework boundary validation
+          - path: AgentQMS/tools/compliance/monitor_artifacts.py
+            priority: high
+            description: Artifact monitoring tool
+          - path: AgentQMS/tools/audit/artifact_audit.py
+            priority: high
+            description: Artifact audit and auto-fix tool
+          - path: AgentQMS/.agentqms/plugins/validators.yaml
+            priority: high
+            description: Plugin validators configuration
+          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+            priority: medium
+            description: Tool catalog with validation commands
+        tier3:
+          name: Framework Standards
+          description: Framework standards and configuration
+          max_files: 10
+          files:
+          - path: AgentQMS/standards/INDEX.yaml
+            priority: medium
+            description: Standards index
+          - path: AgentQMS/standards/tier1-sst/system-architecture.yaml
+            priority: medium
+            description: System architecture rules
+          - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+            priority: medium
+            description: Workflow requirements
+          - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
+            priority: medium
+            description: Git conventions to check
+          - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
+            priority: low
+            description: Coding standards
+          - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+            priority: low
+            description: Configuration standards
+    documentation-update:
+      name: documentation-update
+      title: Documentation & Standards Update
+      version: '1.0'
+      scope: project
+      description: 'Context files for updating project documentation, standards, and
+        artifact management.
+
+        Includes AgentQMS standards, documentation tools, and artifact templates.
+
+        '
+      tags:
+      - documentation
+      - standards
+      - artifact
+      - compliance
+      - validate
+      triggers:
+        keywords:
+        - doc
+        - documentation
+        - standard
+        - artifact
+        - compliance
+        - validate
+        - guide
+        - readme
+        - changelog
+      tiers:
+        tier1:
+          name: Documentation Essentials
+          description: Core documentation standards and tools
+          max_files: 8
+          files:
+          - path: AgentQMS/standards/INDEX.yaml
+            priority: critical
+            description: Standards index and navigation
+          - path: AgentQMS/standards/tier1-sst/artifact-types.yaml
+            priority: critical
+            description: Artifact type definitions
+          - path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+            priority: critical
+            description: Naming conventions for artifacts and files
+          - path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+            priority: high
+            description: File organization rules
+          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+            priority: high
+            description: Available documentation tools and commands
+        tier2:
+          name: Documentation Framework
+          description: Documentation structure and validation tools
+          max_files: 10
+          files:
+          - path: docs/index.md
+            priority: high
+            description: Documentation index
+          - path: README.md
+            priority: high
+            description: Project README
+          - path: CHANGELOG.md
+            priority: high
+            description: Project changelog
+          - path: CONTRIBUTING.md
+            priority: medium
+            description: Contribution guidelines
+          - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
+            priority: medium
+            description: Git and commit conventions
+          - path: AgentQMS/tools/documentation/auto_generate_index.py
+            priority: medium
+            description: Documentation index generator
+          - path: AgentQMS/tools/compliance/validate_artifacts.py
+            priority: medium
+            description: Artifact validation tool
+        tier3:
+          name: Extended Documentation
+          description: Additional documentation resources and templates
+          max_files: 8
+          files:
+          - path: docs/_templates/artifact-template.md
+            priority: medium
+            description: Artifact template
+            optional: true
+          - path: AgentQMS/standards/tier2-framework/quickstart.yaml
+            priority: medium
+            description: Quick start guide for new developers
+          - path: docs/guides/
+            priority: low
+            description: User guides directory
+            optional: true
+          - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+            priority: low
+            description: Workflow requirements
+    hydra-configuration:
+      name: hydra-configuration
+      title: Hydra Configuration Framework
+      version: '1.0'
+      scope: project
+      description: 'Context for understanding and working with Hydra configuration
+        system
+
+        including configuration architecture, best practices, examples, and
+
+        schema definitions.
+
+        '
+      tags:
+      - hydra
+      - configuration
+      - config
+      - experiment
+      - yaml
+      triggers:
+        keywords:
+        - hydra
+        - configuration
+        - config
+        - experiment
+        - yaml
+        - compose
+      tiers:
+        tier1:
+          name: Hydra Architecture
+          description: Hydra configuration fundamentals and architecture
+          max_files: 4
+          files:
+          - path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+            priority: critical
+            description: Hydra architecture design and patterns
+          - path: configs/base.yaml
+            priority: critical
+            description: Base configuration example
+          - path: pyproject.toml
+            priority: high
+            description: Project dependencies and Hydra setup
+        tier2:
+          name: Configuration Details
+          description: Detailed configuration specifications and standards
+          max_files: 6
+          files:
+          - path: configs/
+            priority: high
+            description: All configuration files (base, train, eval, etc.)
+          - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+            priority: high
+            description: Configuration standards and best practices
+          - path: configs/_foundation/
+            priority: medium
+            description: Foundation configuration defaults
+            optional: true
+          - path: configs/debug/
+            priority: low
+            description: Debug configurations
+            optional: true
+        tier3:
+          name: Examples & Tools
+          description: Configuration examples and experiment management tools
+          max_files: 3
+          files:
+          - path: experiment_manager/etk.py
+            priority: medium
+            description: Experiment manager with Hydra config integration
+          - path: README.md
+            priority: low
+            description: Project documentation with config examples
+          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+            priority: low
+            description: Available tools including config management
+    ocr-debugging:
+      name: ocr-debugging
+      title: OCR Debugging & AST Analysis
+      version: '1.0'
+      scope: project
+      description: 'AST-based debugging context bundle integrating agent-debug-toolkit
+        analyzers.
+
+
+        Provides deep code analysis capabilities for debugging configuration issues,
+
+        tracing component instantiation, and understanding data flow through complex
+        systems.
+
+        Reduces debugging time by 60-80% compared to text-based grep approaches.
+
+        '
+      tags:
+      - debugging
+      - ast-analysis
+      - configuration
+      - refactoring
+      - code-analysis
+      - hydra
+      - component-tracking
+      - data-flow
+      - troubleshooting
+      triggers:
+        keywords:
+        - debug
+        - troubleshoot
+        - refactor
+        - audit
+        - analyze
+        - trace
+        - merge
+        - configuration-issue
+        - component
+        - instantiation
+        - merge-order
+        - hydra
+        - config-access
+        - data-flow
+        - ast
+      tiers:
+        tier1:
+          name: AST Analyzers & Tools
+          description: Essential AST-based debugging tools
+          max_files: 8
+          files:
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
+            priority: critical
+            description: Config access pattern analyzer
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
+            priority: critical
+            description: OmegaConf merge order tracer
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
+            priority: critical
+            description: Hydra pattern detector
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
+            priority: critical
+            description: Component instantiation tracker
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/explain.py
+            priority: high
+            description: Config flow explanation generator
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/cli.py
+            priority: high
+            description: AST debugging CLI interface
+          - path: agent-debug-toolkit/README.md
+            priority: high
+            description: Debugging toolkit documentation
+          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+            priority: high
+            description: Tool catalog and usage patterns
+        tier2:
+          name: Extended Debugging Context
+          description: Configuration files and component mappings
+          max_files: 10
+          files:
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/__init__.py
+            priority: high
+            description: Analyzer module initialization
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/mcp_server.py
+            priority: high
+            description: MCP server integration
+          - path: configs/hydra/*.yaml
+            priority: high
+            description: Hydra configuration files
+          - path: configs/_foundation/*.yaml
+            priority: high
+            description: Foundation configuration patterns
+          - path: ocr/__init__.py
+            priority: medium
+            description: OCR module structure
+          - path: ocr/core/__init__.py
+            priority: medium
+            description: Core module organization
+          - path: ocr/features/detection/__init__.py
+            priority: medium
+            description: Detection feature structure
+          - path: ocr/features/recognition/__init__.py
+            priority: medium
+            description: Recognition feature structure
+          - path: ocr/features/layout/__init__.py
+            priority: medium
+            description: Layout feature structure
+          - path: ocr/features/kie/__init__.py
+            priority: medium
+            description: KIE feature structure
+        tier3:
+          name: Reference Implementations
+          description: Test cases and usage examples
+          max_files: 7
+          files:
+          - path: agent-debug-toolkit/tests/test_config_access.py
+            priority: low
+            description: Config access analyzer tests
+          - path: agent-debug-toolkit/tests/test_merge_order.py
+            priority: low
+            description: Merge order tracer tests
+          - path: agent-debug-toolkit/tests/test_hydra_usage.py
+            priority: low
+            description: Hydra usage analyzer tests
+          - path: ocr/core/inference/__init__.py
+            priority: low
+            description: Component factory examples
+          - path: ocr/core/models/__init__.py
+            priority: low
+            description: Model management examples
+          - path: ocr/core/lightning/__init__.py
+            priority: low
+            description: Lightning training examples
+          - path: configs/train.yaml
+            priority: low
+            description: Training configuration reference
+    ocr-experiment:
+      name: ocr-experiment
+      title: OCR Experiment Management
+      version: '1.0'
+      scope: project
+      description: 'Context files for running, tracking, and analyzing OCR experiments.
+
+        Includes experiment tracking tools, configuration, and OCR components.
+
+        '
+      tags:
+      - experiment
+      - ocr
+      - tracker
+      - run
+      - trial
+      - etk
+      triggers:
+        keywords:
+        - experiment
+        - etk
+        - tracker
+        - run
+        - trial
+        - wandb
+        - training
+        - evaluation
+      tiers:
+        tier1:
+          name: Experiment Essentials
+          description: Core experiment tracking and management tools
+          max_files: 8
+          files:
+          - path: experiment_manager/etk.py
+            priority: critical
+            description: Experiment Tracker Kernel - main experiment management
+          - path: experiment_manager/agent_interface.yaml
+            priority: critical
+            description: Agent interface configuration for experiment tools
+          - path: experiment_manager/AGENTS.yaml
+            priority: high
+            description: Agent configurations for experiment workflows
+          - path: pyproject.toml
+            priority: high
+            description: Project dependencies including experiment tools
+          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+            priority: medium
+            description: Available tools including experiment commands
+        tier2:
+          name: Configuration & OCR
+          description: Configuration management and OCR pipeline components
+          max_files: 10
+          files:
+          - path: configs/base.yaml
+            priority: high
+            description: Base configuration for all experiments
+          - path: configs/train.yaml
+            priority: high
+            description: Training configuration
+          - path: configs/eval.yaml
+            priority: high
+            description: Evaluation configuration
+          - path: configs/_foundation/defaults.yaml
+            priority: medium
+            description: Default configuration values
+            optional: true
+          - path: ocr/inference/pipeline.py
+            priority: high
+            description: OCR inference pipeline
+          - path: ocr/models/__init__.py
+            priority: medium
+            description: OCR model management
+          - path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+            priority: medium
+            description: Hydra configuration architecture guide
+        tier3:
+          name: Extended Context
+          description: Additional resources for comprehensive experiment context
+          max_files: 8
+          files:
+          - path: README.md
+            priority: medium
+            description: Project overview and setup
+          - path: experiment_manager/docs/README.md
+            priority: medium
+            description: Experiment manager documentation
+            optional: true
+          - path: data/data_catalog.yaml
+            priority: medium
+            description: Data catalog for experiments
+          - path: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
+            priority: medium
+            description: Dataset catalog and specifications
+          - path: tests/test_inference.py
+            priority: low
+            description: Inference testing examples
+            optional: true
+    ocr-information-extraction:
+      name: ocr-information-extraction
+      title: OCR Information Extraction (KIE)
+      version: '1.0'
+      scope: project
+      description: 'Context for key-value information extraction (KIE) tasks including
+        entity
+
+        detection, relationship modeling, and value extraction from documents.
+
+        '
+      tags:
+      - kie
+      - extraction
+      - key-value
+      - entity
+      - information
+      triggers:
+        keywords:
+        - kie
+        - extraction
+        - key-value
+        - entity
+        - information
+        - entities
+      tiers:
+        tier1:
+          name: KIE Code
+          description: Core key-value extraction feature implementation
+          max_files: 5
+          files:
+          - path: ocr/features/kie/*.py
+            priority: critical
+            description: Key-value extraction feature implementation
+          - path: configs/domain/kie.yaml
+            priority: critical
+            description: KIE-specific configuration
+            optional: true
+          - path: ocr/core/inference/pipeline.py
+            priority: high
+            description: Inference pipeline orchestration
+          - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+            priority: high
+            description: Inference framework design patterns
+        tier2:
+          name: Models & Analysis
+          description: Extraction models, analysis, and evaluation
+          max_files: 6
+          files:
+          - path: ocr/core/models/__init__.py
+            priority: high
+            description: Model loading and management
+          - path: ocr/core/analysis/*.py
+            priority: high
+            description: Analysis utilities for extraction
+          - path: ocr/core/evaluation/*.py
+            priority: medium
+            description: Evaluation metrics for KIE
+          - path: ocr/core/metrics/*.py
+            priority: medium
+            description: Entity-level metrics
+          - path: configs/base.yaml
+            priority: low
+            description: Base configuration
+        tier3:
+          name: Examples & Validation
+          description: Examples and validation tools
+          max_files: 3
+          files:
+          - path: tests/test_kie.py
+            priority: low
+            description: KIE tests
+            optional: true
+          - path: data/debug_samples/
+            priority: low
+            description: Sample documents for debugging
+            optional: true
+    ocr-layout-analysis:
+      name: ocr-layout-analysis
+      title: OCR Layout Analysis
+      version: '1.0'
+      scope: project
+      description: 'Context for layout analysis and structure extraction including
+        page structure
+
+        detection, reading order analysis, and layout-related inference.
+
+        '
+      tags:
+      - layout
+      - structure
+      - reading-order
+      - page-segmentation
+      - document-structure
+      triggers:
+        keywords:
+        - layout
+        - structure
+        - reading-order
+        - page-segmentation
+        - document-structure
+        - segmentation
+      tiers:
+        tier1:
+          name: Layout Code
+          description: Core layout feature implementation
+          max_files: 5
+          files:
+          - path: ocr/features/layout/*.py
+            priority: critical
+            description: Layout analysis feature implementation
+          - path: configs/domain/layout.yaml
+            priority: critical
+            description: Layout-specific configuration
+          - path: configs/layout/
+            priority: high
+            description: Layout configuration parameters
+          - path: ocr/core/inference/pipeline.py
+            priority: high
+            description: Inference pipeline orchestration
+        tier2:
+          name: Analysis & Utilities
+          description: Analysis tools, visualization, and utilities
+          max_files: 6
+          files:
+          - path: ocr/core/analysis/*.py
+            priority: high
+            description: Layout analysis utilities and helpers
+          - path: ocr/core/utils/*.py
+            priority: high
+            description: Shared utility functions
+          - path: ocr/core/models/__init__.py
+            priority: medium
+            description: Model loading and management
+          - path: configs/base.yaml
+            priority: medium
+            description: Base configuration template
+          - path: ocr/core/visualization/
+            priority: low
+            description: Visualization components for layout
+            optional: true
+        tier3:
+          name: Examples & Tests
+          description: Examples, tests, and visualization outputs
+          max_files: 3
+          files:
+          - path: tests/test_layout.py
+            priority: low
+            description: Layout analysis tests
+            optional: true
+          - path: data/debug_samples/
+            priority: low
+            description: Sample images for debugging layout analysis
+            optional: true
+    ocr-text-detection:
+      name: ocr-text-detection
+      title: OCR Text Detection
+      version: '1.0'
+      scope: project
+      description: 'Context for text detection tasks including feature code, inference
+        pipeline,
+
+        model management, and configuration. Optimized for low memory footprint.
+
+        '
+      tags:
+      - detection
+      - text
+      - bbox
+      - localization
+      - region
+      triggers:
+        keywords:
+        - detection
+        - text
+        - bbox
+        - localization
+        - region
+        - bounding-box
+        - localize
+      tiers:
+        tier1:
+          name: Detection Code
+          description: Core text detection feature implementation
+          max_files: 5
+          files:
+          - path: ocr/features/detection/*.py
+            priority: critical
+            description: Text detection feature implementation
+          - path: configs/domain/detection.yaml
+            priority: critical
+            description: Detection-specific configuration
+          - path: ocr/core/inference/pipeline.py
+            priority: high
+            description: Inference pipeline orchestration
+          - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+            priority: high
+            description: Inference framework design patterns
+        tier2:
+          name: Shared Components
+          description: Core components and utilities shared with detection
+          max_files: 6
+          files:
+          - path: ocr/core/models/__init__.py
+            priority: high
+            description: Model loading and management
+          - path: ocr/core/utils/*.py
+            priority: high
+            description: Utility functions and helpers
+          - path: ocr/core/analysis/*.py
+            priority: medium
+            description: Analysis utilities for detection
+          - path: configs/base.yaml
+            priority: medium
+            description: Base configuration template
+          - path: configs/model/
+            priority: low
+            description: Model configurations
+            optional: true
+        tier3:
+          name: Examples & Tests
+          description: Testing resources and reference implementations
+          max_files: 3
+          files:
+          - path: tests/test_detection.py
+            priority: medium
+            description: Detection unit and integration tests
+            optional: true
+          - path: apps/ocr_inference_console/
+            priority: low
+            description: Inference console examples
+            optional: true
+    ocr-text-recognition:
+      name: ocr-text-recognition
+      title: OCR Text Recognition
+      version: '1.0'
+      scope: project
+      description: 'Context for text recognition tasks including OCR models, recognition
+        feature code,
+
+        and infrastructure. Optimized for low memory footprint.
+
+        '
+      tags:
+      - recognition
+      - character
+      - text
+      - ocr
+      - charset
+      triggers:
+        keywords:
+        - recognition
+        - character
+        - text
+        - ocr
+        - charset
+        - parseq
+        - paddleocr
+      tiers:
+        tier1:
+          name: Recognition Code
+          description: Core text recognition feature implementation
+          max_files: 5
+          files:
+          - path: ocr/features/recognition/*.py
+            priority: critical
+            description: Text recognition feature implementation
+          - path: configs/domain/recognition.yaml
+            priority: critical
+            description: Recognition-specific configuration
+          - path: configs/model/recognition/
+            priority: high
+            description: Recognition model configurations (parseq, paddleocr)
+          - path: ocr/core/inference/pipeline.py
+            priority: high
+            description: Inference pipeline orchestration
+        tier2:
+          name: Models & Core Components
+          description: Recognition models and shared training/evaluation infrastructure
+          max_files: 8
+          files:
+          - path: ocr/core/models/__init__.py
+            priority: high
+            description: Model loading and management
+          - path: ocr/core/lightning/*.py
+            priority: high
+            description: PyTorch Lightning training components
+          - path: ocr/core/metrics/*.py
+            priority: medium
+            description: Character-level and sequence evaluation metrics
+          - path: configs/base.yaml
+            priority: medium
+            description: Base configuration template
+          - path: configs/data/
+            priority: medium
+            description: Data configuration (character sets, encoding)
+          - path: configs/data/recognition.yaml
+            priority: medium
+            description: Recognition-specific data configuration
+          - path: data/data_catalog.yaml
+            priority: low
+            description: Dataset specifications and catalogs
+        tier3:
+          name: Examples & Tests
+          description: Testing resources and reference implementations
+          max_files: 3
+          files:
+          - path: tests/test_recognition.py
+            priority: low
+            description: Recognition unit and integration tests
+            optional: true
+          - path: configs/recognition/
+            priority: low
+            description: Recognition configuration examples
+            optional: true
+    pipeline-development:
+      name: pipeline-development
+      title: OCR Pipeline Development
+      version: '1.0'
+      scope: project
+      description: 'Context files for developing OCR pipeline components including
+
+        preprocessing, model inference, postprocessing, and visualization.
+
+        '
+      tags:
+      - ocr
+      - pipeline
+      - model
+      - inference
+      - development
+      triggers:
+        keywords:
+        - ocr
+        - pipeline
+        - model
+        - inference
+        - preprocess
+        - postprocess
+        - detection
+        - recognition
+        - layout
+      tiers:
+        tier1:
+          name: Pipeline Essentials
+          description: Core OCR pipeline architecture and contracts
+          max_files: 8
+          files:
+          - path: ocr/inference/pipeline.py
+            priority: critical
+            description: Main OCR pipeline orchestration
+          - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+            priority: critical
+            description: Inference framework architecture
+          - path: AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+            priority: critical
+            description: OCR orchestration flow patterns
+          - path: AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+            priority: high
+            description: Pipeline component contracts
+          - path: ocr/__init__.py
+            priority: high
+            description: OCR package initialization
+        tier2:
+          name: Pipeline Components
+          description: OCR pipeline components and utilities
+          max_files: 12
+          files:
+          - path: ocr/preprocessing/
+            priority: high
+            description: Preprocessing components
+          - path: ocr/models/
+            priority: high
+            description: Model management
+          - path: ocr/postprocessing/
+            priority: high
+            description: Postprocessing components
+          - path: AgentQMS/standards/tier2-framework/ocr-components/preprocessing-logic.yaml
+            priority: high
+            description: Preprocessing patterns
+          - path: AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml
+            priority: high
+            description: Postprocessing patterns
+          - path: AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+            priority: medium
+            description: Model loading and management
+          - path: AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml
+            priority: medium
+            description: Coordinate transformation utilities
+          - path: AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml
+            priority: medium
+            description: Image loading patterns
+        tier3:
+          name: Configuration & Testing
+          description: Configuration files and testing resources
+          max_files: 10
+          files:
+          - path: configs/base.yaml
+            priority: medium
+            description: Base configuration
+          - path: configs/model/
+            priority: medium
+            description: Model configurations
+          - path: configs/data/
+            priority: medium
+            description: Data configurations
+          - path: tests/test_inference.py
+            priority: medium
+            description: Inference tests
+            optional: true
+          - path: tests/test_preprocessing.py
+            priority: low
+            description: Preprocessing tests
+            optional: true
+          - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+            priority: medium
+            description: Configuration standards
+          - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
+            priority: low
+            description: Coding standards
     security-review:
       name: security-review
       title: Security Review Context Bundle
@@ -486,30 +2195,45 @@ resolved:
       - security
       - review
       - compliance
+      - audit
+      triggers:
+        keywords:
+        - security
+        - vulnerability
+        - audit
+        - compliance
+        - review
+        - threat
+        - validation
       tiers:
         tier1:
           name: Security Essentials
           description: Core security documentation and policies
           max_files: 5
           files:
-          - path: AgentQMS/internal_docs/agent/system.md
+          - path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
             priority: critical
-            description: Agent guidelines for security awareness
+            description: Validation protocols including security checks
+          - path: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+            priority: critical
+            description: Prohibited actions for safety and security
           - path: AgentQMS/.agentqms/plugins/validators.yaml
             priority: high
             description: Validation rules including security checks
-            optional: true
         tier2:
           name: Review Guidelines
           description: Security review process documentation
           max_files: 5
           files:
-          - path: AgentQMS/internal_docs/protocols/governance/artifact_rules.md
+          - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
             priority: high
-            description: Artifact governance rules
-          - path: AgentQMS/conventions/audit_framework/README.md
+            description: Git conventions for secure commit practices
+          - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
+            priority: high
+            description: Coding standards including security patterns
+          - path: AgentQMS/standards/tier2-framework/api-contracts.yaml
             priority: medium
-            description: Audit framework for systematic review
+            description: API contracts for secure interfaces
         tier3:
           name: Project Context
           description: Project-specific security context
@@ -518,6 +2242,9 @@ resolved:
           - path: README.md
             priority: medium
             description: Project overview
-          - path: AgentQMS/.agentqms/state/architecture.yaml
+          - path: AgentQMS/standards/tier1-sst/system-architecture.yaml
             priority: medium
             description: System architecture for threat surface analysis
+          - path: AgentQMS/standards/INDEX.yaml
+            priority: low
+            description: Standards index for comprehensive context

@@ -1,0 +1,60 @@
+# Template Artifact Type Plugin
+# Migrated from hardcoded artifact_templates.py
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: template
+version: "1.0"
+description: |
+  Standard template definition for documenting reusable document
+  formats, structures, and guidelines.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_template-{name}.md"
+  directory: templates/
+  frontmatter:
+    ads_version: "1.0"
+    type: template
+    category: reference
+    status: active
+    version: "1.0"
+    tags: [template, reference, guidelines]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  required_sections:
+    - "## Purpose"
+    - "## Structure"
+    - "## Guidelines"
+  filename_prefix: "template-"
+  allowed_statuses:
+    - draft
+    - active
+    - completed
+    - archived
+
+template: |
+  # Template - {title}
+
+  ## Purpose
+  Standard format for {purpose}.
+
+  ## Structure
+  ```markdown
+  # Title
+  ## Section 1
+  ```
+
+  ## Guidelines
+  1. Guideline 1
+  2. Guideline 2
+
+template_variables:
+  purpose: "[purpose description]"

@@ -98,3 +98,73 @@ concepts:
     UNRESOLVED_DYNAMIC: "Interpolation detected (${...})."
     UNRESOLVED_RELATIVE: "Relative path not fully resolved."
     NOT_FOUND: "Symbol not in scanned codebase."
+
+# --- Edit Tools (Phase 4) ---
+edit_tools:
+  apply_unified_diff:
+    desc: Apply git-style unified diffs with fuzzy matching for robust edits.
+    args:
+      diff: "Unified diff text (git diff format)"
+      strategy: "exact | whitespace_insensitive | fuzzy (default: fuzzy)"
+      dry_run: "Preview changes without modifying (default: false)"
+    example: |
+      # Apply a diff with fuzzy matching
+      adt apply-diff --strategy fuzzy << 'EOF'
+      --- a/src/model.py
+      +++ b/src/model.py
+      @@ -10,2 +10,2 @@
+      -    old_function()
+      +    new_function()
+      EOF
+    workflow: "read_file_slice → propose diff → apply_unified_diff"
+
+  smart_edit:
+    desc: Search/replace with exact, regex, or fuzzy matching.
+    args:
+      file: Path to file
+      search: Text or pattern to find
+      replace: Replacement text
+      mode: "exact | regex | fuzzy (default: exact)"
+      all_occurrences: "Replace all matches (default: false)"
+      dry_run: "Preview without modifying (default: false)"
+    example: |
+      # Exact replacement
+      adt smart-edit src/utils.py --search "old_name" --replace "new_name"
+
+      # Regex replacement
+      adt smart-edit src/utils.py --mode regex \
+        --search 'logger\.warn\("([^"]+)"\)' \
+        --replace 'logger.warning("\1")'
+
+  read_file_slice:
+    desc: Read specific line range for targeted editing of large files.
+    args:
+      file: Path to file
+      start_line: Starting line (1-indexed)
+      end_line: Ending line (inclusive)
+      context_lines: "Additional context before/after (default: 0)"
+    example: |
+      # Read lines 50-100 with 5 lines of context
+      adt read-slice src/large_file.py --start 50 --end 100 --context 5
+    purpose: "Minimize context when editing large files"
+
+  format_code:
+    desc: Format code after edits to normalize style.
+    args:
+      path: File or directory
+      style: "black | ruff | isort (default: black)"
+      check_only: "Only check, don't modify (default: false)"
+    example: |
+      adt format src/module.py --style black
+
+best_practices:
+  editing_large_files:
+    - "Use read_file_slice to view target region first"
+    - "Propose changes as unified diff"
+    - "Apply with apply_unified_diff using fuzzy strategy"
+    - "Run format_code after edits"
+  avoiding_failed_edits:
+    - "Never rewrite entire files"
+    - "Use line ranges, not whole file content"
+    - "Prefer fuzzy strategy for drift tolerance"
+

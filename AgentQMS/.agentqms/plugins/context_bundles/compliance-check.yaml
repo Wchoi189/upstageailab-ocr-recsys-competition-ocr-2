@@ -1,0 +1,98 @@
+# Compliance Check Context Bundle Plugin
+# Context files for running compliance and validation checks
+
+name: compliance-check
+title: Compliance & Validation Check
+version: "1.0"
+scope: project
+description: |
+  Context files for running compliance checks, artifact validation,
+  and framework boundary validation.
+
+tags:
+  - compliance
+  - validation
+  - check
+  - audit
+  - verify
+
+triggers:
+  keywords:
+    - compliance
+    - validate
+    - validation
+    - check
+    - audit
+    - verify
+    - boundary
+    - standard
+
+tiers:
+  tier1:
+    name: Compliance Essentials
+    description: Core compliance standards and rules
+    max_files: 8
+    files:
+      - path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
+        priority: critical
+        description: Validation protocols and procedures
+      - path: AgentQMS/standards/tier1-sst/artifact-types.yaml
+        priority: critical
+        description: Artifact type definitions
+      - path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+        priority: critical
+        description: Naming conventions to validate
+      - path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+        priority: high
+        description: File placement rules
+      - path: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+        priority: high
+        description: Prohibited actions list
+
+  tier2:
+    name: Validation Tools
+    description: Compliance checking and validation tools
+    max_files: 10
+    files:
+      - path: AgentQMS/tools/compliance/validate_artifacts.py
+        priority: critical
+        description: Artifact validation tool
+      - path: AgentQMS/tools/compliance/validate_boundaries.py
+        priority: high
+        description: Framework boundary validation
+      - path: AgentQMS/tools/compliance/monitor_artifacts.py
+        priority: high
+        description: Artifact monitoring tool
+      - path: AgentQMS/tools/audit/artifact_audit.py
+        priority: high
+        description: Artifact audit and auto-fix tool
+      - path: AgentQMS/.agentqms/plugins/validators.yaml
+        priority: high
+        description: Plugin validators configuration
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: medium
+        description: Tool catalog with validation commands
+
+  tier3:
+    name: Framework Standards
+    description: Framework standards and configuration
+    max_files: 10
+    files:
+      - path: AgentQMS/standards/INDEX.yaml
+        priority: medium
+        description: Standards index
+      - path: AgentQMS/standards/tier1-sst/system-architecture.yaml
+        priority: medium
+        description: System architecture rules
+      - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+        priority: medium
+        description: Workflow requirements
+      - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
+        priority: medium
+        description: Git conventions to check
+      - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
+        priority: low
+        description: Coding standards
+      - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+        priority: low
+        description: Configuration standards

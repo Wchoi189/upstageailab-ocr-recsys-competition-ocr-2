@@ -1,0 +1,80 @@
+# OCR Information Extraction Context Bundle Plugin
+
+name: ocr-information-extraction
+title: OCR Information Extraction (KIE)
+version: "1.0"
+scope: project
+description: |
+  Context for key-value information extraction (KIE) tasks including entity
+  detection, relationship modeling, and value extraction from documents.
+
+tags:
+  - kie
+  - extraction
+  - key-value
+  - entity
+  - information
+
+triggers:
+  keywords:
+    - kie
+    - extraction
+    - key-value
+    - entity
+    - information
+    - entities
+
+tiers:
+  tier1:
+    name: KIE Code
+    description: Core key-value extraction feature implementation
+    max_files: 5
+    files:
+      - path: ocr/features/kie/*.py
+        priority: critical
+        description: Key-value extraction feature implementation
+      - path: configs/domain/kie.yaml
+        priority: critical
+        description: KIE-specific configuration
+        optional: true
+      - path: ocr/core/inference/pipeline.py
+        priority: high
+        description: Inference pipeline orchestration
+      - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+        priority: high
+        description: Inference framework design patterns
+
+  tier2:
+    name: Models & Analysis
+    description: Extraction models, analysis, and evaluation
+    max_files: 6
+    files:
+      - path: ocr/core/models/__init__.py
+        priority: high
+        description: Model loading and management
+      - path: ocr/core/analysis/*.py
+        priority: high
+        description: Analysis utilities for extraction
+      - path: ocr/core/evaluation/*.py
+        priority: medium
+        description: Evaluation metrics for KIE
+      - path: ocr/core/metrics/*.py
+        priority: medium
+        description: Entity-level metrics
+      - path: configs/base.yaml
+        priority: low
+        description: Base configuration
+
+  tier3:
+    name: Examples & Validation
+    description: Examples and validation tools
+    max_files: 3
+    files:
+      - path: tests/test_kie.py
+        priority: low
+        description: KIE tests
+        optional: true
+      - path: data/debug_samples/
+        priority: low
+        description: Sample documents for debugging
+        optional: true

@@ -1,0 +1,73 @@
+# Assessment Artifact Type Plugin
+# Migrated from hardcoded artifact_templates.py
+#
+# NOTE: This conflicts with existing audit.yaml plugin which also uses
+# category "evaluation". Phase 3 will resolve naming conflicts.
+#
+# Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
+
+name: assessment
+version: "1.0"
+description: |
+  Evaluation and analysis document with findings, recommendations,
+  and implementation plans for specific subjects or systems.
+scope: project
+
+metadata:
+  filename_pattern: "{date}_assessment_{name}.md"
+  directory: assessments/
+  frontmatter:
+    ads_version: "1.0"
+    type: assessment
+    category: evaluation
+    status: active
+    version: "1.0"
+    tags: [assessment, evaluation, analysis]
+
+validation:
+  required_fields:
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  required_sections:
+    - "## Purpose"
+    - "## Findings"
+    - "## Analysis"
+    - "## Recommendations"
+    - "## Implementation Plan"
+  filename_prefix: "assessment_"
+  allowed_statuses:
+    - draft
+    - active
+    - completed
+    - archived
+
+template: |
+  # Assessment - {title}
+
+  ## Purpose
+  Evaluate {subject} and provide recommendations.
+
+  ## Findings
+
+  ### Key Observations
+  1. Observation 1
+  2. Observation 2
+
+  ## Analysis
+  - **Area 1**: Status/Issues
+  - **Area 2**: Status/Issues
+
+  ## Recommendations
+  1. **Action Item** (Priority: High)
+  2. **Action Item** (Priority: Medium)
+
+  ## Implementation Plan
+  - [ ] Immediate Action
+  - [ ] Long-term Action
+
+template_variables:
+  subject: "[system/component/feature]"
