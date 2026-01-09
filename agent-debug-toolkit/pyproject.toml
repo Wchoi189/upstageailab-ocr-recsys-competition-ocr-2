@@ -23,11 +23,15 @@ dependencies = []
 [project.optional-dependencies]
 cli = ["typer>=0.9.0"]
 mcp = ["mcp>=0.9.0"]
+treesitter = [
+    "tree-sitter>=0.21.0,<0.22.0",  # Need 0.21.x for tree-sitter-languages compat
+    "tree-sitter-languages>=1.10.0",
+]
 dev = [
     "pytest>=8.0.0",
     "pytest-cov>=4.0.0",
 ]
-all = ["agent-debug-toolkit[cli,mcp,dev]"]
+all = ["agent-debug-toolkit[cli,mcp,treesitter,dev]"]
 
 [project.scripts]
 adt = "agent_debug_toolkit.cli:main"

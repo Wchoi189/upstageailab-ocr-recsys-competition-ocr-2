@@ -432,11 +432,11 @@ async def list_tools() -> list[Tool]:
         # --- Meta-Tools (Router Pattern) ---
         Tool(
             name="adt_meta_query",
-            description="Unified analysis tool. Routes based on 'kind': config_access, merge_order, hydra_usage, component_instantiations, config_flow, dependency_graph, imports, complexity, context_tree, symbol_search",
+            description="Unified analysis tool. Routes based on 'kind': config_access, merge_order, hydra_usage, component_instantiations, config_flow, dependency_graph, imports, complexity, context_tree, symbol_search, sg_search, sg_lint, ast_dump",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "kind": {"type": "string", "enum": ["config_access", "merge_order", "hydra_usage", "component_instantiations", "config_flow", "dependency_graph", "imports", "complexity", "context_tree", "symbol_search"]},
+                    "kind": {"type": "string", "enum": ["config_access", "merge_order", "hydra_usage", "component_instantiations", "config_flow", "dependency_graph", "imports", "complexity", "context_tree", "symbol_search", "sg_search", "sg_lint", "ast_dump", "ts_parse", "ts_query"]},
                     "target": {"type": "string", "description": "Target path or query"},
                     "options": {"type": "object", "additionalProperties": True},
                 },
@@ -509,6 +509,34 @@ async def list_tools() -> list[Tool]:
                     "path": {"type": "string", "description": "Path to file or directory"},
                     "style": {"type": "string", "enum": ["black", "ruff", "isort"], "default": "black"},
                     "check_only": {"type": "boolean", "default": False},
+                },
+                "required": ["path"],
+            },
+        ),
+        # --- AST-Grep Tools (Phase 3) ---
+        Tool(
+            name="sg_search",
+            description="Structural code search using ast-grep patterns. Find code by AST structure, not text.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "pattern": {"type": "string", "description": "AST pattern (e.g., 'def $NAME($$$)')"},
+                    "path": {"type": "string", "description": "Path to search (file or directory)"},
+                    "lang": {"type": "string", "description": "Language (auto-detected if not specified)"},
+                    "max_results": {"type": "integer", "description": "Maximum matches to return"},
+                },
+                "required": ["pattern", "path"],
+            },
+        ),
+        Tool(
+            name="sg_lint",
+            description="Run ast-grep lint rules against code. Use YAML rules for complex pattern matching.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {"type": "string", "description": "Path to lint"},
+                    "rule": {"type": "string", "description": "YAML rule as string"},
+                    "rule_file": {"type": "string", "description": "Path to YAML rule file"},
                 },
                 "required": ["path"],
             },
@@ -787,6 +815,44 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             from agent_debug_toolkit.edits import format_code
             path = resolve_adt_path(arguments.get("path", ""))
             report = format_code(path, style=arguments.get("style", "black"), check_only=arguments.get("check_only", False))
+            return [TextContent(type="text", text=report.to_json())]
+
+        # --- AST-Grep Tools (Phase 3) ---
+        if name == "sg_search":
+            from agent_debug_toolkit.astgrep import sg_search
+            pattern = arguments.get("pattern", "")
+            path = resolve_adt_path(arguments.get("path", "."))
+            lang = arguments.get("lang")
+            max_results = arguments.get("max_results")
+            report = sg_search(pattern=pattern, path=path, lang=lang, max_results=max_results)
+            return [TextContent(type="text", text=report.to_json())]
+
+        if name == "sg_lint":
+            from agent_debug_toolkit.astgrep import sg_lint
+            path = resolve_adt_path(arguments.get("path", "."))
+            rule = arguments.get("rule")
+            rule_file = arguments.get("rule_file")
+            if rule_file:
+                rule_file = resolve_adt_path(rule_file)
+            report = sg_lint(path=path, rule=rule, rule_file=rule_file)
+            return [TextContent(type="text", text=report.to_json())]
+
+        # --- Tree-Sitter Tools (Phase 4) ---
+        if name == "ts_parse":
+            from agent_debug_toolkit.treesitter import parse_code
+            code = arguments.get("code", "")
+            lang = arguments.get("lang", "python")
+            max_depth = arguments.get("max_depth", 5)
+            report = parse_code(code=code, lang=lang, max_depth=max_depth)
+            return [TextContent(type="text", text=report.to_json())]
+
+        if name == "ts_query":
+            from agent_debug_toolkit.treesitter import run_query
+            code = arguments.get("code", "")
+            query = arguments.get("query", "")
+            lang = arguments.get("lang", "python")
+            max_results = arguments.get("max_results", 50)
+            report = run_query(code=code, query=query, lang=lang, max_results=max_results)
             return [TextContent(type="text", text=report.to_json())]
 
         raise ValueError(f"Unknown tool: {name}")

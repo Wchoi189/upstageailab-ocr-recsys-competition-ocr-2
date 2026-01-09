@@ -1,16 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251129_173500_perspective_correction_implementation
-status: complete
-created: '2025-12-17T17:59:48Z'
-updated: '2025-12-17T17:59:48Z'
-tags:
-- perspective-correction
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251129_173500_perspective_correction_implementation"
+status: "complete"
+created: "2025-12-17T17:59:48Z"
+updated: "2025-12-17T17:59:48Z"
+tags: ['perspective-correction']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
 ---
+
 # Issues Fixed - Test Execution
 
 ## Issues Identified
@@ -36,24 +36,24 @@ evidence_count: 0
 - The user copied the command without replacing the placeholder
 
 **Fix Applied**:
-- ✅ Recorded artifact with correct path: `experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/results.json`
+- ✅ Recorded artifact with correct path: `experiment_manager/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/results.json`
 - ✅ Added metadata including test type, success rate, and image counts
 
 ## Commands to Verify Fixes
 
 ### Check Current Experiment
 ```bash
-./experiment-tracker/scripts/resume-experiment.py --current
+./experiment_manager/scripts/resume-experiment.py --current
 ```
 
 ### Verify Tasks (if tasks.yml exists)
 ```bash
-cat experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/.metadata/tasks.yml
+cat experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/tasks.yml
 ```
 
 ### Verify Artifact Recording
 ```bash
-ls -la experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/artifacts/
+ls -la experiment_manager/experiments/20251129_173500_perspective_correction_implementation/artifacts/
 ```
 
 ## Lessons Learned
@@ -69,19 +69,19 @@ To prevent similar issues in the future:
 
 1. **Switch to correct experiment first**:
    ```bash
-   ./experiment-tracker/scripts/resume-experiment.py --id 20251129_173500_perspective_correction_implementation
+   ./experiment_manager/scripts/resume-experiment.py --id 20251129_173500_perspective_correction_implementation
    ```
 
 2. **Use actual paths** in commands, not placeholders:
    ```bash
    # ❌ Wrong
-   ./experiment-tracker/scripts/record-artifact.py --path artifacts/{timestamp}_worst_performers_test/results.json
+   ./experiment_manager/scripts/record-artifact.py --path artifacts/{timestamp}_worst_performers_test/results.json
 
    # ✅ Correct
-   ./experiment-tracker/scripts/record-artifact.py --path experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/results.json
+   ./experiment_manager/scripts/record-artifact.py --path experiment_manager/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/results.json
    ```
 
 3. **Check current experiment** before running commands:
    ```bash
-   ./experiment-tracker/scripts/resume-experiment.py --current
+   ./experiment_manager/scripts/resume-experiment.py --current
    ```

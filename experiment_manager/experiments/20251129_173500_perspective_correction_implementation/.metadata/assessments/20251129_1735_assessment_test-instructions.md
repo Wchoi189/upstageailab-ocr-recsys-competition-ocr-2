@@ -1,17 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251129_173500_perspective_correction_implementation
-status: complete
-created: '2025-12-17T17:59:48Z'
-updated: '2025-12-17T17:59:48Z'
-tags:
-- perspective-correction
-- testing
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251129_173500_perspective_correction_implementation"
+status: "complete"
+created: "2025-12-17T17:59:48Z"
+updated: "2025-12-17T17:59:48Z"
+tags: ['perspective-correction', 'testing']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
 ---
+
 # Test Instructions for Worst Performers
 
 ## Overview
@@ -28,19 +27,19 @@ scripts/test_worst_performers.py
 ### Option 1: Direct Python Execution
 ```bash
 cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2
-python3 experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/scripts/test_worst_performers.py
+python3 experiment_manager/experiments/20251129_173500_perspective_correction_implementation/scripts/test_worst_performers.py
 ```
 
 ### Option 2: Using uv (if available)
 ```bash
 cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2
-uv run python experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/scripts/test_worst_performers.py
+uv run python experiment_manager/experiments/20251129_173500_perspective_correction_implementation/scripts/test_worst_performers.py
 ```
 
 ## What the Script Does
 
 1. **Reads the worst performers list** from:
-   - `experiment-tracker/experiments/20251128_220100_perspective_correction/worst_performers_top25.txt`
+   - `experiment_manager/experiments/20251128_220100_perspective_correction/worst_performers_top25.txt`
 
 2. **Searches for mask files** in multiple possible locations:
    - `output/improved_edge_approach/worst_force_improved/`
@@ -104,13 +103,13 @@ artifacts/
 3. Record results using experiment tracker tools:
    ```bash
    # Add a task for reviewing results
-   ./experiment-tracker/scripts/add-task.py --description "Review worst performers test results" --status completed
+   ./experiment_manager/scripts/add-task.py --description "Review worst performers test results" --status completed
 
    # Record the results artifact
-   ./experiment-tracker/scripts/record-artifact.py --path artifacts/{timestamp}_worst_performers_test/results.json --type test_results
+   ./experiment_manager/scripts/record-artifact.py --path artifacts/{timestamp}_worst_performers_test/results.json --type test_results
    ```
 
 4. Generate an assessment if needed:
    ```bash
-   ./experiment-tracker/scripts/generate-assessment.py --template run-log-negative-result
+   ./experiment_manager/scripts/generate-assessment.py --template run-log-negative-result
    ```

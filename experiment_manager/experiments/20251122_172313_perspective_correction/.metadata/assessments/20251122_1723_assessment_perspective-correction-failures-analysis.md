@@ -1,19 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:47Z'
-updated: '2025-12-27T16:16:42.222669'
-tags:
-- perspective-correction
-- failure-analysis
-- analysis
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:47Z"
+updated: "2025-12-17T17:59:47Z"
+tags: ['perspective-correction', 'failure-analysis', 'analysis']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
-title: 20251122 1723 Assessment Perspective-Correction-Failures-Analysis
 ---
+
 # Perspective Correction Failures - Analysis & Solutions
 
 **Date**: 2025-11-22
@@ -108,7 +105,7 @@ The pipeline doesn't validate:
 
 **No.** The code references `https://github.com/sraddhanjali/Automated-Perspective-Correction-for-Scanned-Documents-and-Cards` but:
 
-1. **Actual Implementation**: Uses `ocr.datasets.preprocessing.detector.DocumentDetector` and `ocr.datasets.preprocessing.perspective.PerspectiveCorrector`
+1. **Actual Implementation**: Uses `ocr.data.datasets.preprocessing.detector.DocumentDetector` and `ocr.data.datasets.preprocessing.perspective.PerspectiveCorrector`
 2. **Fallback Implementation**: `SimplePerspectiveCorrector` in `test_pipeline_rembg_perspective.py` is based on the reference but not actively used
 3. **Issue**: The existing implementation is also unpredictable (as mentioned by user)
 

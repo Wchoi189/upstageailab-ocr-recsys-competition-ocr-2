@@ -1,19 +1,15 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:47Z'
-updated: '2025-12-27T16:16:43.020670'
-tags:
-- perspective-correction
+ads_version: "1.0"
+type: "guide"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:47Z"
+updated: "2025-12-17T17:59:47Z"
+tags: ['perspective-correction']
 commands: []
 prerequisites: []
-title: 20251122 1723 Guide Quick-Start-Optimized
-phase: phase_1
-priority: medium
-evidence_count: 0
 ---
+
 # Quick Start: Optimized rembg Testing
 
 ## Recommended Configuration

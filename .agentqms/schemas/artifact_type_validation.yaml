@@ -1,0 +1,192 @@
+---
+# Artifact Type Validation Rules
+# Centralized validation schema for artifact plugins
+#
+# This file defines validation rules, naming conventions, and prohibited types
+# for artifact type plugins. It serves as single source of truth for validation
+# across the AgentQMS framework.
+#
+# Usage: PluginValidator loads this to enforce rules at plugin load time
+
+schema_version: "1.0"
+last_updated: "2026-01-10"
+purpose: |
+  Centralized validation rules for artifact type plugins.
+  Prevents naming conflicts and enforces project standards.
+
+# Canonical artifact types (single source of truth)
+# These are the ONLY allowed artifact type names
+canonical_types:
+  assessment:
+    location: "docs/artifacts/assessments/"
+    purpose: "Current investigations, analysis, reviews"
+    plugin_required: true
+    frontmatter_type: "assessment"
+    filename_prefix: "assessment_"
+
+  audit:
+    location: "docs/artifacts/audits/"
+    purpose: "Compliance checks, project closure audits"
+    plugin_required: true
+    frontmatter_type: "audit"
+    filename_prefix: "audit_"
+
+  bug_report:
+    location: "docs/artifacts/bug_reports/"
+    purpose: "Issue tracking, defect documentation"
+    plugin_required: true
+    frontmatter_type: "bug_report"
+    filename_prefix: "BUG_"
+
+  design_document:
+    location: "docs/artifacts/design_documents/"
+    purpose: "Specs, features, architectural designs"
+    plugin_required: true
+    frontmatter_type: "design"  # Note: frontmatter uses "design"
+    filename_prefix: "design_"
+    aliases: ["design"]  # Legacy name
+
+  implementation_plan:
+    location: "docs/artifacts/implementation_plans/"
+    purpose: "Proposed changes, phased execution plans"
+    plugin_required: true
+    frontmatter_type: "implementation_plan"
+    filename_prefix: "implementation_plan_"
+
+  completed_plan:
+    location: "docs/artifacts/completed_plans/"
+    purpose: "Completion reports, session summaries"
+    plugin_required: false  # Can be created from implementation_plan
+    frontmatter_type: "completed_plan"
+    filename_prefix: "completed_plan_"
+
+  vlm_report:
+    location: "docs/artifacts/vlm_reports/"
+    purpose: "VLM image analysis outputs"
+    plugin_required: true
+    frontmatter_type: "vlm_report"
+    filename_prefix: "vlm_report_"
+
+  walkthrough:
+    location: "docs/artifacts/walkthroughs/"
+    purpose: "Step-by-step guides, verification proofs, demo documentation"
+    plugin_required: true
+    frontmatter_type: "walkthrough"
+    filename_prefix: "walkthrough_"
+
+# Prohibited types - use these instead
+prohibited_types:
+  - name: "completion_report"
+    use_instead: "completed_plan"
+    reason: "Standardized naming: use completed_plan"
+
+  - name: "report"
+    use_instead: "completed_plan"
+    reason: "Too generic: use completed_plan for completion reports"
+
+  - name: "implementation_guide"
+    use_instead: "completed_plan"
+    reason: "Use completed_plan for implementation completion guides"
+
+  - name: "spec"
+    use_instead: "design_document"
+    reason: "Standardized naming: use design_document"
+
+  - name: "feature"
+    use_instead: "design_document"
+    reason: "Use design_document for feature specifications"
+
+  - name: "template"
+    use_instead: "docs/_templates/"
+    reason: "Templates belong in docs/_templates/ not artifacts/"
+
+  - name: "research"
+    use_instead: "assessment"
+    reason: "Research is a form of assessment; use assessment type"
+
+  - name: "design"
+    use_instead: "design_document"
+    reason: "Naming conflict resolved: use design_document as canonical name"
+
+# Naming conventions
+naming_convention:
+  pattern: "YYYY-MM-DD_HHMM_{type}_{description}.md"
+  date_format: "%Y-%m-%d"
+  time_format: "%H%M"
+  description_rules:
+    - "Use kebab-case (lowercase with hyphens)"
+    - "Be descriptive but concise (3-5 words)"
+    - "No special characters except hyphens"
+    - "Avoid redundant type names in description"
+
+# Validation rules enforced by PluginValidator
+validation_rules:
+  plugin_name:
+    - "Must match a canonical_types key"
+    - "Cannot use prohibited type names"
+    - "Must be lowercase with underscores only"
+
+  metadata:
+    required_fields:
+      - filename_pattern
+      - directory
+      - frontmatter
+    frontmatter_required:
+      - ads_version
+      - type
+      - category
+      - status
+      - version
+      - tags
+    allowed_statuses:
+      - draft
+      - active
+      - completed
+      - archived
+      - deprecated
+
+  template:
+    - "Must be a non-empty string"
+    - "Should include template variables in {braces}"
+    - "Must have clear section structure with ## headers"
+
+  validation_section:
+    required_fields_check:
+      - title
+      - date
+      - type
+      - category
+      - status
+      - version
+
+# Directory mapping (for validation)
+directory_map:
+  assessments: "docs/artifacts/assessments/"
+  audits: "docs/artifacts/audits/"
+  bug_reports: "docs/artifacts/bug_reports/"
+  design_documents: "docs/artifacts/design_documents/"
+  implementation_plans: "docs/artifacts/implementation_plans/"
+  completed_plans: "docs/artifacts/completed_plans/"
+  vlm_reports: "docs/artifacts/vlm_reports/"
+  walkthroughs: "docs/artifacts/walkthroughs/"
+
+# Plugin resolution order
+plugin_resolution:
+  order: ["plugins", "hardcoded"]
+  conflict_strategy: "plugin_overrides"
+  description: |
+    When both plugin and hardcoded template exist for same type:
+    1. Plugin definition takes precedence
+    2. Hardcoded acts as fallback only
+    3. Warning logged about override
+
+# Validation command
+validation_command: "cd AgentQMS/bin && make validate"
+
+# Migration notes
+migration_notes:
+  - "design -> design_document: Canonical name is design_document"
+  - "research -> assessment: Research artifacts should use assessment type"
+  - "assessment plugin created from hardcoded (no conflicts)"
+  - "vlm_report, bug_report, walkthrough migrated from hardcoded"
+  - "implementation_plan migrated from hardcoded"

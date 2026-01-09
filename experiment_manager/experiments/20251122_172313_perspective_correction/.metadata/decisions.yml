@@ -2,9 +2,9 @@ decisions:
 - alternatives_considered:
   - Keep files in scripts/ directory
   - Use separate documentation folder
-  decision: Use experiment-tracker to organize all perspective correction experiments
+  decision: Use experiment_manager to organize all perspective correction experiments
   id: dec_001
-  impact: All experiment-related scripts and assessments now centralized in experiment-tracker
+  impact: All experiment-related scripts and assessments now centralized in experiment_manager
   rationale: Better organization and tracking of experimental work compared to loose
     files in scripts/
   timestamp: 2025-11-22 17:23 (KST)
@@ -53,9 +53,9 @@ decisions:
 - alternatives_considered:
   - Keep scripts in scripts/ with symlinks
   - Create separate experiment directory structure
-  decision: Move all experiment-related test scripts and documentation to experiment-tracker
+  decision: Move all experiment-related test scripts and documentation to experiment_manager
   id: dec_006
-  impact: All test scripts, documentation, and outputs now organized in experiment-tracker
+  impact: All test scripts, documentation, and outputs now organized in experiment_manager
   rationale: Keep related outputs inside designated experiment folders for better
     organization
   timestamp: 2025-11-23 00:51 (KST)

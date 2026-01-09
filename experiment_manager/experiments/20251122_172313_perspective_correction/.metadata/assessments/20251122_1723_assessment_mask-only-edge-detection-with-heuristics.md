@@ -1,23 +1,19 @@
 ---
-ads_version: '1.0'
-type: assessment
-title: Mask-Only Edge Detection with Line Quality Heuristics
-date: '2025-11-25'
-experiment_id: 20251122_172313_perspective_correction
-phase: phase_2
-priority: high
-status: complete
+ads_version: "1.0"
+type: "assessment"
+title: "Mask-Only Edge Detection with Line Quality Heuristics"
+date: "2025-11-25"
+experiment_id: "20251122_172313_perspective_correction"
+phase: "phase_2"
+priority: "high"
+status: "complete"
 evidence_count: 8
-created: '2025-11-25T00:00:00Z'
-updated: '2025-12-27T16:16:42.205900'
-tags:
-- mask-only
-- edge-detection
-- heuristics
-- perspective-correction
-- validation
-author: AI Agent
+created: "2025-11-25T00:00:00Z"
+updated: "2025-11-25T00:00:00Z"
+tags: ["mask-only", "edge-detection", "heuristics", "perspective-correction", "validation"]
+author: "AI Agent"
 ---
+
 # Mask-Only Edge Detection with Line Quality Heuristics
 
 ## Overview
@@ -142,8 +138,8 @@ When validation fails, the system falls back to mask bounding box with specific 
 
 ## Related Files
 
-- `experiment-tracker/experiments/20251122_172313_perspective_correction/scripts/mask_only_edge_detector.py`
-- `experiment-tracker/experiments/20251122_172313_perspective_correction/scripts/test_improved_edge_approach.py`
+- `experiment_manager/experiments/20251122_172313_perspective_correction/scripts/mask_only_edge_detector.py`
+- `experiment_manager/experiments/20251122_172313_perspective_correction/scripts/test_improved_edge_approach.py`
 - `outputs/improved_edge_approach/mask_only_heuristics_test/test_results.json`
 - `outputs/improved_edge_approach/mask_only_heuristics_test/*_improved_mask_fit.jpg` (debug visualizations)
 

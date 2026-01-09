@@ -233,8 +233,8 @@ adt trace-merges ocr/models/architecture.py --output markdown
 **Solution:** Schema-driven experiment manager with standardized artifact templates.
 
 **Key Artifacts:**
-- [Baseline Metrics Report](archive/artifacts/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251218_1415_report_baseline-metrics-summary.md)
-- [Perspective Correction Data Loss Incident](archive/artifacts/experiments/20251217_024343_image_enhancements_implementation/artifacts/20251220_0130_incident_report_perspective_correction_data_loss.md)
+- [Baseline Metrics Report](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1415_report_baseline-metrics-summary.md)
+- [Perspective Correction Data Loss Incident](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251220_0130_incident_report_perspective_correction_data_loss.md)
 
 **Impact:** Enables AI agents to autonomously locate and analyze historical experiments without human intervention.
 

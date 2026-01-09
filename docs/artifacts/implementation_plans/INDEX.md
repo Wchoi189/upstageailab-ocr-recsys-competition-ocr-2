@@ -2,7 +2,7 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-09 23:42:40
+**Last Updated**: 2026-01-10 04:17:13
 **Total Artifacts**: 30
 
 ## Active (22)
@@ -22,35 +22,35 @@ Active implementation plans and development roadmaps.
 - [AST Analyzer Phase 1: Low Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase1-low-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Extend `agent-debug-toolkit` with foundational analysis capabilities for AI agent codebase navigatio
 - [AST Analyzer Phase 2: Medium Risk Features](2026-01-07_0448_implementation_plan_ast-analyzer-phase2-medium-risk.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - Implement advanced analyzers requiring deeper AST traversal, scope tracking, and heuristic matching.
 - [AST Analyzer Phase 2.5: Hydra Config Resolver](2026-01-07_1918_implementation_plan_ast-analyzer-phase2-5-config-resolver.md) (📅 2026-01-07 19:18 (KST), 📄 implementation_plan) - Implement the **Hydra Config Resolver** tool ("Phase 2.5") to statically map Hydra configuration `_t
-- [Consolidate Session Protocol Documentation](2026-01-08_0302_implementation_plan_consolidate-session-docs.md) (📅 2026-01-08 03:02 (KST), 📄 implementation_plan) - Plan to consolidate session protocol documentation into existing AI-optimized files.
 - [Cleanup & Organization Implementation Plan](2026-01-08_0340_implementation_plan_cleanup-organization-plan.md) (📅 2026-01-08 03:40 (KST), 📄 implementation_plan) - Implement the "Future Recommendations" (1-3) from the Refactor Audit Survey to reduce bloat, improve
 - [Hydra Configuration Architecture Restructuring Implementation Plan](2026-01-08_0359_implementation_plan_hydra-config-restructuring.md) (📅 2026-01-08 03:59 (KST), 📄 implementation_plan) - This plan restructures the Hydra configuration system from **107 YAML files across 37 directories** 
 - [Cleanup & Consolidation Implementation Plan](2026-01-08_1800_implementation_plan_refactor-rescue.md) (📅 2025-11-29 18:00 (KST), 📄 implementation_plan) - **Goal**: Organize `ocr/` into a clean, strictly hierarchical structure by removing duplicates and c
 - [Console Output Polish Plan](2026-01-08_2139_implementation_plan_fix-console-output.md) (📅 2024-10-01 10:00 (KST), 📄 implementation_plan) - Fix the "huge gap" in the training console output reported by the user. The current configuration us
 - [AgentQMS Path Portability Implementation Completed](2026-01-09_1508_implementation_plan_agentqms-path-portability-completed.md) (📅 2026-01-09 15:08 (KST), 📄 implementation_plan) - **Status**: ✅ COMPLETED
 - [ADT Router Pattern and Edit Tools Implementation](2026-01-09_2313_implementation_plan_adt-router-and-edits.md) (📅 2026-01-09 23:13 (KST), 📄 implementation_plan) - Implement Option B (Router/Meta-Tool Pattern) and `adt_edits` module for the agent-debug-toolkit to:
+- [Phase 4: Hardcoded Template Removal Migration Guide](2026-01-10_0417_implementation_plan_phase4-hardcoded-removal-migration.md) (📅 2026-01-10 04:17 (KST), 📄 implementation_plan) - Provide a comprehensive migration guide for developers transitioning from the hardcoded artifact tem
 
-## Completed (4)
+## Completed (5)
 
 - [Model Head Signature Fix - LSP Violation Resolution](2025-12-27_0610_implementation_plan_model-head-signature-fix.md) (📅 2025-12-27 06:10 (KST), 📄 implementation_plan) - **Type:** Liskov Substitution Principle (LSP) Violation - HIGH RISK
 - [Post-Refactor Stabilization Plan](2026-01-08_2010_implementation_plan_stabilization-plan.md) (📅 2024-10-01 10:00 (KST), 📄 implementation_plan) - The goal is to return the system to normal operations following the "nuclear" refactor of source cod
 - [Context System Consolidation - Implementation Roadmap](2026-01-09_2020_implementation_plan_context-system-consolidation-completed.md) (📅 2026-01-09 20:20 (KST), 📄 implementation_plan) - **Objective**: Consolidate three fragmented context systems into unified plugin-based architecture (
 - [Domain-Specialized Context Bundles - Implementation Complete](2026-01-09_2035_implementation_plan_domain-specialized-context-bundles-completed.md) (📅 2026-01-09 20:35 (KST), 📄 implementation_plan) - ✅ **5 new domain-specialized context bundles created and validated**
+- [Phase 5-7: Observability, Maintenance, and AST Integration - Implementation Complete](2026-01-09_2205_implementation_plan_phases-5-7-complete.md) (📅 2026-01-09 22:05 (KST), 📄 implementation_plan) - **Status**: ✅ COMPLETE
 
-## Other (4)
+## Other (3)
 
 - [Phase 2-3: Pipeline Integration + VLM + Optimization](2025-12-25_0410_implementation_plan_phase2-pipeline-integration.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Integrate the recognition, layout, and extraction modules into a unified end-to-end pipeline with hy
 - [Implementation Plan - GitHub Sync Entrypoints](2026-01-05_1900_implementation_plan_github-sync-entrypoints.md) (📅 2026-01-05 18:54 (KST), 📄 implementation_plan) - This plan outlines the steps to expose the new GitHub Sync features (`--init`, `--roadmap`) via VS C
 - [AST Analyzer Phase 3: Conceptual Plan for Automated Refactoring](2026-01-07_0448_implementation_plan_ast-analyzer-phase3-conceptual.md) (📅 2026-01-07 04:48 (KST), 📄 implementation_plan) - > "I have a very big code base... bloat, inconsistencies, obsolete, deprecated, broken, outdated, su
-- [2026-01-09_2205_implementation_plan_phases-5-7-complete](2026-01-09_2205_implementation_plan_phases-5-7-complete.md) (📅 , 📄 ) - **File**: `AgentQMS/tools/utilities/context_inspector.py`
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
 | Active | 22 |
-| Completed | 4 |
-| Other | 4 |
+| Completed | 5 |
+| Other | 3 |
 
 ---
 

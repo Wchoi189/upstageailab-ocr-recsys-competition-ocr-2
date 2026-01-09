@@ -1,0 +1,10 @@
+{
+  "id": "20251129_173500_perspective_correction_implementation",
+  "status": "active",
+  "created_at": "2025-11-29T17:35:00",
+  "type": "perspective_correction_implementation",
+  "description": "Implementation of perspective correction using Max-Edge rule and Lanczos4 interpolation.",
+  "tasks": [],
+  "decisions": [],
+  "insights": []
+}

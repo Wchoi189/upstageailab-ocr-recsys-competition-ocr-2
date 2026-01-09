@@ -44,7 +44,7 @@ phases:
 
   phase3_astgrep_integration:
     name: "Integrate ast-grep MCP (Optional)"
-    status: not_started
+    status: complete
     priority: medium
     description: |
       Add ast-grep structural search capabilities:
@@ -60,7 +60,7 @@ phases:
 
   phase4_treesitter_foundation:
     name: "Tree-Sitter Foundation (Optional)"
-    status: not_started
+    status: complete
     priority: low
     description: |
       Add tree-sitter for multi-language support if needed.

@@ -26,6 +26,13 @@ QUERY_KINDS = {
     "complexity": "analyze_complexity",
     "context_tree": "context_tree",
     "symbol_search": "intelligent_search",
+    # ast-grep integration (Phase 3)
+    "sg_search": "sg_search",
+    "sg_lint": "sg_lint",
+    "ast_dump": "dump_syntax_tree",
+    # tree-sitter integration (Phase 4)
+    "ts_parse": "parse_code",
+    "ts_query": "run_query",
 }
 
 # Define available edit kinds and their mappings
@@ -82,6 +89,35 @@ def route_query(kind: str, target: str, options: dict[str, Any]) -> dict[str, An
             arguments["fuzzy"] = options["fuzzy"]
         if "threshold" in options:
             arguments["threshold"] = options["threshold"]
+    # ast-grep kinds
+    elif kind == "sg_search":
+        arguments["pattern"] = options.get("pattern", target)
+        arguments["path"] = target
+        if "lang" in options:
+            arguments["lang"] = options["lang"]
+        if "max_results" in options:
+            arguments["max_results"] = options["max_results"]
+    elif kind == "sg_lint":
+        arguments["path"] = target
+        if "rule" in options:
+            arguments["rule"] = options["rule"]
+        if "rule_file" in options:
+            arguments["rule_file"] = options["rule_file"]
+    elif kind == "ast_dump":
+        arguments["code"] = options.get("code", target)
+        arguments["lang"] = options.get("lang", "python")
+    # tree-sitter kinds
+    elif kind == "ts_parse":
+        arguments["code"] = options.get("code", target)
+        arguments["lang"] = options.get("lang", "python")
+        if "max_depth" in options:
+            arguments["max_depth"] = options["max_depth"]
+    elif kind == "ts_query":
+        arguments["code"] = options.get("code", target)
+        arguments["query"] = options.get("query", "")
+        arguments["lang"] = options.get("lang", "python")
+        if "max_results" in options:
+            arguments["max_results"] = options["max_results"]
 
     # Pass through common options
     if "output" in options:
@@ -160,7 +196,7 @@ META_QUERY_SCHEMA = {
             "kind": {
                 "type": "string",
                 "enum": list(QUERY_KINDS.keys()),
-                "description": "Type of analysis: config_access (cfg.X patterns), merge_order (OmegaConf.merge precedence), hydra_usage (@hydra.main, instantiate), component_instantiations (factory patterns), config_flow (high-level summary), dependency_graph (imports/calls), imports (categorized imports), complexity (cyclomatic/nesting), context_tree (directory structure), symbol_search (fuzzy symbol lookup)",
+                "description": "Type of analysis: config_access (cfg.X patterns), merge_order (OmegaConf.merge precedence), hydra_usage (@hydra.main, instantiate), component_instantiations (factory patterns), config_flow (high-level summary), dependency_graph (imports/calls), imports (categorized imports), complexity (cyclomatic/nesting), context_tree (directory structure), symbol_search (fuzzy symbol lookup), sg_search (ast-grep pattern search), sg_lint (ast-grep rule linting), ast_dump (syntax tree visualization)",
             },
             "target": {
                 "type": "string",
@@ -168,7 +204,7 @@ META_QUERY_SCHEMA = {
             },
             "options": {
                 "type": "object",
-                "description": "Kind-specific options: output (json|markdown), component (filter), depth (context_tree), threshold (complexity/search), root (symbol_search), fuzzy (symbol_search)",
+                "description": "Kind-specific options: output (json|markdown), component (filter), depth (context_tree), threshold (complexity/search), root (symbol_search), fuzzy (symbol_search), pattern/lang/max_results (sg_search), rule/rule_file (sg_lint), code/lang (ast_dump)",
                 "additionalProperties": True,
             },
         },

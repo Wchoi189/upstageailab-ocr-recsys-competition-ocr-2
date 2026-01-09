@@ -1,5 +1,5 @@
 # Agent Debug Toolkit (ADT) Usage Guide for AI Agents
-# Version: 1.1 (Phase 3.2)
+# Version: 1.2 (Phase 3 - AST-Grep)
 
 tools:
   resolve_hydra_configs:
@@ -168,3 +168,41 @@ best_practices:
     - "Use line ranges, not whole file content"
     - "Prefer fuzzy strategy for drift tolerance"
 
+# --- AST-Grep Tools (Phase 3) ---
+ast_grep_tools:
+  sg_search:
+    desc: Structural code search using AST patterns. More precise than text search.
+    args:
+      pattern: "AST pattern (e.g., 'def $NAME($$$)' matches any function)"
+      path: File or directory to search
+      lang: "Language (auto-detected if not specified)"
+      max_results: "Limit number of matches"
+    example: |
+      # Find all function definitions
+      sg_search pattern="def $NAME($$$)" path="src/"
+
+      # Find print statements
+      sg_search pattern="print($MSG)" path="src/" lang="python"
+
+      # Find classes with specific base
+      sg_search pattern="class $NAME(BaseModel):" path="src/"
+    pattern_syntax:
+      $NAME: "Match single AST node and capture as meta-variable"
+      $$$: "Match zero or more nodes (like regex ...)"
+      $$ARGS: "Match multiple nodes and capture"
+
+  sg_lint:
+    desc: Run custom lint rules defined in YAML format.
+    args:
+      path: File or directory to lint
+      rule: "YAML rule string"
+      rule_file: "Path to YAML rule file"
+    example: |
+      # Find print statements as lint violations
+      sg_lint path="src/" rule="
+        id: no-print
+        language: Python
+        rule:
+          pattern: print($$$)
+        message: 'Avoid print statements'
+      "

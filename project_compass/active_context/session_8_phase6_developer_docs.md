@@ -147,8 +147,8 @@ Plus debugging tips, verbose logging, JSON schema validation CLI.
 ❌ example_artifact plugin failed to load
 
 ⚠️  Found 6 validation errors:
-  - Unknown artifact type 'example_artifact'. Valid types: assessment, audit, 
-    bug_report, design_document, implementation_plan, completed_plan, 
+  - Unknown artifact type 'example_artifact'. Valid types: assessment, audit,
+    bug_report, design_document, implementation_plan, completed_plan,
     vlm_report, walkthrough
 ```
 

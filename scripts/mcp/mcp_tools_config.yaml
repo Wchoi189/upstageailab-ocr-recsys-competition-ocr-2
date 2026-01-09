@@ -75,3 +75,17 @@ tool_groups:
     tools:
       - adt_meta_query
       - adt_meta_edit
+
+  # AST-Grep (Phase 3)
+  adt_astgrep:
+    description: "AST-based structural code search and linting"
+    tools:
+      - sg_search
+      - sg_lint
+
+  # Tree-Sitter (Phase 4)
+  adt_treesitter:
+    description: "Multi-language AST parsing and queries"
+    tools:
+      - ts_parse
+      - ts_query

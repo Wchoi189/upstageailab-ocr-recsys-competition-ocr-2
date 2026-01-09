@@ -1,27 +1,21 @@
 ---
-ads_version: '1.0'
-type: report
-title: Edge Line Selection and Area Metric Defects
-date: 2025-11-24 19:25 (KST)
-experiment_id: 20251122_172313_perspective_correction
-phase: phase_1
-priority: high
-severity: high
-status: complete
+ads_version: "1.0"
+type: "assessment"
+title: "Edge Line Selection and Area Metric Defects"
+date: "2025-11-24 19:25 (KST)"
+experiment_id: "20251122_172313_perspective_correction"
+phase: "phase_1"
+priority: "high"
+severity: "high"
+status: "complete"
 evidence_count: 2
-created: '2025-11-24T19:25:00Z'
-updated: '2025-12-27T16:16:42.618830'
-tags:
-- perspective
-- metrics
-- edge-detection
-- bug
-- analysis
-author: AI Agent
-metrics: []
-baseline: none
-comparison: neutral
+created: "2025-11-24T19:25:00Z"
+updated: "2025-11-24T19:25:00Z"
+tags: ["perspective", "metrics", "edge-detection", "bug", "analysis"]
+author: "AI Agent"
 ---
+
+
 ## Defect Analysis: Edge Line Selection and Area Metric Defects
 
 ### 1. Visual Artifacts (What does the output look like?)

@@ -1,10 +1,10 @@
 tasks:
 - id: task_001
-  description: Organize perspective correction scripts and move to experiment-tracker
+  description: Organize perspective correction scripts and move to experiment_manager
   status: completed
   created_at: '2025-11-22 17:23 (KST)'
   completed_at: '2025-11-23 00:51 (KST)'
-  notes: Moved all test_ prefixed scripts, verify_gpu_usage.py, optimized_rembg.py, and documentation files to experiment-tracker
+  notes: Moved all test_ prefixed scripts, verify_gpu_usage.py, optimized_rembg.py, and documentation files to experiment_manager
 
 - id: task_002
   description: Analyze 200-image comprehensive test results
@@ -35,7 +35,7 @@ tasks:
   notes: Pre-validation caught 28 cases (52%), post-validation failed 25 cases (46%), 1 case now succeeds (1.9% improvement).
 
 - id: task_006
-  description: Update experiment-tracker metadata (tasks, decisions, state)
+  description: Update experiment_manager metadata (tasks, decisions, state)
   status: completed
   created_at: '2025-11-23 00:52 (KST)'
   completed_at: '2025-11-23 13:00 (KST)'

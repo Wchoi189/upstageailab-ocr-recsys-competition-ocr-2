@@ -36,7 +36,10 @@ tools:
   - name: create_artifact
     description: Create artifact with auto-validation, indexing, tracking
     required_params:
-      - artifact_type  # enum: assessment, audit, bug_report, design_document, implementation_plan, walkthrough, completed_plan, vlm_report
+      - artifact_type  # DYNAMIC enum loaded from validated plugins at runtime
+                       # Current canonical types: assessment, bug_report, design_document,
+                       # implementation_plan, vlm_report, walkthrough
+                       # Use list_tools() to get current available types
       - name           # kebab-case identifier
       - title          # human-readable title
     optional_params:
@@ -46,6 +49,11 @@ tools:
       success: boolean
       file_path: string
       message: string
+    notes:
+      - artifact_type enum is dynamically generated from plugin validation
+      - Only plugins passing validation rules appear in enum
+      - Schema self-updates when plugins are added/removed/fixed
+      - See .agentqms/schemas/artifact_type_validation.yaml for canonical types
 
   - name: validate_artifact
     description: Validate artifact against naming and structure standards

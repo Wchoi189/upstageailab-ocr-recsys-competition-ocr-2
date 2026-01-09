@@ -372,6 +372,7 @@ class TestAvailableArtifactTypesHelper:
             "walkthrough",
             "assessment",
             "design",
+            "design_document",
             "research",
             "template",
             "bug_report",

@@ -2,7 +2,7 @@
 
 Active assessments and development roadmaps.
 
-**Last Updated**: 2026-01-09 23:42:40
+**Last Updated**: 2026-01-10 04:17:13
 **Total Artifacts**: 15
 
 ## Active (11)
@@ -17,7 +17,7 @@ Active assessments and development roadmaps.
 - [AgentQMS Autofix Batch Job Path Mutation Analysis](2026-01-09_1451_assessment-agentqms-autofix-path-mutation.md) (📅 2026-01-09 14:51 (KST), 📄 assessment) - **Finding**: The AgentQMS autofix batch job (commit `fe10f5d`) is **working correctly but creating u
 - [Context System Architecture Analysis - Fragmentation Assessment](2026-01-09_1530_assessment-context-system-fragmentation.md) (📅 2026-01-09 15:30 (KST), 📄 assessment) - **Finding**: You have **THREE SEPARATE CONTEXT SYSTEMS** from different architectural iterations, ca
 - [AST-Grep and Tree-Sitter Integration Assessment for Agent Debug Toolkit](2026-01-09_2216_assessment_ast-grep-tree-sitter-integration.md) (📅 2026-01-09 22:16 (KST), 📄 assessment) - This assessment evaluates integrating **ast-grep** and **tree-sitter** into the existing agent-debug
-- [2026-01-09_2342_assessment_artifact-template-overlap-analysis](2026-01-09_2342_assessment_artifact-template-overlap-analysis.md) (📅 2026-01-09, 📄 assessment) - This assessment identifies **significant architectural overlap** in the AgentQMS artifact template m
+- [Artifact Template System: Overlap Analysis and Consolidation Recommendations](2026-01-09_2342_assessment_artifact-template-overlap-analysis.md) (📅 2026-01-09 18:00 (KST), 📄 assessment) - This assessment identifies **significant architectural overlap** in the AgentQMS artifact template m
 
 ## Completed (4)
 

@@ -1,27 +1,22 @@
 ---
-ads_version: '1.0'
-type: report
-title: Catastrophic Perspective Correction Failure on Optimal Orientation Images
-date: 2025-11-24 13:38 (KST)
-experiment_id: 20251122_172313_perspective_correction
-phase: phase_0
-priority: critical
-severity: critical
-status: complete
+ads_version: "1.0"
+type: "assessment"
+title: "Catastrophic Perspective Correction Failure on Optimal Orientation Images"
+date: "2025-11-24 13:38 (KST)"
+experiment_id: "20251122_172313_perspective_correction"
+phase: "phase_0"
+priority: "critical"
+severity: "critical"
+status: "complete"
 evidence_count: 1
-created: '2025-11-24T13:38:00Z'
-updated: '2025-12-27T16:16:42.572505'
-tags:
-- perspective-correction
-- edge-detection
-- background-threshold
-- optimal-orientation
-author: AI Agent
-bug_id: BUG-20251124-001
-metrics: []
-baseline: none
-comparison: neutral
+created: "2025-11-24T13:38:00Z"
+updated: "2025-11-24T13:38:00Z"
+tags: ["perspective-correction", "edge-detection", "background-threshold", "optimal-orientation"]
+author: "AI Agent"
+bug_id: "BUG-20251124-001"
 ---
+
+
 ## Defect Analysis: Catastrophic Perspective Correction Failure on Optimal Orientation Images
 
 **Bug ID:** BUG-20251124-001

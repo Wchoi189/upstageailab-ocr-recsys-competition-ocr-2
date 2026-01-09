@@ -1,19 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:47Z'
-updated: '2025-12-27T16:16:42.348451'
-tags:
-- perspective-correction
-- results
-- rembg
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:47Z"
+updated: "2025-12-17T17:59:47Z"
+tags: ['perspective-correction', 'results', 'rembg']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
-title: 20251122 1723 Assessment Rembg-Mask-Based-Approach-Results
 ---
+
 # Rembg Mask-Based Perspective Correction - Results
 
 **Date**: 2025-11-23

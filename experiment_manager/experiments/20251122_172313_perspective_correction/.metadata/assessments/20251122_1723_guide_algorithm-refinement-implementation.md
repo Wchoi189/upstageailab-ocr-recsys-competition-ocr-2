@@ -1,18 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:47Z'
-updated: '2025-12-27T16:16:42.256088'
-tags:
-- perspective-correction
-- implementation
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:47Z"
+updated: "2025-12-17T17:59:47Z"
+tags: ['perspective-correction', 'implementation']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
-title: 20251122 1723 Guide Algorithm-Refinement-Implementation
 ---
+
 # Algorithm Refinement Implementation
 
 **Date**: 2025-11-22
@@ -172,8 +170,8 @@ if not pre_validation["valid"]:
 ## Files Modified
 
 - `scripts/test_perspective_comprehensive.py` - Added pre-validation and improved detection
-- `experiment-tracker/experiments/20251122_172313_perspective_correction/assessments/200_image_test_results.md` - Test results analysis
-- `experiment-tracker/experiments/20251122_172313_perspective_correction/assessments/algorithm_refinement_implementation.md` - This document
+- `experiment_manager/experiments/20251122_172313_perspective_correction/assessments/200_image_test_results.md` - Test results analysis
+- `experiment_manager/experiments/20251122_172313_perspective_correction/assessments/algorithm_refinement_implementation.md` - This document
 
 ---
 

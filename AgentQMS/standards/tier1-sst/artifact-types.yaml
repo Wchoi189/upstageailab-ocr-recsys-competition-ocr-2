@@ -7,54 +7,136 @@ priority: critical
 validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
 compliance_status: pass
 memory_footprint: 90
-date: "2025-12-21"
+date: "2026-01-10"
 status: active
 
-# Artifact Type Schema
+# Artifact Type Standards & Reference
+#
+# This file serves as a REFERENCE and INDEX to artifact types.
+# The SOURCE OF TRUTH for artifact type definitions is the plugin system:
+#   - Plugin Definitions: AgentQMS/.agentqms/plugins/artifact_types/*.yaml
+#   - Validation Rules: .agentqms/schemas/artifact_type_validation.yaml
+#   - Validator: AgentQMS/tools/core/plugins/validation.py
+#
+# This YAML provides high-level overview and validation command references.
+
+artifact_type_system:
+  source_of_truth: "Plugin System (AgentQMS/.agentqms/plugins/artifact_types/)"
+  validation_schema: ".agentqms/schemas/artifact_type_validation.yaml"
+  validation_command: "cd AgentQMS/bin && make validate"
+
+  description: |
+    Artifact types are defined as plugins to enable extensibility without code changes.
+    Each artifact type plugin specifies:
+    - Metadata (filename pattern, directory, frontmatter schema)
+    - Template content with variables
+    - Validation rules (required sections, fields, statuses)
+
+    The PluginValidator enforces centralized rules from artifact_type_validation.yaml,
+    ensuring naming consistency, prohibited type blocking, and standards compliance.
 
 artifact_types:
+  # NOTE: These definitions are REFERENCES ONLY.
+  # The actual source is the plugin system.
+  # See: AgentQMS/.agentqms/plugins/artifact_types/{type}.yaml
+
   allowed:
     assessment:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml"
       location: "docs/artifacts/assessments/"
       purpose: "Current investigations, analysis, reviews"
+
     audit:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/audit.yaml"
       location: "docs/artifacts/audits/"
       purpose: "Compliance checks, project closure audits"
+
     bug_report:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml"
       location: "docs/artifacts/bug_reports/"
       purpose: "Issue tracking, defect documentation"
+
     design_document:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/design_document.yaml"
       location: "docs/artifacts/design_documents/"
       purpose: "Specs, features, architectural designs"
+      frontmatter_type: "design"  # Backward compatibility
+      aliases: ["design"]  # Legacy name
+
     implementation_plan:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml"
       location: "docs/artifacts/implementation_plans/"
       purpose: "Proposed changes, phased execution plans"
+
     completed_plan:
+      plugin: "None (generated from implementation_plan)"
       location: "docs/artifacts/completed_plans/"
       purpose: "Completion reports, session summaries"
+
     vlm_report:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/vlm_report.yaml"
       location: "docs/artifacts/vlm_reports/"
       purpose: "VLM image analysis outputs"
+
     walkthrough:
+      plugin: "AgentQMS/.agentqms/plugins/artifact_types/walkthrough.yaml"
       location: "docs/artifacts/walkthroughs/"
       purpose: "Step-by-step guides, verification proofs, demo documentation"
 
   prohibited:
+    # Enforced by .agentqms/schemas/artifact_type_validation.yaml
     - type: completion_report
       use_instead: completed_plan
+
     - type: report
       use_instead: completed_plan
+
     - type: implementation_guide
       use_instead: completed_plan
+
     - type: spec
       use_instead: design_document
+
     - type: feature
       use_instead: design_document
+
     - type: template
       use_instead: "docs/_templates/"
+
     - type: research
       use_instead: assessment
+      reason: "Research is a form of assessment (deprecated 2026-01-10)"
+
+    - type: design
+      use_instead: design_document
+      reason: "Naming conflict resolved: use design_document (deprecated 2026-01-10)"
 
 naming_convention: "YYYY-MM-DD_HHMM_{type}_{description}.md"
 
-validation_command: "make validate-artifacts"
+validation:
+  command: "cd AgentQMS/bin && make validate"
+  validator_location: "AgentQMS/tools/core/plugins/validation.py"
+  rules_schema: ".agentqms/schemas/artifact_type_validation.yaml"
+
+  enforcement:
+    - "Plugin names must match canonical types"
+    - "Prohibited types rejected at load time"
+    - "Required metadata fields validated"
+    - "Frontmatter schema enforced"
+    - "Template structure validated"
+
+plugin_development:
+  guide: "AgentQMS/docs/guides/creating-artifact-type-plugins.md"
+  example: "AgentQMS/.agentqms/plugins/artifact_types/audit.yaml"
+  schema: "AgentQMS/standards/schemas/plugin_artifact_type.json"
+
+migration_notes:
+  - date: "2026-01-10"
+    changes:
+      - "Resolved naming conflicts (design → design_document, research → assessment)"
+      - "Deprecated design.yaml, research.yaml, template.yaml plugins"
+      - "Centralized validation in .agentqms/schemas/artifact_type_validation.yaml"
+      - "Updated PluginValidator to enforce validation rules"
+    session: "Phase 3 - Session 5"
+    documentation: "project_compass/active_context/session_5_naming_conflicts_resolution.md"
+

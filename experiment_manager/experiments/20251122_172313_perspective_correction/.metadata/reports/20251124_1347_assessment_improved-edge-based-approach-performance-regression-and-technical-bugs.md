@@ -1,28 +1,22 @@
 ---
-ads_version: '1.0'
-type: report
-title: Improved Edge-Based Approach Performance Regression and Technical Bugs
-date: 2025-11-24 13:47 (KST)
-experiment_id: 20251122_172313_perspective_correction
-phase: phase_1
-priority: high
-severity: high
-status: complete
+ads_version: "1.0"
+type: "assessment"
+title: "Improved Edge-Based Approach Performance Regression and Technical Bugs"
+date: "2025-11-24 13:47 (KST)"
+experiment_id: "20251122_172313_perspective_correction"
+phase: "phase_1"
+priority: "high"
+severity: "high"
+status: "complete"
 evidence_count: 3
-created: '2025-11-24T13:47:00Z'
-updated: '2025-12-27T16:16:42.592430'
-tags:
-- edge-detection
-- line-fitting
-- performance-regression
-- broadcasting-error
-- area-calculation
-author: AI Agent
-bug_id: BUG-20251124-002
-metrics: []
-baseline: none
-comparison: neutral
+created: "2025-11-24T13:47:00Z"
+updated: "2025-11-24T13:47:00Z"
+tags: ["edge-detection", "line-fitting", "performance-regression", "broadcasting-error", "area-calculation"]
+author: "AI Agent"
+bug_id: "BUG-20251124-002"
 ---
+
+
 ## Defect Analysis: Improved Edge-Based Approach Performance Regression and Technical Bugs
 
 **Bug ID:** BUG-20251124-002

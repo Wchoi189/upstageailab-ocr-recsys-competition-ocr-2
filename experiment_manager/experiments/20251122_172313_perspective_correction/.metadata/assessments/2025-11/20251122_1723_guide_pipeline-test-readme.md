@@ -1,21 +1,15 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:47Z'
-updated: '2025-12-27T16:16:42.495817'
-tags:
-- perspective-correction
-- testing
-- pipeline
+ads_version: "1.0"
+type: "guide"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:47Z"
+updated: "2025-12-17T17:59:47Z"
+tags: ['perspective-correction', 'testing', 'pipeline']
 commands: []
 prerequisites: []
-title: 20251122 1723 Guide Pipeline-Test-Readme
-phase: phase_1
-priority: medium
-evidence_count: 0
 ---
+
 # Test Pipeline: rembg → Perspective Correction
 
 This directory contains scripts for testing the rembg background removal and perspective correction pipeline.
@@ -24,8 +18,8 @@ This directory contains scripts for testing the rembg background removal and per
 
 ```bash
 # Process 10 sample images
-# Note: Script is now in experiment-tracker
-python experiment-tracker/experiments/20251122_172313_perspective_correction/scripts/test_pipeline_rembg_perspective.py \
+# Note: Script is now in experiment_manager
+python experiment_manager/experiments/20251122_172313_perspective_correction/scripts/test_pipeline_rembg_perspective.py \
     --input-dir data/samples \
     --output-dir outputs/pipeline_test \
     --num-samples 10
@@ -48,8 +42,8 @@ Main test pipeline script that:
 
 **Usage:**
 ```bash
-# Note: Script is now in experiment-tracker
-python experiment-tracker/experiments/20251122_172313_perspective_correction/scripts/test_pipeline_rembg_perspective.py \
+# Note: Script is now in experiment_manager
+python experiment_manager/experiments/20251122_172313_perspective_correction/scripts/test_pipeline_rembg_perspective.py \
     --input-dir <input_directory> \
     --output-dir <output_directory> \
     --num-samples <number> \
@@ -72,7 +66,7 @@ Optimized background removal wrapper that provides:
 
 **Usage:**
 ```python
-# Note: optimized_rembg.py is now in experiment-tracker
+# Note: optimized_rembg.py is now in experiment_manager
 # Update import path as needed for your use case
 from optimized_rembg import OptimizedBackgroundRemover
 
@@ -112,8 +106,8 @@ Tests specific optimization settings:
 
 **Usage**:
 ```bash
-# Note: Script is now in experiment-tracker
-python experiment-tracker/experiments/20251122_172313_perspective_correction/scripts/test_optimized_rembg.py \
+# Note: Script is now in experiment_manager
+python experiment_manager/experiments/20251122_172313_perspective_correction/scripts/test_optimized_rembg.py \
     --input-dir data/samples \
     --output-dir outputs/optimized_test \
     --num-samples 10

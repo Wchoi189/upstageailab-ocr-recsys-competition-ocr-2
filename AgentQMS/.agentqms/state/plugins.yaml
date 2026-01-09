@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-09T17:14:32.688933+00:00'
+  generated_at: '2026-01-09T19:52:34.339078+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -8,14 +8,9 @@ discovery_paths:
 plugins_loaded:
   artifact_types:
   - assessment
-  - audit
   - bug_report
-  - change_request
   - design_document
   - implementation_plan
-  - ocr_experiment_report
-  - research
-  - template
   - vlm_report
   - walkthrough
   validators: true
@@ -38,21 +33,11 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml
-- name: audit
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
 - name: bug_report
   type: artifact_type
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml
-- name: change_request
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
 - name: design_document
   type: artifact_type
   version: '1.0'
@@ -63,21 +48,6 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
-- name: ocr_experiment_report
-  type: artifact_type
-  version: '1.1'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
-- name: research
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/research.yaml
-- name: template
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/template.yaml
 - name: vlm_report
   type: artifact_type
   version: '1.0'
@@ -153,7 +123,37 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
-validation_errors: []
+validation_errors:
+- path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
+  type: artifact_type
+  error: 'Missing required frontmatter field: ads_version'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
+- path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
+  type: artifact_type
+  error: 'Unknown artifact type ''change_request''. Valid types: assessment, audit,
+    bug_report, design_document, implementation_plan, completed_plan, vlm_report,
+    walkthrough'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
+- path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
+  type: artifact_type
+  error: 'Missing required frontmatter field: ads_version'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
+- path: AgentQMS/.agentqms/plugins/artifact_types/example_artifact.yaml
+  type: artifact_type
+  error: 'Unknown artifact type ''example_artifact''. Valid types: assessment, audit,
+    bug_report, design_document, implementation_plan, completed_plan, vlm_report,
+    walkthrough'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
+- path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+  type: artifact_type
+  error: 'Unknown artifact type ''ocr_experiment_report''. Valid types: assessment,
+    audit, bug_report, design_document, implementation_plan, completed_plan, vlm_report,
+    walkthrough'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
+- path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+  type: artifact_type
+  error: 'Missing required frontmatter field: ads_version'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
 resolved:
   artifact_types:
     assessment:
@@ -239,79 +239,6 @@ resolved:
         '
       template_variables:
         subject: '[system/component/feature]'
-    audit:
-      name: audit
-      version: '1.0'
-      description: 'Framework audits, compliance checks, and quality evaluations with
-
-        automated implementation plan generation via GitHub Actions.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_audit-{name}.md'
-        directory: audits/
-        frontmatter:
-          type: audit
-          category: compliance
-          status: draft
-          version: '1.0'
-          related_artifacts: []
-          generated_artifacts: []
-          tags:
-          - audit
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - status
-        - category
-        - related_artifacts
-        - generated_artifacts
-        required_sections:
-        - '## Executive Summary'
-        - '## Findings'
-        - '## Recommendations'
-        - '## Compliance Status'
-        - '## Related Artifacts'
-        filename_prefix: audit-
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: "# Audit: {title}\n\n**Audit Date**: {date}\n**Category**: {category}\n\
-        **Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
-        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
-        \ Scope**: [Describe what was audited]\n**Compliance Status**: [Overall status]\n\
-        **Critical Issues**: [Number]\n**High Priority Issues**: [Number]\n\n---\n\
-        \n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
-        \ Critical\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
-        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
-        \ recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n**Severity**:\
-        \ High\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
-        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
-        \ recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\n**Severity**:\
-        \ Medium\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
-        \n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\n## Recommendations\n\
-        \n### Immediate Actions (Week 1)\n1. [Action item with priority and owner]\n\
-        2. [Action item with priority and owner]\n\n### Short-term (Weeks 2-4)\n3.\
-        \ [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action item]\n\n---\n\
-        \n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
-        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
-        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
-        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
-        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
-        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
-        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
-        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
-        \n---\n\n**Last Updated**: {date}\n**Auditor**: {auditor}\n"
-      template_variables:
-        date: '2025-11-29'
-        category: compliance
-        status: draft
-        auditor: AI Agent
     bug_report:
       name: bug_report
       version: '1.0'
@@ -412,172 +339,6 @@ resolved:
         actual_behavior: '[What actually happens]'
         error_messages: '[Error logs]'
         impact: '[Impact description]'
-    change_request:
-      name: change_request
-      version: '1.0'
-      description: 'A structured change request document for tracking proposed changes
-
-        that require approval before implementation.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_{type}_change-request-{name}.md'
-        directory: change_requests/
-        frontmatter:
-          type: change_request
-          category: governance
-          status: pending
-          version: '1.0'
-          tags:
-          - change-request
-          - governance
-          - approval
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - status
-        - requester
-        - approver
-        required_sections:
-        - '## Change Summary'
-        - '## Justification'
-        - '## Impact Assessment'
-        - '## Approval'
-        filename_prefix: change_request_
-        allowed_statuses:
-        - draft
-        - pending
-        - approved
-        - rejected
-        - implemented
-      template: '# Change Request: {title}
-
-
-        ## Metadata
-
-        - **CR ID**: {cr_id}
-
-        - **Requester**: {requester}
-
-        - **Approver**: {approver}
-
-        - **Priority**: {priority}
-
-
-        ---
-
-
-        ## Change Summary
-
-
-        Brief description of the proposed change.
-
-
-        ## Justification
-
-
-        ### Business Need
-
-        Why is this change necessary?
-
-
-        ### Expected Benefits
-
-        - Benefit 1
-
-        - Benefit 2
-
-
-        ## Impact Assessment
-
-
-        ### Affected Systems
-
-        - System 1
-
-        - System 2
-
-
-        ### Risk Level
-
-        - **Risk**: Low / Medium / High
-
-        - **Mitigation**: Describe risk mitigation strategy
-
-
-        ### Resource Requirements
-
-        - Estimated effort: X hours/days
-
-        - Required skills: List skills
-
-
-        ## Implementation Plan
-
-
-        ### Approach
-
-        1. Step 1
-
-        2. Step 2
-
-        3. Step 3
-
-
-        ### Timeline
-
-        - Start date: YYYY-MM-DD
-
-        - Target completion: YYYY-MM-DD
-
-
-        ### Rollback Plan
-
-        How to revert if issues occur.
-
-
-        ## Approval
-
-
-        ### Approval Status
-
-        - [ ] Technical Review
-
-        - [ ] Security Review (if applicable)
-
-        - [ ] Manager Approval
-
-        - [ ] Final Approval
-
-
-        ### Approver Comments
-
-        _Comments from approver will be added here._
-
-
-        ### Decision
-
-        - **Status**: Pending
-
-        - **Date**:
-
-        - **Approved By**:
-
-
-        ---
-
-
-        *This change request follows the AgentQMS governance protocol.*
-
-        '
-      template_variables:
-        cr_id: CR-001
-        requester: AI Agent
-        approver: '[Pending Assignment]'
-        priority: Medium
     design_document:
       name: design_document
       version: '1.0'
@@ -704,307 +465,6 @@ resolved:
         '
       template_variables:
         description: '[Enter goal/objective here]'
-    ocr_experiment_report:
-      name: ocr_experiment_report
-      version: '1.1'
-      description: 'OCR experiment workflow and analysis report with structured metadata
-
-        and artifact tracking for experiment-tracker integration.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_ocr-experiment_{name}.md'
-        directory: experiments/
-        frontmatter:
-          type: ocr_experiment_report
-          category: research
-          status: draft
-          version: '1.0'
-          tags:
-          - ocr
-          - experiment
-          - tracking
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - status
-        - experiment_id
-        - intention
-        required_sections:
-        - '## Experiment Overview'
-        - '## Methodology'
-        - '## Results'
-        - '## Analysis'
-        filename_prefix: ocr_experiment_
-        allowed_statuses:
-        - active
-        - incomplete
-        - completed
-        - archived
-      template: '# OCR Experiment: {title}
-
-
-        ## Experiment Overview
-
-
-        **Experiment ID**: {experiment_id}
-
-        **Date**: {date}
-
-        **Status**: {status}
-
-        **Intention**: {intention}
-
-
-        ---
-
-
-        ## Methodology
-
-
-        ### Objective
-
-        [Describe the experiment objective]
-
-
-        ### Scope
-
-        [Define the scope of the experiment]
-
-
-        ### Setup
-
-        [Describe the experimental setup]
-
-
-        ---
-
-
-        ## Results
-
-
-        ### Key Findings
-
-        - Finding 1
-
-        - Finding 2
-
-        - Finding 3
-
-
-        ### Metrics
-
-        [Document relevant metrics]
-
-
-        ### Artifacts Generated
-
-        - [Artifact 1](path/to/artifact)
-
-        - [Artifact 2](path/to/artifact)
-
-
-        ---
-
-
-        ## Analysis
-
-
-        ### Observations
-
-        [Detailed analysis of observations]
-
-
-        ### Performance Impact
-
-        [Describe any performance improvements or regressions]
-
-
-        ### Recommendations
-
-        1. [Recommendation 1]
-
-        2. [Recommendation 2]
-
-
-        ### Related Assessments
-
-        - [Assessment](../assessments/YYYY-MM-DD_HHMM_assessment_name.md)
-
-
-        ---
-
-
-        ## Related Artifacts
-
-
-        **Implementation Plans**:
-
-        - [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)
-
-
-        **Incident Reports**:
-
-        - [Report](../incident_reports/YYYY-MM-DD_HHMM_incident_report_name.md)
-
-
-        ---
-
-
-        **Last Updated**: {date}
-
-        **Researcher**: AI Agent
-
-        '
-      template_variables:
-        experiment_id: EXP-001
-        date: '2025-12-06'
-        status: draft
-        intention: '[Experiment objective and goal]'
-    research:
-      name: research
-      version: '1.0'
-      description: 'Research document for investigation, analysis, and answering
-
-        technical questions with findings, analysis, and references.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_research_{name}.md'
-        directory: research/
-        frontmatter:
-          ads_version: '1.0'
-          type: research
-          category: research
-          status: active
-          version: '1.0'
-          tags:
-          - research
-          - investigation
-          - analysis
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        - version
-        required_sections:
-        - '## Objective'
-        - '## Findings'
-        - '## Analysis'
-        - '## Conclusion'
-        - '## References'
-        filename_prefix: research_
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: '# Research - {title}
-
-
-        ## Objective
-
-        Answer: {title}?
-
-
-        ## Findings
-
-        - Finding 1
-
-        - Finding 2
-
-
-        ## Analysis
-
-        Details of the investigation.
-
-
-        ## Conclusion
-
-        Summary of the answer.
-
-
-        ## References
-
-        - [Link]
-
-        '
-      template_variables: {}
-    template:
-      name: template
-      version: '1.0'
-      description: 'Standard template definition for documenting reusable document
-
-        formats, structures, and guidelines.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_template-{name}.md'
-        directory: templates/
-        frontmatter:
-          ads_version: '1.0'
-          type: template
-          category: reference
-          status: active
-          version: '1.0'
-          tags:
-          - template
-          - reference
-          - guidelines
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        - version
-        required_sections:
-        - '## Purpose'
-        - '## Structure'
-        - '## Guidelines'
-        filename_prefix: template-
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: '# Template - {title}
-
-
-        ## Purpose
-
-        Standard format for {purpose}.
-
-
-        ## Structure
-
-        ```markdown
-
-        # Title
-
-        ## Section 1
-
-        ```
-
-
-        ## Guidelines
-
-        1. Guideline 1
-
-        2. Guideline 2
-
-        '
-      template_variables:
-        purpose: '[purpose description]'
     vlm_report:
       name: vlm_report
       version: '1.0'

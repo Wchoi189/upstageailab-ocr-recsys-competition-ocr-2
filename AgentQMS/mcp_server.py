@@ -319,28 +319,37 @@ async def _get_available_artifact_types() -> list[str]:
         from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
 
         templates_obj = ArtifactTemplates()
-        types_dict = templates_obj._get_available_artifact_types()
-        return sorted(list(types_dict.keys()))
+        types_list = templates_obj.get_available_templates()
+        return sorted(types_list) if types_list else _get_fallback_artifact_types()
     except Exception:
-        # Fallback to hardcoded list if discovery fails
-        return [
-            "assessment",
-            "audit",
-            "bug_report",
-            "change_request",
-            "design",
-            "implementation_plan",
-            "ocr_experiment",
-            "research",
-            "template",
-            "walkthrough",
-            "vlm_report",
-        ]
+        # Fallback to minimal standard types if discovery fails
+        return _get_fallback_artifact_types()
+
+
+def _get_fallback_artifact_types() -> list[str]:
+    """
+    Fallback artifact types when plugin system is unavailable.
+
+    Returns only the core canonical types defined in validation rules.
+    In normal operation, types are loaded dynamically from plugins.
+    """
+    return [
+        "assessment",
+        "bug_report",
+        "design_document",
+        "implementation_plan",
+        "vlm_report",
+        "walkthrough",
+    ]
 
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List all available AgentQMS tools."""
+    """List all available AgentQMS tools with dynamically generated schemas."""
+
+    # Generate dynamic artifact_type enum from available plugins
+    artifact_types_enum = await _get_available_artifact_types()
+
     return [
         Tool(
             name="create_artifact",
@@ -350,17 +359,8 @@ async def list_tools() -> list[Tool]:
                 "properties": {
                     "artifact_type": {
                         "type": "string",
-                        "enum": [
-                            "assessment",
-                            "audit",
-                            "bug_report",
-                            "design_document",
-                            "implementation_plan",
-                            "walkthrough",
-                            "completed_plan",
-                            "vlm_report",
-                        ],
-                        "description": "Type of artifact to create",
+                        "enum": artifact_types_enum,
+                        "description": "Type of artifact to create (dynamically loaded from plugins)",
                     },
                     "name": {
                         "type": "string",

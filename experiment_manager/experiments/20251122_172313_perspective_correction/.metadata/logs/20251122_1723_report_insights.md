@@ -1,17 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:48Z'
-updated: '2025-12-27T16:16:42.548611'
-tags:
-- perspective-correction
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:48Z"
+updated: "2025-12-17T17:59:48Z"
+tags: ['perspective-correction']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
-title: 20251122 1723 Report Insights
 ---
+
 ### Insight [2025-11-22T19:17:25.091683] (general)
 It works
 

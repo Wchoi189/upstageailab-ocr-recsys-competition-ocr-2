@@ -1,17 +1,12 @@
 ---
-ads_version: '1.0'
+ads_version: "1.0"
 type: guide
-experiment_id: 20251220_154834_zero_prediction_images_debug
-title: Sepia Testing Quick Start
-created: '2025-12-21T02:23:00+09:00'
-tags:
-- sepia
-- quickstart
-status: complete
-updated: '2025-12-21T02:23:00+09:00'
-commands: []
-prerequisites: []
+experiment_id: "20251220_154834_zero_prediction_images_debug"
+title: "Sepia Testing Quick Start"
+created: "2025-12-21T02:23:00+09:00"
+tags: ["sepia", "quickstart"]
 ---
+
 # Sepia Testing Quick Start
 
 ## Directory Structure
@@ -94,7 +89,7 @@ export DASHSCOPE_API_KEY="your_key"
 **Missing background_normalization.py**:
 ```bash
 # Copy from project root
-cp ../../../ocr/datasets/background_normalization.py scripts/
+cp ../../../ocr.data.datasets/background_normalization.py scripts/
 ```
 
 **Permission denied on vlm_validate_sepia.sh**:

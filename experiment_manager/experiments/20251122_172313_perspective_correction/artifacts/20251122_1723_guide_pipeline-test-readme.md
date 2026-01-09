@@ -1,19 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251122_172313_perspective_correction
-status: complete
-created: '2025-12-17T17:59:47Z'
-updated: '2025-12-27T16:16:42.965483'
-tags:
-- perspective-correction
-- testing
-- pipeline
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251122_172313_perspective_correction"
+status: "complete"
+created: "2025-12-17T17:59:47Z"
+updated: "2025-12-17T17:59:47Z"
+tags: ['perspective-correction', 'testing', 'pipeline']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
-title: 20251122 1723 Guide Pipeline-Test-Readme
 ---
+
 # Test Pipeline: rembg → Perspective Correction
 
 This directory contains scripts for testing the rembg background removal and perspective correction pipeline.

@@ -1,21 +1,16 @@
 ---
-ads_version: '1.0'
-type: report
-experiment_id: 20251220_154834_zero_prediction_images_debug
-status: active
-created: '2025-12-21T03:16:24.054303+09:00'
-updated: '2025-12-21T03:16:24.054303+09:00'
-tags:
-- sepia
-- clahe
-- ocr-preprocessing
-metrics:
-- edge_improvement_pct
-- contrast_change
-- processing_time_ms
-baseline: gray_world_norm
-comparison: neutral
+ads_version: "1.0"
+type: "report"
+experiment_id: "20251220_154834_zero_prediction_images_debug"
+status: "active"
+created: "2025-12-21T03:16:24.054303+09:00"
+updated: "2025-12-21T03:16:24.054303+09:00"
+tags: ["sepia", "clahe", "ocr-preprocessing"]
+metrics: ["edge_improvement_pct", "contrast_change", "processing_time_ms"]
+baseline: "gray_world_norm"
+comparison: "baseline"
 ---
+
 # Final Sepia vs CLAHE Performance Analysis
 
 ## Overview

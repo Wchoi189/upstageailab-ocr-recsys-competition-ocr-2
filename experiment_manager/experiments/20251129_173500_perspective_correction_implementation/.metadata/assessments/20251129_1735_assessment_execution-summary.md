@@ -1,16 +1,16 @@
 ---
-ads_version: '1.0'
-type: assessment
-experiment_id: 20251129_173500_perspective_correction_implementation
-status: complete
-created: '2025-12-17T17:59:48Z'
-updated: '2025-12-17T17:59:48Z'
-tags:
-- perspective-correction
-phase: phase_0
-priority: medium
+ads_version: "1.0"
+type: "assessment"
+experiment_id: "20251129_173500_perspective_correction_implementation"
+status: "complete"
+created: "2025-12-17T17:59:48Z"
+updated: "2025-12-17T17:59:48Z"
+tags: ['perspective-correction']
+phase: "phase_0"
+priority: "medium"
 evidence_count: 0
 ---
+
 # Test Execution Summary
 
 ## Test Results: ✅ 100% Success Rate
@@ -68,15 +68,15 @@ The implementation demonstrates:
 
 ### Switch to This Experiment
 ```bash
-./experiment-tracker/scripts/resume-experiment.py --id 20251129_173500_perspective_correction_implementation
+./experiment_manager/scripts/resume-experiment.py --id 20251129_173500_perspective_correction_implementation
 ```
 
 ### View Results
 ```bash
-cat experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/results.json
+cat experiment_manager/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/results.json
 ```
 
 ### List Warped Images
 ```bash
-ls experiment-tracker/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/*.jpg
+ls experiment_manager/experiments/20251129_173500_perspective_correction_implementation/artifacts/20251129_184305_worst_performers_test/*.jpg
 ```

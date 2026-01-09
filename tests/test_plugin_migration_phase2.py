@@ -174,7 +174,7 @@ class TestPluginMigrationPhase2:
         assert "implementation_plan" in available
         assert "walkthrough" in available
         assert "assessment" in available
-        
+
         # Session 4 plugins
         assert "design_document" in available
         assert "research" in available
