@@ -5,6 +5,12 @@ Versioning and Lifecycle Management for AgentQMS Artifacts
 Handles semantic versioning (MAJOR.MINOR), lifecycle transitions,
 and artifact aging detection.
 
+Relationship:
+- `versioning.py` models artifact lifecycle and versions. It complements
+  `utils/timestamps.py`, which handles time formatting and timezone utilities.
+  There is no duplication: use `timestamps.py` for date handling, and this
+  module for lifecycle/version calculations.
+
 Usage:
     from AgentQMS.tools.utilities.versioning import (
         SemanticVersion, ArtifactLifecycle, ArtifactAgeDetector

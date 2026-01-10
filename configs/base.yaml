@@ -36,7 +36,11 @@ defaults:
 
 # Runtime extras (inlined from extras/default.yaml)
 # disable python warnings if they annoy you
+# disable python warnings if they annoy you
 ignore_warnings: False
+
+# Default batch size (can be overridden by trainer configs)
+batch_size: 32
 
 # ask user for tags if none are provided in the config
 enforce_tags: True

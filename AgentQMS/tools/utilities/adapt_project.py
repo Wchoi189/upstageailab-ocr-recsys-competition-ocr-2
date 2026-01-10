@@ -131,7 +131,7 @@ class ProjectAdapter:
         return issues
 
 
-def create_config_template(output_path: Path):
+def create_config_template(output_path: Path) -> None:
     """Create a template configuration file."""
     template = """# Project Configuration Template
 # Fill in your project details and save as project_config.yaml
@@ -167,7 +167,7 @@ project:
     print(f"✅ Created config template: {output_path}")
 
 
-def interactive_setup():
+def interactive_setup() -> tuple[Path, dict]:
     """Interactive setup wizard."""
     print("🚀 AI Agent Framework Adaptation Wizard\n")
     print("This wizard will help you configure the framework for your project.\n")
@@ -195,7 +195,7 @@ def interactive_setup():
     return config_path, config
 
 
-def main():
+def main() -> int:
     import argparse
 
     parser = argparse.ArgumentParser(

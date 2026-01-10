@@ -48,9 +48,16 @@ class PARSeq(OCRModel):
         else:
             visual_feat = features
 
-        # Flatten visual features for Transformer: [B, C, H, W] -> [B, H*W, C] -> [B, S, C]
-        b, c, h, w = visual_feat.shape
-        visual_memory = visual_feat.permute(0, 2, 3, 1).flatten(1, 2) # [B, S, C]
+        # Flatten visual features for Transformer
+        if visual_feat.ndim == 4:
+            # CNN output: [B, C, H, W] -> [B, H*W, C] -> [B, S, C]
+            b, c, h, w = visual_feat.shape
+            visual_memory = visual_feat.permute(0, 2, 3, 1).flatten(1, 2) # [B, S, C]
+        elif visual_feat.ndim == 3:
+            # ViT output: [B, S, C]
+            visual_memory = visual_feat
+        else:
+            raise ValueError(f"Unexpected visual features shape: {visual_feat.shape}")
 
         # 2. Decoder
         # Prepare targets

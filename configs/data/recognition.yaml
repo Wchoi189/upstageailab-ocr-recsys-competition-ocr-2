@@ -1,22 +1,42 @@
+# @package _global_
 # Recognition Dataset Configuration
 # Used for text recognition models (PARSeq)
 
 defaults:
-  - /data/transforms/recognition@_here_
+  - /data/dataloaders/default
+  - /data/transforms/recognition@transforms
 
-# Tokenizer
-tokenizer:
-  _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
-  charset_path: ${paths.data_root}/ocr/data/charset.json
-  max_len: 25
+# Tokenizer (Nested under data for consistency with domain config)
+data:
+  tokenizer:
+    _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+    charset_path: ${paths.data_root}/ocr/data/charset.json
+    max_len: 25
 
-# Dataset
-dataset:
+# Dataset Template
+_dataset_template: &dataset_template
   _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
-  lmdb_path: ${paths.data_root}/data/processed/aihub_lmdb_validation
-  tokenizer: ${tokenizer}
-  max_len: ${tokenizer.max_len}
+  lmdb_path: ${paths.data_root}/data/processed/recognition/aihub_lmdb_validation
+  tokenizer: ${data.tokenizer}
+  max_len: ${data.tokenizer.max_len}
+  transform: ${transforms}
+  config: null  # Suppress inherited 'config' key from base.yaml merge
 
-# Collate
+# Explicit dataset definitions for factory (at root/datasets)
+datasets:
+  train_dataset:
+    <<: *dataset_template
+
+  val_dataset:
+    <<: *dataset_template
+
+  test_dataset:
+    <<: *dataset_template
+
+  predict_dataset:
+    <<: *dataset_template
+
+# Collate (at root)
 collate_fn:
   _target_: ocr.data.datasets.recognition_collate_fn.recognition_collate_fn
+  _partial_: true

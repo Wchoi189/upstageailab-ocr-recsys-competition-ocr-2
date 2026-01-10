@@ -1,0 +1,71 @@
+{% if few_shot_examples %}
+## Few-Shot Examples
+
+Here are some example analyses for reference:
+
+{% for example in few_shot_examples %}
+### Example {{ loop.index }}
+**Image:** {{ example.image_id }}
+**Description:** {{ example.description }}
+**Analysis:** {{ example.analysis }}
+
+{% endfor %}
+---
+{% endif %}
+
+Analyze the provided image for visual defects and artifacts in the output.
+
+## Task
+
+Examine the image carefully and identify any visual defects, distortions, or artifacts that may indicate processing failures or quality issues.
+
+{% if via_annotations %}
+## Annotations
+
+The user has provided manual annotations:
+{% for annotation in via_annotations %}
+- {{ annotation.label }}: {{ annotation.description }}
+{% endfor %}
+
+Please consider these annotations in your analysis.
+{% endif %}
+
+## Analysis Focus
+
+1. **Distortion Types**: Look for:
+   - Shearing (skewed text or objects)
+   - Pincushion distortion (curved edges)
+   - Barrel distortion (bulging center)
+   - Stretching (elongated elements)
+   - Blank or empty output regions
+   - Cropped or missing content
+
+2. **Key Features**: Identify:
+   - Text alignment issues (diagonal, rotated, misaligned)
+   - Pixel smearing or blurring
+   - ROI (Region of Interest) problems
+   - Color artifacts
+   - Edge artifacts
+   - Compression artifacts
+
+3. **Comparison**: Compare with expected output:
+   - Is this worse than baseline?
+   - Is this a regression from previous version?
+   - Are there improvements despite defects?
+
+{% if initial_description %}
+## Initial Description
+
+The user provided this initial description:
+"{{ initial_description }}"
+
+Use this as context for your analysis.
+{% endif %}
+
+## Output Format
+
+Provide a structured analysis in the following format:
+
+- **Distortion Type:** [Type of distortion observed]
+- **Key Features:** [Specific features that indicate the defect]
+- **Comparison:** [How this compares to baseline or expected output]

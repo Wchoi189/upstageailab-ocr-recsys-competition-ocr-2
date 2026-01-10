@@ -1,6 +1,6 @@
 defaults:
   - train_v2
-  - model/recognition/parseq
+  - model/architectures/parseq
   - data/recognition
   - _self_
 

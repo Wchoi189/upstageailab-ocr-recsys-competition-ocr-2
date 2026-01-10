@@ -38,7 +38,8 @@ def _print(obj) -> None:
 
 
 def _create_artifact(artifact_type: str, name: str, title: str) -> str:
-    root = Path(__file__).resolve().parents[2]  # AgentQMS.tools
+    from AgentQMS.tools.utils.paths import get_agent_tools_dir
+    root = get_agent_tools_dir()
     cmd = [
         sys.executable,
         str(root / "core" / "artifact_workflow.py"),

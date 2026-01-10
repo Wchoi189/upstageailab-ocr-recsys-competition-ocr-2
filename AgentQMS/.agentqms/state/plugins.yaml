@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-10T06:14:28.622206+00:00'
+  generated_at: '2026-01-10T09:05:47.090448+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -61,7 +61,7 @@ plugin_metadata:
   path: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
 - name: assessment
   type: artifact_type
-  version: '1.1'
+  version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
 - name: vlm_report
@@ -144,7 +144,7 @@ resolved:
   artifact_types:
     assessment:
       name: assessment
-      version: '1.1'
+      ads_version: '1.1'
       description: 'OCR experiment workflow and analysis report with structured metadata
 
         and artifact tracking for experiment-tracker integration.
@@ -305,7 +305,7 @@ resolved:
         intention: '[Experiment objective and goal]'
     audit:
       name: audit
-      version: '1.0'
+      ads_version: '1.0'
       description: 'Framework audits, compliance checks, and quality evaluations with
 
         automated implementation plan generation via GitHub Actions.
@@ -379,7 +379,7 @@ resolved:
         auditor: AI Agent
     bug_report:
       name: bug_report
-      version: '1.0'
+      ads_version: '1.0'
       description: 'Structured bug report for tracking issues with environment details,
 
         reproduction steps, and impact assessment.
@@ -479,7 +479,7 @@ resolved:
         impact: '[Impact description]'
     design_document:
       name: design_document
-      version: '1.0'
+      ads_version: '1.0'
       description: 'Architecture and design specification document with component
 
         descriptions, design decisions, and implementation requirements.
@@ -529,7 +529,7 @@ resolved:
         component_system: '[component/system]'
     implementation_plan:
       name: implementation_plan
-      version: '1.0'
+      ads_version: '1.0'
       description: 'Structured implementation plan for tracking development work with
 
         proposed changes, verification steps, and completion criteria.
@@ -605,7 +605,7 @@ resolved:
         description: '[Enter goal/objective here]'
     vlm_report:
       name: vlm_report
-      version: '1.0'
+      ads_version: '1.0'
       description: 'Vision-Language Model (VLM) analysis report for documenting
 
         visual analysis results, findings, and conclusions.
@@ -678,7 +678,7 @@ resolved:
       template_variables: {}
     walkthrough:
       name: walkthrough
-      version: '1.0'
+      ads_version: '1.0'
       description: 'Step-by-step walkthrough documentation for guiding users through
 
         processes, workflows, or feature demonstrations.
@@ -772,7 +772,7 @@ resolved:
     agent-configuration:
       name: agent-configuration
       title: Agent Configuration & Settings
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context files for configuring AI agents including Claude, Copilot,
         Cursor,
@@ -868,7 +868,7 @@ resolved:
     compliance-check:
       name: compliance-check
       title: Compliance & Validation Check
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context files for running compliance checks, artifact validation,
 
@@ -961,7 +961,7 @@ resolved:
     documentation-update:
       name: documentation-update
       title: Documentation & Standards Update
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context files for updating project documentation, standards, and
         artifact management.
@@ -1055,7 +1055,7 @@ resolved:
     hydra-configuration:
       name: hydra-configuration
       title: Hydra Configuration Framework
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context for understanding and working with Hydra configuration
         system
@@ -1130,7 +1130,7 @@ resolved:
     ocr-debugging:
       name: ocr-debugging
       title: OCR Debugging & AST Analysis
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'AST-based debugging context bundle integrating agent-debug-toolkit
         analyzers.
@@ -1265,7 +1265,7 @@ resolved:
     ocr-experiment:
       name: ocr-experiment
       title: OCR Experiment Management
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context files for running, tracking, and analyzing OCR experiments.
 
@@ -1362,7 +1362,7 @@ resolved:
     ocr-information-extraction:
       name: ocr-information-extraction
       title: OCR Information Extraction (KIE)
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context for key-value information extraction (KIE) tasks including
         entity
@@ -1439,7 +1439,7 @@ resolved:
     ocr-layout-analysis:
       name: ocr-layout-analysis
       title: OCR Layout Analysis
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context for layout analysis and structure extraction including
         page structure
@@ -1516,7 +1516,7 @@ resolved:
     ocr-text-detection:
       name: ocr-text-detection
       title: OCR Text Detection
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context for text detection tasks including feature code, inference
         pipeline,
@@ -1594,7 +1594,7 @@ resolved:
     ocr-text-recognition:
       name: ocr-text-recognition
       title: OCR Text Recognition
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context for text recognition tasks including OCR models, recognition
         feature code,
@@ -1677,7 +1677,7 @@ resolved:
     pipeline-development:
       name: pipeline-development
       title: OCR Pipeline Development
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context files for developing OCR pipeline components including
 
@@ -1782,7 +1782,7 @@ resolved:
     security-review:
       name: security-review
       title: Security Review Context Bundle
-      version: '1.0'
+      ads_version: '1.0'
       scope: project
       description: 'Context files for conducting security-focused code reviews.
 

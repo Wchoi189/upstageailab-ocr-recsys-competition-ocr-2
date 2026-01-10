@@ -163,7 +163,7 @@ def create_session(bug_id: str, title: str, severity: str = "medium") -> Path:
     return session_path
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Initialize debugging session")
     parser.add_argument("--id", required=True, help="Bug ID (e.g., 001)")
     parser.add_argument("--title", required=True, help="Short title (e.g., overlay-misalignment)")

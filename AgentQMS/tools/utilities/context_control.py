@@ -9,6 +9,12 @@ Provides controls to:
 - Manage stale content and refactoring states
 - Track context usage patterns
 
+Relationship:
+- `context_control.py` manages global state and policies (enable/disable, maintenance windows,
+  feedback ingestion). It does not compute memory footprint.
+- `context_inspector.py` provides observability (what bundles are loaded, memory footprint,
+  stale detection, feedback reporting) and does not change system state.
+
 Usage:
     python context_control.py --disable --reason "extensive refactor in progress"
     python context_control.py --status
@@ -67,7 +73,7 @@ class BundleConfig:
     refresh_on_file_change: bool = True
     timestamp: str = ""
 
-    def __post_init__(self):
+    def __post_init__(self) -> None:
         if not self.timestamp:
             self.timestamp = datetime.now().isoformat()
 
@@ -377,8 +383,8 @@ class ContextFeedbackCollector:
         cutoff = datetime.now() - timedelta(days=days)
         feedback_files = list(self._feedback_dir.glob("*.json"))
 
-        bundle_data = {}
-        overall_scores = []
+        bundle_data: dict[str, dict[str, Any]] = {}
+        overall_scores: list[float] = []
 
         for fb_file in feedback_files:
             try:
@@ -419,7 +425,7 @@ class ContextFeedbackCollector:
                 pass
 
         # Calculate statistics
-        analytics = {
+        analytics: dict[str, Any] = {
             "period_days": days,
             "bundles_analyzed": len(bundle_data),
             "total_feedback_points": sum(d["count"] for d in bundle_data.values()),

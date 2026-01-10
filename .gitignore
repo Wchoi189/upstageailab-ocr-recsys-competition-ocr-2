@@ -150,7 +150,7 @@ test_*/
 # .agentqms/state/agent_state.json
 # .agentqms/state/*.sqlite
 AgentQMS/vlm/cache/
-
+!outputs/README_outputs_structure.md
 # Project-specific files (review and remove if no longer needed)
 # notepad.md
 # root-cause.md
@@ -182,3 +182,4 @@ AgentQMS/standards/tier3-agents/claude/.claude.json
 AgentQMS/.agentqms/state/
 .agentqms/state/
 .agentqms/effective.yaml
+!archive/__TEMP__

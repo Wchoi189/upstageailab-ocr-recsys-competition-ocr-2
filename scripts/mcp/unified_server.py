@@ -190,8 +190,38 @@ async def list_resources() -> list[Resource]:
 async def read_resource(uri: str) -> list[ReadResourceContents]:
     uri = str(uri).strip()
     resource = next((r for r in RESOURCES_CONFIG if r["uri"] == uri), None)
+
+    # Alias Handling: If exact URI match fails, try to match by file path
     if not resource:
-        raise ValueError(f"Unknown resource URI: {uri}")
+        try:
+            # Check if it looks like a file path or file URI
+            input_path = None
+            if uri.startswith("file://"):
+                from urllib.parse import urlparse, unquote
+                parsed = urlparse(uri)
+                input_path = Path(unquote(parsed.path)).resolve()
+            elif uri.startswith("/") or (len(uri) > 1 and uri[1] == ":"):  # Simple check for abs path
+                input_path = Path(uri).resolve()
+
+            if input_path and input_path.exists():
+                # Search for a registered resource that points to this path
+                for res in RESOURCES_CONFIG:
+                    res_path = res.get("path")
+                    if res_path and res_path.resolve() == input_path:
+                        resource = res
+                        break
+        except Exception:
+            # If path parsing fails, ignore and fall through to error
+            pass
+
+    if not resource:
+        # Enhancement: "Did you mean?" suggestions
+        msg = f"Unknown resource URI: {uri}"
+        if "compass" in uri or "agentqms" in uri:
+             possible = [r["uri"] for r in RESOURCES_CONFIG if uri.split("://")[-1] in r["uri"]]
+             if possible:
+                 msg += f". Did you mean: {', '.join(possible[:3])}?"
+        raise ValueError(msg)
 
     if uri == "agentqms://templates/list":
         try:
@@ -571,7 +601,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             return [TextContent(type="text", text=json.dumps(info, indent=2))]
 
         if name == "project_compass":
-            entrypoint_path = COMPASS_DIR / "AI_ENTRYPOINT.md"
+            entrypoint_path = COMPASS_DIR / "AGENTS.md"
             if entrypoint_path.exists():
                 return [TextContent(type="text", text=entrypoint_path.read_text())]
             return [TextContent(type="text", text="Project Compass Entrypoint not found.")]

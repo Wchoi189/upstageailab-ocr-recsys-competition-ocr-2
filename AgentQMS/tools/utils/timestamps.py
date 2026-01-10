@@ -170,10 +170,11 @@ def infer_artifact_filename_timestamp(file_path: str | Path) -> str:
     """
     import subprocess
     from pathlib import Path
+    from AgentQMS.tools.utils.paths import get_project_root
 
     file_path = Path(file_path)
-    # Project root is 4 levels up from this file
-    project_root = Path(__file__).resolve().parent.parent.parent.parent
+    # Project root from utility function
+    project_root = get_project_root()
 
     # Get configured timezone
     tz_name = get_configured_timezone()

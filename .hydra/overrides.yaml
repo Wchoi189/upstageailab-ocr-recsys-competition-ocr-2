@@ -1,0 +1,3 @@
+- domain=recognition
+- trainer=debug_crash
+- print_config=true

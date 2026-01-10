@@ -14,6 +14,7 @@ Usage:
 
 import argparse
 import json
+from typing import Any
 import os
 import sys
 import time
@@ -31,13 +32,13 @@ class CostTracker:
     INPUT_COST_PER_1M = 0.20  # $0.20 per 1M input tokens
     OUTPUT_COST_PER_1M = 0.50  # $0.50 per 1M output tokens
 
-    def __init__(self):
+    def __init__(self) -> None:
         self.total_input_tokens = 0
         self.total_output_tokens = 0
         self.api_calls = 0
-        self.file_costs = []
+        self.file_costs: list[dict[str, Any]] = []
 
-    def record_usage(self, file_path: str, input_tokens: int, output_tokens: int):
+    def record_usage(self, file_path: str, input_tokens: int, output_tokens: int) -> None:
         """Record token usage for a file."""
         self.total_input_tokens += input_tokens
         self.total_output_tokens += output_tokens
@@ -63,7 +64,7 @@ class CostTracker:
             "file_costs": self.file_costs,
         }
 
-    def save_report(self, path: str):
+    def save_report(self, path: str) -> None:
         """Save cost report to JSON file."""
         with open(path, "w") as f:
             json.dump(self.get_summary(), f, indent=2)
@@ -86,8 +87,8 @@ class GrokLinter:
         self.base_url = "https://api.x.ai/v1"
         self.model = "grok-4-1-fast-non-reasoning"  # Grok-4 for cost efficiency
         self.fixes_applied = 0
-        self.files_modified = []
-        self.files_excluded = []
+        self.files_modified: list[str] = []
+        self.files_excluded: list[str] = []
         self.cost_tracker = CostTracker()
 
         # Load configuration
@@ -112,7 +113,7 @@ class GrokLinter:
             self.log(f"Warning: Could not load config from {config_path}: {e}", "WARN")
             return {}
 
-    def log(self, message: str, level: str = "INFO"):
+    def log(self, message: str, level: str = "INFO") -> None:
         """Log a message with timestamp."""
         timestamp = time.strftime("%Y-%m-%d %H:%M:%S")
         print(f"[{timestamp}] [{level}] {message}")
@@ -310,7 +311,7 @@ Provide the corrected code. Output ONLY the fixed Python code without any markdo
 
         return False
 
-    def run(self, errors: list[dict], limit: int | None = None):
+    def run(self, errors: list[dict], limit: int | None = None) -> None:
         """Run the linting fix process."""
         self.log(f"Starting Grok Linter (dry_run={self.dry_run})")
         self.log(f"Exclusions active: {', '.join(self.exclusions)}")
@@ -364,7 +365,7 @@ Provide the corrected code. Output ONLY the fixed Python code without any markdo
         self.log("=" * 80)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="AI-powered linting autofix using Grok")
     parser.add_argument("--input", type=str, help="Path to ruff JSON output file")
     parser.add_argument("--stdin", action="store_true", help="Read JSON from stdin")

@@ -157,8 +157,14 @@ class OCRPLModule(pl.LightningModule):
             Stores predictions for W&B logging
         """
         # Validate input batch against data contract
+        # Validate input batch against data contract
         try:
-            CollateOutput(**batch)
+            # Check if we have detection fields (polygons, prob_maps, thresh_maps)
+            if "polygons" not in batch and "prob_maps" not in batch and "thresh_maps" not in batch:
+                 # Recognition batch - skip detection-strict validation
+                 pass
+            else:
+                 CollateOutput(**batch)
         except Exception as e:
             raise ValueError(f"Batch validation failed: {e}") from e
 
@@ -189,26 +195,28 @@ class OCRPLModule(pl.LightningModule):
         for key, value in pred["loss_dict"].items():
             self.log(f"val_{key}", value, batch_size=batch["images"].shape[0])
 
-        boxes_batch, _ = self.model.get_polygons_from_maps(batch, pred)
-        predictions = format_predictions(batch, boxes_batch)
+        # Validation steps specific to detection (polygons from maps)
+        if "prob_maps" in pred or "thresh_maps" in pred:
+            boxes_batch, _ = self.model.get_polygons_from_maps(batch, pred)
+            predictions = format_predictions(batch, boxes_batch)
 
-        # Store predictions for wandb image logging callback
-        for idx, prediction_entry in enumerate(predictions):
-            filename = batch["image_filename"][idx]
-            # Store transformed image for WandB logging (only for first few samples to minimize memory)
-            # Keep on GPU - WandB callback's _tensor_to_pil handles .cpu() conversion when needed
-            if batch_idx < 2 and idx < 8:  # Limit to first 2 batches, 8 images each
-                prediction_entry["transformed_image"] = batch["images"][idx].detach()
-            self.validation_step_outputs[filename] = prediction_entry
+            # Store predictions for wandb image logging callback
+            for idx, prediction_entry in enumerate(predictions):
+                filename = batch["image_filename"][idx]
+                # Store transformed image for WandB logging (only for first few samples to minimize memory)
+                # Keep on GPU - WandB callback's _tensor_to_pil handles .cpu() conversion when needed
+                if batch_idx < 2 and idx < 8:  # Limit to first 2 batches, 8 images each
+                    prediction_entry["transformed_image"] = batch["images"][idx].detach()
+                self.validation_step_outputs[filename] = prediction_entry
 
-        if self.valid_evaluator is not None:
-            self.valid_evaluator.update(batch["image_filename"], predictions)
+            if self.valid_evaluator is not None:
+                self.valid_evaluator.update(batch["image_filename"], predictions)
 
-        # Compute per-batch validation metrics and log problematic batch images
-        batch_metrics = self.wandb_logger.log_if_needed(batch, predictions, batch_idx)
-        self.log(f"batch_{batch_idx}/recall", batch_metrics["recall"], batch_size=batch["images"].shape[0])
-        self.log(f"batch_{batch_idx}/precision", batch_metrics["precision"], batch_size=batch["images"].shape[0])
-        self.log(f"batch_{batch_idx}/hmean", batch_metrics["hmean"], batch_size=batch["images"].shape[0])
+            # Compute per-batch validation metrics and log problematic batch images
+            batch_metrics = self.wandb_logger.log_if_needed(batch, predictions, batch_idx)
+            self.log(f"batch_{batch_idx}/recall", batch_metrics["recall"], batch_size=batch["images"].shape[0])
+            self.log(f"batch_{batch_idx}/precision", batch_metrics["precision"], batch_size=batch["images"].shape[0])
+            self.log(f"batch_{batch_idx}/hmean", batch_metrics["hmean"], batch_size=batch["images"].shape[0])
 
         return pred["loss"]
 
@@ -267,18 +275,26 @@ class OCRPLModule(pl.LightningModule):
             Logs test loss and loss components
         """
         # Validate input batch against data contract
+        # Validate input batch against data contract
         try:
-            CollateOutput(**batch)
+            # Check if we have detection fields (polygons, prob_maps, thresh_maps)
+            if "polygons" not in batch and "prob_maps" not in batch and "thresh_maps" not in batch:
+                 # Recognition batch - skip detection-strict validation
+                 pass
+            else:
+                 CollateOutput(**batch)
         except Exception as e:
             raise ValueError(f"Batch validation failed: {e}") from e
 
         pred = self.model(return_loss=False, **batch)
 
-        boxes_batch, _ = self.model.get_polygons_from_maps(batch, pred)
-        predictions = format_predictions(batch, boxes_batch)
+        # Validation steps specific to detection (polygons from maps)
+        if "prob_maps" in pred or "thresh_maps" in pred:
+            boxes_batch, _ = self.model.get_polygons_from_maps(batch, pred)
+            predictions = format_predictions(batch, boxes_batch)
 
-        if self.test_evaluator is not None:
-            self.test_evaluator.update(batch["image_filename"], predictions)
+            if self.test_evaluator is not None:
+                self.test_evaluator.update(batch["image_filename"], predictions)
         return pred
 
     def on_test_epoch_end(self):

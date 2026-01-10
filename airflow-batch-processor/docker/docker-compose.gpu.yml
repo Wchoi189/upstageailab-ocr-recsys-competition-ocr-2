@@ -1,0 +1,31 @@
+# GPU override: enable NVIDIA GPUs for Airflow services
+# Usage:
+#   docker compose -f docker-compose.yml -f docker-compose.gpu.yml --compatibility up -d
+# Requires: NVIDIA Container Toolkit installed
+
+services:
+  airflow-webserver:
+    profiles: ["gpu"]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+
+  airflow-scheduler:
+    profiles: ["gpu"]
+    environment:
+      NVIDIA_VISIBLE_DEVICES: all
+      NVIDIA_DRIVER_CAPABILITIES: compute,utility
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]

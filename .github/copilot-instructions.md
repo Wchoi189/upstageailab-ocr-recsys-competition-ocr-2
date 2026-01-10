@@ -25,7 +25,7 @@ You are working in an environment governed by **AgentQMS**—a comprehensive Qua
 - **Standards Index**: `AgentQMS/standards/INDEX.yaml`
 - **Tool Catalog**: `AgentQMS/standards/tier2-framework/tool-catalog.yaml`
 - **Quickstart**: `AgentQMS/standards/tier2-framework/quickstart.yaml`
-- **Project Compass**: `project_compass/AI_ENTRYPOINT.md`
+- **Project Compass**: `project_compass/AGENTS.md`
 - **Experiment Manager**: `experiment_manager/agent_interface.yaml`
 - **Agent Debug Toolkit**: `agent-debug-toolkit/AI_USAGE.yaml`
 - **Workflow Triggers (generator)**: `AgentQMS/tools/core/workflow_detector.py` (generates `.copilot/context/workflow-triggers.yaml` if needed)

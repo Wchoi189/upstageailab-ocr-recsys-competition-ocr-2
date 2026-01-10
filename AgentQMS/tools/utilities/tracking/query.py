@@ -1,3 +1,11 @@
+"""High-level status queries for the tracking subsystem.
+
+Responsibilities:
+- Present concise status strings for plans/experiments/debug/refactors
+- Auto-initialize the DB if not present (developer-friendly)
+- Delegate data access to `tracking.db` helpers
+"""
+
 from __future__ import annotations
 
 from typing import TYPE_CHECKING

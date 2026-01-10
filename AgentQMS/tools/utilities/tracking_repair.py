@@ -28,9 +28,10 @@ import sqlite3
 import sys
 from pathlib import Path
 
-# Repository root detection
-SCRIPT_DIR = Path(__file__).resolve().parent
-REPO_ROOT = SCRIPT_DIR.parent.parent.parent
+from AgentQMS.tools.utils.paths import get_project_root
+
+# Repository root from utility function
+REPO_ROOT = get_project_root()
 TRACKING_DB = REPO_ROOT / "data" / "ops" / "tracking.db"
 MASTER_INDEX = REPO_ROOT / "docs" / "artifacts" / "MASTER_INDEX.md"
 STATE_FILE = REPO_ROOT / ".agentqms" / "state" / "tracking_repair_state.json"

@@ -21,6 +21,20 @@ from typing import Any
 from AgentQMS.tools.utils.paths import get_project_root
 
 
+def update_frontmatter_stub(source: Path, dry_run: bool = False) -> bool:
+    """Handle frontmatter updates without the removed maintenance dependency."""
+
+    if dry_run:
+        print("   [dry-run] Would update frontmatter (manual review still required)")
+        return True
+
+    print(
+        "   ⚠️  Frontmatter auto-update tool is no longer bundled. "
+        "Use the current artifact workflow (make create-*) or add frontmatter manually, then re-run validation."
+    )
+    return False
+
+
 def run_git_command(cmd: list[str], dry_run: bool = False) -> bool:
     """Execute git command, optionally in dry-run mode."""
     if dry_run:
@@ -310,18 +324,7 @@ def apply_fixes(
             print(f"\n{i + 1}. Update Frontmatter: {source.name}")
             print(f"   Reason: {suggestion['reason']}")
 
-            if not dry_run:
-                try:
-                    from AgentQMS.tools.maintenance.add_frontmatter import FrontmatterGenerator
-
-                    generator = FrontmatterGenerator()
-                    if generator.add_frontmatter_to_file(str(source)):
-                        print("   ✅ Frontmatter updated")
-                        applied += 1
-                except Exception as e:
-                    print(f"   ❌ Failed to update frontmatter: {e}")
-            else:
-                print("   [dry-run] Would update frontmatter")
+            if update_frontmatter_stub(source, dry_run):
                 applied += 1
 
     return applied, moves
@@ -351,7 +354,7 @@ def run_validation() -> list[dict[str, Any]]:
     return validator.validate_all()
 
 
-def main():
+def main() -> int:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Safe autofix pipeline for artifacts")
     parser.add_argument("--limit", type=int, default=10, help="Max fixes to apply")

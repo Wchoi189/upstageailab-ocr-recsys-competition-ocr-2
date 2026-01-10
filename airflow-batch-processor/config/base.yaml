@@ -1,0 +1,21 @@
+# Base configuration for Airflow batch processor
+execution_mode: local  # local | aws
+
+input:
+  source: local  # local | s3
+  path: ./data/input
+
+output:
+  format: json  # json | parquet
+  path: ./data/output
+
+api:
+  rate_limit_per_minute: 60
+  retry:
+    max_attempts: 5
+    backoff_seconds: 2
+
+aws:
+  s3_bucket: your-bucket
+  input_prefix: datasets/images/
+  output_prefix: export/

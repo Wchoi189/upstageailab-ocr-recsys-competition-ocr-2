@@ -1,0 +1,95 @@
+x-airflow-env: &airflow-env
+  AIRFLOW__CORE__EXECUTOR: LocalExecutor
+  AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
+  AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+  PYTHONPATH: /opt/airflow:/opt/airflow/src
+  # GPU hints (use `docker compose --profile gpu up` with override file if needed)
+  NVIDIA_VISIBLE_DEVICES: all
+
+services:
+  postgres:
+    image: postgres:14
+    environment:
+      POSTGRES_USER: airflow
+      POSTGRES_PASSWORD: airflow
+      POSTGRES_DB: airflow
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "airflow"]
+      interval: 10s
+      retries: 5
+
+  airflow-init:
+    image: airflow-cuda:3.1.5
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      <<: *airflow-env
+    env_file:
+      - ../.env
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../plugins:/opt/airflow/plugins
+      - ../src:/opt/airflow/src
+      - ../config:/opt/airflow/config
+      - ../data:/opt/airflow/data
+    entrypoint: ["/bin/bash", "-c"]
+    command: >
+      airflow db migrate &&
+      airflow users create-user
+        --username admin
+        --firstname Air
+        --lastname Flow
+        --email admin@example.com
+        --role Admin
+        --password admin || true
+
+  airflow-webserver:
+    image: airflow-cuda:3.1.5
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      <<: *airflow-env
+    env_file:
+      - ../.env
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../plugins:/opt/airflow/plugins
+      - ../src:/opt/airflow/src
+      - ../config:/opt/airflow/config
+      - ../data:/opt/airflow/data
+      - airflow_logs:/opt/airflow/logs
+    command: ["airflow", "webserver"]
+
+  airflow-scheduler:
+    image: airflow-cuda:3.1.5
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    depends_on:
+      - postgres
+    environment:
+      <<: *airflow-env
+    env_file:
+      - ../.env
+    volumes:
+      - ../dags:/opt/airflow/dags
+      - ../plugins:/opt/airflow/plugins
+      - ../src:/opt/airflow/src
+      - ../config:/opt/airflow/config
+      - ../data:/opt/airflow/data
+      - airflow_logs:/opt/airflow/logs
+    command: ["airflow", "scheduler"]
+
+volumes:
+  airflow_logs:
+  postgres_data:

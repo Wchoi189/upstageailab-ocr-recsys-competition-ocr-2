@@ -20,13 +20,14 @@ from dataclasses import asdict, dataclass
 from datetime import datetime
 from pathlib import Path
 
-# Add parent directories to path
-sys.path.insert(0, str(Path(__file__).parent.parent.parent.parent))
-
+from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.tools.utilities.versioning import (
     ArtifactAgeDetector,
     VersionManager,
 )
+
+ensure_project_root_on_sys_path()
 
 
 @dataclass
@@ -194,7 +195,7 @@ def print_compact(statuses: list[ArtifactStatus]) -> None:
     print("-" * 120 + "\n")
 
 
-def main():
+def main() -> None:
     """Main entry point."""
     parser = argparse.ArgumentParser(description="Display artifact status dashboard with aging and lifecycle information")
     parser.add_argument(
@@ -234,19 +235,8 @@ def main():
 
     # Auto-detect artifacts root if not provided
     if args.root is None:
-        # Try to find docs/artifacts from current location
-        script_path = Path(__file__)
-        artifacts_root = script_path.parent.parent.parent.parent / "docs" / "artifacts"
-
-        # Fallback: try relative to current directory
-        if not artifacts_root.exists():
-            artifacts_root = Path.cwd() / "docs" / "artifacts"
-
-        # Fallback: try one level up
-        if not artifacts_root.exists():
-            artifacts_root = Path.cwd().parent / "docs" / "artifacts"
-
-        args.root = artifacts_root
+        # Prefer configured project root
+        args.root = get_project_root() / "docs" / "artifacts"
 
     # Find artifacts
     if not args.root.exists():

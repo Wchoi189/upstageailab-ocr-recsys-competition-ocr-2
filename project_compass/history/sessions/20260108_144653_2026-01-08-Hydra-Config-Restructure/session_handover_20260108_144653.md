@@ -174,7 +174,7 @@ After bug interruption, remember the MCP tool workflow:
 - `AgentQMS/standards/workflow_standards.yaml` - Development patterns
 - `AgentQMS/standards/naming_standards.yaml` - Naming conventions
 - `AgentQMS/standards/artifact_standards.yaml` - Artifact templates
-- `project_compass/AI_ENTRYPOINT.md` - Session lifecycle protocol
+- `project_compass/AGENTS.md` - Session lifecycle protocol
 - `analysis/phase0_summary.md` - Complete Phase 0 findings
 - `docs/artifacts/implementation_plans/2026-01-08_0359_implementation_plan_hydra-config-restructuring.md` - Full implementation plan
 - `project_compass/roadmap/00_source_code_refactoring.yaml` - Hydra-Config-Restructure Full Roadmap

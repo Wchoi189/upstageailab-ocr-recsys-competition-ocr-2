@@ -176,57 +176,50 @@ validate-naming: ## Check naming conventions only
 boundary: ## Validate framework/project boundaries
 	uv run python ../tools/compliance/validate_boundaries.py
 
-audit-framework: ## Audit framework plugins and templates for schema compliance
-	uv run python ../tools/audit/framework_audit.py
+audit-framework: ## (DEPRECATED) Use 'make validate' or 'make compliance' instead
+	@echo "⚠️  'audit-framework' is deprecated. Use 'make validate' or 'make compliance'."
+	@exit 0
 
-audit-framework-verbose: ## Audit framework with verbose output
-	uv run python ../tools/audit/framework_audit.py --verbose
+audit-framework-verbose: ## (DEPRECATED) Use 'make validate' or 'make compliance' instead
+	@echo "⚠️  'audit-framework-verbose' is deprecated. Use 'make validate' or 'make compliance'."
+	@exit 0
 
-audit-framework-json: ## Audit framework and output JSON results
-	uv run python ../tools/audit/framework_audit.py --json
+audit-framework-json: ## (DEPRECATED) Use 'make validate' or 'make compliance' instead
+	@echo "⚠️  'audit-framework-json' is deprecated. Use 'make validate' or 'make compliance'."
+	@exit 0
 
-audit-framework-plugins: ## Audit plugins only
-	uv run python ../tools/audit/framework_audit.py --plugins-only
+audit-framework-plugins: ## (DEPRECATED) Use 'make validate' instead
+	@echo "⚠️  'audit-framework-plugins' is deprecated. Use 'make validate'."
+	@exit 0
 
-audit-framework-templates: ## Audit templates only
-	uv run python ../tools/audit/framework_audit.py --templates-only
+audit-framework-templates: ## (DEPRECATED) Use 'make validate' instead
+	@echo "⚠️  'audit-framework-templates' is deprecated. Use 'make validate'."
+	@exit 0
 
 # Artifact Audit (Safe Mode)
-audit-fix-batch: ## Preview batch N changes (usage: make audit-fix-batch BATCH=1)
-	@if [ -z "$(BATCH)" ]; then \
-		echo "ERROR: BATCH parameter required. Usage: make audit-fix-batch BATCH=1"; \
-		exit 1; \
-	fi
-	@echo "🔍 Previewing changes for batch $(BATCH)..."
-	uv run python ../tools/audit/artifact_audit.py --batch $(BATCH) --dry-run
-	@echo ""
-	@echo "💡 To apply changes, run: make audit-fix-batch-apply BATCH=$(BATCH)"
+audit-fix-batch: ## (DEPRECATED) Use 'make fix' pipeline instead
+	@echo "⚠️  'audit-fix-batch' is deprecated. Use 'make fix ARGS=\"--limit N --dry-run\"'."
+	@exit 0
 
-audit-fix-batch-apply: ## Apply batch N fixes with confirmation (usage: make audit-fix-batch-apply BATCH=1)
-	@if [ -z "$(BATCH)" ]; then \
-		echo "ERROR: BATCH parameter required."; \
-		exit 1; \
-	fi
-	uv run python ../tools/audit/artifact_audit.py --batch $(BATCH)
+audit-fix-batch-apply: ## (DEPRECATED) Use 'make fix' pipeline instead
+	@echo "⚠️  'audit-fix-batch-apply' is deprecated. Use 'make fix'."
+	@exit 0
 
-audit-fix-all: ## Fix all artifacts with safety checks (excludes archive/deprecated)
-	uv run python ../tools/audit/artifact_audit.py --all
+audit-fix-all: ## (DEPRECATED) Use 'make fix' pipeline instead
+	@echo "⚠️  'audit-fix-all' is deprecated. Use 'make fix'."
+	@exit 0
 
-audit-fix-all-force: ## Fix ALL artifacts including excluded directories (DANGER)
-	@echo "⚠️  WARNING: This will process archive/, deprecated/, vlm_reports/"
-	@echo "Press Ctrl+C to cancel, or"
-	@read -p "Type 'YES' to continue: " response; \
-	if [ "$$response" = "YES" ]; then \
-		uv run python ../tools/audit/artifact_audit.py --all --include-excluded; \
-	else \
-		echo "Aborted."; \
-	fi
+audit-fix-all-force: ## (DEPRECATED) Use 'make fix' pipeline instead
+	@echo "⚠️  'audit-fix-all-force' is deprecated. Use 'make fix'."
+	@exit 0
 
-audit-report: ## Report violations without fixing
-	uv run python ../tools/audit/artifact_audit.py --all --report
+audit-report: ## (DEPRECATED) Use 'make validate' with reports
+	@echo "⚠️  'audit-report' is deprecated. Use 'make validate' or 'make compliance'."
+	@exit 0
 
-audit-report-all: ## Report violations including excluded directories
-	uv run python ../tools/audit/artifact_audit.py --all --report --include-excluded
+audit-report-all: ## (DEPRECATED) Use 'make validate' with reports
+	@echo "⚠️  'audit-report-all' is deprecated. Use 'make validate' or 'make compliance'."
+	@exit 0
 
 # Archive Management
 archive-artifacts-dry: ## Preview artifacts marked for archival (status='archived')
@@ -351,6 +344,40 @@ context-suggest: ## Suggest context bundles for task (usage: make context-sugges
 	fi
 	uv run python ../tools/utilities/suggest_context.py "$(TASK)"
 
+# Context Control & Inspection
+context-status: ## Show context bundling system status
+	uv run python ../tools/utilities/context_control.py --status
+
+context-enable: ## Re-enable context bundling after maintenance
+	uv run python ../tools/utilities/context_control.py --enable
+
+context-disable: ## Disable bundling for maintenance (usage: make context-disable REASON="..." HOURS=2)
+	@if [ -z "$(REASON)" ]; then \
+		echo "ERROR: REASON parameter required. Usage: make context-disable REASON=\"...\" [HOURS=2]"; \
+		exit 1; \
+	fi
+	uv run python ../tools/utilities/context_control.py --disable --maintenance $(if $(HOURS),--duration $(HOURS),) --reason "$(REASON)"
+
+context-feedback: ## Submit AI feedback (usage: make context-feedback BUNDLE=name SCORE=80 TOKENS=2048 TEXT="useful")
+	@if [ -z "$(BUNDLE)" ] || [ -z "$(SCORE)" ] || [ -z "$(TOKENS)" ] || [ -z "$(TEXT)" ]; then \
+		echo "ERROR: BUNDLE, SCORE, TOKENS, and TEXT required."; \
+		exit 1; \
+	fi
+	uv run python ../tools/utilities/context_control.py --feedback "$(BUNDLE)" "$(SCORE)" "$(TOKENS)" "$(TEXT)"
+
+context-memory: ## Analyze memory footprint of context bundles
+	uv run python ../tools/utilities/context_inspector.py --memory
+
+context-stale: ## Detect stale context (usage: make context-stale DAYS=7)
+	uv run python ../tools/utilities/context_inspector.py --stale $(if $(DAYS),--threshold $(DAYS),)
+
+context-inspect: ## Inspect a specific bundle (usage: make context-inspect BUNDLE=name)
+	@if [ -z "$(BUNDLE)" ]; then \
+		echo "ERROR: BUNDLE parameter required."; \
+		exit 1; \
+	fi
+	uv run python ../tools/utilities/context_inspector.py --inspect "$(BUNDLE)"
+
 plan-progress: ## Show or update plan progress (usage: make plan-progress show FILE=path/to/plan.md)
 	@if [ -z "$(FILE)" ]; then \
 		echo "ERROR: FILE parameter required. Usage: make plan-progress show FILE=path/to/plan.md"; \
@@ -380,23 +407,21 @@ plan-progress-complete: ## Mark task as complete (usage: make plan-progress-comp
 	uv run python ../tools/utilities/plan_progress.py mark-complete --file "$(FILE)" --task "$(TASK)"
 
 # Audit Framework Tools
-audit-init: ## Initialize audit (usage: make audit-init FRAMEWORK="Framework Name" DATE="2025-11-09" SCOPE="Scope description")
-	uv run python ../tools/audit/audit_generator.py init \
-		--framework-name "$(FRAMEWORK)" \
-		--audit-date "$(DATE)" \
-		--audit-scope "$(SCOPE)" \
-		--output-dir "docs/audit"
+audit-init: ## (DEPRECATED) Legacy audit framework - use assessments/design docs
+	@echo "⚠️  'audit-init' is deprecated. Prefer assessments or design_documents."
+	@exit 0
 
-audit-validate: ## Validate audit documents
-	uv run python ../tools/audit/audit_validator.py validate --audit-dir "docs/audit"
+audit-validate: ## (DEPRECATED) Legacy audit framework
+	@echo "⚠️  'audit-validate' is deprecated. Use 'make validate'."
+	@exit 0
 
-audit-checklist-generate: ## Generate checklist for phase (usage: make audit-checklist-generate PHASE="discovery")
-	uv run python ../tools/audit/checklist_tool.py generate \
-		--phase "$(PHASE)" \
-		--output "docs/audit/checklist_$(PHASE).md"
+audit-checklist-generate: ## (DEPRECATED) Legacy audit framework
+	@echo "⚠️  'audit-checklist-generate' is deprecated. Track tasks in implementation plans."
+	@exit 0
 
-audit-checklist-report: ## Generate audit progress report
-	uv run python ../tools/audit/checklist_tool.py report --audit-dir "docs/audit"
+audit-checklist-report: ## (DEPRECATED) Legacy audit framework
+	@echo "⚠️  'audit-checklist-report' is deprecated. Use Project Compass or plans."
+	@exit 0
 
 docs-validate-templates: ## Validate documentation templates
 	uv run python ../tools/documentation/validate_templates.py

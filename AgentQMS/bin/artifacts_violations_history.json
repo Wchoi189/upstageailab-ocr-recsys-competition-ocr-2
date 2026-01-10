@@ -1,15 +1,5 @@
 [
   {
-    "timestamp": "2025-12-11T00:31:28.828178",
-    "compliance_rate": 61.111111111111114,
-    "invalid_files": 35,
-    "violation_counts": {
-      "naming": 4,
-      "directory": 30,
-      "frontmatter": 5
-    }
-  },
-  {
     "timestamp": "2025-12-14T12:58:31.214340",
     "compliance_rate": 100.0,
     "invalid_files": 0,
@@ -277,6 +267,26 @@
       "naming": 0,
       "directory": 0,
       "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2026-01-10T18:47:28.665989",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
+  },
+  {
+    "timestamp": "2026-01-11T02:05:04.641900",
+    "compliance_rate": 97.59036144578313,
+    "invalid_files": 2,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 2
     }
   }
 ]

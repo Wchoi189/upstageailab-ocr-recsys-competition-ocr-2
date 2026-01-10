@@ -1,3 +1,15 @@
+"""Tracking database (SQLite) persistence layer.
+
+Responsibilities:
+- Provide a single, centralized connection to the tracking DB
+- Initialize schema and enforce foreign keys
+- CRUD helpers for plans, tasks, refactors, debug sessions, experiments
+
+Path handling:
+- Uses `get_project_root()` from `tools/utils/paths.py` to locate DB under
+    `data/ops/tracking.db` (no hard-coded parent() chains).
+"""
+
 from __future__ import annotations
 
 import json

@@ -1,0 +1,69 @@
+# Centralized configuration for VLM tools
+
+backends:
+  # Default to API backend; CLI backend is opt-in and requires a compatible
+  # qwen-vl style binary configured via QWEN_VLM_COMMAND.
+  default: "dashscope"
+  priority:
+    - "dashscope"
+    - "openrouter"
+    - "solar_pro2"
+    - "cli"
+
+  dashscope:
+    # Alibaba Cloud DashScope API (Qwen VL models)
+    endpoint: "https://dashscope-intl.aliyuncs.com/compatible-mode/v1"
+    default_model: "qwen3-vl-plus-2025-09-23"
+    # Available models (change default_model to switch):
+    #   qwen-vl-max              - Most capable, best quality (default)
+    #   qwen-vl-plus             - Balanced performance/quality
+    #   qwen3-vl-plus-2025-09-23 - Qwen3 VL Plus (dated release)
+    #   qwen3-vl-flash-2025-10-15 - Fastest inference, good quality
+    #   qwen-vl-ocr-2025-11-20   - Specialized for OCR tasks
+    api_key_env: "DASHSCOPE_API_KEY"
+
+  openrouter:
+    base_url: "https://openrouter.ai/api/v1"
+    default_model: "qwen/qwen2.5-vl-32b-instruct"
+    api_key_env: "QWEN25"
+
+  solar_pro2:
+    endpoint: "https://api.upstage.ai/v1"
+    default_model: "solar-pro2"
+    api_key_env: "SOLAR_PRO2_API_KEY"
+
+  cli:
+    # NOTE: The generic `qwen` Code CLI does NOT support the VLM interface
+    # expected by CLIQwenBackend (analyze --image --prompt-file --mode).
+    # To enable the cli backend, set QWEN_VLM_COMMAND to a compatible binary
+    # (for example, a qwen-vl wrapper) inside the container.
+    default_command: "qwen"
+    command_env: "QWEN_VLM_COMMAND"
+    model: "qwen3-vl-plus-2025-09-23"
+    # Optional extra CLI flags, e.g. forcing JSON output:
+    # extra_args:
+    #   - "--output-format"
+    #   - "json"
+
+image:
+  max_resolution: 2048
+  max_dimension: 8192
+  default_quality: 95
+  supported_formats:
+    - "JPEG"
+    - "PNG"
+    - "WEBP"
+
+backend_defaults:
+  timeout_seconds: 60
+  max_retries: 3
+  max_resolution: 2048
+
+env:
+  search_paths:
+    - "AgentQMS/vlm"
+    - "."
+  files:
+    - ".env"
+    - ".env.local"
+  priority: "local"  # .env.local overrides .env

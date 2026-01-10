@@ -1,0 +1,34 @@
+# @package model
+name: parseq
+architecture_name: parseq
+architectures: parseq
+
+# Using component_overrides to ensure priority over foundation defaults
+component_overrides:
+  encoder:
+    name: timm_backbone
+    params:
+      model_name: vit_small_patch16_224
+      pretrained: true
+      dynamic_img_size: true
+      output_indices: [-1]
+
+  decoder:
+    name: parseq_decoder
+    params:
+      d_model: 384
+      nhead: 12
+      num_layers: 12
+      dim_feedforward: 1536
+      dropout: 0.1
+      max_len: 26
+
+  head:
+    name: parseq_head
+    params:
+      in_channels: 384
+
+  loss:
+    name: cross_entropy
+    params:
+      ignore_index: 0

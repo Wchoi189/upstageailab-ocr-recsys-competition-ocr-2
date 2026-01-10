@@ -1,0 +1,7 @@
+# Airflow runtime artifacts
+logs/
+airflow.db
+*.pid
+*.log
+__pycache__/
+.env

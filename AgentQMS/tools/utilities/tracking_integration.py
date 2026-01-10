@@ -1,8 +1,13 @@
 """Integration between artifact_workflow and tracking database.
 
-This module handles auto-registration of artifacts in the tracking database
-when they are created. It maps artifact types to tracking entity types
-(plans, experiments, debug sessions, refactors) and registers them automatically.
+Purpose:
+- Auto-register artifacts in the tracking database when they are created.
+- Map artifact types to tracking entity types (plans, experiments, debug sessions, refactors).
+
+Relationship:
+- `tracking_integration.py` provides a thin integration boundary for `artifact_workflow.py`.
+- The tracking subsystem lives under `tools/utilities/tracking/` (DB, CLI utilities).
+- Avoid duplicating logic: this module delegates to functions in `tracking/` for persistence.
 """
 
 from __future__ import annotations

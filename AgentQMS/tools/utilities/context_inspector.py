@@ -10,13 +10,18 @@ Key Features:
 - Calculate precise memory footprint per bundle and tier
 - Detect stale files and outdated documentation
 - Track AI feedback on context quality and relevance
-- Enable/disable context-bundling for maintenance operations
+- Report system status; does not modify global enable/disable state
+
+Relationship:
+- Pairs with `context_control.py`: this module is read-only and focuses on measurements
+    (inventory, memory, staleness, feedback summaries). `context_control.py` is responsible
+    for state changes (enable/disable, maintenance window, feedback ingestion).
 
 Usage:
-    python context_inspector.py --inspect ocr-text-detection
-    python context_inspector.py --memory --output json
-    python context_inspector.py --stale --threshold 7d
-    python context_inspector.py --feedback --recent
+        python context_inspector.py --inspect ocr-text-detection
+        python context_inspector.py --memory --output json
+        python context_inspector.py --stale --threshold 7d
+        python context_inspector.py --feedback --recent
 """
 
 from __future__ import annotations
@@ -134,7 +139,7 @@ class ContextInspector:
         bundle = self.bundles[bundle_name]
         now = datetime.now()
 
-        tier_files = {"tier1": [], "tier2": [], "tier3": []}
+        tier_files: dict[str, list[Any]] = {"tier1": [], "tier2": [], "tier3": []}
         total_size = 0
         stale_count = 0
         ages = []
@@ -227,9 +232,9 @@ class ContextInspector:
 
         metrics = self.inspect_all_bundles()
 
-        total_tier1_kb = 0
-        total_tier2_kb = 0
-        total_tier3_kb = 0
+        total_tier1_kb = 0.0
+        total_tier2_kb = 0.0
+        total_tier3_kb = 0.0
         total_files = 0
         unhealthy_bundles = []
 
@@ -391,7 +396,7 @@ class ContextInspector:
         cutoff = datetime.now() - timedelta(days=days)
         feedback_files = list(self._feedback_dir.glob("*.json"))
 
-        summaries = {}
+        summaries: dict[str, dict[str, Any]] = {}
         for fb_file in feedback_files:
             try:
                 data = json.loads(fb_file.read_text())

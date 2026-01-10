@@ -12,7 +12,7 @@ resources:
   standards_index: "AgentQMS/standards/INDEX.yaml"
   tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
   quickstart: "AgentQMS/standards/tier2-framework/quickstart.yaml"
-  compass_entrypoint: "project_compass/AI_ENTRYPOINT.md"
+  compass_entrypoint: "project_compass/AGENTS.md"
   mcp_server: "AgentQMS/mcp_server.py"
   plugin_snapshot: "AgentQMS/.agentqms/state/plugins.yaml"
   bin_makefile: "AgentQMS/bin/Makefile"

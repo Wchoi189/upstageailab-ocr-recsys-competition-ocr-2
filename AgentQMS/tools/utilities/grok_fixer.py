@@ -114,7 +114,12 @@ INSTRUCTIONS:
                 self.token_usage["input"] += response.usage.prompt_tokens
                 self.token_usage["output"] += response.usage.completion_tokens
 
-            fixed_content = response.choices[0].message.content.strip()
+            response_content: str | None = response.choices[0].message.content
+            if response_content is None:
+                print(f"⚠️  No content in response for {file_path}")
+                return False
+
+            fixed_content: str = response_content.strip()
 
             # Clean up potential markdown formatting from LLM
             if fixed_content.startswith("```markdown"):
@@ -139,7 +144,7 @@ INSTRUCTIONS:
             print(f"  ❌ API Error: {e}")
             return False
 
-    def process(self, limit: int = 5):
+    def process(self, limit: int = 5) -> None:
         violations = self.run_validation()
         fixable = self.filter_fixable_violations(violations)
 
@@ -161,7 +166,7 @@ INSTRUCTIONS:
         print(f"   Total:  {self.token_usage['input'] + self.token_usage['output']}")
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Grok-based Artifact Fixer")
     parser.add_argument("--limit", type=int, default=5, help="Max files to process")
     parser.add_argument("--dry-run", action="store_true", help="Preview only")

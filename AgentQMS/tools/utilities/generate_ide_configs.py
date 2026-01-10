@@ -7,14 +7,12 @@ from the central AgentQMS source of truth.
 """
 
 import sys
-from pathlib import Path
-
-# Add project root to path
-current_dir = Path(__file__).resolve().parent
-project_root = current_dir.parent.parent.parent
-sys.path.insert(0, str(project_root))
 
 from AgentQMS.tools.utils.paths import get_project_root
+
+# Get project root from utility function
+project_root = get_project_root()
+sys.path.insert(0, str(project_root))
 
 PROJECT_ROOT = get_project_root()
 AGENT_WORKFLOWS_DIR = PROJECT_ROOT / ".agent" / "workflows"
@@ -22,7 +20,7 @@ CURSOR_DIR = PROJECT_ROOT / ".cursor"
 COPILOT_DIR = PROJECT_ROOT / ".copilot" / "context"
 
 
-def generate_antigravity_workflows():
+def generate_antigravity_workflows() -> None:
     """Generates Antigravity .md workflows from AgentQMS templates."""
     print("Generating Antigravity workflows...")
     AGENT_WORKFLOWS_DIR.mkdir(parents=True, exist_ok=True)
@@ -70,7 +68,7 @@ description: Check the status of the AgentQMS framework and available tools
         print(f"  - Created {path}")
 
 
-def generate_cursor_config():
+def generate_cursor_config() -> None:
     """Generates Cursor instructions."""
     print("Generating Cursor config...")
     CURSOR_DIR.mkdir(parents=True, exist_ok=True)
@@ -101,7 +99,7 @@ For full details, run `make help`.
     print(f"  - Created {path}")
 
 
-def generate_claude_config():
+def generate_claude_config() -> None:
     """Generates Claude instructions."""
     print("Generating Claude config...")
     CLAUDE_DIR = PROJECT_ROOT / ".claude"
@@ -128,7 +126,7 @@ See `.agentqms/state/architecture.yaml` for component maps.
     print(f"  - Created {path}")
 
 
-def generate_copilot_config():
+def generate_copilot_config() -> None:
     """Generates GitHub Copilot instructions."""
     print("Generating Copilot config...")
     GITHUB_DIR = PROJECT_ROOT / ".github"
@@ -153,7 +151,7 @@ You are working in an AgentQMS-enabled project.
     print(f"  - Created {path}")
 
 
-def main():
+def main() -> int:
     try:
         generate_antigravity_workflows()
         generate_cursor_config()

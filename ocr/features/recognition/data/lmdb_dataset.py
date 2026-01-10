@@ -39,6 +39,7 @@ class LMDBRecognitionDataset(Dataset):
         tokenizer: Any,
         transform: Callable[[Image.Image], torch.Tensor] | None = None,
         max_len: int = 25,
+        **kwargs: Any,
     ):
         """
         Initialize LMDB recognition dataset.

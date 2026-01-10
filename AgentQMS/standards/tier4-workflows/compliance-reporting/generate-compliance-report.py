@@ -10,8 +10,12 @@ from collections import defaultdict
 from datetime import datetime
 from pathlib import Path
 
-# Project root
-ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# Add parent to path to import AgentQMS
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent.parent))
+from AgentQMS.tools.utils.paths import get_project_root
+
+# Project root from utility function
+ROOT = get_project_root()
 
 # Color codes for terminal output
 GREEN = "\033[92m"

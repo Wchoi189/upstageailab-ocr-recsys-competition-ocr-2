@@ -1,0 +1,92 @@
+
+================================================================================
+AI DOCUMENTATION COMPLIANCE DASHBOARD
+Generated: 2026-01-10 18:29:12
+================================================================================
+
+📊 OVERALL STATUS
+├─ ADS v1.0 Compliance: 32/43 files pass
+├─ Naming Violations: 1 files
+├─ Placement Violations: 5 files
+├─ Agent Configs: 4/4 complete
+└─ Token Footprint: ~15,704 tokens (3,926 lines)
+
+────────────────────────────────────────────────────────────────────────────────
+
+✅ ADS v1.0 COMPLIANCE
+├─ Total YAML Files: 43
+├─ Passed: [92m32[0m
+├─ Failed: [91m11[0m
+└─ Warnings: [93m3[0m
+
+   ❌ Failed Files:
+      - AgentQMS/standards/context_priority.yaml
+      - AgentQMS/standards/tier1-sst/artifact_rules.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/preprocessing-logic.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/visualization-logic.yaml
+      - AgentQMS/standards/tier3-agents/vlm-tools.yaml
+
+────────────────────────────────────────────────────────────────────────────────
+
+📛 NAMING VIOLATIONS
+├─ Files Checked: 2
+├─ ALL-CAPS Violations: [91m1[0m
+   ❌ Violations Found:
+      - docs/AGENTQMS_MAINTENANCE.md
+
+────────────────────────────────────────────────────────────────────────────────
+
+📂 PLACEMENT VIOLATIONS
+├─ Total Violations: [91m5[0m
+├─ Files at docs/ root: 2
+└─ Files at docs/artifacts/ root: 3
+
+   ❌ docs/ root violations:
+      - docs/AGENTQMS_MAINTENANCE.md
+      - docs/index.md
+
+   ❌ docs/artifacts/ root violations:
+      - docs/artifacts/2026-01-10_1730_assessment-agentqms-architecture-audit.md
+      - docs/artifacts/2026-01-10_1730_assessment_agentqms-architecture-audit.md
+      - docs/artifacts/2026-01-10_1730_assessment_agentqms-audit.md
+
+────────────────────────────────────────────────────────────────────────────────
+
+🤖 AGENT CONFIGURATIONS
+├─ Total Agents: 4
+├─ Complete Configs: [92m4[0m
+└─ Missing Configs: [92m0[0m
+
+   Status by Agent:
+   [91m✗[0m claude: fail
+   [91m✗[0m copilot: fail
+   [91m✗[0m cursor: fail
+   [91m✗[0m gemini: fail
+
+────────────────────────────────────────────────────────────────────────────────
+
+💾 TOKEN FOOTPRINT ANALYSIS
+├─ Total Lines: 3,926
+├─ Estimated Tokens: ~15,704
+└─ Files Analyzed: 43
+
+   Breakdown by Tier:
+   ├─ schema: 184 lines (~736 tokens)
+   ├─ tier1: 763 lines (~3052 tokens)
+   ├─ tier2: 2070 lines (~8280 tokens)
+   ├─ tier3: 723 lines (~2892 tokens)
+   ├─ tier4: 58 lines (~232 tokens)
+
+────────────────────────────────────────────────────────────────────────────────
+
+🎯 COMPLIANCE SCORE: 25% (1/4 checks passed)
+
+[91m❌ COMPLIANCE ISSUES DETECTED - Action required[0m
+
+================================================================================

@@ -4,7 +4,7 @@
 # Use with: python runners/train.py +domain=recognition
 
 defaults:
-  - /model/recognition/parseq
+  - override /model: recognition
   - override /data: recognition
   - _self_
 
@@ -20,3 +20,4 @@ data:
 # Tokenizer configuration (uses charset from data)
 tokenizer:
   charset: ${data.tokenizer.charset_path}
+  max_len: 25

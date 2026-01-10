@@ -113,3 +113,12 @@ datasets:
     issues: none
     use_case: layout analysis source
     integration_priority: medium
+
+  - name: aihub_admin_doc_validation
+    path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+    image_count: 616366
+    annotation_format: LMDB (Text Recognition Crops)
+    status: available
+    issues: none
+    use_case: text recognition training (PARSeq)
+    integration_priority: critical

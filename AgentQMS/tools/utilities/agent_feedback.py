@@ -166,7 +166,7 @@ class AgentFeedbackCollector:
                 return json.load(f)
         return []
 
-    def _save_feedback(self, feedback: list[dict]):
+    def _save_feedback(self, feedback: list[dict]) -> None:
         """Save feedback to file."""
         with open(self.feedback_file, "w") as f:
             json.dump(feedback, f, indent=2)
@@ -178,13 +178,13 @@ class AgentFeedbackCollector:
                 return json.load(f)
         return []
 
-    def _save_suggestions(self, suggestions: list[dict]):
+    def _save_suggestions(self, suggestions: list[dict]) -> None:
         """Save suggestions to file."""
         with open(self.suggestions_file, "w") as f:
             json.dump(suggestions, f, indent=2)
 
 
-def main():
+def main() -> None:
     parser = argparse.ArgumentParser(description="Agent Feedback Collection System")
     parser.add_argument("--report", action="store_true", help="Generate feedback report")
     parser.add_argument("--issue", help="Report a documentation issue")
