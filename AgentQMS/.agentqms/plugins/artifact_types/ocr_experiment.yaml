@@ -3,7 +3,7 @@
 #
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
-name: ocr_experiment_report
+name: assessment
 version: "1.1"
 description: |
   OCR experiment workflow and analysis report with structured metadata
@@ -14,7 +14,8 @@ metadata:
   filename_pattern: "{date}_ocr-experiment_{name}.md"
   directory: experiments/
   frontmatter:
-    type: ocr_experiment_report
+    ads_version: "1.0"
+    type: assessment
     category: research
     status: draft
     version: "1.0"

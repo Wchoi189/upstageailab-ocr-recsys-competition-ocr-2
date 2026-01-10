@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-09T19:52:34.339078+00:00'
+  generated_at: '2026-01-10T06:14:28.622206+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -8,6 +8,7 @@ discovery_paths:
 plugins_loaded:
   artifact_types:
   - assessment
+  - audit
   - bug_report
   - design_document
   - implementation_plan
@@ -33,11 +34,21 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml
+- name: audit
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
 - name: bug_report
   type: artifact_type
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml
+- name: assessment
+  type: artifact_type
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
 - name: design_document
   type: artifact_type
   version: '1.0'
@@ -48,6 +59,11 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
+- name: assessment
+  type: artifact_type
+  version: '1.1'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
 - name: vlm_report
   type: artifact_type
   version: '1.0'
@@ -123,122 +139,244 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
-validation_errors:
-- path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
-  type: artifact_type
-  error: 'Missing required frontmatter field: ads_version'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
-- path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
-  type: artifact_type
-  error: 'Unknown artifact type ''change_request''. Valid types: assessment, audit,
-    bug_report, design_document, implementation_plan, completed_plan, vlm_report,
-    walkthrough'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
-- path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
-  type: artifact_type
-  error: 'Missing required frontmatter field: ads_version'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
-- path: AgentQMS/.agentqms/plugins/artifact_types/example_artifact.yaml
-  type: artifact_type
-  error: 'Unknown artifact type ''example_artifact''. Valid types: assessment, audit,
-    bug_report, design_document, implementation_plan, completed_plan, vlm_report,
-    walkthrough'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
-- path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
-  type: artifact_type
-  error: 'Unknown artifact type ''ocr_experiment_report''. Valid types: assessment,
-    audit, bug_report, design_document, implementation_plan, completed_plan, vlm_report,
-    walkthrough'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
-- path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
-  type: artifact_type
-  error: 'Missing required frontmatter field: ads_version'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_artifact_type.json
+validation_errors: []
 resolved:
   artifact_types:
     assessment:
       name: assessment
-      version: '1.0'
-      description: 'Evaluation and analysis document with findings, recommendations,
+      version: '1.1'
+      description: 'OCR experiment workflow and analysis report with structured metadata
 
-        and implementation plans for specific subjects or systems.
+        and artifact tracking for experiment-tracker integration.
 
         '
       scope: project
       metadata:
-        filename_pattern: '{date}_assessment_{name}.md'
-        directory: assessments/
+        filename_pattern: '{date}_ocr-experiment_{name}.md'
+        directory: experiments/
         frontmatter:
           ads_version: '1.0'
           type: assessment
-          category: evaluation
-          status: active
+          category: research
+          status: draft
           version: '1.0'
           tags:
-          - assessment
-          - evaluation
-          - analysis
+          - ocr
+          - experiment
+          - tracking
       validation:
         required_fields:
         - title
         - date
         - type
-        - category
         - status
-        - version
+        - experiment_id
+        - intention
         required_sections:
-        - '## Purpose'
-        - '## Findings'
+        - '## Experiment Overview'
+        - '## Methodology'
+        - '## Results'
         - '## Analysis'
+        filename_prefix: ocr_experiment_
+        allowed_statuses:
+        - active
+        - incomplete
+        - completed
+        - archived
+      template: '# OCR Experiment: {title}
+
+
+        ## Experiment Overview
+
+
+        **Experiment ID**: {experiment_id}
+
+        **Date**: {date}
+
+        **Status**: {status}
+
+        **Intention**: {intention}
+
+
+        ---
+
+
+        ## Methodology
+
+
+        ### Objective
+
+        [Describe the experiment objective]
+
+
+        ### Scope
+
+        [Define the scope of the experiment]
+
+
+        ### Setup
+
+        [Describe the experimental setup]
+
+
+        ---
+
+
+        ## Results
+
+
+        ### Key Findings
+
+        - Finding 1
+
+        - Finding 2
+
+        - Finding 3
+
+
+        ### Metrics
+
+        [Document relevant metrics]
+
+
+        ### Artifacts Generated
+
+        - [Artifact 1](path/to/artifact)
+
+        - [Artifact 2](path/to/artifact)
+
+
+        ---
+
+
+        ## Analysis
+
+
+        ### Observations
+
+        [Detailed analysis of observations]
+
+
+        ### Performance Impact
+
+        [Describe any performance improvements or regressions]
+
+
+        ### Recommendations
+
+        1. [Recommendation 1]
+
+        2. [Recommendation 2]
+
+
+        ### Related Assessments
+
+        - [Assessment](../assessments/YYYY-MM-DD_HHMM_assessment_name.md)
+
+
+        ---
+
+
+        ## Related Artifacts
+
+
+        **Implementation Plans**:
+
+        - [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)
+
+
+        **Incident Reports**:
+
+        - [Report](../incident_reports/YYYY-MM-DD_HHMM_incident_report_name.md)
+
+
+        ---
+
+
+        **Last Updated**: {date}
+
+        **Researcher**: AI Agent
+
+        '
+      template_variables:
+        experiment_id: EXP-001
+        date: '2025-12-06'
+        status: draft
+        intention: '[Experiment objective and goal]'
+    audit:
+      name: audit
+      version: '1.0'
+      description: 'Framework audits, compliance checks, and quality evaluations with
+
+        automated implementation plan generation via GitHub Actions.
+
+        '
+      scope: project
+      metadata:
+        filename_pattern: '{date}_audit-{name}.md'
+        directory: audits/
+        frontmatter:
+          ads_version: '1.0'
+          type: audit
+          category: compliance
+          status: draft
+          version: '1.0'
+          related_artifacts: []
+          generated_artifacts: []
+          tags:
+          - audit
+      validation:
+        required_fields:
+        - title
+        - date
+        - type
+        - status
+        - category
+        - related_artifacts
+        - generated_artifacts
+        required_sections:
+        - '## Executive Summary'
+        - '## Findings'
         - '## Recommendations'
-        - '## Implementation Plan'
-        filename_prefix: assessment_
+        - '## Compliance Status'
+        - '## Related Artifacts'
+        filename_prefix: audit-
         allowed_statuses:
         - draft
         - active
         - completed
         - archived
-      template: '# Assessment - {title}
-
-
-        ## Purpose
-
-        Evaluate {subject} and provide recommendations.
-
-
-        ## Findings
-
-
-        ### Key Observations
-
-        1. Observation 1
-
-        2. Observation 2
-
-
-        ## Analysis
-
-        - **Area 1**: Status/Issues
-
-        - **Area 2**: Status/Issues
-
-
-        ## Recommendations
-
-        1. **Action Item** (Priority: High)
-
-        2. **Action Item** (Priority: Medium)
-
-
-        ## Implementation Plan
-
-        - [ ] Immediate Action
-
-        - [ ] Long-term Action
-
-        '
+      template: "# Audit: {title}\n\n**Audit Date**: {date}\n**Category**: {category}\n\
+        **Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
+        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
+        \ Scope**: [Describe what was audited]\n**Compliance Status**: [Overall status]\n\
+        **Critical Issues**: [Number]\n**High Priority Issues**: [Number]\n\n---\n\
+        \n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
+        \ Critical\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
+        \ recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n**Severity**:\
+        \ High\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
+        \ recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\n**Severity**:\
+        \ Medium\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
+        \n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\n## Recommendations\n\
+        \n### Immediate Actions (Week 1)\n1. [Action item with priority and owner]\n\
+        2. [Action item with priority and owner]\n\n### Short-term (Weeks 2-4)\n3.\
+        \ [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action item]\n\n---\n\
+        \n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
+        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
+        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
+        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
+        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
+        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
+        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
+        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
+        \n---\n\n**Last Updated**: {date}\n**Auditor**: {auditor}\n"
       template_variables:
-        subject: '[system/component/feature]'
+        date: '2025-11-29'
+        category: compliance
+        status: draft
+        auditor: AI Agent
     bug_report:
       name: bug_report
       version: '1.0'

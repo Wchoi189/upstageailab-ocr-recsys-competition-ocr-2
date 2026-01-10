@@ -3,7 +3,7 @@
 #
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
-name: change_request
+name: assessment
 version: "1.0"
 description: |
   A structured change request document for tracking proposed changes
@@ -14,7 +14,8 @@ metadata:
   filename_pattern: "{date}_{type}_change-request-{name}.md"
   directory: change_requests/
   frontmatter:
-    type: change_request
+    ads_version: "1.0"
+    type: assessment
     category: governance
     status: pending
     version: "1.0"
