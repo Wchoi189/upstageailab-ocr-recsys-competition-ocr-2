@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: bug_report
-version: "1.0"
+ads_version: "1.0"
 description: |
   Structured bug report for tracking issues with environment details,
   reproduction steps, and impact assessment.

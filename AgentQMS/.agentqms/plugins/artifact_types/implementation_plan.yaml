@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: implementation_plan
-version: "1.0"
+ads_version: "1.0"
 description: |
   Structured implementation plan for tracking development work with
   proposed changes, verification steps, and completion criteria.

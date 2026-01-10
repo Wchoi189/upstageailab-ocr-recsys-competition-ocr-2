@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: walkthrough
-version: "1.0"
+ads_version: "1.0"
 description: |
   Step-by-step walkthrough documentation for guiding users through
   processes, workflows, or feature demonstrations.

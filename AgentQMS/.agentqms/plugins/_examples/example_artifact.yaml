@@ -16,7 +16,7 @@
 # Validation: .agentqms/schemas/artifact_type_validation.yaml
 
 name: example_artifact
-version: "1.0"
+ads_version: "1.0"
 description: |
   Example artifact type demonstrating all plugin features including:
   - Rich frontmatter with custom fields

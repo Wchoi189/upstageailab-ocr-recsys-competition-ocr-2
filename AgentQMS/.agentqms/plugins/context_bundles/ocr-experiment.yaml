@@ -3,7 +3,7 @@
 
 name: ocr-experiment
 title: OCR Experiment Management
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context files for running, tracking, and analyzing OCR experiments.

@@ -3,7 +3,7 @@
 
 name: agent-configuration
 title: Agent Configuration & Settings
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context files for configuring AI agents including Claude, Copilot, Cursor,

@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: audit
-version: "1.0"
+ads_version: "1.0"
 description: |
   Framework audits, compliance checks, and quality evaluations with
   automated implementation plan generation via GitHub Actions.

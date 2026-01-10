@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: assessment
-version: "1.0"
+ads_version: "1.0"
 description: |
   A structured change request document for tracking proposed changes
   that require approval before implementation.

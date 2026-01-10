@@ -3,7 +3,7 @@
 
 name: pipeline-development
 title: OCR Pipeline Development
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context files for developing OCR pipeline components including

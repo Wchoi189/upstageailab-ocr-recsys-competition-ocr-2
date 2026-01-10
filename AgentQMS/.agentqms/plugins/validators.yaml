@@ -3,7 +3,7 @@
 #
 # Schema: AgentQMS/standards/schemas/plugin_validators.json
 
-version: "1.0"
+ads_version: "1.0"
 description: |
   Project-specific validator extensions for AgentQMS.
   Adds support for custom artifact types and categories.

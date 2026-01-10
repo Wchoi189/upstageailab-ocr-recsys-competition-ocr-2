@@ -2,7 +2,7 @@
 
 name: ocr-information-extraction
 title: OCR Information Extraction (KIE)
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context for key-value information extraction (KIE) tasks including entity

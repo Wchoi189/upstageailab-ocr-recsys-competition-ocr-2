@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: vlm_report
-version: "1.0"
+ads_version: "1.0"
 description: |
   Vision-Language Model (VLM) analysis report for documenting
   visual analysis results, findings, and conclusions.

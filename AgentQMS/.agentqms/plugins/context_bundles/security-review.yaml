@@ -5,7 +5,7 @@
 
 name: security-review
 title: Security Review Context Bundle
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context files for conducting security-focused code reviews.

@@ -4,7 +4,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: design_document
-version: "1.0"
+ads_version: "1.0"
 description: |
   Architecture and design specification document with component
   descriptions, design decisions, and implementation requirements.

@@ -3,7 +3,7 @@
 
 name: documentation-update
 title: Documentation & Standards Update
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context files for updating project documentation, standards, and artifact management.

@@ -2,7 +2,7 @@
 
 name: ocr-text-recognition
 title: OCR Text Recognition
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context for text recognition tasks including OCR models, recognition feature code,

@@ -2,7 +2,7 @@
 
 name: ocr-layout-analysis
 title: OCR Layout Analysis
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context for layout analysis and structure extraction including page structure

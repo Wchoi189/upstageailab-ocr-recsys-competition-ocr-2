@@ -7,7 +7,7 @@
 # Schema: AgentQMS/conventions/schemas/plugin_artifact_type.json
 
 name: assessment
-version: "1.0"
+ads_version: "1.0"
 description: |
   Evaluation and analysis document with findings, recommendations,
   and implementation plans for specific subjects or systems.

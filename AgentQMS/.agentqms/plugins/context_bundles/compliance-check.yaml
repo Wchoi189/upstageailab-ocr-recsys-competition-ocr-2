@@ -3,7 +3,7 @@
 
 name: compliance-check
 title: Compliance & Validation Check
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context files for running compliance checks, artifact validation,

@@ -2,7 +2,7 @@
 
 name: ocr-text-detection
 title: OCR Text Detection
-version: "1.0"
+ads_version: "1.0"
 scope: project
 description: |
   Context for text detection tasks including feature code, inference pipeline,
