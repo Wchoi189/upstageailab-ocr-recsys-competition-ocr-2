@@ -1,6 +1,6 @@
 # AgentQMS Framework
 
-Last Updated: 2026-01-10 (UTC)
+Last Updated: 2026-01-10 (KST)
 
 AgentQMS is a reusable Quality Management Framework that standardizes
 artifact creation, documentation workflows, and automation for collaborative
@@ -267,10 +267,16 @@ project_root/
 
 To keep docs and interfaces fresh and machine-friendly:
 
-- Add a visible `Last Updated: YYYY-MM-DD (UTC)` line at the top of key docs (as above).
-- In Makefile help, embed `LAST_UPDATED := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)` and print it in `help` output.
+- Add a visible `Last Updated: YYYY-MM-DD (KST)` line at the top of key docs (as above).
+- In Makefile help, embed `LAST_UPDATED := $(shell TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)` and print it in `help` output.
 - Include `generated_at` fields in machine-readable YAML (e.g., `.agentqms/state/plugins.yaml`).
-- Prefer UTC timestamps in ISO-8601 format (e.g., `2026-01-10T06:20:00Z`).
+- Prefer KST timestamps in ISO-8601 format with timezone (e.g., `2026-01-10T15:20:00+0900`).
+
+## Versioning (Recommendation)
+
+- Use `ads_version` in frontmatter only when backed by a schema definition.
+- Schema location: `.agentqms/schemas/artifact_type_validation.yaml` defines canonical types and validation rules.
+- Version numbers without schema backing are discouraged; prefer referencing the schema itself.
 
 ---
 

@@ -6,8 +6,8 @@
 
 export PYTHONPATH := $(abspath ../..):$(PYTHONPATH)
 
-# Timestamp (UTC) shown in help for visibility
-LAST_UPDATED := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+# Timestamp (KST) shown in help for visibility
+LAST_UPDATED := $(shell TZ=Asia/Seoul date +%Y-%m-%dT%H:%M:%S%z)
 
 # Default target - show help
 help: ## Show agent help message
@@ -17,7 +17,7 @@ help: ## Show agent help message
 	@echo "⚠️  WARNING: This Makefile is for AI agents only!"
 	@echo "   Humans should use the main project Makefile."
 	@echo ""
-	@echo "Last Updated (UTC): $(LAST_UPDATED)"
+	@echo "Last Updated (KST): $(LAST_UPDATED)"
 	@echo ""
 	@echo "📋 Available Agent Commands:"
 	@echo ""
