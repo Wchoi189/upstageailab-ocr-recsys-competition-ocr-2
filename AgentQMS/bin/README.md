@@ -133,31 +133,23 @@ make ide-config         # Generate configuration files for Antigravity, Cursor, 
 
 ### AgentQMS/ (Framework Container)
 
-- `interface/` – Agent-only interface layer (Makefile, CLI wrappers, workflows).
-- `agent_tools/` – Canonical implementation layer (automation, validators, docs tooling).
-- `conventions/` – Artifact types, schemas, templates, and audit framework.
-- `knowledge/` – Self-contained knowledge surface for agents and maintainers:
-  - `agent/` – system SST, quick references, tool catalog.
-  - `protocols/` – governance/development/testing protocols.
-  - `references/` – technical and architecture references.
-  - `meta/` – maintainer-facing docs (e.g., `MAINTAINERS.md`, framework design).
-
+- `bin/` – Agent interface layer: Makefile commands, CLI entry points
+- `tools/` – Implementation layer: core workflows, validation, compliance, documentation automation
+- `standards/` – Standards index, tier definitions, tool catalogs, quickstart guides
+- `.agentqms/` – Framework plugins and state:
+  - `plugins/` – Built-in artifact types, validators, context bundles
+  - `schemas/` – Validation schemas (artifact_type_validation.yaml)
+- `mcp_server.py` – Model Context Protocol server for AI tool integration
+- `AGENTS.yaml` – Quick-reference index for AI agents
 
 ### Project-Level Directories
 
-- `.agentqms/` – Hidden framework state and configuration:
-  - `settings.yaml` – project configuration (if present).
-  - `effective.yaml` – resolved configuration snapshot.
-  - `state/architecture.yaml` – component and capability map.
-  - `plugins/` – project-specific plugin extensions.
-- `docs/artifacts/` – QMS artifacts (implementation plans, assessments, bug reports, audits).
-- `.copilot/context/` – Auto-discovery context files (for GitHub Copilot Spaces):
-  - `agentqms-overview.md` – Framework overview
-  - `tool-registry.json` – Machine-readable tool registry
-  - `tool-catalog.md` – Human-readable tool catalog
-  - `workflow-triggers.yaml` – Task → workflow mapping
-  - `context-bundles-index.md` – Context bundles reference
-- `.cursor/` – Cursor-specific instructions and plans (`.cursor/instructions.md`) for pinning concise SST reminders inside Cursor IDE.
+- `.agentqms/` – Project state and configuration:
+  - `schemas/` – Centralized validation schemas
+  - `context_control/` – Context bundling system state
+  - `context_feedback/` – AI feedback on context relevance
+- `docs/artifacts/` – QMS artifacts (plans, assessments, audits, bug reports)
+- `.github/copilot-instructions.md` – Primary Copilot entrypoint
 
 ---
 
@@ -196,12 +188,21 @@ AgentQMS supports project-level extensions via plugins. Define custom:
 ### Plugin Directory Structure
 
 ```
-.agentqms/plugins/
-├── artifact_types/           # Custom artifact type definitions
-│   └── change_request.yaml   # Example: Change request type
-├── validators.yaml           # Validator extensions (prefixes, types, categories)
-└── context_bundles/          # Custom context bundles
-    └── security-review.yaml  # Example: Security review bundle
+AgentQMS/.agentqms/plugins/
+├── artifact_types/           # Built-in artifact type definitions
+│   ├── assessment.yaml
+│   ├── audit.yaml
+│   ├── bug_report.yaml
+│   ├── design_document.yaml
+│   ├── implementation_plan.yaml
+│   ├── vlm_report.yaml
+│   └── walkthrough.yaml
+├── validators.yaml           # Validator extensions
+└── context_bundles/          # Task-specific context bundles
+    ├── agent-configuration.yaml
+    ├── compliance-check.yaml
+    ├── hydra-configuration.yaml
+    └── ocr-*.yaml            # OCR domain bundles
 ```
 
 ### Using Plugins
@@ -220,7 +221,7 @@ python -m AgentQMS.tools.core.plugins --write-snapshot
 python -m AgentQMS.tools.core.plugins --show assessment
 ```
 
-See `AgentQMS/conventions/schemas/plugin_*.json` for plugin schema documentation.
+See `.agentqms/schemas/artifact_type_validation.yaml` for validation rules and canonical types.
 
 ---
 
@@ -228,20 +229,18 @@ See `AgentQMS/conventions/schemas/plugin_*.json` for plugin schema documentation
 
 ```text
 project_root/
-├── AgentQMS/                  # Framework container
-│   ├── interface/             # Agent commands (Makefile)
+├── AgentQMS/                  # Framework (lightweight container)
+│   ├── bin/                   # Agent commands (Makefile)
 │   ├── tools/                 # Implementation layer
-│   ├── conventions/           # Schemas, templates, audit framework
-│   └── knowledge/             # Documentation surface
-│       ├── agent/             # AI agent instructions (SST)
-│       ├── protocols/         # Governance, development protocols
-│       └── references/        # Technical references
-├── .agentqms/                 # Framework state
-│   ├── settings.yaml          # Project configuration
-│   ├── state/architecture.yaml
-│   └── plugins/               # Project extensions
-├── docs/artifacts/             # QMS artifacts
-└── README.md
+│   ├── standards/             # Standards, catalogs, quickstart
+│   ├── .agentqms/plugins/     # Built-in plugins
+│   ├── mcp_server.py          # MCP server
+│   └── AGENTS.yaml            # Agent entrypoint index
+├── .agentqms/                 # Project state
+│   ├── schemas/               # Validation schemas
+│   └── context_control/       # Context system state
+├── docs/artifacts/            # QMS artifacts
+└── .github/copilot-instructions.md  # Copilot entrypoint
 ```
 
 ---
@@ -251,15 +250,13 @@ project_root/
 - **Artifact workflows** – `AgentQMS/tools/core/artifact_workflow.py` creates,
   validates, and maintains QMS artifacts.
 - **Validation & compliance** – `AgentQMS/tools/compliance/*` enforces naming,
-  structure, and boundary rules; integrates with CI and optional pre-commit hooks.
-- **Audit framework** – tools and templates under
-  `AgentQMS/conventions/audit_framework/` and `AgentQMS/tools/audit/`.
-- **Knowledge surface** – `AgentQMS/knowledge/*` provides agent-first protocols and
-  references, with `.agentqms/state/plugins.yaml` acting as a compact plugin index.
+  structure, and boundary rules; integrates with CI and pre-commit hooks.
 - **Plugin extensibility** – Define custom artifact types, validators, and context
-  bundles in `.agentqms/plugins/`.
-- **Auto-discovery** – Automatic tool registration, workflow suggestions, and context
-  loading for GitHub Copilot Spaces and compatible AI agents.
+  bundles in `AgentQMS/.agentqms/plugins/`.
+- **MCP integration** – `AgentQMS/mcp_server.py` provides tool access for Claude Desktop
+  and compatible AI clients.
+- **Context bundling** – Task-specific file collections reduce token usage and improve
+  AI context relevance.
 
 ---
 
@@ -280,14 +277,12 @@ To keep docs and interfaces fresh and machine-friendly:
 
 ---
 
-## For Maintainers
+## Contributing
 
-- **Maintainer Guide**: `AgentQMS/knowledge/meta/MAINTAINERS.md`
-- **Framework Design**: `AgentQMS/knowledge/meta/framework_maintenance_design.md`
-- **Audit Framework**: `AgentQMS/conventions/audit_framework/README.md`
+For framework development and contribution guidelines, see [CONTRIBUTING.md](../../CONTRIBUTING.md).
 
 ---
 
 ## License
 
-This project is licensed under the MIT License – see [LICENSE](LICENSE).
+This project is licensed under the MIT License – see [LICENSE](../../LICENSE).
