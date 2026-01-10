@@ -1,5 +1,7 @@
 # AgentQMS Framework
 
+Last Updated: 2026-01-10 (UTC)
+
 AgentQMS is a reusable Quality Management Framework that standardizes
 artifact creation, documentation workflows, and automation for collaborative
 AI coding. The framework is **containerized** so it can travel between projects
@@ -206,13 +208,16 @@ AgentQMS supports project-level extensions via plugins. Define custom:
 
 ```bash
 # List registered plugins
-python -m AgentQMS.agent_tools.core.plugins --list
+python -m AgentQMS.tools.core.plugins --list
 
 # Validate plugin definitions
-python -m AgentQMS.agent_tools.core.plugins --validate
+python -m AgentQMS.tools.core.plugins --validate
+
+# Write snapshot (used by make validate)
+python -m AgentQMS.tools.core.plugins --write-snapshot
 
 # View specific plugin
-python -m AgentQMS.agent_tools.core.plugins --show change_request
+python -m AgentQMS.tools.core.plugins --show assessment
 ```
 
 See `AgentQMS/conventions/schemas/plugin_*.json` for plugin schema documentation.
@@ -225,7 +230,7 @@ See `AgentQMS/conventions/schemas/plugin_*.json` for plugin schema documentation
 project_root/
 ├── AgentQMS/                  # Framework container
 │   ├── interface/             # Agent commands (Makefile)
-│   ├── agent_tools/           # Implementation layer
+│   ├── tools/                 # Implementation layer
 │   ├── conventions/           # Schemas, templates, audit framework
 │   └── knowledge/             # Documentation surface
 │       ├── agent/             # AI agent instructions (SST)
@@ -243,18 +248,29 @@ project_root/
 
 ## Key Capabilities
 
-- **Artifact workflows** – `AgentQMS/agent_tools/core/artifact_workflow.py` creates,
+- **Artifact workflows** – `AgentQMS/tools/core/artifact_workflow.py` creates,
   validates, and maintains QMS artifacts.
-- **Validation & compliance** – `AgentQMS/agent_tools/compliance/*` enforces naming,
+- **Validation & compliance** – `AgentQMS/tools/compliance/*` enforces naming,
   structure, and boundary rules; integrates with CI and optional pre-commit hooks.
 - **Audit framework** – tools and templates under
-  `AgentQMS/conventions/audit_framework/` and `AgentQMS/agent_tools/audit/`.
+  `AgentQMS/conventions/audit_framework/` and `AgentQMS/tools/audit/`.
 - **Knowledge surface** – `AgentQMS/knowledge/*` provides agent-first protocols and
-  references, with `.agentqms/state/architecture.yaml` acting as a compact index.
+  references, with `.agentqms/state/plugins.yaml` acting as a compact plugin index.
 - **Plugin extensibility** – Define custom artifact types, validators, and context
   bundles in `.agentqms/plugins/`.
 - **Auto-discovery** – Automatic tool registration, workflow suggestions, and context
   loading for GitHub Copilot Spaces and compatible AI agents.
+
+---
+
+## Maintenance Timestamping (Recommendation)
+
+To keep docs and interfaces fresh and machine-friendly:
+
+- Add a visible `Last Updated: YYYY-MM-DD (UTC)` line at the top of key docs (as above).
+- In Makefile help, embed `LAST_UPDATED := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)` and print it in `help` output.
+- Include `generated_at` fields in machine-readable YAML (e.g., `.agentqms/state/plugins.yaml`).
+- Prefer UTC timestamps in ISO-8601 format (e.g., `2026-01-10T06:20:00Z`).
 
 ---
 

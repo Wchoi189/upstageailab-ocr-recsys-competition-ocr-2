@@ -6,6 +6,9 @@
 
 export PYTHONPATH := $(abspath ../..):$(PYTHONPATH)
 
+# Timestamp (UTC) shown in help for visibility
+LAST_UPDATED := $(shell date -u +%Y-%m-%dT%H:%M:%SZ)
+
 # Default target - show help
 help: ## Show agent help message
 	@echo "🤖 Agent Tools Makefile (AGENT-ONLY)"
@@ -13,6 +16,8 @@ help: ## Show agent help message
 	@echo ""
 	@echo "⚠️  WARNING: This Makefile is for AI agents only!"
 	@echo "   Humans should use the main project Makefile."
+	@echo ""
+	@echo "Last Updated (UTC): $(LAST_UPDATED)"
 	@echo ""
 	@echo "📋 Available Agent Commands:"
 	@echo ""
@@ -53,14 +58,16 @@ create-assessment: ## Create assessment (usage: make create-assessment NAME=my-a
 create-audit: ## Create audit (usage: make create-audit NAME=my-audit TITLE="My Audit")
 	uv run python ../tools/core/artifact_workflow.py create --type audit --name $(NAME) --title "$(TITLE)"
 
-create-design: ## Create design document (usage: make create-design NAME=my-design TITLE="My Design")
-	uv run python ../tools/core/artifact_workflow.py create --type design --name $(NAME) --title "$(TITLE)"
+create-design: ## Create design document (canonical: design_document) (usage: make create-design NAME=my-design TITLE="My Design")
+	uv run python ../tools/core/artifact_workflow.py create --type design_document --name $(NAME) --title "$(TITLE)"
 
-create-research: ## Create research document (usage: make create-research NAME=my-research TITLE="My Research")
-	uv run python ../tools/core/artifact_workflow.py create --type research --name $(NAME) --title "$(TITLE)"
+create-research: ## Create research document (mapped to assessment) (usage: make create-research NAME=my-research TITLE="My Research")
+	@echo "ℹ️  'research' is not a canonical artifact type; mapping to 'assessment'."
+	uv run python ../tools/core/artifact_workflow.py create --type assessment --name $(NAME) --title "$(TITLE)"
 
-create-template: ## Create template (usage: make create-template NAME=my-template TITLE="My Template")
-	uv run python ../tools/core/artifact_workflow.py create --type template --name $(NAME) --title "$(TITLE)"
+create-template: ## Deprecated – use docs/_templates for reusable templates
+	@echo "⚠️  'template' artifact type is deprecated. Place reusable templates under docs/_templates/."
+	@echo "   For new documentation, prefer canonical types (assessment, design_document, implementation_plan, etc.)."
 
 create-bug-report: ## Create bug report (usage: make create-bug-report NAME=my-bug TITLE="My Bug Report")
 	uv run python ../tools/core/artifact_workflow.py create --type bug_report --name $(NAME) --title "$(TITLE)"
