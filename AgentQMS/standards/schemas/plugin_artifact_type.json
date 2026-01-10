@@ -4,7 +4,7 @@
     "title": "AgentQMS Artifact Type Plugin",
     "description": "Schema for defining custom artifact types in AgentQMS",
     "type": "object",
-    "required": ["name", "version", "metadata", "template"],
+    "required": ["name", "ads_version", "metadata", "template"],
     "additionalProperties": false,
     "properties": {
         "name": {
@@ -13,10 +13,16 @@
             "description": "Unique identifier for the artifact type (lowercase, underscores allowed)",
             "examples": ["change_request", "decision_record", "specification"]
         },
+        "ads_version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+            "description": "AgentQMS standard version for this plugin definition",
+            "examples": ["1.0", "1.0.0", "2.1.0"]
+        },
         "version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
-            "description": "Semantic version of this plugin definition",
+            "description": "[DEPRECATED] Use ads_version instead. Kept for backward compatibility.",
             "examples": ["1.0", "1.0.0", "2.1.0"]
         },
         "description": {

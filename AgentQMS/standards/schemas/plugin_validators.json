@@ -6,10 +6,16 @@
     "type": "object",
     "additionalProperties": false,
     "properties": {
+        "ads_version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+            "description": "AgentQMS standard version for this plugin definition",
+            "default": "1.0"
+        },
         "version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
-            "description": "Semantic version of this plugin definition",
+            "description": "[DEPRECATED] Use ads_version instead. Kept for backward compatibility.",
             "default": "1.0"
         },
         "description": {

@@ -21,10 +21,16 @@
             "type": "string",
             "description": "Detailed description of when and how to use this bundle"
         },
+        "ads_version": {
+            "type": "string",
+            "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
+            "description": "AgentQMS standard version for this bundle definition",
+            "default": "1.0"
+        },
         "version": {
             "type": "string",
             "pattern": "^\\d+\\.\\d+(\\.\\d+)?$",
-            "description": "Semantic version of this bundle definition",
+            "description": "[DEPRECATED] Use ads_version instead. Kept for backward compatibility.",
             "default": "1.0"
         },
         "scope": {
