@@ -77,3 +77,31 @@
   name: "Manifest Schema"
   path: "experiment_manager/.schemas/manifest.schema.json"
   mimeType: "application/json"
+
+# Utility Scripts (Auto-Inject Priority)
+- uri: "utilities://quick-reference"
+  name: "Utility Scripts Quick Reference"
+  description: "ALWAYS CHECK FIRST: Reusable utilities for config loading (2500x faster), paths, timestamps, git"
+  path: "context/utility-scripts/quick-reference.md"
+  mimeType: "text/markdown"
+
+- uri: "utilities://index"
+  name: "Utility Scripts Index"
+  description: "Full index of utility modules with triggers, examples, and performance metrics"
+  path: "context/utility-scripts/utility-scripts-index.yaml"
+  mimeType: "application/x-yaml"
+
+# Standards Discovery
+- uri: "standards://router"
+  name: "Standards Router"
+  description: "Task-to-standards mapping for automatic standard discovery based on task type"
+  path: "AgentQMS/standards/standards-router.yaml"
+  mimeType: "application/x-yaml"
+
+- uri: "standards://frontmatter"
+  name: "Frontmatter Master Schema"
+  description: "Single source of truth for artifact frontmatter field definitions"
+  path: "AgentQMS/standards/tier1-sst/frontmatter-master.yaml"
+  mimeType: "application/x-yaml"
+
+

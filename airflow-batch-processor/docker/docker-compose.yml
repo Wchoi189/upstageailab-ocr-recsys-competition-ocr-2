@@ -42,7 +42,8 @@ services:
       - -c
       - |
         airflow db migrate
-        airflow users create-user --username admin --firstname Air --lastname Flow --email admin@example.com --role Admin --password admin || true
+        # Create default admin user (Airflow 3 uses `airflow users create`).
+        airflow users create --username admin --firstname Air --lastname Flow --email admin@example.com --role Admin --password admin || true
 
   airflow-webserver:
     image: airflow-cuda:3.1.5
@@ -64,7 +65,8 @@ services:
       - ../config:/opt/airflow/config
       - ../data:/opt/airflow/data
       - airflow_logs:/opt/airflow/logs
-    command: ["airflow", "webserver"]
+    # Airflow 3 removes `airflow webserver`; UI/API served by `api-server`.
+    command: ["airflow", "api-server"]
 
   airflow-scheduler:
     image: airflow-cuda:3.1.5

@@ -102,6 +102,13 @@ class ArtifactWorkflow:
         """
         self._log(f"🚀 Creating {artifact_type} artifact: {name}")
 
+        # Pre-flight validation: Check parameters BEFORE attempting creation
+        preflight = self.validator.validate_preflight(artifact_type, name, title)
+        if not preflight.valid:
+            guidance = preflight.format_guidance()
+            self._log(guidance)
+            raise ValueError(guidance)
+
         try:
             # Create the artifact
             file_path: str = create_artifact(artifact_type, name, title, str(self.artifacts_root), quiet=self.quiet, **kwargs)

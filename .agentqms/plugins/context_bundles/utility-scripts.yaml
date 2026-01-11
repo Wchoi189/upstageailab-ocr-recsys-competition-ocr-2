@@ -1,0 +1,134 @@
+name: utility-scripts
+title: "Reusable Utility Scripts Discovery"
+description: |
+  Discover and use reusable utility scripts instead of writing custom code.
+  Includes YAML loading (with caching), path resolution, timestamps, git utilities.
+  These utilities provide significant performance benefits and consistency across projects.
+
+ads_version: "1.0"
+scope: "project"
+
+tags:
+  - utilities
+  - discovery
+  - reusable-code
+  - configuration
+  - paths
+  - timestamps
+  - git
+  - performance
+
+# ============================================================================
+# TRIGGERS: When this bundle should be suggested
+# ============================================================================
+
+triggers:
+  # Keywords that trigger this bundle
+  keywords:
+    # Configuration loading (ConfigLoader)
+    - "load yaml"
+    - "load config"
+    - "configuration"
+    - "config file"
+    - "yaml file"
+    - "parse yaml"
+    - "read config"
+
+    # Caching and performance
+    - "caching"
+    - "cache"
+    - "performance"
+    - "fast load"
+    - "repeated loads"
+
+    # Path resolution (paths utility)
+    - "project root"
+    - "artifacts directory"
+    - "artifacts dir"
+    - "artifact location"
+    - "data directory"
+    - "data dir"
+    - "configs directory"
+    - "outputs directory"
+    - "standard path"
+    - "standard directory"
+    - "find path"
+    - "get path"
+    - "locate file"
+    - "directory location"
+
+    # Timestamps (timestamps utility)
+    - "timestamp"
+    - "kst"
+    - "korea time"
+    - "timezone"
+    - "current time"
+    - "format date"
+    - "date format"
+    - "artifact timestamp"
+    - "metadata timestamp"
+
+    # Git utilities (git utility)
+    - "current branch"
+    - "git branch"
+    - "commit hash"
+    - "git commit"
+    - "detect branch"
+    - "branch name"
+    - "commit info"
+
+  # Regex patterns for more precise matching
+  patterns:
+    # YAML/Config loading patterns
+    - "\\b(yaml|config|configuration)\\b.*\\b(load|import|parse|read)\\b"
+    - "\\b(load|import|parse|read)\\b.*\\b(yaml|config|configuration)\\b"
+    - "\\b(yaml|config)\\b.*\\b(file|cache)\\b"
+
+    # Path resolution patterns
+    - "\\b(path|directory|location|file|folder)\\b.*\\b(find|get|resolve|locate|standard)\\b"
+    - "\\b(project|artifact|document|data|config)\\b.*\\b(root|dir|directory|location|path)\\b"
+    - "\\b(standard|project)\\b.*\\b(directory|path|location)\\b"
+
+    # Timestamp patterns
+    - "\\b(timestamp|datetime|date|time|temporal)\\b.*\\b(format|current|kst|korea)\\b"
+    - "\\b(format|create|generate)\\b.*\\b(timestamp|date|time)\\b"
+    - "\\b(artifact|metadata)\\b.*\\b(timestamp|time|date)\\b"
+
+    # Git detection patterns
+    - "\\b(branch|commit|git|revision)\\b.*\\b(current|detect|get|info)\\b"
+    - "\\b(current|get)\\b.*\\b(branch|commit|git)\\b"
+    - "\\b(build|artifact|version)\\b.*\\b(branch|commit)\\b"
+
+    # Caching/performance patterns
+    - "\\b(cache|caching|fast|speed|performance)\\b.*\\b(load|config|yaml)\\b"
+    - "\\b(optimize|improve)\\b.*\\b(load|config)\\b"
+
+# ============================================================================
+# TIERS: Documentation organized by priority
+# ============================================================================
+
+tiers:
+  tier1:
+    name: "Essential Discovery Resources"
+    description: "Critical discovery resources - always include when bundle is suggested"
+    files:
+      - "context/utility-scripts/quick-reference.md"
+      - "context/utility-scripts/utility-scripts-index.yaml"
+
+  tier2:
+    name: "Detailed Utility Documentation"
+    description: "Comprehensive API reference for the 4 Tier-1 utilities"
+    files:
+      - "context/utility-scripts/by-category/config-loading/config_loader.md"
+      - "context/utility-scripts/by-category/path-resolution/paths.md"
+      - "context/utility-scripts/by-category/timestamps/timestamps.md"
+      - "context/utility-scripts/by-category/git/git.md"
+
+  tier3:
+    name: "Integration & Discovery Guide"
+    description: "Discovery manifest and integration guide for AI agents"
+    files:
+      - "context/utility-scripts/manifest.yaml"
+      - "context/utility-scripts/ai-integration-guide.md"
+
+

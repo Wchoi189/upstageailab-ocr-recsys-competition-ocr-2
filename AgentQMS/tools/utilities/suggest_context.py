@@ -115,6 +115,71 @@ class DebugPatternAnalyzer:
         return "general"
 
 
+class StandardsSuggester:
+    """Suggests applicable standards based on task description using standards-router.yaml."""
+
+    def __init__(self, project_root: Path | None = None):
+        """Initialize the standards suggester.
+
+        Args:
+            project_root: Project root path (auto-detected if not provided)
+        """
+        if project_root is None:
+            project_root = get_project_root()
+        self.project_root = Path(project_root)
+        self._router: dict[str, Any] = {}
+        self._load_router()
+
+    def _load_router(self) -> None:
+        """Load standards router configuration."""
+        router_path = self.project_root / "AgentQMS/standards/standards-router.yaml"
+        if router_path.exists():
+            import yaml
+            with open(router_path, encoding="utf-8") as f:
+                self._router = yaml.safe_load(f) or {}
+
+    def suggest(self, task_description: str) -> list[dict[str, Any]]:
+        """Suggest applicable standards for a task.
+
+        Args:
+            task_description: Description of the task
+
+        Returns:
+            List of matching task mappings with their standards
+        """
+        task_lower = task_description.lower()
+        matches = []
+
+        task_mappings = self._router.get("task_mappings", {})
+        for task_type, config in task_mappings.items():
+            triggers = config.get("triggers", {})
+            keywords = triggers.get("keywords", [])
+            patterns = triggers.get("patterns", [])
+
+            # Check keyword matches
+            keyword_matches = [k for k in keywords if k.lower() in task_lower]
+
+            # Check pattern matches
+            pattern_matches = []
+            for pattern in patterns:
+                if re.search(pattern, task_lower):
+                    pattern_matches.append(pattern)
+
+            if keyword_matches or pattern_matches:
+                matches.append({
+                    "task_type": task_type,
+                    "description": config.get("description", ""),
+                    "standards": config.get("standards", []),
+                    "priority": config.get("priority", 3),
+                    "matched_keywords": keyword_matches,
+                    "matched_patterns": pattern_matches,
+                })
+
+        # Sort by priority (lower is higher priority)
+        matches.sort(key=lambda x: x["priority"])
+        return matches
+
+
 class ContextSuggester:
     """Suggests context bundles based on task keywords and AST pattern analysis."""
 
@@ -130,6 +195,7 @@ class ContextSuggester:
         self.project_root = Path(project_root)
         self._bundles: dict[str, Any] = {}
         self._debug_analyzer = DebugPatternAnalyzer()
+        self._standards_suggester = StandardsSuggester(project_root)
         self._load_bundles_from_registry()
 
     def _load_bundles_from_registry(self) -> None:
@@ -255,12 +321,16 @@ class ContextSuggester:
                 }
             )
 
+        # Get standards suggestions
+        standards_suggestions = self._standards_suggester.suggest(task_description)
+
         return {
             "task_description": task_description,
             "suggestions": suggestions,
             "primary_bundle": suggestions[0]["context_bundle"] if suggestions else None,
             "is_debugging_task": is_debug_task,
             "analysis_metadata": analysis_metadata if analysis_metadata else None,
+            "standards": standards_suggestions,
         }
 
     def _get_recommended_ast_tools(self, analysis_type: str | None) -> list[str]:
@@ -357,6 +427,20 @@ class ContextSuggester:
                 lines.append(f'   🔧 Usage: python suggest_context.py --analyze-patterns "{result["task_description"]}"')
 
             lines.append("")
+
+        # Show standards suggestions if available
+        standards = result.get("standards", [])
+        if standards:
+            lines.append("")
+            lines.append("📚 Applicable Standards:")
+            lines.append("-" * 50)
+            for std in standards:
+                lines.append(f"  📖 {std['task_type'].upper()}: {std['description']}")
+                for s in std.get("standards", [])[:3]:
+                    lines.append(f"     • {s}")
+                if std.get("matched_keywords"):
+                    lines.append(f"     📌 Matched: {', '.join(std['matched_keywords'][:3])}")
+                lines.append("")
 
         return "\n".join(lines)
 

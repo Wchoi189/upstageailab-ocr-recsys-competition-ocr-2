@@ -1,0 +1,148 @@
+---
+ads_version: "1.0"
+type: router
+name: standards-router
+description: "Maps task types to applicable AgentQMS standards for automatic discovery"
+date: "2026-01-12"
+status: active
+
+# Standards Router
+# Maps task descriptions/types → applicable standards files
+# Used by suggest_context.py to auto-suggest relevant standards
+
+task_mappings:
+
+  artifact_creation:
+    description: "Creating any artifact (assessment, plan, audit, design, etc.)"
+    priority: 1
+    standards:
+      - AgentQMS/standards/tier1-sst/naming-conventions.yaml
+      - AgentQMS/standards/tier1-sst/artifact-types.yaml
+      - AgentQMS/standards/tier1-sst/artifact_rules.yaml
+    triggers:
+      keywords:
+        - "create artifact"
+        - "new artifact"
+        - "assessment"
+        - "implementation plan"
+        - "audit"
+        - "design document"
+        - "bug report"
+        - "walkthrough"
+      patterns:
+        - "\\bcreate\\b.*\\bartifact\\b"
+        - "\\bnew\\b.*\\b(assessment|plan|audit|design)\\b"
+
+  config_files:
+    description: "Working with YAML configuration files (Hydra, training configs)"
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/configuration-standards.yaml
+      - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+    triggers:
+      keywords:
+        - "config"
+        - "yaml"
+        - "hydra"
+        - "configuration"
+        - "training config"
+        - "omegaconf"
+      patterns:
+        - "\\bconfig(uration)?\\b"
+        - "\\bhydra\\b"
+        - "\\byaml\\b.*\\b(file|edit|update)\\b"
+
+  code_changes:
+    description: "Writing or modifying Python code"
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/coding-standards.yaml
+      - AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+    triggers:
+      keywords:
+        - "python"
+        - "code"
+        - "implement"
+        - "refactor"
+        - "function"
+        - "class"
+        - "module"
+      patterns:
+        - "\\b(implement|write|create)\\b.*\\b(code|function|class)\\b"
+        - "\\brefactor\\b"
+        - "\\bpython\\b"
+
+  inference_pipeline:
+    description: "OCR inference pipeline work"
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/inference-framework.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+    triggers:
+      keywords:
+        - "inference"
+        - "ocr"
+        - "pipeline"
+        - "detection"
+        - "recognition"
+        - "kie"
+      patterns:
+        - "\\b(inference|ocr|pipeline)\\b"
+        - "\\b(detection|recognition|kie)\\b.*\\b(model|code)\\b"
+
+  api_development:
+    description: "API and contract development"
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/api-contracts.yaml
+      - AgentQMS/standards/tier2-framework/data-contracts.yaml
+    triggers:
+      keywords:
+        - "api"
+        - "endpoint"
+        - "contract"
+        - "schema"
+        - "request"
+        - "response"
+      patterns:
+        - "\\bapi\\b"
+        - "\\b(endpoint|contract|schema)\\b"
+
+  git_workflow:
+    description: "Git operations and version control"
+    priority: 3
+    standards:
+      - AgentQMS/standards/tier2-framework/git-conventions.yaml
+    triggers:
+      keywords:
+        - "git"
+        - "commit"
+        - "branch"
+        - "merge"
+        - "pull request"
+      patterns:
+        - "\\bgit\\b"
+        - "\\b(commit|branch|merge|pr)\\b"
+
+  validation:
+    description: "Running validation and compliance checks"
+    priority: 1
+    standards:
+      - AgentQMS/standards/tier1-sst/validation-protocols.yaml
+      - AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+    triggers:
+      keywords:
+        - "validate"
+        - "compliance"
+        - "check"
+        - "verify"
+      patterns:
+        - "\\b(validate|compliance|verify)\\b"
+
+# Metadata for suggest_context.py integration
+integration:
+  loader: "AgentQMS.tools.utils.config_loader.ConfigLoader"
+  cache_ttl: 3600
+  fallback_standards:
+    - AgentQMS/standards/INDEX.yaml

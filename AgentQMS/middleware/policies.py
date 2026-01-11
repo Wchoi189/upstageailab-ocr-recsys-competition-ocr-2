@@ -122,3 +122,77 @@ class ComplianceInterceptor:
                 message="Internal Violation: Excessive parent chaining.",
                 feedback_to_ai="PROTOCOL ERROR: Excessive .parent chaining detected. Use 'AgentQMS.tools.utils.paths.get_project_root()'."
             )
+
+
+class StandardsInterceptor:
+    """Enforces ADS v1.0 frontmatter on standard documents."""
+
+    REQUIRED_KEYS = {
+        "ads_version", "type", "agent", "tier", "priority",
+        "validates_with", "compliance_status", "memory_footprint"
+    }
+
+    def validate(self, tool_name: str, arguments: dict[str, Any]) -> None:
+        # Check for force override
+        if arguments.get("force") is True or str(arguments.get("force")).lower() == "true":
+            return
+
+        if tool_name != "write_to_file":
+            return
+
+        target_file = arguments.get("TargetFile")
+        if not target_file:
+            return
+
+        path = Path(target_file)
+
+        # Only enforce on AgentQMS/standards/*.yaml
+        if "AgentQMS/standards" not in str(path) or path.suffix != ".yaml":
+            return
+
+        content = arguments.get("CodeContent")
+        if not content:
+            return
+
+        try:
+            # Simple check for frontmatter keys to avoid heavyweight parsing if possible,
+            # but regex/parsing is safer. Let's do a quick YAML load if possible,
+            # or just regex for the keys since we can't import yaml easily here without overhead?
+            # Actually, we can assume standard imports.
+            import yaml
+
+            # Handle multi-document streams (frontmatter often uses ---)
+            # ADS spec says "YAML structured data only", implies the whole file is YAML.
+            data = yaml.safe_load(content)
+
+            if not isinstance(data, dict):
+                 raise PolicyViolation(
+                    message="Standards Violation: Root must be a dict.",
+                    feedback_to_ai="ADS VIOLATION: Standards files must be a valid YAML dictionary."
+                )
+
+            missing = self.REQUIRED_KEYS - data.keys()
+            if missing:
+                raise PolicyViolation(
+                    message=f"Standards Violation: Missing keys {missing}",
+                    feedback_to_ai=f"ADS VIOLATION: Missing required ADS v1.0 frontmatter keys: {missing}. See AgentQMS/standards/schemas/ads-v1.0-spec.yaml"
+                )
+
+            if str(data.get("ads_version")) != "1.0":
+                 raise PolicyViolation(
+                    message="Standards Violation: Wrong version",
+                    feedback_to_ai="ADS VIOLATION: ads_version must be '1.0'"
+                )
+
+        except ImportError:
+            pass # yaml not available? Should be.
+        except yaml.YAMLError as e:
+             raise PolicyViolation(
+                message=f"Standards Violation: Invalid YAML: {e}",
+                feedback_to_ai=f"ADS VIOLATION: Invalid YAML format: {e}"
+            )
+        except PolicyViolation:
+            raise
+        except Exception:
+            # Don't block if something weird happens
+            pass

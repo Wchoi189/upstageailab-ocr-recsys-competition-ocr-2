@@ -1,31 +1,65 @@
+---
+ads_version: "1.0"
+type: agent_instructions
+agent: copilot
+tier: 1
+priority: critical
+memory_footprint: 40
+date: "2026-01-12"
+status: active
+---
 
----
-title: "AgentQMS Copilot Instructions"
-doc_id: "agentqms-copilot-instructions"
-status: "active"
-last_reviewed: "2026-01-08"
-sources:
-  - "AgentQMS/standards/INDEX.yaml"
-  - "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
-  - "AgentQMS/standards/tier2-framework/quickstart.yaml"
-  - "AGENTS.yaml"
----
+> [!IMPORTANT]
+> **Always read `utilities://quick-reference` first** — provides 2500x faster config loading and standard path utilities.
 
 # AgentQMS Copilot Instructions
 
-You are working in an environment governed by **AgentQMS**—a comprehensive Quality Management System that transforms ad-hoc development into engineering excellence through tiered architectural standards and automated compliance validation. This framework empowers you to deliver high-reliability software by enforcing structured planning, execution, and verification across the entire project lifecycle.
+## Environment
+- **System**: AgentQMS (Quality Management System)
+- **Standards**: AgentQMS/standards/
+- **Tools**: AgentQMS/bin/make (preferred) or uv run
+- **Artifacts**: docs/artifacts/ (auto-validated)
 
-## Critical Rules
-1. **Discovery**: Read `AgentQMS/standards/INDEX.yaml` and `AgentQMS/standards/tier2-framework/tool-catalog.yaml`.
-2. **Artifacts**: NEVER create `docs/artifacts/*` files manually.
-   - Use: `cd AgentQMS/bin && make create-plan` (or similar)
-3. **Safety**: Run `cd AgentQMS/bin && make validate` before asking the user to review.
+## Agent Constraints
+1. Artifacts → Always use `AgentQMS/bin/make create-*` (not manual)
+2. Validation → Run before completion: `make validate`
+3. Standards → Read AgentQMS/standards/INDEX.yaml (single source)
 
-## Context
-- **Standards Index**: `AgentQMS/standards/INDEX.yaml`
-- **Tool Catalog**: `AgentQMS/standards/tier2-framework/tool-catalog.yaml`
-- **Quickstart**: `AgentQMS/standards/tier2-framework/quickstart.yaml`
-- **Project Compass**: `project_compass/AGENTS.md`
-- **Experiment Manager**: `experiment_manager/agent_interface.yaml`
-- **Agent Debug Toolkit**: `agent-debug-toolkit/AI_USAGE.yaml`
-- **Workflow Triggers (generator)**: `AgentQMS/tools/core/workflow_detector.py` (generates `.copilot/context/workflow-triggers.yaml` if needed)
+## Tool Routing
+| Task | Command | Location |
+|------|---------|----------|
+| Create artifact | make create-plan/assessment/design | AgentQMS/bin |
+| Validate | make validate | AgentQMS/bin |
+| Check compliance | make compliance | AgentQMS/bin |
+| Discover tools | make discover | AgentQMS/bin |
+| Get context | suggest_context.py "task" | AgentQMS/tools/utilities |
+
+## Utilities (Preferred Imports)
+| Use | Import | Note |
+|-----|--------|------|
+| YAML | ConfigLoader from AgentQMS.tools.utils.config_loader | 2000x cache speedup |
+| Paths | get_project_root, get_data_dir from AgentQMS.tools.utils.paths | No hardcoding |
+| Time | get_kst_timestamp, format_kst from AgentQMS.tools.utils.timestamps | KST only |
+| Git | get_current_branch, get_commit_hash from AgentQMS.tools.utils.git | No subprocess |
+
+## Workflow
+1. **Discover** → Run suggest_context.py or make context TASK="..."
+2. **Plan** → Use implementation plan artifact type
+3. **Execute** → Follow standards, use utilities
+4. **Validate** → make validate before completion
+5. **Report** → If needed, use assessment/audit artifact types
+
+## Key Policies
+- ❌ Manual artifact creation in docs/artifacts/
+- ❌ Hardcoded paths or subprocess calls
+- ✅ Use ConfigLoader for YAML
+- ✅ Use paths utilities for directories
+- ✅ Auto-inject utility context when available
+- ✅ Follow lowercase-kebab-case naming
+
+## Resources (Priority Order)
+1. **FIRST**: `utilities://quick-reference` (Tier 1 utilities — config, paths, timestamps, git)
+2. Standards: AgentQMS/standards/INDEX.yaml
+3. Tool Catalog: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+4. Utilities Index: context/utility-scripts/utility-scripts-index.yaml
+5. Project Context: AGENTS.md

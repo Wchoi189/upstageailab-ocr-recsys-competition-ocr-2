@@ -124,7 +124,10 @@ artifact_types:
     example: "2025-11-29_1800_walkthrough-my-experiment.md"
 
 # Frontmatter requirements
+# See frontmatter-master.yaml for complete field definitions
 frontmatter:
+  master_schema: "tier1-sst/frontmatter-master.yaml"
+
   required_fields:
     - title
     - date

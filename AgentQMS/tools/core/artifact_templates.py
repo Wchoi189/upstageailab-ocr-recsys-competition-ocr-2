@@ -35,15 +35,17 @@ except ImportError:
 # Try to import new utilities for branch and timestamp handling
 try:
     from AgentQMS.tools.utils.git import get_current_branch
-    from AgentQMS.tools.utils.timestamps import get_kst_timestamp
+    from AgentQMS.tools.utils.timestamps import get_kst_timestamp, format_timestamp_for_filename
 
     UTILITIES_AVAILABLE = True
     _get_current_branch = get_current_branch
     _get_kst_timestamp = get_kst_timestamp
+    _format_timestamp_for_filename = format_timestamp_for_filename
 except ImportError:
     UTILITIES_AVAILABLE = False
     _get_current_branch = None  # type: ignore[assignment]
     _get_kst_timestamp = None  # type: ignore[assignment]
+    _format_timestamp_for_filename = None  # type: ignore[assignment]
 
 
 class ArtifactTemplates:
@@ -330,8 +332,12 @@ class ArtifactTemplates:
         # Convert to lowercase and replace spaces/underscores with hyphens
         normalized_name = name.lower().replace(" ", "-").replace("_", "-").replace("--", "-").strip("-")
 
-        now = datetime.now()
-        timestamp = now.strftime("%Y-%m-%d_%H%M")
+        # Generate timestamp using utility if available, fallback to old method
+        if UTILITIES_AVAILABLE and _format_timestamp_for_filename is not None:
+            timestamp = _format_timestamp_for_filename()
+        else:
+            now = datetime.now()
+            timestamp = now.strftime("%Y-%m-%d_%H%M")
 
         # Handle special case for bug reports (need bug ID)
         if template_type == "bug_report":
@@ -354,9 +360,22 @@ class ArtifactTemplates:
             else:
                 bug_id = "001"  # Default bug ID
                 descriptive_name = normalized_name
-            return str(
-                template["filename_pattern"].format(name=descriptive_name).replace("YYYY-MM-DD_HHMM", timestamp).replace("NNN", bug_id)
-            )
+
+            # Build context for format strings
+            filename_context = {
+                "name": descriptive_name,
+                "date": timestamp,
+            }
+
+            # Format filename with context, then replace legacy placeholders
+            filename = template["filename_pattern"]
+            try:
+                filename = filename.format(**filename_context)
+            except KeyError:
+                # Fallback for old-style patterns without {date}
+                filename = filename.format(name=descriptive_name)
+
+            return str(filename.replace("YYYY-MM-DD_HHMM", timestamp).replace("NNN", bug_id))
         else:
             # For plugin-based templates, use .format() with available variables
             # Build context with all possible filename variables

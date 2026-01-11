@@ -1,34 +1,17 @@
 {
     "mcpServers": {
-        "project_compass": {
+        "unified_project": {
             "command": "uv",
             "args": [
                 "run",
                 "--directory",
                 "${workspaceFolder}",
                 "python",
-                "project_compass/mcp_server.py"
-            ]
-        },
-        "agentqms": {
-            "command": "uv",
-            "args": [
-                "run",
-                "--directory",
-                "${workspaceFolder}",
-                "python",
-                "AgentQMS/mcp_server.py"
-            ]
-        },
-        "experiments": {
-            "command": "uv",
-            "args": [
-                "run",
-                "--directory",
-                "${workspaceFolder}",
-                "python",
-                "experiment_manager/mcp_server.py"
-            ]
+                "scripts/mcp/unified_server.py"
+            ],
+            "env": {
+                "PROJECT_ROOT": "${workspaceFolder}"
+            }
         }
     }
 }

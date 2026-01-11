@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-10T09:05:47.090448+00:00'
+  generated_at: '2026-01-11T20:11:30.587616+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -28,6 +28,7 @@ plugins_loaded:
   - ocr-text-recognition
   - pipeline-development
   - security-review
+  - utility-scripts
 plugin_metadata:
 - name: assessment
   type: artifact_type
@@ -139,6 +140,11 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
+- name: utility-scripts
+  type: context_bundle
+  version: '1.0'
+  source: project
+  path: .agentqms/plugins/context_bundles/utility-scripts.yaml
 validation_errors: []
 resolved:
   artifact_types:
@@ -1846,3 +1852,107 @@ resolved:
           - path: AgentQMS/standards/INDEX.yaml
             priority: low
             description: Standards index for comprehensive context
+    utility-scripts:
+      name: utility-scripts
+      title: Reusable Utility Scripts Discovery
+      description: 'Discover and use reusable utility scripts instead of writing custom
+        code.
+
+        Includes YAML loading (with caching), path resolution, timestamps, git utilities.
+
+        These utilities provide significant performance benefits and consistency across
+        projects.
+
+        '
+      ads_version: '1.0'
+      scope: project
+      tags:
+      - utilities
+      - discovery
+      - reusable-code
+      - configuration
+      - paths
+      - timestamps
+      - git
+      - performance
+      triggers:
+        keywords:
+        - load yaml
+        - load config
+        - configuration
+        - config file
+        - yaml file
+        - parse yaml
+        - read config
+        - caching
+        - cache
+        - performance
+        - fast load
+        - repeated loads
+        - project root
+        - artifacts directory
+        - artifacts dir
+        - artifact location
+        - data directory
+        - data dir
+        - configs directory
+        - outputs directory
+        - standard path
+        - standard directory
+        - find path
+        - get path
+        - locate file
+        - directory location
+        - timestamp
+        - kst
+        - korea time
+        - timezone
+        - current time
+        - format date
+        - date format
+        - artifact timestamp
+        - metadata timestamp
+        - current branch
+        - git branch
+        - commit hash
+        - git commit
+        - detect branch
+        - branch name
+        - commit info
+        patterns:
+        - \b(yaml|config|configuration)\b.*\b(load|import|parse|read)\b
+        - \b(load|import|parse|read)\b.*\b(yaml|config|configuration)\b
+        - \b(yaml|config)\b.*\b(file|cache)\b
+        - \b(path|directory|location|file|folder)\b.*\b(find|get|resolve|locate|standard)\b
+        - \b(project|artifact|document|data|config)\b.*\b(root|dir|directory|location|path)\b
+        - \b(standard|project)\b.*\b(directory|path|location)\b
+        - \b(timestamp|datetime|date|time|temporal)\b.*\b(format|current|kst|korea)\b
+        - \b(format|create|generate)\b.*\b(timestamp|date|time)\b
+        - \b(artifact|metadata)\b.*\b(timestamp|time|date)\b
+        - \b(branch|commit|git|revision)\b.*\b(current|detect|get|info)\b
+        - \b(current|get)\b.*\b(branch|commit|git)\b
+        - \b(build|artifact|version)\b.*\b(branch|commit)\b
+        - \b(cache|caching|fast|speed|performance)\b.*\b(load|config|yaml)\b
+        - \b(optimize|improve)\b.*\b(load|config)\b
+      tiers:
+        tier1:
+          name: Essential Discovery Resources
+          description: Critical discovery resources - always include when bundle is
+            suggested
+          files:
+          - context/utility-scripts/quick-reference.md
+          - context/utility-scripts/utility-scripts-index.yaml
+        tier2:
+          name: Detailed Utility Documentation
+          description: Comprehensive API reference for the 4 Tier-1 utilities
+          files:
+          - context/utility-scripts/by-category/config-loading/config_loader.md
+          - context/utility-scripts/by-category/path-resolution/paths.md
+          - context/utility-scripts/by-category/timestamps/timestamps.md
+          - context/utility-scripts/by-category/git/git.md
+        tier3:
+          name: Integration & Discovery Guide
+          description: Discovery manifest and integration guide for AI agents
+          files:
+          - context/utility-scripts/manifest.yaml
+          - context/utility-scripts/ai-integration-guide.md
