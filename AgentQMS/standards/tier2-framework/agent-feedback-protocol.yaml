@@ -1,0 +1,54 @@
+title: Agent-in-the-Loop Feedback Protocol
+version: 1.0.0
+type: protocol
+status: active
+tags: [middleware, telemetry, compliance, feedback]
+
+overview: |
+  The AgentQMS Telemetry Middleware acts as an active guardrail system. It intercepts tool calls at runtime to enforce project standards, prevent redundancy, and guide the agent toward "Golden Paths".
+
+  Unlike static linters, this system provides **immediate, context-aware feedback** during execution.
+
+mechanisms:
+  compliance:
+    description: "Enforces coding and environment standards."
+    rules:
+      - name: "No System Path Hacks"
+        violation: "Using `sys.path.append(...)` or `sys.path.insert(...)`"
+        correction: "Use `PYTHONPATH` or standard imports. Use `AgentQMS.tools.utils.paths` for path resolution."
+        override_available: true
+
+      - name: "Environment Consistency"
+        violation: "Running `python script.py` directly"
+        correction: "Must use `uv run python script.py` to ensure dependencies are loaded."
+        override_available: false
+
+  redundancy:
+    description: "Prevents duplication of work already managed by the underlying provider."
+    rules:
+      - name: "Artifact Duplication"
+        violation: "Creating an artifact (e.g., `implementation_plan`) that is already managed in `.gemini/`."
+        correction: "Reference the managed artifact instead of creating a new one."
+        override_available: false
+
+protocol:
+  trigger: "Agent receives a Tool Error starting with `⚠️ FEEDBACK TRIGGERED:`"
+
+  agent_response:
+    1: "STOP. Do not retry the exact same command."
+    2: "READ the `feedback_to_ai` message carefully."
+    3: "CORRECT the approach based on the specific guidance."
+
+  force_override:
+    condition: "You are 100% certain the violation is a false positive or a necessary exception."
+    action: "Re-issue the tool call with argument `force=True`."
+    example: |
+      # Policy blocks sys.path.insert, but you are patching a legacy vendor script
+      call_tool("run_command", {
+        "CommandLine": "...",
+        "force": true
+      })
+
+telemetry_logging:
+  description: "All violations are logged for system improvement."
+  impact: "Persistent violations decrease agent trust score."

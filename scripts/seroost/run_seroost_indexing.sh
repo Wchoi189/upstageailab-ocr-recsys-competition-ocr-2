@@ -19,7 +19,7 @@ if [ ! -f "$CONFIG_FILE" ]; then
 fi
 
 echo "Running setup_seroost_indexing.py..."
-PYTHONPATH="$PYTHONPATH:$PROJECT_ROOT/../workspace/seroost" python "$PROJECT_ROOT/scripts/seroost/setup_seroost_indexing.py"
+PYTHONPATH="$PYTHONPATH:$PROJECT_ROOT/../workspace/seroost" uv run python "$PROJECT_ROOT/scripts/seroost/setup_seroost_indexing.py"
 
 echo "Seroost indexing setup completed successfully!"
 echo "You can now use Seroost to search through the indexed codebase."

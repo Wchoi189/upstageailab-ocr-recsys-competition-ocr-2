@@ -37,16 +37,12 @@ services:
       - ../src:/opt/airflow/src
       - ../config:/opt/airflow/config
       - ../data:/opt/airflow/data
-    entrypoint: ["/bin/bash", "-c"]
-    command: >
-      airflow db migrate &&
-      airflow users create-user
-        --username admin
-        --firstname Air
-        --lastname Flow
-        --email admin@example.com
-        --role Admin
-        --password admin || true
+    command:
+      - bash
+      - -c
+      - |
+        airflow db migrate
+        airflow users create-user --username admin --firstname Air --lastname Flow --email admin@example.com --role Admin --password admin || true
 
   airflow-webserver:
     image: airflow-cuda:3.1.5

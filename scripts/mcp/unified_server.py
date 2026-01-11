@@ -10,10 +10,8 @@ A single server that combines all project MCP functionality:
 
 import asyncio
 import json
-import subprocess
 import sys
 import os
-import yaml
 from pathlib import Path
 from typing import Any
 
@@ -21,6 +19,25 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Resource, Tool, TextContent
 from mcp.server.lowlevel.helper_types import ReadResourceContents
+
+# Add AgentQMS to path before importing from it
+from pathlib import Path as PathlibPath
+_scripts_mcp_dir = PathlibPath(__file__).resolve().parent
+_project_root_candidate = _scripts_mcp_dir.parent.parent
+if str(_project_root_candidate) not in sys.path:
+    sys.path.insert(0, str(_project_root_candidate))
+
+from AgentQMS.tools.utils.config_loader import ConfigLoader
+
+# --- Middleware Imports ---
+from AgentQMS.middleware.telemetry import TelemetryPipeline, PolicyViolation
+from AgentQMS.middleware.policies import RedundancyInterceptor, ComplianceInterceptor
+
+# Initialize Middleware
+TELEMETRY_PIPELINE = TelemetryPipeline([
+    RedundancyInterceptor(),
+    ComplianceInterceptor()
+])
 
 
 # Auto-discover project root
@@ -56,20 +73,19 @@ if DEBUG_TOOLKIT_SRC.exists() and str(DEBUG_TOOLKIT_SRC) not in sys.path:
 
 app = Server("unified_project")
 
+# --- Configuration Loader Setup ---
+config_loader = ConfigLoader(cache_size=5)
+
 # --- Load Tool Groups Configuration ---
 
 def load_tool_groups_config() -> dict[str, Any]:
     """Load tool groups configuration from YAML file."""
     config_path = Path(__file__).parent / "mcp_tools_config.yaml"
-    if not config_path.exists():
-        # Default: enable all groups
-        return {
-            "enabled_groups": ["compass", "agentqms", "etk", "adt_core", "adt_phase1", "adt_phase3"],
-            "tool_groups": {}
-        }
-
-    with open(config_path) as f:
-        return yaml.safe_load(f)
+    defaults = {
+        "enabled_groups": ["compass", "agentqms", "etk", "adt_core", "adt_phase1", "adt_phase3"],
+        "tool_groups": {}
+    }
+    return config_loader.get_config(config_path, defaults=defaults)
 
 
 TOOLS_CONFIG = load_tool_groups_config()
@@ -94,91 +110,36 @@ def is_tool_enabled(tool_name: str) -> bool:
 
 # --- Resources Definitions ---
 
-RESOURCES_CONFIG = [
-    # Project Compass
-    {
-        "uri": "compass://compass.json",
-        "name": "Project Compass State",
-        "description": "Main compass state: current phase, health, handoff reference",
-        "path": COMPASS_DIR / "compass.json",
-        "mimeType": "application/json",
-    },
-    {
-        "uri": "compass://session_handover.md",
-        "name": "Session Handover",
-        "description": "Current session handover document with accomplishments and next steps",
-        "path": COMPASS_DIR / "session_handover.md",
-        "mimeType": "text/markdown",
-    },
-    {
-        "uri": "compass://current_session.yml",
-        "name": "Active Session Context",
-        "description": "Active session metadata: objective, pipeline, environment lock",
-        "path": COMPASS_DIR / "active_context" / "current_session.yml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "compass://uv_lock_state.yml",
-        "name": "Environment Lock State",
-        "description": "UV environment lock state: Python version, CUDA config, dependencies",
-        "path": COMPASS_DIR / "environments" / "uv_lock_state.yml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "compass://agents.yaml",
-        "name": "Agent Configuration",
-        "description": "AI agent configuration: rules, entry points, schema root",
-        "path": COMPASS_DIR / "AGENTS.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    # AgentQMS
-    {
-        "uri": "agentqms://standards/index",
-        "name": "Standards Index",
-        "path": AGENTQMS_DIR / "standards" / "INDEX.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "agentqms://standards/artifact_types",
-        "name": "Artifact Types",
-        "path": AGENTQMS_DIR / "standards" / "tier1-sst" / "artifact-types.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "agentqms://plugins/artifact_types",
-        "name": "Plugin Artifact Types",
-        "description": "Discoverable artifact types with complete metadata",
-        "mimeType": "application/json",
-        "path": None,
-    },
-    {
-        "uri": "agentqms://standards/workflows",
-        "name": "Workflow Requirements",
-        "path": AGENTQMS_DIR / "standards" / "tier1-sst" / "workflow-requirements.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {"uri": "agentqms://templates/list", "name": "Template Catalog", "path": None, "mimeType": "application/json"},
-    {
-        "uri": "agentqms://config/settings",
-        "name": "QMS Settings",
-        "path": AGENTQMS_DIR / "config" / "settings.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    # Experiments
-    {
-        "uri": "experiments://agent_interface",
-        "name": "Experiment Commands",
-        "path": EXPERIMENT_MANAGER_DIR / "agent_interface.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {"uri": "experiments://active_list", "name": "Active Experiments", "path": None, "mimeType": "application/json"},
-    {
-        "uri": "experiments://schemas/manifest",
-        "name": "Manifest Schema",
-        "path": EXPERIMENT_MANAGER_DIR / ".schemas" / "manifest.schema.json",
-        "mimeType": "application/json",
-    },
-]
+def load_resources_config() -> list[dict]:
+    """Load resources configuration from YAML file."""
+    config_path = Path(__file__).parent / "config/resources.yaml"
+    raw_resources = config_loader.get_config(config_path, defaults=[])
+
+    if not isinstance(raw_resources, list):
+        return []
+
+    # Process paths: resolve relative paths against project root
+    for res in raw_resources:
+        if res.get("path"):
+            res["path"] = PROJECT_ROOT / res["path"]
+        else:
+            res["path"] = None
+    return raw_resources
+
+RESOURCES_CONFIG = load_resources_config()
+
+# --- Optimized Resource Lookups ---
+# Pre-computing these maps turns O(N) searches into O(1) lookups
+URI_MAP = {r["uri"]: r for r in RESOURCES_CONFIG}
+PATH_MAP = {}
+
+for r in RESOURCES_CONFIG:
+    if r.get("path"):
+        try:
+            resolved = r["path"].resolve()
+            PATH_MAP[resolved] = r
+        except Exception:
+            continue
 
 
 @app.list_resources()
@@ -186,395 +147,112 @@ async def list_resources() -> list[Resource]:
     return [Resource(uri=res["uri"], name=res["name"], description=res.get("description", ""), mimeType=res["mimeType"]) for res in RESOURCES_CONFIG]
 
 
+# --- Helper Functions for Dynamic Resources ---
+
+async def _handle_experiments_list() -> list[ReadResourceContents]:
+    try:
+        exps = []
+        if EXPERIMENTS_DIR.exists():
+            for d in EXPERIMENTS_DIR.iterdir():
+                if d.is_dir() and (d / "manifest.json").exists():
+                    m = json.loads((d / "manifest.json").read_text())
+                    exps.append({"id": d.name, "name": m.get("name", d.name), "status": m.get("status")})
+        return [ReadResourceContents(content=json.dumps({"experiments": exps}, indent=2), mime_type="application/json")]
+    except:
+        return [ReadResourceContents(content=json.dumps({"error": "Failed to load experiments"}), mime_type="application/json")]
+
+async def _handle_plugin_artifacts() -> list[ReadResourceContents]:
+    try:
+        from AgentQMS.mcp_server import _get_plugin_artifact_types
+        content = await _get_plugin_artifact_types()
+        return [ReadResourceContents(content=content, mime_type="application/json")]
+    except Exception as e:
+        return [ReadResourceContents(content=json.dumps({"error": f"Failed to load plugin artifact types: {e}"}), mime_type="application/json")]
+
+def _handle_templates_list() -> list[ReadResourceContents]:
+    try:
+        from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+        workflow = ArtifactWorkflow(quiet=True)
+        return [ReadResourceContents(content=json.dumps({"templates": workflow.get_available_templates()}, indent=2), mime_type="application/json")]
+    except:
+        return [ReadResourceContents(content=json.dumps({"error": "Failed to load templates"}), mime_type="application/json")]
+
 @app.read_resource()
 async def read_resource(uri: str) -> list[ReadResourceContents]:
     uri = str(uri).strip()
-    resource = next((r for r in RESOURCES_CONFIG if r["uri"] == uri), None)
 
-    # Alias Handling: If exact URI match fails, try to match by file path
+    # 1. Fast Path: Exact URI Match O(1)
+    resource = URI_MAP.get(uri)
+
+    # 2. Alias Handling: Path Match O(1)
     if not resource:
-        try:
-            # Check if it looks like a file path or file URI
-            input_path = None
-            if uri.startswith("file://"):
-                from urllib.parse import urlparse, unquote
-                parsed = urlparse(uri)
-                input_path = Path(unquote(parsed.path)).resolve()
-            elif uri.startswith("/") or (len(uri) > 1 and uri[1] == ":"):  # Simple check for abs path
-                input_path = Path(uri).resolve()
+        input_path = None
+        if uri.startswith("file://"):
+            from urllib.parse import urlparse, unquote
+            input_path = Path(unquote(urlparse(uri).path)).resolve()
+        elif uri.startswith("/") or (len(uri) > 1 and uri[1] == ":"):
+            input_path = Path(uri).resolve()
 
-            if input_path and input_path.exists():
-                # Search for a registered resource that points to this path
-                for res in RESOURCES_CONFIG:
-                    res_path = res.get("path")
-                    if res_path and res_path.resolve() == input_path:
-                        resource = res
-                        break
-        except Exception:
-            # If path parsing fails, ignore and fall through to error
-            pass
+        if input_path:
+            resource = PATH_MAP.get(input_path)
 
+    # 3. Error Handling & Suggestions
     if not resource:
-        # Enhancement: "Did you mean?" suggestions
         msg = f"Unknown resource URI: {uri}"
-        if "compass" in uri or "agentqms" in uri:
-             possible = [r["uri"] for r in RESOURCES_CONFIG if uri.split("://")[-1] in r["uri"]]
-             if possible:
-                 msg += f". Did you mean: {', '.join(possible[:3])}?"
+        if any(keyword in uri for keyword in ["compass", "agentqms"]):
+            # Filtered list comprehension for suggestions
+            matches = [u for u in URI_MAP.keys() if uri.split("://")[-1] in u]
+            if matches:
+                msg += f". Did you mean: {', '.join(matches[:3])}?"
         raise ValueError(msg)
 
+    # 4. Dynamic Resource Handlers
     if uri == "agentqms://templates/list":
-        try:
-            from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
-
-            workflow = ArtifactWorkflow(quiet=True)
-            return [
-                ReadResourceContents(
-                    content=json.dumps({"templates": workflow.get_available_templates()}, indent=2), mime_type="application/json"
-                )
-            ]
-        except:
-            return [ReadResourceContents(content=json.dumps({"error": "Failed to load templates"}), mime_type="application/json")]
+        return _handle_templates_list()
 
     if uri == "agentqms://plugins/artifact_types":
-        try:
-            from AgentQMS.mcp_server import _get_plugin_artifact_types
-
-            content = await _get_plugin_artifact_types()
-            return [ReadResourceContents(content=content, mime_type="application/json")]
-        except Exception as e:
-            return [
-                ReadResourceContents(
-                    content=json.dumps({"error": f"Failed to load plugin artifact types: {e}"}), mime_type="application/json"
-                )
-            ]
+        return await _handle_plugin_artifacts()
 
     if uri == "experiments://active_list":
-        try:
-            exps = []
-            if EXPERIMENTS_DIR.exists():
-                for d in EXPERIMENTS_DIR.iterdir():
-                    if d.is_dir() and (d / "manifest.json").exists():
-                        m = json.loads((d / "manifest.json").read_text())
-                        exps.append({"id": d.name, "name": m.get("name", d.name), "status": m.get("status")})
-            return [ReadResourceContents(content=json.dumps({"experiments": exps}, indent=2), mime_type="application/json")]
-        except:
-            return [ReadResourceContents(content=json.dumps({"error": "Failed to load experiments"}), mime_type="application/json")]
+        return await _handle_experiments_list()
 
-    path: Path = resource["path"]
-    if not path or not path.exists():
-        raise FileNotFoundError(f"Resource file not found: {path}")
-    return [ReadResourceContents(content=path.read_text(encoding="utf-8"), mime_type=resource["mimeType"])]
+    # 5. Static File Reading
+    file_path: Path = resource["path"]
+    if not file_path or not file_path.exists():
+        raise FileNotFoundError(f"Resource file not found: {file_path}")
+
+    return [ReadResourceContents(content=file_path.read_text(encoding="utf-8"), mime_type=resource["mimeType"])]
 
 
 # --- Tools Definitions ---
 
 
+def load_tools_definitions() -> list[dict]:
+    """Load tools configuration from YAML file."""
+    config_path = Path(__file__).parent / "config/tools.yaml"
+    tools = config_loader.get_config(config_path, defaults=[])
+    return tools if isinstance(tools, list) else []
+
+TOOLS_DEFINITIONS = load_tools_definitions()
+
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List all enabled tools based on tool groups configuration."""
-    all_tools = [
-        Tool(
-            name="get_server_info",
-            description="Get information about the Unified Project MCP server",
-            inputSchema={"type": "object", "properties": {}},
-        ),
-        Tool(
-            name="project_compass",
-            description="Project Compass guide and entrypoint information",
-            inputSchema={"type": "object", "properties": {}},
-        ),
-        Tool(
-            name="manage_session",
-            description="Manage project sessions (export, import, list, new) to save/restore context.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "action": {
-                        "type": "string",
-                        "enum": ["export", "import", "list", "new"],
-                        "description": "Action to perform on the session.",
-                    },
-                    "session_name": {"type": "string", "description": "Name of the session to import (required for import action)."},
-                    "note": {"type": "string", "description": "Note to attach to the session (optional for export)."},
-                },
-                "required": ["action"],
-            },
-        ),
-        Tool(name="env_check", description="Validate project environment", inputSchema={"type": "object", "properties": {}}),
-        Tool(
-            name="create_artifact",
-            description="Create standard artifact following project standards",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "artifact_type": {
-                        "type": "string",
-                        "enum": [
-                            "assessment",
-                            "audit",
-                            "bug_report",
-                            "design_document",
-                            "implementation_plan",
-                            "walkthrough",
-                            "completed_plan",
-                            "vlm_report",
-                        ],
-                    },
-                    "name": {"type": "string"},
-                    "title": {"type": "string"},
-                    "description": {"type": "string"},
-                    "tags": {"type": "string"},
-                    "content": {"type": "string", "description": "Markdown content to write to the file immediately"},
-                },
-                "required": ["artifact_type", "name", "title"],
-            },
-        ),
-        Tool(
-            name="validate_artifact",
-            description="Validate artifact(s) against naming and structure standards",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "file_path": {"type": "string"},
-                    "validate_all": {"type": "boolean"},
-                },
-            },
-        ),
-        Tool(name="list_artifact_templates", description="List all available artifact templates", inputSchema={"type": "object", "properties": {}}),
-        Tool(name="check_compliance", description="Check overall artifact compliance status", inputSchema={"type": "object", "properties": {}}),
-        Tool(
-            name="get_standard",
-            description="Retrieve project standard or rule content by name",
-            inputSchema={
-                "type": "object",
-                "properties": {"name": {"type": "string"}},
-                "required": ["name"],
-            },
-        ),
-        # Experiment Manager (ETK)
-        Tool(
-            name="init_experiment",
-            description="Initialize experiment",
-            inputSchema={
-                "type": "object",
-                "properties": {"name": {"type": "string"}, "description": {"type": "string"}},
-                "required": ["name"],
-            },
-        ),
-        Tool(
-            name="log_insight",
-            description="Log experiment insight",
-            inputSchema={
-                "type": "object",
-                "properties": {"insight": {"type": "string"}, "type": {"type": "string", "enum": ["insight", "decision", "failure"]}},
-                "required": ["insight"],
-            },
-        ),
-        # Agent Debug Toolkit
-        Tool(
-            name="analyze_config_access",
-            description="Analyze Python code for configuration access patterns (cfg.X, self.cfg.X, config['key']).",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "path": {"type": "string"},
-                    "component": {"type": "string"},
-                    "output": {"type": "string", "enum": ["json", "markdown"]},
-                },
-                "required": ["path"],
-            },
-        ),
-        Tool(
-            name="trace_merge_order",
-            description="Trace OmegaConf.merge() operations and their precedence order.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "file": {"type": "string"},
-                    "explain": {"type": "boolean"},
-                    "output": {"type": "string", "enum": ["json", "markdown"]},
-                },
-                "required": ["file"],
-            },
-        ),
-        Tool(
-            name="find_hydra_usage",
-            description="Find Hydra framework usage patterns including @hydra.main decorators.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "path": {"type": "string"},
-                    "output": {"type": "string", "enum": ["json", "markdown"]},
-                },
-                "required": ["path"],
-            },
-        ),
-        Tool(
-            name="find_component_instantiations",
-            description="Track component instantiation patterns: get_*_by_cfg() factory calls.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "path": {"type": "string"},
-                    "component": {"type": "string"},
-                    "output": {"type": "string", "enum": ["json", "markdown"]},
-                },
-                "required": ["path"],
-            },
-        ),
-        Tool(
-            name="explain_config_flow",
-            description="Generate a high-level summary of configuration flow through a file.",
-            inputSchema={
-                "type": "object",
-                "properties": {"file": {"type": "string"}},
-                "required": ["file"],
-            },
-        ),
-        Tool(
-            name="context_tree",
-            description="Generate annotated directory tree with semantic context. Extracts docstrings, exports, and key definitions for AI navigation.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "path": {"type": "string", "description": "Directory path to analyze"},
-                    "depth": {"type": "integer", "description": "Maximum directory depth (default: 3)"},
-                    "output": {"type": "string", "enum": ["json", "markdown"], "description": "Output format"},
-                },
-                "required": ["path"],
-            },
-        ),
-        Tool(
-            name="intelligent_search",
-            description="Search for symbols by name or qualified path with fuzzy matching. Resolves Hydra _target_ paths and finds class definitions.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "query": {"type": "string", "description": "Symbol name or qualified path"},
-                    "root": {"type": "string", "description": "Root directory to search (default: project root)"},
-                    "fuzzy": {"type": "boolean", "description": "Enable fuzzy matching (default: true)"},
-                    "threshold": {"type": "number", "description": "Min similarity 0.0-1.0 (default: 0.6)"},
-                },
-                "required": ["query"],
-            },
-        ),
-        # --- Meta-Tools (Router Pattern) ---
-        Tool(
-            name="adt_meta_query",
-            description="Unified analysis tool. Routes based on 'kind': config_access, merge_order, hydra_usage, component_instantiations, config_flow, dependency_graph, imports, complexity, context_tree, symbol_search, sg_search, sg_lint, ast_dump",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "kind": {"type": "string", "enum": ["config_access", "merge_order", "hydra_usage", "component_instantiations", "config_flow", "dependency_graph", "imports", "complexity", "context_tree", "symbol_search", "sg_search", "sg_lint", "ast_dump", "ts_parse", "ts_query"]},
-                    "target": {"type": "string", "description": "Target path or query"},
-                    "options": {"type": "object", "additionalProperties": True},
-                },
-                "required": ["kind", "target"],
-            },
-        ),
-        Tool(
-            name="adt_meta_edit",
-            description="Unified edit tool. Routes based on 'kind': apply_diff, smart_edit, read_slice, format",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "kind": {"type": "string", "enum": ["apply_diff", "smart_edit", "read_slice", "format"]},
-                    "target": {"type": "string", "description": "Target file or diff content"},
-                    "options": {"type": "object", "additionalProperties": True},
-                },
-                "required": ["kind", "target"],
-            },
-        ),
-        # --- Edit Tools ---
-        Tool(
-            name="apply_unified_diff",
-            description="Apply a unified diff with fuzzy matching. Handles whitespace drift. Returns detailed hunk report.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "diff": {"type": "string", "description": "Unified diff text (git diff format)"},
-                    "strategy": {"type": "string", "enum": ["exact", "whitespace_insensitive", "fuzzy"], "default": "fuzzy"},
-                    "dry_run": {"type": "boolean", "default": False},
-                },
-                "required": ["diff"],
-            },
-        ),
-        Tool(
-            name="smart_edit",
-            description="Intelligent search/replace with exact, regex, or fuzzy matching.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "file": {"type": "string", "description": "Path to file"},
-                    "search": {"type": "string", "description": "Text or pattern to find"},
-                    "replace": {"type": "string", "description": "Replacement text"},
-                    "mode": {"type": "string", "enum": ["exact", "regex", "fuzzy"], "default": "exact"},
-                    "all_occurrences": {"type": "boolean", "default": False},
-                    "dry_run": {"type": "boolean", "default": False},
-                },
-                "required": ["file", "search", "replace"],
-            },
-        ),
-        Tool(
-            name="read_file_slice",
-            description="Read specific line range from a file for targeted editing.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "file": {"type": "string", "description": "Path to file"},
-                    "start_line": {"type": "integer", "description": "Start line (1-indexed)"},
-                    "end_line": {"type": "integer", "description": "End line (inclusive)"},
-                    "context_lines": {"type": "integer", "default": 0},
-                },
-                "required": ["file", "start_line", "end_line"],
-            },
-        ),
-        Tool(
-            name="format_code",
-            description="Format code using black, ruff, or isort.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "path": {"type": "string", "description": "Path to file or directory"},
-                    "style": {"type": "string", "enum": ["black", "ruff", "isort"], "default": "black"},
-                    "check_only": {"type": "boolean", "default": False},
-                },
-                "required": ["path"],
-            },
-        ),
-        # --- AST-Grep Tools (Phase 3) ---
-        Tool(
-            name="sg_search",
-            description="Structural code search using ast-grep patterns. Find code by AST structure, not text.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "pattern": {"type": "string", "description": "AST pattern (e.g., 'def $NAME($$$)')"},
-                    "path": {"type": "string", "description": "Path to search (file or directory)"},
-                    "lang": {"type": "string", "description": "Language (auto-detected if not specified)"},
-                    "max_results": {"type": "integer", "description": "Maximum matches to return"},
-                },
-                "required": ["pattern", "path"],
-            },
-        ),
-        Tool(
-            name="sg_lint",
-            description="Run ast-grep lint rules against code. Use YAML rules for complex pattern matching.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "path": {"type": "string", "description": "Path to lint"},
-                    "rule": {"type": "string", "description": "YAML rule as string"},
-                    "rule_file": {"type": "string", "description": "Path to YAML rule file"},
-                },
-                "required": ["path"],
-            },
-        ),
-    ]
+    """List all enabled tools based on tool groups configuration and external definitions."""
+    enabled_tools = []
 
-    # Filter tools based on enabled groups
-    enabled_tools = [tool for tool in all_tools if is_tool_enabled(tool.name)]
+    # 1. Filter enabled tools
+    enabled_names = set()
+    # If using groups:
+    # Iterate all definitions, check if enabled
+
+    for tool_def in TOOLS_DEFINITIONS:
+        name = tool_def["name"]
+        if is_tool_enabled(name):
+            enabled_tools.append(Tool(
+                name=name,
+                description=tool_def["description"],
+                inputSchema=tool_def["inputSchema"]
+            ))
 
     return enabled_tools
 
@@ -582,12 +260,11 @@ async def list_tools() -> list[Tool]:
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     try:
-        # Generic runner for simple script calls
-        def run_py(args):
-            res = subprocess.run(["uv", "run", "python3"] + args, capture_output=True, text=True, cwd=PROJECT_ROOT)
-            return [TextContent(type="text", text=res.stdout + res.stderr)]
+        # --- Middleware Validation ---
+        TELEMETRY_PIPELINE.validate(name, arguments)
 
         if name == "get_server_info":
+             # Keep local implementation for server info
             info = {
                 "name": "unified_project",
                 "version": "1.0.0",
@@ -600,294 +277,37 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             }
             return [TextContent(type="text", text=json.dumps(info, indent=2))]
 
-        if name == "project_compass":
-            entrypoint_path = COMPASS_DIR / "AGENTS.md"
-            if entrypoint_path.exists():
-                return [TextContent(type="text", text=entrypoint_path.read_text())]
-            return [TextContent(type="text", text="Project Compass Entrypoint not found.")]
+        # --- Dynamic Dispatch ---
+        # Find tool definition
+        tool_def = next((t for t in TOOLS_DEFINITIONS if t["name"] == name), None)
 
-        if name == "manage_session":
-            action = arguments["action"]
-            cmd = [str(COMPASS_DIR / "scripts/session_manager.py"), action]
-            if action == "import" and arguments.get("session_name"):
-                cmd.append(arguments["session_name"])
-            if action == "export" and arguments.get("note"):
-                cmd.extend(["--note", arguments["note"]])
-            return run_py(cmd)
+        if tool_def and "implementation" in tool_def:
+            impl = tool_def["implementation"]
+            module_name = impl.get("module")
+            # function_name = impl.get("function", "call_tool") # Default to call_tool
 
-        if name == "env_check":
-            try:
-                # Import the EnvironmentChecker from ETK
-                from etk.compass import EnvironmentChecker
+            if module_name:
+                import importlib
+                module = importlib.import_module(module_name)
+                # We assume the module exposes the same call_tool interface or we access the app?
+                # Most standard MCP servers using @app.call_tool decorate a function wrapped by FastMCP or Server
+                # BUT here we are importing the module directly.
+                # If the module has a top-level 'call_tool' function (which we checked they do), use it.
+                if hasattr(module, "call_tool"):
+                    return await module.call_tool(name, arguments)
 
-                checker = EnvironmentChecker()
-                passed, errors, warnings = checker.check_all()
+                # Fallback: if it's decorating 'app', we might need to find the handler.
+                # But in our analyzed files, 'call_tool' is a dedicated async function.
+                raise ValueError(f"Module {module_name} does not have a 'call_tool' function.")
 
-                result_lines = []
-                if warnings:
-                    for warning in warnings:
-                        result_lines.append(f"⚠️  {warning}")
+        raise ValueError(f"Unknown tool or missing implementation: {name}")
 
-                if errors:
-                    result_lines.append("❌ ENVIRONMENT BREACH DETECTED")
-                    for error in errors:
-                        result_lines.append(f"  ✗ {error}")
-                    result_lines.append("\n🔧 Path Restoration Instructions:")
-                    result_lines.append("   1. Ensure you are using the correct UV binary")
-                    result_lines.append("   2. Run: uv sync")
-                    result_lines.append('   3. Verify with: uv run python -c "import torch; print(torch.__version__)"')
-                else:
-                    result_lines.append("✅ Environment validated against Compass lock state")
-
-                return [TextContent(type="text", text="\n".join(result_lines))]
-            except Exception as e:
-                return [TextContent(type="text", text=f"Error checking environment: {e}")]
-
-        if name == "create_artifact":
-            try:
-                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
-                workflow = ArtifactWorkflow(quiet=True)
-                result = workflow.create_artifact(
-                    artifact_type=arguments["artifact_type"],
-                    name=arguments["name"],
-                    title=arguments["title"],
-                    description=arguments.get("description"),
-                    tags=arguments.get("tags"),
-                    content=arguments.get("content")
-                )
-                return [TextContent(type="text", text=result)]
-            except Exception as e:
-                return [TextContent(type="text", text=f"Error creating artifact: {e}")]
-
-        if name == "validate_artifact":
-            try:
-                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
-                workflow = ArtifactWorkflow(quiet=True)
-
-                if arguments.get("validate_all"):
-                    success = workflow.validate_all()
-                    return [TextContent(type="text", text=f"Validation {'passed' if success else 'failed'}")]
-                elif arguments.get("file_path"):
-                    success = workflow.validate_artifact(arguments["file_path"])
-                    return [TextContent(type="text", text=f"Validation {'passed' if success else 'failed'}")]
-                else:
-                    return [TextContent(type="text", text="Error: Must specify either validate_all or file_path")]
-            except Exception as e:
-                return [TextContent(type="text", text=f"Error validating artifact: {e}")]
-
-        if name == "list_artifact_templates":
-            try:
-                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
-                workflow = ArtifactWorkflow(quiet=True)
-                return [TextContent(type="text", text=json.dumps({"templates": workflow.get_available_templates()}, indent=2))]
-            except Exception as e:
-                return [TextContent(type="text", text=f"Error: {e}")]
-
-        if name == "check_compliance":
-            try:
-                from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
-                workflow = ArtifactWorkflow(quiet=True)
-                return [TextContent(type="text", text=json.dumps(workflow.check_compliance(), indent=2))]
-            except Exception as e:
-                return [TextContent(type="text", text=f"Error: {e}")]
-
-        if name == "get_standard":
-            # Direct python implementation for get_standard as it's simple file searching
-            query = arguments["name"].lower()
-            standards_dir = AGENTQMS_DIR / "standards"
-            matches = []
-            if standards_dir.exists():
-                for path in standards_dir.rglob("*"):
-                    if path.is_file() and path.suffix in [".yaml", ".md", ".json"]:
-                        if query in path.stem.lower():
-                            matches.append(path)
-            if not matches:
-                return [TextContent(type="text", text=f"No standards found matching '{query}'")]
-            if len(matches) == 1:
-                return [TextContent(type="text", text=f"Standard: {matches[0].name}\n\n{matches[0].read_text(encoding='utf-8')}")]
-            return [TextContent(type="text", text=f"Multiple matches: {[str(p.relative_to(standards_dir)) for p in matches]}")]
-
-        if name == "init_experiment":
-            cmd = ["-m", "etk.factory", "init", "--name", arguments["name"]]
-            if arguments.get("description"):
-                cmd.extend(["-d", arguments["description"]])
-            return run_py(cmd)
-
-        if name == "log_insight":
-            return run_py(["-m", "etk.factory", "log", "--msg", arguments["insight"], "--type", arguments.get("type", "insight")])
-
-        # Agent Debug Toolkit Tools
-        def resolve_adt_path(p: str) -> Path:
-            path = Path(p)
-            return path if path.is_absolute() else PROJECT_ROOT / path
-
-        if name == "analyze_config_access":
-            from agent_debug_toolkit.analyzers.config_access import ConfigAccessAnalyzer
-            path = resolve_adt_path(arguments["path"])
-            report = ConfigAccessAnalyzer().analyze_file(path) if path.is_file() else ConfigAccessAnalyzer().analyze_directory(path)
-            if arguments.get("component"):
-                report.results = report.filter_by_component(arguments["component"])
-            return [TextContent(type="text", text=report.to_json() if arguments.get("output") == "json" else report.to_markdown())]
-
-        if name == "trace_merge_order":
-            from agent_debug_toolkit.analyzers.merge_order import MergeOrderTracker
-            path = resolve_adt_path(arguments["file"])
-            analyzer = MergeOrderTracker()
-            report = analyzer.analyze_file(path)
-            content = report.to_json() if arguments.get("output") == "json" else f"{analyzer.explain_precedence()}\n\n{report.to_markdown()}"
-            return [TextContent(type="text", text=content)]
-
-        if name == "find_hydra_usage":
-            from agent_debug_toolkit.analyzers.hydra_usage import HydraUsageAnalyzer
-            path = resolve_adt_path(arguments["path"])
-            report = HydraUsageAnalyzer().analyze_file(path) if path.is_file() else HydraUsageAnalyzer().analyze_directory(path)
-            return [TextContent(type="text", text=report.to_json() if arguments.get("output") == "json" else report.to_markdown())]
-
-        if name == "find_component_instantiations":
-            from agent_debug_toolkit.analyzers.instantiation import ComponentInstantiationTracker
-            path = resolve_adt_path(arguments["path"])
-            report = ComponentInstantiationTracker().analyze_file(path) if path.is_file() else ComponentInstantiationTracker().analyze_directory(path)
-            content = report.to_json() if arguments.get("output") == "json" else report.to_markdown()
-            return [TextContent(type="text", text=content)]
-
-        if name == "explain_config_flow":
-            # Nested imports to avoid circular/missing dependencies if not used
-            from agent_debug_toolkit.analyzers.config_access import ConfigAccessAnalyzer
-            from agent_debug_toolkit.analyzers.merge_order import MergeOrderTracker
-            from agent_debug_toolkit.analyzers.hydra_usage import HydraUsageAnalyzer
-            from agent_debug_toolkit.analyzers.instantiation import ComponentInstantiationTracker
-
-            path = resolve_adt_path(arguments["file"])
-            if not path.is_file(): return [TextContent(type="text", text="Error: File not found")]
-
-            creport = ConfigAccessAnalyzer().analyze_file(path)
-            mtracker = MergeOrderTracker()
-            mreport = mtracker.analyze_file(path)
-            hreport = HydraUsageAnalyzer().analyze_file(path)
-            ireport = ComponentInstantiationTracker().analyze_file(path)
-
-            summary = [f"# Config Flow: {path.name}", "", f"Accesses: {len(creport.results)}", f"Merges: {len(mreport.results)}", f"Hydra: {len(hreport.results)}", f"Components: {len(ireport.results)}"]
-            if mreport.results: summary.extend(["", "## Precedence", mtracker.explain_precedence()])
-
-            return [TextContent(type="text", text="\n".join(summary))]
-
-        if name == "context_tree":
-            from agent_debug_toolkit.analyzers.context_tree import ContextTreeAnalyzer, format_tree_markdown
-            path = resolve_adt_path(arguments["path"])
-
-            if not path.exists():
-                return [TextContent(type="text", text=f"Error: Path not found: {path}")]
-            if not path.is_dir():
-                return [TextContent(type="text", text=f"Error: Not a directory: {path}")]
-
-            depth = arguments.get("depth", 3)
-            analyzer = ContextTreeAnalyzer(max_depth=depth)
-            report = analyzer.analyze_directory(str(path))
-
-            if "error" in report.summary:
-                return [TextContent(type="text", text=f"Error: {report.summary['error']}")]
-
-            if arguments.get("output") == "json":
-                return [TextContent(type="text", text=report.to_json())]
-            else:
-                return [TextContent(type="text", text=format_tree_markdown(report))]
-
-        if name == "intelligent_search":
-            from agent_debug_toolkit.analyzers.intelligent_search import IntelligentSearcher, format_search_results_markdown
-
-            query = arguments["query"]
-            root = resolve_adt_path(arguments.get("root", PROJECT_ROOT))
-            fuzzy = arguments.get("fuzzy", True)
-            threshold = arguments.get("threshold", 0.6)
-
-            searcher = IntelligentSearcher(str(root), str(PROJECT_ROOT))
-            results = searcher.search(query, fuzzy=fuzzy, threshold=threshold)
-
-            if arguments.get("output") == "json":
-                return [TextContent(type="text", text=json.dumps([r.to_dict() for r in results], indent=2))]
-            else:
-                return [TextContent(type="text", text=format_search_results_markdown(results, query))]
-
-        # --- Edit Tools ---
-        if name == "apply_unified_diff":
-            from agent_debug_toolkit.edits import apply_unified_diff
-            diff = arguments.get("diff", "")
-            strategy = arguments.get("strategy", "fuzzy")
-            dry_run = arguments.get("dry_run", False)
-            report = apply_unified_diff(diff=diff, strategy=strategy, project_root=PROJECT_ROOT, dry_run=dry_run)
-            return [TextContent(type="text", text=report.to_json())]
-
-        if name == "smart_edit":
-            from agent_debug_toolkit.edits import smart_edit
-            path = resolve_adt_path(arguments.get("file", ""))
-            report = smart_edit(
-                file=path,
-                search=arguments.get("search", ""),
-                replace=arguments.get("replace", ""),
-                mode=arguments.get("mode", "exact"),
-                all_occurrences=arguments.get("all_occurrences", False),
-                dry_run=arguments.get("dry_run", False),
-            )
-            return [TextContent(type="text", text=report.to_json())]
-
-        if name == "read_file_slice":
-            from agent_debug_toolkit.edits import read_file_slice
-            path = resolve_adt_path(arguments.get("file", ""))
-            content = read_file_slice(
-                path,
-                int(arguments.get("start_line", 1)),
-                int(arguments.get("end_line", 50)),
-                int(arguments.get("context_lines", 0)),
-            )
-            return [TextContent(type="text", text=content)]
-
-        if name == "format_code":
-            from agent_debug_toolkit.edits import format_code
-            path = resolve_adt_path(arguments.get("path", ""))
-            report = format_code(path, style=arguments.get("style", "black"), check_only=arguments.get("check_only", False))
-            return [TextContent(type="text", text=report.to_json())]
-
-        # --- AST-Grep Tools (Phase 3) ---
-        if name == "sg_search":
-            from agent_debug_toolkit.astgrep import sg_search
-            pattern = arguments.get("pattern", "")
-            path = resolve_adt_path(arguments.get("path", "."))
-            lang = arguments.get("lang")
-            max_results = arguments.get("max_results")
-            report = sg_search(pattern=pattern, path=path, lang=lang, max_results=max_results)
-            return [TextContent(type="text", text=report.to_json())]
-
-        if name == "sg_lint":
-            from agent_debug_toolkit.astgrep import sg_lint
-            path = resolve_adt_path(arguments.get("path", "."))
-            rule = arguments.get("rule")
-            rule_file = arguments.get("rule_file")
-            if rule_file:
-                rule_file = resolve_adt_path(rule_file)
-            report = sg_lint(path=path, rule=rule, rule_file=rule_file)
-            return [TextContent(type="text", text=report.to_json())]
-
-        # --- Tree-Sitter Tools (Phase 4) ---
-        if name == "ts_parse":
-            from agent_debug_toolkit.treesitter import parse_code
-            code = arguments.get("code", "")
-            lang = arguments.get("lang", "python")
-            max_depth = arguments.get("max_depth", 5)
-            report = parse_code(code=code, lang=lang, max_depth=max_depth)
-            return [TextContent(type="text", text=report.to_json())]
-
-        if name == "ts_query":
-            from agent_debug_toolkit.treesitter import run_query
-            code = arguments.get("code", "")
-            query = arguments.get("query", "")
-            lang = arguments.get("lang", "python")
-            max_results = arguments.get("max_results", 50)
-            report = run_query(code=code, query=query, lang=lang, max_results=max_results)
-            return [TextContent(type="text", text=report.to_json())]
-
-        raise ValueError(f"Unknown tool: {name}")
+    except PolicyViolation as e:
+        # Return the feedback message to the agent instead of executing the tool
+        return [TextContent(type="text", text=f"⚠️ FEEDBACK TRIGGERED: {e.feedback_to_ai}")]
     except Exception as e:
-        return [TextContent(type="text", text=f"Error: {str(e)}")]
+        import traceback
+        return [TextContent(type="text", text=f"Error executing {name}: {str(e)}\n{traceback.format_exc()}")]
 
 
 async def main():

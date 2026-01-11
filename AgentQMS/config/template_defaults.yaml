@@ -1,0 +1,57 @@
+# Template Variable Defaults Configuration
+# Used by artifact_templates.py to populate template placeholders
+#
+# These values are merged with plugin-specific template_variables
+# and user-provided kwargs (user values take highest priority).
+
+version: "1.0"
+last_updated: "2026-01-11"
+
+# Default values for all artifact types
+defaults:
+  # General
+  title: "Artifact Title"
+  description: "Description of the artifact."
+  purpose: "documentation"
+
+  # Dates (computed dynamically in code)
+  # start_date: computed as current date
+  # target_date: computed as current date + 7 days
+  # assessment_date: computed as current date
+
+  # System/Component References
+  subject: "the system"
+  methodology: "systematic analysis"
+  component/system: "the component"
+
+# Bug Report specific defaults
+bug_report:
+  bug_id: "001"
+  summary: "Brief description of the bug."
+  os_info: "Operating system"
+  python_version: "Python version"
+  dependencies: "Key dependencies and versions"
+  browser: "Browser and version (if applicable)"
+  reproduction_steps: "1. Step 1\n2. Step 2\n3. Step 3"
+  expected_behavior: "What should happen."
+  actual_behavior: "What actually happens."
+  error_messages: "Error message here"
+  impact: "- **Severity**: High/Medium/Low\n- **Affected Users**: Who is affected\n- **Workaround**: Any temporary workarounds"
+  root_cause: "- **Cause**: What is causing the issue\n- **Location**: Where in the code\n- **Trigger**: What triggers the issue"
+  proposed_solution: "Short description of the applied fix, if any."
+
+# Frontmatter field denylist - fields excluded from kwargs merge
+frontmatter_denylist:
+  - expected_behavior
+  - actual_behavior
+  - impact
+  - root_cause
+  - proposed_solution
+  - investigation
+  - analysis
+  - summary
+  - error_messages
+  - os_info
+  - python_version
+  - dependencies
+  - browser

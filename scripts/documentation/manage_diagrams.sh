@@ -7,19 +7,19 @@ set -e
 case "$1" in
     "update")
         echo "🔄 Updating all diagrams..."
-        python scripts/documentation/generate_diagrams.py --update
+        uv run python scripts/documentation/generate_diagrams.py --update
         ;;
     "check")
         echo "🔍 Checking for diagram updates..."
-        python scripts/documentation/generate_diagrams.py --check-changes
+        uv run python scripts/documentation/generate_diagrams.py --check-changes
         ;;
     "validate")
         echo "✅ Validating diagram syntax..."
-        python scripts/documentation/generate_diagrams.py --validate
+        uv run python scripts/documentation/generate_diagrams.py --validate
         ;;
     "force-update")
         echo "🔄 Force updating all diagrams..."
-        python scripts/documentation/generate_diagrams.py --update --force
+        uv run python scripts/documentation/generate_diagrams.py --update --force
         ;;
     *)
         echo "Usage: $0 {update|check|validate|force-update}"

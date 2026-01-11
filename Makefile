@@ -192,13 +192,13 @@ lint-fix-ai:  ## Run AI-powered linting fixes using Grok
 		echo "✅ No linting errors found!"; \
 	else \
 		echo "Found $$ERROR_COUNT errors. Running Grok fixer..."; \
-		python AgentQMS/tools/utilities/grok_linter.py --input /tmp/lint_errors.json --limit 5 --verbose; \
+		uv run python AgentQMS/tools/utilities/grok_linter.py --input /tmp/lint_errors.json --limit 5 --verbose; \
 	fi
 
 lint-fix-ai-dry-run:  ## Preview AI-powered linting fixes without applying
 	@echo "🤖 Running AI-powered linting fixes (DRY RUN)..."
 	@uv run ruff check . --output-format=json > /tmp/lint_errors.json || true
-	@python AgentQMS/tools/utilities/grok_linter.py --input /tmp/lint_errors.json --dry-run --verbose
+	@uv run python AgentQMS/tools/utilities/grok_linter.py --input /tmp/lint_errors.json --dry-run --verbose
 
 format:
 	uv run ruff format .
@@ -430,6 +430,9 @@ checkpoint-index-verify:
 # ============================================================================
 # DEVELOPMENT WORKFLOW
 # ============================================================================
+
+refresh-mcp:  ## Refresh MCP Tool definitions from sub-packages
+	PYTHONPATH=.::agent-debug-toolkit/src uv run python scripts/mcp/refresh_tools.py
 
 # ============================================================================
 # CI SIMULATION

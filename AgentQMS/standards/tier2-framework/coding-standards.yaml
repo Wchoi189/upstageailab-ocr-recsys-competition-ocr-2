@@ -305,11 +305,12 @@ path_resolution_rules:
   objective: "Ensure robust path resolution independent of file location"
 
   required_patterns:
-    - "Use ocr.core.utils.path_utils.PROJECT_ROOT for root-relative paths"
+    - "Use AgentQMS.tools.utils.paths.get_project_root() for root-relative paths"
     - "Use simple / operator for path joining"
 
   prohibited_patterns:
     - "Chained .parent calls (more than 2) to find root"
+    - "Manual sys.path.append() to fix imports"
     - "Hardcoded relative paths assuming directory depth"
 
   patterns:
@@ -323,13 +324,13 @@ path_resolution_rules:
       description: "Robust root import"
       example: |
         # GOOD: Works anywhere
-        from ocr.core.utils.path_utils import PROJECT_ROOT
-        data_file = PROJECT_ROOT / "data" / "file.txt"
+        from AgentQMS.tools.utils.paths import get_project_root
+        data_file = get_project_root() / "data" / "file.txt"
 
   enforcement:
-    detection: "grep for excessive parent chaining"
+    detection: "pre-commit hook (validate-path-usage)"
     command: |
-      grep -rn "\.parent\.parent\.parent" .
+      pre-commit run validate-path-usage --all-files
 
 # Tier 2 - Coding Standards: Deprecation Protocol
 

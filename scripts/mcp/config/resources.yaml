@@ -1,0 +1,79 @@
+
+# Project Compass
+- uri: "compass://compass.json"
+  name: "Project Compass State"
+  description: "Main compass state: current phase, health, handoff reference"
+  path: "project_compass/compass.json"
+  mimeType: "application/json"
+
+- uri: "compass://session_handover.md"
+  name: "Session Handover"
+  description: "Current session handover document with accomplishments and next steps"
+  path: "project_compass/session_handover.md"
+  mimeType: "text/markdown"
+
+- uri: "compass://current_session.yml"
+  name: "Active Session Context"
+  description: "Active session metadata: objective, pipeline, environment lock"
+  path: "project_compass/active_context/current_session.yml"
+  mimeType: "application/x-yaml"
+
+- uri: "compass://uv_lock_state.yml"
+  name: "Environment Lock State"
+  description: "UV environment lock state: Python version, CUDA config, dependencies"
+  path: "project_compass/environments/uv_lock_state.yml"
+  mimeType: "application/x-yaml"
+
+- uri: "compass://agents.yaml"
+  name: "Agent Configuration"
+  description: "AI agent configuration: rules, entry points, schema root"
+  path: "project_compass/AGENTS.yaml"
+  mimeType: "application/x-yaml"
+
+# AgentQMS
+- uri: "agentqms://standards/index"
+  name: "Standards Index"
+  path: "AgentQMS/standards/INDEX.yaml"
+  mimeType: "application/x-yaml"
+
+- uri: "agentqms://standards/artifact_types"
+  name: "Artifact Types"
+  path: "AgentQMS/standards/tier1-sst/artifact-types.yaml"
+  mimeType: "application/x-yaml"
+
+- uri: "agentqms://plugins/artifact_types"
+  name: "Plugin Artifact Types"
+  description: "Discoverable artifact types with complete metadata"
+  mimeType: "application/json"
+  path: null
+
+- uri: "agentqms://standards/workflows"
+  name: "Workflow Requirements"
+  path: "AgentQMS/standards/tier1-sst/workflow-requirements.yaml"
+  mimeType: "application/x-yaml"
+
+- uri: "agentqms://templates/list"
+  name: "Template Catalog"
+  path: null
+  mimeType: "application/json"
+
+- uri: "agentqms://config/settings"
+  name: "QMS Settings"
+  path: "AgentQMS/config/settings.yaml"
+  mimeType: "application/x-yaml"
+
+# Experiments
+- uri: "experiments://agent_interface"
+  name: "Experiment Commands"
+  path: "experiment_manager/agent_interface.yaml"
+  mimeType: "application/x-yaml"
+
+- uri: "experiments://active_list"
+  name: "Active Experiments"
+  path: null
+  mimeType: "application/json"
+
+- uri: "experiments://schemas/manifest"
+  name: "Manifest Schema"
+  path: "experiment_manager/.schemas/manifest.schema.json"
+  mimeType: "application/json"

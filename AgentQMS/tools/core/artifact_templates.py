@@ -19,8 +19,11 @@ Usage:
 """
 
 from datetime import datetime, timedelta
+import re
 from pathlib import Path
 from typing import Any
+
+from AgentQMS.tools.utils.config_loader import ConfigLoader
 
 # Try to import plugin registry for extensibility
 try:
@@ -67,6 +70,7 @@ class ArtifactTemplates:
         No hardcoded templates - all types must be defined as plugins.
         """
         self.templates: dict[str, dict[str, Any]] = {}
+        self._config_loader = ConfigLoader(cache_size=5)
 
         # Load all templates from plugin registry
         self._load_plugin_templates()
@@ -105,6 +109,22 @@ class ArtifactTemplates:
             # Plugin loading failure is critical in plugin-only system
             import warnings
             warnings.warn(f"Failed to load artifact type plugins: {e}")
+
+    def _load_template_defaults(self) -> dict[str, Any]:
+        """Load template defaults from external YAML configuration.
+
+        Uses ConfigLoader for consistent configuration management.
+        Falls back to minimal defaults if config file not found.
+        """
+        config_path = Path(__file__).resolve().parent.parent.parent / "config" / "template_defaults.yaml"
+
+        defaults = {
+            "defaults": {},
+            "bug_report": {},
+            "frontmatter_denylist": []
+        }
+
+        return self._config_loader.get_config(config_path, defaults=defaults)
 
     def _convert_plugin_to_template(self, name: str, plugin_def: dict[str, Any]) -> dict[str, Any] | None:
         """Convert a plugin artifact type definition to template format.
@@ -345,6 +365,25 @@ class ArtifactTemplates:
                 "date": timestamp,  # Plugin {date} gets full timestamp
             }
 
+            # Prevent duplicate type tokens: if pattern embeds a type prefix
+            # (e.g., {date}_implementation_plan_{name}.md) and the slug already
+            # starts with the same token, strip it from the slug.
+            pattern = template["filename_pattern"]
+            m = re.search(r"\{date\}_(.+?)_\{name\}", pattern)
+            if m:
+                type_hint = m.group(1).lower()
+                variants = {type_hint}
+                variants.add(type_hint.replace("_", "-"))
+
+                for hint in variants:
+                    for sep in ("-", "_"):
+                        dup = f"{hint}{sep}"
+                        if normalized_name.startswith(dup):
+                            normalized_name = normalized_name[len(dup):].lstrip("-_")
+                            break
+                    # Rebuild context if modified
+                    filename_context["name"] = normalized_name
+
             filename = template["filename_pattern"]
 
             # Try to format with context (for plugin templates)
@@ -388,28 +427,13 @@ class ArtifactTemplates:
                 frontmatter["branch"] = "main"  # Fallback
 
         # Add any additional frontmatter fields (may override defaults including branch)
-        # Define fields that should NOT be in frontmatter (body content or system args)
-        denylist = {
-            # System args
-            "output_dir",
-            "interactive",
-            # Bug report body content
-            "reproduction_steps",
-            "steps_to_reproduce",
-            "expected_behavior",
-            "actual_behavior",
-            "impact",
-            "root_cause",
-            "proposed_solution",
-            "investigation",
-            "analysis",
-            "summary",
-            "error_messages",
-            "os_info",
-            "python_version",
-            "dependencies",
-            "browser",
-        }
+        # Load denylist from config to avoid hardcoding
+        config = self._load_template_defaults()
+        denylist_from_config = set(config.get("frontmatter_denylist", []))
+
+        # Always exclude system args
+        system_args = {"output_dir", "interactive", "steps_to_reproduce"}
+        denylist = denylist_from_config | system_args
 
         for key, value in kwargs.items():
             if key not in denylist:
@@ -434,33 +458,24 @@ class ArtifactTemplates:
 
         content_template = template["content_template"]
 
-        # Default values
+        # Load defaults from external config
+        config = self._load_template_defaults()
+
+        # Build defaults with computed date values
         now = datetime.now()
         defaults = {
             "title": title,
             "start_date": now.strftime("%Y-%m-%d"),
             "target_date": (now + timedelta(days=7)).strftime("%Y-%m-%d"),
             "assessment_date": now.strftime("%Y-%m-%d"),
-            "subject": "the system",
-            "methodology": "systematic analysis",
-            "component/system": "the component",
-            "purpose": "documentation",
-            "description": "Description of the artifact.",
-            "bug_id": "001",
-            # Bug Report Defaults
-            "summary": "Brief description of the bug.",
-            "os_info": "Operating system",
-            "python_version": "Python version",
-            "dependencies": "Key dependencies and versions",
-            "browser": "Browser and version (if applicable)",
-            "reproduction_steps": "1. Step 1\n2. Step 2\n3. Step 3",
-            "expected_behavior": "What should happen.",
-            "actual_behavior": "What actually happens.",
-            "error_messages": "Error message here",
-            "impact": "- **Severity**: High/Medium/Low\n- **Affected Users**: Who is affected\n- **Workaround**: Any temporary workarounds",
-            "root_cause": "- **Cause**: What is causing the issue\n- **Location**: Where in the code\n- **Trigger**: What triggers the issue",
-            "proposed_solution": "Short description of the applied fix, if any.",
         }
+
+        # Merge general defaults from config
+        defaults.update(config.get("defaults", {}))
+
+        # Merge artifact-type-specific defaults (e.g., bug_report)
+        if template_type in config:
+            defaults.update(config[template_type])
 
         # Add plugin-defined template variables if present
         if "_plugin_variables" in template:

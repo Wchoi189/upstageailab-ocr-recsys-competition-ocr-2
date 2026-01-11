@@ -38,7 +38,7 @@ run_check() {
 # 1. Workflow YAML Validation
 echo "📋 GitHub Actions Workflows"
 echo "----------------------------"
-run_check "Workflow YAML syntax" "python3 -c 'import yaml; [yaml.safe_load(open(f)) for f in __import__(\"glob\").glob(\".github/workflows/*.yml\")]'"
+run_check "Workflow YAML syntax" "uv run python3 -c 'import yaml; [yaml.safe_load(open(f)) for f in __import__(\"glob\").glob(\".github/workflows/*.yml\")]'"
 
 # 2. Python Code Quality
 echo ""
@@ -62,12 +62,12 @@ if [ -f "AgentQMS/tools/compliance/validate_artifacts.py" ]; then
     if [ "$MODE" = "quick" ]; then
         CHANGED_FILES=$(git diff --name-only HEAD docs/artifacts/ 2>/dev/null || echo "")
         if [ -n "$CHANGED_FILES" ]; then
-            run_check "AgentQMS validation (changed only)" "cd AgentQMS/bin && python ../tools/compliance/validate_artifacts.py --changed-only"
+            run_check "AgentQMS validation (changed only)" "cd AgentQMS/bin && uv run python ../tools/compliance/validate_artifacts.py --changed-only"
         else
             echo "  No artifact changes detected, skipping"
         fi
     else
-        run_check "AgentQMS validation (all)" "cd AgentQMS/bin && python ../tools/compliance/validate_artifacts.py --all"
+        run_check "AgentQMS validation (all)" "cd AgentQMS/bin && uv run python ../tools/compliance/validate_artifacts.py --all"
     fi
 else
     echo -e "${YELLOW}⚠️  AgentQMS validator not found${NC}"
@@ -78,7 +78,7 @@ echo ""
 echo "🧪 Test Quality Checks"
 echo "----------------------"
 if [ -f "scripts/ci/check_test_isolation.py" ]; then
-    run_check "Test isolation (mock cleanup)" "python3 scripts/ci/check_test_isolation.py"
+    run_check "Test isolation (mock cleanup)" "uv run python3 scripts/ci/check_test_isolation.py"
 fi
 
 # 5. Quick Test Run (if --full mode)

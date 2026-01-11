@@ -37,7 +37,7 @@ echo ""
 
 # Check PyTorch CUDA availability
 echo -e "${YELLOW}Checking PyTorch CUDA support:${NC}"
-python3 -c "
+uv run python3 -c "
 import torch
 print(f'PyTorch version: {torch.__version__}')
 print(f'CUDA available: {torch.cuda.is_available()}')
@@ -71,4 +71,4 @@ echo ""
 
 # Run training with all arguments passed to this script
 # The training script will automatically detect DEBUG_CUDA=1
-exec python runners/train.py "$@"
+exec uv run python runners/train.py "$@"

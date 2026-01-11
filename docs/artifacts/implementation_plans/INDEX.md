@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-11 02:04:29
-**Total Artifacts**: 18
+**Last Updated**: 2026-01-11 20:14:52
+**Total Artifacts**: 22
 
-## Active (9)
+## Active (13)
 
 - [Phase 1: Core Recognition Implementation](2025-12-25_0410_implementation_plan_phase1-core-recognition.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Replace the current `StubRecognizer` with a production-ready `PaddleOCRRecognizer` backend using Pad
 - [Overnight Code Quality Resolution (Ruff & Mypy)](2025-12-25_1639_implementation_plan_code-quality-overnight.md) (📅 2025-12-25 16:39 (KST), 📄 implementation_plan) - This plan outlines the systematic resolution of linting and type errors across the project, optimize
@@ -15,7 +15,11 @@ Active implementation plans and development roadmaps.
 - [Cleanup & Consolidation Implementation Plan](2026-01-08_1800_implementation_plan_refactor-rescue.md) (📅 2025-11-29 18:00 (KST), 📄 implementation_plan) - **Goal**: Organize `ocr/` into a clean, strictly hierarchical structure by removing duplicates and c
 - [Console Output Polish Plan](2026-01-08_2139_implementation_plan_fix-console-output.md) (📅 2024-10-01 10:00 (KST), 📄 implementation_plan) - Fix the "huge gap" in the training console output reported by the user. The current configuration us
 - [ADT Router Pattern and Edit Tools Implementation](2026-01-09_2313_implementation_plan_adt-router-and-edits.md) (📅 2026-01-09 23:13 (KST), 📄 implementation_plan) - Implement Option B (Router/Meta-Tool Pattern) and `adt_edits` module for the agent-debug-toolkit to:
-- [Airflow Batch Processor for Upstage APIs](2026-01-11_0204_implementation_plan_airflow-batch-processor.md) (📅 2026-01-11 02:04 (KST), 📄 implementation_plan) - Implementation plan for Airflow project to batch process data using Upstage Document Parse and KIE A
+- [Airflow Batch Processor for Upstage APIs](2026-01-11_0204_implementation_plan_airflow-batch-processor.md) (📅 2026-01-11 02:04 (KST), 📄 implementation_plan) - Create an Airflow-based batch processing system for OCR and KIE data processing using Upstage APIs. 
+- [Unified Server Resource Optimization](2026-01-11_1512_implementation_plan_implementation-plan-resource-optimization.md) (📅 2026-01-11 15:12 (KST), 📄 implementation_plan) - Optimize the `read_resource` function in `scripts/mcp/unified_server.py` to reduce file system I/O o
+- [Agent Process Feedback System](2026-01-11_1630_implementation_plan_implementation-plan-feedback-system.md) (📅 2026-01-11 16:30 (KST), 📄 implementation_plan) - Implement a "Metacognitive Feedback Loop" (Agent-In-the-Loop) by adding a `log_process_feedback` too
+- [Telemetry Middleware Implementation Plan](2026-01-11_1819_implementation_plan_telemetry-middleware.md) (📅 2026-01-11 18:19 (KST), 📄 implementation_plan) - Implement a **Telemetry-driven Feedback Loop** (Middleware Layer) to resolve "Architectural Redundan
+- [Automated MCP Tool Synchronization](2026-01-11_2014_implementation_plan_auto-mcp-sync.md) (📅 2026-01-11 20:14 (KST), 📄 implementation_plan) - Automate the synchronization of MCP tools between component servers (AgentQMS, Agent Debug Toolkit, 
 
 ## Completed (8)
 
@@ -36,7 +40,7 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 9 |
+| Active | 13 |
 | Completed | 8 |
 | Other | 1 |
 

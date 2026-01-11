@@ -30,7 +30,7 @@ ps aux | grep -E "python.*8000|uvicorn|mkdocs" | grep -v grep || echo "  No matc
 
 echo ""
 echo "6. Testing port binding:"
-python3 << 'EOF'
+uv run python3 << 'EOF'
 import socket
 import sys
 

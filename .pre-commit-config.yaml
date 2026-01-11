@@ -79,3 +79,10 @@ repos:
         language: system
         files: ^ocr/.*\.py$
         pass_filenames: true
+
+      - id: validate-path-usage
+        name: Validate Path Usage
+        entry: uv run python scripts/hooks/validate_path_usage.py
+        language: system
+        types: [python]
+        pass_filenames: true
