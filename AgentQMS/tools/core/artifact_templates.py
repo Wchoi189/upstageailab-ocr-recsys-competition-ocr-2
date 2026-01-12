@@ -25,6 +25,56 @@ from typing import Any
 
 from AgentQMS.tools.utils.config_loader import ConfigLoader
 
+
+DEFAULT_CONFIG: dict[str, Any] = {
+    "frontmatter_defaults": {
+        "type": "{artifact_type}",
+        "category": "development",
+        "status": "active",
+        "version": "1.0",
+        "tags": ["{artifact_type}"],
+        "ads_version": "1.0",
+    },
+    "frontmatter_denylist": [
+        "output_dir",
+        "interactive",
+        "steps_to_reproduce",
+        "quiet",
+    ],
+    "default_branch": "main",
+    "frontmatter_delimiter": "---",
+    "date_formats": {
+        "filename_timestamp": "%Y-%m-%d_%H%M",
+        "date_only": "%Y-%m-%d",
+        "timestamp_with_tz": "%Y-%m-%d %H:%M (KST)",
+    },
+    "content_defaults": {
+        "target_date_offset_days": 7,
+    },
+    "naming_conventions": {
+        "replacements": [[" ", "-"], ["_", "-"], ["--", "-"]],
+        "strip_chars": "-_",
+        "lowercase": True,
+        "type_prefix_separators": ["-", "_"],
+    },
+    "duplicate_detection": {
+        "recent_file_window_seconds": 300,
+        "recent_file_window_description": "5 minutes",
+        "patterns": {
+            "bug_report": "bug_{date}_*_*_{name}.md",
+            "default": "{date}_*_{type}_{name}.md",
+        },
+    },
+    "artifact_types": {
+        "bug_report": {
+            "default_id": "001",
+            "separators": ["-", "_"],
+        },
+    },
+}
+
+STANDARDS_CONFIG_DIR = Path(__file__).resolve().parents[2] / "standards" / "tier2-framework" / "config-externalization"
+
 # Try to import plugin registry for extensibility
 try:
     from AgentQMS.tools.core.plugins import get_plugin_registry
@@ -51,14 +101,13 @@ except ImportError:
 class ArtifactTemplates:
     """Templates for creating properly formatted artifacts.
 
-    PLUGIN-BASED SYSTEM (Phase 4 - Post Hardcoded Template Removal)
+    PURE PLUGIN-BASED SYSTEM
 
-    This class is now a pure plugin loader and wrapper. All artifact types
-    are defined as plugins in .agentqms/plugins/artifact_types/*.yaml
+    This class is a pure plugin loader. All artifact types are defined
+    exclusively as plugins in .agentqms/plugins/artifact_types/*.yaml
 
-    Hardcoded templates have been removed. See archived code for legacy system:
-    - Archive: AgentQMS/tools/archive/artifact_templates_legacy.py
-    - Migration Guide: docs/artifacts/implementation_plans/phase4_hardcoded_removal_migration.md
+    No hardcoded templates exist. All artifact type definitions must be
+    registered through the plugin registry.
 
     Additional artifact types can be registered by creating plugin YAML files.
     See: AgentQMS/docs/guides/creating-artifact-type-plugins.md
@@ -73,6 +122,7 @@ class ArtifactTemplates:
         """
         self.templates: dict[str, dict[str, Any]] = {}
         self._config_loader = ConfigLoader(cache_size=5)
+        self._config_cache: dict[str, Any] | None = None
 
         # Load all templates from plugin registry
         self._load_plugin_templates()
@@ -112,13 +162,24 @@ class ArtifactTemplates:
             import warnings
             warnings.warn(f"Failed to load artifact type plugins: {e}")
 
+    def _get_config(self) -> dict[str, Any]:
+        """Get cached artifact template configuration."""
+        if self._config_cache is None:
+            self._config_cache = self._load_config()
+        return self._config_cache
+
+    def _load_config(self) -> dict[str, Any]:
+        """Load artifact_template_config.yaml (all defaults are in the YAML file)."""
+        config_path = STANDARDS_CONFIG_DIR / "artifact_template_config.yaml"
+        return self._config_loader.get_config(config_path, defaults=DEFAULT_CONFIG)
+
     def _load_template_defaults(self) -> dict[str, Any]:
         """Load template defaults from external YAML configuration.
 
         Uses ConfigLoader for consistent configuration management.
         Falls back to minimal defaults if config file not found.
         """
-        config_path = Path(__file__).resolve().parent.parent.parent / "config" / "template_defaults.yaml"
+        config_path = STANDARDS_CONFIG_DIR / "template_defaults.yaml"
 
         defaults = {
             "defaults": {},
@@ -127,6 +188,32 @@ class ArtifactTemplates:
         }
 
         return self._config_loader.get_config(config_path, defaults=defaults)
+
+    def _replace_artifact_type(self, value: Any, artifact_type: str) -> Any:
+        """Replace {artifact_type} placeholders in supported types."""
+        if isinstance(value, str):
+            return value.replace("{artifact_type}", artifact_type)
+        if isinstance(value, list):
+            return [self._replace_artifact_type(item, artifact_type) for item in value]
+        return value
+
+    def _build_default_frontmatter(self, artifact_type: str) -> dict[str, Any]:
+        """Build default frontmatter with placeholders resolved and ADS metadata ensured."""
+        config = self._get_config()
+        defaults = config.get("frontmatter_defaults", DEFAULT_CONFIG["frontmatter_defaults"]).copy()
+        resolved = {k: self._replace_artifact_type(v, artifact_type) for k, v in defaults.items()}
+        resolved.setdefault("ads_version", "1.0")
+        resolved.setdefault("type", artifact_type)
+        resolved.setdefault("artifact_type", artifact_type)
+        return resolved
+
+    def _merge_frontmatter(self, artifact_type: str, metadata_frontmatter: dict[str, Any] | None) -> dict[str, Any]:
+        """Merge plugin frontmatter over defaults while keeping required keys."""
+        base = self._build_default_frontmatter(artifact_type)
+        if metadata_frontmatter:
+            for key, value in metadata_frontmatter.items():
+                base[key] = self._replace_artifact_type(value, artifact_type)
+        return base
 
     def _convert_plugin_to_template(self, name: str, plugin_def: dict[str, Any]) -> dict[str, Any] | None:
         """Convert a plugin artifact type definition to template format.
@@ -160,16 +247,7 @@ class ArtifactTemplates:
             template: dict[str, Any] = {
                 "filename_pattern": filename_pattern,
                 "directory": directory,
-                "frontmatter": metadata.get(
-                    "frontmatter",
-                    {
-                        "type": name,
-                        "category": "development",
-                        "status": "active",
-                        "version": "1.0",
-                        "tags": [name],
-                    },
-                ),
+                "frontmatter": self._merge_frontmatter(name, metadata.get("frontmatter")),
                 "content_template": template_content,
             }
 
@@ -182,129 +260,72 @@ class ArtifactTemplates:
         except Exception:
             return None
 
-    def get_template(self, template_type: str) -> dict | None:
+    def get_template(self, template_type: str) -> dict[str, Any] | None:
         """Get template configuration for a specific type."""
         return self.templates.get(template_type)
 
-    def get_available_templates(self) -> list:
+    def get_available_templates(self) -> list[str]:
         """Get list of available template types."""
         return list(self.templates.keys())
 
     def _get_available_artifact_types(self) -> dict[str, Any]:
         """
-        Get all available artifact types with source metadata.
+        Get all available artifact types with metadata.
 
-        Returns comprehensive information about all artifact types including:
-        - Type name and description
-        - Source (hardcoded, plugin, or standards)
-        - Validation rules if available
-        - Template metadata
+        Returns comprehensive information about all artifact types defined
+        in the plugin system.
 
         Returns:
             dict mapping artifact type name to info dict with keys:
             - name: artifact type name
-            - source: "hardcoded", "plugin", or "standards"
             - description: human-readable description
-            - validation: validation rules from plugin/standards if available
+            - validation: validation rules from plugin if available
             - template: template configuration
-            - conflict: bool, True if defined in multiple sources
 
         Example:
             types = artifacts._get_available_artifact_types()
             for name, info in types.items():
-                print(f"{name}: {info['source']}")
+                print(f"{name}: {info['description']}")
         """
         artifact_types: dict[str, dict[str, Any]] = {}
-        sources_seen: dict[str, list[str]] = {}  # Track which sources define each type
 
-        # 1. Collect hardcoded types (base layer)
-        hardcoded_names = {
-            "implementation_plan": "Implementation plan for features and changes",
-            "walkthrough": "Code walkthrough and explanation",
-            "assessment": "Technical assessment and analysis",
-            "design": "Design document for architecture",
-            "research": "Research findings and documentation",
-            "template": "Template for standardized processes",
-            "bug_report": "Bug report with reproduction steps",
-            "vlm_report": "VLM analysis and evaluation report",
-        }
-
-        for name, description in hardcoded_names.items():
-            if name not in artifact_types:
-                artifact_types[name] = {
-                    "name": name,
-                    "source": "hardcoded",
-                    "description": description,
-                    "template": self.templates.get(name),
-                    "validation": None,
-                    "conflict": False,
-                }
-                sources_seen[name] = ["hardcoded"]
-            else:
-                sources_seen[name].append("hardcoded")
-
-        # 2. Collect plugin types (adds or overrides)
+        # Load all artifact types from plugin registry
         if PLUGINS_AVAILABLE:
             try:
                 registry = get_plugin_registry()
                 plugin_types = registry.get_artifact_types()
 
                 for name, plugin_def in plugin_types.items():
-                    if name not in artifact_types:
-                        artifact_types[name] = {
-                            "name": name,
-                            "source": "plugin",
-                            "description": plugin_def.get("description", f"Plugin artifact type: {name}"),
-                            "template": self._convert_plugin_to_template(name, plugin_def),
-                            "validation": plugin_def.get("validation"),
-                            "conflict": False,
-                        }
-                        sources_seen[name] = ["plugin"]
-                    else:
-                        # Type defined in multiple sources
-                        sources_seen[name].append("plugin")
-                        if artifact_types[name]["source"] == "hardcoded":
-                            artifact_types[name]["source"] = "hardcoded (plugin available)"
-                        artifact_types[name]["conflict"] = True
+                    artifact_types[name] = {
+                        "name": name,
+                        "description": plugin_def.get("description", f"Artifact type: {name}"),
+                        "template": self._convert_plugin_to_template(name, plugin_def),
+                        "validation": plugin_def.get("validation"),
+                    }
 
-            except Exception:
-                # Plugin loading failed - continue with hardcoded only
-                pass
-
-        # 3. Mark naming conflicts and inconsistencies
-        # Known duplicates in our system: "assessment" in hardcoded and potentially plugins
-        # Note: These are documented in the assessment artifact
-        conflict_groups = {
-            "assessment": ["hardcoded", "potential plugin"],
-            "design": ["hardcoded", "possible design_document variant"],
-            "research": ["hardcoded", "potential duplicate in standards"],
-        }
-
-        for type_name in conflict_groups:
-            if type_name in artifact_types:
-                artifact_types[type_name]["_conflict_note"] = conflict_groups[type_name]
+            except Exception as e:
+                import warnings
+                warnings.warn(f"Failed to load artifact type plugins: {e}")
 
         return artifact_types
 
     def get_available_templates_with_metadata(self) -> list[dict[str, Any]]:
         """
-        Get list of available templates with source and validation metadata.
+        Get list of available templates with validation metadata.
 
-        Enhanced version of get_available_templates() that includes information
-        about artifact source (hardcoded vs plugin), validation rules, and conflicts.
+        Returns information about all available artifact types including
+        validation rules and descriptions.
 
         Returns:
             List of dicts with keys:
             - name: template name
-            - source: "hardcoded" or "plugin"
             - description: brief description
             - has_validation: bool
-            - has_conflict: bool
 
         Example:
             templates = artifacts.get_available_templates_with_metadata()
             for t in templates:
-                print(f"{t['name']}: {t['source']}")
+                print(f"{t['name']}: {t['description']}")
         """
         types = self._get_available_artifact_types()
 
@@ -313,14 +334,85 @@ class ArtifactTemplates:
             result.append(
                 {
                     "name": name,
-                    "source": info["source"],
                     "description": info.get("description", ""),
                     "has_validation": info.get("validation") is not None,
-                    "has_conflict": info.get("conflict", False),
                 }
             )
 
         return sorted(result, key=lambda x: x["name"])
+
+    def _normalize_name(self, name: str) -> str:
+        """Normalize artifact name to lowercase kebab-case."""
+        config = self._get_config()
+        naming = config.get("naming_conventions", DEFAULT_CONFIG["naming_conventions"])
+
+        normalized = name.lower()
+        for old, new in naming["replacements"]:
+            normalized = normalized.replace(old, new)
+        return normalized.strip(naming["strip_chars"] + "-")
+
+    def _get_timestamp(self) -> str:
+        """Get formatted timestamp for filename."""
+        if UTILITIES_AVAILABLE and _format_timestamp_for_filename is not None:
+            return _format_timestamp_for_filename()
+
+        config = self._get_config()
+        return datetime.now().strftime(config["date_formats"]["filename_timestamp"])
+
+    def _strip_duplicate_type_prefix(self, pattern: str, normalized_name: str) -> str:
+        """Remove duplicate type prefix from name if it matches pattern."""
+        m = re.search(r"\{date\}_(.+?)_\{name\}", pattern)
+        if not m:
+            return normalized_name
+
+        type_hint = m.group(1).lower()
+        variants = {type_hint, type_hint.replace("_", "-")}
+
+        separators = (
+            self._get_config()
+            .get("naming_conventions", DEFAULT_CONFIG["naming_conventions"])
+            .get("type_prefix_separators", ["-", "_"])
+        )
+
+        for hint in variants:
+            for sep in separators:
+                dup = f"{hint}{sep}"
+                if normalized_name.startswith(dup):
+                    return normalized_name[len(dup):].lstrip("-_")
+        return normalized_name
+
+    def _create_bug_report_filename(self, name: str, timestamp: str, pattern: str) -> str:
+        """Create filename for bug_report artifact type."""
+        bug_config = self._get_config().get("artifact_types", {}).get("bug_report", {})
+        default_bug_id = bug_config.get("default_id", DEFAULT_CONFIG["artifact_types"]["bug_report"]["default_id"])
+        separators = bug_config.get("separators", DEFAULT_CONFIG["artifact_types"]["bug_report"]["separators"])
+
+        split_parts: list[str] = [name]
+        for sep in separators:
+            if sep in name:
+                split_parts = name.split(sep)
+                break
+
+        bug_id = default_bug_id
+        descriptive_parts: list[str] = []
+        if len(split_parts) >= 2 and split_parts[0].isdigit():
+            bug_id = split_parts[0]
+            descriptive_parts = split_parts[1:]
+        elif len(split_parts) >= 2 and split_parts[1].isdigit():
+            bug_id = split_parts[1]
+            descriptive_parts = split_parts[2:]
+        else:
+            descriptive_parts = split_parts[1:] if len(split_parts) > 1 else split_parts
+
+        descriptive_name = "-".join(self._normalize_name(p) for p in descriptive_parts) or self._normalize_name(name)
+
+        context = {"name": descriptive_name, "date": timestamp}
+        try:
+            filename = pattern.format(**context)
+        except KeyError:
+            filename = pattern.format(name=descriptive_name)
+
+        return filename.replace("YYYY-MM-DD_HHMM", timestamp).replace("NNN", bug_id)
 
     def create_filename(self, template_type: str, name: str) -> str:
         """Create a properly formatted filename for an artifact."""
@@ -328,94 +420,61 @@ class ArtifactTemplates:
         if not template:
             raise ValueError(f"Unknown template type: {template_type}")
 
-        # Normalize name to lowercase kebab-case (artifacts must be lowercase)
-        # Convert to lowercase and replace spaces/underscores with hyphens
-        normalized_name = name.lower().replace(" ", "-").replace("_", "-").replace("--", "-").strip("-")
+        timestamp = self._get_timestamp()
+        pattern = template["filename_pattern"]
 
-        # Generate timestamp using utility if available, fallback to old method
-        if UTILITIES_AVAILABLE and _format_timestamp_for_filename is not None:
-            timestamp = _format_timestamp_for_filename()
-        else:
-            now = datetime.now()
-            timestamp = now.strftime("%Y-%m-%d_%H%M")
-
-        # Handle special case for bug reports (need bug ID)
+        # Special handling for bug reports
         if template_type == "bug_report":
-            # Extract bug ID from name or generate one
-            if "_" in name:
-                # Extract bug ID from original name (e.g., "BUG_001_description" -> "001")
-                parts = name.split("_")
-                bug_id = parts[0] if parts[0].upper() == "BUG" and len(parts) > 1 else parts[0]
-                # If pattern is "BUG_NNN_description", extract NNN
-                if len(parts) >= 2 and parts[1].isdigit():
-                    bug_id = parts[1]
-                    # Descriptive part starts from index 2
-                    descriptive_parts = parts[2:]
-                else:
-                    # Otherwise assume first part is bug ID
-                    bug_id = parts[0]
-                    descriptive_parts = parts[1:]
-                # Normalize descriptive parts: convert underscores to hyphens
-                descriptive_name = "-".join(p.lower().replace(" ", "-") for p in descriptive_parts)
+            return self._create_bug_report_filename(name, timestamp, pattern)
+
+        # Standard filename generation
+        normalized_name = self._normalize_name(name)
+        normalized_name = self._strip_duplicate_type_prefix(pattern, normalized_name)
+
+        context = {"name": normalized_name, "date": timestamp}
+        try:
+            filename = pattern.format(**context)
+        except KeyError:
+            filename = pattern.format(name=normalized_name)
+
+        return filename.replace("YYYY-MM-DD_HHMM", timestamp)
+
+    def _get_kst_timestamp_str(self) -> str:
+        """Get KST timestamp string."""
+        if UTILITIES_AVAILABLE and _get_kst_timestamp is not None:
+            return _get_kst_timestamp()
+
+        from datetime import timedelta, timezone
+        config = self._get_config()
+        kst = timezone(timedelta(hours=9))
+        return datetime.now(kst).strftime(config["date_formats"]["timestamp_with_tz"])
+
+    def _get_branch_name(self) -> str:
+        """Get current git branch name."""
+        if UTILITIES_AVAILABLE and _get_current_branch is not None:
+            try:
+                return _get_current_branch()
+            except Exception:
+                pass
+        return self._get_config()["default_branch"]
+
+    def _format_frontmatter_yaml(self, data: dict[str, Any]) -> str:
+        """Format frontmatter dict as YAML."""
+        config = self._get_config()
+        delimiter = config["frontmatter_delimiter"]
+
+        lines = [delimiter]
+        for key, value in data.items():
+            if value is None:
+                continue
+            if isinstance(value, list):
+                lines.append(f"{key}:")
+                for item in value:
+                    lines.append(f"  - {item}")
             else:
-                bug_id = "001"  # Default bug ID
-                descriptive_name = normalized_name
-
-            # Build context for format strings
-            filename_context = {
-                "name": descriptive_name,
-                "date": timestamp,
-            }
-
-            # Format filename with context, then replace legacy placeholders
-            filename = template["filename_pattern"]
-            try:
-                filename = filename.format(**filename_context)
-            except KeyError:
-                # Fallback for old-style patterns without {date}
-                filename = filename.format(name=descriptive_name)
-
-            return str(filename.replace("YYYY-MM-DD_HHMM", timestamp).replace("NNN", bug_id))
-        else:
-            # For plugin-based templates, use .format() with available variables
-            # Build context with all possible filename variables
-            filename_context = {
-                "name": normalized_name,
-                "date": timestamp,  # Plugin {date} gets full timestamp
-            }
-
-            # Prevent duplicate type tokens: if pattern embeds a type prefix
-            # (e.g., {date}_implementation_plan_{name}.md) and the slug already
-            # starts with the same token, strip it from the slug.
-            pattern = template["filename_pattern"]
-            m = re.search(r"\{date\}_(.+?)_\{name\}", pattern)
-            if m:
-                type_hint = m.group(1).lower()
-                variants = {type_hint}
-                variants.add(type_hint.replace("_", "-"))
-
-                for hint in variants:
-                    for sep in ("-", "_"):
-                        dup = f"{hint}{sep}"
-                        if normalized_name.startswith(dup):
-                            normalized_name = normalized_name[len(dup):].lstrip("-_")
-                            break
-                    # Rebuild context if modified
-                    filename_context["name"] = normalized_name
-
-            filename = template["filename_pattern"]
-
-            # Try to format with context (for plugin templates)
-            try:
-                filename = filename.format(**filename_context)
-            except KeyError:
-                # Fallback: format with just name
-                filename = filename.format(name=normalized_name)
-
-            # Replace builtin pattern for legacy compatibility
-            filename = filename.replace("YYYY-MM-DD_HHMM", timestamp)
-
-            return str(filename)
+                lines.append(f"{key}: {value}")
+        lines.append(delimiter)
+        return "\n".join(lines)
 
     def create_frontmatter(self, template_type: str, title: str, **kwargs) -> str:
         """Create frontmatter for an artifact."""
@@ -425,49 +484,52 @@ class ArtifactTemplates:
 
         frontmatter = template["frontmatter"].copy()
         frontmatter["title"] = title
+        frontmatter["date"] = self._get_kst_timestamp_str()
+        frontmatter.setdefault("ads_version", "1.0")
+        frontmatter.setdefault("artifact_type", template_type)
 
-        # Add timestamp using new utility if available, fallback to old method
-        if UTILITIES_AVAILABLE and _get_kst_timestamp is not None:
-            frontmatter["date"] = _get_kst_timestamp()
-        else:
-            from datetime import timedelta, timezone
-
-            kst = timezone(timedelta(hours=9))  # KST is UTC+9
-            frontmatter["date"] = datetime.now(kst).strftime("%Y-%m-%d %H:%M (KST)")
-
-        # Add branch name if not explicitly provided in kwargs
         if "branch" not in kwargs:
-            if UTILITIES_AVAILABLE and _get_current_branch is not None:
-                try:
-                    frontmatter["branch"] = _get_current_branch()
-                except Exception:
-                    frontmatter["branch"] = "main"  # Fallback
-            else:
-                frontmatter["branch"] = "main"  # Fallback
+            frontmatter["branch"] = self._get_branch_name()
 
-        # Add any additional frontmatter fields (may override defaults including branch)
-        # Load denylist from config to avoid hardcoding
-        config = self._load_template_defaults()
-        denylist_from_config = set(config.get("frontmatter_denylist", []))
-
-        # Always exclude system args
-        system_args = {"output_dir", "interactive", "steps_to_reproduce"}
-        denylist = denylist_from_config | system_args
-
+        # Merge kwargs, excluding denylist
+        config = self._get_config()
+        denylist = set(config["frontmatter_denylist"])
         for key, value in kwargs.items():
             if key not in denylist:
                 frontmatter[key] = value
 
-        # Convert to YAML-like format
-        lines = ["---"]
-        for key, value in frontmatter.items():
-            if isinstance(value, list):
-                lines.append(f"{key}: {value}")
-            else:
-                lines.append(f'{key}: "{value}"')
-        lines.append("---")
+        return self._format_frontmatter_yaml(frontmatter)
 
-        return "\n".join(lines)
+    def _build_content_context(self, template_type: str, title: str, template: dict[str, Any], **kwargs) -> dict[str, Any]:
+        """Build context dict for template content formatting."""
+        config = self._get_config()
+        date_fmt = config.get("date_formats", DEFAULT_CONFIG["date_formats"])["date_only"]
+        offset_days = config.get("content_defaults", {}).get(
+            "target_date_offset_days",
+            DEFAULT_CONFIG["content_defaults"]["target_date_offset_days"],
+        )
+
+        now = datetime.now()
+        context = {
+            "title": title,
+            "start_date": now.strftime(date_fmt),
+            "target_date": (now + timedelta(days=offset_days)).strftime(date_fmt),
+            "assessment_date": now.strftime(date_fmt),
+        }
+
+        # Merge legacy config defaults
+        legacy_config = self._load_template_defaults()
+        context.update(legacy_config.get("defaults", {}))
+        if template_type in legacy_config:
+            context.update(legacy_config[template_type])
+
+        # Add plugin variables
+        if "_plugin_variables" in template:
+            context.update(template["_plugin_variables"])
+
+        # User kwargs override all
+        context.update(kwargs)
+        return context
 
     def create_content(self, template_type: str, title: str, **kwargs) -> str:
         """Create content for an artifact using the template."""
@@ -475,35 +537,50 @@ class ArtifactTemplates:
         if not template:
             raise ValueError(f"Unknown template type: {template_type}")
 
-        content_template = template["content_template"]
+        context = self._build_content_context(template_type, title, template, **kwargs)
+        return str(template["content_template"].format(**context))
 
-        # Load defaults from external config
-        config = self._load_template_defaults()
+    def _check_for_duplicate(self, output_path: Path, template_type: str, name: str, quiet: bool) -> str | None:
+        """Check if a recently created duplicate exists. Returns path if found, None otherwise."""
+        normalized_name = self._normalize_name(name)
+        config = self._get_config()
+        dup_config = config.get("duplicate_detection", DEFAULT_CONFIG["duplicate_detection"])
 
-        # Build defaults with computed date values
         now = datetime.now()
-        defaults = {
-            "title": title,
-            "start_date": now.strftime("%Y-%m-%d"),
-            "target_date": (now + timedelta(days=7)).strftime("%Y-%m-%d"),
-            "assessment_date": now.strftime("%Y-%m-%d"),
-        }
+        current_date = now.strftime(config.get("date_formats", DEFAULT_CONFIG["date_formats"])["date_only"])
 
-        # Merge general defaults from config
-        defaults.update(config.get("defaults", {}))
+        # Get pattern from config
+        if template_type == "bug_report" and "bug_report" in dup_config["patterns"]:
+            pattern_template = dup_config["patterns"]["bug_report"]
+        else:
+            pattern_template = dup_config["patterns"]["default"]
 
-        # Merge artifact-type-specific defaults (e.g., bug_report)
-        if template_type in config:
-            defaults.update(config[template_type])
+        # Build glob pattern
+        pattern_base = pattern_template.format(
+            artifact_type=template_type,
+            type=template_type,
+            date=current_date,
+            time="*",
+            name=normalized_name
+        )
 
-        # Add plugin-defined template variables if present
-        if "_plugin_variables" in template:
-            defaults.update(template["_plugin_variables"])
+        existing_files = list(output_path.glob(pattern_base))
+        if not existing_files:
+            return None
 
-        # Merge with provided kwargs (user values override defaults)
-        context = {**defaults, **kwargs}
+        # Check recent files within window
+        window_seconds = dup_config["recent_file_window_seconds"]
+        for existing_file in sorted(existing_files, key=lambda p: p.stat().st_mtime, reverse=True):
+            file_mtime = datetime.fromtimestamp(existing_file.stat().st_mtime)
+            time_diff = (now - file_mtime).total_seconds()
 
-        return str(content_template.format(**context))
+            if time_diff < window_seconds:
+                if not quiet:
+                    print(f"⚠️  Found recently created file: {existing_file.name}")
+                    print("   Reusing existing file instead of creating duplicate.")
+                return str(existing_file)
+
+        return None
 
     def create_artifact(
         self,
@@ -523,64 +600,26 @@ class ArtifactTemplates:
         output_path = Path(output_dir) / template["directory"]
         output_path.mkdir(parents=True, exist_ok=True)
 
-        # Check for recently created files with the same base name to prevent duplicates
-        # Look for files created within the last 5 minutes with matching type and name
-        normalized_name = name.lower().replace(" ", "-").replace("_", "-").replace("--", "-").strip("-")
+        # Check for recent duplicates
+        duplicate_path = self._check_for_duplicate(output_path, template_type, name, quiet)
+        if duplicate_path:
+            return duplicate_path
 
-        # Build pattern to match files based on artifact type
-        now = datetime.now()
-        current_date = now.strftime("%Y-%m-%d")
-
-        # Search for files with same date and base name pattern
-        # Different patterns for different artifact types
-        if template_type == "bug_report":
-            # Bug reports: BUG_YYYY-MM-DD_HHMM_NNN_{name}.md
-            # Extract bug ID if present in name (format: "NNN_descriptive-name")
-            if "_" in name:
-                bug_id = name.split("_")[0]
-                descriptive_name = normalized_name.replace(bug_id + "-", "").strip("-")
-            else:
-                descriptive_name = normalized_name
-            # Match files with same descriptive name (bug ID may differ)
-            # Pattern needs to account for: BUG_DATE_TIME_BUGID_NAME.md
-            pattern_base = f"BUG_{current_date}_*_*_{descriptive_name}.md"
-        else:
-            # Other types: YYYY-MM-DD_HHMM_{template_type}_{normalized-name}.md
-            pattern_base = f"{current_date}_*_{template_type}_{normalized_name}.md"
-
-        existing_files = list(output_path.glob(pattern_base))
-
-        # Check if any existing file was created recently (within 5 minutes)
-        if existing_files:
-            for existing_file in sorted(existing_files, key=lambda p: p.stat().st_mtime, reverse=True):
-                file_mtime = datetime.fromtimestamp(existing_file.stat().st_mtime)
-                time_diff = (now - file_mtime).total_seconds()
-
-                # If file was created within the last 5 minutes, reuse it
-                if time_diff < 300:  # 5 minutes = 300 seconds
-                    if not quiet:
-                        print(f"⚠️  Found recently created file: {existing_file.name}")
-                        print("   Reusing existing file instead of creating duplicate.")
-                    return str(existing_file)
-
-        # Create filename
+        # Create new artifact
         filename = self.create_filename(template_type, name)
         file_path = output_path / filename
 
-        # Create content
         frontmatter = self.create_frontmatter(template_type, title, **kwargs)
         content = self.create_content(template_type, title, **kwargs)
 
-        # Write file
-        full_content = frontmatter + "\n\n" + content
         with open(file_path, "w", encoding="utf-8") as f:
-            f.write(full_content)
+            f.write(frontmatter + "\n\n" + content)
 
         return str(file_path)
 
 
 # Convenience functions
-def get_template(template_type: str) -> dict | None:
+def get_template(template_type: str) -> dict[str, Any] | None:
     """Get template configuration for a specific type."""
     templates = ArtifactTemplates()
     return templates.get_template(template_type)
@@ -599,7 +638,7 @@ def create_artifact(
     return templates.create_artifact(template_type, name, title, output_dir, quiet=quiet, **kwargs)
 
 
-def get_available_templates() -> list:
+def get_available_templates() -> list[str]:
     """Get list of available template types."""
     templates = ArtifactTemplates()
     return templates.get_available_templates()

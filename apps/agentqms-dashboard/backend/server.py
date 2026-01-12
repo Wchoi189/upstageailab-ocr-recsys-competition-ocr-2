@@ -7,13 +7,19 @@ from pydantic import BaseModel
 
 # Import local utils
 # Ensure current directory is in path
-sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
+from pathlib import Path
 # Add workspace root to path for AgentQMS imports
-workspace_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
-sys.path.insert(0, workspace_root)
+# Current file: apps/agentqms-dashboard/backend/server.py
+current_dir = Path(__file__).resolve().parent
+if str(current_dir) not in sys.path:
+    sys.path.insert(0, str(current_dir))
+
+workspace_root = current_dir.parents[2] # backend -> dashboard -> apps -> root
+if str(workspace_root) not in sys.path:
+    sys.path.insert(0, str(workspace_root))
 
 import fs_utils
-from routes import artifacts, compliance, system, tools, tracking
+from routes import artifacts, compliance, system, tools, tracking, chat
 
 # Initialize FastAPI app
 app = FastAPI(title="AgentQMS Dashboard Bridge", description="Backend bridge for AgentQMS Manager Dashboard", version="0.1.0")
@@ -24,6 +30,7 @@ app.include_router(compliance.router)
 app.include_router(system.router)
 app.include_router(tracking.router)
 app.include_router(tools.router)
+app.include_router(chat.router)
 
 # Configure CORS
 app.add_middleware(

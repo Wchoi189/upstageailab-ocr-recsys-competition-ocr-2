@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-11T20:11:30.587616+00:00'
+  generated_at: '2026-01-12T12:03:29.428929+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -393,7 +393,7 @@ resolved:
         '
       scope: project
       metadata:
-        filename_pattern: '{date}_BUG_NNN_{name}.md'
+        filename_pattern: '{date}_bug_NNN_{name}.md'
         directory: bug_reports/
         frontmatter:
           ads_version: '1.0'
@@ -422,7 +422,7 @@ resolved:
         - '## Comparison'
         - '## Logs'
         - '## Impact'
-        filename_prefix: BUG_
+        filename_prefix: bug_
         allowed_statuses:
         - draft
         - active
@@ -1082,9 +1082,20 @@ resolved:
         - hydra
         - configuration
         - config
+        - configs
+        - settings
+        - parameters
         - experiment
         - yaml
         - compose
+        - omegaconf
+        - merge
+        - override
+        patterns:
+        - hydra.*config
+        - config.*hydra
+        - yaml.*config
+        - experiment.*config
       tiers:
         tier1:
           name: Hydra Architecture

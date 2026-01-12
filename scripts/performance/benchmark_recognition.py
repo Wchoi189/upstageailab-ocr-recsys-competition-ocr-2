@@ -5,8 +5,8 @@ This script measures throughput and VRAM usage for different recognition
 backends (stub, paddleocr, etc.) to ensure they meet performance targets.
 
 Usage:
-    python scripts/benchmark_recognition.py --backend paddleocr --batch-size 32
-    python scripts/benchmark_recognition.py --backend stub --batch-size 16
+    uv run python scripts/benchmark_recognition.py --backend paddleocr --batch-size 32
+    uv run python scripts/benchmark_recognition.py --backend stub --batch-size 16
 """
 
 from __future__ import annotations

@@ -28,16 +28,17 @@ def _detect_intended_type(after_timestamp: str) -> tuple[str, str] | None:
 
     # Check for common misspellings or format errors
     type_hints = [
-        ("assessment", "assessment-", "-"),
+        ("assessment", "assessment_", "_"),
         ("implementation_plan", "implementation_plan_", "_"),
         ("implementation-plan", "implementation_plan_", "_"),  # Common mistake
-        ("bug", "BUG_", "_"),
-        ("bug_report", "BUG_", "_"),
+        ("bug", "bug_", "_"),
+        ("bug_report", "bug_", "_"),
         ("session", "SESSION_", "_"),
-        ("design", "design-", "-"),
-        ("research", "research-", "-"),
-        ("audit", "audit-", "-"),
-        ("template", "template-", "-"),
+        ("design_document", "design_document_", "_"),
+        ("design", "design_document_", "_"),
+        ("research", "research_", "_"),
+        ("audit", "audit_", "_"),
+        ("template", "template_", "_"),
     ]
 
     for keyword, correct_prefix, expected_sep in type_hints:

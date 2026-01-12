@@ -6,8 +6,8 @@ A simple CLI tool to query the Perplexity API for research purposes.
 Results are printed to stdout and optionally saved to data/research.
 
 Usage:
-    python scripts/research/perplexity_client.py --query "Your research question"
-    python scripts/research/perplexity_client.py -q "Question" -m llama-3.1-sonar-huge-128k-online
+    uv run python scripts/research/perplexity_client.py --query "Your research question"
+    uv run python scripts/research/perplexity_client.py -q "Question" -m llama-3.1-sonar-huge-128k-online
 """
 
 import argparse

@@ -14,6 +14,13 @@ framework:
       enabled: false
       validate_artifacts: true
 
+context_integration:
+  enabled: true
+  auto_load_threshold: 5
+  window_size: 5
+  persistence_turns: 3
+  analytics_enabled: true
+
 paths:
   artifacts: docs/artifacts
   docs: docs

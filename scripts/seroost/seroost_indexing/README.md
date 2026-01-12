@@ -36,7 +36,7 @@ The configuration excludes:
 To set up and run the indexing:
 
 ```bash
-python setup_seroost_indexing.py
+uv run python setup_seroost_indexing.py
 ```
 
 Or using the shell script:

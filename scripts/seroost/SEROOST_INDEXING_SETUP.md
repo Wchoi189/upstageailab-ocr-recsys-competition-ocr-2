@@ -76,13 +76,11 @@ To verify the configuration is valid:
 python test_seroost_config.py
 ```
 
-## Customization
+## Steps to Run
 
-To customize the configuration:
-
-1. Modify `seroost_config.json` to adjust include/exclude patterns
-2. Test the configuration: `python test_seroost_config.py`
-3. Run the indexing: `python setup_seroost_indexing.py`
+1.  Set up the configuration in `seroost_config.py`.
+2.  Test the configuration: `uv run python test_seroost_config.py`
+3.  Run the indexing: `uv run python setup_seroost_indexing.py`
 
 ## Benefits
 

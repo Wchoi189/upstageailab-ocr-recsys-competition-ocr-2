@@ -117,11 +117,11 @@ Automated container build workflow:
 
 ### Paid Tier
 
-| Machine Type | Cost/Hour | Cost/Month (24/7) | Use Case |
-|-------------|-----------|-------------------|----------|
-| 4-core      | $0.18     | ~$130             | Active development |
-| 8-core      | $0.36     | ~$260             | Heavy workloads |
-| GPU-enabled | $1-2      | ~$1,500           | ML training (not recommended) |
+| Machine Type | Cost/Hour | Cost/Month (24/7) | Use Case                      |
+| ------------ | --------- | ----------------- | ----------------------------- |
+| 4-core       | $0.18     | ~$130             | Active development            |
+| 8-core       | $0.36     | ~$260             | Heavy workloads               |
+| GPU-enabled  | $1-2      | ~$1,500           | ML training (not recommended) |
 
 ### Recommendations
 
@@ -252,8 +252,8 @@ Modify lifecycle hooks in `devcontainer.json`:
 {
   "onCreateCommand": "echo 'Container created'",
   "updateContentCommand": "uv sync --frozen",
-  "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validation/validate_environment.py",
-  "postStartCommand": "python scripts/validation/validate_environment.py"
+  "postCreateCommand": "uv sync --frozen && uv pip install -e . && uv run python scripts/validation/validate_environment.py",
+  "postStartCommand": "uv run python scripts/validation/validate_environment.py"
 }
 ```
 

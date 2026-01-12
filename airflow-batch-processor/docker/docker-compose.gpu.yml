@@ -5,6 +5,7 @@
 
 services:
   airflow-webserver:
+    container_name: airflow-webserver
     profiles: ["gpu"]
     environment:
       NVIDIA_VISIBLE_DEVICES: all
@@ -18,6 +19,7 @@ services:
               capabilities: [gpu]
 
   airflow-scheduler:
+    container_name: airflow-scheduler
     profiles: ["gpu"]
     environment:
       NVIDIA_VISIBLE_DEVICES: all

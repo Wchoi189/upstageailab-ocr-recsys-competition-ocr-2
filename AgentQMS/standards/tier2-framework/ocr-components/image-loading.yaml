@@ -1,3 +1,9 @@
+ads_version: "1.0"
+type: specification
+agent: all
+tier: 2
+priority: high
+
 component: image_loading
 description: Handles loading and validation of input images.
 role: |

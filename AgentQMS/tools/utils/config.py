@@ -106,36 +106,22 @@ class ConfigLoader:
         return config
 
     def _load_project_overrides(self) -> dict[str, Any]:
-        # Check for project-level config/ (used by consuming projects)
-        config_dir = self.project_root / "config"
+        # Framework project's own config in .agentqms/project_config/
+        # (avoids conflicts when framework is imported into projects with their own config/)
+        framework_config_dir = self.framework_root / ".agentqms" / "project_config"
         config: dict[str, Any] = {}
 
-        if config_dir.exists():
-            yaml_files: Iterable[Path] = (
-                config_dir / "framework.yaml",
-                config_dir / "interface.yaml",
-                config_dir / "paths.yaml",
+        if framework_config_dir.exists():
+            yaml_files = (
+                framework_config_dir / "framework.yaml",
+                framework_config_dir / "interface.yaml",
+                framework_config_dir / "paths.yaml",
             )
             for path in yaml_files:
                 config = self._merge_yaml_if_exists(config, path)
 
-            config = self._merge_directory_overrides(config, config_dir / "environments")
-            config = self._merge_directory_overrides(config, config_dir / "overrides")
-        else:
-            # Framework project's own config in .agentqms/project_config/
-            # (avoids conflicts when framework is imported into projects with their own config/)
-            framework_config_dir = self.framework_root / ".agentqms" / "project_config"
-            if framework_config_dir.exists():
-                yaml_files = (
-                    framework_config_dir / "framework.yaml",
-                    framework_config_dir / "interface.yaml",
-                    framework_config_dir / "paths.yaml",
-                )
-                for path in yaml_files:
-                    config = self._merge_yaml_if_exists(config, path)
-
-                config = self._merge_directory_overrides(config, framework_config_dir / "environments")
-                config = self._merge_directory_overrides(config, framework_config_dir / "overrides")
+            config = self._merge_directory_overrides(config, framework_config_dir / "environments")
+            config = self._merge_directory_overrides(config, framework_config_dir / "overrides")
 
         return config
 

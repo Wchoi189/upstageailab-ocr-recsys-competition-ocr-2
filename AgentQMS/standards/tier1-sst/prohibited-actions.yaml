@@ -1,81 +1,67 @@
----
-ads_version: "1.0"
+ads_version: '1.0'
 type: rule_set
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: pass
 memory_footprint: 50
-date: "2025-12-16"
-status: active
 depends_on: []
-
-# Tier 1 - Prohibited Actions (Extracted from SST)
-
 prohibited_actions:
   file_creation:
-    - action: "Manual artifact creation (touch, echo, cat >)"
-      reason: "Bypasses validation, naming enforcement, frontmatter generation"
-      instead: "cd AgentQMS/bin && make create-{TYPE}"
-      severity: critical
-      detection: "pre-commit hooks"
-
-    - action: "Files at docs/ root (except README, CHANGELOG)"
-      reason: "Violates placement rules"
-      instead: "Use docs/artifacts/{TYPE}/"
-      severity: critical
-      detection: "make validate"
-
-    - action: "ALL-CAPS filenames"
-      reason: "Violates naming conventions"
-      instead: "lowercase-with-hyphens + timestamp prefix"
-      severity: critical
-      detection: "pre-commit hooks + make validate"
-
+  - action: Manual artifact creation (touch, echo, cat >)
+    reason: Bypasses validation, naming enforcement, frontmatter generation
+    instead: cd AgentQMS/bin && make create-{TYPE}
+    severity: critical
+    detection: pre-commit hooks
+  - action: Files at docs/ root (except README, CHANGELOG)
+    reason: Violates placement rules
+    instead: Use docs/artifacts/{TYPE}/
+    severity: critical
+    detection: make validate
+  - action: ALL-CAPS filenames
+    reason: Violates naming conventions
+    instead: lowercase-with-hyphens + timestamp prefix
+    severity: critical
+    detection: pre-commit hooks + make validate
   coding_practices:
-    - action: "Manual sys.path manipulation"
-      reason: "Creates brittle dependencies"
-      instead: "Use PYTHONPATH=. from project root"
-      severity: high
-      detection: "Code review"
-
-    - action: "Silent error handling (bare except)"
-      reason: "Hides critical failures"
-      instead: "Specific exceptions + logging"
-      severity: high
-      detection: "Code review"
-
+  - action: Manual sys.path manipulation
+    reason: Creates brittle dependencies
+    instead: Use PYTHONPATH=. from project root
+    severity: high
+    detection: Code review
+  - action: Silent error handling (bare except)
+    reason: Hides critical failures
+    instead: Specific exceptions + logging
+    severity: high
+    detection: Code review
   documentation:
-    - action: "Verbose tutorials in AI instructions"
-      reason: "Wastes context, reduces effectiveness"
-      instead: "Concise hints (1-3 lines max)"
-      severity: medium
-      detection: "Manual review"
-
-    - action: "User-oriented content in AI docs"
-      reason: "Wrong audience"
-      instead: "AI-optimized machine-readable format"
-      severity: medium
-      detection: "Manual review"
-
+  - action: Verbose tutorials in AI instructions
+    reason: Wastes context, reduces effectiveness
+    instead: Concise hints (1-3 lines max)
+    severity: medium
+    detection: Manual review
+  - action: User-oriented content in AI docs
+    reason: Wrong audience
+    instead: AI-optimized machine-readable format
+    severity: medium
+    detection: Manual review
 enforcement_priority:
   critical:
-    - "Manual artifact creation"
-    - "ALL-CAPS filenames"
-    - "Files at docs/ root"
+  - Manual artifact creation
+  - ALL-CAPS filenames
+  - Files at docs/ root
   high:
-    - "sys.path manipulation"
-    - "Silent error handling"
+  - sys.path manipulation
+  - Silent error handling
   medium:
-    - "Verbose AI documentation"
-    - "User-oriented AI content"
-
+  - Verbose AI documentation
+  - User-oriented AI content
 detection_mechanisms:
   automated:
-    - "Pre-commit hooks"
-    - "make validate"
-    - "make compliance"
+  - Pre-commit hooks
+  - make validate
+  - make compliance
   manual:
-    - "Code review"
-    - "Documentation audit"
+  - Code review
+  - Documentation audit

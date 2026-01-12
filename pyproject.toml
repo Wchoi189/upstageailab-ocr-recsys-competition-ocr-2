@@ -81,6 +81,7 @@ dependencies = [
     "jsonschema>=4.25.1",
     "mcp>=1.25.0",
     "lmdb>=1.7.5",
+    "pika>=1.3.2",
 ]
 
 

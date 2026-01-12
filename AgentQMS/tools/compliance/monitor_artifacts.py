@@ -8,10 +8,10 @@ for violations. It can be run as part of CI/CD or as a standalone check.
 This is the canonical implementation in agent_tools.
 
 Usage:
-    python monitor_artifacts.py --check
-    python monitor_artifacts.py --alert
-    python monitor_artifacts.py --report
-    python monitor_artifacts.py --fix-suggestions
+    uv run python AgentQMS/tools/compliance/monitor_artifacts.py --check
+    uv run python AgentQMS/tools/compliance/monitor_artifacts.py --alert
+    uv run python AgentQMS/tools/compliance/monitor_artifacts.py --report
+    uv run python AgentQMS/tools/compliance/monitor_artifacts.py --fix-suggestions
 """
 
 import argparse
@@ -263,10 +263,10 @@ class ArtifactMonitor:
 
         suggestions.append("\n🔧 AUTOMATED FIXES:")
         suggestions.append("  # Update all indexes")
-        suggestions.append("  python AgentQMS.tools/documentation/update_artifact_indexes.py --all")
+        suggestions.append("  uv run python AgentQMS/tools/documentation/update_artifact_indexes.py --all")
         suggestions.append("")
         suggestions.append("  # Validate specific file")
-        suggestions.append("  python AgentQMS.tools/compliance/validate_artifacts.py --file path/to/file.md")
+        suggestions.append("  uv run python AgentQMS/tools/compliance/validate_artifacts.py --file path/to/file.md")
 
         return "\n".join(suggestions)
 

@@ -1,93 +1,85 @@
----
-ads_version: "1.0"
+ads_version: '1.0'
 type: quick_reference
 agent: all
 tier: 1
 priority: critical
-validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: unknown
 memory_footprint: 150
-date: "2026-01-05"
-status: active
-
-# AI Instructions Index
-
 root_map:
-  schema: "AgentQMS/standards/schemas/ads-v1.0-spec.yaml"
-  sst: "AgentQMS/standards/tier1-sst/"
-  framework: "AgentQMS/standards/tier2-framework/"
-  agents: "AgentQMS/standards/tier3-agents/"
-  workflows: "AgentQMS/standards/tier4-workflows/"
-
-# Context System - Task-Specific File Loading
+  schema: AgentQMS/standards/schemas/ads-v1.0-spec.yaml
+  sst: AgentQMS/standards/tier1-sst/
+  framework: AgentQMS/standards/tier2-framework/
+  agents: AgentQMS/standards/tier3-agents/
+  workflows: AgentQMS/standards/tier4-workflows/
 context_system:
-  context_map: "AgentQMS/standards/context_map.yaml"
-  context_priority: "AgentQMS/standards/context_priority.yaml"
-  context_classification: "AgentQMS/standards/context_classification.yaml"
-  task_classification: "AgentQMS/standards/context_classification.yaml"
-  priority_system: "AgentQMS/standards/context_priority.yaml"
-
+  context_map: AgentQMS/standards/context_map.yaml
+  context_priority: AgentQMS/standards/context_priority.yaml
+  context_classification: AgentQMS/standards/context_classification.yaml
+  task_classification: AgentQMS/standards/context_classification.yaml
+  priority_system: AgentQMS/standards/context_priority.yaml
 glob_patterns:
-  - pattern: "ocr/inference/**/*.py"
-    instructions:
-      - "AgentQMS/standards/tier2-framework/inference-framework.yaml"
-      - "AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml"
-  - pattern: "ocr/models/**/*.py"
-    instructions:
-      - "AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml"
-  - pattern: "apps/ocr_inference_console/**/*.py"
-    instructions:
-      - "AgentQMS/standards/tier2-framework/api-contracts.yaml"
-  - pattern: "configs/**/*.yaml"
-    instructions:
-      - "AgentQMS/standards/tier2-framework/configuration-standards.yaml"
-      - "AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml"
-
+- pattern: ocr/inference/**/*.py
+  instructions:
+  - AgentQMS/standards/tier2-framework/inference-framework.yaml
+  - AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+- pattern: ocr/models/**/*.py
+  instructions:
+  - AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+- pattern: apps/ocr_inference_console/**/*.py
+  instructions:
+  - AgentQMS/standards/tier2-framework/api-contracts.yaml
+- pattern: configs/**/*.yaml
+  instructions:
+  - AgentQMS/standards/tier2-framework/configuration-standards.yaml
+  - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
 tier1_sst:
-  architecture: "AgentQMS/standards/tier1-sst/system-architecture.yaml"
-  naming: "AgentQMS/standards/tier1-sst/naming-conventions.yaml"
-  placement: "AgentQMS/standards/tier1-sst/file-placement-rules.yaml"
-  prohibited: "AgentQMS/standards/tier1-sst/prohibited-actions.yaml"
-  artifacts: "AgentQMS/standards/tier1-sst/artifact-types.yaml"
-  validation: "AgentQMS/standards/tier1-sst/validation-protocols.yaml"
-  workflows: "AgentQMS/standards/tier1-sst/workflow-requirements.yaml"
-
+  architecture: AgentQMS/standards/tier1-sst/system-architecture.yaml
+  naming: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+  placement: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+  prohibited: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+  artifacts: AgentQMS/standards/tier1-sst/artifact-types.yaml
+  validation: AgentQMS/standards/tier1-sst/validation-protocols.yaml
+  workflows: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
 tier2_framework:
-  contracts: "AgentQMS/standards/tier2-framework/data-contracts.yaml"
-  api_contracts: "AgentQMS/standards/tier2-framework/api-contracts.yaml"
-  inference: "AgentQMS/standards/tier2-framework/inference-framework.yaml"
-  tools: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
-  quickstart: "AgentQMS/standards/tier2-framework/quickstart.yaml"
-  debugging: "AgentQMS/standards/tier2-framework/debugging-sessions.yaml"
-  coding_standards: "AgentQMS/standards/tier2-framework/coding-standards.yaml"
-  configuration_standards: "AgentQMS/standards/tier2-framework/configuration-standards.yaml"
-  hydra_architecture: "AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml"
-  git_conventions: "AgentQMS/standards/tier2-framework/git-conventions.yaml"
-  datasets: "AgentQMS/standards/tier2-framework/dataset-catalog.yaml"
+  contracts: AgentQMS/standards/tier2-framework/data-contracts.yaml
+  api_contracts: AgentQMS/standards/tier2-framework/api-contracts.yaml
+  inference: AgentQMS/standards/tier2-framework/inference-framework.yaml
+  tools: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+  quickstart: AgentQMS/standards/tier2-framework/quickstart.yaml
+  debugging: AgentQMS/standards/tier2-framework/debugging-sessions.yaml
+  coding_standards:
+    core: AgentQMS/standards/tier2-framework/coding/python-core.yaml
+    testing: AgentQMS/standards/tier2-framework/coding/testing.yaml
+    async: AgentQMS/standards/tier2-framework/coding/async-concurrency.yaml
+    pydantic: AgentQMS/standards/tier2-framework/coding/pydantic-validation.yaml
+    ml: AgentQMS/standards/tier2-framework/coding/ml-frameworks.yaml
+  configuration_standards: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+  hydra_architecture: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+  git_conventions: AgentQMS/standards/tier2-framework/git-conventions.yaml
+  datasets: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
   ocr_components:
-    coordinate_transforms: "AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml"
-    image_loading: "AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml"
-    model_management: "AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml"
-    orchestration_flow: "AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml"
-    pipeline_contracts: "AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml"
-    postprocessing_logic: "AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml"
-    preprocessing_logic: "AgentQMS/standards/tier2-framework/ocr-components/preprocessing-logic.yaml"
-    visualization_logic: "AgentQMS/standards/tier2-framework/ocr-components/visualization-logic.yaml"
-
+    coordinate_transforms: AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml
+    image_loading: AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml
+    model_management: AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+    orchestration_flow: AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+    pipeline_contracts: AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+    postprocessing_logic: AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml
+    preprocessing_logic: AgentQMS/standards/tier2-framework/ocr-components/preprocessing-logic.yaml
+    visualization_logic: AgentQMS/standards/tier2-framework/ocr-components/visualization-logic.yaml
 tier3_agents:
-  claude: "AgentQMS/standards/tier3-agents/claude/config.yaml"
-  copilot: "AgentQMS/standards/tier3-agents/copilot/config.yaml"
-  cursor: "AgentQMS/standards/tier3-agents/cursor/config.yaml"
-  gemini: "AgentQMS/standards/tier3-agents/gemini/config.yaml"
-  vlm: "AgentQMS/standards/tier3-agents/vlm-tools.yaml"
-
+  claude: AgentQMS/standards/tier3-agents/claude/config.yaml
+  copilot: AgentQMS/standards/tier3-agents/copilot/config.yaml
+  cursor: AgentQMS/standards/tier3-agents/cursor/config.yaml
+  gemini: AgentQMS/standards/tier3-agents/gemini/config.yaml
+  vlm: AgentQMS/standards/tier3-agents/vlm-tools.yaml
 tier4_workflows:
-  gap_analysis: "AgentQMS/standards/tier4-workflows/compliance-reporting/gap-analysis.yaml"
-  compliance: "AgentQMS/standards/tier4-workflows/compliance-reporting/generate-compliance-report.py"
-  hooks: "AgentQMS/standards/tier4-workflows/pre-commit-hooks/"
+  gap_analysis: AgentQMS/standards/tier4-workflows/compliance-reporting/gap-analysis.yaml
+  compliance: AgentQMS/standards/tier4-workflows/compliance-reporting/generate-compliance-report.py
+  hooks: AgentQMS/standards/tier4-workflows/pre-commit-hooks/
   utilities:
-    artifact_audit: "AgentQMS/tools/audit/artifact_audit.py"
-    index_generator: "AgentQMS/tools/documentation/auto_generate_index.py"
-    audit_generator: "AgentQMS/tools/audit/audit_generator.py"
-    audit_validator: "AgentQMS/tools/audit/audit_validator.py"
-    framework_audit: "AgentQMS/tools/audit/framework_audit.py"
+    artifact_audit: AgentQMS/tools/audit/artifact_audit.py
+    index_generator: AgentQMS/tools/documentation/auto_generate_index.py
+    audit_generator: AgentQMS/tools/audit/audit_generator.py
+    audit_validator: AgentQMS/tools/audit/audit_validator.py
+    framework_audit: AgentQMS/tools/audit/framework_audit.py

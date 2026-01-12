@@ -6,10 +6,10 @@ Uses xAI's Grok API to intelligently fix linting errors reported by ruff.
 Integrates with the AgentQMS workflow for automated code quality improvements.
 
 Usage:
-    python grok_linter.py --input lint_errors.json [--dry-run] [--limit N]
+    uv run python AgentQMS/tools/utilities/grok_linter.py --input lint_errors.json [--dry-run] [--limit N]
 
     # Or via ruff directly:
-    ruff check . --output-format=json | python grok_linter.py --stdin
+    ruff check . --output-format=json | uv run python AgentQMS/tools/utilities/grok_linter.py --stdin
 """
 
 import argparse

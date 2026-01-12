@@ -8,6 +8,7 @@ x-airflow-env: &airflow-env
 
 services:
   postgres:
+    container_name: airflow-postgres
     image: postgres:14
     environment:
       POSTGRES_USER: airflow
@@ -21,6 +22,7 @@ services:
       retries: 5
 
   airflow-init:
+    container_name: airflow-init
     image: airflow-cuda:3.1.5
     build:
       context: ..
@@ -46,6 +48,7 @@ services:
         airflow users create --username admin --firstname Air --lastname Flow --email admin@example.com --role Admin --password admin || true
 
   airflow-webserver:
+    container_name: airflow-webserver
     image: airflow-cuda:3.1.5
     build:
       context: ..
@@ -69,6 +72,7 @@ services:
     command: ["airflow", "api-server"]
 
   airflow-scheduler:
+    container_name: airflow-scheduler
     image: airflow-cuda:3.1.5
     build:
       context: ..

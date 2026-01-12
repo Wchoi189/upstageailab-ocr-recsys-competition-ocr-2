@@ -131,7 +131,28 @@ class TrackingRepair:
         cleaned = re.sub(pattern, "", filename)
 
         # Remove artifact type prefix
-        type_prefixes = ["implementation_plan_", "assessment-", "audit-", "design-", "research-", "BUG_", "SESSION_"]
+        # Remove artifact type prefix
+        type_prefixes = [
+            "implementation_plan_",
+            "assessment_",
+            "audit_",
+            "design_document_",
+            "research_",
+            "template_",
+            "bug_",
+            "guide_",
+            "walkthrough_",
+            "SESSION_",
+            # Legacy support (optional, can be removed if strictly enforcing new standards)
+            "assessment-",
+            "audit-",
+            "design-",
+            "research-",
+            "template-",
+            "guide-",
+            "walkthrough-",
+            "BUG_",
+        ]
         for prefix in type_prefixes:
             if cleaned.startswith(prefix):
                 cleaned = cleaned[len(prefix) :]

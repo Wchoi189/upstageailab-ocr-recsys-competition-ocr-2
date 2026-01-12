@@ -47,5 +47,5 @@ This resource mirrors the AgentQMS MCP handler and ensures consistent discovery 
 
 ## Adding a New Server
 1. Add the server definition to `scripts/mcp/shared_config.json`.
-2. Run `python3 scripts/mcp/sync_configs.py`.
+2. Run `uv run python scripts/mcp/sync_configs.py`.
 3. Clear your agent's cache or restart the agent to see the new server.

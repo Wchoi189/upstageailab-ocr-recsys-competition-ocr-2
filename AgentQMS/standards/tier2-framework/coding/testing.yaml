@@ -1,0 +1,49 @@
+ads_version: "1.0"
+type: rule_set
+agent: all
+tier: 2
+priority: high
+
+# Testing Standards
+# Focus: Pytest, Fixtures, Import Management in Tests
+
+lazy_import_rules:
+  scope: test files, fixtures, optional feature modules
+  must_lazy_import:
+  - All heavy_modules in test_*.py files
+  - All heavy_modules in conftest.py fixtures
+  - Optional dependencies in library code
+  allowed_module_level:
+  - pytest
+  - typing
+  - pathlib
+  - dataclasses
+  - Standard library lightweight modules
+  patterns:
+    prohibited:
+      location: module level in test files
+      example: 'import torch\nimport numpy as np\ndef test_foo(): ...\n'
+    required:
+      location: inside function/fixture body
+      example: "def test_foo():\n    import torch\n    import numpy as np\n    ...\n\
+        \n@pytest.fixture\ndef my_fixture():\n    import torch\n    return torch.randn(3,\
+        \ 224, 224)\n"
+
+test_file_rules:
+  conftest_py:
+  - NO module-level torch/numpy imports
+  - Import inside each fixture body
+  - Use function-scoped fixtures when importing heavy modules
+  test_modules:
+  - Import heavy dependencies inside test functions
+  - Use TYPE_CHECKING guards for type hints only
+  - Group lazy imports at function start
+
+rationale_for_ai:
+  objective: Reduce pytest collection time
+  impact: Heavy imports at module level execute during collection
+  target: Collection time < execution overhead of lazy imports
+enforcement:
+  detection: grep for module-level imports in test files
+  future_hook: pre-commit check for test file imports
+  command: 'grep -rn "^import torch\|^import numpy\|^from torch\|^from numpy" tests/'

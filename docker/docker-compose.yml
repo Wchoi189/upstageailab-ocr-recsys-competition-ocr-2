@@ -1,5 +1,5 @@
 name: ocr-dev
-
+# docker-compose --profile dev up -d
 services:
   ocr-dev:
     build:
@@ -16,6 +16,7 @@ services:
     environment:
       - DISPLAY=${DISPLAY}
       - UV_LINK_MODE=copy
+      - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
     ports:
       - "8000:8000"   # Web interface/API
       - "8501:8501"   # Streamlit (if used)
@@ -34,7 +35,27 @@ services:
     profiles:
       - dev
 
-  # docker-dev:
+# docker-compose --profile dev up rabbitmq -d
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: ocr-rabbitmq
+    hostname: rabbitmq
+    ports:
+      - "5672:5672"   # AMQP
+      - "15672:15672" # Management UI
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+
+      - RABBITMQ_DEFAULT_PASS=guest
+    networks:
+      - default
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    profiles:
+      - dev
   #   build:
   #     context: ..
   #     dockerfile: docker/Dockerfile

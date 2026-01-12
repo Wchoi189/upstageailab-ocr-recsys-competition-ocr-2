@@ -67,14 +67,14 @@ Match score: 2 keywords × 2 points = 4 points
 
 ## 📊 Bundle Memory Footprint
 
-| Bundle | Tier1 Size | Est. KB | % Context |
-|--------|-----------|---------|-----------|
-| ocr-text-detection | ~5 files | 120 KB | 3.0% |
-| ocr-text-recognition | ~5 files | 150 KB | 3.5% |
-| ocr-layout-analysis | ~5 files | 140 KB | 3.3% |
-| ocr-information-extraction | ~5 files | 130 KB | 3.0% |
-| hydra-configuration | ~4 files | 100 KB | 2.4% |
-| pipeline-development | ~8 files | 400 KB | 10.0% |
+| Bundle                     | Tier1 Size | Est. KB | % Context |
+| -------------------------- | ---------- | ------- | --------- |
+| ocr-text-detection         | ~5 files   | 120 KB  | 3.0%      |
+| ocr-text-recognition       | ~5 files   | 150 KB  | 3.5%      |
+| ocr-layout-analysis        | ~5 files   | 140 KB  | 3.3%      |
+| ocr-information-extraction | ~5 files   | 130 KB  | 3.0%      |
+| hydra-configuration        | ~4 files   | 100 KB  | 2.4%      |
+| pipeline-development       | ~8 files   | 400 KB  | 10.0%     |
 
 **Savings**: Domain bundles use 60-70% less context than generic
 
@@ -99,14 +99,14 @@ Match score: 2 keywords × 2 points = 4 points
 
 ```bash
 # Suggest bundle for task
-python suggest_context.py "your task description"
+uv run python suggest_context.py "your task description"
 
 # Load specific bundle programmatically
 from AgentQMS.tools.core.context_bundle import get_context_bundle
 files = get_context_bundle("", bundle_name="ocr-text-detection")
 
 # List all bundles
-python suggest_context.py --list-bundles
+uv run python suggest_context.py --list-bundles
 ```
 
 ---

@@ -1,3 +1,9 @@
+ads_version: "1.0"
+type: specification
+agent: all
+tier: 2
+priority: high
+
 component: coordinate_transforms
 description: Handles mapping between resized/padded images and original coordinates.
 role: |

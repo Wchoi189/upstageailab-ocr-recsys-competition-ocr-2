@@ -21,10 +21,10 @@ roadmap:
 
   phase_2:
     name: "Foundation Implementation"
-    status: "pending"
+    status: "in-progress"
     goals:
-      - "Implement RabbitMQ Task Queue (Background Worker)."
-      - "Create 'Background Agent' for linting/formatting jobs."
+      - "[x] Implement RabbitMQ Task Queue (Background Worker)."
+      - "[x] Create 'Background Agent' for linting/formatting jobs."
       - "Integrate Slack Webhooks for executive alerts."
       - "Establish QwenCLI wrapper for local LLM inference."
 

@@ -197,7 +197,7 @@ class TemplateValidator:
 def main():
     """Main entry point."""
     if len(sys.argv) < 3:
-        print("Usage: python validate_templates.py <templates_dir> <docs_dir>")
+        print("Usage: uv run python validate_templates.py <templates_dir> <docs_dir>")
         sys.exit(1)
 
     templates_dir = sys.argv[1]

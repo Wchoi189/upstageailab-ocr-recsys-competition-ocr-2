@@ -1,0 +1,27 @@
+ads_version: "1.0"
+type: rule_set
+agent: all
+tier: 2
+priority: high
+
+# ML Framework Standards
+# Focus: Dependencies, Import Weights
+
+heavy_modules:
+  ml_frameworks:
+  - torch
+  - torchvision
+  - lightning
+  - tensorflow
+  - jax
+  data_processing:
+  - numpy
+  - pandas
+  - scipy
+  model_libraries:
+  - timm
+  - transformers
+  - huggingface_hub
+
+# Note: This file primarily serves as a reference for 'lazy_import_rules' in testing.yaml
+# and for dependency management tasks.

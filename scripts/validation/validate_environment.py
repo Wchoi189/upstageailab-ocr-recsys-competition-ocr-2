@@ -4,7 +4,7 @@ Environment validation script - Run this after environment setup
 to catch issues early before starting work.
 
 Usage:
-    python scripts/validate_environment.py
+    uv run python scripts/validate_environment.py
 """
 
 import importlib

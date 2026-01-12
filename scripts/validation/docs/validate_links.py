@@ -144,7 +144,7 @@ class LinkValidator:
 def main():
     """Main entry point."""
     if len(sys.argv) != 2:
-        print("Usage: python validate_links.py <docs_root>")
+        print("Usage: uv run python validate_links.py <docs_root>")
         sys.exit(1)
 
     docs_root = sys.argv[1]

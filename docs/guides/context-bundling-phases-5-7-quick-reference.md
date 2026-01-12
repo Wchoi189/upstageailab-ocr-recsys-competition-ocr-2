@@ -114,14 +114,14 @@ uv run python context_inspector.py --stale
 
 ## Key Metrics
 
-| Metric | Value |
-|--------|-------|
-| Context bundles | 12 total |
-| Token savings (debugging) | 60-80% |
-| Time savings (debugging) | 70-80% |
-| Accuracy improvement | 10-25% |
-| Maintenance disable time | Configurable (1-24h) |
-| Auto-enable enabled | Yes |
+| Metric                    | Value                |
+| ------------------------- | -------------------- |
+| Context bundles           | 12 total             |
+| Token savings (debugging) | 60-80%               |
+| Time savings (debugging)  | 70-80%               |
+| Accuracy improvement      | 10-25%               |
+| Maintenance disable time  | Configurable (1-24h) |
+| Auto-enable enabled       | Yes                  |
 
 ---
 
@@ -253,7 +253,7 @@ uv run python context_control.py --feedback ocr-debugging 9 500 "Great tool!"
 
 For detailed information:
 - Read: `docs/artifacts/design_documents/2026-01-09_2200_design-phases-5-7-observability-maintenance-ast.md`
-- Ask: `python context_inspector.py --help`
+- Ask: `uv run python context_inspector.py --help`
 - Learn: Run commands with `--help` flag
 
 ---

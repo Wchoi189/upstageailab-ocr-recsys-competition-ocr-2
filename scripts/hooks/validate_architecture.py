@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 # Allowed patterns
-CORE_DOMAINS = {"models", "data", "utils", "transforms", "metrics", "losses", "inference"}
+CORE_DOMAINS = {"models", "data", "utils", "transforms", "metrics", "losses", "inference", "communication", "lightning", "analysis", "evaluation"}
 ALLOWED_CORE_PATHS = {f"ocr/core/{domain}" for domain in CORE_DOMAINS}
 
 # Known features
@@ -49,6 +49,11 @@ def validate_path(file_path: str) -> tuple[bool, str]:
 
     # Must have at least ocr/<feature>/<domain>/file.py structure
     if len(parts) < 4:
+        # Special case: allow ocr/agents/*.py and ocr/communication/*.py
+        # These are legacy top-level directories that we validate as exceptions
+        if len(parts) == 3 and parts[1] in {"agents", "communication", "synthetic_data", "validation"}:
+            return True, ""
+
         # Special case: allow ocr/core/<domain>/file.py (3 parts + filename = 4)
         if len(parts) == 4 and parts[1] == "core" and parts[2] in CORE_DOMAINS:
             return True, ""

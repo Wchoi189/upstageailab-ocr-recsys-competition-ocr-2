@@ -1,3 +1,9 @@
+ads_version: "1.0"
+type: specification
+agent: all
+tier: 2
+priority: high
+
 component: pipeline_contracts
 description: Defines the canonical data structures and contracts used to pass data between pipeline stages.
 role: |
@@ -29,7 +35,7 @@ data_contract:
           description: (width, height) of image fed to model (typ. 640x640)
         - name: padding
           type: Dict[str, int]
-          description: Keys: top, bottom, left, right
+          description: "Keys: top, bottom, left, right"
         - name: padding_position
           type: str
           description: Always 'top_left'

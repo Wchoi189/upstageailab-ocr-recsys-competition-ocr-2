@@ -109,7 +109,7 @@ def check_prohibited_content(file_path: Path) -> tuple[bool, list[str]]:
 
 
 def validate_file(file_path: Path) -> dict:
-    """Validate a single file against ADS v1.0"""
+    """Validate a single file against ADS v1.0 Dual Profiles"""
     result = {"file": str(file_path), "valid": False, "errors": [], "warnings": []}
 
     # 1. Validate YAML structure
@@ -123,12 +123,25 @@ def validate_file(file_path: Path) -> dict:
         content = yaml.safe_load(f)
 
     # Load schema
-    schema = load_schema()
+    full_schema = load_schema()
+
+    # Determine Profile
+    if "AgentQMS/standards" in str(file_path):
+        profile_name = "system_profile"
+        schema = full_schema["definitions"]["system_profile"]
+    elif "docs/artifacts" in str(file_path):
+        profile_name = "project_profile"
+        schema = full_schema["definitions"]["project_profile"]
+    else:
+        # Fallback or Skip? For now, treat unknown locations as system files (stricter)
+        # or warn. Let's default to system_profile for safety in AgentQMS.
+        profile_name = "system_profile"
+        schema = full_schema["definitions"]["system_profile"]
 
     # 2. Validate required fields
     valid, missing = validate_required_fields(content, schema)
     if not valid:
-        result["errors"].append(f"Missing required fields: {', '.join(missing)}")
+        result["errors"].append(f"Missing required fields ({profile_name}): {', '.join(missing)}")
 
     # 3. Validate field values
     valid, errors = validate_field_values(content, schema)

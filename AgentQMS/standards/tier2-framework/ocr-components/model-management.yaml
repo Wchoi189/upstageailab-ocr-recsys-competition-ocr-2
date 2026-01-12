@@ -1,3 +1,9 @@
+ads_version: "1.0"
+type: specification
+agent: all
+tier: 2
+priority: high
+
 component: model_management
 description: Manages the lifecycle of the DBNet model (loading, inference, unloading).
 role: |

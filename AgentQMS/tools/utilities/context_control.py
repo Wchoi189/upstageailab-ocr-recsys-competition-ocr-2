@@ -16,10 +16,10 @@ Relationship:
   stale detection, feedback reporting) and does not change system state.
 
 Usage:
-    python context_control.py --disable --reason "extensive refactor in progress"
-    python context_control.py --status
-    python context_control.py --enable
-    python context_control.py --feedback collect bundle-name relevance-score feedback-text
+    uv run python AgentQMS/tools/utilities/context_control.py --disable --reason "extensive refactor in progress"
+    uv run python AgentQMS/tools/utilities/context_control.py --status
+    uv run python AgentQMS/tools/utilities/context_control.py --enable
+    uv run python AgentQMS/tools/utilities/context_control.py --feedback collect bundle-name relevance-score feedback-text
 """
 
 from __future__ import annotations

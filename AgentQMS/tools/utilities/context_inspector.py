@@ -18,10 +18,10 @@ Relationship:
     for state changes (enable/disable, maintenance window, feedback ingestion).
 
 Usage:
-        python context_inspector.py --inspect ocr-text-detection
-        python context_inspector.py --memory --output json
-        python context_inspector.py --stale --threshold 7d
-        python context_inspector.py --feedback --recent
+        uv run python AgentQMS/tools/utilities/context_inspector.py --inspect ocr-text-detection
+        uv run python AgentQMS/tools/utilities/context_inspector.py --memory --output json
+        uv run python AgentQMS/tools/utilities/context_inspector.py --stale --threshold 7d
+        uv run python AgentQMS/tools/utilities/context_inspector.py --feedback --recent
 """
 
 from __future__ import annotations
@@ -146,10 +146,22 @@ class ContextInspector:
 
         # Collect files from all tiers
         for tier_name in ["tier1", "tier2", "tier3"]:
-            if tier_name not in bundle:
+            if "tiers" not in bundle or tier_name not in bundle["tiers"]:
                 continue
 
-            for file_pattern in bundle[tier_name]:
+            tier_config = bundle["tiers"][tier_name]
+            if not isinstance(tier_config, dict) or "files" not in tier_config:
+                continue
+
+            for file_entry in tier_config["files"]:
+                # Handle both string paths and dict entries with 'path' key
+                if isinstance(file_entry, str):
+                    file_pattern = file_entry
+                elif isinstance(file_entry, dict) and "path" in file_entry:
+                    file_pattern = file_entry["path"]
+                else:
+                    continue
+
                 files = self._expand_glob(file_pattern)
                 for filepath in files:
                     try:

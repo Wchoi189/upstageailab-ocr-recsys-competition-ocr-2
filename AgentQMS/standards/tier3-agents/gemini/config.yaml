@@ -1,86 +1,69 @@
----
-ads_version: "1.0"
+ads_version: '1.0'
 type: agent_configuration
 agent: gemini
 tier: 3
 priority: critical
-validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: pass
 memory_footprint: 220
-date: "2025-12-16"
-status: active
 depends_on:
-  - "tier1-sst/naming-conventions.yaml"
-  - "tier1-sst/file-placement-rules.yaml"
-  - "tier1-sst/workflow-requirements.yaml"
-  - "tier2-framework/tool-catalog.yaml"
-
-# Gemini Agent Configuration
-
+- tier1-sst/naming-conventions.yaml
+- tier1-sst/file-placement-rules.yaml
+- tier1-sst/workflow-requirements.yaml
+- tier2-framework/tool-catalog.yaml
 agent_identity:
-  name: "Gemini"
-  model: "gemini"
-  role: "AI assistant"
-
+  name: Gemini
+  model: gemini
+  role: AI assistant
 critical_protocols:
   pre_operation_checks:
-    - check: "Tool exists in catalog?"
-      fail_action: "STOP - Consult tier2-framework/tool-catalog.yaml"
-      severity: critical
-
-    - check: "Naming correct?"
-      fail_action: "STOP - Consult tier1-sst/naming-conventions.yaml"
-      severity: critical
-
-    - check: "Placement valid?"
-      fail_action: "STOP - Consult tier1-sst/file-placement-rules.yaml"
-      severity: critical
-
+  - check: Tool exists in catalog?
+    fail_action: STOP - Consult tier2-framework/tool-catalog.yaml
+    severity: critical
+  - check: Naming correct?
+    fail_action: STOP - Consult tier1-sst/naming-conventions.yaml
+    severity: critical
+  - check: Placement valid?
+    fail_action: STOP - Consult tier1-sst/file-placement-rules.yaml
+    severity: critical
   post_operation_validation:
-    - command: "cd AgentQMS/bin && make validate"
-      required: true
-      failure_mode: "BLOCK until pass"
-
-    - command: "make compliance"
-      required: true
-      failure_mode: "BLOCK before commits"
-
+  - command: cd AgentQMS/bin && make validate
+    required: true
+    failure_mode: BLOCK until pass
+  - command: make compliance
+    required: true
+    failure_mode: BLOCK before commits
 tool_access:
-  catalog: "tier2-framework/tool-catalog.yaml"
+  catalog: tier2-framework/tool-catalog.yaml
   agentqms_tools:
-    create_assessment: "cd AgentQMS/bin && make create-assessment NAME=slug TITLE='Title'"
-    create_plan: "cd AgentQMS/bin && make create-plan NAME=slug TITLE='Title'"
-    create_design: "cd AgentQMS/bin && make create-design NAME=slug TITLE='Title'"
-    create_research: "cd AgentQMS/bin && make create-research NAME=slug TITLE='Title'"
-    create_audit: "cd AgentQMS/bin && make create-audit NAME=slug TITLE='Title'"
-    create_bug: "cd AgentQMS/bin && make create-bug-report NAME=slug TITLE='Title'"
-    validate: "cd AgentQMS/bin && make validate"
-    compliance: "cd AgentQMS/bin && make compliance"
-    discover: "cd AgentQMS/bin && make discover"
-
+    create_assessment: cd AgentQMS/bin && make create-assessment NAME=slug TITLE='Title'
+    create_plan: cd AgentQMS/bin && make create-plan NAME=slug TITLE='Title'
+    create_design: cd AgentQMS/bin && make create-design NAME=slug TITLE='Title'
+    create_research: cd AgentQMS/bin && make create-research NAME=slug TITLE='Title'
+    create_audit: cd AgentQMS/bin && make create-audit NAME=slug TITLE='Title'
+    create_bug: cd AgentQMS/bin && make create-bug-report NAME=slug TITLE='Title'
+    validate: cd AgentQMS/bin && make validate
+    compliance: cd AgentQMS/bin && make compliance
+    discover: cd AgentQMS/bin && make discover
 prohibited_actions:
-  - action: "Manual artifact creation"
-    instead: "Use make create-* commands"
-    severity: critical
-
-  - action: "ALL-CAPS filenames"
-    instead: "lowercase-with-hyphens"
-    severity: critical
-
-  - action: "Files at docs/ root"
-    instead: "docs/artifacts/{TYPE}/"
-    severity: critical
-
+- action: Manual artifact creation
+  instead: Use make create-* commands
+  severity: critical
+- action: ALL-CAPS filenames
+  instead: lowercase-with-hyphens
+  severity: critical
+- action: Files at docs/ root
+  instead: docs/artifacts/{TYPE}/
+  severity: critical
 validation_workflow:
   sequence:
-    - "Execute operation"
-    - "Run: make validate"
-    - "Fix failures"
-    - "Re-validate"
-
+  - Execute operation
+  - 'Run: make validate'
+  - Fix failures
+  - Re-validate
   failure_response:
-    - "HALT operations"
-    - "Fix violations"
-    - "Re-validate"
-
-self_validation_command: "python3 AgentQMS/standards/schemas/compliance-checker.py AgentQMS/standards/tier3-agents/gemini/config.yaml"
+  - HALT operations
+  - Fix violations
+  - Re-validate
+self_validation_command: python3 AgentQMS/standards/schemas/compliance-checker.py
+  AgentQMS/standards/tier3-agents/gemini/config.yaml

@@ -12,10 +12,10 @@ Features:
 - Dynamic bundle prioritization based on task type
 
 Usage:
-    python suggest_context.py "implement new feature for OCR"
-    python suggest_context.py --file task_description.txt
-    python suggest_context.py --json "debug memory leak"
-    python suggest_context.py --analyze-patterns "debug config merge issue"
+    uv run python AgentQMS/tools/utilities/suggest_context.py "implement new feature for OCR"
+    uv run python AgentQMS/tools/utilities/suggest_context.py --file task_description.txt
+    uv run python AgentQMS/tools/utilities/suggest_context.py --json "debug memory leak"
+    uv run python AgentQMS/tools/utilities/suggest_context.py --analyze-patterns "debug config merge issue"
 """
 
 from __future__ import annotations
@@ -208,6 +208,7 @@ class ContextSuggester:
             for bundle_name, bundle_config in raw_bundles.items():
                 # Extract keywords from tags and triggers
                 keywords = []
+                patterns = []
 
                 # Get tags (always present)
                 if "tags" in bundle_config:
@@ -217,10 +218,13 @@ class ContextSuggester:
                 if "triggers" in bundle_config:
                     trigger_keywords = bundle_config["triggers"].get("keywords", [])
                     keywords.extend(trigger_keywords)
+                    trigger_patterns = bundle_config["triggers"].get("patterns", [])
+                    patterns.extend(trigger_patterns)
 
                 # Store bundle with metadata
                 self._bundles[bundle_name] = {
                     "keywords": keywords,
+                    "patterns": patterns,
                     "context_bundle": bundle_name,
                     "description": bundle_config.get("description", ""),
                     "title": bundle_config.get("title", bundle_name),
@@ -252,17 +256,23 @@ class ContextSuggester:
         # Score each bundle based on keyword matches
         for bundle_name, config in self._bundles.items():
             keywords = config.get("keywords", [])
+            patterns = config.get("patterns", [])
             matches = []
+            pattern_matches = []
 
             for keyword in keywords:
                 if keyword.lower() in task_lower:
                     matches.append(keyword)
 
-            if matches:
-                # Weight: number of matches + length of matched keywords
-                score = len(matches) + sum(len(k.split()) for k in matches)
+            for pattern in patterns:
+                if re.search(pattern, task_lower, re.IGNORECASE):
+                    pattern_matches.append(pattern)
+
+            if matches or pattern_matches:
+                # Weight: number of matches + length of matched keywords + pattern matches
+                score = len(matches) + len(pattern_matches) + sum(len(k.split()) for k in matches)
                 scores[bundle_name] = score
-                matched_keywords[bundle_name] = matches
+                matched_keywords[bundle_name] = matches + pattern_matches
 
         # Boost debugging bundle if this is a debugging task
         if is_debug_task and "ocr-debugging" in self._bundles:
@@ -424,7 +434,7 @@ class ContextSuggester:
                         lines.append(f"      $ {tool}")
 
             if bundle:
-                lines.append(f'   🔧 Usage: python suggest_context.py --analyze-patterns "{result["task_description"]}"')
+                lines.append(f'   🔧 Usage: uv run python AgentQMS/tools/utilities/suggest_context.py --analyze-patterns "{result["task_description"]}"')
 
             lines.append("")
 

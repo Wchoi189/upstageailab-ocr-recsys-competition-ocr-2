@@ -1,0 +1,95 @@
+ads_version: '1.0'
+type: standard
+agent: all
+tier: 2
+priority: medium
+config_externalization:
+  target_file: AgentQMS/tools/core/artifact_templates.py
+  config_file: AgentQMS/standards/tier2-framework/config-externalization/artifact_template_config.yaml
+  status: ready_for_implementation
+  identified_configs:
+  - name: frontmatter_defaults
+    location: line_162
+    method: _convert_plugin_to_template
+    type: dict
+    size: 5_keys
+  - name: frontmatter_denylist
+    location: line_394
+    method: create_frontmatter
+    type: set
+    size: 3_items
+    current_value:
+    - output_dir
+    - interactive
+    - steps_to_reproduce
+  - name: default_branch
+    location: line_382-386
+    method: create_frontmatter
+    type: str
+    current_value: main
+  - name: frontmatter_delimiter
+    location: line_402
+    method: create_frontmatter
+    type: str
+    current_value: '---'
+  - name: date_formats
+    locations:
+    - line_282
+    - line_376
+    - line_429
+    methods:
+    - create_filename
+    - create_frontmatter
+    - create_content
+    type: str
+    formats:
+    - '%Y-%m-%d_%H%M'
+    - '%Y-%m-%d %H:%M (KST)'
+    - '%Y-%m-%d'
+  - name: content_defaults
+    location: line_429
+    method: create_content
+    type: dict
+    keys:
+    - start_date
+    - target_date
+    - assessment_date
+    offset_days: 7
+  - name: duplicate_detection
+    location: line_488
+    method: create_artifact
+    type: int
+    current_value: 300
+  - name: naming_conventions
+    location: line_282
+    method: create_filename
+    type: list
+    replacements:
+    - - ' '
+      - '-'
+    - - _
+      - '-'
+    - - --
+      - '-'
+  implementation:
+    steps:
+    - add_config_methods:
+      - _get_config
+      - _load_config
+    - replace_hardcoded_values: 8
+    - add_caching: _config_cache
+    - test:
+      - without_config
+      - with_config
+      - no_behavioral_change
+    effort_hours: 2-3
+    risk: very_low
+  pattern:
+    config_location: AgentQMS/standards/tier2-framework/config-externalization/{module_name}_config.yaml
+    loader: ConfigLoader
+    cache_strategy: lazy_load
+    fallback: comprehensive_defaults
+  other_modules:
+  - tool_registry.py
+  - plugins.py
+  - validators.py

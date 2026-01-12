@@ -8,10 +8,10 @@ This directory contains various utility scripts and tools for the OCR project.
 Migrate existing checkpoints to the new naming scheme:
 ```bash
 # Dry run (preview changes)
-python scripts/checkpoints/migrate.py --dry-run --verbose
+uv run python scripts/checkpoints/migrate.py --dry-run --verbose
 
 # Migrate and cleanup (delete early epochs)
-python scripts/checkpoints/migrate.py --delete-old
+uv run python scripts/checkpoints/migrate.py --delete-old
 ```
 
 See `docs/CHECKPOINT_MIGRATION_GUIDE.md` for details.
@@ -20,7 +20,7 @@ See `docs/CHECKPOINT_MIGRATION_GUIDE.md` for details.
 Validate the UI inference compatibility schema:
 ```bash
 # Validate schema correctness
-python scripts/validation/schemas/validate_ui_schema.py
+uv run python scripts/validation/schemas/validate_ui_schema.py
 ```
 
 See `docs/UI_INFERENCE_COMPATIBILITY_SCHEMA.md` for details.

@@ -24,6 +24,7 @@ except ImportError:
     sys.exit(1)
 
 from AgentQMS.tools.core.context_bundle import TASK_KEYWORDS, analyze_task_type
+from AgentQMS.tools.utils.config_loader import ConfigLoader
 from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
 
@@ -31,99 +32,82 @@ ensure_project_root_on_sys_path()
 
 PROJECT_ROOT = get_project_root()
 
+STANDARDS_CONFIG_DIR = PROJECT_ROOT / "AgentQMS" / "standards" / "tier1-foundations"
+CONFIG_PATH = STANDARDS_CONFIG_DIR / "workflow-detector.yaml"
+_CONFIG_CACHE: dict[str, Any] | None = None
+_CONFIG_LOADER = ConfigLoader(cache_size=5)
 
-# Workflow suggestions based on task keywords
-WORKFLOW_SUGGESTIONS = {
-    "development": {
-        "context_bundle": "development",
-        "suggested_workflows": [
-            "create-plan",
-            "validate",
+DEFAULT_CONFIG: dict[str, Any] = {
+    "version": "1.0",
+    "task_types": {
+        "development": {
+            "context_bundle": "development",
+            "suggested_workflows": ["create-plan", "validate", "compliance"],
+            "suggested_tools": ["artifact_workflow", "validate_artifacts", "context_bundle"],
+        },
+        "documentation": {
+            "context_bundle": "documentation",
+            "suggested_workflows": ["docs-generate", "docs-validate-links", "docs-update-indexes"],
+            "suggested_tools": ["auto_generate_index", "validate_links", "update_artifact_indexes"],
+        },
+        "debugging": {
+            "context_bundle": "debugging",
+            "suggested_workflows": ["create-bug-report", "validate", "context-debug"],
+            "suggested_tools": ["artifact_workflow", "validate_artifacts", "context_bundle"],
+        },
+        "planning": {
+            "context_bundle": "planning",
+            "suggested_workflows": ["create-plan", "create-design", "context-plan"],
+            "suggested_tools": ["artifact_workflow", "context_bundle"],
+        },
+        "general": {
+            "context_bundle": "general",
+            "suggested_workflows": ["discover", "status", "validate"],
+            "suggested_tools": ["discover", "validate_artifacts"],
+        },
+    },
+    "artifact_triggers": {
+        "plan": ["plan", "design", "architecture", "blueprint", "strategy", "roadmap"],
+        "assessment": ["assess", "evaluate", "review", "analysis"],
+        "audit": [
+            "audit",
             "compliance",
+            "framework audit",
+            "quality audit",
+            "security audit",
+            "accessibility audit",
+            "performance audit",
+            "code quality audit",
         ],
-        "suggested_tools": [
-            "artifact_workflow",
-            "validate_artifacts",
-            "context_bundle",
-        ],
+        "bug_report": ["bug", "error", "issue", "fix", "broken", "crash", "exception"],
+        "design": ["design", "spec", "specification", "schema"],
+        "research": ["research", "investigate", "explore", "study"],
     },
-    "documentation": {
-        "context_bundle": "documentation",
-        "suggested_workflows": [
-            "docs-generate",
-            "docs-validate-links",
-            "docs-update-indexes",
-        ],
-        "suggested_tools": [
-            "auto_generate_index",
-            "validate_links",
-            "update_artifact_indexes",
-        ],
-    },
-    "debugging": {
-        "context_bundle": "debugging",
-        "suggested_workflows": [
-            "create-bug-report",
-            "validate",
-            "context-debug",
-        ],
-        "suggested_tools": [
-            "artifact_workflow",
-            "validate_artifacts",
-            "context_bundle",
-        ],
-    },
-    "planning": {
-        "context_bundle": "planning",
-        "suggested_workflows": [
-            "create-plan",
-            "create-design",
-            "context-plan",
-        ],
-        "suggested_tools": [
-            "artifact_workflow",
-            "context_bundle",
-        ],
-    },
-    "general": {
-        "context_bundle": "general",
-        "suggested_workflows": [
-            "discover",
-            "status",
-            "validate",
-        ],
-        "suggested_tools": [
-            "discover",
-            "validate_artifacts",
-        ],
+    "command_templates": {
+        "context": "make context-{context_bundle}",
+        "artifact": {
+            "plan": "make create-plan NAME=my-{artifact_type} TITLE=\"...\"",
+            "bug_report": "make create-bug-report NAME=my-{artifact_type} TITLE=\"...\"",
+            "design": "make create-design NAME=my-{artifact_type} TITLE=\"...\"",
+            "assessment": "make create-assessment NAME=my-{artifact_type} TITLE=\"...\"",
+            "research": "make create-research NAME=my-{artifact_type} TITLE=\"...\"",
+        },
     },
 }
 
-# Artifact creation triggers
-ARTIFACT_TRIGGERS = {
-    "plan": ["plan", "design", "architecture", "blueprint", "strategy", "roadmap"],
-    "assessment": ["assess", "evaluate", "review", "analysis"],
-    "audit": [
-        "audit",
-        "compliance",
-        "framework audit",
-        "quality audit",
-        "security audit",
-        "accessibility audit",
-        "performance audit",
-        "code quality audit",
-    ],
-    "bug_report": ["bug", "error", "issue", "fix", "broken", "crash", "exception"],
-    "design": ["design", "spec", "specification", "schema"],
-    "research": ["research", "investigate", "explore", "study"],
-}
+
+def _get_config() -> dict[str, Any]:
+    global _CONFIG_CACHE
+    if _CONFIG_CACHE is None:
+        _CONFIG_CACHE = _CONFIG_LOADER.get_config(CONFIG_PATH, defaults=DEFAULT_CONFIG)
+    return _CONFIG_CACHE
 
 
 def detect_artifact_type(task_description: str) -> str | None:
     """Detect if task should create an artifact and which type."""
     task_lower = task_description.lower()
 
-    for artifact_type, keywords in ARTIFACT_TRIGGERS.items():
+    for artifact_type, keywords in _get_config().get("artifact_triggers", {}).items():
         for keyword in keywords:
             if keyword in task_lower:
                 return artifact_type
@@ -149,7 +133,9 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
     task_type = analyze_task_type(task_description)
     artifact_type = detect_artifact_type(task_description)
 
-    base_suggestions = WORKFLOW_SUGGESTIONS.get(task_type, WORKFLOW_SUGGESTIONS["general"])
+    config = _get_config()
+    task_types = config.get("task_types", {})
+    base_suggestions = task_types.get(task_type, task_types.get("general", {}))
 
     suggestions: dict[str, Any] = {
         "task_type": task_type,
@@ -162,24 +148,31 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
 
     # Add artifact creation workflow if detected
     if artifact_type:
+        cmd_templates = config.get("command_templates", {}).get("artifact", {})
         if artifact_type == "plan":
             suggestions["workflows"].insert(0, "create-plan")
-            suggestions["make_commands"].append(f'make create-plan NAME=my-{artifact_type} TITLE="..."')
+            template = cmd_templates.get("plan")
         elif artifact_type == "bug_report":
             suggestions["workflows"].insert(0, "create-bug-report")
-            suggestions["make_commands"].append(f'make create-bug-report NAME=my-{artifact_type} TITLE="..."')
+            template = cmd_templates.get("bug_report")
         elif artifact_type == "design":
             suggestions["workflows"].insert(0, "create-design")
-            suggestions["make_commands"].append(f'make create-design NAME=my-{artifact_type} TITLE="..."')
+            template = cmd_templates.get("design")
         elif artifact_type == "assessment":
             suggestions["workflows"].insert(0, "create-assessment")
-            suggestions["make_commands"].append(f'make create-assessment NAME=my-{artifact_type} TITLE="..."')
+            template = cmd_templates.get("assessment")
         elif artifact_type == "research":
             suggestions["workflows"].insert(0, "create-research")
-            suggestions["make_commands"].append(f'make create-research NAME=my-{artifact_type} TITLE="..."')
+            template = cmd_templates.get("research")
+        else:
+            template = None
+
+        if template:
+            suggestions["make_commands"].append(template.format(artifact_type=artifact_type))
 
     # Add context loading command
-    context_cmd = f"make context-{suggestions['context_bundle']}"
+    context_template = config.get("command_templates", {}).get("context", "make context-{context_bundle}")
+    context_cmd = context_template.format(context_bundle=suggestions["context_bundle"])
     suggestions["make_commands"].insert(0, context_cmd)
 
     return suggestions
@@ -187,18 +180,19 @@ def suggest_workflows(task_description: str) -> dict[str, Any]:
 
 def generate_workflow_triggers_yaml(output_path: Path) -> None:
     """Generate workflow-triggers.yaml mapping task patterns to workflows."""
+    config = _get_config()
     triggers: dict[str, Any] = {
-        "version": "1.0",
+        "version": config.get("version", "1.0"),
         "task_types": {},
-        "artifact_triggers": ARTIFACT_TRIGGERS,
+        "artifact_triggers": config.get("artifact_triggers", {}),
     }
 
-    for task_type, config in WORKFLOW_SUGGESTIONS.items():
+    for task_type, entry in config.get("task_types", {}).items():
         triggers["task_types"][task_type] = {
             "keywords": TASK_KEYWORDS.get(task_type, []),
-            "context_bundle": config["context_bundle"],
-            "suggested_workflows": config["suggested_workflows"],
-            "suggested_tools": config["suggested_tools"],
+            "context_bundle": entry.get("context_bundle"),
+            "suggested_workflows": entry.get("suggested_workflows", []),
+            "suggested_tools": entry.get("suggested_tools", []),
         }
 
     with output_path.open("w", encoding="utf-8") as f:
@@ -221,7 +215,7 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=str,
-        default=str(PROJECT_ROOT / ".copilot" / "context" / "workflow-triggers.yaml"),
+        default=str(PROJECT_ROOT / "AgentQMS" / "config" / "workflow-triggers.yaml"),
         help="Output path for triggers file",
     )
 

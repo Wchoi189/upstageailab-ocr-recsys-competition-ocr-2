@@ -1,3 +1,9 @@
+ads_version: "1.0"
+type: specification
+agent: all
+tier: 2
+priority: high
+
 component: orchestration_flow
 description: The central controller for the OCR inference pipeline.
 role: |

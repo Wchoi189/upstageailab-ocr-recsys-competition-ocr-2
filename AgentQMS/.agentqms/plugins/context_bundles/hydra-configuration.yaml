@@ -21,9 +21,20 @@ triggers:
     - hydra
     - configuration
     - config
+    - configs
+    - settings
+    - parameters
     - experiment
     - yaml
     - compose
+    - omegaconf
+    - merge
+    - override
+  patterns:
+    - "hydra.*config"
+    - "config.*hydra"
+    - "yaml.*config"
+    - "experiment.*config"
 
 tiers:
   tier1:

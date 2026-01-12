@@ -95,7 +95,7 @@ class ComplianceInterceptor:
 
     def _check_python_execution(self, text: str) -> None:
         # Robust check for bare 'python' not preceded by 'uv run'
-        # Matches "python script.py" or "python -m ..." but ignores "import python_module"
+        # Matches "uv run python script.py" or "python -m ..." but ignores "import python_module"
         # We look for the command at start of string or following common shell delimiters like &&, ;, |
 
         # Regex explanation:
@@ -111,13 +111,13 @@ class ComplianceInterceptor:
             )
 
     def _check_path_usage(self, text: str) -> None:
-        if "sys.path.append" in text or "sys.path.insert" in text or "sys.path.extend" in text:
+        if "sys.path.append" in text or "sys.path.insert" in text or "sys.path.extend" in text:  # noqa: path-hack
              raise PolicyViolation(
                 message="Internal Violation: sys.path modified.",
                 feedback_to_ai="PROTOCOL ERROR: Do not use sys.path modifications (append/insert). Use 'AgentQMS.tools.utils.paths' or correct environment setup (PYTHONPATH)."
             )
 
-        if ".parent.parent.parent" in text:
+        if ".parent.parent.parent" in text:  # noqa: path-hack
              raise PolicyViolation(
                 message="Internal Violation: Excessive parent chaining.",
                 feedback_to_ai="PROTOCOL ERROR: Excessive .parent chaining detected. Use 'AgentQMS.tools.utils.paths.get_project_root()'."
@@ -196,3 +196,33 @@ class StandardsInterceptor:
         except Exception:
             # Don't block if something weird happens
             pass
+
+class FileOperationInterceptor:
+    """Restricts file operations to enforce directory structure."""
+
+    def validate(self, tool_name: str, arguments: dict[str, Any]) -> None:
+        if tool_name not in ("write_to_file",):
+            return
+
+        target_file = arguments.get("TargetFile")
+        if not target_file:
+            return
+
+        path = Path(target_file)
+        path_str = str(path)
+
+        # RULE 1: AgentQMS/config/ is READ-ONLY for agents (except manual overrides)
+        # Agents should write to AgentQMS/standards/ or AgentQMS/env/
+        if "AgentQMS/config" in path_str and not self._is_override(arguments):
+             raise PolicyViolation(
+                message="Architecture Violation: AgentQMS/config is read-only.",
+                feedback_to_ai=(
+                    "ARCHITECTURE VIOLATION: You cannot write to 'AgentQMS/config/'. "
+                    "Configurations should be placed in 'AgentQMS/standards/' (if shared) "
+                    "or 'AgentQMS/env/' (if environment specific). "
+                    "For external tools, use 'AgentQMS/standards/tier2-framework/'."
+                )
+            )
+
+    def _is_override(self, arguments: dict[str, Any]) -> bool:
+        return arguments.get("force") is True or str(arguments.get("force")).lower() == "true"

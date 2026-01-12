@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-12 04:56:40
-**Total Artifacts**: 22
+**Last Updated**: 2026-01-12 21:11:16
+**Total Artifacts**: 26
 
-## Active (13)
+## Active (16)
 
 - [Phase 1: Core Recognition Implementation](2025-12-25_0410_implementation_plan_phase1-core-recognition.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Replace the current `StubRecognizer` with a production-ready `PaddleOCRRecognizer` backend using Pad
 - [Overnight Code Quality Resolution (Ruff & Mypy)](2025-12-25_1639_implementation_plan_code-quality-overnight.md) (📅 2025-12-25 16:39 (KST), 📄 implementation_plan) - This plan outlines the systematic resolution of linting and type errors across the project, optimize
@@ -20,8 +20,11 @@ Active implementation plans and development roadmaps.
 - [Agent Process Feedback System](2026-01-11_1630_implementation_plan_implementation-plan-feedback-system.md) (📅 2026-01-11 16:30 (KST), 📄 implementation_plan) - Implement a "Metacognitive Feedback Loop" (Agent-In-the-Loop) by adding a `log_process_feedback` too
 - [Telemetry Middleware Implementation Plan](2026-01-11_1819_implementation_plan_telemetry-middleware.md) (📅 2026-01-11 18:19 (KST), 📄 implementation_plan) - Implement a **Telemetry-driven Feedback Loop** (Middleware Layer) to resolve "Architectural Redundan
 - [Automated MCP Tool Synchronization](2026-01-11_2014_implementation_plan_auto-mcp-sync.md) (📅 2026-01-11 20:14 (KST), 📄 implementation_plan) - Automate the synchronization of MCP tools between component servers (AgentQMS, Agent Debug Toolkit, 
+- [Configuration Externalization: artifact_templates.py](2026-01-12_1200_implementation_plan_externalize-artifact-templates-config.md) (📅 2026-01-12 12:00 (KST), 📄 implementation_plan) - This plan externalizes all embedded lists, dictionaries, and configuration values from `artifact_tem
+- [Refactor workflow_detector: config + command templates](2026-01-12_2015_implementation_plan_workflow-detector-refactor-plan.md) (📅 2026-01-12 20:15 (KST), 📄 implementation_plan) - - Remove magic values from workflow detection.
+- [Implementation Plan: Deep Integration of Context Bundling System](2026-01-12_2111_implementation_plan_context-bundling-deep-integration.md) (📅 2026-01-12 21:11 (KST), 📄 implementation_plan) - [Enter goal/objective here]
 
-## Completed (8)
+## Completed (9)
 
 - [Model Head Signature Fix - LSP Violation Resolution](2025-12-27_0610_implementation_plan_model-head-signature-fix.md) (📅 2025-12-27 06:10 (KST), 📄 implementation_plan) - **Type:** Liskov Substitution Principle (LSP) Violation - HIGH RISK
 - [Master Architecture Refactoring Plan "Project Polaris](2026-01-05_1750_implementation_plan_master-refactoring.md) (📅 2026-01-05 17:50 (KST), 📄 implementation_plan) - **Date:** 2026-01-05 17:50 (KST)
@@ -31,6 +34,7 @@ Active implementation plans and development roadmaps.
 - [Cleanup & Organization Implementation Plan](2026-01-08_0340_implementation_plan_cleanup-organization-plan.md) (📅 2026-01-08 03:40 (KST), 📄 implementation_plan) - Implement the "Future Recommendations" (1-3) from the Refactor Audit Survey to reduce bloat, improve
 - [Post-Refactor Stabilization Plan](2026-01-08_2010_implementation_plan_stabilization-plan.md) (📅 2024-10-01 10:00 (KST), 📄 implementation_plan) - The goal is to return the system to normal operations following the "nuclear" refactor of source cod
 - [Context System Consolidation - Implementation Roadmap](2026-01-09_2020_implementation_plan_context-system-consolidation-completed.md) (📅 2026-01-09 20:20 (KST), 📄 implementation_plan) - **Objective**: Consolidate three fragmented context systems into unified plugin-based architecture (
+- [Phase 1 Refactoring: Quick Wins for artifact_templates.py](2026-01-12_1152_implementation_plan_phase1-refactoring-quick-wins.md) (📅 2026-01-12 11:52 (KST), 📄 implementation_plan) - **Status**: All objectives achieved and exceeded
 
 ## Other (1)
 
@@ -40,8 +44,8 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 13 |
-| Completed | 8 |
+| Active | 16 |
+| Completed | 9 |
 | Other | 1 |
 
 ---

@@ -1,35 +1,32 @@
----
-ads_version: "1.0"
-type: context_priority
-date: "2026-01-05"
-status: active
-
+ads_version: '1.0'
+type: rule_set
+agent: all
+tier: 1
+priority: critical
 tiers:
   tier_1_core:
-    description: "Essential files for any operation"
+    description: Essential files for any operation
     files:
-      - "AGENTS.yaml"
-      - "AgentQMS/standards/INDEX.yaml"
-      - "pyproject.toml"
-      - "README.md"
+    - AGENTS.yaml
+    - AgentQMS/standards/INDEX.yaml
+    - pyproject.toml
+    - README.md
     always_load: true
-
   tier_2_domain:
-    description: "Domain-specific files based on task"
+    description: Domain-specific files based on task
     ocr_related:
-      - "ocr/**/*.py"
-      - "configs/**/*.yaml"
+    - ocr/**/*.py
+    - configs/**/*.yaml
     experiment_related:
-      - "experiment_manager/.ai-instructions/**/*.yaml"
-      - "experiment_manager/src/**/*.py"
+    - experiment_manager/.ai-instructions/**/*.yaml
+    - experiment_manager/src/**/*.py
     documentation_related:
-      - "AgentQMS/standards/**/*.yaml"
-      - "docs/**/*.md"
-
+    - AgentQMS/standards/**/*.yaml
+    - docs/**/*.md
   tier_3_auxiliary:
-    description: "Supporting files loaded on demand"
+    description: Supporting files loaded on demand
     files:
-      - "tests/**/*.py"
-      - "logs/**/*"
-      - "outputs/**/*"
+    - tests/**/*.py
+    - logs/**/*
+    - outputs/**/*
     load_on_demand: true

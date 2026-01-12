@@ -10,56 +10,44 @@ status: active
 ---
 
 > [!IMPORTANT]
-> **Always read `utilities://quick-reference` first** — provides 2500x faster config loading and standard path utilities.
+> Read `utilities://quick-reference` first (cached loaders, standard paths).
 
-# AgentQMS Copilot Instructions
+# Copilot Runbook (Concise)
 
-## Environment
-- **System**: AgentQMS (Quality Management System)
-- **Standards**: AgentQMS/standards/
-- **Tools**: AgentQMS/bin/make (preferred) or uv run
-- **Artifacts**: docs/artifacts/ (auto-validated)
+## Essentials
+- System: AgentQMS. Artifacts live in docs/artifacts/.
+- Standards map: AgentQMS/standards/INDEX.yaml.
+- Prefer AgentQMS/bin/make; fallback `uv run` when needed.
 
-## Agent Constraints
-1. Artifacts → Always use `AgentQMS/bin/make create-*` (not manual)
-2. Validation → Run before completion: `make validate`
-3. Standards → Read AgentQMS/standards/INDEX.yaml (single source)
+## Commands
+- Context: `make context TASK="..."`
+- Create artifact: `make create-plan` / `create-assessment` / `create-design`
+- Validate: `make validate`
+- Compliance: `make compliance`
+- Discover tools: `make discover`
 
-## Tool Routing
-| Task | Command | Location |
-|------|---------|----------|
-| Create artifact | make create-plan/assessment/design | AgentQMS/bin |
-| Validate | make validate | AgentQMS/bin |
-| Check compliance | make compliance | AgentQMS/bin |
-| Discover tools | make discover | AgentQMS/bin |
-| Get context | suggest_context.py "task" | AgentQMS/tools/utilities |
+## Rules
+- Do not write docs/artifacts manually; use make create-*.
+- No hardcoded paths; use AgentQMS.tools.utils.paths.
+- No user docs; AI-facing only.
+- Load YAML via ConfigLoader; use KST helpers from timestamps utils; git info via git utils.
+- Run `make validate` before finishing; add `make compliance` when touching artifacts.
 
-## Utilities (Preferred Imports)
-| Use | Import | Note |
-|-----|--------|------|
-| YAML | ConfigLoader from AgentQMS.tools.utils.config_loader | 2000x cache speedup |
-| Paths | get_project_root, get_data_dir from AgentQMS.tools.utils.paths | No hardcoding |
-| Time | get_kst_timestamp, format_kst from AgentQMS.tools.utils.timestamps | KST only |
-| Git | get_current_branch, get_commit_hash from AgentQMS.tools.utils.git | No subprocess |
+## Resource Pointers
+- Tool catalog: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+- Naming/placement: AgentQMS/standards/tier1-sst/naming-conventions.yaml and file-placement-rules.yaml
+- Context bundles: context/utility-scripts/utility-scripts-index.yaml; `make context-list`
+- Project guide: AGENTS.md
+
+## Package Hints
+- AgentQMS: standards + artifact tooling; entrypoint commands in AgentQMS/bin/make.
+- project_compass: workflow/session bundles; see project_compass/AGENTS.md.
+- experiment_manager: image experimentation CLI at experiment_manager/etk.py.
+- agent-debug-toolkit: AST/Hydra analysis via `uv run adt ...`.
 
 ## Workflow
-1. **Discover** → Run suggest_context.py or make context TASK="..."
-2. **Plan** → Use implementation plan artifact type
-3. **Execute** → Follow standards, use utilities
-4. **Validate** → make validate before completion
-5. **Report** → If needed, use assessment/audit artifact types
-
-## Key Policies
-- ❌ Manual artifact creation in docs/artifacts/
-- ❌ Hardcoded paths or subprocess calls
-- ✅ Use ConfigLoader for YAML
-- ✅ Use paths utilities for directories
-- ✅ Auto-inject utility context when available
-- ✅ Follow lowercase-kebab-case naming
-
-## Resources (Priority Order)
-1. **FIRST**: `utilities://quick-reference` (Tier 1 utilities — config, paths, timestamps, git)
-2. Standards: AgentQMS/standards/INDEX.yaml
-3. Tool Catalog: AgentQMS/standards/tier2-framework/tool-catalog.yaml
-4. Utilities Index: context/utility-scripts/utility-scripts-index.yaml
-5. Project Context: AGENTS.md
+1) Load context (`make context TASK="..."`).
+2) Plan if needed (make create-plan for implementation plan).
+3) Execute using utilities (paths, ConfigLoader, timestamps, git).
+4) Validate (`make validate`; add `make compliance` when artifacts change).
+5) Summarize changes briefly.

@@ -9,10 +9,10 @@ This script provides CLI commands for managing dataset caches including:
 - Validating cache consistency
 
 Usage:
-    python scripts/cache_manager.py status
-    python scripts/cache_manager.py clear --all
-    python scripts/cache_manager.py health
-    python scripts/cache_manager.py validate --config configs/data/base.yaml
+    uv run python scripts/cache_manager.py status
+    uv run python scripts/cache_manager.py clear --all
+    uv run python scripts/cache_manager.py health
+    uv run python scripts/cache_manager.py validate --config configs/data/base.yaml
 """
 
 import argparse
@@ -181,7 +181,7 @@ def show_cache_health():
     if warnings or errors:
         print("\nRecommendations:")
         if size_gb > 10:
-            print("  • Consider clearing cache with: python scripts/cache_manager.py clear --all")
+            print("  • Consider clearing cache with: uv run python scripts/cache_manager.py clear --all")
         if len(stale_files) > 0:
             print("  • Stale cache may be invalid - clear before training")
 
