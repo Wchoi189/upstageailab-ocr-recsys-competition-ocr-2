@@ -1,4 +1,3 @@
-
 # Project Compass
 - uri: "compass://compass.json"
   name: "Project Compass State"
@@ -30,38 +29,6 @@
   path: "project_compass/AGENTS.yaml"
   mimeType: "application/x-yaml"
 
-# AgentQMS
-- uri: "agentqms://standards/index"
-  name: "Standards Index"
-  path: "AgentQMS/standards/INDEX.yaml"
-  mimeType: "application/x-yaml"
-
-- uri: "agentqms://standards/artifact_types"
-  name: "Artifact Types"
-  path: "AgentQMS/standards/tier1-sst/artifact-types.yaml"
-  mimeType: "application/x-yaml"
-
-- uri: "agentqms://plugins/artifact_types"
-  name: "Plugin Artifact Types"
-  description: "Discoverable artifact types with complete metadata"
-  mimeType: "application/json"
-  path: null
-
-- uri: "agentqms://standards/workflows"
-  name: "Workflow Requirements"
-  path: "AgentQMS/standards/tier1-sst/workflow-requirements.yaml"
-  mimeType: "application/x-yaml"
-
-- uri: "agentqms://templates/list"
-  name: "Template Catalog"
-  path: null
-  mimeType: "application/json"
-
-- uri: "agentqms://config/settings"
-  name: "QMS Settings"
-  path: "AgentQMS/config/settings.yaml"
-  mimeType: "application/x-yaml"
-
 # Experiments
 - uri: "experiments://agent_interface"
   name: "Experiment Commands"
@@ -78,7 +45,7 @@
   path: "experiment_manager/.schemas/manifest.schema.json"
   mimeType: "application/json"
 
-# Utility Scripts (Auto-Inject Priority)
+# Utility Scripts
 - uri: "utilities://quick-reference"
   name: "Utility Scripts Quick Reference"
   description: "ALWAYS CHECK FIRST: Reusable utilities for config loading (2500x faster), paths, timestamps, git"
@@ -103,5 +70,3 @@
   description: "Single source of truth for artifact frontmatter field definitions"
   path: "AgentQMS/standards/tier1-sst/frontmatter-master.yaml"
   mimeType: "application/x-yaml"
-
-

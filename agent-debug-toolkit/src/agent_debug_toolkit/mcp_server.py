@@ -19,6 +19,7 @@ Tools exposed:
 """
 
 import asyncio
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -26,430 +27,44 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
+# Add AgentQMS to path before importing from it
+_mcp_server_dir = Path(__file__).resolve().parent
+_project_root_candidate = _mcp_server_dir.parent.parent.parent / "AgentQMS"
+if str(_project_root_candidate.parent) not in sys.path:
+    sys.path.insert(0, str(_project_root_candidate.parent))
+
+# Import from AgentQMS (now that path is set up)
+from AgentQMS.tools.utils.paths import get_project_root as _get_project_root
+
+try:
+    from AgentQMS.tools.utils.config_loader import ConfigLoader
+    HAS_CONFIG_LOADER = True
+except ImportError:
+    HAS_CONFIG_LOADER = False
 
 # Create MCP server
 app = Server("agent_debug_toolkit")
 
+# Get project root
+PROJECT_ROOT = _get_project_root()
 
-def get_project_root() -> Path:
-    """Get project root from environment or current working directory."""
-    import os
+def load_tools_config() -> list[dict]:
+    """Load tools configuration from YAML file."""
+    if not HAS_CONFIG_LOADER:
+        # Fallback if AgentQMS not available (should be rare given usage)
+        print("Warning: ConfigLoader not found. Using empty tools list.", file=sys.stderr)
+        return []
 
-    # Check for PROJECT_ROOT environment variable
-    env_root = os.environ.get("PROJECT_ROOT")
-    if env_root:
-        return Path(env_root)
+    config_loader = ConfigLoader(cache_size=5)
+    config_path = Path(__file__).parent / "config/tools.yaml"
 
-    # Default to current working directory
-    return Path.cwd()
+    tools = config_loader.get_config(config_path, defaults=[])
+
+    return tools if isinstance(tools, list) else []
 
 
-# Define available tools
-# Meta-tools are listed first (recommended for reduced context)
-# Individual tools follow for backward compatibility
-TOOLS = [
-    # --- Meta-Tools (Router Pattern) ---
-    {
-        "name": "adt_meta_query",
-        "description": "Unified analysis tool for code understanding. Routes to specialized analyzers based on 'kind' parameter. Kinds: config_access, merge_order, hydra_usage, component_instantiations, config_flow, dependency_graph, imports, complexity, context_tree, symbol_search",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "kind": {
-                    "type": "string",
-                    "enum": ["config_access", "merge_order", "hydra_usage", "component_instantiations", "config_flow", "dependency_graph", "imports", "complexity", "context_tree", "symbol_search"],
-                    "description": "Type of analysis to perform",
-                },
-                "target": {
-                    "type": "string",
-                    "description": "Target path or search query",
-                },
-                "options": {
-                    "type": "object",
-                    "description": "Kind-specific options (output, component, depth, threshold, fuzzy, etc.)",
-                    "additionalProperties": True,
-                },
-            },
-            "required": ["kind", "target"],
-        },
-    },
-    {
-        "name": "adt_meta_edit",
-        "description": "Unified edit tool for code modification. Routes to specialized editors based on 'kind' parameter. Kinds: apply_diff (fuzzy unified diff), smart_edit (search/replace), read_slice (line range), format (code formatting)",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "kind": {
-                    "type": "string",
-                    "enum": ["apply_diff", "smart_edit", "read_slice", "format"],
-                    "description": "Type of edit to perform",
-                },
-                "target": {
-                    "type": "string",
-                    "description": "Target file path or diff content",
-                },
-                "options": {
-                    "type": "object",
-                    "description": "Kind-specific options (diff, search, replace, mode, strategy, dry_run, etc.)",
-                    "additionalProperties": True,
-                },
-            },
-            "required": ["kind", "target"],
-        },
-    },
-    # --- Individual Analysis Tools (backward compatibility) ---
-    {
-        "name": "analyze_config_access",
-        "description": "Analyze Python code for configuration access patterns (cfg.X, self.cfg.X, config['key']). Essential for understanding how configuration flows through the codebase.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to Python file or directory to analyze (relative to project root or absolute)",
-                },
-                "component": {
-                    "type": "string",
-                    "description": "Optional: Filter results by component name (e.g., 'decoder', 'encoder')",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "json",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "trace_merge_order",
-        "description": "Trace OmegaConf.merge() operations and their precedence order. Critical for debugging configuration override issues where later merges overwrite earlier values.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "file": {"type": "string", "description": "Path to Python file to analyze"},
-                "explain": {
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Include detailed precedence explanation",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "markdown",
-                    "description": "Output format",
-                },
-            },
-            "required": ["file"],
-        },
-    },
-    {
-        "name": "find_hydra_usage",
-        "description": "Find Hydra framework usage patterns including @hydra.main decorators, hydra.utils.instantiate() calls, and _target_ config patterns.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to Python file or directory to analyze",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "json",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "find_component_instantiations",
-        "description": "Track component instantiation patterns: get_*_by_cfg() factory calls, registry.create() patterns, and direct class instantiation. Helps trace where components are created and what config sources them.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to Python file or directory to analyze",
-                },
-                "component": {
-                    "type": "string",
-                    "description": "Optional: Filter by component type (e.g., 'decoder', 'encoder', 'head')",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "json",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "explain_config_flow",
-        "description": "Generate a high-level summary of configuration flow through a file: imports, entry points, merge operations, and instantiations. Provides a bird's-eye view for understanding complex config handling.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "file": {"type": "string", "description": "Path to Python file to analyze"}
-            },
-            "required": ["file"],
-        },
-    },
-    {
-        "name": "analyze_dependency_graph",
-        "description": "Build module dependency graph showing imports, class inheritance, and call relationships. Detects circular dependencies. Outputs JSON, markdown, or Mermaid diagram.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to Python file or directory to analyze",
-                },
-                "include_stdlib": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Include standard library imports in graph",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown", "mermaid"],
-                    "default": "json",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "analyze_imports",
-        "description": "Categorize imports as stdlib, third-party, or local. Detects potentially unused imports. Useful for dependency auditing and dead code detection.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to Python file or directory to analyze",
-                },
-                "show_unused": {
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Include potentially unused imports in output",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "json",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "analyze_complexity",
-        "description": "Calculate code complexity metrics: cyclomatic complexity, nesting depth, LOC, parameter count. Identifies functions exceeding thresholds for refactoring candidates.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to Python file or directory to analyze",
-                },
-                "threshold": {
-                    "type": "integer",
-                    "default": 10,
-                    "description": "Complexity threshold for warnings",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "json",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "context_tree",
-        "description": "Generate annotated directory tree with semantic context. Extracts module docstrings, __all__ exports, and key class/function definitions for rich AI navigation.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Directory path to analyze",
-                },
-                "depth": {
-                    "type": "integer",
-                    "default": 3,
-                    "description": "Maximum directory depth to traverse",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "markdown",
-                    "description": "Output format",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-    {
-        "name": "intelligent_search",
-        "description": "Search for symbols by name or qualified path with fuzzy matching. Resolves Hydra _target_ paths, finds class definitions, and suggests corrections for typos.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "query": {
-                    "type": "string",
-                    "description": "Symbol name or qualified path (e.g., 'TimmBackbone' or 'ocr.core.models.encoder.TimmBackbone')",
-                },
-                "root": {
-                    "type": "string",
-                    "description": "Root directory to search (default: project root)",
-                },
-                "fuzzy": {
-                    "type": "boolean",
-                    "default": True,
-                    "description": "Enable fuzzy matching for typos",
-                },
-                "threshold": {
-                    "type": "number",
-                    "default": 0.6,
-                    "description": "Minimum similarity for fuzzy matches (0.0-1.0)",
-                },
-                "output": {
-                    "type": "string",
-                    "enum": ["json", "markdown"],
-                    "default": "markdown",
-                    "description": "Output format",
-                },
-            },
-            "required": ["query"],
-        },
-    },
-    # --- Edit Tools ---
-    {
-        "name": "apply_unified_diff",
-        "description": "Apply a unified diff to files with fuzzy matching. Handles whitespace drift and minor code changes. Returns detailed report of applied/failed hunks.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "diff": {
-                    "type": "string",
-                    "description": "Unified diff text (git diff format)",
-                },
-                "strategy": {
-                    "type": "string",
-                    "enum": ["exact", "whitespace_insensitive", "fuzzy"],
-                    "default": "fuzzy",
-                    "description": "Matching strategy for finding content to replace",
-                },
-                "dry_run": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "If true, show what would change without modifying files",
-                },
-            },
-            "required": ["diff"],
-        },
-    },
-    {
-        "name": "smart_edit",
-        "description": "Intelligent search/replace in a file. Supports exact, regex, and fuzzy matching modes with fallback.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "file": {
-                    "type": "string",
-                    "description": "Path to file to edit",
-                },
-                "search": {
-                    "type": "string",
-                    "description": "Text or pattern to search for",
-                },
-                "replace": {
-                    "type": "string",
-                    "description": "Replacement text",
-                },
-                "mode": {
-                    "type": "string",
-                    "enum": ["exact", "regex", "fuzzy"],
-                    "default": "exact",
-                    "description": "Matching mode",
-                },
-                "all_occurrences": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Replace all matches (default: first only)",
-                },
-                "dry_run": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Preview changes without modifying",
-                },
-            },
-            "required": ["file", "search", "replace"],
-        },
-    },
-    {
-        "name": "read_file_slice",
-        "description": "Read a specific line range from a file. Use this for targeted editing of large files instead of reading the entire file.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "file": {
-                    "type": "string",
-                    "description": "Path to file",
-                },
-                "start_line": {
-                    "type": "integer",
-                    "description": "Starting line number (1-indexed)",
-                },
-                "end_line": {
-                    "type": "integer",
-                    "description": "Ending line number (1-indexed, inclusive)",
-                },
-                "context_lines": {
-                    "type": "integer",
-                    "default": 0,
-                    "description": "Additional lines to include before/after range",
-                },
-            },
-            "required": ["file", "start_line", "end_line"],
-        },
-    },
-    {
-        "name": "format_code",
-        "description": "Format code using black, ruff, or isort. Normalizes code style after edits.",
-        "inputSchema": {
-            "type": "object",
-            "properties": {
-                "path": {
-                    "type": "string",
-                    "description": "Path to file or directory to format",
-                },
-                "style": {
-                    "type": "string",
-                    "enum": ["black", "ruff", "isort"],
-                    "default": "black",
-                    "description": "Formatter to use",
-                },
-                "check_only": {
-                    "type": "boolean",
-                    "default": False,
-                    "description": "Only check, don't modify",
-                },
-            },
-            "required": ["path"],
-        },
-    },
-]
+# Load tools from configuration
+TOOLS = load_tools_config()
 
 
 @app.list_tools()
@@ -467,7 +82,7 @@ def resolve_path(path_str: str) -> Path:
     path = Path(path_str)
     if path.is_absolute():
         return path
-    return get_project_root() / path
+    return PROJECT_ROOT / path
 
 
 def run_analyzer(analyzer_class, path: Path, recursive: bool = True):
@@ -751,12 +366,12 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         )
 
         query = arguments.get("query", "")
-        root = resolve_path(arguments.get("root", get_project_root()))
+        root = resolve_path(arguments.get("root", PROJECT_ROOT))
         fuzzy = arguments.get("fuzzy", True)
         threshold = arguments.get("threshold", 0.6)
         output_format = arguments.get("output", "markdown")
 
-        searcher = IntelligentSearcher(str(root), str(get_project_root()))
+        searcher = IntelligentSearcher(str(root), str(PROJECT_ROOT))
         results = searcher.search(query, fuzzy=fuzzy, threshold=threshold)
 
         if output_format == "json":
@@ -779,7 +394,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         report = apply_unified_diff(
             diff=diff,
             strategy=strategy,
-            project_root=get_project_root(),
+            project_root=PROJECT_ROOT,
             dry_run=dry_run,
         )
 

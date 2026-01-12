@@ -11,29 +11,38 @@ resources:
     name: Main Project State
     description: Current phase, health status, handoff reference, UV constraints
     mime_type: application/json
+    path: compass.json
 
   - uri: compass://session_handover.md
     name: Current Session Handover
     description: Recent accomplishments, current state, next steps, blockers
     mime_type: text/markdown
+    path: session_handover.md
 
   - uri: compass://current_session.yml
     name: Active Session Context
     description: Session ID, timestamps, objective, active pipeline, env lock
     mime_type: application/x-yaml
+    path: active_context/current_session.yml
 
   - uri: compass://uv_lock_state.yml
     name: Environment Lock State
     description: UV binary, Python version, CUDA config, Torch version
     mime_type: application/x-yaml
+    path: environments/uv_lock_state.yml
 
   - uri: compass://agents.yaml
     name: Agent Configuration
     description: AI agent rules, entry points, schema root, consumption metrics
     mime_type: application/x-yaml
+    path: AGENTS.yaml
 
 # Tools: Currently resource-only server (no tools)
-tools: []
+tools:
+  - name: get_server_info
+    description: Get information about the Project Compass MCP server
+  - name: manage_session
+    description: Manage project sessions (export, import, list, new)
 
 # Implementation details
 implementation:

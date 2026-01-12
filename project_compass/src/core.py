@@ -1,14 +1,15 @@
 """
-Compass Integration Module for ETK CLI.
+Compass Integration Module for Project Compass CLI.
 
 Provides environment validation and session management by reading/writing
 Project Compass configuration files with schema validation and atomic writes.
 
-PRINCIPLE: "If it's in the Compass, it's a rule. If it's a rule, ETK must enforce it."
+PRINCIPLE: "If it's in the Compass, it's a rule."
 """
 
 import json
 import os
+import sys
 import subprocess
 import tempfile
 from datetime import datetime
@@ -219,7 +220,8 @@ class EnvironmentChecker:
             return
 
         try:
-            result = subprocess.run(["python", "--version"], capture_output=True, text=True, timeout=5)
+            # Use 'uv run python' to check the environment python version specifically
+            result = subprocess.run(["uv", "run", "python", "--version"], capture_output=True, text=True, timeout=10)
             # Output: "Python X.Y.Z"
             actual_version = result.stdout.strip().replace("Python ", "")
 
@@ -229,7 +231,7 @@ class EnvironmentChecker:
         except subprocess.TimeoutExpired:
             self.errors.append("Timeout checking Python version")
         except FileNotFoundError:
-            self.errors.append("Python not found in PATH")
+            self.errors.append("Python or UV not found in PATH")
 
     def _check_cuda(self, config: dict[str, Any]) -> None:
         """Verify CUDA/PyTorch configuration."""
@@ -317,6 +319,10 @@ class SessionManager:
         if not is_valid:
             return False, f"Session data failed schema validation: {error_msg}"
 
+        # User note 2026-01-13: compass.json requires synchronization
+        # We must update the Compass State to reflect activity
+        self._update_compass_manifest()
+
         # Atomic write
         header = (
             "# ACTIVE SESSION CONTEXT\n"
@@ -328,6 +334,30 @@ class SessionManager:
             return True, f"Session initialized: {new_session_id}"
         except Exception as e:
             return False, f"Failed to write session file: {e}"
+
+    def _update_compass_manifest(self) -> None:
+        """Update compass.json with latest activity timestamp."""
+        if not self.paths.compass_json.exists():
+            return
+
+        try:
+            with open(self.paths.compass_json, encoding="utf-8") as f:
+                compass_data = json.load(f)
+
+            # Update timestamp
+            kst_time = datetime.now().strftime("%Y-%m-%d %H:%M (KST)")
+            compass_data["last_updated"] = kst_time
+
+            # Atomic write back
+            with tempfile.NamedTemporaryFile("w", dir=str(self.paths.compass_json.parent), delete=False) as tf:
+                json.dump(compass_data, tf, indent=2)
+                temp_path = Path(tf.name)
+
+            temp_path.replace(self.paths.compass_json)
+
+        except Exception as e:
+            # Non-critical failure, just warn
+            print(f"WARNING: Failed to sync compass.json: {e}", file=sys.stderr)
 
     def _load_current_session(self) -> dict[str, Any]:
         """Load current session data if exists."""

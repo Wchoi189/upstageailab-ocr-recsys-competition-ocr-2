@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-12T12:03:29.428929+00:00'
+  generated_at: '2026-01-12T17:43:50.519714+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -1768,6 +1768,9 @@ resolved:
           - path: AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml
             priority: medium
             description: Image loading patterns
+          - path: AgentQMS/tools/utils/paths.py
+            priority: high
+            description: Path resolution utilities
         tier3:
           name: Configuration & Testing
           description: Configuration files and testing resources

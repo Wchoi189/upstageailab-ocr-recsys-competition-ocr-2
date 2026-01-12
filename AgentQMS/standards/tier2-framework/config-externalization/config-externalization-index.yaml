@@ -90,6 +90,6 @@ config_externalization:
     cache_strategy: lazy_load
     fallback: comprehensive_defaults
   other_modules:
-  - tool_registry.py
+
   - plugins.py
   - validators.py

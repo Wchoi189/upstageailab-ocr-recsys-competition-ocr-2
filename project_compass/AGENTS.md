@@ -21,11 +21,10 @@ When discussing the project in chat, use these specific references to minimize a
 
 ## **3. Atomic Operations**
 
-Agents are prohibited from manual YAML editing. Use the following internal CLI patterns (to be implemented in etk.py):
+Agents are prohibited from manual YAML editing. Use the following internal CLI patterns (Run from project root):
 
-* etk compass-sync: Updates compass.json timestamp and active handoff.
-* etk session-start --goal "...": Initializes a new current_session.yml.
-* etk check-env: Compares current shell uv and torch against [Compass:Lock].
+* `uv run python -m project_compass.cli session-init --objective "..."` : Initializes a new current_session.yml.
+* `uv run python -m project_compass.cli check-env` : Compares current shell uv and torch against [Compass:Lock].
 
 ## **4. Hard Constraints**
 
@@ -37,11 +36,12 @@ Agents are prohibited from manual YAML editing. Use the following internal CLI p
 
 Adhere to this cycle to ensure correct history tracking and prevent stale session artifacts.
 
-1.  **INIT**: `uv run python -m etk.factory session-init --objective "{objective}"`
+1.  **INIT**: `uv run python -m project_compass.cli session-init --objective "{objective}"`
 2.  **WORK**: Execute tasks. Update `task.md` and `implementation_plan.md`.
 3.  **UPDATE CONTEXT (CRITICAL)**:
     *   **Target**: `active_context/current_session.yml`
     *   **Action**: Change `session_id`, set `status="completed"`, update `completed_date`, and add `notes`.
     *   **Constraint**: *Must* be done **BEFORE** export.
-4.  **EXPORT**: `uv run python -m etk.factory reconcile`
+4.  **EXPORT SESSION**: `uv run python -m project_compass.cli session-export --note "Session completion note"`
+
 

@@ -2,12 +2,12 @@
 
 Active templates and development roadmaps.
 
-**Last Updated**: 2026-01-12 21:11:16
+**Last Updated**: 2026-01-13 03:58:00
 **Total Artifacts**: 1
 
 ## Active (1)
 
-- [Perspective Correction Phase 2 - Completion Guide](2025-12-18_0339_template-perspective-correction-phase2-completion-guide.md) (📅 2025-12-14 12:00 (KST), 📄 template) - 1. **Backend Infrastructure** - DONE
+- [Perspective Correction Phase 2 - Completion Guide](2025-12-18_0339_template_perspective-correction-phase2-completion-guide.md) (📅 2025-12-14 12:00 (KST), 📄 template) - 1. **Backend Infrastructure** - DONE
 
 ## Summary
 

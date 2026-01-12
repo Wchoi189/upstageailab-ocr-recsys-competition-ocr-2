@@ -2,10 +2,10 @@
 
 Active implementation plans and development roadmaps.
 
-**Last Updated**: 2026-01-12 21:11:16
-**Total Artifacts**: 26
+**Last Updated**: 2026-01-13 03:57:59
+**Total Artifacts**: 27
 
-## Active (16)
+## Active (17)
 
 - [Phase 1: Core Recognition Implementation](2025-12-25_0410_implementation_plan_phase1-core-recognition.md) (📅 2025-12-25 04:10 (KST), 📄 implementation_plan) - Replace the current `StubRecognizer` with a production-ready `PaddleOCRRecognizer` backend using Pad
 - [Overnight Code Quality Resolution (Ruff & Mypy)](2025-12-25_1639_implementation_plan_code-quality-overnight.md) (📅 2025-12-25 16:39 (KST), 📄 implementation_plan) - This plan outlines the systematic resolution of linting and type errors across the project, optimize
@@ -22,7 +22,8 @@ Active implementation plans and development roadmaps.
 - [Automated MCP Tool Synchronization](2026-01-11_2014_implementation_plan_auto-mcp-sync.md) (📅 2026-01-11 20:14 (KST), 📄 implementation_plan) - Automate the synchronization of MCP tools between component servers (AgentQMS, Agent Debug Toolkit, 
 - [Configuration Externalization: artifact_templates.py](2026-01-12_1200_implementation_plan_externalize-artifact-templates-config.md) (📅 2026-01-12 12:00 (KST), 📄 implementation_plan) - This plan externalizes all embedded lists, dictionaries, and configuration values from `artifact_tem
 - [Refactor workflow_detector: config + command templates](2026-01-12_2015_implementation_plan_workflow-detector-refactor-plan.md) (📅 2026-01-12 20:15 (KST), 📄 implementation_plan) - - Remove magic values from workflow detection.
-- [Implementation Plan: Deep Integration of Context Bundling System](2026-01-12_2111_implementation_plan_context-bundling-deep-integration.md) (📅 2026-01-12 21:11 (KST), 📄 implementation_plan) - [Enter goal/objective here]
+- [Implementation Plan: Deep Integration of Context Bundling System](2026-01-12_2111_implementation_plan_context-bundling-deep-integration.md) (📅 2026-01-12 21:11 (KST), 📄 implementation_plan) - Integrate the context bundling system deeply into the AI chat workflow to automatically load relevan
+- [Repair MCP Tools and Context Bundles](2026-01-13_0357_implementation_plan_repair-mcp-tools-and-bundles.md) (📅 2026-01-13 03:57 (KST), 📄 implementation_plan) - Repair ADT MCP tools and Context Bundle resources in Unified Server
 
 ## Completed (9)
 
@@ -44,7 +45,7 @@ Active implementation plans and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 16 |
+| Active | 17 |
 | Completed | 9 |
 | Other | 1 |
 

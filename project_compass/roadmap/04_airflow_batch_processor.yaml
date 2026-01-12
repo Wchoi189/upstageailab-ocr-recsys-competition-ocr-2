@@ -1,0 +1,223 @@
+---
+# Airflow Batch Processor Roadmap
+# Project Compass | Source: Implementation Plan 2026-01-11_0204
+# Status: In Progress (Phase 1 Partially Complete)
+roadmap_id: "04_airflow_batch_processor"
+title: "Airflow Batch Processor for Upstage APIs"
+priority: "high"
+status: "in_progress"
+created_date: "2026-01-11"
+last_updated: "2026-01-13"
+
+# Implementation Source
+source_document: "docs/artifacts/implementation_plans/2026-01-11_0204_implementation_plan_airflow-batch-processor.md"
+description: |
+  Create an Airflow-based batch processing system for OCR and KIE data processing
+  using Upstage APIs. The system provides independent, reusable workflows with
+  local GPU (RTX 3090) and AWS Batch execution capabilities.
+
+# Progress Summary
+progress:
+  overall_completion: 40
+  current_phase: "phase_1_foundation"
+  last_completed_milestone: "Base DAG and API client scaffolds"
+  next_milestone: "GPU passthrough and API configuration"
+
+# Phase Definitions
+phases:
+  phase_1_foundation:
+    name: "Foundation Setup"
+    timeline: "Week 1-2"
+    status: "in_progress"
+    completion: 80
+    tasks:
+      - id: "1.1"
+        name: "Set up Airflow environment with Docker"
+        status: "completed"
+        notes: "Docker containers pulled successfully, Airflow UI accessible on defined port, login verified. Both standard and GPU compose files present."
+      - id: "1.2"
+        name: "Configure RTX 3090 GPU passthrough"
+        status: "in_progress"
+        notes: "docker-compose.gpu.yml exists. Need NVIDIA Container Toolkit installation and testing."
+      - id: "1.3"
+        name: "Create base DAG structure"
+        status: "completed"
+        notes: "batch_processor_dag.py created with full task flow: preprocess → api_call → validate → export → cleanup"
+      - id: "1.4"
+        name: "Integrate Upstage API client"
+        status: "completed"
+        notes: "upstage.py API client implemented with retry logic (tenacity), rate limiting foundation, and auth headers. Needs real endpoint configuration."
+      - id: "1.5"
+        name: "Implement basic local processing DAG"
+        status: "in_progress"
+        notes: "Scaffold exists, needs enhancement with real data processing and batch mapping logic"
+
+  phase_2_core_processing:
+    name: "Core Processing Capabilities"
+    timeline: "Week 3-4"
+    status: "not_started"
+    completion: 0
+    tasks:
+      - id: "2.1"
+        name: "Add AWS Batch integration"
+        status: "not_started"
+        notes: "Migrate logic from aws-batch-processor codebase"
+      - id: "2.2"
+        name: "Implement checkpointing system"
+        status: "not_started"
+        notes: "Enable resumable operations with state persistence"
+      - id: "2.3"
+        name: "Add rate limiting and quota management"
+        status: "not_started"
+        notes: "Upstage API throttling and backoff strategies"
+      - id: "2.4"
+        name: "Create monitoring and alerting"
+        status: "not_started"
+        notes: "Custom sensors, callbacks, and failure notifications"
+      - id: "2.5"
+        name: "Add data validation tasks"
+        status: "not_started"
+        notes: "Post-processing validation for API responses"
+
+  phase_3_advanced_features:
+    name: "Advanced Features & Integration"
+    timeline: "Week 5-6"
+    status: "not_started"
+    completion: 0
+    tasks:
+      - id: "3.1"
+        name: "Implement KIE processing workflows"
+        status: "not_started"
+        notes: "Create kie_processor_dag.py for key information extraction"
+      - id: "3.2"
+        name: "Add PDF processing capabilities"
+        status: "not_started"
+        notes: "Create pdf_processor_dag.py with Document Parse API"
+      - id: "3.3"
+        name: "Create reusable DAG templates"
+        status: "not_started"
+        notes: "Modular components for various processing scenarios"
+      - id: "3.4"
+        name: "Add comprehensive testing"
+        status: "not_started"
+        notes: "pytest suite covering API, DAG logic, GPU, and AWS Batch"
+      - id: "3.5"
+        name: "Documentation and deployment guides"
+        status: "not_started"
+        notes: "README, setup instructions, troubleshooting guide"
+
+  phase_4_deferred_features:
+    name: "Deferred Features (Future)"
+    timeline: "TBD"
+    status: "deferred"
+    completion: 0
+    tasks:
+      - id: "4.1"
+        name: "JPG to LMDB conversion"
+        status: "deferred"
+        notes: "Leverage ocr-etl-pipeline patterns"
+      - id: "4.2"
+        name: "Image optimization pipeline"
+        status: "deferred"
+        notes: "Resolution normalization and preprocessing"
+      - id: "4.3"
+        name: "IT textbook processing DAG"
+        status: "deferred"
+        notes: "Specialized workflow for textbook datasets"
+
+# Architecture Overview
+architecture:
+  components:
+    - name: "Airflow Core"
+      elements: ["Webserver (UI)", "Scheduler", "Workers", "PostgreSQL"]
+    - name: "Processing Modules"
+      elements: ["API Client", "Data Processing", "Storage Layer", "Monitoring"]
+    - name: "DAG Structure"
+      elements: ["Preprocess", "API Call (parallel)", "Validate", "Export", "Cleanup"]
+
+  execution_modes:
+    - local_gpu: "RTX 3090 24GB with WSL2 passthrough"
+    - aws_batch: "Cloud scaling for large workloads"
+
+# Technical Configuration
+technical_config:
+  python_version: "3.11"
+  airflow_version: "2.x"
+  gpu: "RTX 3090 24GB"
+  containerization: "Docker + docker-compose"
+
+  key_dependencies:
+    - "Upstage SDK"
+    - "AWS SDK (boto3)"
+    - "PostgreSQL"
+    - "CUDA drivers (for GPU)"
+
+# Success Criteria
+success_criteria:
+  functional:
+    - "All DAGs process sample data successfully"
+    - "API integration validated with real Upstage endpoints"
+    - "GPU processing operational in Docker"
+
+  performance:
+    - "Process 1000+ documents in <2 hours"
+    - "<5% GPU idle time during processing"
+    - "95%+ success rate with retries"
+
+  reliability:
+    - "Checkpointing enables resume after failures"
+    - "Rate limiting prevents API quota exhaustion"
+    - "Comprehensive monitoring and alerting active"
+
+# Risk Tracking
+risks:
+  - risk_id: "R1"
+    description: "WSL2 GPU passthrough performance overhead"
+    mitigation: "Early benchmarking and optimization; fallback to native Linux if needed"
+    status: "active"
+
+  - risk_id: "R2"
+    description: "Upstage API rate limits bottlenecking"
+    mitigation: "Intelligent queuing, backoff strategies, parallel worker tuning"
+    status: "active"
+
+  - risk_id: "R3"
+    description: "Docker GPU runtime configuration complexity"
+    mitigation: "Follow nvidia-docker guidelines, test with simple CUDA containers first"
+    status: "active"
+
+# Dependencies
+dependencies:
+  external:
+    - "Upstage API access and quotas"
+    - "AWS Batch environment (optional)"
+    - "RTX 3090 GPU with WSL2"
+
+  internal:
+    - "aws-batch-processor codebase patterns"
+    - "ocr-etl-pipeline ETL utilities"
+    - ".env.local with UPSTAGE_API_KEY"
+
+# Notes & Context
+notes: |
+  Current Status (2026-01-13):
+  - Docker environment successfully configured
+  - Airflow containers running without errors
+  - Airflow UI accessible and login verified
+  - Next: Configure GPU passthrough and create base DAG structure
+
+  Key Assets to Leverage:
+  - aws-batch-processor: Resumable checkpointing, API rate limiting
+  - ocr-etl-pipeline: LMDB creation, multi-threaded patterns
+
+  Priority Focus:
+  - Complete Phase 1 foundation setup
+  - Validate GPU integration early to derisk
+  - Implement basic processing DAG for proof-of-concept
+
+# Version History
+version_history:
+  - version: "1.0"
+    date: "2026-01-13"
+    changes: "Initial roadmap creation from implementation plan"
+    author: "AI Agent"

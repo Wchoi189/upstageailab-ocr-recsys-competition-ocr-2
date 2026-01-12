@@ -1,5 +1,33 @@
 # Changelog
 
+## [2026-01-13] - Unified MCP Server Refactoring
+
+### Changed
+- **Refactored unified MCP server to use runtime aggregation** - Tools and resources now aggregated from individual MCP servers at startup via `importlib` imports, eliminating all YAML duplication
+- **Established individual MCP servers as single source of truth** - AgentQMS, project_compass, experiment_manager, and agent_debug_toolkit each define their own tools/resources
+- **Simplified resource routing** - URI scheme-based routing (`agentqms://`, `compass://`, `experiments://`, `bundle://`) delegates to appropriate server modules
+- **Replaced manual path resolution** - Using `AgentQMS.tools.utils.paths.get_project_root()` for consistent path handling
+
+### Removed
+- `scripts/mcp/config/tools.yaml` (908 lines) - duplicate tool definitions
+- `AgentQMS/standards/tier2-framework/tools.yaml` (312 lines) - duplicate documentation
+- `AgentQMS/tools/core/mcp_registry.py` (67 lines) - obsolete registry
+- `scripts/mcp/mcp_tools_config.yaml` (92 lines) - legacy tool groups filtering
+- Legacy tool filtering system (`load_tool_groups_config()`, `is_tool_enabled()`) - ~100 lines
+- Removed tools section from `AgentQMS/mcp_schema.yaml` - tools now hardcoded in `list_tools()`
+- Removed duplicate `agentqms://` resources from `scripts/mcp/config/resources.yaml`
+
+### Fixed
+- **Zero synchronization issues** - No manual YAML updates needed; changes to server code auto-reflected
+- Fixed bundle resource handler to pass `task_description` parameter correctly
+- Cleaned up `call_tool()` routing, removed unreachable code and legacy references
+
+### Technical Details
+- Total cleanup: ~175 lines of legacy code removed
+- 28 tools and 28 resources aggregated from 4 MCP servers
+- Context bundle auto-suggestion working with keyword triggers
+- All ADT tools functional (tested: `config_access`, `hydra_usage`)
+
 ## Changelog Format Guidelines
 - **Format**: `[YYYY-MM-DD HH:MM] - Brief description (max 120 chars)`
 - **Placement**: Add new entries at the very top, below this guidelines section

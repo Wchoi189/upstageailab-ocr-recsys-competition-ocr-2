@@ -2,14 +2,61 @@
 # Machine-parseable configuration for AI agents
 
 servers:
-  - name: agentqms
-    path: AgentQMS/mcp_server.py
-    description: Artifact workflow, validation, compliance
+  - name: unified_project
+    path: scripts/mcp/unified_server.py
+    description: Unified MCP server aggregating all tools/resources from individual servers
+    note: Runtime aggregation - imports from AgentQMS, project_compass, experiment_manager, agent-debug-toolkit
     resources:
       - agentqms://standards/index
       - agentqms://standards/artifact_types
       - agentqms://standards/workflows
       - agentqms://templates/list
+      - agentqms://plugins/artifact_types
+      - agentqms://config/settings
+      - compass://compass.json
+      - compass://session_handover.md
+      - compass://current_session.yml
+      - compass://uv_lock_state.yml
+      - compass://agents.yaml
+      - experiments://agent_interface
+      - experiments://active_list
+      - experiments://schemas/manifest
+      - experiments://schemas/artifact
+      - utilities://quick-reference
+      - utilities://index
+      - standards://router
+      - standards://frontmatter
+      - bundle://list
+    tools:
+      # AgentQMS tools
+      - create_artifact
+      - validate_artifact
+      - list_artifact_templates
+      - check_compliance
+      - get_standard
+      # Project Compass tools
+      - get_server_info
+      - manage_session
+      # Experiment Manager tools
+      - init_experiment
+      - get_experiment_status
+      - add_task
+      - log_insight
+      - sync_experiment
+      # Agent Debug Toolkit tools
+      - adt_meta_query
+      - adt_meta_edit
+
+  - name: agentqms
+    path: AgentQMS/mcp_server.py
+    description: Artifact workflow, validation, compliance
+    note: Individual server - tools hardcoded in list_tools()
+    resources:
+      - agentqms://standards/index
+      - agentqms://standards/artifact_types
+      - agentqms://standards/workflows
+      - agentqms://templates/list
+      - agentqms://plugins/artifact_types
       - agentqms://config/settings
     tools:
       - create_artifact
@@ -22,35 +69,36 @@ servers:
     path: project_compass/mcp_server.py
     description: Project state, session management, navigation
     resources:
-      - compass://state/current
-      - compass://session/handover
-      - compass://config/settings
+      - compass://compass.json
+      - compass://session_handover.md
+      - compass://current_session.yml
+      - compass://uv_lock_state.yml
+      - compass://agents.yaml
     tools:
-      - get_project_state
+      - get_server_info
       - manage_session
-      - update_compass
 
-  - name: experiments
+  - name: experiment_manager
     path: experiment_manager/mcp_server.py
     description: Experiment tracking, insights, task management
     resources:
-      - experiments://current/metadata
-      - experiments://history/list
+      - experiments://agent_interface
+      - experiments://active_list
+      - experiments://schemas/manifest
+      - experiments://schemas/artifact
     tools:
       - init_experiment
+      - get_experiment_status
       - add_task
       - log_insight
       - sync_experiment
 
-  - name: agent-debug-toolkit
+  - name: agent_debug_toolkit
     path: agent-debug-toolkit/src/agent_debug_toolkit/mcp_server.py
-    description: AST-based analysis for Hydra/OmegaConf debugging
+    description: AST-based analysis and code editing (meta-tools and individual tools)
     tools:
-      - analyze_config_access
-      - trace_merge_order
-      - find_hydra_usage
-      - find_component_instantiations
-      - explain_config_flow
+      - adt_meta_query
+      - adt_meta_edit
 
 # Startup command template
 command_template: "uv run --directory ${workspaceFolder} python {path}"

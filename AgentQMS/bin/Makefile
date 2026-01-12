@@ -610,15 +610,7 @@ quick-status: status ## Quick status check (alias for status)
 tool-catalog: ## Generate tool catalog and scripts index
 	uv run python ../tools/utilities/generate_tool_catalog.py
 
-generate-registry: ## Generate tool registry and context files for auto-discovery
-	@echo "🔧 Generating tool registry and context files..."
-	PYTHONPATH=../.. python ../tools/core/tool_registry.py --output-dir ../../.copilot/context
-	PYTHONPATH=../.. python ../tools/core/workflow_detector.py --generate-triggers
-	@echo "✅ Registry generation complete"
-	@echo "   Generated files in .copilot/context/:"
-	@echo "   - tool-registry.json"
-	@echo "   - tool-catalog.md"
-	@echo "   - workflow-triggers.yaml"
+
 
 # Export Framework
 export: ## Export framework to project-agnostic package (usage: make export OUTPUT=export_package/)

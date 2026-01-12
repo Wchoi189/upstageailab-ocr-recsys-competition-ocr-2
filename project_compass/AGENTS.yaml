@@ -9,10 +9,9 @@ rules:
   - "Nomenclature: Use [Compass:X] tags in dialogue to refer to project state."
 
 entry_points:
-  env_check: "uv run python -m etk.factory check-env"
-  session_init: "uv run python -m etk.factory session-init --objective {str}"
-  milestone_update: "uv run python -m etk.factory milestone --id {01|02|03} --status {enum}"
-  reconcile: "uv run python -m etk.factory reconcile"
+  env_check: "uv run python -m project_compass.cli check-env"
+  session_init: "uv run python -m project_compass.cli session-init --objective {str}"
+  session_export: "uv run python -m project_compass.cli session-export --note {str}"
   ocr_convert: "uv run ocr-etl convert --input-dir {path} --output-dir {path}"
   ocr_inspect: "uv run ocr-etl inspect --lmdb-path {path}"
 

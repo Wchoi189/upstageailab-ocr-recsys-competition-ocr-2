@@ -11,7 +11,6 @@ A single server that combines all project MCP functionality:
 import asyncio
 import json
 import sys
-import os
 from pathlib import Path
 from typing import Any
 
@@ -41,24 +40,10 @@ TELEMETRY_PIPELINE = TelemetryPipeline([
 ])
 
 
-# Auto-discover project root
-def find_project_root() -> Path:
-    # First, check environment variable
-    env_root = os.environ.get("PROJECT_ROOT")
-    if env_root:
-        return Path(env_root)
+# Import path utility
+from AgentQMS.tools.utils.paths import get_project_root
 
-    # Second, traverse up from this file to find project_compass marker
-    current = Path(__file__).resolve().parent
-    for parent in current.parents:
-        if (parent / "project_compass").exists():
-            return parent
-
-    # Fallback to current working directory (portable)
-    return Path.cwd()
-
-
-PROJECT_ROOT = find_project_root()
+PROJECT_ROOT = get_project_root()
 COMPASS_DIR = PROJECT_ROOT / "project_compass"
 AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
 EXPERIMENT_MANAGER_DIR = PROJECT_ROOT / "experiment_manager"
@@ -77,75 +62,78 @@ app = Server("unified_project")
 # --- Configuration Loader Setup ---
 config_loader = ConfigLoader(cache_size=5)
 
-# --- Load Tool Groups Configuration ---
 
-def load_tool_groups_config() -> dict[str, Any]:
-    """Load tool groups configuration from YAML file."""
-    config_path = Path(__file__).parent / "mcp_tools_config.yaml"
-    defaults = {
-        "enabled_groups": ["compass", "agentqms", "etk", "adt_core", "adt_phase1", "adt_phase3"],
-        "tool_groups": {}
-    }
-    return config_loader.get_config(config_path, defaults=defaults)
+# --- Resources Aggregation from Server Modules ---
 
+async def load_resources_from_servers() -> list[dict]:
+    """Aggregate resources from all MCP servers + unified config."""
+    import importlib
 
-TOOLS_CONFIG = load_tool_groups_config()
-ENABLED_GROUPS = set(TOOLS_CONFIG.get("enabled_groups", []))
+    resources = []
 
+    # 1. Load from AgentQMS server (agentqms:// URIs)
+    mod = importlib.import_module("AgentQMS.mcp_server")
+    agentqms_resources = await mod.list_resources()
+    for res in agentqms_resources:
+        resources.append({
+            "uri": res.uri,
+            "name": res.name,
+            "description": res.description,
+            "mimeType": res.mimeType,
+            "path": None  # Handled by AgentQMS server's read_resource
+        })
 
-def is_tool_enabled(tool_name: str) -> bool:
-    """Check if a tool is enabled based on group configuration."""
-    tool_groups = TOOLS_CONFIG.get("tool_groups", {})
+    # 2. Load from project_compass server (compass:// URIs)
+    mod = importlib.import_module("project_compass.mcp_server")
+    compass_resources = await mod.list_resources()
+    for res in compass_resources:
+        resources.append({
+            "uri": res.uri,
+            "name": res.name,
+            "description": res.description,
+            "mimeType": res.mimeType,
+            "path": None  # Handled by compass server's read_resource
+        })
 
-    for group_name, group_config in tool_groups.items():
-        if group_name in ENABLED_GROUPS:
-            if tool_name in group_config.get("tools", []):
-                return True
+    # 3. Load from experiment_manager server (experiments:// URIs)
+    mod = importlib.import_module("experiment_manager.mcp_server")
+    exp_resources = await mod.list_resources()
+    for res in exp_resources:
+        resources.append({
+            "uri": res.uri,
+            "name": res.name,
+            "description": res.description,
+            "mimeType": res.mimeType,
+            "path": None  # Handled by experiments server's read_resource
+        })
 
-    # If no groups defined or tool not in any group, enable by default
-    if not tool_groups:
-        return True
-
-    return False
-
-
-# --- Resources Definitions ---
-
-def load_resources_config() -> list[dict]:
-    """Load resources configuration from YAML file."""
+    # 4. Load remaining resources from unified config (utilities://, standards://)
     config_path = Path(__file__).parent / "config/resources.yaml"
-    raw_resources = config_loader.get_config(config_path, defaults=[])
-
-    if not isinstance(raw_resources, list):
-        return []
-
-    # Process paths: resolve relative paths against project root
-    for res in raw_resources:
+    config_resources = config_loader.get_config(config_path, defaults=[])
+    for res in config_resources:
         if res.get("path"):
             res["path"] = PROJECT_ROOT / res["path"]
-        else:
-            res["path"] = None
-    return raw_resources
+        resources.append(res)
 
-RESOURCES_CONFIG = load_resources_config()
+    # 5. Add bundle:// resources (context bundles)
+    resources.append({
+        "uri": "bundle://list",
+        "name": "Context Bundles",
+        "description": "List available context bundles for AI agents",
+        "mimeType": "application/json",
+        "path": None  # Dynamic handler
+    })
 
-# --- Optimized Resource Lookups ---
-# Pre-computing these maps turns O(N) searches into O(1) lookups
-URI_MAP = {r["uri"]: r for r in RESOURCES_CONFIG}
-PATH_MAP = {}
+    return resources
 
-for r in RESOURCES_CONFIG:
-    if r.get("path"):
-        try:
-            resolved = r["path"].resolve()
-            PATH_MAP[resolved] = r
-        except Exception:
-            continue
-
+RESOURCES_CONFIG = []
 
 @app.list_resources()
 async def list_resources() -> list[Resource]:
-    return [Resource(uri=res["uri"], name=res["name"], description=res.get("description", ""), mimeType=res["mimeType"]) for res in RESOURCES_CONFIG]
+    return [
+        Resource(uri=res["uri"], name=res["name"], description=res.get("description", ""), mimeType=res["mimeType"])
+        for res in RESOURCES_CONFIG
+    ]
 
 
 # --- Helper Functions for Dynamic Resources ---
@@ -182,80 +170,97 @@ def _handle_templates_list() -> list[ReadResourceContents]:
 async def read_resource(uri: str) -> list[ReadResourceContents]:
     uri = str(uri).strip()
 
-    # 1. Fast Path: Exact URI Match O(1)
-    resource = URI_MAP.get(uri)
+    # Route to individual servers based on URI scheme
+    import importlib
 
-    # 2. Alias Handling: Path Match O(1)
+    if uri.startswith("agentqms://"):
+        mod = importlib.import_module("AgentQMS.mcp_server")
+        return await mod.read_resource(uri)
+
+    elif uri.startswith("compass://"):
+        mod = importlib.import_module("project_compass.mcp_server")
+        return await mod.read_resource(uri)
+
+    elif uri.startswith("experiments://"):
+        mod = importlib.import_module("experiment_manager.mcp_server")
+        return await mod.read_resource(uri)
+
+    elif uri.startswith("bundle://"):
+        try:
+            from AgentQMS.tools.core.context_bundle import list_available_bundles, get_context_bundle
+
+            if uri == "bundle://list":
+                bundles = list_available_bundles()
+                return [ReadResourceContents(content=json.dumps(bundles, indent=2), mime_type="application/json")]
+            else:
+                bundle_name = uri.replace("bundle://", "")
+                # Get bundle files by passing bundle name as task description
+                files = get_context_bundle(task_description=bundle_name, task_type=bundle_name)
+                return [ReadResourceContents(content=json.dumps({"bundle": bundle_name, "files": files}, indent=2), mime_type="application/json")]
+        except Exception as e:
+            return [ReadResourceContents(content=json.dumps({"error": str(e)}), mime_type="application/json")]
+
+    # Handle file-based resources (utilities://, standards://)
+    resource = next((r for r in RESOURCES_CONFIG if r["uri"] == uri), None)
+
     if not resource:
-        input_path = None
-        if uri.startswith("file://"):
-            from urllib.parse import urlparse, unquote
-            input_path = Path(unquote(urlparse(uri).path)).resolve()
-        elif uri.startswith("/") or (len(uri) > 1 and uri[1] == ":"):
-            input_path = Path(uri).resolve()
+        raise ValueError(f"Unknown resource URI: {uri}")
 
-        if input_path:
-            resource = PATH_MAP.get(input_path)
-
-    # 3. Error Handling & Suggestions
-    if not resource:
-        msg = f"Unknown resource URI: {uri}"
-        if any(keyword in uri for keyword in ["compass", "agentqms"]):
-            # Filtered list comprehension for suggestions
-            matches = [u for u in URI_MAP.keys() if uri.split("://")[-1] in u]
-            if matches:
-                msg += f". Did you mean: {', '.join(matches[:3])}?"
-        raise ValueError(msg)
-
-    # 4. Dynamic Resource Handlers
-    if uri == "agentqms://templates/list":
-        return _handle_templates_list()
-
-    if uri == "agentqms://plugins/artifact_types":
-        return await _handle_plugin_artifacts()
-
-    if uri == "experiments://active_list":
-        return await _handle_experiments_list()
-
-    # 5. Static File Reading
-    file_path: Path = resource["path"]
+    file_path: Path = resource.get("path")
     if not file_path or not file_path.exists():
         raise FileNotFoundError(f"Resource file not found: {file_path}")
 
     return [ReadResourceContents(content=file_path.read_text(encoding="utf-8"), mime_type=resource["mimeType"])]
 
 
-# --- Tools Definitions ---
 
 
-def load_tools_definitions() -> list[dict]:
-    """Load tools configuration from YAML file."""
-    config_path = Path(__file__).parent / "config/tools.yaml"
-    tools = config_loader.get_config(config_path, defaults=[])
-    return tools if isinstance(tools, list) else []
 
-TOOLS_DEFINITIONS = load_tools_definitions()
+# --- Tools Aggregation from Server Modules ---
+
+async def load_tools_from_servers() -> list[dict]:
+    """Runtime aggregation: import list_tools() from each MCP server."""
+    import importlib
+
+    tools = []
+    servers = [
+        ("AgentQMS.mcp_server", "agentqms"),
+        ("project_compass.mcp_server", "compass"),
+        ("experiment_manager.mcp_server", "experiments"),
+        ("agent_debug_toolkit.mcp_server", "adt"),
+    ]
+
+    for module_name, _prefix in servers:
+        mod = importlib.import_module(module_name)
+        server_tools = await mod.list_tools()
+
+        for tool in server_tools:
+            tools.append({
+                "name": tool.name,
+                "description": tool.description,
+                "inputSchema": tool.inputSchema,
+                "implementation": {
+                    "module": module_name,
+                    "function": "call_tool"
+                }
+            })
+
+    return tools
+
+TOOLS_DEFINITIONS = []
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List all enabled tools based on tool groups configuration and external definitions."""
-    enabled_tools = []
+    """List all available tools aggregated from individual MCP servers."""
+    return [
+        Tool(
+            name=tool_def["name"],
+            description=tool_def["description"],
+            inputSchema=tool_def["inputSchema"]
+        )
+        for tool_def in TOOLS_DEFINITIONS
+    ]
 
-    # 1. Filter enabled tools
-    enabled_names = set()
-    # If using groups:
-    # Iterate all definitions, check if enabled
-
-    for tool_def in TOOLS_DEFINITIONS:
-        name = tool_def["name"]
-        if is_tool_enabled(name):
-            enabled_tools.append(Tool(
-                name=name,
-                description=tool_def["description"],
-                inputSchema=tool_def["inputSchema"]
-            ))
-
-    return enabled_tools
 
 
 @app.call_tool()
@@ -264,54 +269,64 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         # --- Middleware Validation ---
         TELEMETRY_PIPELINE.validate(name, arguments)
 
-        if name == "get_server_info":
-             # Keep local implementation for server info
-            info = {
-                "name": "unified_project",
-                "version": "1.0.0",
-                "status": "running",
-                "components": ["Compass", "AgentQMS", "ETK", "ADT"],
-                "tool_groups": {
-                    "enabled": list(ENABLED_GROUPS),
-                    "available": list(TOOLS_CONFIG.get("tool_groups", {}).keys()),
-                },
-            }
-            return [TextContent(type="text", text=json.dumps(info, indent=2))]
-
-        # --- Dynamic Dispatch ---
-        # Find tool definition
+        # --- Find tool implementation ---
         tool_def = next((t for t in TOOLS_DEFINITIONS if t["name"] == name), None)
 
-        if tool_def and "implementation" in tool_def:
-            impl = tool_def["implementation"]
-            module_name = impl.get("module")
-            # function_name = impl.get("function", "call_tool") # Default to call_tool
+        if not tool_def or "implementation" not in tool_def:
+            raise ValueError(f"Unknown tool: {name}")
 
-            if module_name:
-                import importlib
-                module = importlib.import_module(module_name)
-                # We assume the module exposes the same call_tool interface or we access the app?
-                # Most standard MCP servers using @app.call_tool decorate a function wrapped by FastMCP or Server
-                # BUT here we are importing the module directly.
-                # If the module has a top-level 'call_tool' function (which we checked they do), use it.
-                if hasattr(module, "call_tool"):
-                    return await module.call_tool(name, arguments)
+        # --- Route to appropriate server module ---
+        impl = tool_def["implementation"]
+        module_name = impl.get("module")
 
-                # Fallback: if it's decorating 'app', we might need to find the handler.
-                # But in our analyzed files, 'call_tool' is a dedicated async function.
-                raise ValueError(f"Module {module_name} does not have a 'call_tool' function.")
+        if not module_name:
+            raise ValueError(f"No module specified for tool: {name}")
 
-        raise ValueError(f"Unknown tool or missing implementation: {name}")
+        import importlib
+        module = importlib.import_module(module_name)
+
+        if not hasattr(module, "call_tool"):
+            raise ValueError(f"Module {module_name} does not have a 'call_tool' function")
+
+        result_content = await module.call_tool(name, arguments)
+
+        # --- Context Suggestion Injection ---
+        try:
+            # Suggest relevant context bundles for non-context tools
+            if "context" not in name and "bundle" not in name:
+                from AgentQMS.tools.core.context_bundle import auto_suggest_context
+                task_desc = f"{name}: {str(arguments)}"
+                suggestions = auto_suggest_context(task_desc)
+
+                # Only suggest if we have a specific bundle
+                if suggestions.get("bundle_files"):
+                    bundle_name = suggestions.get("context_bundle")
+                    if bundle_name and bundle_name not in ("general", "development", "documentation"):
+                        suggestion_text = (
+                            f"\n💡 **Context Suggestion**: The '{bundle_name}' bundle seems relevant.\n"
+                            f"   Access it: read_resource('bundle://{bundle_name}')"
+                        )
+                        result_content.append(TextContent(type="text", text=suggestion_text))
+        except Exception:
+            # Suppress suggestion errors to not break main tool execution
+            pass
+
+        return result_content
 
     except PolicyViolation as e:
-        # Return the feedback message to the agent instead of executing the tool
         return [TextContent(type="text", text=f"⚠️ FEEDBACK TRIGGERED: {e.feedback_to_ai}")]
     except Exception as e:
         import traceback
         return [TextContent(type="text", text=f"Error executing {name}: {str(e)}\n{traceback.format_exc()}")]
 
 
+
+
 async def main():
+    global TOOLS_DEFINITIONS, RESOURCES_CONFIG
+    TOOLS_DEFINITIONS = await load_tools_from_servers()
+    RESOURCES_CONFIG = await load_resources_from_servers()
+
     async with stdio_server() as (read_stream, write_stream):
         await app.run(read_stream, write_stream, app.create_initialization_options())
 

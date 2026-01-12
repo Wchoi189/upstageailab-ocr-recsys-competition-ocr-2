@@ -188,6 +188,7 @@ tool_categories:
     - adapt_project
     - tracking_cli
     - get_context
+    - path_utils
     base_path: AgentQMS/agent_tools/utilities/
 workflow_triggers:
   artifact_creation:

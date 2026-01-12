@@ -15,6 +15,8 @@ Resources exposed:
 
 import asyncio
 import json
+import sys
+import yaml
 from pathlib import Path
 from typing import Any
 
@@ -43,46 +45,36 @@ def find_project_root() -> Path:
 
 PROJECT_ROOT = find_project_root()
 COMPASS_DIR = PROJECT_ROOT / "project_compass"
+SCHEMA_PATH = COMPASS_DIR / "mcp_schema.yaml"
 
 
-# Define available resources
-RESOURCES = [
-    {
-        "uri": "compass://compass.json",
-        "name": "Project Compass State",
-        "description": "Main compass state: current phase, health, handoff reference",
-        "path": COMPASS_DIR / "compass.json",
-        "mimeType": "application/json",
-    },
-    {
-        "uri": "compass://session_handover.md",
-        "name": "Session Handover",
-        "description": "Current session handover document with accomplishments and next steps",
-        "path": COMPASS_DIR / "session_handover.md",
-        "mimeType": "text/markdown",
-    },
-    {
-        "uri": "compass://current_session.yml",
-        "name": "Active Session Context",
-        "description": "Active session metadata: objective, pipeline, environment lock",
-        "path": COMPASS_DIR / "active_context" / "current_session.yml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "compass://uv_lock_state.yml",
-        "name": "Environment Lock State",
-        "description": "UV environment lock state: Python version, CUDA config, dependencies",
-        "path": COMPASS_DIR / "environments" / "uv_lock_state.yml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "compass://agents.yaml",
-        "name": "Agent Configuration",
-        "description": "AI agent configuration: rules, entry points, schema root",
-        "path": COMPASS_DIR / "AGENTS.yaml",
-        "mimeType": "application/x-yaml",
-    },
-]
+def load_resources_from_schema() -> list[dict[str, Any]]:
+    """Load resources configuration from mcp_schema.yaml."""
+    if not SCHEMA_PATH.exists():
+        print(f"CRITICAL: Schema not found at {SCHEMA_PATH}", file=sys.stderr)
+        sys.exit(1)
+
+    try:
+        with open(SCHEMA_PATH) as f:
+            schema = yaml.safe_load(f)
+
+        resources = []
+        for item in schema.get("resources", []):
+            resources.append({
+                "uri": item["uri"],
+                "name": item["name"],
+                "description": item["description"],
+                "path": COMPASS_DIR / item["path"],
+                "mimeType": item["mime_type"],
+            })
+        return resources
+    except Exception as e:
+        print(f"CRITICAL: Failed to load resources from schema: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+# Define available resources from schema (No Fallback)
+RESOURCES = load_resources_from_schema()
 
 
 # Create MCP server
@@ -148,7 +140,17 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         session_name = arguments.get("session_name")
         note = arguments.get("note")
 
-        cmd = ["uv", "run", "python", str(COMPASS_DIR / "scripts/session_manager.py"), action]
+        # Use new CLI entry point: uv run python -m project_compass.cli
+        # Note: Only 'session-init' and 'check-env' are currently in CLI.
+        # 'manage_session' seems to rely on project_compass/scripts/session_manager.py
+        # We will preserve the script path but enforce UV module usage where possible,
+        # or stick to the script if it hasn't been migrated to CLI yet.
+
+        # Checking file context: project_compass/scripts/session_manager.py exists.
+        # We should invoke it via uv run python.
+
+        script_path = COMPASS_DIR / "scripts/session_manager.py"
+        cmd = ["uv", "run", "python", str(script_path), action]
 
         if action == "export" and note:
             cmd.extend(["--note", note])

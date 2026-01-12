@@ -51,62 +51,22 @@ try:
 except ImportError:
     PLUGINS_AVAILABLE = False
 
-# Task type keywords for automatic classification
-TASK_KEYWORDS = {
-    "development": [
-        "implement",
-        "code",
-        "develop",
-        "feature",
-        "function",
-        "class",
-        "module",
-        "refactor",
-        "rewrite",
-        "build",
-        "create",
-        "add",
-        "fix bug",
-        "bug fix",
-    ],
-    "documentation": [
-        "document",
-        "doc",
-        "write docs",
-        "readme",
-        "guide",
-        "manual",
-        "tutorial",
-        "update docs",
-        "documentation",
-    ],
-    "debugging": [
-        "debug",
-        "troubleshoot",
-        "error",
-        "fix",
-        "broken",
-        "issue",
-        "problem",
-        "crash",
-        "exception",
-        "traceback",
-        "log",
-        "investigate",
-    ],
-    "planning": [
-        "plan",
-        "design",
-        "architecture",
-        "blueprint",
-        "strategy",
-        "assess",
-        "evaluate",
-        "analysis",
-        "proposal",
-        "roadmap",
-    ],
-}
+
+from AgentQMS.tools.utils.config_loader import ConfigLoader
+
+CONFIG_LOADER = ConfigLoader()
+
+def load_task_keywords() -> dict[str, list[str]]:
+    """Load task type keywords from configuration."""
+    config_path = PROJECT_ROOT / "AgentQMS/standards/tier2-framework/context_keywords.yaml"
+    if not config_path.exists():
+        raise FileNotFoundError(f"Context keywords config not found at: {config_path}")
+
+    return CONFIG_LOADER.get_config(config_path, defaults={})
+
+# Cache keywords to avoid reloading on every call (optional optimization)
+# But ConfigLoader has caching, so this is just a convenient access
+TASK_KEYWORDS = load_task_keywords()
 
 
 def analyze_task_type(description: str) -> str:
@@ -123,7 +83,10 @@ def analyze_task_type(description: str) -> str:
 
     # Count keyword matches for each task type
     scores = {}
-    for task_type, keywords in TASK_KEYWORDS.items():
+    # Refresh keywords (optional, relies on ConfigLoader caching)
+    keywords_map = load_task_keywords()
+
+    for task_type, keywords in keywords_map.items():
         score = sum(1 for keyword in keywords if keyword in description_lower)
         if score > 0:
             scores[task_type] = score
@@ -392,28 +355,20 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
         "suggested_tools": [],
     }
 
-    try:
-        from AgentQMS.tools.core.workflow_detector import suggest_workflows
+    from AgentQMS.tools.core.workflow_detector import suggest_workflows
 
-        workflow_suggestions = suggest_workflows(task_description)
-        suggestions["suggested_workflows"] = workflow_suggestions.get("workflows", [])
-        suggestions["suggested_tools"] = workflow_suggestions.get("tools", [])
-        if workflow_suggestions.get("artifact_type"):
-            suggestions["artifact_type"] = workflow_suggestions["artifact_type"]
-    except ImportError:
-        # Workflow detector not available, use basic suggestions
-        if detected_type == "development":
-            suggestions["suggested_workflows"] = ["create-plan", "validate"]
-            suggestions["suggested_tools"] = ["artifact_workflow", "validate_artifacts"]
-        elif detected_type == "documentation":
-            suggestions["suggested_workflows"] = ["docs-generate", "docs-validate-links"]
-            suggestions["suggested_tools"] = ["auto_generate_index", "validate_links"]
-        elif detected_type == "debugging":
-            suggestions["suggested_workflows"] = ["create-bug-report", "validate"]
-            suggestions["suggested_tools"] = ["artifact_workflow", "validate_artifacts"]
-        elif detected_type == "planning":
-            suggestions["suggested_workflows"] = ["create-plan", "create-design"]
-            suggestions["suggested_tools"] = ["artifact_workflow"]
+    workflow_suggestions = suggest_workflows(task_description)
+    suggestions["suggested_workflows"] = workflow_suggestions.get("workflows", [])
+    suggestions["suggested_tools"] = workflow_suggestions.get("tools", [])
+    if workflow_suggestions.get("artifact_type"):
+        suggestions["artifact_type"] = workflow_suggestions["artifact_type"]
+
+    # --- Universal Utilities Injection ---
+    # Always include essential utilities regardless of task type
+    universal_utils = ["AgentQMS/tools/utils/paths.py"]
+    for util in universal_utils:
+        if util not in suggestions["bundle_files"]:
+            suggestions["bundle_files"].append(util)
 
     return suggestions
 

@@ -79,6 +79,9 @@ tiers:
       - path: AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml
         priority: medium
         description: Image loading patterns
+      - path: AgentQMS/tools/utils/paths.py
+        priority: high
+        description: Path resolution utilities
 
   tier3:
     name: Configuration & Testing

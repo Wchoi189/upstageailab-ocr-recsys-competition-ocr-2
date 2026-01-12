@@ -54,51 +54,30 @@ AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
 sys.path.insert(0, str(PROJECT_ROOT))
 
 
-# Define available resources
-RESOURCES = [
-    {
-        "uri": "agentqms://standards/index",
-        "name": "Standards Index",
-        "description": "Complete standards hierarchy with 4-tier system (SST, Framework, Agents, Workflows)",
-        "path": AGENTQMS_DIR / "standards" / "INDEX.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "agentqms://standards/artifact_types",
-        "name": "Artifact Types",
-        "description": "Allowed artifact types, locations, naming conventions, and prohibited types",
-        "path": AGENTQMS_DIR / "standards" / "tier1-sst" / "artifact-types.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "agentqms://standards/workflows",
-        "name": "Workflow Requirements",
-        "description": "Workflow validation protocols and requirements",
-        "path": AGENTQMS_DIR / "standards" / "tier1-sst" / "workflow-requirements.yaml",
-        "mimeType": "application/x-yaml",
-    },
-    {
-        "uri": "agentqms://templates/list",
-        "name": "Template Catalog",
-        "description": "Available artifact templates (dynamically generated)",
-        "path": None,  # Dynamic content
-        "mimeType": "application/json",
-    },
-    {
-        "uri": "agentqms://plugins/artifact_types",
-        "name": "Plugin Artifact Types",
-        "description": "Discoverable artifact types with complete metadata (hardcoded, plugins, and standards)",
-        "path": None,  # Dynamic content
-        "mimeType": "application/json",
-    },
-    {
-        "uri": "agentqms://config/settings",
-        "name": "QMS Settings",
-        "description": "Framework configuration, paths, validation rules, tool mappings",
-        "path": AGENTQMS_DIR / "config" / "settings.yaml",
-        "mimeType": "application/x-yaml",
-    },
-]
+
+from AgentQMS.tools.utils.config_loader import ConfigLoader
+
+# Initialize ConfigLoader
+CONFIG_LOADER = ConfigLoader()
+
+def load_mcp_schema() -> dict[str, list[dict]]:
+    """Load MCP resources from schema."""
+    schema_path = AGENTQMS_DIR / "mcp_schema.yaml"
+    if not schema_path.exists():
+        raise FileNotFoundError(f"MCP Schema not found at: {schema_path}")
+
+    return CONFIG_LOADER.get_config(schema_path, defaults={"resources": []})
+
+
+# Load Schema
+MCP_SCHEMA = load_mcp_schema()
+RESOURCES = MCP_SCHEMA.get("resources", [])
+
+
+# Resolve Resource Paths
+for res in RESOURCES:
+    if res.get("path"):
+        res["path"] = PROJECT_ROOT / res["path"]
 
 
 # Create MCP server
@@ -142,7 +121,7 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
     # Handle file-based resources
     path: Path = resource["path"]
 
-    if not path.exists():
+    if not path or not path.exists():
         raise FileNotFoundError(f"Resource file not found: {path}")
 
     content = path.read_text(encoding="utf-8")
@@ -345,10 +324,8 @@ def _get_fallback_artifact_types() -> list[str]:
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List all available AgentQMS tools with dynamically generated schemas."""
-
-    # Generate dynamic artifact_type enum from available plugins
-    artifact_types_enum = await _get_available_artifact_types()
+    """List all available AgentQMS tools."""
+    artifact_types = await _get_available_artifact_types()
 
     return [
         Tool(
@@ -357,30 +334,15 @@ async def list_tools() -> list[Tool]:
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "artifact_type": {
-                        "type": "string",
-                        "enum": artifact_types_enum,
-                        "description": "Type of artifact to create (dynamically loaded from plugins)",
-                    },
-                    "name": {
-                        "type": "string",
-                        "description": "Artifact name in kebab-case (e.g., 'api-refactor')",
-                    },
-                    "title": {
-                        "type": "string",
-                        "description": "Human-readable title for the artifact",
-                    },
-                    "description": {
-                        "type": "string",
-                        "description": "Optional description of the artifact",
-                    },
-                    "tags": {
-                        "type": "string",
-                        "description": "Comma-separated tags (e.g., 'optimization,performance')",
-                    },
+                    "artifact_type": {"type": "string", "enum": artifact_types, "description": "Type of artifact to create"},
+                    "name": {"type": "string", "description": "Artifact name in kebab-case"},
+                    "title": {"type": "string", "description": "Human-readable title"},
+                    "description": {"type": "string", "description": "Optional description"},
+                    "tags": {"type": "string", "description": "Comma-separated tags"},
+                    "force": {"type": "boolean", "default": False}
                 },
-                "required": ["artifact_type", "name", "title"],
-            },
+                "required": ["artifact_type", "name", "title"]
+            }
         ),
         Tool(
             name="validate_artifact",
@@ -388,32 +350,21 @@ async def list_tools() -> list[Tool]:
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "file_path": {
-                        "type": "string",
-                        "description": "Path to specific artifact to validate (optional)",
-                    },
-                    "validate_all": {
-                        "type": "boolean",
-                        "description": "Validate all artifacts instead of single file",
-                    },
-                },
-            },
+                    "file_path": {"type": "string", "description": "Path to specific artifact to validate (optional)"},
+                    "validate_all": {"type": "boolean", "description": "Validate all artifacts instead of single file"},
+                    "force": {"type": "boolean", "default": False}
+                }
+            }
         ),
         Tool(
             name="list_artifact_templates",
             description="List all available artifact templates with details",
-            inputSchema={
-                "type": "object",
-                "properties": {},
-            },
+            inputSchema={"type": "object", "properties": {"force": {"type": "boolean", "default": False}}}
         ),
         Tool(
             name="check_compliance",
             description="Check overall artifact compliance status and generate report",
-            inputSchema={
-                "type": "object",
-                "properties": {},
-            },
+            inputSchema={"type": "object", "properties": {"force": {"type": "boolean", "default": False}}}
         ),
         Tool(
             name="get_standard",
@@ -421,15 +372,15 @@ async def list_tools() -> list[Tool]:
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "name": {
-                        "type": "string",
-                        "description": "Name of the standard (e.g. 'naming-conventions', 'artifact-types')",
-                    },
+                    "name": {"type": "string", "description": "Name of the standard"},
+                    "force": {"type": "boolean", "default": False}
                 },
-                "required": ["name"],
-            },
-        ),
+                "required": ["name"]
+            }
+        )
     ]
+
+
 
 
 @app.call_tool()
