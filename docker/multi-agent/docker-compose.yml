@@ -1,0 +1,203 @@
+version: '3.8'
+
+services:
+  # RabbitMQ Message Broker
+  rabbitmq:
+    image: rabbitmq:3.12-management
+    container_name: ocr-rabbitmq
+    ports:
+      - "5672:5672"   # AMQP port
+      - "15672:15672" # Management UI
+    environment:
+      RABBITMQ_DEFAULT_USER: admin
+      RABBITMQ_DEFAULT_PASS: admin123
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - ocr-network
+
+  # OCR Preprocessing Agent
+  agent-preprocessor:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-agent-preprocessor
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - AGENT_TYPE=preprocessor
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+      - ocr_data:/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.agents.ocr_preprocessing_agent
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # OCR Inference Agent
+  agent-inference:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-agent-inference
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - AGENT_TYPE=inference
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+      - ocr_data:/data
+      - ocr_models:/models
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.agents.ocr_inference_agent
+    restart: unless-stopped
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - ocr-network
+
+  # OCR Validation Agent (with LLM)
+  agent-validator:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-agent-validator
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - AGENT_TYPE=validator
+      - QWEN_API_ENDPOINT=${QWEN_API_ENDPOINT:-http://qwen-api:8000}
+      - XAI_API_KEY=${XAI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+      - ocr_data:/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.agents.ocr_validation_agent
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # Orchestrator Agent
+  agent-orchestrator:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-agent-orchestrator
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - AGENT_TYPE=orchestrator
+      - XAI_API_KEY=${XAI_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+      - ocr_data:/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.agents.orchestrator_agent
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # Linting Agent (existing)
+  agent-linter:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-agent-linter
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - AGENT_TYPE=linter
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.agents.linting_agent
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # Background Worker 1
+  worker-1:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-worker-1
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - WORKER_ID=worker.ocr.1
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+      - ocr_data:/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.workers.ocr_worker
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # Background Worker 2
+  worker-2:
+    build:
+      context: ../..
+      dockerfile: docker/multi-agent/Dockerfile.agent
+    container_name: ocr-worker-2
+    environment:
+      - RABBITMQ_HOST=rabbitmq
+      - WORKER_ID=worker.ocr.2
+      - PYTHONPATH=/app
+    volumes:
+      - ../../:/app
+      - ocr_data:/data
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+    command: python -m ocr.workers.ocr_worker
+    restart: unless-stopped
+    networks:
+      - ocr-network
+
+  # Optional: Qwen Local LLM API
+  # qwen-api:
+  #   image: qwen/qwen-api:latest
+  #   container_name: ocr-qwen-api
+  #   ports:
+  #     - "8000:8000"
+  #   volumes:
+  #     - ocr_models:/models
+  #   environment:
+  #     - MODEL_PATH=/models/qwen
+  #   networks:
+  #     - ocr-network
+
+volumes:
+  rabbitmq_data:
+  ocr_data:
+  ocr_models:
+
+networks:
+  ocr-network:
+    driver: bridge
