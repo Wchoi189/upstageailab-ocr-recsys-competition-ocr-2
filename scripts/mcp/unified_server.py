@@ -17,6 +17,8 @@ import json
 import sys
 import time
 import argparse
+import hashlib
+from datetime import datetime
 from pathlib import Path
 from typing import Any
 
@@ -56,6 +58,17 @@ TELEMETRY_PIPELINE = TelemetryPipeline([
 
 app = Server("unified_project")
 config_loader = ConfigLoader(cache_size=5)
+
+# --- Telemetry ---
+TELEMETRY_FILE = PROJECT_ROOT / ".mcp-telemetry.jsonl"
+
+def log_telemetry_event(event: dict) -> None:
+    """Append a telemetry event to the JSONL log."""
+    try:
+        with open(TELEMETRY_FILE, "a", encoding="utf-8") as f:
+            f.write(json.dumps(event) + "\n")
+    except Exception:
+        pass  # Don't crash on telemetry failure
 
 # --- Aggregation Variables ---
 TOOLS_DEFINITIONS: list[dict] = []
@@ -111,6 +124,15 @@ async def load_resources_from_servers() -> list[dict]:
         "path": None
     })
 
+    # Telemetry resource
+    resources.append({
+        "uri": "mcp://telemetry/recent",
+        "name": "Recent MCP Calls",
+        "description": "Recent tool call telemetry (last 50 calls)",
+        "mimeType": "application/json",
+        "path": None
+    })
+
     return resources
 
 @app.list_resources()
@@ -122,6 +144,35 @@ async def list_resources() -> list[Resource]:
 
 @app.read_resource()
 async def read_resource(uri: str) -> list[ReadResourceContents]:
+    start_time = time.time()
+    event = {
+        "timestamp": datetime.now().isoformat(),
+        # Use a distinguishable name for the resource read event
+        "tool_name": f"read_resource:{uri}",
+        "args_hash": hashlib.md5(uri.encode()).hexdigest()[:8],
+    }
+
+    try:
+        result = await _read_resource_impl(uri)
+
+        duration_ms = (time.time() - start_time) * 1000
+        event["status"] = "success"
+        event["duration_ms"] = round(duration_ms, 2)
+        log_telemetry_event(event)
+
+        return result
+
+    except Exception as e:
+        duration_ms = (time.time() - start_time) * 1000
+        event["status"] = "error"
+        event["duration_ms"] = round(duration_ms, 2)
+        event["error"] = str(e)[:200]
+        log_telemetry_event(event)
+        # Re-raise or return error content - MCP expects list of contents or error
+        # Re-raising allows the client to see the error properly
+        raise e
+
+async def _read_resource_impl(uri: str) -> list[ReadResourceContents]:
     uri = str(uri).strip()
     import importlib
 
@@ -150,6 +201,34 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
                     return [ReadResourceContents(content=json.dumps({"bundle": bundle_name, "files": files}, indent=2), mime_type="application/json")]
             except Exception as e:
                 return [ReadResourceContents(content=json.dumps({"error": str(e)}), mime_type="application/json")]
+        elif scheme == "mcp":
+            # Handle MCP internal resources
+            if uri == "mcp://telemetry/recent":
+                try:
+                    if TELEMETRY_FILE.exists():
+                        lines = TELEMETRY_FILE.read_text(encoding="utf-8").strip().split("\n")
+                        # Get last 50 entries
+                        recent = [json.loads(line) for line in lines[-50:] if line.strip()]
+                        # Summary stats
+                        success = sum(1 for e in recent if e.get("status") == "success")
+                        errors = sum(1 for e in recent if e.get("status") == "error")
+                        violations = sum(1 for e in recent if e.get("status") == "policy_violation")
+                        avg_duration = sum(e.get("duration_ms", 0) for e in recent) / max(len(recent), 1)
+                        result = {
+                            "summary": {
+                                "total": len(recent),
+                                "success": success,
+                                "errors": errors,
+                                "policy_violations": violations,
+                                "avg_duration_ms": round(avg_duration, 2)
+                            },
+                            "recent_calls": recent
+                        }
+                        return [ReadResourceContents(content=json.dumps(result, indent=2), mime_type="application/json")]
+                    else:
+                        return [ReadResourceContents(content=json.dumps({"summary": {"total": 0}, "recent_calls": []}), mime_type="application/json")]
+                except Exception as e:
+                    return [ReadResourceContents(content=json.dumps({"error": str(e)}), mime_type="application/json")]
 
     # Static resources
     resource = next((r for r in RESOURCES_CONFIG if r["uri"] == uri), None)
@@ -201,6 +280,11 @@ async def list_tools() -> list[Tool]:
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageContent | EmbeddedResource]:
     start_time = time.time()
+    event = {
+        "timestamp": datetime.now().isoformat(),
+        "tool_name": name,
+        "args_hash": hashlib.md5(str(arguments).encode()).hexdigest()[:8],
+    }
     try:
         # 1. Validation Logic
         TELEMETRY_PIPELINE.validate(name, arguments)
@@ -218,6 +302,12 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         # 3. Post-Execution & Proactive Feedback (Fix #3)
         duration_ms = (time.time() - start_time) * 1000
         feedback_msg = feedback_interceptor.after_execution(name, duration_ms)
+
+        # Log success
+        event["status"] = "success"
+        event["duration_ms"] = round(duration_ms, 2)
+        event["module"] = module_name
+        log_telemetry_event(event)
 
         if feedback_msg:
             # Append feedback to result
@@ -246,8 +336,18 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         return result
 
     except PolicyViolation as e:
+        duration_ms = (time.time() - start_time) * 1000
+        event["status"] = "policy_violation"
+        event["duration_ms"] = round(duration_ms, 2)
+        event["policy"] = e.message
+        log_telemetry_event(event)
         return [TextContent(type="text", text=f"⚠️ FEEDBACK TRIGGERED: {e.feedback_to_ai}")]
     except Exception as e:
+        duration_ms = (time.time() - start_time) * 1000
+        event["status"] = "error"
+        event["duration_ms"] = round(duration_ms, 2)
+        event["error"] = str(e)[:200]
+        log_telemetry_event(event)
         return [TextContent(type="text", text=f"Error executing {name}: {str(e)}")]
 
 # --- Server Start Logic ---

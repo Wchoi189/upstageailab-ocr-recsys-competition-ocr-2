@@ -49,6 +49,7 @@ class CompassPaths:
         self.schemas_dir = self.config_dir / "schemas"
         self.environments_dir = self.compass_dir / "environments"
         self.active_context_dir = self.compass_dir / "active_context"
+        self.compass_json = self.compass_dir / "compass.json"
 
     @property
     def uv_lock_state(self) -> Path:

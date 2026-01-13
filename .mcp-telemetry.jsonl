@@ -1,0 +1,9 @@
+{"timestamp": "2026-01-13T20:11:21.468722", "tool_name": "adt_meta_query", "args_hash": "1d836bc1", "status": "success", "duration_ms": 17.66, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:11:24.895711", "tool_name": "adt_meta_query", "args_hash": "d3bfe75f", "status": "success", "duration_ms": 0.16, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:12:07.840918", "tool_name": "adt_meta_query", "args_hash": "0ba0c053", "status": "success", "duration_ms": 0.2, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:12:22.977287", "tool_name": "adt_meta_query", "args_hash": "1d836bc1", "status": "success", "duration_ms": 0.12, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:12:25.417294", "tool_name": "adt_meta_query", "args_hash": "2be9233e", "status": "success", "duration_ms": 0.09, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:12:28.119755", "tool_name": "adt_meta_query", "args_hash": "f8d65c9a", "status": "success", "duration_ms": 7787.39, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:12:39.006681", "tool_name": "adt_meta_query", "args_hash": "abae53d0", "status": "success", "duration_ms": 0.11, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:41:39.967182", "tool_name": "adt_meta_edit", "args_hash": "f4721391", "status": "success", "duration_ms": 16.1, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-13T20:42:00.179208", "tool_name": "adt_meta_edit", "args_hash": "756428b2", "status": "success", "duration_ms": 7.58, "module": "agent_debug_toolkit.mcp_server"}

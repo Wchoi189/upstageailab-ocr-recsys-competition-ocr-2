@@ -1,0 +1,312 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; script-src 'nonce-{{nonce}}';">
+    <title>MCP Visibility Dashboard</title>
+    <style>
+        :root {
+            --bg-primary: var(--vscode-editor-background);
+            --bg-secondary: var(--vscode-sideBar-background);
+            --text-primary: var(--vscode-editor-foreground);
+            --text-muted: var(--vscode-descriptionForeground);
+            --border: var(--vscode-panel-border);
+            --success: #4caf50;
+            --error: #f44336;
+            --warning: #ff9800;
+            --info: #2196f3;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: var(--vscode-font-family);
+            font-size: var(--vscode-font-size);
+            color: var(--text-primary);
+            background: var(--bg-primary);
+            padding: 16px;
+        }
+
+        h1 {
+            font-size: 1.4em;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .refresh-btn {
+            background: var(--vscode-button-background);
+            color: var(--vscode-button-foreground);
+            border: none;
+            padding: 4px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8em;
+        }
+        .refresh-btn:hover {
+            background: var(--vscode-button-hoverBackground);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 1.8em;
+            font-weight: bold;
+        }
+
+        .stat-value.success { color: var(--success); }
+        .stat-value.error { color: var(--error); }
+        .stat-value.warning { color: var(--warning); }
+        .stat-value.info { color: var(--info); }
+
+        .stat-label {
+            color: var(--text-muted);
+            font-size: 0.85em;
+            margin-top: 4px;
+        }
+
+        .section {
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 1.1em;
+            margin-bottom: 10px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .log-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9em;
+        }
+
+        .log-table th,
+        .log-table td {
+            padding: 8px 10px;
+            text-align: left;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .log-table th {
+            background: var(--bg-secondary);
+            font-weight: 600;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            font-weight: 500;
+        }
+
+        .status-success { background: rgba(76, 175, 80, 0.2); color: var(--success); }
+        .status-error { background: rgba(244, 67, 54, 0.2); color: var(--error); }
+        .status-policy_violation { background: rgba(255, 152, 0, 0.2); color: var(--warning); }
+
+        .violations-panel {
+            background: rgba(255, 152, 0, 0.1);
+            border: 1px solid var(--warning);
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .violation-item {
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(255, 152, 0, 0.3);
+        }
+
+        .violation-item:last-child { border-bottom: none; }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-muted);
+        }
+
+        .tool-name { font-family: var(--vscode-editor-font-family); }
+        .time-ago { color: var(--text-muted); font-size: 0.85em; }
+
+        .bundles-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        .bundle-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+        }
+        .bundle-name {
+            font-weight: 600;
+            color: var(--info);
+            margin-bottom: 4px;
+        }
+        .bundle-desc {
+            font-size: 0.85em;
+            color: var(--text-muted);
+            margin-bottom: 6px;
+        }
+        .bundle-files {
+            font-size: 0.8em;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <h1>
+        <span>📊 MCP Visibility Dashboard</span>
+        <button class="refresh-btn" onclick="refresh()">↻ Refresh</button>
+    </h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-value info" id="total">0</div>
+            <div class="stat-label">Total Calls</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value success" id="success">0</div>
+            <div class="stat-label">Successful</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value error" id="errors">0</div>
+            <div class="stat-label">Errors</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value warning" id="violations">0</div>
+            <div class="stat-label">Policy Violations</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="avgDuration">0</div>
+            <div class="stat-label">Avg Duration (ms)</div>
+        </div>
+    </div>
+
+    <div class="section" id="violations-section" style="display: none;">
+        <h2 class="section-title">⚠️ Recent Policy Violations</h2>
+        <div class="violations-panel" id="violations-list"></div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">📋 Recent Tool Calls</h2>
+        <div id="calls-container">
+            <div class="empty-state">No telemetry data yet. Make some MCP tool calls!</div>
+        </div>
+    </div>
+
+    <div class="section">
+        <h2 class="section-title">📦 Context Bundles</h2>
+        <div id="bundles-container">
+            <div class="empty-state">No bundles found.</div>
+        </div>
+    </div>
+
+    <script nonce="{{nonce}}">
+        const vscode = acquireVsCodeApi();
+
+        function refresh() {
+            vscode.postMessage({ command: 'refresh' });
+        }
+
+        function formatTimeAgo(timestamp) {
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffSec = Math.floor(diffMs / 1000);
+
+            if (diffSec < 60) return diffSec + 's ago';
+            if (diffSec < 3600) return Math.floor(diffSec / 60) + 'm ago';
+            if (diffSec < 86400) return Math.floor(diffSec / 3600) + 'h ago';
+            return date.toLocaleDateString();
+        }
+
+        function updateDashboard(data) {
+            document.getElementById('total').textContent = data.total;
+            document.getElementById('success').textContent = data.success;
+            document.getElementById('errors').textContent = data.errors;
+            document.getElementById('violations').textContent = data.policyViolations;
+            document.getElementById('avgDuration').textContent = data.avgDurationMs;
+
+            // Violations panel
+            const violationsSection = document.getElementById('violations-section');
+            const violationsList = document.getElementById('violations-list');
+            const violations = data.recentCalls.filter(c => c.status === 'policy_violation');
+
+            if (violations.length > 0) {
+                violationsSection.style.display = 'block';
+                violationsList.innerHTML = violations.slice(0, 5).map(v =>
+                    '<div class="violation-item"><strong class="tool-name">' + v.tool_name + '</strong>: ' +
+                    (v.policy || 'Unknown policy') +
+                    ' <span class="time-ago">' + formatTimeAgo(v.timestamp) + '</span></div>'
+                ).join('');
+            } else {
+                violationsSection.style.display = 'none';
+            }
+
+            // Recent calls table
+            const container = document.getElementById('calls-container');
+            if (data.recentCalls.length === 0) {
+                container.innerHTML = '<div class="empty-state">No telemetry data yet. Make some MCP tool calls!</div>';
+                return;
+            }
+
+            container.innerHTML = '<table class="log-table">' +
+                '<thead><tr><th>Tool</th><th>Status</th><th>Duration</th><th>Time</th></tr></thead>' +
+                '<tbody>' +
+                data.recentCalls.map(call =>
+                    '<tr>' +
+                    '<td class="tool-name">' + call.tool_name + '</td>' +
+                    '<td><span class="status-badge status-' + call.status + '">' + call.status + '</span></td>' +
+                    '<td>' + (call.duration_ms ? call.duration_ms + 'ms' : '-') + '</td>' +
+                    '<td class="time-ago">' + formatTimeAgo(call.timestamp) + '</td>' +
+                    '</tr>'
+                ).join('') +
+                '</tbody></table>';
+        }
+
+        function updateBundles(bundles) {
+            const container = document.getElementById('bundles-container');
+            if (!bundles || bundles.length === 0) {
+                container.innerHTML = '<div class="empty-state">No bundles found.</div>';
+                return;
+            }
+            container.innerHTML = '<div class="bundles-grid">' +
+                bundles.map(b =>
+                    '<div class="bundle-card">' +
+                    '<div class="bundle-name">📦 ' + b.name + '</div>' +
+                    '<div class="bundle-desc">' + b.description + '</div>' +
+                    '<div class="bundle-files">' + b.fileCount + ' files</div>' +
+                    '</div>'
+                ).join('') +
+                '</div>';
+        }
+
+        window.addEventListener('message', event => {
+            const message = event.data;
+            if (message.command === 'update') {
+                updateDashboard(message.data);
+            } else if (message.command === 'updateBundles') {
+                updateBundles(message.bundles);
+            }
+        });
+    </script>
+</body>
+</html>

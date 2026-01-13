@@ -277,7 +277,7 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 **Verification:** AST Debug Toolkit confirmed correct precedence order after fix.
 
-**Reference:** [BUG_003: Config Precedence Leak](docs/artifacts/bug_reports/2026-01-04_1730_BUG_003_config-precedence-leak.md)
+**Reference:** [BUG_003: Config Precedence Leak](docs/artifacts/bug_reports/2026-01-04_1730_bug_003_config-precedence-leak.md)
 
 ---
 
