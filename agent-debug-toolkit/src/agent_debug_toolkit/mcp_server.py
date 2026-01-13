@@ -5,21 +5,9 @@ Agent Debug Toolkit MCP Server
 Provides AST-based analysis tools for AI agents to debug complex
 Hydra/OmegaConf configuration issues.
 
-Tools exposed:
-- analyze_config_access: Find cfg.X, config.X patterns in Python code
-- trace_merge_order: Trace OmegaConf.merge() call precedence
-- find_hydra_usage: Find Hydra framework patterns (@hydra.main, instantiate)
-- find_component_instantiations: Track component factory patterns
-- explain_config_flow: Generate high-level config flow summary
-- analyze_dependency_graph: Build module dependency graphs (Phase 1)
-- analyze_imports: Categorize and track imports (Phase 1)
-- analyze_complexity: Calculate code complexity metrics (Phase 1)
-- context_tree: Generate annotated directory tree with semantic context (Phase 3.2)
-- intelligent_search: Search symbols by name or qualified path with fuzzy matching (Phase 3.2)
 """
-
-import asyncio
 import sys
+import asyncio
 from pathlib import Path
 from typing import Any
 
@@ -27,13 +15,7 @@ from mcp.server import Server
 from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
-# Add AgentQMS to path before importing from it
-_mcp_server_dir = Path(__file__).resolve().parent
-_project_root_candidate = _mcp_server_dir.parent.parent.parent / "AgentQMS"
-if str(_project_root_candidate.parent) not in sys.path:
-    sys.path.insert(0, str(_project_root_candidate.parent))
-
-# Import from AgentQMS (now that path is set up)
+# Import from AgentQMS (installed as package in pyproject.toml)
 from AgentQMS.tools.utils.paths import get_project_root as _get_project_root
 
 try:
@@ -45,7 +27,7 @@ except ImportError:
 # Create MCP server
 app = Server("agent_debug_toolkit")
 
-# Get project root
+# Get project root using the path utility (this is the canonical project root)
 PROJECT_ROOT = _get_project_root()
 
 def load_tools_config() -> list[dict]:
