@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-12T17:43:50.519714+00:00'
+  generated_at: '2026-01-13T07:38:59.680271+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -28,6 +28,7 @@ plugins_loaded:
   - ocr-text-recognition
   - pipeline-development
   - security-review
+  - multi-agent-system
   - utility-scripts
 plugin_metadata:
 - name: assessment
@@ -140,6 +141,11 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
+- name: multi-agent-system
+  type: context_bundle
+  version: '1.0'
+  source: project
+  path: .agentqms/plugins/context_bundles/multi-agent-system.yaml
 - name: utility-scripts
   type: context_bundle
   version: '1.0'
@@ -1866,6 +1872,53 @@ resolved:
           - path: AgentQMS/standards/INDEX.yaml
             priority: low
             description: Standards index for comprehensive context
+    multi-agent-system:
+      name: multi-agent-system
+      title: Multi-Agent System Architecture
+      description: 'Documentation for the multi-agent system including Coordinator,
+        Validation, and Base agents.
+
+        Covering RabbitMQ architecture, IACP protocol, and usage patterns.
+
+        '
+      ads_version: '1.0'
+      scope: project
+      tags:
+      - agents
+      - coordinator
+      - validation
+      - rabbitmq
+      - iacp
+      - architecture
+      triggers:
+        keywords:
+        - coordinator agent
+        - validation agent
+        - multi-agent
+        - rabbitmq
+        - iacp
+        - agent workflow
+        - ocr pipeline
+        - distributed agents
+        - base agent
+        - orchestrator
+        patterns:
+        - \b(coordinator|validation)\b.*\b(agent)\b
+        - \b(multi|distributed)\b.*\b(agent|system)\b
+        - \b(rabbitmq|iacp)\b
+      tiers:
+        tier1:
+          name: Core Architecture
+          description: Main documentation for the multi-agent system
+          files:
+          - AgentQMS/standards/tier3-agents/multi-agent-system.yaml
+        tier2:
+          name: Agent Implementations
+          description: Source code references
+          files:
+          - ocr/agents/coordinator_agent.py
+          - ocr/agents/validation_agent.py
+          - ocr/agents/base_agent.py
     utility-scripts:
       name: utility-scripts
       title: Reusable Utility Scripts Discovery
@@ -1954,19 +2007,19 @@ resolved:
           description: Critical discovery resources - always include when bundle is
             suggested
           files:
-          - context/utility-scripts/quick-reference.md
-          - context/utility-scripts/utility-scripts-index.yaml
+          - AgentQMS/standards/utility-scripts/quick-reference.md
+          - AgentQMS/standards/utility-scripts/utility-scripts-index.yaml
         tier2:
           name: Detailed Utility Documentation
           description: Comprehensive API reference for the 4 Tier-1 utilities
           files:
-          - context/utility-scripts/by-category/config-loading/config_loader.md
-          - context/utility-scripts/by-category/path-resolution/paths.md
-          - context/utility-scripts/by-category/timestamps/timestamps.md
-          - context/utility-scripts/by-category/git/git.md
+          - AgentQMS/standards/utility-scripts/by-category/config-loading/config_loader.md
+          - AgentQMS/standards/utility-scripts/by-category/path-resolution/paths.md
+          - AgentQMS/standards/utility-scripts/by-category/timestamps/timestamps.md
+          - AgentQMS/standards/utility-scripts/by-category/git/git.md
         tier3:
           name: Integration & Discovery Guide
           description: Discovery manifest and integration guide for AI agents
           files:
-          - context/utility-scripts/manifest.yaml
-          - context/utility-scripts/ai-integration-guide.md
+          - AgentQMS/standards/utility-scripts/manifest.yaml
+          - AgentQMS/standards/utility-scripts/ai-integration-guide.md

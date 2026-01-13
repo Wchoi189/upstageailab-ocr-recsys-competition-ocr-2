@@ -1,0 +1,65 @@
+ads_version: '1.0'
+type: quick_reference
+agent: all
+tier: 3
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: compliant
+memory_footprint: 500
+
+discovery_trigger:
+  keywords:
+    - coordinator agent
+    - validation agent
+    - multi-agent
+    - rabbitmq
+    - iacp
+    - agent workflow
+    - ocr pipeline
+    - distributed agents
+
+core_components:
+  infrastructure:
+    transport: RabbitMQ (producer/consumer)
+    protocol: IACP (Inter-Agent Communication Protocol)
+    base_class: BaseAgent (ocr/agents/base_agent.py)
+
+  agents:
+    coordinator:
+      name: CoordinatorAgent
+      module: ocr.agents.coordinator_agent
+      role: Orchestrates workflows, plans tasks, manages state.
+      capabilities:
+        - plan_workflow
+        - execute_ocr_workflow
+        - monitor_workflow
+
+    validation:
+      name: ValidationAgent
+      module: ocr.agents.validation_agent
+      role: Validates results, detects errors, scores quality.
+      capabilities:
+        - validate_ocr_result
+        - score_quality
+        - detect_errors
+
+architecture:
+  pattern: Message-based microservices
+  communication: Asynchronous events via RabbitMQ
+  serialization: JSON envelopes
+
+usage_pattern:
+  start_coordinator: "python -m ocr.agents.coordinator_agent"
+  start_validation: "python -m ocr.agents.validation_agent"
+  dispatch_task: "python -m ocr.tools.dispatch_task --target agent.coordinator --cmd execute_ocr_workflow ..."
+  monitoring: "RabbitMQ Management UI or log analysis"
+
+key_principles:
+  - Decentralized execution
+  - Centralized coordination via Coordinator
+  - Independent validation step
+  - Standardized message envelopes for all inter-agent communication
+
+documentation:
+  implementation: ocr/agents/
+  standards: AgentQMS/standards/tier3-agents/multi-agent-system.yaml

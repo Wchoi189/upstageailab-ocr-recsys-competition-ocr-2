@@ -12,12 +12,6 @@ root_map:
   framework: AgentQMS/standards/tier2-framework/
   agents: AgentQMS/standards/tier3-agents/
   workflows: AgentQMS/standards/tier4-workflows/
-context_system:
-  context_map: AgentQMS/standards/context_map.yaml
-  context_priority: AgentQMS/standards/context_priority.yaml
-  context_classification: AgentQMS/standards/context_classification.yaml
-  task_classification: AgentQMS/standards/context_classification.yaml
-  priority_system: AgentQMS/standards/context_priority.yaml
 glob_patterns:
 - pattern: ocr/inference/**/*.py
   instructions:
@@ -73,6 +67,7 @@ tier3_agents:
   cursor: AgentQMS/standards/tier3-agents/cursor/config.yaml
   gemini: AgentQMS/standards/tier3-agents/gemini/config.yaml
   vlm: AgentQMS/standards/tier3-agents/vlm-tools.yaml
+  multi_agent_system: AgentQMS/standards/tier3-agents/multi-agent-system.yaml
 tier4_workflows:
   gap_analysis: AgentQMS/standards/tier4-workflows/compliance-reporting/gap-analysis.yaml
   compliance: AgentQMS/standards/tier4-workflows/compliance-reporting/generate-compliance-report.py

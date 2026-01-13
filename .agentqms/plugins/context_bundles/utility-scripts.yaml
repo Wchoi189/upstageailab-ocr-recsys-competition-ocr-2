@@ -112,23 +112,23 @@ tiers:
     name: "Essential Discovery Resources"
     description: "Critical discovery resources - always include when bundle is suggested"
     files:
-      - "context/utility-scripts/quick-reference.md"
-      - "context/utility-scripts/utility-scripts-index.yaml"
+      - "AgentQMS/standards/utility-scripts/quick-reference.md"
+      - "AgentQMS/standards/utility-scripts/utility-scripts-index.yaml"
 
   tier2:
     name: "Detailed Utility Documentation"
     description: "Comprehensive API reference for the 4 Tier-1 utilities"
     files:
-      - "context/utility-scripts/by-category/config-loading/config_loader.md"
-      - "context/utility-scripts/by-category/path-resolution/paths.md"
-      - "context/utility-scripts/by-category/timestamps/timestamps.md"
-      - "context/utility-scripts/by-category/git/git.md"
+      - "AgentQMS/standards/utility-scripts/by-category/config-loading/config_loader.md"
+      - "AgentQMS/standards/utility-scripts/by-category/path-resolution/paths.md"
+      - "AgentQMS/standards/utility-scripts/by-category/timestamps/timestamps.md"
+      - "AgentQMS/standards/utility-scripts/by-category/git/git.md"
 
   tier3:
     name: "Integration & Discovery Guide"
     description: "Discovery manifest and integration guide for AI agents"
     files:
-      - "context/utility-scripts/manifest.yaml"
-      - "context/utility-scripts/ai-integration-guide.md"
+      - "AgentQMS/standards/utility-scripts/manifest.yaml"
+      - "AgentQMS/standards/utility-scripts/ai-integration-guide.md"
 
 

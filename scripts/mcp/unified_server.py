@@ -1,133 +1,117 @@
 #!/usr/bin/env python3
 """
-Unified Project MCP Server
+Unified Project MCP Server (SSE + Stdio)
 
 A single server that combines all project MCP functionality:
 - Project Compass resources and tools
 - AgentQMS artifact workflows and standards
 - Experiment Manager lifecycle tools
+- Middleware enforcement (Telemetry, Compliance, Proactive Feedback)
+- Context Auto-Loading
+
+Supports both Stdio (for local desktop) and SSE (for cloud/remote).
 """
 
 import asyncio
 import json
 import sys
+import time
+import argparse
 from pathlib import Path
 from typing import Any
 
 from mcp.server import Server
 from mcp.server.stdio import stdio_server
-from mcp.types import Resource, Tool, TextContent
+from mcp.types import Resource, Tool, TextContent, ImageContent, EmbeddedResource
 from mcp.server.lowlevel.helper_types import ReadResourceContents
 
-# Add AgentQMS to path before importing from it
-from pathlib import Path as PathlibPath
-_scripts_mcp_dir = PathlibPath(__file__).resolve().parent
-_project_root_candidate = _scripts_mcp_dir.parent.parent
-if str(_project_root_candidate) not in sys.path:
-    sys.path.insert(0, str(_project_root_candidate))
+# Add project root to path
+# NOTE: We assume the environment is set up correctly (uv pip install -e .).
+# If AgentQMS is not found, it means the environment is invalid.
 
+# --- Imports ---
 from AgentQMS.tools.utils.config_loader import ConfigLoader
-
-# --- Middleware Imports ---
+from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.middleware.telemetry import TelemetryPipeline, PolicyViolation
-from AgentQMS.middleware.policies import RedundancyInterceptor, ComplianceInterceptor, FileOperationInterceptor, StandardsInterceptor
+from AgentQMS.middleware.policies import (
+    RedundancyInterceptor,
+    ComplianceInterceptor,
+    FileOperationInterceptor,
+    StandardsInterceptor,
+    ProactiveFeedbackInterceptor
+)
+
+PROJECT_ROOT = get_project_root()
+EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
 
 # Initialize Middleware
+feedback_interceptor = ProactiveFeedbackInterceptor()
 TELEMETRY_PIPELINE = TelemetryPipeline([
     RedundancyInterceptor(),
     ComplianceInterceptor(),
     FileOperationInterceptor(),
-    StandardsInterceptor()
+    StandardsInterceptor(),
+    feedback_interceptor
 ])
 
-
-# Import path utility
-from AgentQMS.tools.utils.paths import get_project_root
-
-PROJECT_ROOT = get_project_root()
-COMPASS_DIR = PROJECT_ROOT / "project_compass"
-AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
-EXPERIMENT_MANAGER_DIR = PROJECT_ROOT / "experiment_manager"
-EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
-
-# Add AgentQMS and Agent Debug Toolkit to path
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.insert(0, str(PROJECT_ROOT))
-
-DEBUG_TOOLKIT_SRC = PROJECT_ROOT / "agent-debug-toolkit/src"
-if DEBUG_TOOLKIT_SRC.exists() and str(DEBUG_TOOLKIT_SRC) not in sys.path:
-    sys.path.insert(0, str(DEBUG_TOOLKIT_SRC))
-
 app = Server("unified_project")
-
-# --- Configuration Loader Setup ---
 config_loader = ConfigLoader(cache_size=5)
 
+# --- Aggregation Variables ---
+TOOLS_DEFINITIONS: list[dict] = []
+RESOURCES_CONFIG: list[dict] = []
 
-# --- Resources Aggregation from Server Modules ---
+
+# --- Resource Handling ---
 
 async def load_resources_from_servers() -> list[dict]:
     """Aggregate resources from all MCP servers + unified config."""
     import importlib
-
     resources = []
 
-    # 1. Load from AgentQMS server (agentqms:// URIs)
-    mod = importlib.import_module("AgentQMS.mcp_server")
-    agentqms_resources = await mod.list_resources()
-    for res in agentqms_resources:
-        resources.append({
-            "uri": res.uri,
-            "name": res.name,
-            "description": res.description,
-            "mimeType": res.mimeType,
-            "path": None  # Handled by AgentQMS server's read_resource
-        })
+    # Servers to aggregate
+    server_modules = [
+        ("AgentQMS.mcp_server", "agentqms"),
+        ("project_compass.mcp_server", "compass"),
+        ("experiment_manager.mcp_server", "experiments"),
+    ]
 
-    # 2. Load from project_compass server (compass:// URIs)
-    mod = importlib.import_module("project_compass.mcp_server")
-    compass_resources = await mod.list_resources()
-    for res in compass_resources:
-        resources.append({
-            "uri": res.uri,
-            "name": res.name,
-            "description": res.description,
-            "mimeType": res.mimeType,
-            "path": None  # Handled by compass server's read_resource
-        })
+    for mod_name, scheme in server_modules:
+        try:
+            mod = importlib.import_module(mod_name)
+            if hasattr(mod, "list_resources"):
+                server_res = await mod.list_resources()
+                for res in server_res:
+                    resources.append({
+                        "uri": res.uri,
+                        "name": res.name,
+                        "description": res.description,
+                        "mimeType": res.mimeType,
+                        "path": None # Delegated
+                    })
+        except ImportError:
+            pass # Skip missing modules
 
-    # 3. Load from experiment_manager server (experiments:// URIs)
-    mod = importlib.import_module("experiment_manager.mcp_server")
-    exp_resources = await mod.list_resources()
-    for res in exp_resources:
-        resources.append({
-            "uri": res.uri,
-            "name": res.name,
-            "description": res.description,
-            "mimeType": res.mimeType,
-            "path": None  # Handled by experiments server's read_resource
-        })
+    # Unified config resources
+    # Use PROJECT_ROOT based path for robustness
+    config_path = PROJECT_ROOT / "scripts/mcp/config/resources.yaml"
+    if config_path.exists():
+        config_resources = config_loader.get_config(config_path, defaults=[])
+        for res in config_resources:
+            if res.get("path"):
+                res["path"] = PROJECT_ROOT / res["path"]
+            resources.append(res)
 
-    # 4. Load remaining resources from unified config (utilities://, standards://)
-    config_path = Path(__file__).parent / "config/resources.yaml"
-    config_resources = config_loader.get_config(config_path, defaults=[])
-    for res in config_resources:
-        if res.get("path"):
-            res["path"] = PROJECT_ROOT / res["path"]
-        resources.append(res)
-
-    # 5. Add bundle:// resources (context bundles)
+    # Dynamic bundles
     resources.append({
         "uri": "bundle://list",
         "name": "Context Bundles",
         "description": "List available context bundles for AI agents",
         "mimeType": "application/json",
-        "path": None  # Dynamic handler
+        "path": None
     })
 
     return resources
-
-RESOURCES_CONFIG = []
 
 @app.list_resources()
 async def list_resources() -> list[Resource]:
@@ -136,94 +120,54 @@ async def list_resources() -> list[Resource]:
         for res in RESOURCES_CONFIG
     ]
 
-
-# --- Helper Functions for Dynamic Resources ---
-
-async def _handle_experiments_list() -> list[ReadResourceContents]:
-    try:
-        exps = []
-        if EXPERIMENTS_DIR.exists():
-            for d in EXPERIMENTS_DIR.iterdir():
-                if d.is_dir() and (d / "manifest.json").exists():
-                    m = json.loads((d / "manifest.json").read_text())
-                    exps.append({"id": d.name, "name": m.get("name", d.name), "status": m.get("status")})
-        return [ReadResourceContents(content=json.dumps({"experiments": exps}, indent=2), mime_type="application/json")]
-    except:
-        return [ReadResourceContents(content=json.dumps({"error": "Failed to load experiments"}), mime_type="application/json")]
-
-async def _handle_plugin_artifacts() -> list[ReadResourceContents]:
-    try:
-        from AgentQMS.mcp_server import _get_plugin_artifact_types
-        content = await _get_plugin_artifact_types()
-        return [ReadResourceContents(content=content, mime_type="application/json")]
-    except Exception as e:
-        return [ReadResourceContents(content=json.dumps({"error": f"Failed to load plugin artifact types: {e}"}), mime_type="application/json")]
-
-def _handle_templates_list() -> list[ReadResourceContents]:
-    try:
-        from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
-        workflow = ArtifactWorkflow(quiet=True)
-        return [ReadResourceContents(content=json.dumps({"templates": workflow.get_available_templates()}, indent=2), mime_type="application/json")]
-    except:
-        return [ReadResourceContents(content=json.dumps({"error": "Failed to load templates"}), mime_type="application/json")]
-
 @app.read_resource()
 async def read_resource(uri: str) -> list[ReadResourceContents]:
     uri = str(uri).strip()
-
-    # Route to individual servers based on URI scheme
     import importlib
 
-    if uri.startswith("agentqms://"):
-        mod = importlib.import_module("AgentQMS.mcp_server")
-        return await mod.read_resource(uri)
-
-    elif uri.startswith("compass://"):
-        mod = importlib.import_module("project_compass.mcp_server")
-        return await mod.read_resource(uri)
-
-    elif uri.startswith("experiments://"):
-        mod = importlib.import_module("experiment_manager.mcp_server")
-        return await mod.read_resource(uri)
-
-    elif uri.startswith("bundle://"):
-        try:
+    # Route by scheme
+    if "://" in uri:
+        scheme = uri.split("://")[0]
+        if scheme == "agentqms":
+            mod = importlib.import_module("AgentQMS.mcp_server")
+            return await mod.read_resource(uri)
+        elif scheme == "compass":
+            mod = importlib.import_module("project_compass.mcp_server")
+            return await mod.read_resource(uri)
+        elif scheme == "experiments":
+            mod = importlib.import_module("experiment_manager.mcp_server")
+            return await mod.read_resource(uri)
+        elif scheme == "bundle":
+             # Handle context bundles
             from AgentQMS.tools.core.context_bundle import list_available_bundles, get_context_bundle
+            try:
+                if uri == "bundle://list":
+                    bundles = list_available_bundles()
+                    return [ReadResourceContents(content=json.dumps(bundles, indent=2), mime_type="application/json")]
+                else:
+                    bundle_name = uri.replace("bundle://", "")
+                    files = get_context_bundle(task_description=bundle_name, task_type=bundle_name)
+                    return [ReadResourceContents(content=json.dumps({"bundle": bundle_name, "files": files}, indent=2), mime_type="application/json")]
+            except Exception as e:
+                return [ReadResourceContents(content=json.dumps({"error": str(e)}), mime_type="application/json")]
 
-            if uri == "bundle://list":
-                bundles = list_available_bundles()
-                return [ReadResourceContents(content=json.dumps(bundles, indent=2), mime_type="application/json")]
-            else:
-                bundle_name = uri.replace("bundle://", "")
-                # Get bundle files by passing bundle name as task description
-                files = get_context_bundle(task_description=bundle_name, task_type=bundle_name)
-                return [ReadResourceContents(content=json.dumps({"bundle": bundle_name, "files": files}, indent=2), mime_type="application/json")]
-        except Exception as e:
-            return [ReadResourceContents(content=json.dumps({"error": str(e)}), mime_type="application/json")]
-
-    # Handle file-based resources (utilities://, standards://)
+    # Static resources
     resource = next((r for r in RESOURCES_CONFIG if r["uri"] == uri), None)
-
     if not resource:
         raise ValueError(f"Unknown resource URI: {uri}")
 
     file_path: Path = resource.get("path")
-    if not file_path or not file_path.exists():
-        raise FileNotFoundError(f"Resource file not found: {file_path}")
+    if file_path and file_path.exists():
+         return [ReadResourceContents(content=file_path.read_text(encoding="utf-8"), mime_type=resource["mimeType"])]
 
-    return [ReadResourceContents(content=file_path.read_text(encoding="utf-8"), mime_type=resource["mimeType"])]
+    raise ValueError("Resource content not found")
 
-
-
-
-
-# --- Tools Aggregation from Server Modules ---
+# --- Tool Handling ---
 
 async def load_tools_from_servers() -> list[dict]:
-    """Runtime aggregation: import list_tools() from each MCP server."""
     import importlib
-
     tools = []
+    # Order matters for overriding
     servers = [
         ("AgentQMS.mcp_server", "agentqms"),
         ("project_compass.mcp_server", "compass"),
@@ -232,105 +176,131 @@ async def load_tools_from_servers() -> list[dict]:
     ]
 
     for module_name, _prefix in servers:
-        mod = importlib.import_module(module_name)
-        server_tools = await mod.list_tools()
-
-        for tool in server_tools:
-            tools.append({
-                "name": tool.name,
-                "description": tool.description,
-                "inputSchema": tool.inputSchema,
-                "implementation": {
-                    "module": module_name,
-                    "function": "call_tool"
-                }
-            })
-
+        try:
+            mod = importlib.import_module(module_name)
+            if hasattr(mod, "list_tools"):
+                server_tools = await mod.list_tools()
+                for tool in server_tools:
+                    tools.append({
+                        "name": tool.name,
+                        "description": tool.description,
+                        "inputSchema": tool.inputSchema,
+                        "implementation": {"module": module_name}
+                    })
+        except ImportError:
+            pass
     return tools
-
-TOOLS_DEFINITIONS = []
 
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List all available tools aggregated from individual MCP servers."""
     return [
-        Tool(
-            name=tool_def["name"],
-            description=tool_def["description"],
-            inputSchema=tool_def["inputSchema"]
-        )
-        for tool_def in TOOLS_DEFINITIONS
+        Tool(name=t["name"], description=t["description"], inputSchema=t["inputSchema"])
+        for t in TOOLS_DEFINITIONS
     ]
 
-
-
 @app.call_tool()
-async def call_tool(name: str, arguments: Any) -> list[TextContent]:
+async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageContent | EmbeddedResource]:
+    start_time = time.time()
     try:
-        # --- Middleware Validation ---
+        # 1. Validation Logic
         TELEMETRY_PIPELINE.validate(name, arguments)
 
-        # --- Find tool implementation ---
+        # 2. Execution Logic
         tool_def = next((t for t in TOOLS_DEFINITIONS if t["name"] == name), None)
-
-        if not tool_def or "implementation" not in tool_def:
+        if not tool_def:
             raise ValueError(f"Unknown tool: {name}")
 
-        # --- Route to appropriate server module ---
-        impl = tool_def["implementation"]
-        module_name = impl.get("module")
-
-        if not module_name:
-            raise ValueError(f"No module specified for tool: {name}")
-
+        module_name = tool_def["implementation"]["module"]
         import importlib
         module = importlib.import_module(module_name)
+        result = await module.call_tool(name, arguments)
 
-        if not hasattr(module, "call_tool"):
-            raise ValueError(f"Module {module_name} does not have a 'call_tool' function")
+        # 3. Post-Execution & Proactive Feedback (Fix #3)
+        duration_ms = (time.time() - start_time) * 1000
+        feedback_msg = feedback_interceptor.after_execution(name, duration_ms)
 
-        result_content = await module.call_tool(name, arguments)
+        if feedback_msg:
+            # Append feedback to result
+            result.append(TextContent(type="text", text=f"\n\n{feedback_msg}"))
 
-        # --- Context Suggestion Injection ---
-        try:
-            # Suggest relevant context bundles for non-context tools
-            if "context" not in name and "bundle" not in name:
+        # 4. Context Auto-Suggestion (Fix #5)
+        if "context" not in name and "bundle" not in name:
+            try:
                 from AgentQMS.tools.core.context_bundle import auto_suggest_context
-                task_desc = f"{name}: {str(arguments)}"
+                # Use tool name + args as task desc
+                task_desc = f"{name}: {str(arguments)[:200]}"
                 suggestions = auto_suggest_context(task_desc)
 
-                # Only suggest if we have a specific bundle
-                if suggestions.get("bundle_files"):
-                    bundle_name = suggestions.get("context_bundle")
-                    if bundle_name and bundle_name not in ("general", "development", "documentation"):
-                        suggestion_text = (
-                            f"\n💡 **Context Suggestion**: The '{bundle_name}' bundle seems relevant.\n"
-                            f"   Access it: read_resource('bundle://{bundle_name}')"
-                        )
-                        result_content.append(TextContent(type="text", text=suggestion_text))
-        except Exception:
-            # Suppress suggestion errors to not break main tool execution
-            pass
+                # If a specific, non-generic bundle is suggested
+                bundle_name = suggestions.get("context_bundle")
+                if bundle_name and bundle_name not in ("general", "development"):
+                    sug_text = (
+                        f"\n💡 **Context Suggestion**: The '{bundle_name}' bundle may be relevant.\n"
+                        f"   Files: {len(suggestions.get('bundle_files', []))}\n"
+                        f"   Access: read_resource('bundle://{bundle_name}')"
+                    )
+                    result.append(TextContent(type="text", text=sug_text))
+            except Exception:
+                pass
 
-        return result_content
+        return result
 
     except PolicyViolation as e:
         return [TextContent(type="text", text=f"⚠️ FEEDBACK TRIGGERED: {e.feedback_to_ai}")]
     except Exception as e:
-        import traceback
-        return [TextContent(type="text", text=f"Error executing {name}: {str(e)}\n{traceback.format_exc()}")]
+        return [TextContent(type="text", text=f"Error executing {name}: {str(e)}")]
 
-
-
+# --- Server Start Logic ---
 
 async def main():
     global TOOLS_DEFINITIONS, RESOURCES_CONFIG
+
+    parser = argparse.ArgumentParser(description="Unified MCP Server")
+    parser.add_argument("--transport", default="stdio", choices=["stdio", "sse"], help="Transport mode")
+    parser.add_argument("--port", type=int, default=8000, help="Port for SSE")
+    parser.add_argument("--host", default="0.0.0.0", help="Host for SSE")
+    args = parser.parse_args()
+
+    print(f"Loading resources/tools... (Transport: {args.transport})", file=sys.stderr)
     TOOLS_DEFINITIONS = await load_tools_from_servers()
     RESOURCES_CONFIG = await load_resources_from_servers()
 
-    async with stdio_server() as (read_stream, write_stream):
-        await app.run(read_stream, write_stream, app.create_initialization_options())
+    if args.transport == "sse":
+        from mcp.server.sse import SseServerTransport
+        from starlette.applications import Starlette
+        from starlette.routing import Route
+        from starlette.middleware import Middleware
+        from starlette.middleware.cors import CORSMiddleware
+        import uvicorn
 
+        sse = SseServerTransport("/messages")
+
+        async def handle_sse(request):
+            async with sse.connect_sse(request.scope, request.receive, request._send) as streams:
+                await app.run(streams[0], streams[1], app.create_initialization_options())
+
+        async def handle_messages(request):
+            await sse.handle_post_message(request.scope, request.receive, request._send)
+
+        starlette_app = Starlette(
+            routes=[
+                Route("/sse", endpoint=handle_sse),
+                Route("/messages", endpoint=handle_messages, methods=["POST"])
+            ],
+            middleware=[
+                Middleware(CORSMiddleware, allow_origins=["*"], allow_methods=["*"])
+            ]
+        )
+
+        # Disable uvicorn logs to clear stdio if needed, but for background it's fine
+        config = uvicorn.Config(starlette_app, host=args.host, port=args.port, log_level="info")
+        server = uvicorn.Server(config)
+        await server.serve()
+
+    else:
+        # Standard Stdio
+        async with stdio_server() as (read_stream, write_stream):
+            await app.run(read_stream, write_stream, app.create_initialization_options())
 
 if __name__ == "__main__":
     asyncio.run(main())

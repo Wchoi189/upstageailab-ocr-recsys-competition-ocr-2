@@ -1,6 +1,5 @@
 {
     "name": "OCR RecSys Development (Cloud-Optimized)",
-    "image": "ghcr.io/wchoi189/upstageailab-ocr-recsys-competition-ocr-2:latest",
     "build": {
         "dockerfile": "../docker/Dockerfile",
         "context": "..",
@@ -47,7 +46,7 @@
     "onCreateCommand": "echo '✅ Container created (cloud-optimized)'",
     "updateContentCommand": "uv sync --no-install || uv sync",
     "postCreateCommand": "uv sync && uv pip install -e . --no-deps",
-    "postStartCommand": "bash .devcontainer/scripts/start-mcp-servers.sh && python scripts/validate_environment.py || echo '⚠️ Validation incomplete'",
+    "postStartCommand": "bash .devcontainer/scripts/start-mcp-servers.sh && python scripts/validate_environment.py && nohup uv run python scripts/mcp/unified_server.py --transport sse --port 8000 > /tmp/mcp.log 2>&1 & || echo '⚠️ Validation incomplete'",
     "forwardPorts": [
         8000,
         8501,

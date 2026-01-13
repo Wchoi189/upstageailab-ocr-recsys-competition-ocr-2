@@ -226,3 +226,53 @@ class FileOperationInterceptor:
 
     def _is_override(self, arguments: dict[str, Any]) -> bool:
         return arguments.get("force") is True or str(arguments.get("force")).lower() == "true"
+
+
+class ProactiveFeedbackInterceptor:
+    """
+    Trigger proactive feedback based on tool execution metrics and state.
+    Addresses Fix #3: Proactive Feedback Triggers.
+    """
+
+    def validate(self, tool_name: str, arguments: dict[str, Any]) -> None:
+        # Pre-execution checks can be done here.
+        # Check for bloat in docs/artifacts/
+        if "artifact" in tool_name or tool_name == "write_to_file":
+            self._check_artifact_bloat()
+
+    def after_execution(self, tool_name: str, duration_ms: float) -> str | None:
+        """
+        Called by the server AFTER tool execution.
+        Returns a feedback string if a trigger fires, else None.
+        """
+        triggers = []
+
+        # Trigger 1: Slow Operation Warning
+        if duration_ms > 10000:  # 10s threshold
+            triggers.append(f"⚠️ Performance Warning: '{tool_name}' took {duration_ms/1000:.1f}s (Threshold: 10s). Consider optimization.")
+
+        # Trigger 2: Directory Bloat (re-check after write)
+        if "artifact" in tool_name or tool_name == "write_to_file":
+             bloat_warning = self._check_artifact_bloat()
+             if bloat_warning:
+                 triggers.append(bloat_warning)
+
+        if triggers:
+            return "\n".join(triggers)
+        return None
+
+    def _check_artifact_bloat(self) -> str | None:
+        try:
+            artifact_dir = get_project_root() / "docs/artifacts"
+            if not artifact_dir.exists():
+                return None
+
+            # Simple file count
+            count = sum(1 for _ in artifact_dir.rglob("*.md"))
+
+            if count > 200:
+                # Check if archive script has run recently (optional)
+                return f"⚠️ Bloat Alert: {count} artifacts detected in docs/artifacts/. Please run 'scripts/cleanup/archive_artifacts.sh'."
+        except Exception:
+            pass
+        return None
