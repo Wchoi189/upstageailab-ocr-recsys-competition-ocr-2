@@ -49,13 +49,13 @@
 - uri: "utilities://quick-reference"
   name: "Utility Scripts Quick Reference"
   description: "ALWAYS CHECK FIRST: Reusable utilities for config loading (2500x faster), paths, timestamps, git"
-  path: "context/utility-scripts/quick-reference.md"
+  path: "AgentQMS/standards/utility-scripts/quick-reference.md"
   mimeType: "text/markdown"
 
 - uri: "utilities://index"
   name: "Utility Scripts Index"
   description: "Full index of utility modules with triggers, examples, and performance metrics"
-  path: "context/utility-scripts/utility-scripts-index.yaml"
+  path: "AgentQMS/standards/utility-scripts/utility-scripts-index.yaml"
   mimeType: "application/x-yaml"
 
 # Standards Discovery

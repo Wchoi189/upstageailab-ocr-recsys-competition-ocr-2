@@ -1,0 +1,56 @@
+# Component Specification Template
+# Use this schema for all component API reference documents
+
+component_specification:
+  metadata:
+    name: string                          # e.g., "InferenceOrchestrator"
+    file: string                          # e.g., "ocr/inference/orchestrator.py"
+    lines_of_code: number                 # e.g., 274
+    purpose: string                       # Single sentence describing core responsibility
+
+  interface:
+    input_types: [string]                 # Input data types accepted
+    output_types: [string]                # Output data types produced
+    key_methods:
+      - name: string                      # Method name
+        signature: string                 # Full signature with types
+        args: [string]                    # Parameter list with types
+        returns: string                   # Return type
+        raises: [string]                  # Exception types
+
+  dependencies:
+    imports: [string]                     # External modules imported
+    internal_components: [string]         # Other components used
+
+  state_management:
+    stateful: boolean                     # Maintains internal state
+    thread_safe: boolean                  # Thread-safe operations
+    lifecycle: [string]                   # State transitions (e.g., ["init", "loaded", "ready"])
+
+  constraints:
+    model_dependent: boolean              # Requires model to be loaded
+    async_support: boolean                # Supports async operations
+    device_dependent: boolean             # GPU/CPU specific
+
+  backward_compatibility:
+    status: "maintained | deprecated | new"
+    breaking_changes: [string]            # List of breaking changes (if any)
+    migration_path: string                # Migration instructions (if deprecated)
+
+# Example:
+# component_specification:
+#   metadata:
+#     name: "PreprocessingPipeline"
+#     file: "ocr/inference/preprocessing_pipeline.py"
+#     lines_of_code: 264
+#     purpose: "Coordinates image preprocessing stages with metadata calculation"
+#
+#   interface:
+#     input_types: ["numpy.ndarray", "PIL.Image", "torch.Tensor"]
+#     output_types: ["PreprocessingResult"]
+#     key_methods:
+#       - name: "preprocess"
+#         signature: "preprocess(image: ImageInput) -> PreprocessingResult"
+#         args: ["image: ImageInput"]
+#         returns: "PreprocessingResult"
+#         raises: ["ValueError", "RuntimeError"]

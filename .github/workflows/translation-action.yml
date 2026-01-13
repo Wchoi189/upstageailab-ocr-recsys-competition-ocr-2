@@ -53,21 +53,21 @@ jobs:
             echo "OUTPUT_FILE=$output" >> $GITHUB_ENV
           done
 
-      - name: Translate README to Korean (Upstage Solar)
-        id: translate-readme
-        uses: wchoi189/translation-action@solar
+      - name: Set up Python
+        uses: actions/setup-python@v5
         with:
-          provider: upstage
-          lang: en-ko
-          source: README.md
-          api_key: ${{ secrets.UPSTAGE_API_KEY }}
-          api_additional_parameter: solar-pro2
+          python-version: '3.10'
 
-      - name: Save Korean README
-        env:
-          TRANSLATED_TEXT: ${{ steps.translate-readme.outputs.text }}
+      - name: Install dependencies
         run: |
-          echo "$TRANSLATED_TEXT" > README.ko.md
+          pip install openai python-dotenv
+
+      - name: Translate README to Korean
+        id: translate-readme
+        env:
+          UPSTAGE_API_KEY: ${{ secrets.UPSTAGE_API_KEY }}
+        run: |
+          python scripts/data/translate_document.py README.md
 
       - name: Commit and push translations
         run: |

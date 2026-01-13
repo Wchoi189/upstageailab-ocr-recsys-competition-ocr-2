@@ -82,7 +82,7 @@ jobs:
         env:
           UPSTAGE_API_KEY: ${{ secrets.UPSTAGE_API_KEY }}
         run: |
-          python tools/translate_document.py --recursive "${{ matrix.file }}"
+          python scripts/data/translate_document.py --recursive "${{ matrix.file }}"
 
       - name: Save Korean translation metadata
         if: steps.check.outputs.should_translate == 'true'

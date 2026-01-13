@@ -1,0 +1,56 @@
+ads_version: "1.0"
+type: standard
+title: "Multi-Agent Architecture Standard"
+agent: all
+tier: 2
+priority: critical
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
+compliance_status: "certified"
+memory_footprint: 100
+
+description: |
+  Defines the architecture, communication protocols, and patterns for the
+  Multi-Agent Collaboration System.
+
+components:
+  base_agent:
+    class_name: "BaseAgent"
+    path: "ocr.agents.base_agent"
+    responsibilities:
+      - "RabbitMQ Connection Management"
+      - "Signal Handling (Graceful Shutdown)"
+      - "Path Resolution (Project Root)"
+      - "Message Envelope Parsing"
+
+  communication:
+    transport: "RabbitMQ"
+    protocol: "IACP (Inter-Agent Communication Protocol) v1.0"
+    envelope_structure:
+      id: "UUID"
+      type: "cmd.<domain>.<action> | res.<status> | event.<name>"
+      metadata:
+        source: "agent.<id>"
+        target: "agent.<id> | *"
+        timestamp: "Unix Timestamp"
+        correlation_id: "UUID"
+      payload: "JSON Object"
+
+  roles:
+    worker:
+      description: "Stateless agent performing specific tasks (e.g., OCR, Linting)."
+      pattern: "Request-Response"
+
+    coordinator:
+      description: "Stateful agent managing complex workflows."
+      responsibilities:
+        - "Task Decomposition"
+        - "Delegation to Workers"
+        - "Result Aggregation"
+        - "Error Handling & Retries"
+      pattern: "Saga / Orchestrator"
+
+rules:
+  - "All agents MUST inherit from BaseAgent."
+  - "Agents MUST use environment variables for configuration (e.g., RABBITMQ_HOST)."
+  - "Path handling MUST use ocr.core.utils.path_utils.PROJECT_ROOT."
+  - "Log messages MUST output to stdout/stderr for container logging."

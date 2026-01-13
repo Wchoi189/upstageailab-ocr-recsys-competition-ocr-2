@@ -58,7 +58,7 @@ CONFIG_LOADER = ConfigLoader()
 
 def load_task_keywords() -> dict[str, list[str]]:
     """Load task type keywords from configuration."""
-    config_path = PROJECT_ROOT / "AgentQMS/standards/tier2-framework/context_keywords.yaml"
+    config_path = PROJECT_ROOT / "AgentQMS/standards/tier2-framework/context-keywords.yaml"
     if not config_path.exists():
         raise FileNotFoundError(f"Context keywords config not found at: {config_path}")
 

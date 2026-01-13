@@ -25,6 +25,8 @@ roadmap:
     goals:
       - "[x] Implement RabbitMQ Task Queue (Background Worker)."
       - "[x] Create 'Background Agent' for linting/formatting jobs."
+      - "[x] Implement 'OCR Agent' for document processing."
+      - "Design and Implement 'Coordinator Agent' (Orchestrator)."
       - "Integrate Slack Webhooks for executive alerts."
       - "Establish QwenCLI wrapper for local LLM inference."
 

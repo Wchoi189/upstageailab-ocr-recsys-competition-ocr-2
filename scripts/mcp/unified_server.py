@@ -30,13 +30,14 @@ from AgentQMS.tools.utils.config_loader import ConfigLoader
 
 # --- Middleware Imports ---
 from AgentQMS.middleware.telemetry import TelemetryPipeline, PolicyViolation
-from AgentQMS.middleware.policies import RedundancyInterceptor, ComplianceInterceptor, FileOperationInterceptor
+from AgentQMS.middleware.policies import RedundancyInterceptor, ComplianceInterceptor, FileOperationInterceptor, StandardsInterceptor
 
 # Initialize Middleware
 TELEMETRY_PIPELINE = TelemetryPipeline([
     RedundancyInterceptor(),
     ComplianceInterceptor(),
-    FileOperationInterceptor()
+    FileOperationInterceptor(),
+    StandardsInterceptor()
 ])
 
 
