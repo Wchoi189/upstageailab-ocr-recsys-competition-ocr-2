@@ -2,3 +2,15 @@
 {"timestamp": "2026-01-14T14:38:47.988357", "tool_name": "adt_meta_query", "args_hash": "c4f26922", "status": "success", "duration_ms": 23.2, "module": "agent_debug_toolkit.mcp_server"}
 {"timestamp": "2026-01-14T14:39:14.548721", "tool_name": "adt_meta_query", "args_hash": "dca67727", "status": "success", "duration_ms": 14.04, "module": "agent_debug_toolkit.mcp_server"}
 {"timestamp": "2026-01-14T15:03:11.083411", "tool_name": "manage_session", "args_hash": "745a4b50", "status": "success", "duration_ms": 1614.81, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T16:40:28.231401", "tool_name": "adt_meta_query", "args_hash": "70e93c59", "status": "success", "duration_ms": 6812.81, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-14T16:40:39.964939", "tool_name": "init_experiment", "args_hash": "a0a40071", "status": "success", "duration_ms": 1620.22, "module": "experiment_manager.mcp_server"}
+{"timestamp": "2026-01-14T17:05:05.078660", "tool_name": "manage_session", "args_hash": "2ee7150a", "status": "success", "duration_ms": 2401.03, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T17:32:45.293177", "tool_name": "get_server_info", "args_hash": "99914b93", "status": "success", "duration_ms": 0.26, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T17:32:48.008924", "tool_name": "adt_meta_query", "args_hash": "a5ff053d", "status": "error", "duration_ms": 0.61, "error": "Path not found: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/default"}
+{"timestamp": "2026-01-14T18:23:48.752734", "tool_name": "get_effective_config", "args_hash": "ea8eeb26", "status": "success", "duration_ms": 4489.83, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T18:24:56.793998", "tool_name": "get_effective_config", "args_hash": "ea8eeb26", "status": "success", "duration_ms": 5160.92, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T18:25:33.443429", "tool_name": "get_effective_config", "args_hash": "ea8eeb26", "status": "success", "duration_ms": 4843.27, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T18:25:55.922803", "tool_name": "get_effective_config", "args_hash": "ea8eeb26", "status": "success", "duration_ms": 4773.67, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T18:26:24.256220", "tool_name": "get_effective_config", "args_hash": "ea8eeb26", "status": "success", "duration_ms": 6092.93, "module": "project_compass.mcp_server"}
+{"timestamp": "2026-01-14T20:05:50.115936", "tool_name": "adt_meta_edit", "args_hash": "3941fe76", "status": "success", "duration_ms": 75.26, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-14T20:12:05.547411", "tool_name": "get_effective_config", "args_hash": "ea8eeb26", "status": "success", "duration_ms": 4704.87, "module": "project_compass.mcp_server"}

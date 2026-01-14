@@ -3,7 +3,7 @@ title: Project Compass Lifecycle
 ads_version: "1.0"
 scope: project
 description: |
-  Core lifecycle protocols and session management for Project Compass. Use this bundle to understand how to initialize, update, and finalize work sessions.
+  Core lifecycle protocols and session management for Project Compass. Use this bundle to understand how to initialize, update, and finalize work sessions (Sprint Contexts).
 tags:
   - "compass"
   - "lifecycle"
@@ -24,14 +24,14 @@ triggers:
 tiers:
   tier1:
     name: "Core Protocols"
-    description: "Essential rules and active session state. MUST READ."
+    description: "Essential rules and active Sprint Context state. MUST READ."
     files:
       - path: "project_compass/AGENTS.md"
         priority: high
         description: "Defines the strict lifecycle protocols, chat nomenclature, and atomic operations for agents."
       - path: "project_compass/active_context/current_session.yml"
         priority: high
-        description: "The Single Source of Truth for the current active session, including objectives and phase status."
+        description: "The Single Source of Truth for the current active Sprint Context, including objectives and phase status."
 
   tier2:
     name: "Tooling & State"

@@ -18,6 +18,7 @@ import sys
 import time
 import argparse
 import hashlib
+import uuid
 from datetime import datetime
 from pathlib import Path
 from typing import Any
@@ -58,6 +59,7 @@ TELEMETRY_PIPELINE = TelemetryPipeline([
 
 app = Server("unified_project")
 config_loader = ConfigLoader(cache_size=5)
+SESSION_ID = str(uuid.uuid4())
 
 # --- Telemetry ---
 TELEMETRY_FILE = PROJECT_ROOT / "AgentQMS" / ".mcp-telemetry.jsonl"
@@ -149,15 +151,20 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
         "timestamp": datetime.now().isoformat(),
         # Use a distinguishable name for the resource read event
         "tool_name": f"read_resource:{uri}",
-        "args_hash": hashlib.md5(uri.encode()).hexdigest()[:8],
+        "session_id": SESSION_ID,
+        "input_tokens": len(uri) // 4,  # Approx input
     }
 
     try:
         result = await _read_resource_impl(uri)
 
+        # Calculate size of content for token estimation
+        output_len = sum(len(c.content) if isinstance(c.content, str) else len(str(c.content)) for c in result)
+
         duration_ms = (time.time() - start_time) * 1000
         event["status"] = "success"
         event["duration_ms"] = round(duration_ms, 2)
+        event["output_tokens"] = output_len // 4
         log_telemetry_event(event)
 
         return result
@@ -167,6 +174,7 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
         event["status"] = "error"
         event["duration_ms"] = round(duration_ms, 2)
         event["error"] = str(e)[:200]
+        event["output_tokens"] = 0
         log_telemetry_event(event)
         # Re-raise or return error content - MCP expects list of contents or error
         # Re-raising allows the client to see the error properly
@@ -280,10 +288,14 @@ async def list_tools() -> list[Tool]:
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageContent | EmbeddedResource]:
     start_time = time.time()
+    # Approx input tokens
+    arg_str = json.dumps(arguments) if arguments else ""
     event = {
         "timestamp": datetime.now().isoformat(),
         "tool_name": name,
         "args_hash": hashlib.md5(str(arguments).encode()).hexdigest()[:8],
+        "session_id": SESSION_ID,
+        "input_tokens": len(arg_str) // 4,
     }
     try:
         # 1. Validation Logic
@@ -299,6 +311,16 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         module = importlib.import_module(module_name)
         result = await module.call_tool(name, arguments)
 
+        # Calculate output tokens
+        res_str = ""
+        for content in result:
+            if hasattr(content, "text") and content.text:
+                res_str += content.text
+            elif hasattr(content, "data"):
+                # Binary data - rough estimate base64
+                res_str += str(content.data)
+        event["output_tokens"] = len(res_str) // 4
+
         # 3. Post-Execution & Proactive Feedback (Fix #3)
         duration_ms = (time.time() - start_time) * 1000
         feedback_msg = feedback_interceptor.after_execution(name, duration_ms)
@@ -307,6 +329,19 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         event["status"] = "success"
         event["duration_ms"] = round(duration_ms, 2)
         event["module"] = module_name
+
+        # FEASIBILITY UPDATE: Capture safe metadata for analytics (Bundle, Type, Query)
+        # We only whitelist specific keys to avoid PII/bloat.
+        safe_keys = ["bundle_name", "context_bundle", "artifact_type", "type", "category", "query", "action"]
+        metadata = {}
+        if isinstance(arguments, dict):
+            for k in safe_keys:
+                if k in arguments and isinstance(arguments[k], (str, int, bool)):
+                    metadata[k] = arguments[k]
+
+        if metadata:
+            event["metadata"] = metadata
+
         log_telemetry_event(event)
 
         if feedback_msg:

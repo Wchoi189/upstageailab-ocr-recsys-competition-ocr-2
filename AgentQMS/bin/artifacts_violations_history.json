@@ -288,5 +288,15 @@
       "directory": 0,
       "frontmatter": 0
     }
+  },
+  {
+    "timestamp": "2026-01-14T16:53:26.351648",
+    "compliance_rate": 100.0,
+    "invalid_files": 0,
+    "violation_counts": {
+      "naming": 0,
+      "directory": 0,
+      "frontmatter": 0
+    }
   }
 ]

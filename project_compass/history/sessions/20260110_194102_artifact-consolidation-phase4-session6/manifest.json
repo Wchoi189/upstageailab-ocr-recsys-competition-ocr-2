@@ -1,5 +1,0 @@
-{
-  "original_session_id": "artifact-consolidation-phase4-session6",
-  "exported_at": "20260110_194102",
-  "note": "AgentQMS Tools Audit Resolutions: Fixed broken FrontmatterGenerator dependencies in autofix_artifacts.py and deprecated_audit/artifact_audit.py. Added graceful error handling and user guidance. Validation passing (82/82 artifacts valid)."
-}

@@ -4,6 +4,7 @@ import { BundleProvider, ContextBundle } from './bundleProvider';
 import { PolicyProvider, Policy } from './policyProvider';
 
 export class DashboardPanel implements vscode.Disposable {
+    public static readonly viewType = 'mcpVisibility.dashboard';
     private panel: vscode.WebviewPanel | undefined;
     private webview: vscode.Webview | undefined;
     private disposables: vscode.Disposable[] = [];
@@ -13,8 +14,8 @@ export class DashboardPanel implements vscode.Disposable {
     constructor(
         private readonly extensionUri: vscode.Uri,
         private readonly telemetryWatcher: TelemetryWatcher | undefined,
-        private readonly bundleProvider?: BundleProvider,
-        private readonly policyProvider?: PolicyProvider,
+        private readonly bundleProvider: BundleProvider | undefined,
+        private readonly policyProvider: PolicyProvider | undefined,
         existingWebview?: vscode.Webview
     ) {
         if (existingWebview) {
@@ -30,7 +31,7 @@ export class DashboardPanel implements vscode.Disposable {
         }
 
         this.panel = vscode.window.createWebviewPanel(
-            'mcpVisibility.dashboard',
+            DashboardPanel.viewType,
             'AgentQMS Visibility',
             vscode.ViewColumn.Two,
             {
@@ -122,13 +123,20 @@ export class DashboardPanel implements vscode.Disposable {
     private async getHtmlContent(): Promise<string> {
         const nonce = getNonce();
         const htmlPath = vscode.Uri.joinPath(this.extensionUri, 'media', 'dashboard.html');
+        const stylePath = vscode.Uri.joinPath(this.extensionUri, 'media', 'dashboard.css');
+        const scriptPath = vscode.Uri.joinPath(this.extensionUri, 'media', 'dashboard.js');
+
+        const styleUri = this.webview?.asWebviewUri(stylePath);
+        const scriptUri = this.webview?.asWebviewUri(scriptPath);
 
         try {
             const htmlContent = await vscode.workspace.fs.readFile(htmlPath);
             let html = new TextDecoder('utf-8').decode(htmlContent);
 
-            // Replace nonce placeholder
+            // Replace placeholders
             html = html.replace(/{{nonce}}/g, nonce);
+            html = html.replace(/{{styleUri}}/g, styleUri ? styleUri.toString() : '');
+            html = html.replace(/{{scriptUri}}/g, scriptUri ? scriptUri.toString() : '');
             return html;
         } catch (error) {
             console.error('Failed to load dashboard.html', error);

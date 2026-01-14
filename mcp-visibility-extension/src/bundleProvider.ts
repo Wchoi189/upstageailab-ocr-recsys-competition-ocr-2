@@ -64,11 +64,11 @@ export class BundleProvider implements vscode.Disposable {
                 const descMatch = content.match(/^description:\s*["']?(.+?)["']?\s*$/m);
                 const filesMatch = content.match(/^\s*-\s+path:.*$/gm);
 
-                const name = nameMatch ? nameMatch[1] : file.replace('.yaml', '');
-                const description = descMatch ? descMatch[1] : 'No description';
-                const fileCount = filesMatch ? filesMatch.length : 0;
+                const nameStr = nameMatch ? nameMatch[1] : file.replace('.yaml', '');
+                const descStr = descMatch ? descMatch[1] : 'No description';
+                const count = filesMatch ? filesMatch.length : 0;
 
-                bundles.push({ name, description, fileCount });
+                bundles.push({ name: nameStr, description: descStr, fileCount: count });
             }
 
             return bundles;

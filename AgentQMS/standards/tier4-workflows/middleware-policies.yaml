@@ -1,0 +1,33 @@
+ads_version: "1.0"
+type: standard
+agent: all
+tier: 4
+priority: high
+compliance_status: enforced
+description: "Runtime middleware policies enforced by the AgentQMS server."
+items:
+  - name: "Redundancy Prevention"
+    description: "Detects and prevents recreation of artifacts already managed by the internal Antigravity service."
+    rules:
+      - "Do not create 'implementation_plan', 'task_list', or 'walkthrough' if a shadow version exists in .gemini/"
+      - "Reference managed artifacts instead of duplicating them."
+
+  - name: "Python Execution Compliance"
+    description: "Enforces consistent and safe Python environment usage."
+    rules:
+      - "Must not use plain 'python' command; use 'uv run python'."
+      - "Must not modify 'sys.path' (append/insert/extend)."
+      - "Must not use excessive '.parent' chaining (use path utils instead)."
+
+  - name: "Documentation Standards"
+    description: "Enforces ADS v1.0 metadata on documentation artifacts."
+    rules:
+      - "Standard documents must start with valid YAML frontmatter."
+      - "Must include required keys: ads_version, type, agent, tier, priority."
+      - "ads_version must be '1.0'."
+
+  - name: "File System Integrity"
+    description: "Enforces directory structure and write permissions."
+    rules:
+      - "AgentQMS/config/ directory is READ-ONLY for agents."
+      - "Configurations should be placed in AgentQMS/standards/ or AgentQMS/env/."

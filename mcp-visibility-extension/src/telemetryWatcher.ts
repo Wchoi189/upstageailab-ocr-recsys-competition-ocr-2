@@ -14,6 +14,10 @@ export interface TelemetryEvent {
     module?: string;
     policy?: string;
     error?: string;
+    metadata?: Record<string, any>;
+    session_id?: string;
+    input_tokens?: number;
+    output_tokens?: number;
 }
 /* eslint-enable @typescript-eslint/naming-convention */
 
@@ -24,6 +28,10 @@ export interface TelemetrySummary {
     policyViolations: number;
     avgDurationMs: number;
     recentCalls: TelemetryEvent[];
+    session_id?: string;
+    session_input_tokens?: number;
+    session_output_tokens?: number;
+    session_total_tokens?: number;
 }
 
 export class TelemetryWatcher implements vscode.Disposable {
@@ -196,13 +204,31 @@ export class TelemetryWatcher implements vscode.Disposable {
             ? durations.reduce((a, b) => a + b, 0) / durations.length
             : 0;
 
+        // Session Stats
+        const allEvents = this.cache.query();
+        const lastEvent = this.events[this.events.length - 1];
+        const currentSessionId = lastEvent?.session_id;
+
+        let sessionInput = 0;
+        let sessionOutput = 0;
+
+        if (currentSessionId) {
+            const sessionEvents = allEvents.filter(e => e.session_id === currentSessionId);
+            sessionInput = sessionEvents.reduce((acc, e) => acc + (e.input_tokens || 0), 0);
+            sessionOutput = sessionEvents.reduce((acc, e) => acc + (e.output_tokens || 0), 0);
+        }
+
         return {
             total: this.events.length,
             success,
             errors,
             policyViolations,
             avgDurationMs: Math.round(avgDurationMs * 100) / 100,
-            recentCalls: [...this.events].reverse().slice(0, 20)
+            recentCalls: [...this.events].reverse().slice(0, 20),
+            session_id: currentSessionId,
+            session_input_tokens: sessionInput,
+            session_output_tokens: sessionOutput,
+            session_total_tokens: sessionInput + sessionOutput
         };
     }
 

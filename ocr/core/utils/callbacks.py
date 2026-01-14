@@ -18,7 +18,7 @@ def _is_enabled(cb_conf: DictConfig) -> bool:
 
 
 def build_callbacks(config: DictConfig) -> list[Any]:
-    """Instantiate callbacks defined under `config.callbacks`.
+    """Instantiate callbacks defined under `config.callbacks` and `config.training.callbacks`.
 
     - Skips entries without `_target_` or disabled callbacks.
     - Attaches resolved config to callbacks exposing `_resolved_config` for
@@ -26,24 +26,30 @@ def build_callbacks(config: DictConfig) -> list[Any]:
     """
     callbacks: list[Any] = []
 
-    callbacks_conf = config.get("callbacks")
-    if not callbacks_conf:
-        return callbacks
+    # Check both root 'callbacks' and 'training.callbacks'
+    callback_sources = [
+        config.get("callbacks"),
+        config.get("training", {}).get("callbacks") if isinstance(config.get("training"), (dict, DictConfig)) else None
+    ]
 
-    for _, cb_conf in callbacks_conf.items():
-        if not isinstance(cb_conf, DictConfig):
-            continue
-        if "_target_" not in cb_conf:
-            continue
-        if not _is_enabled(cb_conf):
+    for callbacks_conf in callback_sources:
+        if not callbacks_conf:
             continue
 
-        callback = hydra.utils.instantiate(cb_conf)
+        for _, cb_conf in callbacks_conf.items():
+            if not isinstance(cb_conf, DictConfig):
+                continue
+            if "_target_" not in cb_conf:
+                continue
+            if not _is_enabled(cb_conf):
+                continue
 
-        if hasattr(callback, "_resolved_config"):
-            resolved_config = OmegaConf.to_container(config, resolve=True)
-            callback._resolved_config = resolved_config
+            callback = hydra.utils.instantiate(cb_conf)
 
-        callbacks.append(callback)
+            if hasattr(callback, "_resolved_config"):
+                resolved_config = OmegaConf.to_container(config, resolve=True)
+                callback._resolved_config = resolved_config
+
+            callbacks.append(callback)
 
     return callbacks

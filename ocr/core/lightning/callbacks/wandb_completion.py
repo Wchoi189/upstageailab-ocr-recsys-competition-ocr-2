@@ -12,13 +12,13 @@ class WandbCompletionCallback(Callback):
     """Signal run completion to W&B and the filesystem."""
 
     def on_train_end(self, trainer: pl.Trainer, pl_module: pl.LightningModule) -> None:
-        from ocr.core.utils.wandb_utils import _get_wandb
+        import wandb
 
         if trainer.fast_dev_run:  # type: ignore[attr-defined]
             print("Skipping completion signal for fast_dev_run.")
             return
 
-        wandb = _get_wandb()
+
         current_run = getattr(wandb, "run", None)
         if current_run:
             try:
@@ -45,9 +45,7 @@ class WandbCompletionCallback(Callback):
             print(f"Warning: Failed to create local sentinel file: {exc}")
 
     def on_exception(self, trainer: pl.Trainer, pl_module: pl.LightningModule, exception: BaseException) -> None:
-        from ocr.core.utils.wandb_utils import _get_wandb
-
-        wandb = _get_wandb()
+        import wandb
         current_run = getattr(wandb, "run", None)
         if current_run:
             current_run.tags = current_run.tags + ("status:failed",)

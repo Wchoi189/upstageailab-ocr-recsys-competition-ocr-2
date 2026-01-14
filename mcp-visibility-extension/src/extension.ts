@@ -14,13 +14,6 @@ let dashboardPanel: DashboardPanel | undefined;
 export function activate(context: vscode.ExtensionContext) {
     console.log('MCP Visibility extension activated');
 
-    // Register webview view provider for activity bar
-    const provider = new DashboardViewProvider(context.extensionUri, telemetryWatcher, bundleProvider);
-    context.subscriptions.push(
-        vscode.window.registerWebviewViewProvider('mcpVisibility.dashboard', provider),
-        provider
-    );
-
     // 1. Try Configuration
     const config = vscode.workspace.getConfiguration('mcpVisibility');
     let configPath = config.get<string>('telemetryPath');
@@ -29,15 +22,12 @@ export function activate(context: vscode.ExtensionContext) {
 
     if (configPath) {
         // Normalize: We need the parent of 'AgentQMS'
-        // If user pointed to the file: .../AgentQMS/.mcp-telemetry.jsonl -> .../AgentQMS
         if (configPath.endsWith('.mcp-telemetry.jsonl')) {
             configPath = path.dirname(configPath);
         }
-        // If user pointed to the folder: .../AgentQMS -> .../
         if (configPath.endsWith('AgentQMS')) {
             workspaceRoot = path.dirname(configPath);
         } else {
-            // Assume they pointed to the workspace root directly
             workspaceRoot = configPath;
         }
         console.log(`Using configured workspace root: ${workspaceRoot}`);
@@ -62,26 +52,35 @@ export function activate(context: vscode.ExtensionContext) {
 
     if (!workspaceRoot) {
         vscode.window.showWarningMessage('MCP Visibility: Could not resolve AgentQMS path. Please configure mcpVisibility.telemetryPath or open a workspace.');
-        // We still register to avoid errors, but functionalities will be disabled
-        return;
+        // Still register empty if needed or return? Just continue.
     }
 
-    // Initialize watchers
-    // Initialize watchers
-    telemetryWatcher = new TelemetryWatcher(workspaceRoot);
-    bundleProvider = new BundleProvider(workspaceRoot);
-    policyProvider = new PolicyProvider(workspaceRoot);
-    context.subscriptions.push(telemetryWatcher);
-    context.subscriptions.push(bundleProvider);
-    context.subscriptions.push(policyProvider);
+    // Initialize watchers if we have a root
+    if (workspaceRoot) {
+        telemetryWatcher = new TelemetryWatcher(workspaceRoot);
+        bundleProvider = new BundleProvider(workspaceRoot);
+        policyProvider = new PolicyProvider(workspaceRoot);
+        context.subscriptions.push(telemetryWatcher);
+        context.subscriptions.push(bundleProvider);
+        context.subscriptions.push(policyProvider);
+    }
 
-    // Update provider with initialized watchers
-    provider.setWatchers(telemetryWatcher, bundleProvider, policyProvider);
+    // Register webview view provider for activity bar
+    const provider = new DashboardViewProvider(context.extensionUri, telemetryWatcher, bundleProvider, policyProvider);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider('mcpVisibility.dashboard', provider),
+        provider
+    );
 
     // Register show dashboard command
     const showDashboardCmd = vscode.commands.registerCommand('mcpVisibility.showDashboard', () => {
         if (!dashboardPanel) {
-            dashboardPanel = new DashboardPanel(context.extensionUri, telemetryWatcher!, bundleProvider, policyProvider);
+            dashboardPanel = new DashboardPanel(
+                context.extensionUri,
+                telemetryWatcher,
+                bundleProvider,
+                policyProvider
+            );
             dashboardPanel.onDidDispose(() => {
                 dashboardPanel = undefined;
             });
@@ -94,25 +93,20 @@ export function activate(context: vscode.ExtensionContext) {
 export function deactivate() {
     telemetryWatcher?.dispose();
     dashboardPanel?.dispose();
+    bundleProvider?.dispose();
+    policyProvider?.dispose();
 }
 
 class DashboardViewProvider implements vscode.WebviewViewProvider {
-    private telemetryWatcher: TelemetryWatcher | undefined;
-    private bundleProvider: BundleProvider | undefined;
-    private policyProvider: PolicyProvider | undefined;
     private currentPanel: DashboardPanel | undefined;
     private disposables: vscode.Disposable[] = [];
 
     constructor(
         private readonly extensionUri: vscode.Uri,
-        telemetryWatcher?: TelemetryWatcher,
-        bundleProvider?: BundleProvider,
-        policyProvider?: PolicyProvider
-    ) {
-        this.telemetryWatcher = telemetryWatcher;
-        this.bundleProvider = bundleProvider;
-        this.policyProvider = policyProvider;
-    }
+        private telemetryWatcher?: TelemetryWatcher,
+        private bundleProvider?: BundleProvider,
+        private policyProvider?: PolicyProvider
+    ) {}
 
     setWatchers(telemetryWatcher: TelemetryWatcher, bundleProvider: BundleProvider, policyProvider: PolicyProvider) {
         this.telemetryWatcher = telemetryWatcher;
@@ -131,7 +125,7 @@ class DashboardViewProvider implements vscode.WebviewViewProvider {
             localResourceRoots: [this.extensionUri]
         };
 
-        // Clean up old listeners before creating new ones
+        // Clean up old listeners
         this.disposeListeners();
 
         // Reuse or create panel
@@ -161,19 +155,31 @@ class DashboardViewProvider implements vscode.WebviewViewProvider {
         // Clear existing listeners
         this.disposeListeners();
 
-        if (!this.currentPanel || !this.telemetryWatcher) {
+        if (!this.currentPanel) {
             return;
         }
 
         // Register telemetry updates
-        const telemetryListener = this.telemetryWatcher.onUpdate((data: TelemetrySummary) => {
-            this.currentPanel?.updateTelemetry(data);
-        });
-        this.disposables.push(telemetryListener);
+        if (this.telemetryWatcher) {
+            const telemetryListener = this.telemetryWatcher.onUpdate((data: TelemetrySummary) => {
+                this.currentPanel?.updateTelemetry(data);
+            });
+            this.disposables.push(telemetryListener);
 
-        // Send initial telemetry data
-        const initialData = this.telemetryWatcher.getSummary();
-        this.currentPanel.updateTelemetry(initialData);
+            // Send initial telemetry data
+            const initialData = this.telemetryWatcher.getSummary();
+            this.currentPanel.updateTelemetry(initialData);
+
+            // Register health updates
+            const healthListener = this.telemetryWatcher.onHealthChange((status) => {
+                this.currentPanel?.updateConnectionStatus(status.healthy, status.error);
+            });
+            this.disposables.push(healthListener);
+
+             // Send connection health status
+            const health = this.telemetryWatcher.getHealth();
+            this.currentPanel.updateConnectionStatus(health.healthy, health.error);
+        }
 
         // Register bundle updates if provider exists
         if (this.bundleProvider) {
@@ -196,16 +202,6 @@ class DashboardViewProvider implements vscode.WebviewViewProvider {
             // Send initial policy data
             this.currentPanel.updatePolicies(this.policyProvider.getPolicies());
         }
-
-        // Register health updates
-        const healthListener = this.telemetryWatcher.onHealthChange((status) => {
-            this.currentPanel?.updateConnectionStatus(status.healthy, status.error);
-        });
-        this.disposables.push(healthListener);
-
-        // Send connection health status
-        const health = this.telemetryWatcher.getHealth();
-        this.currentPanel.updateConnectionStatus(health.healthy, health.error);
     }
 
     private disposeListeners() {

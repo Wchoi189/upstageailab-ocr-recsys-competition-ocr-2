@@ -124,6 +124,21 @@ async def list_tools() -> list[Tool]:
                 "required": ["action"],
             },
         ),
+        Tool(
+            name="get_effective_config",
+            description="Retrieve the effective (resolved) Hydra configuration.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "config_name": {"type": "string", "description": "Base config name (default: train)"},
+                    "overrides": {
+                        "type": "array",
+                        "items": {"type": "string"},
+                        "description": "Hydra overrides (e.g. ['experiment=foo', 'model.backbone=resnet'])"
+                    }
+                },
+            },
+        ),
     ]
 
 
@@ -132,6 +147,27 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute a tool."""
     if name == "get_server_info":
         return [TextContent(type="text", text=json.dumps({"name": "project_compass", "version": "0.1.0", "status": "running"}, indent=2))]
+
+    if name == "get_effective_config":
+        import subprocess
+
+        config_name = arguments.get("config_name", "train")
+        overrides = arguments.get("overrides", [])
+
+        script_path = PROJECT_ROOT / "scripts/utils/show_config.py"
+        cmd = ["uv", "run", "python", str(script_path), config_name]
+        if overrides:
+            cmd.extend(overrides)
+
+        try:
+            result = subprocess.run(cmd, capture_output=True, text=True, cwd=PROJECT_ROOT)
+            if result.returncode != 0:
+                output = f"Error retrieving config:\n{result.stderr}\n{result.stdout}"
+            else:
+                output = result.stdout
+            return [TextContent(type="text", text=output)]
+        except Exception as e:
+            return [TextContent(type="text", text=f"Failed to execute config viewer: {str(e)}")]
 
     if name == "manage_session":
         import subprocess

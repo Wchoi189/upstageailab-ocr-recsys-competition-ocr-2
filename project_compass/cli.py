@@ -14,11 +14,13 @@ import sys
 # NOTE: Run this CLI as a module: uv run python -m project_compass.cli
 try:
     from project_compass.src.core import EnvironmentChecker, SessionManager
+    from project_compass.src.wizard import SprintContextWizard
     from project_compass.scripts import session_manager as legacy_session_manager
 except ImportError:
     # Fallback for development/local execution context
     try:
         from src.core import EnvironmentChecker, SessionManager
+        from src.wizard import SprintContextWizard
         from scripts import session_manager as legacy_session_manager
     except ImportError as e:
         print(f"CRITICAL ERROR: Failed to import Project Compass core components.\nDetail: {e}")
@@ -48,6 +50,9 @@ def main():
         choices=["text_detection", "text_recognition", "layout_analysis", "kie", "roadmap"],
         help="Active pipeline (default: kie)",
     )
+
+    # wizard command (Interactive Session Setup)
+    subparsers.add_parser("wizard", help="Interactive Sprint Context setup")
 
     # session-export command (Wrapper for legacy script)
     session_export_parser = subparsers.add_parser("session-export", help="Archive current session to history")
@@ -99,6 +104,11 @@ def main():
             else:
                 print(f"❌ {message}")
                 sys.exit(1)
+
+        elif args.command == "wizard":
+            wizard = SprintContextWizard()
+            wizard.run()
+            sys.exit(0)
 
         elif args.command == "session-export":
             print("📦 Session Management: Exporting session...\n")

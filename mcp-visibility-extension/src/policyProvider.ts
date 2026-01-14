@@ -10,11 +10,13 @@ export interface Policy {
 
 export class PolicyProvider implements vscode.Disposable {
     private standardsPath: string;
+    private workspaceRoot: string;
     private _onUpdate = new vscode.EventEmitter<Policy[]>();
     readonly onUpdate = this._onUpdate.event;
     private watcher: vscode.FileSystemWatcher | undefined;
 
     constructor(workspaceRoot: string) {
+        this.workspaceRoot = workspaceRoot;
         this.standardsPath = path.join(workspaceRoot, 'AgentQMS', 'standards', 'INDEX.yaml');
         this.initWatcher(workspaceRoot);
     }
@@ -82,6 +84,15 @@ export class PolicyProvider implements vscode.Disposable {
                             continue;
                         }
 
+                        // Special handling for Middleware Policies (User Request)
+                        if (name === 'middleware' && filePath.includes('middleware-policies.yaml')) {
+                            const expanded = this.parseMiddlewarePolicies(filePath);
+                            if (expanded.length > 0) {
+                                policies.push(...expanded);
+                                continue;
+                            }
+                        }
+
                         policies.push({
                             category: currentTier,
                             name: this.formatName(name),
@@ -94,6 +105,48 @@ export class PolicyProvider implements vscode.Disposable {
             return policies;
         } catch (err) {
             console.error('Failed to parse policies:', err);
+            return [];
+        }
+    }
+
+    private parseMiddlewarePolicies(relPath: string): Policy[] {
+        try {
+            const absPath = path.join(this.workspaceRoot, relPath);
+            if (!fs.existsSync(absPath)) {
+                console.warn('[PolicyProvider] Middleware file not found:', absPath);
+                return [];
+            }
+
+            const content = fs.readFileSync(absPath, 'utf-8');
+            const lines = content.split('\n');
+            const policies: Policy[] = [];
+
+            let inItems = false;
+            let currentName = '';
+
+            for (const line of lines) {
+                // Check if we entered the items section
+                if (line.trim() === 'items:') {
+                    inItems = true;
+                    continue;
+                }
+                if (!inItems) continue;
+
+                // Match name entry: "  - name: "Something""
+                const nameMatch = line.match(/^\s+-\s+name:\s+["']?([^"']+)["']?/);
+                if (nameMatch) {
+                    currentName = nameMatch[1];
+                    policies.push({
+                        category: 'Tier 4: Middleware Policies',
+                        name: currentName,
+                        path: 'AgentQMS/middleware/policies.py'
+                    });
+                }
+            }
+            console.log('[PolicyProvider] Parsed middleware policies:', policies.length);
+            return policies;
+        } catch (error) {
+            console.error('[PolicyProvider] Failed to parse middleware policies:', error);
             return [];
         }
     }

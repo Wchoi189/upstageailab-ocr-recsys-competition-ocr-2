@@ -43,6 +43,8 @@ tools:
     description: Get information about the Project Compass MCP server
   - name: manage_session
     description: Manage project sessions (export, import, list, new)
+  - name: get_effective_config
+    description: Retrieve the effective Hydra configuration (resolved)
 
 # Implementation details
 implementation:

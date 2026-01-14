@@ -1,29 +1,38 @@
-# ROADMAP MILESTONE: Text Recognition Pipeline
-# SCHEMA: ../.config/schemas/milestone.schema.json
+# Text Recognition Roadmap (Consolidated)
 
-milestone_id: "02_recognition"
-status: "in_progress"
-started_at: "2026-01-03 19:15 (KST)"
-last_successful_exp: ""
-target_metrics:
-  accuracy: 0.85  # Target Korean text recognition accuracy
-  character_error_rate: 0.15  # Target CER
-  word_error_rate: 0.25  # Target WER
-notes: |
-  Pivoted from KIE+DP approach after discovering Document Parse API limitation for receipts.
+phase: recognition
+owner: ocr-team
+status: active
 
-  Current Focus:
-  - Build text recognition pipeline on AI Hub 공공행정문서 dataset
-  - Train PARSeq or CRNN model on word crops
-  - Target Korean + alphanumeric recognition
+milestones:
+  - id: rec-init
+    title: "Pipeline Initialization"
+    status: completed
+    deliverables:
+      - "PARSeq model definition"
+      - "Tokenizer (Korean/English mixed)"
+      - "Data loaders (AIHub LMDB)"
 
-  Dataset Ready:
-  - 5467 images optimized @ 1024px height
-  - Clean word-level bboxes available
-  - Estimated ~100k+ word crops for training
+  - id: rec-stability
+    title: "Training Stability"
+    status: completed
+    deliverables:
+      - "Fix CUDA asserts (vocab size)"
+      - "Fix Feature Shape Mismatch"
+      - "Config separation (detection vs recognition)"
 
-  Next Steps:
-  1. Verify AI Hub parquet image paths point to optimized images
-  2. Create word-crop extraction script
-  3. Train text recognizer (PARSeq/CRNN)
-  4. Validate on held-out AI Hub samples
+  - id: rec-optimization
+    title: "Hardware Optimization & Logging"
+    status: in-progress
+    deliverables:
+      - "RTX 3090 24GB Config Tuning"
+      - "WandB Image Logging Verification"
+      - "4-Era Baseline Training Run"
+
+  - id: rec-scaling
+    title: "Full Scale Training"
+    status: pending
+    deliverables:
+      - "Long duration training"
+      - "Augmentation pipeline refinement"
+      - "Model Export (ONNX/TorchScript)"

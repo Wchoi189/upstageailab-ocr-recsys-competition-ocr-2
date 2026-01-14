@@ -17,6 +17,7 @@ roadmap:
       - "[x] Rename extension to AgentQMS Visibility & Telemetry"
       - "[x] Fix Bundle Parsing (nested tiers)"
       - "[x] Implement Policy View (Standards & Violations)"
+      - "[x] Modularize Webview code (Split HTML/CSS/JS)"
       - "[ ] Enforce `extension-config-schema.yaml` as the source of truth."
 
   phase_2:

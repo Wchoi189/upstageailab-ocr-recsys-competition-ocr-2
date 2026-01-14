@@ -37,6 +37,7 @@ servers:
       # Project Compass tools
       - get_server_info
       - manage_session
+      - get_effective_config
       # Experiment Manager tools
       - init_experiment
       - get_experiment_status
@@ -67,7 +68,7 @@ servers:
 
   - name: project_compass
     path: project_compass/mcp_server.py
-    description: Project state, session management, navigation
+    description: Project state, Sprint Context management, navigation
     resources:
       - compass://compass.json
       - compass://session_handover.md
@@ -77,6 +78,7 @@ servers:
     tools:
       - get_server_info
       - manage_session
+      - get_effective_config
 
   - name: experiment_manager
     path: experiment_manager/mcp_server.py

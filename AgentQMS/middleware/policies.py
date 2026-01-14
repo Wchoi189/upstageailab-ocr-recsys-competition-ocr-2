@@ -80,7 +80,12 @@ class ComplianceInterceptor:
             return
 
         # We only care about tools that execute code or write code
-        code_content = arguments.get("code") or arguments.get("content") or arguments.get("CodeContent")
+        code_content = (
+            arguments.get("code") or
+            arguments.get("content") or
+            arguments.get("CodeContent") or
+            arguments.get("ReplacementContent")
+        )
 
         if not code_content or not isinstance(code_content, str):
             # Check for command execution
@@ -90,8 +95,32 @@ class ComplianceInterceptor:
             return
 
         # Check code content
-        self._check_python_execution(code_content)
-        self._check_path_usage(code_content)
+        if code_content and isinstance(code_content, str):
+            self._check_python_execution(code_content)
+            self._check_path_usage(code_content)
+
+        # Handle multi_replace_file_content chunks
+        chunks = arguments.get("ReplacementChunks")
+        if chunks and isinstance(chunks, list):
+            for chunk in chunks:
+                content = chunk.get("ReplacementContent")
+                if content:
+                     self._check_python_execution(content)
+                     self._check_path_usage(content)
+
+        # Handle ADT options/diff
+        options = arguments.get("options")
+        if options and isinstance(options, dict):
+            for key, value in options.items():
+                if isinstance(value, str):
+                    self._check_python_execution(value)
+                    self._check_path_usage(value)
+
+        # Handle raw diff (apply_unified_diff)
+        diff = arguments.get("diff")
+        if diff and isinstance(diff, str):
+             self._check_python_execution(diff)
+             self._check_path_usage(diff)
 
     def _check_python_execution(self, text: str) -> None:
         # Robust check for bare 'python' not preceded by 'uv run'
