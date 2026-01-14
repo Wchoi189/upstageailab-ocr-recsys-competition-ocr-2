@@ -2,13 +2,11 @@
 
 Active research and development roadmaps.
 
-**Last Updated**: 2026-01-13 03:58:00
-**Total Artifacts**: 5
+**Last Updated**: 2026-01-15 00:31:01
+**Total Artifacts**: 3
 
-## Active (5)
+## Active (3)
 
-- [KIE Model Selection Strategy](2025-11-29_1800_research_kie-model-selection.md) (📅 2025-11-29 18:00 (KST), 📄 research) - This document evaluates potential models for the Key Information Extraction (KIE) task on the compet
-- [Tracking Db Agentqms Integration](2025-12-06_0201_research_tracking-db-agentqms-integration.md) (📅 2025-12-06 03:04 (KST), 📄 research) - The Tracking Database (`data/ops/tracking.db`) is a critical infrastructure component that AgentQMS 
 - [Perspective Correction Integration Summary](2025-12-25_0213_research_perspective-correction-summary.md) (📅 2025-12-25 02:13 (KST), 📄 research) - How can perspective correction and image enhancement preprocessing be effectively integrated into th
 - [AgentQMS Plugin System Evolution Strategy](2026-01-09_1515_research_agentqms-plugin-system-evolution.md) (📅 2026-01-09 15:15 (KST), 📄 research) - ---
 - [Configuration Externalization Project: Complete Deliverables Index](2026-01-12_1220_research_configuration-externalization-deliverables-index.md) (📅 2026-01-12 12:20 (KST), 📄 research) - This document indexes all deliverables from the Configuration Externalization project, which establi
@@ -17,7 +15,7 @@ Active research and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 5 |
+| Active | 3 |
 | Completed | 0 |
 
 ---

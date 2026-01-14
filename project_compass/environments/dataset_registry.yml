@@ -26,7 +26,7 @@ datasets:
       notes: "Raw images, avg 2459x3443"
 
     - name: "aihub_lmdb_validation"
-      path: "data/processed/aihub_lmdb_validation/"
+      path: "data/processed/recognition/aihub_lmdb_validation/"
       format: "lmdb"
       status: "planned"
       notes: "LMDB format for high-performance training. Converted from aihub_public_admin_docs_raw."

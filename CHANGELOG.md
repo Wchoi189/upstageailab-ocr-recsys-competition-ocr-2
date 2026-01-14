@@ -135,3 +135,4 @@
   `outputs/experiments/<kind>/<task>/<name>/<run_id>/` and loggers use canonical
   `outputs_root`-based paths.
 
+- 2026-01-15: Refactored OCR architecture and WandB utils (perf/compliance).

@@ -1,5 +1,5 @@
 import torch
-from ocr.core.architecture import OCRModel
+from ocr.core.models.architecture import OCRModel
 from ocr.core import registry
 from ocr.features.recognition.models.decoder import PARSeqDecoder
 from ocr.features.recognition.models.head import PARSeqHead

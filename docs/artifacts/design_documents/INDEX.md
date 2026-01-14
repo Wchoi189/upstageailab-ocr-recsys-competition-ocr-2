@@ -1,6 +1,6 @@
-# Completed Plans
+# Design Documents
 
-Active completed plans and development roadmaps.
+Active design documents and development roadmaps.
 
 **Last Updated**: 2026-01-15 00:31:01
 **Total Artifacts**: 0

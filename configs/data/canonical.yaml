@@ -1,5 +1,9 @@
 # @package _global_
 
+defaults:
+  - /data/transforms/base
+  - /data/dataloaders/default
+
 dataset_base_path: "${hydra:runtime.cwd}/data/datasets/"
 
 batch_size: 16

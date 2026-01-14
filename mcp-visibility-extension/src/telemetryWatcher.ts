@@ -206,8 +206,15 @@ export class TelemetryWatcher implements vscode.Disposable {
 
         // Session Stats
         const allEvents = this.cache.query();
-        const lastEvent = this.events[this.events.length - 1];
-        const currentSessionId = lastEvent?.session_id;
+
+        // Find the most recent session ID (scan backwards)
+        let currentSessionId: string | undefined;
+        for (let i = this.events.length - 1; i >= 0; i--) {
+            if (this.events[i].session_id) {
+                currentSessionId = this.events[i].session_id;
+                break;
+            }
+        }
 
         let sessionInput = 0;
         let sessionOutput = 0;

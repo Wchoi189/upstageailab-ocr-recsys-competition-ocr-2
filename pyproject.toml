@@ -82,6 +82,14 @@ dependencies = [
     "mcp>=1.25.0",
     "lmdb>=1.7.5",
     "pika>=1.3.2",
+    "coverage==7.13.1",
+    "orjson==3.11.5",
+    "pytest-cov==7.0.0",
+    "shellingham==1.5.4",
+    "tree-sitter==0.21.3",
+    "tree-sitter-languages==1.10.2",
+    "typer==0.21.0",
+    "agent-debug-toolkit",
 ]
 
 
@@ -95,6 +103,9 @@ packages = ["ocr", "AgentQMS"]
 [tool.uv]
 extra-index-url = ["https://download.pytorch.org/whl/cu124"]
 index-strategy = "unsafe-best-match"
+
+[tool.uv.sources]
+agent-debug-toolkit = { path = "agent-debug-toolkit" }
 
 [tool.mypy]
 # General settings - Balanced for ML/Research projects

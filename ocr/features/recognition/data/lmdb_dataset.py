@@ -136,6 +136,16 @@ class LMDBRecognitionDataset(Dataset):
             "label": label,
         }
 
+    def __getstate__(self):
+        """
+        Prepare state for pickling (process fork).
+        We must NOT pickle the LMDB environment, as it cannot be shared across processes.
+        The worker process will re-open it lazily in __getitem__.
+        """
+        state = self.__dict__.copy()
+        state["env"] = None
+        return state
+
     def __del__(self):
         """Clean up LMDB environment."""
         if self.env is not None:

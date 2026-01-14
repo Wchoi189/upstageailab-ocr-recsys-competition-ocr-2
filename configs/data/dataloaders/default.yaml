@@ -4,17 +4,17 @@
 train_dataloader:
   batch_size: ${batch_size}
   shuffle: true
-  num_workers: 4  # Reduced from 12 to prevent OOM in workers
+  num_workers: 0  # Reduced to 0 (segfault persists even with safe fork)
   pin_memory: true
-  persistent_workers: true
-  prefetch_factor: 1  # Adjusted for fewer workers
+  persistent_workers: false
+  prefetch_factor: null
 val_dataloader:
   batch_size: ${batch_size}
   shuffle: false
-  num_workers: 4  # Balanced for fast validation
+  num_workers: 0  # Reduced to 0 for stability
   pin_memory: true
-  persistent_workers: true
-  prefetch_factor: 1
+  persistent_workers: false
+  prefetch_factor: null
 test_dataloader:
   batch_size: ${batch_size}
   shuffle: false

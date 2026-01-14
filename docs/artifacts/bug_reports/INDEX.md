@@ -2,23 +2,17 @@
 
 Active bug reports and development roadmaps.
 
-**Last Updated**: 2026-01-13 03:58:00
-**Total Artifacts**: 22
+**Last Updated**: 2026-01-15 00:31:01
+**Total Artifacts**: 16
 
-## Active (12)
+## Active (6)
 
-- [001 Dominant Edge Extension Failure](2025-11-28_0000_bug_001_dominant-edge-extension-failure.md) (📅 2025-12-06 18:09 (KST), 📄 bug_report) - The "Dominant Edge Extension" algorithm, designed to handle folded or torn document corners by exten
-- [001 Inference Studio Overlay Misalignment](2025-12-02_2313_bug_001_inference-studio-overlay-misalignment.md) (📅 2025-12-04 12:43 (KST), 📄 bug_report) - BUG-001
-- [001 Bootstrap Bug](2025-12-02_2335_bug_001_bootstrap-bug.md) (📅 2025-12-02 23:38 (KST), 📄 bug_report) - BUG-001
-- [001 Inference Resize Misalignment](2025-12-03_0003_bug_001_inference-resize-misalignment.md) (📅 2025-12-04 12:43 (KST), 📄 bug_report) - BUG-001
-- [001 Inference Studio Offsets Data Contract](2025-12-03_1100_bug_001_inference-studio-offsets-data-contract.md) (📅 2025-12-06 18:09 (KST), 📄 bug_report) - **Date**: 2025-12-03
-- [002 Inference Studio Visual Padding Mismatch](2025-12-03_2300_bug_002_inference-studio-visual-padding-mismatch.md) (📅 2025-12-06 18:09 (KST), 📄 bug_report) - **Date**: 2025-12-03
-- [001 Catastrophic Bulk Migration Incident](2025-12-07_0047_bug_001_catastrophic-bulk-migration-incident.md) (📅 2025-12-07 01:33 (KST), 📄 bug_report) - BUG-001-CATASTROPHIC-MIGRATION
 - [BaseHead.get_polygons_from_maps Signature Incompatibility (LSP Violation)](2025-12-27_0608_bug_001_model-head-lsp-violation.md) (📅 2025-12-27 15:08 (KST), 📄 bug_report) - BUG-20251227-001
 - [Test Bug Report](2026-01-03_0340_bug_001_test-bug.md) (📅 2026-01-03 03:40 (KST), 📄 bug_report) - BUG-001
 - [Incorrect State Directory Location](2026-01-03_1734_bug_001_state-dir-location.md) (📅 2026-01-03 17:34 (KST), 📄 bug_report) - Bug ID: BUG-001
 - [Test MCP Artifact Creation Fix](2026-01-07_0036_bug_001_test-mcp-artifact-creation.md) (📅 2026-01-07 00:36 (KST), 📄 bug_report) - Bug ID: BUG-001
 - [MCP Client Not Seeing Updated Tool List](2026-01-12_0518_bug_002_mcp-tool-cache-issue.md) (📅 2026-01-12 05:18 (KST), 📄 bug_report) - Antigravity IDE reports "Unknown tool: adt_meta_query" even though the unified MCP server is running
+- [DataLoader Segmentation Fault with Multiprocessing](2026-01-14_2153_bug_001_segfault.md) (📅 2026-01-14 21:53 (KST), 📄 bug_report) - Bug ID: BUG-20260114-001
 
 ## Completed (10)
 
@@ -37,7 +31,7 @@ Active bug reports and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 12 |
+| Active | 6 |
 | Completed | 10 |
 
 ---

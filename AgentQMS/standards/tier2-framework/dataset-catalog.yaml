@@ -121,7 +121,7 @@ datasets:
   use_case: validation
   integration_priority: high
 - name: aihub_lmdb_validation
-  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/aihub_lmdb_validation
+  path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
   sample_count: 616367
   format: LMDB
   lmdb_schema:

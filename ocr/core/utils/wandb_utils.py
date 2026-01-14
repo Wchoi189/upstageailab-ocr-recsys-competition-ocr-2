@@ -1,5 +1,8 @@
 # src/utils/wandb_utils.py
-# NEEDS TO BE REPURPOSED FOR TEXT DETECTION
+# Refactored for lazy imports to reduce module coupling
+# Heavy imports (cv2, torch, wandb, numpy, PIL) are loaded inside functions
+
+from __future__ import annotations
 
 import hashlib
 import math
@@ -7,17 +10,23 @@ import os
 import re
 from collections.abc import Mapping, Sequence
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
-import cv2
-import numpy as np
-import torch
-from omegaconf import DictConfig
-from PIL import Image as PILImage
+if TYPE_CHECKING:
+    import numpy as np
+    from omegaconf import DictConfig
 
-import wandb
 
-from .text_rendering import put_text_utf8
+
+def _get_wandb():
+    """Return the wandb module for use in callbacks.
+
+    This helper provides a consistent interface for accessing wandb
+    in contexts where it may or may not be initialized.
+    """
+    import wandb
+
+    return wandb
 
 
 def load_env_variables():
@@ -56,6 +65,7 @@ _MAX_RUN_NAME_LENGTH = 120
 
 def _select(config: Any, path: Sequence[str], default: Any | None = None) -> Any | None:
     """Safely retrieve a nested value from a DictConfig or mapping."""
+    from omegaconf import DictConfig
 
     current = config
     for key in path:
@@ -135,12 +145,77 @@ def _deduplicate_labeled_tokens(tokens: list[tuple[str, str]]) -> list[tuple[str
     return result
 
 
+def _to_u8_bgr(image: Any) -> tuple[Any, bool]:
+    """Convert image to BGR uint8 format for OpenCV drawing.
+
+    Consolidates conversion logic for tensors, PIL images, and numpy arrays.
+    Per visualization-logic.yaml: OpenCV uses BGR, WandB expects RGB.
+
+    Args:
+        image: Input image (torch.Tensor, PIL.Image, or np.ndarray)
+
+    Returns:
+        tuple: (bgr_image as np.ndarray, needs_rgb_conversion bool)
+            - bgr_image: uint8 BGR image ready for cv2 drawing
+            - needs_rgb_conversion: True if input was RGB and needs conversion back
+    """
+    import cv2
+    import numpy as np
+    import torch
+    from PIL import Image as PILImage
+
+    needs_rgb_conversion = False
+
+    if torch.is_tensor(image):
+        # Tensor expected as CHW normalized with mean=std=0.5
+        arr = image.detach().cpu().float().numpy()  # C,H,W
+        if arr.shape[0] in (1, 3):
+            arr = np.transpose(arr, (1, 2, 0))  # H,W,C
+        # Un-normalize from (-1,1) back to (0,1)
+        arr = arr * 0.5 + 0.5
+        arr = np.clip(arr * 255.0, 0, 255).astype(np.uint8)
+        # Tensor images are typically RGB, convert to BGR for OpenCV
+        if arr.ndim == 3 and arr.shape[2] == 3:
+            arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+            needs_rgb_conversion = True
+
+    elif isinstance(image, PILImage.Image):
+        # PIL Images are in RGB format
+        arr = np.array(image)
+        if arr.ndim == 3 and arr.shape[2] == 3:
+            arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
+            needs_rgb_conversion = True
+        if arr.dtype != np.uint8:
+            arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
+
+    elif isinstance(image, np.ndarray):
+        arr = image.copy()
+        # Numpy arrays may be RGB or BGR depending on source
+        # We assume they're already in the correct format
+        if arr.dtype != np.uint8:
+            maxv = float(arr.max()) if arr.size > 0 else 1.0
+            if maxv <= 1.5:
+                arr = (np.clip(arr, 0.0, 1.0) * 255.0).astype(np.uint8)
+            else:
+                arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
+
+    else:
+        # Fallback: best-effort conversion
+        arr = np.array(image)
+        if arr.dtype != np.uint8:
+            arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
+
+    return np.ascontiguousarray(arr), needs_rgb_conversion
+
+
 def _crop_to_content(image: np.ndarray, threshold: int = 4) -> np.ndarray:
     """Crop image to content, removing black borders.
 
     BUG-20251116-001: This function may crop too aggressively if images are incorrectly
     denormalized and appear dark. Ensure proper denormalization before calling this.
     """
+    import numpy as np
+
     if image.size == 0:
         return image
 
@@ -351,6 +426,7 @@ def generate_run_name(cfg: DictConfig) -> str:
 
 def finalize_run(metrics: Mapping[str, float] | float | None):
     """Finalize the active W&B run with the most relevant metric."""
+    import wandb
 
     if not wandb.run:
         print("W&B run not initialized. Skipping finalization.")
@@ -432,6 +508,13 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
     Adds a compact legend overlay and samples up to `limit` images with a fixed seed
     for diversity across epochs.
     """
+    # Lazy imports to reduce module coupling
+    import cv2
+    import numpy as np
+    import wandb
+
+    from .text_rendering import put_text_utf8
+
     if not wandb.run:
         return
 
@@ -468,52 +551,8 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
     for rank, i in enumerate(idxs):
         image, gt_boxes, pred_boxes = images[i], gt_bboxes[i], pred_bboxes[i]
 
-        # Convert to a proper BGR uint8 image for OpenCV drawing
-        # BUG-20251116-001: PIL Images are in RGB format, but OpenCV expects BGR
-        # We need to convert RGB→BGR for drawing, then BGR→RGB for WandB logging
-        needs_rgb_conversion = False  # Track if we need to convert back to RGB for WandB
-
-        if torch.is_tensor(image):
-            # image expected as CHW normalized with mean=std=0.5
-            arr = image.detach().cpu().float().numpy()  # C,H,W
-            if arr.shape[0] in (1, 3):
-                arr = np.transpose(arr, (1, 2, 0))  # H,W,C
-            # Un-normalize from (-1,1) back to (0,1)
-            arr = arr * 0.5 + 0.5
-            arr = np.clip(arr * 255.0, 0, 255).astype(np.uint8)
-            # BUG-20251116-001: Tensor images are typically RGB, convert to BGR for OpenCV
-            if arr.ndim == 3 and arr.shape[2] == 3:
-                arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
-                needs_rgb_conversion = True  # Mark for conversion back to RGB for WandB
-        elif isinstance(image, PILImage.Image):
-            # BUG-20251116-001: PIL Images are in RGB format
-            # Convert to numpy array (RGB) then to BGR for OpenCV
-            arr = np.array(image)
-            if arr.ndim == 3 and arr.shape[2] == 3:
-                # PIL Image is RGB, convert to BGR for OpenCV drawing
-                arr = cv2.cvtColor(arr, cv2.COLOR_RGB2BGR)
-                needs_rgb_conversion = True  # Mark for conversion back to RGB for WandB
-            if arr.dtype != np.uint8:
-                arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
-        elif isinstance(image, np.ndarray):
-            arr = image.copy()
-            # BUG-20251116-001: Numpy arrays may be RGB or BGR depending on source
-            # We assume they're already in the correct format (BGR if from OpenCV, RGB if from PIL)
-            # Only PIL Images are explicitly converted since we know they're RGB
-            if arr.dtype != np.uint8:
-                # Try to scale float images in [0,1]
-                maxv = float(arr.max()) if arr.size > 0 else 1.0
-                if maxv <= 1.5:
-                    arr = (np.clip(arr, 0.0, 1.0) * 255.0).astype(np.uint8)
-                else:
-                    arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
-        else:
-            # Fallback: best-effort conversion
-            arr = np.array(image)
-            if arr.dtype != np.uint8:
-                arr = np.clip(arr, 0.0, 255.0).astype(np.uint8)
-
-        img_to_draw = np.ascontiguousarray(arr)
+        # Convert to BGR uint8 for OpenCV drawing
+        img_to_draw, needs_rgb_conversion = _to_u8_bgr(image)
 
         # Prepare counts and safe iterables
         g = len(gt_boxes) if gt_boxes is not None else 0
