@@ -60,7 +60,7 @@ app = Server("unified_project")
 config_loader = ConfigLoader(cache_size=5)
 
 # --- Telemetry ---
-TELEMETRY_FILE = PROJECT_ROOT / ".mcp-telemetry.jsonl"
+TELEMETRY_FILE = PROJECT_ROOT / "AgentQMS" / ".mcp-telemetry.jsonl"
 
 def log_telemetry_event(event: dict) -> None:
     """Append a telemetry event to the JSONL log."""

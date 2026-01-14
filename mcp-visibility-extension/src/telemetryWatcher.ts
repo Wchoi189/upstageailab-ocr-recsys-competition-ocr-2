@@ -2,7 +2,9 @@ import * as vscode from 'vscode';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as readline from 'readline';
+import { TelemetryCache } from './telemetryCache';
 
+/* eslint-disable @typescript-eslint/naming-convention */
 export interface TelemetryEvent {
     timestamp: string;
     tool_name: string;
@@ -13,6 +15,7 @@ export interface TelemetryEvent {
     policy?: string;
     error?: string;
 }
+/* eslint-enable @typescript-eslint/naming-convention */
 
 export interface TelemetrySummary {
     total: number;
@@ -27,14 +30,26 @@ export class TelemetryWatcher implements vscode.Disposable {
     private watcher: vscode.FileSystemWatcher | undefined;
     private telemetryPath: string;
     private lastSize: number = 0;
+    private lastInode: number | undefined;
     private events: TelemetryEvent[] = [];
+    private cache: TelemetryCache;
     private readonly maxEvents = 100;
+    private debounceTimer: NodeJS.Timeout | undefined;
+    private readonly debounceMs = 100;
+    private isHealthy: boolean = true;
+    private lastError: string | undefined;
+    private consecutiveErrors: number = 0;
+    private readonly maxConsecutiveErrors = 5;
 
     private _onUpdate = new vscode.EventEmitter<TelemetrySummary>();
     readonly onUpdate = this._onUpdate.event;
 
-    constructor(workspaceRoot: string) {
-        this.telemetryPath = path.join(workspaceRoot, '.mcp-telemetry.jsonl');
+    private _onHealthChange = new vscode.EventEmitter<{ healthy: boolean; error?: string }>();
+    readonly onHealthChange = this._onHealthChange.event;
+
+    constructor(workspaceRoot: string, maxCacheSize: number = 1000) {
+        this.telemetryPath = path.join(workspaceRoot, 'AgentQMS', '.mcp-telemetry.jsonl');
+        this.cache = new TelemetryCache(maxCacheSize);
         this.initWatcher();
         this.loadExisting();
     }
@@ -48,8 +63,25 @@ export class TelemetryWatcher implements vscode.Disposable {
 
         this.watcher = vscode.workspace.createFileSystemWatcher(pattern);
 
-        this.watcher.onDidChange(() => this.handleFileChange());
+        this.watcher.onDidChange(() => this.debouncedHandleFileChange());
         this.watcher.onDidCreate(() => this.handleFileChange());
+        this.watcher.onDidDelete(() => this.handleFileDeleted());
+    }
+
+    private debouncedHandleFileChange() {
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+        }
+        this.debounceTimer = setTimeout(() => this.handleFileChange(), this.debounceMs);
+    }
+
+    private handleFileDeleted() {
+        console.warn('Telemetry file deleted, resetting state');
+        this.lastSize = 0;
+        this.lastInode = undefined;
+        this.events = [];
+        this.setHealth(false, 'Telemetry file deleted');
+        this.emitUpdate();
     }
 
     private async loadExisting() {
@@ -58,9 +90,8 @@ export class TelemetryWatcher implements vscode.Disposable {
                 const content = fs.readFileSync(this.telemetryPath, 'utf-8');
                 const lines = content.trim().split('\n').filter(l => l);
 
-                // Take last maxEvents
-                const recentLines = lines.slice(-this.maxEvents);
-                this.events = recentLines.map(line => {
+                // Parse all events and add to cache
+                const events = lines.map(line => {
                     try {
                         return JSON.parse(line) as TelemetryEvent;
                     } catch {
@@ -68,17 +99,44 @@ export class TelemetryWatcher implements vscode.Disposable {
                     }
                 }).filter((e): e is TelemetryEvent => e !== null);
 
-                this.lastSize = fs.statSync(this.telemetryPath).size;
+                // Add to cache
+                this.cache.addBatch(events);
+
+                // Keep recent events in memory for quick access
+                this.events = this.cache.getRecent(this.maxEvents);
+
+                const stats = fs.statSync(this.telemetryPath);
+                this.lastSize = stats.size;
+                this.lastInode = stats.ino;
+
+                this.setHealth(true);
                 this.emitUpdate();
+            } else {
+                this.setHealth(false, 'Telemetry file not found');
             }
         } catch (err) {
-            console.error('Failed to load existing telemetry:', err);
+            this.handleError('Failed to load existing telemetry', err);
         }
     }
 
     private async handleFileChange() {
         try {
+            if (!fs.existsSync(this.telemetryPath)) {
+                this.handleFileDeleted();
+                return;
+            }
+
             const stats = fs.statSync(this.telemetryPath);
+
+            // Detect file rotation (inode changed or file truncated)
+            const fileRotated = this.lastInode !== undefined && stats.ino !== this.lastInode;
+            const fileTruncated = stats.size < this.lastSize;
+
+            if (fileRotated || fileTruncated) {
+                console.log('File rotation or truncation detected, reloading...');
+                await this.loadExisting();
+                return;
+            }
 
             if (stats.size > this.lastSize) {
                 // Read only new content
@@ -93,9 +151,12 @@ export class TelemetryWatcher implements vscode.Disposable {
                     if (line.trim()) {
                         try {
                             const event = JSON.parse(line) as TelemetryEvent;
-                            this.events.push(event);
 
-                            // Trim old events
+                            // Add to cache
+                            this.cache.add(event);
+
+                            // Update in-memory recent events
+                            this.events.push(event);
                             if (this.events.length > this.maxEvents) {
                                 this.events.shift();
                             }
@@ -106,10 +167,14 @@ export class TelemetryWatcher implements vscode.Disposable {
                 }
 
                 this.lastSize = stats.size;
+                this.lastInode = stats.ino;
+                this.setHealth(true);
                 this.emitUpdate();
             }
         } catch (err) {
-            console.error('Failed to read telemetry update:', err);
+            this.handleError('Failed to read telemetry update', err);
+            // Attempt recovery by reloading
+            setTimeout(() => this.loadExisting(), 1000);
         }
     }
 
@@ -145,8 +210,54 @@ export class TelemetryWatcher implements vscode.Disposable {
         await this.loadExisting();
     }
 
+    public getHealth(): { healthy: boolean; error?: string } {
+        return {
+            healthy: this.isHealthy,
+            error: this.lastError
+        };
+    }
+
+    public getCache(): TelemetryCache {
+        return this.cache;
+    }
+
+    public getCacheStats() {
+        return this.cache.getStats();
+    }
+
+    private setHealth(healthy: boolean, error?: string) {
+        if (this.isHealthy !== healthy || this.lastError !== error) {
+            this.isHealthy = healthy;
+            this.lastError = error;
+
+            if (healthy) {
+                this.consecutiveErrors = 0;
+            }
+
+            this._onHealthChange.fire({ healthy, error });
+        }
+    }
+
+    private handleError(message: string, err: unknown) {
+        const errorMsg = `${message}: ${err}`;
+        console.error(errorMsg);
+
+        this.consecutiveErrors++;
+
+        if (this.consecutiveErrors >= this.maxConsecutiveErrors) {
+            this.setHealth(false, `Too many errors (${this.consecutiveErrors})`);
+        } else {
+            // Don't mark as unhealthy for occasional errors
+            console.warn(`Error ${this.consecutiveErrors}/${this.maxConsecutiveErrors}: ${errorMsg}`);
+        }
+    }
+
     dispose() {
+        if (this.debounceTimer) {
+            clearTimeout(this.debounceTimer);
+        }
         this.watcher?.dispose();
         this._onUpdate.dispose();
+        this._onHealthChange.dispose();
     }
 }

@@ -1,0 +1,4 @@
+{"timestamp":"2026-01-14T00:00:00Z","tool_name":"init","status":"success"}
+{"timestamp": "2026-01-14T14:38:47.988357", "tool_name": "adt_meta_query", "args_hash": "c4f26922", "status": "success", "duration_ms": 23.2, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-14T14:39:14.548721", "tool_name": "adt_meta_query", "args_hash": "dca67727", "status": "success", "duration_ms": 14.04, "module": "agent_debug_toolkit.mcp_server"}
+{"timestamp": "2026-01-14T15:03:11.083411", "tool_name": "manage_session", "args_hash": "745a4b50", "status": "success", "duration_ms": 1614.81, "module": "project_compass.mcp_server"}

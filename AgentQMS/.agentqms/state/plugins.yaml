@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-13T07:38:59.680271+00:00'
+  generated_at: '2026-01-14T06:28:20.209943+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -27,9 +27,8 @@ plugins_loaded:
   - ocr-text-detection
   - ocr-text-recognition
   - pipeline-development
+  - project-compass
   - security-review
-  - multi-agent-system
-  - utility-scripts
 plugin_metadata:
 - name: assessment
   type: artifact_type
@@ -136,21 +135,16 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/pipeline-development.yaml
+- name: project-compass
+  type: context_bundle
+  version: '1.0'
+  source: framework
+  path: AgentQMS/.agentqms/plugins/context_bundles/project-compass.yaml
 - name: security-review
   type: context_bundle
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
-- name: multi-agent-system
-  type: context_bundle
-  version: '1.0'
-  source: project
-  path: .agentqms/plugins/context_bundles/multi-agent-system.yaml
-- name: utility-scripts
-  type: context_bundle
-  version: '1.0'
-  source: project
-  path: .agentqms/plugins/context_bundles/utility-scripts.yaml
 validation_errors: []
 resolved:
   artifact_types:
@@ -1805,6 +1799,58 @@ resolved:
           - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
             priority: low
             description: Coding standards
+    project-compass:
+      name: project-compass
+      title: Project Compass Lifecycle
+      ads_version: '1.0'
+      scope: project
+      description: 'Core lifecycle protocols and session management for Project Compass.
+        Use this bundle to understand how to initialize, update, and finalize work
+        sessions.
+
+        '
+      tags:
+      - compass
+      - lifecycle
+      - session
+      - management
+      - roadmap
+      triggers:
+        keywords:
+        - compass
+        - session
+        - roadmap
+        - checkout
+        - handover
+        - init
+        - export
+      tiers:
+        tier1:
+          name: Core Protocols
+          description: Essential rules and active session state. MUST READ.
+          files:
+          - path: project_compass/AGENTS.md
+            priority: high
+            description: Defines the strict lifecycle protocols, chat nomenclature,
+              and atomic operations for agents.
+          - path: project_compass/active_context/current_session.yml
+            priority: high
+            description: The Single Source of Truth for the current active session,
+              including objectives and phase status.
+        tier2:
+          name: Tooling & State
+          description: Helper tools and global project health.
+          files:
+          - path: project_compass/compass.json
+            priority: medium
+            description: Global project health status and current phase markers.
+          - path: project_compass/cli.py
+            priority: medium
+            description: CLI entry points for session management (init, check-env,
+              export).
+          - path: project_compass/session_handover.md
+            priority: low
+            description: Template or previous record of session handover.
     security-review:
       name: security-review
       title: Security Review Context Bundle
@@ -1872,154 +1918,3 @@ resolved:
           - path: AgentQMS/standards/INDEX.yaml
             priority: low
             description: Standards index for comprehensive context
-    multi-agent-system:
-      name: multi-agent-system
-      title: Multi-Agent System Architecture
-      description: 'Documentation for the multi-agent system including Coordinator,
-        Validation, and Base agents.
-
-        Covering RabbitMQ architecture, IACP protocol, and usage patterns.
-
-        '
-      ads_version: '1.0'
-      scope: project
-      tags:
-      - agents
-      - coordinator
-      - validation
-      - rabbitmq
-      - iacp
-      - architecture
-      triggers:
-        keywords:
-        - coordinator agent
-        - validation agent
-        - multi-agent
-        - rabbitmq
-        - iacp
-        - agent workflow
-        - ocr pipeline
-        - distributed agents
-        - base agent
-        - orchestrator
-        patterns:
-        - \b(coordinator|validation)\b.*\b(agent)\b
-        - \b(multi|distributed)\b.*\b(agent|system)\b
-        - \b(rabbitmq|iacp)\b
-      tiers:
-        tier1:
-          name: Core Architecture
-          description: Main documentation for the multi-agent system
-          files:
-          - AgentQMS/standards/tier3-agents/multi-agent-system.yaml
-        tier2:
-          name: Agent Implementations
-          description: Source code references
-          files:
-          - ocr/agents/coordinator_agent.py
-          - ocr/agents/validation_agent.py
-          - ocr/agents/base_agent.py
-    utility-scripts:
-      name: utility-scripts
-      title: Reusable Utility Scripts Discovery
-      description: 'Discover and use reusable utility scripts instead of writing custom
-        code.
-
-        Includes YAML loading (with caching), path resolution, timestamps, git utilities.
-
-        These utilities provide significant performance benefits and consistency across
-        projects.
-
-        '
-      ads_version: '1.0'
-      scope: project
-      tags:
-      - utilities
-      - discovery
-      - reusable-code
-      - configuration
-      - paths
-      - timestamps
-      - git
-      - performance
-      triggers:
-        keywords:
-        - load yaml
-        - load config
-        - configuration
-        - config file
-        - yaml file
-        - parse yaml
-        - read config
-        - caching
-        - cache
-        - performance
-        - fast load
-        - repeated loads
-        - project root
-        - artifacts directory
-        - artifacts dir
-        - artifact location
-        - data directory
-        - data dir
-        - configs directory
-        - outputs directory
-        - standard path
-        - standard directory
-        - find path
-        - get path
-        - locate file
-        - directory location
-        - timestamp
-        - kst
-        - korea time
-        - timezone
-        - current time
-        - format date
-        - date format
-        - artifact timestamp
-        - metadata timestamp
-        - current branch
-        - git branch
-        - commit hash
-        - git commit
-        - detect branch
-        - branch name
-        - commit info
-        patterns:
-        - \b(yaml|config|configuration)\b.*\b(load|import|parse|read)\b
-        - \b(load|import|parse|read)\b.*\b(yaml|config|configuration)\b
-        - \b(yaml|config)\b.*\b(file|cache)\b
-        - \b(path|directory|location|file|folder)\b.*\b(find|get|resolve|locate|standard)\b
-        - \b(project|artifact|document|data|config)\b.*\b(root|dir|directory|location|path)\b
-        - \b(standard|project)\b.*\b(directory|path|location)\b
-        - \b(timestamp|datetime|date|time|temporal)\b.*\b(format|current|kst|korea)\b
-        - \b(format|create|generate)\b.*\b(timestamp|date|time)\b
-        - \b(artifact|metadata)\b.*\b(timestamp|time|date)\b
-        - \b(branch|commit|git|revision)\b.*\b(current|detect|get|info)\b
-        - \b(current|get)\b.*\b(branch|commit|git)\b
-        - \b(build|artifact|version)\b.*\b(branch|commit)\b
-        - \b(cache|caching|fast|speed|performance)\b.*\b(load|config|yaml)\b
-        - \b(optimize|improve)\b.*\b(load|config)\b
-      tiers:
-        tier1:
-          name: Essential Discovery Resources
-          description: Critical discovery resources - always include when bundle is
-            suggested
-          files:
-          - AgentQMS/standards/utility-scripts/quick-reference.md
-          - AgentQMS/standards/utility-scripts/utility-scripts-index.yaml
-        tier2:
-          name: Detailed Utility Documentation
-          description: Comprehensive API reference for the 4 Tier-1 utilities
-          files:
-          - AgentQMS/standards/utility-scripts/by-category/config-loading/config_loader.md
-          - AgentQMS/standards/utility-scripts/by-category/path-resolution/paths.md
-          - AgentQMS/standards/utility-scripts/by-category/timestamps/timestamps.md
-          - AgentQMS/standards/utility-scripts/by-category/git/git.md
-        tier3:
-          name: Integration & Discovery Guide
-          description: Discovery manifest and integration guide for AI agents
-          files:
-          - AgentQMS/standards/utility-scripts/manifest.yaml
-          - AgentQMS/standards/utility-scripts/ai-integration-guide.md

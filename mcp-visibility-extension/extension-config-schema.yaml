@@ -1,0 +1,56 @@
+schema_version: "1.0"
+title: "MCP Visibility Extension Configuration Schema"
+description: "Reference for configuration settings, data paths, and expected formats."
+
+configuration:
+  settings:
+    - name: "mcpVisibility.telemetryPath"
+      type: "string"
+      description: "Absolute path to the AgentQMS directory or .mcp-telemetry.jsonl file. Examples: '/abs/path/to/project', '/abs/path/to/project/AgentQMS'"
+      scope: "window"
+      default: ""
+
+data_resolution:
+  logic: "The extension resolves a 'Workspace Root' which MUST contain the 'AgentQMS' directory."
+  steps:
+    1: "Check 'mcpVisibility.telemetryPath'. If it points to a file, use its directory's parent (assuming file is inside AgentQMS). If it points to 'AgentQMS' dir, use its parent. Otherwise, use as is."
+    2: "Check 'vscode.workspace.workspaceFolders[0]'. Use the first open folder."
+    3: "Fallback: Check parent directory of the extension installation. If 'AgentQMS' exists there, use the parent directory."
+
+datasources:
+  telemetry:
+    name: "Agent Telemetry"
+    path_relative_to_root: "AgentQMS/.mcp-telemetry.jsonl"
+    format: "JSONL (Newline Delimited JSON)"
+    description: "Stream of tool execution events."
+    schema:
+      type: "object"
+      required: ["timestamp", "tool_name", "status"]
+      properties:
+        timestamp: { type: "string", format: "iso8601" }
+        tool_name: { type: "string" }
+        args_hash: { type: "string" }
+        status: { type: "string", enum: ["success", "error", "policy_violation"] }
+        duration_ms: { type: "number" }
+        module: { type: "string", description: "Source module/agent" }
+        policy: { type: "string", description: "Violated policy name (if status=policy_violation)" }
+        error: { type: "string", description: "Error message (if status=error)" }
+
+  bundles:
+    name: "Context Bundles"
+    path_relative_to_root: "AgentQMS/.agentqms/plugins/context_bundles/*.yaml"
+    format: "YAML"
+    description: "Definitions of related file groups."
+    schema:
+      type: "object"
+      required: ["name", "files"]
+      properties:
+        name: { type: "string" }
+        description: { type: "string" }
+        files:
+          type: "array"
+          items: { type: "string", description: "Path relative to project root" }
+
+notes:
+  - "The extension strictly expects the 'AgentQMS' directory structure for both telemetry and bundles."
+  - "If 'AgentQMS' exists but .mcp-telemetry.jsonl is missing, the extension will connect and wait for the file to be created."

@@ -33,7 +33,7 @@ from enum import Enum
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.tools.utils.paths import get_project_root
+from AgentQMS.tools.utils.paths import get_framework_root
 from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
@@ -88,7 +88,7 @@ class ContextControl:
             project_root: Project root path (auto-detected if not provided)
         """
         if project_root is None:
-            project_root = get_project_root()
+            project_root = get_framework_root()
 
         self.project_root = Path(project_root)
         self._control_dir = self.project_root / ".agentqms" / "context_control"
@@ -331,7 +331,7 @@ class ContextFeedbackCollector:
             project_root: Project root path (auto-detected if not provided)
         """
         if project_root is None:
-            project_root = get_project_root()
+            project_root = get_framework_root()
 
         self.project_root = Path(project_root)
         self._feedback_dir = self.project_root / ".agentqms" / "context_feedback"

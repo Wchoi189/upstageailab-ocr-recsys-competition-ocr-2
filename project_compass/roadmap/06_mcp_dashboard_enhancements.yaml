@@ -1,0 +1,48 @@
+ads_version: "1.0"
+type: rule_set
+title: "MCP Dashboard Enhancements Roadmap"
+agent: all
+tier: 1
+priority: high
+validates_with: "AgentQMS/standards/schemas/compliance-checker.py"
+compliance_status: active
+memory_footprint: 200
+description: "Roadmap for Phase 2 of MCP Visibility Dashboard, focusing on visualization, spec-driven development, and advanced filtering."
+
+roadmap:
+  phase_1:
+    name: "Refactoring & Standards"
+    status: "completed"
+    goals:
+      - "[x] Rename extension to AgentQMS Visibility & Telemetry"
+      - "[x] Fix Bundle Parsing (nested tiers)"
+      - "[x] Implement Policy View (Standards & Violations)"
+      - "[ ] Enforce `extension-config-schema.yaml` as the source of truth."
+
+  phase_2:
+    name: "Visualization & Insights"
+    status: "in_progress"
+    goals:
+      - "[ ] Implement timeline visualization for tool calls (Gantt chart view)."
+      - "[ ] Add success/failure distribution charts."
+      - "[ ] **Context Usage Tracking**: Visualize which bundles were suggested/loaded during prompting."
+      - "[ ] **Memory Footprint**: Display estimated token count/memory usage of read documents."
+      - "[ ] **Path Traversal**: Show time elapsed to resolve target directories."
+
+  phase_3:
+    name: "Advanced Data & Filtering"
+    status: "planned"
+    goals:
+      - "[ ] Enable regex-based filtering for tool arguments."
+      - "[ ] Add support for filtering by specific error types/codes."
+      - "[ ] Implement 'Live Mode' toggle to pause/resume real-time updates."
+      - "[ ] Add support for exporting filtered views."
+
+datasources:
+  current:
+    - "telemetry (AgentQMS)"
+    - "bundles (AgentQMS)"
+    - "standards (AgentQMS/standards/INDEX.yaml)"
+  planned:
+    - "feedback_loops"
+    - "context_usage"

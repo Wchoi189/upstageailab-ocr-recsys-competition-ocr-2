@@ -52,7 +52,9 @@ export class BundleProvider implements vscode.Disposable {
             const bundles: ContextBundle[] = [];
 
             for (const file of files) {
-                if (!file.endsWith('.yaml')) continue;
+                if (!file.endsWith('.yaml')) {
+                    continue;
+                }
 
                 const filePath = path.join(this.bundlesPath, file);
                 const content = fs.readFileSync(filePath, 'utf-8');
@@ -60,13 +62,11 @@ export class BundleProvider implements vscode.Disposable {
                 // Simple YAML parsing for key fields
                 const nameMatch = content.match(/^name:\s*["']?(.+?)["']?\s*$/m);
                 const descMatch = content.match(/^description:\s*["']?(.+?)["']?\s*$/m);
-                const filesMatch = content.match(/^files:\s*\n((?:\s+-\s+.+\n?)+)/m);
+                const filesMatch = content.match(/^\s*-\s+path:.*$/gm);
 
                 const name = nameMatch ? nameMatch[1] : file.replace('.yaml', '');
                 const description = descMatch ? descMatch[1] : 'No description';
-                const fileCount = filesMatch
-                    ? (filesMatch[1].match(/^\s+-/gm) || []).length
-                    : 0;
+                const fileCount = filesMatch ? filesMatch.length : 0;
 
                 bundles.push({ name, description, fileCount });
             }

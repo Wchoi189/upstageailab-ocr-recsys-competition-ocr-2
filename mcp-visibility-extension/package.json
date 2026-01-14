@@ -1,7 +1,7 @@
 {
-    "name": "mcp-visibility-extension",
-    "displayName": "MCP Visibility Dashboard",
-    "description": "Real-time visibility into MCP tool calls, middleware enforcement, and context bundles",
+    "name": "agentqms-visibility",
+    "displayName": "AgentQMS Visibility & Telemetry",
+    "description": "Real-time visibility, auditing, and telemetry for AgentQMS context, tools, and compliance.",
     "version": "0.1.0",
     "publisher": "upstage-ocr",
     "engines": {
@@ -15,6 +15,16 @@
     ],
     "main": "./out/extension.js",
     "contributes": {
+        "configuration": {
+            "title": "MCP Visibility",
+            "properties": {
+                "mcpVisibility.telemetryPath": {
+                    "type": "string",
+                    "default": "",
+                    "description": "Absolute path to the AgentQMS directory or .mcp-telemetry.jsonl file."
+                }
+            }
+        },
         "commands": [
             {
                 "command": "mcpVisibility.showDashboard",

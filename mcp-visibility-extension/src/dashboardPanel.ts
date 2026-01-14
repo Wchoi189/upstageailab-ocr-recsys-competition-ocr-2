@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { TelemetryWatcher, TelemetrySummary } from './telemetryWatcher';
 import { BundleProvider, ContextBundle } from './bundleProvider';
+import { PolicyProvider, Policy } from './policyProvider';
 
 export class DashboardPanel implements vscode.Disposable {
     private panel: vscode.WebviewPanel | undefined;
@@ -13,11 +14,12 @@ export class DashboardPanel implements vscode.Disposable {
         private readonly extensionUri: vscode.Uri,
         private readonly telemetryWatcher: TelemetryWatcher | undefined,
         private readonly bundleProvider?: BundleProvider,
+        private readonly policyProvider?: PolicyProvider,
         existingWebview?: vscode.Webview
     ) {
         if (existingWebview) {
             this.webview = existingWebview;
-            this.setupWebview(existingWebview);
+            this.initializeWebview(existingWebview);
         }
     }
 
@@ -29,7 +31,7 @@ export class DashboardPanel implements vscode.Disposable {
 
         this.panel = vscode.window.createWebviewPanel(
             'mcpVisibility.dashboard',
-            'MCP Visibility Dashboard',
+            'AgentQMS Visibility',
             vscode.ViewColumn.Two,
             {
                 enableScripts: true,
@@ -39,7 +41,7 @@ export class DashboardPanel implements vscode.Disposable {
         );
 
         this.webview = this.panel.webview;
-        this.setupWebview(this.panel.webview);
+        this.initializeWebview(this.panel.webview);
 
         this.panel.onDidDispose(() => {
             this.panel = undefined;
@@ -47,29 +49,8 @@ export class DashboardPanel implements vscode.Disposable {
         }, null, this.disposables);
     }
 
-    private async setupWebview(webview: vscode.Webview) {
+    private async initializeWebview(webview: vscode.Webview) {
         webview.html = await this.getHtmlContent();
-
-        if (this.telemetryWatcher) {
-            // Listen for telemetry updates
-            const updateListener = this.telemetryWatcher.onUpdate((data: TelemetrySummary) => {
-                this.updateTelemetry(data);
-            });
-            this.disposables.push(updateListener);
-
-            // Send initial data
-            const initialData = this.telemetryWatcher.getSummary();
-            this.updateTelemetry(initialData);
-        }
-
-        // Send initial bundles
-        if (this.bundleProvider) {
-            this.updateBundles(this.bundleProvider.listBundles());
-            const bundleListener = this.bundleProvider.onUpdate((bundles: ContextBundle[]) => {
-                this.updateBundles(bundles);
-            });
-            this.disposables.push(bundleListener);
-        }
 
         // Handle messages from webview
         webview.onDidReceiveMessage(
@@ -79,10 +60,30 @@ export class DashboardPanel implements vscode.Disposable {
                         if (this.telemetryWatcher) {
                             await this.telemetryWatcher.refresh();
                             this.updateTelemetry(this.telemetryWatcher.getSummary());
+                            const health = this.telemetryWatcher.getHealth();
+                            this.updateConnectionStatus(health.healthy, health.error);
                         }
                         if (this.bundleProvider) {
                             this.bundleProvider.refresh();
                             this.updateBundles(this.bundleProvider.listBundles());
+                        }
+                        if (this.policyProvider) {
+                            this.policyProvider.refresh();
+                            this.updatePolicies(this.policyProvider.getPolicies());
+                        }
+                        break;
+                    case 'webviewReady':
+                        // Send initial state
+                        if (this.telemetryWatcher) {
+                            this.updateTelemetry(this.telemetryWatcher.getSummary());
+                            const health = this.telemetryWatcher.getHealth();
+                            this.updateConnectionStatus(health.healthy, health.error);
+                        }
+                        if (this.bundleProvider) {
+                            this.updateBundles(this.bundleProvider.listBundles());
+                        }
+                        if (this.policyProvider) {
+                            this.updatePolicies(this.policyProvider.getPolicies());
                         }
                         break;
                 }
@@ -92,12 +93,30 @@ export class DashboardPanel implements vscode.Disposable {
         );
     }
 
+    attachWebview(webview: vscode.Webview) {
+        this.webview = webview;
+        this.initializeWebview(webview);
+    }
+
     updateTelemetry(data: TelemetrySummary) {
         this.webview?.postMessage({ command: 'update', data });
     }
 
     updateBundles(bundles: ContextBundle[]) {
         this.webview?.postMessage({ command: 'updateBundles', bundles });
+    }
+
+    updatePolicies(policies: Policy[]) {
+        this.webview?.postMessage({ command: 'updatePolicies', policies });
+    }
+
+    updateConnectionStatus(connected: boolean, error?: string) {
+        this.webview?.postMessage({
+            command: 'connectionStatus',
+            connected,
+            error,
+            timestamp: new Date().toISOString()
+        });
     }
 
     private async getHtmlContent(): Promise<string> {
