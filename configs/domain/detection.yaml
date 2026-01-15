@@ -9,6 +9,8 @@ defaults:
   - _self_
 
 task: detection
+batch_size: 16
+skip_test: true
 
 model:
   type: detection

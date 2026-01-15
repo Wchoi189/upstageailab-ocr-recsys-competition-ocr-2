@@ -41,8 +41,17 @@ watch -n 1 "df -h /dev/shm; nvidia-smi --query-gpu=memory.used --format=csv"
 
 ## Results Table
 
-| Test             | Config                  | Duration | Result      | Notes                                             |
-| ---------------- | ----------------------- | -------- | ----------- | ------------------------------------------------- |
-| Baseline         | num_workers=4           | ~4s      | ❌ SEGFAULT  | Crashes at step 38-40                             |
-| test_h2_mask_fix | num_workers=0 (default) | 43m      | ✅ Completed | Epoch 0 finished; import error at checkpoint save |
-| -                | -                       | -        | -           | Next: test with num_workers=2                     |
+| Test             | Config                           | Duration | Result      | Notes                                             |
+| ---------------- | -------------------------------- | -------- | ----------- | ------------------------------------------------- |
+| Baseline         | num_workers=4                    | ~4s      | ❌ SEGFAULT  | Crashed at step 38-40                             |
+| test_h2_mask_fix | num_workers=0 (default)          | 43m      | ✅ Completed | Epoch 0 finished; import error at checkpoint save |
+| test_h2_workers  | num_workers=2, limit=100 train   | ~3min    | ✅ PASSED    | 100+ train batches, no segfault                   |
+| test_h2_final    | num_workers=2, 50 train + 20 val | ~30s     | ✅ PASSED    | .SUCCESS sentinel, training phase stable          |
+
+## Conclusion
+
+**Root Cause**: H2 confirmed - `tgt_key_padding_mask` bool/float mismatch in `decoder.py:105`
+
+**Fix**: Cast mask to float: `(targets == self.pad_token_id).float()`
+
+**Recommendation**: Update `configs/data/dataloaders/default.yaml` to use `num_workers > 0` now that the fix is applied.

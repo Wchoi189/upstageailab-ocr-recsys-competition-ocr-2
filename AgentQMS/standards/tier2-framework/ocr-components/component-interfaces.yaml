@@ -1,0 +1,33 @@
+ads_version: "1.0"
+type: specification
+agent: all
+tier: 2
+priority: high
+
+component: component_interfaces
+description: Defines the interface contracts for OCR components and the Feature-First architecture pattern.
+role: |
+  Establishes the separation between Core (Generic) and Feature (Specific) interfaces.
+  Ensures that the Core remains task-agnostic while Features can enforce strict contracts.
+critical_logic:
+  - id: feature-first-inheritance
+    description: |
+      Feature-specific logic MUST NOT reside in `ocr/core`.
+      Instead, create `ocr/features/<feature>/interfaces.py` that inherits from generic core interfaces.
+      Example: `DetectionHead(BaseHead)` adds `get_polygons_from_maps`.
+  - id: generic-core
+    description: |
+      `ocr/core/interfaces/*.py` MUST remain Generic.
+      Signatures should be `(x, **kwargs)` or `(preds, targets, **kwargs)`.
+      Do not import feature-specific types into core.
+  - id: detection-contract
+    description: |
+      Detection Heads require `get_polygons_from_maps(batch, pred)`.
+      Detection Losses require strict `pred, gt_binary, gt_thresh` inputs for debugging clarity, but should use `**kwargs` for forward compatibility.
+  - id: recognition-contract
+    description: |
+      recognition Heads are simple functional blocks (Linear) and do not require complex post-processing interfaces within the Head definition itself (delegated to Decoder/PostProcessor).
+data_contract:
+  implementation_rules:
+    - rule: "All specific heads must inherit from their Feature Interface (e.g. `DBHead(DetectionHead)`), NOT `BaseHead` directly if a Feature Interface exists."
+    - rule: "Core interfaces must not contain methods that return empty/dummy values just to satisfy a specific feature (e.g. no empty `get_polygons` in `BaseHead`)."

@@ -15,4 +15,4 @@ metrics:
     scale_wise: false
     scale_bins: [0.0, 0.005, 0.01, 0.015, 0.02, 0.025, 0.1, 0.5, 1.0]
     scale_range: [0.0, 1.0]
-    max_polygons: 500
+    max_polygons: 300

@@ -249,7 +249,7 @@ class MetadataCallback(Callback):
 
             # Save metadata using V2 API
             metadata_path = save_metadata(metadata, checkpoint_path)
-            LOGGER.info("Generated metadata: %s", metadata_path)
+            LOGGER.debug("Generated metadata: %s", metadata_path)
 
             # Update checkpoint index (Phase 4.3 optimization)
             try:

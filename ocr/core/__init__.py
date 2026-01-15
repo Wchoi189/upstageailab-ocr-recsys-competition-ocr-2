@@ -1,13 +1,9 @@
 """Core abstract base classes and registry for OCR framework components."""
 
-from .base_classes import (
-    BaseDecoder,
-    BaseEncoder,
-    BaseHead,
-    BaseLoss,
-    BaseMetric,
-)
-from .registry import ComponentRegistry, get_registry, registry
+from .interfaces.losses import BaseLoss
+from .interfaces.metrics import BaseMetric
+from .interfaces.models import BaseDecoder, BaseEncoder, BaseHead
+from .utils.registry import ComponentRegistry, get_registry, registry
 
 __all__ = [
     "BaseEncoder",

@@ -36,6 +36,11 @@
 
 ## [Unreleased]
 
+- **[BUG-001] Fixed Detection Pipeline "Red Line" Failure (2026-01-15)**:
+  - **Issue**: Uninitialized `DBHead` models output saturated probability maps (~0.5 mean) due to improper bias initialization, causing catastrophic failure.
+  - **Fix**: Initialized final classification layer bias to `-4.595` (background prior `p=0.01`).
+  - **Verification**: Regression test `tests/unit/models/test_db_head_init.py` passes; `prob_maps` mean reduced to ~0.15.
+
 - **[2026-01-08 22:30] Post-Refactor Stabilization COMPLETE**:
     - **Refactor**: "Nuclear" source code refactor completed. Models moved to `ocr.core`.
     - **Hydra Configs**: Complete restructuring. Defined `domain/`, `task/`, `model/` hierarchies. Decoupled configurations.

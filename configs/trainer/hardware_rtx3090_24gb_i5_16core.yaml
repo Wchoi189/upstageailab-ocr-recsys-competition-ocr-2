@@ -48,16 +48,16 @@ batch_size: 8
 datasets:
   train:
     config:
-      preload_images: true
-      load_maps: true
+      preload_images: false
+      load_maps: false
       cache_config:
         # With 24GB VRAM + 64GB System RAM, we can be aggressive with caching
         cache_transformed_tensors: false # Still unsafe for VRAM, but keep map/image caching
-        cache_images: true
-        cache_maps: true
+        cache_images: false
+        cache_maps: false
         log_statistics_every_n: 100
 
   val_dataset:
     config:
-      preload_images: true
-      load_maps: true
+      preload_images: false
+      load_maps: false

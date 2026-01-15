@@ -37,27 +37,119 @@ class OCRModel(nn.Module):
 
     def forward(self, images, return_loss=True, **kwargs):
         encoded_features = self.encoder(images)
-        decoded_features = self.decoder(encoded_features)
-        pred = self.head(decoded_features, return_loss)
 
-        # Loss 계산
-        if return_loss:
+        # Extract targets for AR training if available
+        targets = kwargs.get("labels") or kwargs.get("targets")
+
+        # Check if model is Autoregressive (has bos_token_id)
+        is_ar_model = hasattr(self.decoder, "bos_token_id")
+
+        if is_ar_model:
+            if return_loss and targets is not None:
+                # Training mode with targets (AR)
+                decoded_features = self.decoder(encoded_features, targets=targets)
+                pred = self.head(decoded_features, return_loss)
+            elif not return_loss:
+                # Inference generation (AR)
+                return self.generate(encoded_features)
+            else:
+                # return_loss=True but no targets? Likely validation without teacher forcing
+                # or just standard forward if decoder supports it.
+                # For PARSeq, we might need targets for loss.
+                # If targets missing but loss requested, we might fallback to inference or error.
+                # Assuming validation provides targets/labels usually.
+                # If not, let's try standard decode with targets=None if decoder supports it, else error.
+                if targets is None:
+                     # Attempt generation-based validation or error?
+                     # Usually validation step passes labels.
+                     # If we are here, maybe we skip loss?
+                     # Let's assume we proceed with targets=None (which raises error in PARSeq)
+                     # UNLESS we switch to generation.
+                     # But let's stick to the 'forward' flow.
+                     decoded_features = self.decoder(encoded_features, targets=targets)
+                     pred = self.head(decoded_features, return_loss)
+        else:
+            # Standard forward (Detection / non-AR Recognition)
+            # targets=None is passed (optional argument we added to all decoders)
+            decoded_features = self.decoder(encoded_features, targets=targets)
+            pred = self.head(decoded_features, return_loss)
+
+        # Loss Calculation (Shared logic)
+        if return_loss and "loss" not in pred:
             # Extract ground truth from kwargs
             gt_binary = kwargs.get("prob_maps")
             gt_thresh = kwargs.get("thresh_maps")
 
             # Static filtering of kwargs to prevent torch.compile re-tracing
-            # Optimization: Direct dict comprehension is faster than multiple if checks inside loop
             loss_input_kwargs = {k: v for k, v in kwargs.items() if k in self.LOSS_KEYS}
 
             if gt_binary is not None and gt_thresh is not None:
                 loss, loss_dict = self.loss(pred, gt_binary, gt_thresh, **loss_input_kwargs)
             else:
+                # Some heads might rely on targets being passed here if not in pred
+                # But typically loss module handles it.
+                # For detection, gt_binary/thresh are key.
+                # For AR recognition, loss is often computed inside head or loss module needs targets.
+                # If AR model, head might have already computed loss if it accepts targets?
+                # Actually, our head.forward(..., return_loss) typically returns dict.
+
+                # Check if we have targets for loss (e.g. recognition loss)
+                if targets is not None:
+                     loss_input_kwargs["targets"] = targets
+
                 loss, loss_dict = self.loss(pred, **loss_input_kwargs)
 
             pred.update(loss=loss, loss_dict=loss_dict)
 
         return pred
+
+    def generate(self, encoded_features):
+        """
+        Autoregressive generation loop.
+        """
+        # Get start token from decoder logic or config
+        # Assuming decoder has BOS/EOS properties, but usually they are on the instance
+        # if not, we default to 1 (BOS)
+        bos_token_id = getattr(self.decoder, "bos_token_id", 1)
+        max_len = getattr(self.decoder, "max_len", 25)
+
+        device = encoded_features.device if isinstance(encoded_features, torch.Tensor) else encoded_features[-1].device
+        B = encoded_features[-1].size(0) if isinstance(encoded_features, list) else encoded_features.size(0)
+
+        # Initialize current tokens with BOS
+        current_tokens = torch.full((B, 1), bos_token_id, dtype=torch.long, device=device)
+
+        # Expand encoded features for decoder if needed (handled inside decoder normally)
+        # But we need to cache memory if possible. For now, we just pass it every time.
+
+        for i in range(max_len):
+            # Decoder forward
+            # We pass current_tokens as targets. Decoder should handle causal masking.
+            # Decoder returns features [B, T, D]
+            decoded_features = self.decoder(encoded_features, targets=current_tokens)
+
+            # Head projection
+            # Head returns logits [B, T, Vocab] or dict
+            # We assume head(x, return_loss=False) returns dict with 'logits'
+            head_out = self.head(decoded_features, return_loss=False)
+            logits = head_out["logits"]
+
+            # Pick next token (Greedy)
+            # Take the last step
+            next_token_logits = logits[:, -1, :]
+            next_token = next_token_logits.argmax(dim=-1)
+
+            # Stop if EOS (simple check for now, can be optimized to stop individual batch items)
+            # For efficiency in batching, we usually just run to max_len or EOS all.
+            # Here we just append.
+            current_tokens = torch.cat([current_tokens, next_token.unsqueeze(1)], dim=1)
+
+            # Optimization: check if all are EOS? (Skipped for now)
+
+        # Final projection with full sequence
+        # (Though we already have it effectively)
+        # Return the final structure expected by post-processor
+        return head_out
 
     def get_optimizers(self):
         optimizer_config = self.cfg.optimizer

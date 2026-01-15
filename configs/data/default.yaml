@@ -4,3 +4,4 @@ defaults:
   - /data/base
   - /data/transforms/base
   - /data/dataloaders/default
+  - performance_preset: none

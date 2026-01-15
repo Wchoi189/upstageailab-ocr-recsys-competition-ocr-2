@@ -113,6 +113,59 @@ task_mappings:
       patterns:
       - \b(inference|ocr|pipeline)\b
       - \b(detection|recognition|kie)\b.*\b(model|code)\b
+  ocr_geometry:
+    description: Coordinate transforms and geometry handling
+    priority: 2
+    standards:
+    - AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml
+    - AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+    triggers:
+      keywords:
+      - coordinate
+      - polygon
+      - box
+      - bbox
+      - geometry
+      - transform
+      - padding
+      patterns:
+      - \b(coordinate|polygon|bbox)\b
+      - \bcoordinate\b.*\b(collapse|transform)\b
+  ocr_postprocessing:
+    description: Post-processing and logic
+    priority: 2
+    standards:
+    - AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml
+    triggers:
+      keywords:
+      - postprocessing
+      - binarization
+      - threshold
+      - filter
+      patterns:
+      - \bpost-?processing\b
+      - \bbinariz\w+\b
+  ocr_architecture:
+    description: Defining component interfaces and architecture patterns
+    priority: 2
+    standards:
+    - AgentQMS/standards/tier2-framework/ocr-components/component-interfaces.yaml
+    - AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+    triggers:
+      keywords:
+      - architecture
+      - interface
+      - component
+      - head
+      - loss
+      - refactor
+      - feature first
+      - generic
+      patterns:
+      - \barchitecture\b
+      - \binterface\b
+      - \bcomponent\b
+      - \brefactor\b
   api_development:
     description: API and contract development
     priority: 2

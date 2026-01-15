@@ -50,7 +50,7 @@ class CraftDecoder(BaseDecoder):
 
         self._output_channels = out_channels
 
-    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+    def forward(self, features: list[torch.Tensor], targets: torch.Tensor = None) -> torch.Tensor:
         if len(features) != len(self.reduce_layers):
             raise ValueError(f"CraftDecoder expected {len(self.reduce_layers)} feature maps but received {len(features)}.")
 

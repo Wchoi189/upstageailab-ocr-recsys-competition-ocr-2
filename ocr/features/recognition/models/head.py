@@ -1,5 +1,5 @@
 import torch.nn as nn
-from ocr.core.base_classes import BaseHead
+from ocr.core.interfaces.models import BaseHead
 
 class PARSeqHead(BaseHead):
     def __init__(self, in_channels: int, out_channels: int, **kwargs):
@@ -10,8 +10,4 @@ class PARSeqHead(BaseHead):
         # x is [B, T, D]
         return self.fc(x)
 
-    def get_polygons_from_maps(self, batch, pred):
-        # PARSeq is recognition only, no polygons to extract from maps
-        # Return empty lists matching batch size
-        B = len(batch['image_filename'])
-        return [[] for _ in range(B)], [[] for _ in range(B)]
+

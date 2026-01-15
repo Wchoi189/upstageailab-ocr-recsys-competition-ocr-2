@@ -167,8 +167,8 @@ def filter_degenerate_polygons(
         import logging
 
         logger = logging.getLogger(__name__)
-        if logger.isEnabledFor(logging.INFO):
-            logger.info(
+        if logger.isEnabledFor(logging.DEBUG):
+            logger.debug(
                 "Filtered %d degenerate polygons (too_few_points=%d, too_small=%d, zero_span=%d, empty=%d, none=%d)",
                 total_removed,
                 removed_counts["too_few_points"],

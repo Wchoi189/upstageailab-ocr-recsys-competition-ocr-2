@@ -86,11 +86,12 @@ class BaseDecoder(nn.Module, ABC):
         self.in_channels = in_channels
 
     @abstractmethod
-    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+    def forward(self, features: list[torch.Tensor], targets: torch.Tensor = None) -> torch.Tensor:
         """Decode features to produce dense prediction maps.
 
         Args:
             features: List of feature tensors from encoder, ordered from shallow to deep.
+            targets: Optional targets for autoregressive decoding (e.g. text tokens).
 
         Returns:
             Decoded feature tensor suitable for head prediction.
@@ -140,107 +141,4 @@ class BaseHead(nn.Module, ABC):
         """
         pass
 
-    @abstractmethod
-    def get_polygons_from_maps(
-        self,
-        batch: dict[str, Any],
-        pred: dict[str, torch.Tensor]
-    ) -> tuple[list[list[list[int]]], list[list[float]]]:
-        """Extract polygons and scores from prediction maps.
 
-        Args:
-            batch: Batch dictionary with preprocessing metadata including:
-                - images: Tensor of shape (B, C, H, W)
-                - shape: List of original image dimensions before preprocessing
-                - filename: List of source image filenames
-                - inverse_matrix: Matrices for mapping predictions back to original coords
-            pred: Dictionary of prediction maps from model forward pass.
-                  Keys depend on head type (e.g., 'binary_map', 'thresh_map' for DB)
-
-        Returns:
-            Tuple containing:
-            - boxes_batch: List[List[List[int]]] - Polygons per image with integer coordinates
-                          Shape: [batch_size][num_boxes][num_points*2]
-                          Each box is flattened [x1,y1,x2,y2,...,xn,yn]
-            - scores_batch: List[List[float]] - Confidence scores per box
-                           Shape: [batch_size][num_boxes]
-
-        Note:
-            The batch dict provides inverse transformation matrices to map
-            predicted coordinates from model space back to original image space.
-            Implementations typically delegate to postprocessor.represent().
-        """
-        pass
-
-
-class BaseLoss(nn.Module, ABC):
-    """Abstract base class for OCR loss functions.
-
-    Loss functions compute training objectives for text detection models.
-    """
-
-    def __init__(self, **kwargs):
-        """Initialize the loss function.
-
-        Args:
-            **kwargs: Configuration parameters for the loss function.
-        """
-        super().__init__()
-
-    @abstractmethod
-    def forward(
-        self, pred: dict[str, torch.Tensor], gt_binary: torch.Tensor, gt_thresh: torch.Tensor, **kwargs
-    ) -> tuple[torch.Tensor, dict[str, torch.Tensor]]:
-        """Compute loss from predictions and ground truth.
-
-        Args:
-            pred: Dictionary of predictions from head
-            gt_binary: Ground truth binary map of shape (B, 1, H, W)
-            gt_thresh: Ground truth threshold map of shape (B, 1, H, W)
-            **kwargs: Additional loss-specific parameters
-
-        Returns:
-            Tuple of (total_loss, loss_dict) where:
-            - total_loss: Scalar tensor for optimization
-            - loss_dict: Dictionary of individual loss components for logging
-        """
-        pass
-
-
-class BaseMetric(nn.Module, ABC):
-    """Abstract base class for OCR evaluation metrics.
-
-    Metrics compute evaluation scores for text detection performance.
-    """
-
-    def __init__(self, **kwargs):
-        """Initialize the metric.
-
-        Args:
-            **kwargs: Configuration parameters for the metric.
-        """
-        super().__init__()
-
-    @abstractmethod
-    def update(self, preds: torch.Tensor, targets: torch.Tensor) -> None:
-        """Update metric state with new predictions and targets.
-
-        Args:
-            preds: Predicted polygons or maps
-            targets: Ground truth polygons or maps
-        """
-        pass
-
-    @abstractmethod
-    def compute(self) -> dict[str, torch.Tensor]:
-        """Compute final metric values.
-
-        Returns:
-            Dictionary of metric values (precision, recall, f1, etc.)
-        """
-        pass
-
-    @abstractmethod
-    def reset(self) -> None:
-        """Reset metric state for new evaluation."""
-        pass

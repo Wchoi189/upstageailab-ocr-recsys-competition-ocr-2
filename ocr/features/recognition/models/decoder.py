@@ -1,7 +1,7 @@
 import math
 import torch
 import torch.nn as nn
-from ocr.core.base_classes import BaseDecoder
+from ocr.core.interfaces.models import BaseDecoder
 
 
 class PARSeqDecoder(BaseDecoder):
@@ -75,72 +75,36 @@ class PARSeqDecoder(BaseDecoder):
 
         device = memory.device
 
-        if targets is not None:
-            # Training Mode (AR)
-            # targets usually include BOS/EOS or we just prepend BOS
-            # Let's assume targets are raw tokens.
-            # We usually feed [BOS, t1, ..., t_{N-1}] to predict [t1, ..., tN]
+        if targets is None:
+             # If targets are not provided, we cannot perform AR decoding in this module alone.
+             # The OCRModel is responsible for the generation loop.
+             raise ValueError("PARSeqDecoder requires 'targets' to be passed. "
+                              "For inference, use OCRModel.generate() which handles iterative decoding.")
 
-            # If targets doesn't have BOS, prepend it
-            # But verifying input format is hard. Assume external dataloader handles it or we handle it.
-            # Let's implement robust handling:
-            #   Input to decoder: [BOS] + targets[:, :-1]
-
-            B, T = targets.shape
-
-            # Create input sequence
-            # Usually input is BOS + targets (excluding EOS if present at end? or just length constraint)
-            # Simplified: Use targets directly as input (assuming it starts with BOS)
-            tgt_emb = self.embed_tokens(targets) * math.sqrt(self.d_model)
-
-            # Add positional encoding
-            # Use T positions
-            pos_emb = self.pos_encoder[:, :T, :]
-            tgt = tgt_emb + pos_emb
-
-            # Causal Mask (Upper triangular)
-            tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
-
-            # Padding Mask
-            tgt_key_padding_mask = targets == self.pad_token_id
-
-            output = self.decoder(tgt, memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask)
-
-            return self.norm(output)
-
-        else:
-            # Inference (should implement generate)
-            return self.generate(memory)
-
-    def generate(self, memory):
-        # Greedy decoding
         device = memory.device
-        B = memory.size(0)
 
-        # Start symbol
-        tgt_tokens = torch.full((B, 1), self.bos_token_id, dtype=torch.long, device=device)
+        # Training Mode (AR) or One Step of Inference
+        # targets usually include BOS/EOS or we just prepend BOS
+        # Let's assume targets are raw tokens.
 
-        for i in range(self.max_len):
-            tgt_emb = self.embed_tokens(tgt_tokens) * math.sqrt(self.d_model)
-            pos_emb = self.pos_encoder[:, : tgt_tokens.size(1), :]
-            tgt = tgt_emb + pos_emb
+        B, T = targets.shape
 
-            output = self.decoder(tgt, memory)
-            output = self.norm(output)
+        # Create input sequence
+        # Usually input is BOS + targets (excluding EOS if present at end? or just length constraint)
+        # Simplified: Use targets directly as input (assuming it starts with BOS)
+        tgt_emb = self.embed_tokens(targets) * math.sqrt(self.d_model)
 
-            # Project logic is usually in Head, but we need logits here to pick next token.
-            # This indicates tightly coupled decoder-head or verify if we return features.
-            # Since Head is separate in architecture, 'generate' in decoder is tricky without head.
+        # Add positional encoding
+        # Use T positions
+        pos_emb = self.pos_encoder[:, :T, :]
+        tgt = tgt_emb + pos_emb
 
-            # Option: Return features for all steps so far, architecture calls head, then loop?
-            # Architecture-controlled generation is better.
-            # But let's return features and let architecture handle it?
-            # No, standard is architecture.generate()
+        # Causal Mask (Upper triangular)
+        tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
 
-            pass
+        # Padding Mask (cast to float to match tgt_mask dtype - fixes PyTorch 2.x deprecation)
+        tgt_key_padding_mask = (targets == self.pad_token_id).float()
 
-        # As a fallback for this tool call, return features corresponding to 'single pass' or similar.
-        # But since I delegated generate to here in Architecture, I should probably implement it properly
-        # OR move generation loop to Architecture.
+        output = self.decoder(tgt, memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask)
 
-        return output
+        return self.norm(output)

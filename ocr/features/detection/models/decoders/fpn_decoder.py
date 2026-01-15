@@ -45,7 +45,7 @@ class FPNDecoder(BaseDecoder):
         self.fusion = _conv_bn_relu(fused_channels, out_channels, kernel_size=3)
         self._output_channels = out_channels
 
-    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+    def forward(self, features: list[torch.Tensor], targets: torch.Tensor = None) -> torch.Tensor:
         if len(features) != len(self.lateral_convs):
             raise ValueError(f"Expected {len(self.lateral_convs)} feature maps, received {len(features)}.")
 

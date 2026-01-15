@@ -5,7 +5,9 @@ from __future__ import annotations
 import inspect
 from typing import Any
 
-from .base_classes import BaseDecoder, BaseEncoder, BaseHead, BaseLoss, BaseMetric
+from ..interfaces.losses import BaseLoss
+from ..interfaces.metrics import BaseMetric
+from ..interfaces.models import BaseDecoder, BaseEncoder, BaseHead
 
 
 class ComponentRegistry:

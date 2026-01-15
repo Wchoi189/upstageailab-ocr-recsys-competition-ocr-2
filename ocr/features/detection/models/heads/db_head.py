@@ -17,11 +17,11 @@ from typing import Any
 import torch
 import torch.nn as nn
 
-from ocr.core import BaseHead
+from ocr.features.detection.interfaces import DetectionHead
 from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
 
 
-class DBHead(BaseHead):
+class DBHead(DetectionHead):
     """DBNet head for text detection with differentiable binarization.
 
     Implements the DBNet prediction head that produces probability maps,
@@ -81,6 +81,12 @@ class DBHead(BaseHead):
                 binarize_layers.append(nn.ReLU(inplace=True))
         self.binarize = nn.Sequential(*binarize_layers)
         self.binarize.apply(self.weights_init)
+
+        # [BUG-001] 2026-01-15: Initialize final classification layer with background prior (p=0.01)
+        # bias = -log((1-0.01)/0.01) ≈ -4.595
+        # This prevents the "Red Line" failure where uninitialized models output ~0.5 probability everywhere
+        if isinstance(self.binarize[-1], nn.ConvTranspose2d):
+            nn.init.constant_(self.binarize[-1].bias, -4.595)
         self.prob_activation = nn.Sigmoid()
 
         # Output of Threshold map

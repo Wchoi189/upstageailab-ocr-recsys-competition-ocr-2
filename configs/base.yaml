@@ -39,8 +39,8 @@ defaults:
 # disable python warnings if they annoy you
 ignore_warnings: False
 
-# Default batch size (can be overridden by trainer configs)
-batch_size: 32
+# Default batch size (can be overridden by trainer configs) [WARNING: BATCH 32 IS TOO BIG FOR DETECTION]
+batch_size: 16
 
 # ask user for tags if none are provided in the config
 enforce_tags: True

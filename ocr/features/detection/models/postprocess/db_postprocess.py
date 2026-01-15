@@ -142,6 +142,13 @@ class DBPostProcessor:
                     segmentation[batch_index],
                     inverse_matrix=inverse_matrix[batch_index],
                 )
+
+            # DIAGNOSTIC: Sample first box
+            # if len(boxes) > 0 and batch_index == 0:
+            #      logger.info(f"DIAG: DBPP.represent | Batch 0 found {len(boxes)} boxes. First box: {boxes[0]}. Score: {scores[0]}")
+            # elif batch_index == 0:
+            #      logger.warning("DIAG: DBPP.represent | Batch 0 found NO boxes.")
+
             # Append to batch
             boxes_batch.append(boxes)
             scores_batch.append(scores)

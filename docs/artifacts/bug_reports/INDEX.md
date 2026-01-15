@@ -2,17 +2,16 @@
 
 Active bug reports and development roadmaps.
 
-**Last Updated**: 2026-01-15 00:31:01
-**Total Artifacts**: 16
+**Last Updated**: 2026-01-15 20:30:55
+**Total Artifacts**: 18
 
-## Active (6)
+## Active (5)
 
 - [BaseHead.get_polygons_from_maps Signature Incompatibility (LSP Violation)](2025-12-27_0608_bug_001_model-head-lsp-violation.md) (📅 2025-12-27 15:08 (KST), 📄 bug_report) - BUG-20251227-001
 - [Test Bug Report](2026-01-03_0340_bug_001_test-bug.md) (📅 2026-01-03 03:40 (KST), 📄 bug_report) - BUG-001
 - [Incorrect State Directory Location](2026-01-03_1734_bug_001_state-dir-location.md) (📅 2026-01-03 17:34 (KST), 📄 bug_report) - Bug ID: BUG-001
 - [Test MCP Artifact Creation Fix](2026-01-07_0036_bug_001_test-mcp-artifact-creation.md) (📅 2026-01-07 00:36 (KST), 📄 bug_report) - Bug ID: BUG-001
 - [MCP Client Not Seeing Updated Tool List](2026-01-12_0518_bug_002_mcp-tool-cache-issue.md) (📅 2026-01-12 05:18 (KST), 📄 bug_report) - Antigravity IDE reports "Unknown tool: adt_meta_query" even though the unified MCP server is running
-- [DataLoader Segmentation Fault with Multiprocessing](2026-01-14_2153_bug_001_segfault.md) (📅 2026-01-14 21:53 (KST), 📄 bug_report) - Bug ID: BUG-20260114-001
 
 ## Completed (10)
 
@@ -27,12 +26,19 @@ Active bug reports and development roadmaps.
 - [Legacy Config Leaks Override Architecture Components](2026-01-04_1730_bug_003_config-precedence-leak.md) (📅 2026-01-04 17:30 (KST), 📄 bug_report) - When running `fast_dev_run` for PARSeq:
 - [ADT MCP Tools Not Available in Antigravity IDE](2026-01-12_0517_bug_001_adt-mcp-server-not-configured.md) (📅 2026-01-12 05:17 (KST), 📄 bug_report) - The agent-debug-toolkit (ADT) MCP tools (`adt_meta_query`, `adt_meta_edit`) are failing with the err
 
+## Other (3)
+
+- [DataLoader Segmentation Fault with Multiprocessing](2026-01-14_2153_bug_001_segfault.md) (📅 2026-01-14 21:53 (KST), 📄 bug_report) - Bug ID: BUG-20260114-001
+- [2026-01-14_segfault_resolution](2026-01-14_segfault_resolution.md) (📅 , 📄 ) - 
+- [2026-01-15_1852_bug_001_report-dbhead-initialization](2026-01-15_1852_bug_001_report-dbhead-initialization.md) (📅 , 📄 ) - 
+
 ## Summary
 
 | Status | Count |
 |--------|-------|
-| Active | 6 |
+| Active | 5 |
 | Completed | 10 |
+| Other | 3 |
 
 ---
 

@@ -62,7 +62,7 @@ class PANDecoder(BaseDecoder):
         self.output_conv = _conv_bn_relu(fused_channels, out_channels, kernel_size=3)
         self._output_channels = out_channels
 
-    def forward(self, features: list[torch.Tensor]) -> torch.Tensor:
+    def forward(self, features: list[torch.Tensor], targets: torch.Tensor = None) -> torch.Tensor:
         if len(features) != len(self.reduce_convs):
             raise ValueError(f"Expected {len(self.reduce_convs)} feature maps, received {len(features)}.")
 

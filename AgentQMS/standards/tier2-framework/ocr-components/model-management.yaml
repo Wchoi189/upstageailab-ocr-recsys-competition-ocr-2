@@ -23,6 +23,10 @@ critical_logic:
     description: |
       Cleanup: Calls 'torch.cuda.empty_cache()' on model swap to prevent OutOfMemory (OOM) errors on 8GB GPUs.
       Device: Defaults to 'cuda' if available, else 'cpu'.
+  - id: initialization-stability
+    description: |
+      [BUG-001] DBHead biases must be initialized to background prior (p=0.01) to prevent "Red Line" saturation failure during scratch training.
+      Uninitialized biases (~0.0) result in ~0.5 probability, causing all-positive masks.
 data_contract:
   input:
     - field: checkpoint_path

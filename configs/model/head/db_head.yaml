@@ -12,4 +12,4 @@ postprocess:
   thresh: 0.2                    # Binarization threshold
   box_thresh: 0.2                # Detection Box threshold
   max_candidates: 300            # Limit the number of detection boxes
-  use_polygon: true             # Detection Box Type (QUAD or POLY)
+  use_polygon: false             # Detection Box Type (QUAD or POLY)

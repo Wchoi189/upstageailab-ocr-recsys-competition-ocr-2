@@ -44,6 +44,14 @@ def build_callbacks(config: DictConfig) -> list[Any]:
             if not _is_enabled(cb_conf):
                 continue
 
+            # Skip ModelCheckpoint if enable_checkpointing is explicitly False in trainer config
+            if (
+                "_target_" in cb_conf
+                and "ModelCheckpoint" in cb_conf["_target_"]
+                and config.get("trainer", {}).get("enable_checkpointing") is False
+            ):
+                continue
+
             callback = hydra.utils.instantiate(cb_conf)
 
             if hasattr(callback, "_resolved_config"):
