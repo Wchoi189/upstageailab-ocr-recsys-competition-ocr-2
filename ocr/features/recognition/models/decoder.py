@@ -17,13 +17,15 @@ class PARSeqDecoder(BaseDecoder):
         num_layers=12,
         dim_feedforward=1536,
         dropout=0.1,
-        vocab_size=100,
+        vocab_size=None,
         max_len=25,
         pad_token_id=0,
         bos_token_id=1,
         eos_token_id=2,
         **kwargs,  # Accept extra kwargs
     ):
+        if vocab_size is None:
+            raise ValueError("PARSeqDecoder requires 'vocab_size' to be specified.")
         super().__init__(in_channels=in_channels)
         self.d_model = d_model
         self.max_len = max_len
@@ -49,8 +51,10 @@ class PARSeqDecoder(BaseDecoder):
         self._init_weights()
 
     def _init_weights(self):
-        nn.init.trunc_normal_(self.pos_encoder, std=0.02)
-        nn.init.normal_(self.embed_tokens.weight, std=0.02)
+        # FIX: standard transformer initialization (Xavier) works better for Post-Norm
+        # trunc_normal(std=0.02) is too small and causes vanishing gradients without warmup
+        nn.init.xavier_uniform_(self.pos_encoder)
+        nn.init.xavier_uniform_(self.embed_tokens.weight)
 
     @property
     def out_channels(self) -> int:
@@ -96,14 +100,17 @@ class PARSeqDecoder(BaseDecoder):
 
         # Add positional encoding
         # Use T positions
-        pos_emb = self.pos_encoder[:, :T, :]
+        # FIX: Scale pos_emb to match tgt_emb magnitude (sqrt(d_model)) so position isn't drowned out
+        pos_emb = self.pos_encoder[:, :T, :] * math.sqrt(self.d_model)
         tgt = tgt_emb + pos_emb
 
         # Causal Mask (Upper triangular)
         tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
 
-        # Padding Mask (cast to float to match tgt_mask dtype - fixes PyTorch 2.x deprecation)
-        tgt_key_padding_mask = (targets == self.pad_token_id).float()
+        # Padding Mask (Float: 0.0 = Keep, -inf = Ignore)
+        # Required to match tgt_mask dtype (Float) and avoid "mismatched types" warning
+        tgt_key_padding_mask = torch.zeros_like(targets, dtype=tgt_mask.dtype)
+        tgt_key_padding_mask.masked_fill_(targets == self.pad_token_id, float("-inf"))
 
         output = self.decoder(tgt, memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask)
 

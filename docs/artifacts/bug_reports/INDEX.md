@@ -2,7 +2,7 @@
 
 Active bug reports and development roadmaps.
 
-**Last Updated**: 2026-01-15 20:30:55
+**Last Updated**: 2026-01-16 01:17:19
 **Total Artifacts**: 18
 
 ## Active (5)
@@ -13,7 +13,7 @@ Active bug reports and development roadmaps.
 - [Test MCP Artifact Creation Fix](2026-01-07_0036_bug_001_test-mcp-artifact-creation.md) (📅 2026-01-07 00:36 (KST), 📄 bug_report) - Bug ID: BUG-001
 - [MCP Client Not Seeing Updated Tool List](2026-01-12_0518_bug_002_mcp-tool-cache-issue.md) (📅 2026-01-12 05:18 (KST), 📄 bug_report) - Antigravity IDE reports "Unknown tool: adt_meta_query" even though the unified MCP server is running
 
-## Completed (10)
+## Completed (13)
 
 - [001 Startup Latency SLA Violation](2025-12-23_0900_bug_001_startup-latency.md) (📅 2025-12-23 09:00 (KST), 📄 bug_report) - **Date Detected:** 2025-12-23
 - [001 Metadata Callback ModuleNotFoundError](2025-12-24_1000_bug_001_metadata-callback-import-error.md) (📅 2025-12-24 10:00 (KST), 📄 bug_report) - **Date Detected:** 2025-12-24
@@ -25,20 +25,16 @@ Active bug reports and development roadmaps.
 - [레거시 구성이 아키텍처 구성 요소를 덮어쓰는 문제](2026-01-04_1730_bug_003_config-precedence-leak.ko.md) (📅 2026-01-04 17:30 (KST), 📄 bug_report) - PARSeq에 대해 `fast_dev_run` 실행 시:
 - [Legacy Config Leaks Override Architecture Components](2026-01-04_1730_bug_003_config-precedence-leak.md) (📅 2026-01-04 17:30 (KST), 📄 bug_report) - When running `fast_dev_run` for PARSeq:
 - [ADT MCP Tools Not Available in Antigravity IDE](2026-01-12_0517_bug_001_adt-mcp-server-not-configured.md) (📅 2026-01-12 05:17 (KST), 📄 bug_report) - The agent-debug-toolkit (ADT) MCP tools (`adt_meta_query`, `adt_meta_edit`) are failing with the err
-
-## Other (3)
-
 - [DataLoader Segmentation Fault with Multiprocessing](2026-01-14_2153_bug_001_segfault.md) (📅 2026-01-14 21:53 (KST), 📄 bug_report) - Bug ID: BUG-20260114-001
-- [2026-01-14_segfault_resolution](2026-01-14_segfault_resolution.md) (📅 , 📄 ) - 
-- [2026-01-15_1852_bug_001_report-dbhead-initialization](2026-01-15_1852_bug_001_report-dbhead-initialization.md) (📅 , 📄 ) - 
+- [Resolution: CUDA Segfault in DataLoader (Validation Phase)](2026-01-15_1200_bug_report_segfault-resolution.md) (📅 2026-01-15 12:00 (KST), 📄 bug_report) - **Bug ID**: BUG-20260114-001
+- [Detection Pipeline Failure (Red Line)](2026-01-15_1852_bug_001_report-dbhead-initialization.md) (📅 2026-01-15 18:52 (KST), 📄 bug_report) - **Defect ID**: BUG-001
 
 ## Summary
 
 | Status | Count |
 |--------|-------|
 | Active | 5 |
-| Completed | 10 |
-| Other | 3 |
+| Completed | 13 |
 
 ---
 

@@ -12,6 +12,7 @@ from torch.utils.data import DataLoader
 from ocr.core.validation import CollateOutput, ValidatedTensorData
 from ocr.core.evaluation import CLEvalEvaluator
 from ocr.core.lightning.loggers import WandbProblemLogger
+from torchmetrics.text import CharErrorRate
 from ocr.core.lightning.utils import CheckpointHandler, extract_metric_kwargs, extract_normalize_stats, format_predictions
 from ocr.core.metrics import CLEvalMetric
 from ocr.core.utils.submission import SubmissionWriter
@@ -69,6 +70,9 @@ class OCRPLModule(pl.LightningModule):
             self.metric_kwargs,
         )
         self.submission_writer = SubmissionWriter(config)
+
+        # Initialize recognition metrics
+        self.rec_cer = CharErrorRate()
 
         # Log selected performance preset in bright yellow
         self._log_performance_preset()
@@ -217,6 +221,68 @@ class OCRPLModule(pl.LightningModule):
             self.log(f"batch_{batch_idx}/recall", batch_metrics["recall"], batch_size=batch["images"].shape[0])
             self.log(f"batch_{batch_idx}/precision", batch_metrics["precision"], batch_size=batch["images"].shape[0])
             self.log(f"batch_{batch_idx}/hmean", batch_metrics["hmean"], batch_size=batch["images"].shape[0])
+
+        # Validation steps specific to recognition (logits)
+        # [VERIFY-BUG-20260115-001] Added basic recognition visualization to verify data loading fix
+        elif "logits" in pred:
+            # Run inference for metrics (always)
+            with torch.no_grad():
+                inference_out = self.model(images=batch["images"], return_loss=False)
+
+            if "tokens" in inference_out:
+                tokenizer = None
+                if "val" in self.dataset and hasattr(self.dataset["val"], "tokenizer"):
+                    tokenizer = self.dataset["val"].tokenizer
+
+                if tokenizer:
+                    # Decode predictions
+                    pred_tokens = inference_out["tokens"]
+                    if isinstance(pred_tokens, torch.Tensor):
+                        pred_tokens = pred_tokens.tolist()
+                    pred_texts = tokenizer.batch_decode(pred_tokens)
+
+                    # Decode Ground Truth if available
+                    gt_texts = None
+                    if "text_tokens" in batch:
+                        gt_tokens = batch["text_tokens"]
+                        if isinstance(gt_tokens, torch.Tensor):
+                            gt_tokens = gt_tokens.tolist()
+                        gt_texts = tokenizer.batch_decode(gt_tokens)
+                    elif "label" in batch:  # Some datasets might pass raw labels
+                        gt_texts = batch["label"]
+
+                    # Compute and Log Metrics
+                    if gt_texts:
+                        self.rec_cer(pred_texts, gt_texts)
+                        # Exact Match Accuracy
+                        matches = sum([1 for p, g in zip(pred_texts, gt_texts, strict=True) if p == g])
+                        batch_acc = matches / len(pred_texts) if len(pred_texts) > 0 else 0.0
+
+                        self.log("val/acc", batch_acc, batch_size=len(pred_texts), prog_bar=True)
+                        self.log("val/cer", self.rec_cer, batch_size=len(pred_texts), prog_bar=True)
+
+                        print(f"\n[DEBUG] Step {self.trainer.global_step} Predictions:")
+                        for i in range(min(3, len(pred_texts))):
+                            # Debug: Re-encode GT to see what the tokenizer thinks
+                            if hasattr(self.dataset["val"], "tokenizer"):
+                                gt_tokens = self.dataset["val"].tokenizer.encode(gt_texts[i])
+                                print(f"  GT Text:   '{gt_texts[i]}'")
+                                print(f"  GT Tokens: {gt_tokens}")
+                            print(f"  Pred Text: '{pred_texts[i]}'")
+
+                    if batch_idx < 2 and self.config.logger.wandb.get("enabled", False):
+                        from ocr.core.utils.wandb_utils import log_recognition_images
+
+                        log_recognition_images(
+                            images=batch["images"],
+                            pred_texts=pred_texts,
+                            gt_texts=gt_texts,
+                            epoch=self.current_epoch,
+                            limit=8,
+                            seed=42,
+                            filenames=batch.get("image_filename", None),
+                            caption_prefix="val_recognition_samples",
+                        )
 
         return pred["loss"]
 

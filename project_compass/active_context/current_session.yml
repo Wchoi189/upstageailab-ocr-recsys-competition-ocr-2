@@ -1,14 +1,15 @@
----
-# Project Compass Active Session
-session_id: "new-session-170507"
-status: "active"
-started_date: "2026-01-14"
-completed_date: null
-
-objective: |
-  [Enter objective here]
-
-implementation_plan: null
-source_walkthrough: null
-
-phases: {}
+# ACTIVE SESSION CONTEXT
+# MANDATORY: Verify env_lock before execution.
+# SCHEMA: ../.config/schemas/session.schema.json
+session_id: 20260116_session_01
+objective:
+  primary_goal: 'SVTR Transition: Offline Performance & Architecture Pivot'
+  active_pipeline: kie
+  success_criteria: ''
+env_lock:
+  uv_path: /opt/uv/bin/uv
+  python_version: 3.11.14
+  is_gpu_required: true
+  verified_at: 2026-01-16 20:01 (KST)
+active_blockers: []
+working_references: {}

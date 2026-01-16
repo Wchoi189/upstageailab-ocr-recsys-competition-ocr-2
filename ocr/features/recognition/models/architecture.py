@@ -55,9 +55,22 @@ class PARSeq(OCRModel):
             visual_memory = visual_feat.permute(0, 2, 3, 1).flatten(1, 2) # [B, S, C]
         elif visual_feat.ndim == 3:
             # ViT output: [B, S, C]
-            visual_memory = visual_feat
+            # TIMM ViT includes [CLS] token at index 0. We must remove it for PARSeq.
+            visual_memory = visual_feat[:, 1:, :]
+            # DEBUG: Confirm shape
+            if torch.rand(1).item() < 0.001:
+                print(f"[DEBUG] Visual Memory Shape (After CLS Removal): {visual_memory.shape}")
         else:
             raise ValueError(f"Unexpected visual features shape: {visual_feat.shape}")
+
+        # DEBUG: Check if features are dead
+        if torch.rand(1).item() < 0.01: # 1% chance to print (or first batch if we could track it)
+             pass
+             # We rely on the lightning module loop for printing mainly,
+             # preventing spam here. BUT, let's print once if mean is suspicious.
+
+        if visual_memory.abs().mean() < 1e-6:
+             print(f"[WARNING] Visual Memory seems dead! Mean: {visual_memory.abs().mean().item()}")
 
         # 2. Decoder
         # Prepare targets
@@ -66,7 +79,12 @@ class PARSeq(OCRModel):
         if return_loss and targets is not None:
             # Training: Forward with targets
             # output: [B, T, D_model]
-            decoded_output = self.decoder(visual_memory, targets=targets)
+            # AR Training: Input is targets[:, :-1], Gold is targets[:, 1:]
+            tgt_in = targets[:, :-1]
+            tgt_out = targets[:, 1:]
+
+            # output: [B, T-1, D_model]
+            decoded_output = self.decoder(visual_memory, targets=tgt_in)
 
             # 3. Head
             logits = self.head(decoded_output) # [B, T, V]
@@ -80,7 +98,7 @@ class PARSeq(OCRModel):
             # If decoder inputs included [BOS, t1, ... tn], output corresponds to [t1, ... tn, EOS]
 
             # Let's assume prediction aligns with targets for now
-            loss_val, loss_dict = self.loss(logits, targets)
+            loss_val, loss_dict = self.loss(logits, tgt_out)
 
             return {
                 "logits": logits,

@@ -4,7 +4,7 @@
 _target_: torchvision.transforms.Compose
 transforms:
   - _target_: torchvision.transforms.Resize
-    size: [32, 128]  # H, W for PARSeq
+    size: [224, 224]  # H, W for PARSeq (Temporarily increased for Debugging)
   - _target_: torchvision.transforms.ToTensor
   - _target_: torchvision.transforms.Normalize
     mean: [0.485, 0.456, 0.406]

@@ -59,8 +59,12 @@ class LMDBRecognitionDataset(Dataset):
         self.env = None
         self._num_samples: int | None = None
 
-        # Initialize to get num_samples
+        # Initialize to get num_samples and then close to ensure fork safety
+        # BUG-20260115-001: Close env in main process to prevent unsafe handle inheritance by workers
         self._init_env()
+        if self.env is not None:
+             self.env.close()
+             self.env = None
 
     def _init_env(self) -> None:
         """Initialize LMDB environment."""

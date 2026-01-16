@@ -1,7 +1,7 @@
 {
   "$schema": ".config/schemas/compass.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-01-13 10:30 (KST)",
+  "last_updated": "2026-01-16 20:01 (KST)",
   "active_handoff": "active_context/current_session.yml",
   "uv_constraints": {
     "min_version": "0.9.0",

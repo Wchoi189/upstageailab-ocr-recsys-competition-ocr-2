@@ -8,25 +8,27 @@ component_overrides:
   encoder:
     name: timm_backbone
     params:
-      model_name: vit_small_patch16_224
+      model_name: resnet18
       pretrained: true
-      dynamic_img_size: true
-      output_indices: [-1]
+      features_only: true
+      out_indices: [4] # Select the last feature map (Downsample 32x, 512 channels)
 
   decoder:
     name: parseq_decoder
     params:
-      d_model: 384
-      nhead: 12
+      d_model: 512 # ResNet18 output dim
+      nhead: 8     # 512 / 8 = 64
       num_layers: 12
-      dim_feedforward: 1536
+      dim_feedforward: 2048 # Usually 4*d_model
       dropout: 0.1
+      vocab_size: null # Must be overridden by dataset/domain config
       max_len: 26
 
   head:
     name: parseq_head
     params:
-      in_channels: 384
+      in_channels: 512
+      out_channels: null # Must be overridden by dataset/domain config
 
   loss:
     name: cross_entropy
