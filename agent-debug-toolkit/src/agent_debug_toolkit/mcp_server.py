@@ -364,6 +364,90 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         return [TextContent(type="text", text=content)]
 
+    # --- AST-Grep Tools ---
+
+    elif name == "sg_search":
+        from agent_debug_toolkit.astgrep import sg_search
+
+        pattern = arguments.get("pattern", "")
+        path = resolve_path(arguments.get("path", PROJECT_ROOT))
+        lang = arguments.get("lang")
+        max_results = arguments.get("max_results")
+        output_format = arguments.get("output", "json")
+
+        report = sg_search(
+            pattern=pattern,
+            path=path,
+            lang=lang,
+            max_results=max_results,
+            output_format=output_format,
+        )
+
+        if output_format == "markdown":
+            content = report.to_markdown()
+        else:
+            content = report.to_json()
+
+        return [TextContent(type="text", text=content)]
+
+    elif name == "sg_lint":
+        from agent_debug_toolkit.astgrep import sg_lint
+
+        path = resolve_path(arguments.get("path", PROJECT_ROOT))
+        rule = arguments.get("rule")
+        rule_file = arguments.get("rule_file")
+
+        if rule_file:
+            rule_file = resolve_path(rule_file)
+
+        report = sg_lint(
+            path=path,
+            rule=rule,
+            rule_file=rule_file,
+        )
+
+        return [TextContent(type="text", text=report.to_json())]
+
+    elif name == "dump_syntax_tree":
+        from agent_debug_toolkit.astgrep import dump_syntax_tree
+
+        code = arguments.get("code", "")
+        lang = arguments.get("lang", "python")
+
+        result = dump_syntax_tree(code=code, lang=lang)
+
+        return [TextContent(type="text", text=result)]
+
+    # --- Tree-Sitter Tools ---
+
+    elif name == "parse_code":
+        from agent_debug_toolkit.treesitter import parse_code
+
+        code = arguments.get("code", "")
+        lang = arguments.get("lang", "python")
+        max_depth = arguments.get("max_depth", 5)
+
+        report = parse_code(code=code, lang=lang, max_depth=max_depth)
+
+        return [TextContent(type="text", text=report.to_json())]
+
+    elif name == "run_query":
+        from agent_debug_toolkit.treesitter import run_query
+
+        code = arguments.get("code", "")
+        query = arguments.get("query", "")
+        lang = arguments.get("lang", "python")
+        max_results = arguments.get("max_results", 50)
+
+        report = run_query(
+            code=code,
+            query=query,
+            lang=lang,
+            max_results=max_results,
+        )
+
+        return [TextContent(type="text", text=report.to_json())]
+
     # --- Edit Tools ---
 
     elif name == "apply_unified_diff":

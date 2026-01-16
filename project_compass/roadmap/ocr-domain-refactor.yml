@@ -1,0 +1,67 @@
+version: 1.0
+project: OCR Domain Separation Refactor
+status: planned
+architecture: Domains First
+
+objectives:
+  - name: Eliminate Domain Leakage
+    description: Strictly separate Detection, Recognition, KIE, and Layout domains.
+    success_criteria:
+      - "ocr/core contains no domain-specific keywords (polygon, bbox, tokenizer)"
+      - "No cross-domain imports without interfaces"
+
+tooling:
+  adt_cli: "Available (requires .venv activation)"
+  sg_search: "Available (MCP)"
+  sg_lint: "Available (MCP)"
+
+phases:
+  - name: Phase 1: Preparation (Complete)
+    status: completed
+    items:
+      - Project Initialization
+      - Tooling Audit
+      - "Domains First" Architecture Design
+      - Comprehensive File Mapping (Proposed Tree)
+
+  - name: Phase 2: Execution (Next)
+    status: pending
+    steps:
+      - name: Initialize Directory Structure
+        action: "mkdir -p ocr/domains/{detection,recognition,kie,layout}"
+
+      - name: Infrastructure Setup
+        action: "Create ocr/pipelines/ and ocr/core/interfaces/"
+
+      - name: The Bridge
+        action: "Create ocr/core/interfaces/schemas.py (Box, PageResult)"
+
+      - name: Bulk Migration (The Mover)
+        action: "Move files based on Proposed Tree artifact"
+
+      - name: Surgical Refactor (The Splitter)
+        targets:
+          - "ocr/core/utils/wandb_utils.py -> domains/{det,rec}/callbacks/wandb.py"
+          - "ocr/core/lightning/ocr_pl.py -> domains/{det,rec}/module.py"
+          - "ocr/core/evaluation/evaluator.py -> domains/{det,rec}/evaluation.py"
+
+  - name: Phase 3: Verification
+    status: pending
+    steps:
+      - "Run adt analyze-dependencies"
+      - "Verify clean separation of imports"
+      - "Run domain-specific training loops"
+
+directory_map:
+  core_strict:
+    - "ocr/core/utils/image_utils.py"
+    - "ocr/core/utils/logging.py"
+  domains:
+    detection:
+      - "ocr/domains/detection/utils/geometry.py"
+      - "ocr/domains/detection/inference/perspective/"
+    recognition:
+      - "ocr/domains/recognition/utils/visualization.py"
+  pipelines:
+    - "ocr/pipelines/engine.py"
+    - "ocr/pipelines/orchestrator.py"

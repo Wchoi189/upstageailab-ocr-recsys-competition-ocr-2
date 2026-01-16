@@ -428,6 +428,146 @@ def create_app() -> "typer.Typer":
         else:
             typer.echo(format_search_results_markdown(results, path))
 
+    @app.command("sg-search")
+    def sg_search_cmd(
+        pattern: str = Argument(..., help="AST pattern to search for (e.g., 'def $NAME($$$)')"),
+        path: str = Option(".", "--path", "-p", help="Path to search (file or directory)"),
+        lang: Optional[str] = Option(None, "--lang", "-l", help="Language (python, javascript, etc.)"),
+        max_results: Optional[int] = Option(None, "--max", "-m", help="Maximum number of results"),
+        output: str = Option("markdown", "--output", "-o", help="Output format: json or markdown"),
+    ):
+        """
+        Search code using ast-grep structural patterns.
+
+        Examples:
+          adt sg-search "def $NAME($$$)" --lang python
+          adt sg-search "function $NAME($$$)" --path src/ --lang javascript
+        """
+        from agent_debug_toolkit.astgrep import sg_search
+
+        report = sg_search(
+            pattern=pattern,
+            path=path,
+            lang=lang,
+            max_results=max_results,
+            output_format=output,
+        )
+
+        if not report.success:
+            typer.echo(f"Error: {report.message}", err=True)
+            raise typer.Exit(1)
+
+        if output == "markdown":
+            typer.echo(report.to_markdown())
+        else:
+            typer.echo(report.to_json())
+
+    @app.command("sg-lint")
+    def sg_lint_cmd(
+        path: str = Argument(..., help="Path to lint (file or directory)"),
+        rule_file: Optional[str] = Option(None, "--rule-file", "-r", help="Path to YAML rule file"),
+        rule: Optional[str] = Option(None, "--rule", help="Inline YAML rule"),
+    ):
+        """
+        Run ast-grep lint rules against code.
+
+        Requires either --rule-file or --rule to be specified.
+
+        Examples:
+          adt sg-lint . --rule-file rules/no-print.yaml
+          adt sg-lint src/ --rule "rule: {pattern: 'print($$$)'}"
+        """
+        from agent_debug_toolkit.astgrep import sg_lint
+
+        if not rule_file and not rule:
+            typer.echo("Error: Either --rule-file or --rule must be specified", err=True)
+            raise typer.Exit(1)
+
+        report = sg_lint(path=path, rule=rule, rule_file=rule_file)
+
+        if not report.success:
+            typer.echo(f"Error: {report.message}", err=True)
+            raise typer.Exit(1)
+
+        typer.echo(report.to_json())
+
+    @app.command("dump-ast")
+    def dump_ast_cmd(
+        code: str = Argument(..., help="Code snippet to parse"),
+        lang: str = Option("python", "--lang", "-l", help="Language of the code"),
+    ):
+        """
+        Dump the AST (Abstract Syntax Tree) for a code snippet.
+
+        Useful for understanding code structure and debugging patterns.
+
+        Examples:
+          adt dump-ast "def hello(): pass" --lang python
+          adt dump-ast "function foo() {}" --lang javascript
+        """
+        from agent_debug_toolkit.astgrep import dump_syntax_tree
+
+        result = dump_syntax_tree(code=code, lang=lang)
+        typer.echo(result)
+
+    @app.command("ts-parse")
+    def ts_parse_cmd(
+        code: str = Argument(..., help="Code snippet to parse"),
+        lang: str = Option("python", "--lang", "-l", help="Language of the code"),
+        max_depth: int = Option(5, "--depth", "-d", help="Maximum AST depth to display"),
+        output: str = Option("json", "--output", "-o", help="Output format: json"),
+    ):
+        """
+        Parse code into an AST using tree-sitter.
+
+        Provides detailed AST node information with line/column positions.
+
+        Examples:
+          adt ts-parse "class Foo: pass" --lang python
+          adt ts-parse "const x = 1;" --lang javascript --depth 10
+        """
+        from agent_debug_toolkit.treesitter import parse_code
+
+        report = parse_code(code=code, lang=lang, max_depth=max_depth)
+
+        if not report.success:
+            typer.echo(f"Error: {report.message}", err=True)
+            raise typer.Exit(1)
+
+        typer.echo(report.to_json())
+
+    @app.command("ts-query")
+    def ts_query_cmd(
+        code: str = Argument(..., help="Code snippet to query"),
+        query: str = Argument(..., help="Tree-sitter query in S-expression format"),
+        lang: str = Option("python", "--lang", "-l", help="Language of the code"),
+        max_results: int = Option(50, "--max", "-m", help="Maximum number of results"),
+        output: str = Option("json", "--output", "-o", help="Output format: json"),
+    ):
+        """
+        Run a tree-sitter query against code.
+
+        Query syntax uses S-expressions to match AST patterns.
+
+        Examples:
+          adt ts-query "def foo(): pass" "(function_definition) @fn" --lang python
+          adt ts-query "x = 1; y = 2" "(assignment) @assign" --lang python
+        """
+        from agent_debug_toolkit.treesitter import run_query
+
+        report = run_query(
+            code=code,
+            query=query,
+            lang=lang,
+            max_results=max_results,
+        )
+
+        if not report.success:
+            typer.echo(f"Error: {report.message}", err=True)
+            raise typer.Exit(1)
+
+        typer.echo(report.to_json())
+
     def _output_report(report, output_format: str) -> None:
         """Output a report in the specified format."""
         if output_format == "json":
