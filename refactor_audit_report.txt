@@ -2,9 +2,9 @@
 HYDRA CONFIGURATION AUDIT REPORT
 ================================================================================
 
-Total Violations: 87
-  - Critical: 57
-  - Errors: 30
+Total Violations: 65
+  - Critical: 36
+  - Errors: 29
   - Warnings: 0
 
 
@@ -17,6 +17,7 @@ CRITICAL VIOLATIONS (Must Fix Before Refactor)
 🚩 [MISSING HEADER] configs/data/transforms/background_removal.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/data/transforms/recognition.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/debug/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/domain/recognition.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/extraction/default.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/extraction/hybrid.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/layout/default.yaml: No @package directive found
@@ -37,37 +38,15 @@ CRITICAL VIOLATIONS (Must Fix Before Refactor)
 🚩 [MISSING HEADER] configs/training/logger/default.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/training/logger/inference.yaml: No @package directive found
 🚩 [UI BLOAT] configs/training/logger/inference.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
-🚩 [MISSING HEADER] configs/training/logger/preprocessing_profiles.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/preprocessing_profiles.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
 🚩 [MISSING HEADER] configs/training/logger/unified_app.yaml: No @package directive found
 🚩 [UI BLOAT] configs/training/logger/unified_app.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
 🚩 [MISSING HEADER] configs/training/logger/wandb.yaml: No @package directive found
-🚩 [MISSING HEADER] configs/training/logger/architectures/craft.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/architectures/craft.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
-🚩 [MISSING HEADER] configs/training/logger/architectures/dbnet.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/architectures/dbnet.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
-🚩 [MISSING HEADER] configs/training/logger/architectures/dbnetpp.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/architectures/dbnetpp.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
-🚩 [MISSING HEADER] configs/training/logger/modes/comparison.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/modes/comparison.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
-🚩 [MISSING HEADER] configs/training/logger/modes/inference.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/modes/inference.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
-🚩 [MISSING HEADER] configs/training/logger/modes/preprocessing.yaml: No @package directive found
-🚩 [UI BLOAT] configs/training/logger/modes/preprocessing.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
 🚩 [MISSING HEADER] configs/training/logger/optimizers/adam.yaml: No @package directive found
 🚩 [UI BLOAT] configs/training/logger/optimizers/adam.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
 🚩 [MISSING HEADER] configs/training/logger/optimizers/adamw.yaml: No @package directive found
 🚩 [UI BLOAT] configs/training/logger/optimizers/adamw.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
 🚩 [MISSING HEADER] configs/training/profiling/cache_performance_test.yaml: No @package directive found
 🚩 [MISSING HEADER] configs/training/profiling/performance_test.yaml: No @package directive found
-🚩 [LEGACY POLLUTION] configs/__EXTENDED__: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__EXTENDED__/benchmarks: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__EXTENDED__/examples: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__EXTENDED__/experiments: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__EXTENDED__/kie_variants: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__LEGACY__: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__LEGACY__/data: Legacy directory found in configs/. Should be moved to archive/
-🚩 [LEGACY POLLUTION] configs/__LEGACY__/model: Legacy directory found in configs/. Should be moved to archive/
 
 ================================================================================
 ERRORS (Should Fix)
@@ -92,7 +71,6 @@ ERRORS (Should Fix)
 ⚠️ [PACKAGE ERROR] configs/domain/detection.yaml: Uses @package _global_ but not in hardware/experiment/global directory
 ⚠️ [PACKAGE ERROR] configs/domain/kie.yaml: Uses @package _global_ but not in hardware/experiment/global directory
 ⚠️ [PACKAGE ERROR] configs/domain/layout.yaml: Uses @package _global_ but not in hardware/experiment/global directory
-⚠️ [PACKAGE ERROR] configs/domain/recognition.yaml: Uses @package _global_ but not in hardware/experiment/global directory
 ⚠️ [PACKAGE ERROR] configs/evaluation/metrics.yaml: Uses @package _global_ but not in hardware/experiment/global directory
 ⚠️ [PACKAGE ERROR] configs/model/lightning_modules/base.yaml: Uses @package _global_ but not in hardware/experiment/global directory
 ⚠️ [PACKAGE ERROR] configs/trainer/debug_crash.yaml: Uses @package _global_ but not in hardware/experiment/global directory

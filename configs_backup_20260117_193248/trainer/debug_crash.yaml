@@ -1,0 +1,16 @@
+# @package _global_
+defaults:
+  - hardware_rtx3090_24gb_i5_16core
+
+trainer:
+  limit_train_batches: 20
+  limit_val_batches: 5
+  max_epochs: 2
+
+# Force 4 workers to test multiprocessing (user scenario)
+data:
+  dataloaders:
+    train_dataloader:
+      num_workers: 4
+    val_dataloader:
+      num_workers: 4

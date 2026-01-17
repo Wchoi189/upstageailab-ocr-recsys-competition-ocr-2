@@ -1,0 +1,73 @@
+# @package _global_
+# Safe Debug Configuration for Segfault Resolution
+# Usage: python runners/train.py +trainer=debug_safe ...
+
+defaults:
+  - override /trainer: default
+
+# Explicitly disable all multiprocessing features that interact with CUDA/IPC
+# We target both root 'dataloaders' and 'data.dataloaders' to ensure coverage depending on config composition.
+
+# Root dataloaders (used by OCRDataPLModule)
+dataloaders:
+  train_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+    prefetch_factor: null
+
+  val_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+    prefetch_factor: null
+
+  test_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+    prefetch_factor: null
+
+  predict_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+    prefetch_factor: null
+
+# Data package dataloaders (often the source of truth for others)
+data:
+  dataloaders:
+    train_dataloader:
+      num_workers: 0
+      pin_memory: false
+      persistent_workers: false
+      prefetch_factor: null
+
+    val_dataloader:
+      num_workers: 0
+      pin_memory: false
+      persistent_workers: false
+      prefetch_factor: null
+
+    test_dataloader:
+      num_workers: 0
+      pin_memory: false
+      persistent_workers: false
+      prefetch_factor: null
+
+    predict_dataloader:
+      num_workers: 0
+      pin_memory: false
+      persistent_workers: false
+      prefetch_factor: null
+
+# Disable Image Logging in WandB to prevent multiprocessing pickling errors
+# which occur even with num_workers=0 in some environments.
+logger:
+  per_batch_image_logging:
+    enabled: false
+
+trainer:
+  limit_train_batches: 50
+  limit_val_batches: 20
+  max_epochs: 1

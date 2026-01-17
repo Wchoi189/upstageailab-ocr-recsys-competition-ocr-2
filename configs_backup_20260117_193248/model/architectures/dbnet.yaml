@@ -1,0 +1,31 @@
+# @package model
+
+architectures: dbnet
+
+component_overrides:
+  encoder:
+    model_name: "resnet18"
+    select_features: [1, 2, 3, 4]
+    pretrained: false
+  decoder:
+    name: "fpn_decoder"
+    params:
+      inner_channels: 256
+      output_channels: 256
+      out_channels: 256
+  head:
+    name: "db_head"
+    params:
+      k: 50
+      postprocess:
+        thresh: 0.2
+        box_thresh: 0.3
+        max_candidates: 300
+        use_polygon: false
+  loss:
+    name: "db_loss"
+    params:
+      negative_ratio: 3.0
+      prob_map_loss_weight: 5.0
+      thresh_map_loss_weight: 10.0
+      binary_map_loss_weight: 1.0

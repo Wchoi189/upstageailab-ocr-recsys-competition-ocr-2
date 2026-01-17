@@ -1,0 +1,99 @@
+# Streamlit UI configuration for the Real-time OCR Inference app.
+# This file is intentionally simple and self-contained for loading without Hydra runtime.
+
+app:
+  title: "🔍 Real-time OCR Inference"
+  subtitle: "Upload images and get instant OCR predictions."
+  page_icon: "🔍"
+  layout: "wide"
+  initial_sidebar_state: "expanded"
+
+paths:
+  outputs_dir: "outputs"
+  hydra_config_filenames:
+    - config.yaml
+    - hparams.yaml
+    - train.yaml
+    - predict.yaml
+
+model_selector:
+  sort_by:
+    - architecture
+    - backbone
+    - epochs
+  demo_label: "No trained models found - using Demo Mode"
+  success_message: "✅ **Real Inference Available**: Using trained OCR model for predictions."
+  unavailable_message: "⚠️ **Inference Engine Not Available**: Using mock predictions for demonstration."
+  empty_message: "⚠️ **No Models Found**: Please train a model first or use demo mode."
+
+hyperparameters:
+  binarization_thresh:
+    label: "Binarization Threshold"
+    min: 0.0
+    max: 1.0
+    step: 0.05
+    default: 0.2
+    help: "Threshold for converting probability maps to binary text regions. Lower values detect more text."
+  box_thresh:
+    label: "Box Threshold"
+    min: 0.0
+    max: 1.0
+    step: 0.05
+    default: 0.2
+    help: "Threshold for filtering detected text boxes. Higher values are more strict."
+  max_candidates:
+    label: "Max Candidates"
+    min: 10
+    max: 1000
+    step: 10
+    default: 300
+    help: "Maximum number of text boxes to detect per image."
+  min_detection_size:
+    label: "Min Detection Size"
+    min: 1
+    max: 50
+    step: 1
+    default: 5
+    help: "Minimum pixel size for detected text regions."
+
+upload:
+  enabled_file_types:
+    - jpg
+    - jpeg
+    - png
+    - bmp
+  multi_file_selection: true
+  immediate_inference_for_single: true
+
+results:
+  expand_first_result: true
+  show_summary: true
+  show_raw_predictions: true
+  image_width: "content"
+
+preprocessing:
+  enable_label: "Enable docTR preprocessing"
+  enable_help: "Apply docTR geometry (orientation, rcrops, padding cleanup) before inference and preview the results."
+  default_enabled: false
+  enable_document_detection: true
+  enable_perspective_correction: true
+  enable_enhancement: false
+  enhancement_method: "conservative"
+  target_size: [640, 640]
+  enable_final_resize: true
+  enable_orientation_correction: true
+  orientation_angle_threshold: 1.0
+  orientation_expand_canvas: true
+  orientation_preserve_original_shape: false
+  use_doctr_geometry: false
+  doctr_assume_horizontal: false
+  enable_padding_cleanup: true
+  document_detection_min_area_ratio: 0.18
+  document_detection_use_adaptive: true
+  document_detection_use_fallback_box: true
+  document_detection_use_camscanner: false
+  show_metadata: true
+  show_corner_overlay: true
+
+notifications:
+  inference_complete_delay_seconds: 1.0

@@ -1,0 +1,34 @@
+# @package trainer
+
+# Optimized trainer configuration for RTX 3090 24GB VRAM
+# High-performance setting for large VRAM GPUs
+
+max_steps: -1
+max_epochs: 3
+num_sanity_val_steps: 1
+log_every_n_steps: 10
+val_check_interval: null
+check_val_every_n_epoch: 1
+
+# Training stability & Performance
+deterministic: true
+accumulate_grad_batches: 1   # 24GB allows larger physical batch, so less accum needed
+precision: "32-true"         # FP32 for stability
+benchmark: true
+
+# Gradient management
+gradient_clip_val: 5.0
+
+# Hardware settings
+accelerator: gpu
+devices: 1
+strategy: auto
+
+# Dataloader batch limits
+limit_train_batches: null
+limit_val_batches: null
+limit_test_batches: null
+
+# Memory optimization notes:
+# - RTX 3090 (24GB) can handle double the batch size of RTX 3060 (12GB)
+# - Recommended batch_size: 8 (or 16 if using FP16)

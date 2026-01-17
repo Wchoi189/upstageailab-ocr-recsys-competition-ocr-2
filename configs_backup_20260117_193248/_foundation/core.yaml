@@ -1,0 +1,35 @@
+# @package _global_
+
+# Core experiment configuration (Hydra config is in /hydra/default.yaml)
+
+# Task and experiment identity
+task_name: "train"
+experiment:
+  kind: "train"
+  task: "ocr"
+  name: ${exp_name}
+  run_id: ${now:%Y%m%d_%H%M%S}_${seed}
+
+# Runtime configuration
+seed: 42
+exp_name: "ocr_training"
+resume: null
+project_name: null
+experiment_tag: null
+
+# Extras configuration
+ignore_warnings: false
+enforce_tags: true
+print_config: true
+
+# Module paths
+dataset_module: ocr.data.datasets
+dataset_config_module: ocr.core.validation
+dataset_path: ${dataset_module}
+dataset_config_path: ${dataset_config_module}
+model_path: ocr.core.models
+encoder_path: ocr.core.models.encoder
+decoder_path: ocr.core.models.decoder
+head_path: ocr.core.models.head
+loss_path: ocr.core.models.loss
+lightning_path: ocr.core.lightning

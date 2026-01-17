@@ -1,0 +1,6 @@
+# @package _global_
+
+defaults:
+  - /data/base
+  - /transforms/base
+  - /dataloaders/default

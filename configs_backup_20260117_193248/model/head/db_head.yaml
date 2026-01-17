@@ -1,0 +1,15 @@
+# @package model.head
+
+# https://arxiv.org/pdf/1911.08947.pdf 참조
+
+_target_: ${head_path}.DBHead
+in_channels: 256                 # Input layer channel
+upscale: 4                       # Output layer scale factor
+k: 50                            # The amplifying factor
+bias: false                      # Use bias or not in LayerNorm
+smooth: false                    # Use smooth or not in Upsample
+postprocess:
+  thresh: 0.2                    # Binarization threshold
+  box_thresh: 0.2                # Detection Box threshold
+  max_candidates: 300            # Limit the number of detection boxes
+  use_polygon: false             # Detection Box Type (QUAD or POLY)

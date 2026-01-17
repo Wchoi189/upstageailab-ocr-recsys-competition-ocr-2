@@ -1,0 +1,58 @@
+# @package _global_
+
+defaults:
+  - /data/transforms/base
+  - /data/dataloaders/default
+  - performance_preset: none
+
+dataset_base_path: "${hydra:runtime.cwd}/data/datasets/"
+
+batch_size: 16
+
+data:
+  train_num_samples: null
+  val_num_samples: null
+  test_num_samples: null
+
+datasets:
+  train_dataset:
+    _target_: ${dataset_path}.ValidatedOCRDataset
+    config:
+      _target_: ${dataset_config_path}.DatasetConfig
+      image_path: ${dataset_base_path}images/train
+      annotation_path: ${dataset_base_path}jsons/train.json
+      # Explicitly disable caching to prevent default override
+      cache_config:
+        _target_: ${dataset_config_path}.CacheConfig
+        cache_transformed_tensors: false
+        cache_images: false
+        cache_maps: false
+        log_statistics_every_n: null
+    transform: ${transforms.train_transform}
+  val_dataset:
+    _target_: ${dataset_path}.ValidatedOCRDataset
+    config:
+      _target_: ${dataset_config_path}.DatasetConfig
+      image_path: ${dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
+      annotation_path: ${dataset_base_path}jsons/val.json
+    transform: ${transforms.val_transform}
+  test_dataset:
+    _target_: ${dataset_path}.ValidatedOCRDataset
+    config:
+      _target_: ${dataset_config_path}.DatasetConfig
+      image_path: ${dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
+      annotation_path: ${dataset_base_path}jsons/val.json
+    transform: ${transforms.test_transform}
+  predict_dataset:
+    _target_: ${dataset_path}.ValidatedOCRDataset
+    config:
+      _target_: ${dataset_config_path}.DatasetConfig
+      image_path: ${dataset_base_path}images/test
+      annotation_path: null
+    transform: ${transforms.test_transform}
+
+collate_fn:
+  _target_: ${dataset_path}.DBCollateFN
+  shrink_ratio: 0.4
+  thresh_min: 0.3
+  thresh_max: 0.7

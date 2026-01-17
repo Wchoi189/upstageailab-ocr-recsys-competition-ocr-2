@@ -1,30 +1,14 @@
+---
 # Project Compass Active Session
-session_id: "session-hydra-config-refactor-01"
+session_id: "new-session-200722"
 status: "active"
 started_date: "2026-01-17"
 completed_date: null
 
 objective: |
-  Execute Hydra Configuration Audit and "Domains First" V5 Refactor.
-  See roadmap/hydra_config_refactor.yml for detailed phases and objectives.
+  [Enter objective here]
 
 implementation_plan: null
-source_walkthrough: "/home/vscode/.gemini/antigravity/brain/fc4327ec-3a2b-4d7b-a2e0-5aefa21cad51/walkthrough.md"
-roadmap_reference: "project_compass/roadmap/hydra_config_refactor.yml"
+source_walkthrough: null
 
-blockers: []
-
-artifacts:
-  - "ocr-refactor-prep/hydra_refactor/README.md"
-  - "ocr-refactor-prep/hydra_refactor/01_PROTOCOL_hydra_architectural_laws.md"
-  - "ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
-  - "ocr-refactor-prep/hydra_refactor/03_SCRIPT_hydra_guard.py"
-  - "ocr-refactor-prep/hydra_refactor/04_TEMPLATE_global_paths.yaml"
-  - "ocr-refactor-prep/hydra_refactor/05_PROMPT_ai_architect_audit.md"
-  - "ocr-refactor-prep/hydra_refactor/06_TEMPLATE_domain_controller.yaml"
-  - "ocr-refactor-prep/hydra_refactor/07_GUIDE_refactor_execution.md"
-
-next_steps:
-  - "Run baseline audit: python ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
-  - "Review audit report and document current violations"
-  - "Begin Phase 1: Preparation (backup, archive setup)"
+phases: {}

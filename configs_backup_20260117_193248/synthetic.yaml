@@ -1,0 +1,43 @@
+# @package _global_
+
+# Synthetic dataset generation configuration
+# This config drives the synthetic data generator CLI.
+# It supports multiple backends (custom, paddle, mmocr) and exposes
+# generation parameters for easy experimentation.
+
+defaults:
+  - _self_
+
+# Global struct setting to allow overrides
+struct: false
+
+backend: custom  # one of: custom, paddle, mmocr
+
+output:
+  root_dir: ${hydra:runtime.output_dir}/synthetic
+  image_prefix: synthetic
+  image_format: png
+  annotation_format: json
+
+generation:
+  num_images: 1000
+  image_size: [512, 512]
+  num_text_regions: 4
+  background_type: plain
+
+augmentation:
+  enable: true
+
+paths:
+  fonts_dir: null
+  assets_dir: null
+  dictionaries_dir: null
+
+generator:
+  _target_: ocr.synthetic_data.dataset.SyntheticDatasetGenerator
+  config:
+    backend: ${backend}
+    output: ${output}
+    generation: ${generation}
+    augmentation: ${augmentation}
+    paths: ${paths}

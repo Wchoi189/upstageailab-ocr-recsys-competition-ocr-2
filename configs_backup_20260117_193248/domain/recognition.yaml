@@ -1,0 +1,31 @@
+# @package _global_
+
+# Text Recognition Domain Configuration
+# Use with: python runners/train.py +domain=recognition
+
+defaults:
+  - override /model: recognition
+  - override /data: recognition
+  - _self_
+
+task: recognition
+
+model:
+  type: recognition
+  task_type: recognition
+  # Override model components with correct vocab size for KoreanOCRTokenizer
+  component_overrides:
+    decoder:
+      params:
+        vocab_size: 1027
+    head:
+      params:
+        out_channels: 1027
+
+data:
+  task_type: recognition
+
+# Tokenizer configuration (uses charset from data)
+tokenizer:
+  charset: ${data.tokenizer.charset_path}
+  max_len: 25

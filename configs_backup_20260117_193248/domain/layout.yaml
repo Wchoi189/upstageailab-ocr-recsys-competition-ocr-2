@@ -1,0 +1,30 @@
+# @package _global_
+
+# Layout Analysis Domain Configuration
+# Use with: python runners/train.py +domain=layout
+
+defaults:
+  - /layout: default
+  - _self_
+
+task: layout_analysis
+
+model:
+  type: layout
+
+data:
+  task_type: layout
+
+# Layout detection configuration
+layout:
+  enabled: true
+  grouping:
+    backend: "rule_based"
+    y_overlap_threshold: 0.5
+    x_gap_ratio: 1.5
+    merge_close_lines: false
+    line_merge_threshold: 0.3
+  hierarchy:
+    detect_tables: false
+    detect_headers: false
+    detect_lists: false

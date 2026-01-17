@@ -1,0 +1,1131 @@
+# ==============================================================================
+# RESOLVED CONFIGURATION: recognition
+# ==============================================================================
+# This file shows the FINAL resolved values after all interpolations.
+# Use this for AI agent context to eliminate ${variable} guessing.
+# ==============================================================================
+
+seed: 42
+exp_name: ocr_training_b
+resume: null
+project_name: null
+experiment_tag: null
+wandb: true
+compile_model: false
+model:
+  architectures: parseq
+  component_overrides:
+    encoder:
+      model_name: resnet18
+      select_features:
+      - 1
+      - 2
+      - 3
+      - 4
+      pretrained: false
+      name: timm_backbone
+      params:
+        model_name: resnet18
+        pretrained: true
+        features_only: true
+        out_indices:
+        - 4
+    decoder:
+      name: parseq_decoder
+      params:
+        inner_channels: 256
+        output_channels: 256
+        out_channels: 256
+        d_model: 512
+        nhead: 8
+        num_layers: 12
+        dim_feedforward: 2048
+        dropout: 0.1
+        vocab_size: null
+        max_len: 26
+    head:
+      name: parseq_head
+      params:
+        k: 50
+        postprocess:
+          thresh: 0.2
+          box_thresh: 0.3
+          max_candidates: 300
+          use_polygon: false
+        in_channels: 512
+        out_channels: null
+    loss:
+      name: cross_entropy
+      params:
+        negative_ratio: 3.0
+        prob_map_loss_weight: 5.0
+        thresh_map_loss_weight: 10.0
+        binary_map_loss_weight: 1.0
+        ignore_index: 0
+  optimizer:
+    _target_: torch.optim.Adam
+    lr: 0.001
+    betas:
+    - 0.9
+    - 0.999
+    eps: 1.0e-08
+    weight_decay: 0.0001
+  _target_: ocr.core.models.architecture.OCRModel
+  scheduler:
+    _target_: torch.optim.lr_scheduler.CosineAnnealingLR
+    T_max: 1000
+    eta_min: 0
+  name: parseq
+  architecture_name: parseq
+dataset_base_path: ./data/datasets/
+batch_size: 16
+data:
+  train_num_samples: null
+  val_num_samples: null
+  test_num_samples: null
+  tokenizer:
+    _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+    char_path: ./ocr/data/charset.json
+    max_len: 25
+datasets:
+  train_dataset:
+    _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    config: null
+    transform:
+      train_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.HorizontalFlip
+          p: 0.5
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      val_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      test_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      predict_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params: null
+      _target_: torchvision.transforms.Compose
+      transforms:
+      - _target_: torchvision.transforms.Resize
+        size:
+        - 224
+        - 224
+      - _target_: torchvision.transforms.ToTensor
+      - _target_: torchvision.transforms.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+    lmdb_path: ./data/train/recognition/aihub_lmdb_validation
+    tokenizer:
+      _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+      char_path: ./ocr/data/charset.json
+      max_len: 25
+    max_len: 25
+  val_dataset:
+    _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    config:
+      preload_images: false
+      preload_maps: false
+      prenormalize_images: false
+      load_maps: false
+      cache_config:
+        cache_images: false
+        cache_maps: false
+        cache_transformed_tensors: false
+        log_statistics_every_n: null
+      image_loading_config:
+        use_turbojpeg: true
+        turbojpeg_fallback: true
+    transform:
+      train_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.HorizontalFlip
+          p: 0.5
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      val_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      test_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      predict_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params: null
+      _target_: torchvision.transforms.Compose
+      transforms:
+      - _target_: torchvision.transforms.Resize
+        size:
+        - 224
+        - 224
+      - _target_: torchvision.transforms.ToTensor
+      - _target_: torchvision.transforms.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+    lmdb_path: ./data/train/recognition/aihub_lmdb_validation
+    tokenizer:
+      _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+      char_path: ./ocr/data/charset.json
+      max_len: 25
+    max_len: 25
+  test_dataset:
+    _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    config: null
+    transform:
+      train_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.HorizontalFlip
+          p: 0.5
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      val_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      test_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      predict_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params: null
+      _target_: torchvision.transforms.Compose
+      transforms:
+      - _target_: torchvision.transforms.Resize
+        size:
+        - 224
+        - 224
+      - _target_: torchvision.transforms.ToTensor
+      - _target_: torchvision.transforms.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+    lmdb_path: ./data/train/recognition/aihub_lmdb_validation
+    tokenizer:
+      _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+      char_path: ./ocr/data/charset.json
+      max_len: 25
+    max_len: 25
+  predict_dataset:
+    _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    config: null
+    transform:
+      train_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.HorizontalFlip
+          p: 0.5
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      val_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      test_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params:
+          _target_: albumentations.KeypointParams
+          format: xy
+          remove_invisible: true
+      predict_transform:
+        _target_: ocr.data.datasets.DBTransforms
+        transforms:
+        - _target_: albumentations.LongestMaxSize
+          max_size: 640
+          interpolation: 1
+          p: 1.0
+        - _target_: albumentations.PadIfNeeded
+          min_width: 640
+          min_height: 640
+          border_mode: 0
+          position: top_left
+          p: 1.0
+        - _target_: albumentations.Normalize
+          mean:
+          - 0.485
+          - 0.456
+          - 0.406
+          std:
+          - 0.229
+          - 0.224
+          - 0.225
+        keypoint_params: null
+      _target_: torchvision.transforms.Compose
+      transforms:
+      - _target_: torchvision.transforms.Resize
+        size:
+        - 224
+        - 224
+      - _target_: torchvision.transforms.ToTensor
+      - _target_: torchvision.transforms.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+    lmdb_path: ./data/train/recognition/aihub_lmdb_validation
+    tokenizer:
+      _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+      char_path: ./ocr/data/charset.json
+      max_len: 25
+    max_len: 25
+collate_fn:
+  _target_: ocr.data.datasets.recognition_collate_fn.recognition_collate_fn
+  shrink_ratio: 0.4
+  thresh_min: 0.3
+  thresh_max: 0.7
+  _partial_: true
+default_interpolation: 1
+transforms:
+  train_transform:
+    _target_: ocr.data.datasets.DBTransforms
+    transforms:
+    - _target_: albumentations.LongestMaxSize
+      max_size: 640
+      interpolation: 1
+      p: 1.0
+    - _target_: albumentations.PadIfNeeded
+      min_width: 640
+      min_height: 640
+      border_mode: 0
+      position: top_left
+      p: 1.0
+    - _target_: albumentations.HorizontalFlip
+      p: 0.5
+    - _target_: albumentations.Normalize
+      mean:
+      - 0.485
+      - 0.456
+      - 0.406
+      std:
+      - 0.229
+      - 0.224
+      - 0.225
+    keypoint_params:
+      _target_: albumentations.KeypointParams
+      format: xy
+      remove_invisible: true
+  val_transform:
+    _target_: ocr.data.datasets.DBTransforms
+    transforms:
+    - _target_: albumentations.LongestMaxSize
+      max_size: 640
+      interpolation: 1
+      p: 1.0
+    - _target_: albumentations.PadIfNeeded
+      min_width: 640
+      min_height: 640
+      border_mode: 0
+      position: top_left
+      p: 1.0
+    - _target_: albumentations.Normalize
+      mean:
+      - 0.485
+      - 0.456
+      - 0.406
+      std:
+      - 0.229
+      - 0.224
+      - 0.225
+    keypoint_params:
+      _target_: albumentations.KeypointParams
+      format: xy
+      remove_invisible: true
+  test_transform:
+    _target_: ocr.data.datasets.DBTransforms
+    transforms:
+    - _target_: albumentations.LongestMaxSize
+      max_size: 640
+      interpolation: 1
+      p: 1.0
+    - _target_: albumentations.PadIfNeeded
+      min_width: 640
+      min_height: 640
+      border_mode: 0
+      position: top_left
+      p: 1.0
+    - _target_: albumentations.Normalize
+      mean:
+      - 0.485
+      - 0.456
+      - 0.406
+      std:
+      - 0.229
+      - 0.224
+      - 0.225
+    keypoint_params:
+      _target_: albumentations.KeypointParams
+      format: xy
+      remove_invisible: true
+  predict_transform:
+    _target_: ocr.data.datasets.DBTransforms
+    transforms:
+    - _target_: albumentations.LongestMaxSize
+      max_size: 640
+      interpolation: 1
+      p: 1.0
+    - _target_: albumentations.PadIfNeeded
+      min_width: 640
+      min_height: 640
+      border_mode: 0
+      position: top_left
+      p: 1.0
+    - _target_: albumentations.Normalize
+      mean:
+      - 0.485
+      - 0.456
+      - 0.406
+      std:
+      - 0.229
+      - 0.224
+      - 0.225
+    keypoint_params: null
+  _target_: torchvision.transforms.Compose
+  transforms:
+  - _target_: torchvision.transforms.Resize
+    size:
+    - 224
+    - 224
+  - _target_: torchvision.transforms.ToTensor
+  - _target_: torchvision.transforms.Normalize
+    mean:
+    - 0.485
+    - 0.456
+    - 0.406
+    std:
+    - 0.229
+    - 0.224
+    - 0.225
+dataloaders:
+  train_dataloader:
+    batch_size: 16
+    shuffle: true
+    num_workers: 4
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
+  val_dataloader:
+    batch_size: 16
+    shuffle: false
+    num_workers: 4
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
+  test_dataloader:
+    batch_size: 16
+    shuffle: false
+    num_workers: 2
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 1
+  predict_dataloader:
+    batch_size: 16
+    shuffle: false
+    num_workers: 2
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 1
+metrics:
+  eval:
+    _target_: ocr.core.metrics.cleval_metric.CLEvalMetric
+    dist_sync_on_step: false
+    case_sensitive: true
+    recall_gran_penalty: 1.0
+    precision_gran_penalty: 1.0
+    vertical_aspect_ratio_thresh: 0.5
+    ap_constraint: 0.3
+    scale_wise: false
+    scale_bins:
+    - 0.0
+    - 0.005
+    - 0.01
+    - 0.015
+    - 0.02
+    - 0.025
+    - 0.1
+    - 0.5
+    - 1.0
+    scale_range:
+    - 0.0
+    - 1.0
+    max_polygons: 300
+paths:
+  outputs_root: ./outputs
+  experiments_root: ./outputs/experiments
+  artifacts_root: ./outputs/artifacts
+  logs_root: ./outputs/logs
+  wandb_sync_root: ./outputs/wandb_sync
+  output_dir: ./outputs/latest
+  log_dir: ./outputs/latest/logs
+  checkpoint_dir: ./outputs/latest/checkpoints
+  submission_dir: ./outputs/latest/submissions
+  data_root: .
+logger:
+  wandb:
+    enabled: true
+    log_model: all
+    project_name: receipt-text-recognition-ocr-project
+    exp_version: v1.0
+    settings:
+      offline: false
+      save_code: false
+      sync_dir: ./outputs/wandb_sync
+    per_batch_image_logging:
+      enabled: false
+      recall_threshold: 0.4
+      max_batches_per_epoch: 2
+      max_images_per_batch: 4
+      use_transformed_batch: true
+      image_format: jpeg
+      max_image_side: 640
+  csv:
+    _target_: lightning.pytorch.loggers.csv_logs.CSVLogger
+    save_dir: ./outputs/latest
+    name: csv/
+    prefix: ''
+trainer:
+  max_steps: -1
+  max_epochs: 3
+  num_sanity_val_steps: 1
+  log_every_n_steps: 20
+  val_check_interval: null
+  check_val_every_n_epoch: 1
+  deterministic: false
+  accumulate_grad_batches: 2
+  precision: 32-true
+  benchmark: false
+  gradient_clip_val: 5.0
+  accelerator: gpu
+  devices: 1
+  strategy: auto
+  enable_checkpointing: false
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+training:
+  callbacks:
+    model_checkpoint:
+      _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
+      dirpath: ./outputs/latest/checkpoints
+      experiment_tag: ocr_training_b
+      training_phase: training
+      add_timestamp: true
+      filename: best
+      monitor: val/hmean
+      verbose: false
+      save_last: true
+      save_top_k: 1
+      mode: max
+      auto_insert_metric_name: true
+      save_weights_only: false
+      every_n_train_steps: null
+      train_time_interval: null
+      every_n_epochs: 1
+      save_on_train_epoch_end: false
+    early_stopping:
+      _target_: lightning.pytorch.callbacks.EarlyStopping
+      monitor: val/hmean
+      min_delta: 0.0
+      patience: 5
+      verbose: false
+      mode: max
+      strict: true
+      check_finite: true
+      stopping_threshold: null
+      divergence_threshold: null
+      check_on_train_epoch_end: false
+    rich_progress_bar:
+      _target_: lightning.pytorch.callbacks.RichProgressBar
+      theme:
+        _target_: lightning.pytorch.callbacks.progress.rich_progress.RichProgressBarTheme
+        progress_bar: red
+        progress_bar_finished: green
+        progress_bar_pulse: yellow
+        time: cyan
+        processing_speed: cyan
+        description: bold white
+        metrics: white
+      refresh_rate: 2
+    performance_profiler:
+      _target_: ocr.core.lightning.callbacks.PerformanceProfilerCallback
+      enabled: false
+      log_interval: 10
+      profile_memory: true
+      verbose: false
+    metadata:
+      _target_: ocr.core.lightning.callbacks.MetadataCallback
+      exp_name: ocr_training_b
+      outputs_dir: ./outputs/latest
+      training_phase: training
+    wandb_completion:
+      _target_: ocr.core.lightning.callbacks.wandb_completion.WandbCompletionCallback
+callbacks:
+  wandb_image_logging:
+    _target_: ocr.core.lightning.callbacks.wandb_image_logging.WandbImageLoggingCallback
+    log_every_n_epochs: 1
+debug:
+  verbose: false
+  profiling: false
+task_name: train
+experiment:
+  kind: train
+  task: ocr
+  name: ocr_training_b
+  run_id: '20260117_194252_42'
+ignore_warnings: false
+enforce_tags: true
+print_config: true
+dataset_module: ocr.data.datasets
+dataset_config_module: ocr.core.validation
+dataset_path: ocr.data.datasets
+dataset_config_path: ocr.core.validation
+model_path: ocr.core.models
+encoder_path: ocr.core.models.encoder
+decoder_path: ocr.core.models.decoder
+head_path: ocr.core.models.head
+loss_path: ocr.core.models.loss
+lightning_path: ocr.core.lightning
+domain:
+  detection: null
+  max_polygons: null
+  shrink_ratio: null
+  thresh_min: null
+  thresh_max: null
+  box_thresh: null
+  unclip_ratio: null
+  kie: null
+  max_entities: null
+  relation_types: null
+  entity_categories: null
+  linking_mode: null
+  recognition:
+    max_label_length: 25
+    charset: korean
+    case_sensitive: false
+    decode_mode: greedy
+    beam_width: 5
+    use_eos_token: true
+    use_pad_token: true
+  domain_info:
+    name: recognition
+    description: Korean text recognition using PARSeq architecture
+    version: '2.0'
+    required_keys:
+    - recognition.max_label_length
+    - recognition.charset
+    forbidden_keys:
+    - max_polygons
+    - max_entities
+  trainer:
+    max_steps: -1
+    max_epochs: 3
+    num_sanity_val_steps: 1
+    log_every_n_steps: 20
+    val_check_interval: null
+    check_val_every_n_epoch: 1
+    deterministic: false
+    accumulate_grad_batches: 2
+    precision: 32-true
+    benchmark: false
+    gradient_clip_val: 5.0
+    accelerator: gpu
+    devices: 1
+    strategy: auto
+    enable_checkpointing: false
+    limit_train_batches: null
+    limit_val_batches: null
+    limit_test_batches: null
+global:
+  paths:
+    root_dir: .
+    data_dir: ./data
+    output_dir: ./outputs
+    artifacts:
+      detection: ./outputs/detection
+      recognition: ./outputs/recognition
+      kie: ./outputs/kie
+    checkpoints: ./outputs/checkpoints
+    logs: ./outputs/logs
+    wandb: ./outputs/wandb
+    datasets:
+      train: ./data/train
+      val: ./data/val
+      test: ./data/test
+    cache: ./outputs/cache
+    temp: ./outputs/temp
+_dataset_template:
+  _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+  lmdb_path: ./data/train/recognition/aihub_lmdb_validation
+  tokenizer:
+    _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+    char_path: ./ocr/data/charset.json
+    max_len: 25
+  max_len: 25
+  transform:
+    train_transform:
+      _target_: ocr.data.datasets.DBTransforms
+      transforms:
+      - _target_: albumentations.LongestMaxSize
+        max_size: 640
+        interpolation: 1
+        p: 1.0
+      - _target_: albumentations.PadIfNeeded
+        min_width: 640
+        min_height: 640
+        border_mode: 0
+        position: top_left
+        p: 1.0
+      - _target_: albumentations.HorizontalFlip
+        p: 0.5
+      - _target_: albumentations.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+      keypoint_params:
+        _target_: albumentations.KeypointParams
+        format: xy
+        remove_invisible: true
+    val_transform:
+      _target_: ocr.data.datasets.DBTransforms
+      transforms:
+      - _target_: albumentations.LongestMaxSize
+        max_size: 640
+        interpolation: 1
+        p: 1.0
+      - _target_: albumentations.PadIfNeeded
+        min_width: 640
+        min_height: 640
+        border_mode: 0
+        position: top_left
+        p: 1.0
+      - _target_: albumentations.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+      keypoint_params:
+        _target_: albumentations.KeypointParams
+        format: xy
+        remove_invisible: true
+    test_transform:
+      _target_: ocr.data.datasets.DBTransforms
+      transforms:
+      - _target_: albumentations.LongestMaxSize
+        max_size: 640
+        interpolation: 1
+        p: 1.0
+      - _target_: albumentations.PadIfNeeded
+        min_width: 640
+        min_height: 640
+        border_mode: 0
+        position: top_left
+        p: 1.0
+      - _target_: albumentations.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+      keypoint_params:
+        _target_: albumentations.KeypointParams
+        format: xy
+        remove_invisible: true
+    predict_transform:
+      _target_: ocr.data.datasets.DBTransforms
+      transforms:
+      - _target_: albumentations.LongestMaxSize
+        max_size: 640
+        interpolation: 1
+        p: 1.0
+      - _target_: albumentations.PadIfNeeded
+        min_width: 640
+        min_height: 640
+        border_mode: 0
+        position: top_left
+        p: 1.0
+      - _target_: albumentations.Normalize
+        mean:
+        - 0.485
+        - 0.456
+        - 0.406
+        std:
+        - 0.229
+        - 0.224
+        - 0.225
+      keypoint_params: null
+    _target_: torchvision.transforms.Compose
+    transforms:
+    - _target_: torchvision.transforms.Resize
+      size:
+      - 224
+      - 224
+    - _target_: torchvision.transforms.ToTensor
+    - _target_: torchvision.transforms.Normalize
+      mean:
+      - 0.485
+      - 0.456
+      - 0.406
+      std:
+      - 0.229
+      - 0.224
+      - 0.225
+  config: null

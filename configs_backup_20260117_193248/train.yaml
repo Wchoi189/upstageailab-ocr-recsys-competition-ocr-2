@@ -1,0 +1,24 @@
+defaults:
+  - _self_
+  - base                   # Base config includes paths, evaluation, logger, callbacks
+  - optional domain: detection      # Default domain (override with domain=recognition|kie|layout)
+
+
+# Domain switching enabled via CLI:
+# python runners/train.py domain=detection (default)
+# python runners/train.py domain=recognition
+# python runners/train.py domain=kie
+# python runners/train.py domain=layout
+
+seed: 42
+exp_name: "ocr_training_b"
+resume: null #"/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/outputs/pan_resnet18_no_polygons_canonical/checkpoints/last_20251011_004442.ckpt"
+project_name: null
+experiment_tag: null
+wandb: true
+
+# Remove this line to use default callbacks (including wandb_image_logging)
+# callbacks: {}
+
+# Add this to your trainer or model config section
+compile_model: false  # Set to true to enable compilation (experimental)

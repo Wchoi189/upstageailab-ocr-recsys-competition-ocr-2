@@ -1,0 +1,91 @@
+# Unified OCR Development Studio Configuration
+# Main application configuration file
+
+app:
+  title: "🔍 Unified OCR Development Studio"
+  subtitle: "Preprocessing tuning, model inference, and A/B testing in one place"
+  page_icon: "🔍"
+  layout: "wide"
+  initial_sidebar_state: "expanded"
+
+  # Mode configuration
+  modes:
+    - id: "preprocessing"
+      label: "Preprocessing"
+      icon: "🎨"
+      default: true
+      config_file: "modes/preprocessing.yaml"
+      description: "Interactive preprocessing pipeline tuning and visualization"
+
+    - id: "inference"
+      label: "Inference"
+      icon: "🤖"
+      default: false
+      config_file: "modes/inference.yaml"
+      description: "Model-based OCR inference with real-time preprocessing"
+
+    - id: "comparison"
+      label: "Comparison"
+      icon: "📊"
+      default: false
+      config_file: "modes/comparison.yaml"
+      description: "A/B testing and parameter sweep analysis"
+
+# Shared settings across all modes
+shared:
+  upload:
+    enabled_file_types:
+      - jpg
+      - jpeg
+      - png
+      - bmp
+    max_file_size_mb: 10
+    multi_file_selection: true
+    show_upload_instructions: true
+    upload_help_text: "Upload receipt or document images for processing"
+
+  image_display:
+    thumbnail_size: 200
+    preview_size: 400
+    detail_size: 600
+    max_width: 800
+    default_mode: "grid"
+    grid_columns: 3
+    show_dimensions: true
+    show_file_size: true
+
+  session:
+    enable_cache: true
+    cache_ttl_seconds: 3600
+    persist_preferences: true
+    clear_cache_on_mode_switch: false
+
+# Paths
+paths:
+  outputs_dir: "outputs"
+  configs_dir: "configs"
+  checkpoints_dir: "outputs/experiments/train/ocr"
+  presets_dir: "configs/ui/presets"
+  schemas_dir: "configs/schemas"
+
+# Validation
+validation:
+  schema_dir: "configs/schemas"
+  strict_mode: true
+  show_warnings: true
+  fail_on_unknown_keys: false
+
+# Performance
+performance:
+  lazy_load_models: true
+  enable_profiling: false
+  max_image_dimension: 4000
+  warn_on_large_images: true
+  large_image_threshold_mb: 5
+
+# Logging
+logging:
+  level: "INFO"
+  show_debug_info: false
+  log_config_loads: true
+  log_state_changes: false

@@ -1,0 +1,15 @@
+================================================================================
+HYDRA CONFIGURATION HEALTH REPORT
+================================================================================
+
+Total Checks: 1
+  ✅ Passed: 0
+  🚩 Critical: 0
+  ⚠️  Errors: 1
+  ℹ️  Warnings: 0
+
+
+================================================================================
+ERRORS (Should Be Fixed)
+================================================================================
+⚠️  Package violation: 'batch_size' found at root level. Should be under appropriate group (data/model/train)

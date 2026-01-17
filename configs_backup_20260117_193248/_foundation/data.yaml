@@ -1,0 +1,9 @@
+# @package _global_
+
+# Consolidated data configuration
+defaults:
+  - /data/base
+  - /data/transforms/base
+  - /data/dataloaders/default
+  - _self_
+
