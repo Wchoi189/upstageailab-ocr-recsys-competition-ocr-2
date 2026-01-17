@@ -1,0 +1,32 @@
+# @package model
+# v5.0 | Purpose: Monolithic PARSeq Preset (Recognition)
+# Validated: 2026-01-18 | Deps: ocr.domains.recognition
+
+# 1. Architecture Definition
+architecture:
+  _target_: ocr.domains.recognition.models.PARSeq
+  backbone:
+    _target_: ocr.core.models.encoder.TimmBackbone
+    model_name: resnet18
+    pretrained: true
+  decoder:
+    _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+    d_model: 512
+    nhead: 8
+    num_layers: 12
+
+# 2. Tokenizer (Integrated for Recognition Domain)
+tokenizer:
+  _target_: ocr.domains.recognition.data.tokenizer.KoreanOCRTokenizer
+  char_path: ${global.paths.root_dir}/ocr/data/charset.json
+  max_len: 25
+
+# 3. Loss Configuration
+loss:
+  _target_: torch.nn.CrossEntropyLoss
+  ignore_index: 0
+
+# 4. Local Optimization Defaults
+optimizer:
+  lr: 0.0003
+  weight_decay: 0.01

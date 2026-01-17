@@ -1,0 +1,49 @@
+# @package _global_
+
+defaults:
+  - paths
+  - _self_
+
+# Global Trainer Defaults
+trainer:
+  max_steps: -1
+  max_epochs: 3
+  num_sanity_val_steps: 1
+  log_every_n_steps: 20
+  val_check_interval: null
+  check_val_every_n_epoch: 1
+  deterministic: false
+  accumulate_grad_batches: 1
+  precision: "32-true"
+  benchmark: false
+  gradient_clip_val: 1.0
+  accelerator: auto
+  devices: 1
+  strategy: auto
+  enable_checkpointing: false
+  limit_train_batches: null
+  limit_val_batches: null
+  limit_test_batches: null
+
+# Global Dataloader Defaults (Fallback)
+dataloaders:
+  train_dataloader:
+    num_workers: 4
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
+  val_dataloader:
+    num_workers: 4
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
+  test_dataloader:
+    num_workers: 2
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 1
+  predict_dataloader:
+    num_workers: 2
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 1

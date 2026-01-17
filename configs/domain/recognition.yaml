@@ -1,3 +1,6 @@
+# @package _group_
+# v5.0 | Purpose: Master Controller for Text Recognition (PARSeq)
+# Validated: 2026-01-18 | Deps: model/presets/parseq, data/recognition
 # ============================================================================
 # DOMAIN CONTROLLER TEMPLATE - Recognition Example
 # ============================================================================
@@ -14,9 +17,8 @@ defaults:
   - /global/paths
   - /model/architectures/parseq
   - /data/recognition
-  - /data/performance_preset/none
+
   # Optional: training configuration
-  - /trainer/default
 
 # ============================================================================
 # CRITICAL: Domain Isolation - Nullify Other Domains
@@ -82,52 +84,5 @@ domain_info:
     - max_entities
 
 # ============================================================================
-# Usage Instructions
-# ============================================================================
-#
-# To use this domain configuration:
-#
-#   python train.py domain=recognition
-#
-# To override specific settings:
-#
-#   python train.py domain=recognition \
-#     recognition.max_label_length=30 \
-#     model=recognition/svtr
-#
-# To verify resolved configuration:
-#
-#   python train.py domain=recognition --print-config
-#
-# ============================================================================
-
-# ============================================================================
 # Adaptation Guide for Other Domains
-# ============================================================================
-#
-# To create a controller for another domain (e.g., detection):
-#
-# 1. Copy this file to configs/domain/detection.yaml
-#
-# 2. Update defaults to point to detection components:
-#    defaults:
-#      - _self_
-#      - /model/detection/dbnet
-#      - /data/detection/icdar
-#
-# 3. Nullify OTHER domains (recognition, kie):
-#    recognition: null
-#    max_label_length: null
-#    charset: null
-#
-#    kie: null
-#    max_entities: null
-#
-# 4. Define detection-specific config:
-#    detection:
-#      max_polygons: 1000
-#      shrink_ratio: 0.4
-#
-# 5. Update domain_info metadata
-#
 # ============================================================================

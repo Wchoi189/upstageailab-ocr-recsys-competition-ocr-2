@@ -1,4 +1,4 @@
-# @package _global_
+# @package _group_
 # Quick preset that enables the docTR-enhanced preprocessing stack so you can
 # compare "before vs after" in one command:
 #   uv run python runners/predict.py preset.datasets=preprocessing_docTR_demo

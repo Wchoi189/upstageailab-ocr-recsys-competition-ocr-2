@@ -13,63 +13,16 @@
   "tools": {
     "approvalMode": "yolo"
   },
-  "workspace": {
-    "includeDirectories": [
-      "/workspaces/upstageailab-ocr-recsys-competition-ocr-2"
-    ],
-    "excludePatterns": [
-      "**/node_modules/**",
-      "**/.git/**",
-      "**/.copilot/**",
-      "**/.cursor/**",
-      "**/.github/**",
-      "**/*.pyc",
-      "**/__pycache__/**",
-      "**/logs/**",
-      "**/outputs/**",
-      "**/data/**",
-      "**/multirun/**",
-      "**/results/**",
-      "**/wandb/**",
-      "**/docs/_deprecated/**",
-      "**/DEPRECATED/**",
-      "**/_archive/**",
-      "**/_*/**",
-      "**/raw_metrics*.json",
-      "**/*.jsonl",
-      "**/multirun.yaml",
-      "**/test_runs/**",
-      ".qwen/archive/**",
-      "**/archive/**"
-    ]
-  },
-  "agentqms": {
-    "enabled": true,
-    "instructions": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/AGENTS.yaml",
-    "architecture": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/tier1-sst/system-architecture.yaml",
-    "artifactsPath": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/docs/artifacts",
-    "validation": {
-      "enabled": true,
-      "ignorePaths": [
-        "docs/*.md",
-        "docs/assets/**",
-        "docs/archive/**",
-        ".copilot/**",
-        ".cursor/**",
-        ".github/**"
-      ]
-    }
-  },
   "context": {
     "fileFiltering": {
       "respectGitIgnore": true,
       "respectQwenIgnore": true,
       "context_aware_loading": true,
-      "context_map": "AgentQMS/standards/context_map.yaml",
       "includePatterns": [
         "**/pyproject.toml",
         "**/AGENTS.yaml",
-        "**/README.md"
+        "**/README.md",
+        "**/AgentQMS/.agentqms/plugins/context_bundles/*.yaml"
       ],
       "excludePatterns": [
         "**/node_modules/**",
@@ -101,27 +54,6 @@
         "scripts/mcp/unified_server.py"
       ]
     },
-    "perplexity-ask": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "server-perplexity-ask"
-      ],
-      "env": {
-        "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
-      }
-    },
-    "debug-toolkit": {
-      "command": "uv",
-      "args": [
-        "run",
-        "--directory",
-        "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/agent-debug-toolkit",
-        "python",
-        "-m",
-        "agent_debug_toolkit.mcp_server"
-      ]
-    },
     "perplexity": {
       "command": "npx",
       "args": [
@@ -130,8 +62,7 @@
       ],
       "env": {
         "PERPLEXITY_API_KEY": "${PERPLEXITY_API_KEY}"
-      },
-      "disabled": true
+      }
     }
   }
 }

@@ -1,0 +1,41 @@
+# @package _global_
+
+# Hardware capabilities
+hardware:
+  gpu: "rtx3060"
+  vram: "12gb"
+  cpu: "i5_16core"
+
+# Trainer optimization
+trainer:
+  accumulate_grad_batches: 2
+  precision: "32-true"
+  gradient_clip_val: 5.0
+  max_epochs: 200
+  benchmark: true
+  accelerator: gpu
+  devices: 1
+  strategy: auto
+
+# Dataloader optimization
+dataloaders:
+  train_dataloader:
+    num_workers: 12
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 3
+  val_dataloader:
+    num_workers: 8
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
+  test_dataloader:
+    num_workers: 4
+    pin_memory: true
+  predict_dataloader:
+    num_workers: 4
+    pin_memory: true
+
+# Data Overrides
+data:
+  batch_size: 4

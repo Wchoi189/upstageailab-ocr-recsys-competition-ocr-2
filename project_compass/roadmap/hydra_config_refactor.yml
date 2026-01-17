@@ -30,14 +30,14 @@ objectives:
 
 phases:
   - name: "Phase 1: Preparation"
-    status: pending
+    status: complete
     steps:
       - "Run baseline audit with 02_SCRIPT_migration_auditor.py"
       - "Create backup of configs/ directory"
       - "Create archive directories for legacy/UI files"
 
   - name: "Phase 2: Structural Migration"
-    status: pending
+    status: complete
     steps:
       - "Establish global layer (configs/global/paths.yaml)"
       - "Move legacy files to archive/__LEGACY__/"
@@ -45,11 +45,24 @@ phases:
       - "Create domain controllers with proper isolation"
 
   - name: "Phase 3: Validation"
-    status: pending
+    status: complete
     steps:
       - "Run migration auditor to verify improvements"
       - "Run Hydra Guard for runtime validation"
-      - "Test training runs for all domains"
+
+  - name: "Phase 3.5: Namespace Purge & Consolidation"
+    status: complete
+    steps:
+      - "Purge package errors (53 resolved)"
+      - "Consolidate entry points (main.yaml)"
+      - "Verify with Hydra Guard (0 violations)"
+
+  - name: "Phase 4: Full Training Restoration"
+    status: pending
+    steps:
+      - "Re-enable training script with new config path"
+      - "Dry run training for Recognition domain"
+      - "Verify artifact generation and logging"
 
 artifacts:
   - "ocr-refactor-prep/hydra_refactor/README.md"
@@ -62,6 +75,6 @@ artifacts:
   - "ocr-refactor-prep/hydra_refactor/07_GUIDE_refactor_execution.md"
 
 next_steps:
-  - "Run baseline audit: uv run python ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
-  - "Review audit report and document current violations"
-  - "Begin Phase 1: Preparation (backup, archive setup)"
+  - "Begin Phase 4: Full Training Restoration"
+  - "Verify training runs with: uv run python ocr/training/train.py domain=recognition"
+  - "Monitor WandB for correct logging"

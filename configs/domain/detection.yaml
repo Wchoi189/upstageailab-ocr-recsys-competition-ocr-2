@@ -1,4 +1,4 @@
-# @package _global_
+# @package _group_
 
 # Text Detection Domain Configuration
 # Use with: python runners/train.py +domain=detection

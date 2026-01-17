@@ -1,0 +1,8 @@
+# @package _group_
+
+defaults:
+  - _self_
+
+# Default runtime settings (no specific optimizations)
+caching: false
+prefetch: false

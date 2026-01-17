@@ -1,0 +1,43 @@
+# @package _group_
+# https://lightning.ai/docs/pytorch/stable/api/lightning.pytorch.callbacks.ModelCheckpoint.html
+#
+# Enhanced checkpoint naming scheme for better organization and clarity
+# Structure: <index>/checkpoints/<type>-<epoch>_<step>_<metric>.ckpt
+#
+# Example checkpoint names:
+#   - Epoch: epoch-03_step-000103.ckpt
+#   - Last:  last.ckpt
+#   - Best:  best-hmean-0.8920.ckpt
+#
+# Directory structure:
+#   outputs/1/checkpoints/
+#   outputs/2/checkpoints/
+#   outputs/3/checkpoints/
+#   (Index-based numbering for easy sorting and to avoid overlaps)
+
+model_checkpoint:
+  _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
+  dirpath: ${paths.checkpoint_dir} # directory to save the model file
+
+  # Experiment identification
+  experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}} # Unique experiment identifier
+  training_phase: "training" # Stage: training, validation, finetuning, etc.
+  add_timestamp: true # Add timestamp to directory structure for uniqueness
+
+  # Checkpoint naming template (used for type determination)
+  # The actual naming is handled by the callback using the hierarchical scheme
+  filename: "best" # Template for best checkpoints
+
+  # Monitoring and saving configuration
+  # BUG-20251116-001: Reduced checkpoint saving to prevent excessive disk usage
+  monitor: "val/hmean" # name of the logged metric which determines when model is improving
+  verbose: False # verbosity mode - set to False to reduce log spam (BUG-20251116-001)
+  save_last: True # save last checkpoint for resuming training
+  save_top_k: 1 # save only the best model to reduce disk usage (BUG-20251116-001)
+  mode: "max" # "max" means higher metric value is better, can be also "min"
+  auto_insert_metric_name: True # Add metric name and value to checkpoint filename
+  save_weights_only: False # if True, then only the model's weights will be saved
+  every_n_train_steps: null # number of training steps between checkpoints
+  train_time_interval: null # checkpoints are monitored at the specified time interval
+  every_n_epochs: 1 # number of epochs between checkpoints - ensure we save checkpoints every epoch
+  save_on_train_epoch_end: False # whether to run checkpointing at the end of the training epoch or the end of validation

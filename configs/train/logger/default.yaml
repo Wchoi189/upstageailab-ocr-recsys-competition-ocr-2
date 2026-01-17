@@ -1,0 +1,7 @@
+# @package _group_
+# Logger config
+
+defaults:
+  - wandb
+  - csv
+  - _self_

@@ -1,4 +1,4 @@
-# @package _global_
+# @package _group_
 
 # Key Information Extraction (KIE) Domain Configuration
 # Use with: python runners/train.py +domain=kie

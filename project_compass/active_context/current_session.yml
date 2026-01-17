@@ -6,9 +6,46 @@ started_date: "2026-01-17"
 completed_date: null
 
 objective: |
-  [Enter objective here]
+  Refactor Hydra Configuration - Phase 3:
+  1. State Reconciliation
+  2. Path Logic Correction
+  3. Directive Hardening
 
-implementation_plan: null
+implementation_plan: "brain/9b1efb3d-91f9-4be2-9c2c-2d97fd5350fa/implementation_plan.md"
 source_walkthrough: null
 
-phases: {}
+phases:
+  phase_3:
+    name: "Phase 3: Directive Hardening and Path Audit"
+    status: "complete"
+    goals:
+      - "State Reconciliation: Verified archives (Legacy & Extended)"
+      - "Path Logic Correction: Audited configs/domain/recognition.yaml (All valid)"
+      - "Directive Hardening: Added @package headers (36 files), Resolved 6 Critical UI Bloat violations"
+    outcome: "Success. 53 non-critical package errors remain for Phase 4."
+  phase_3_5:
+    name: "Phase 3.5: Namespace Purge & Consolidation"
+    status: "complete"
+    goals:
+      - "Namespace Purge: Switch sub-configs to _group_"
+      - "Consolidation: Create main.yaml, remove separate entry points"
+      - "Verification: Achieve 0 violations in Hydra Guard"
+    outcome: "Success. All package errors resolved. Hydra Guard reports 0 violations. Entry points consolidated to main.yaml."
+  phase_3_6:
+    name: "Phase 3.6: Pruning & Hardware Cleanup"
+    status: "complete"
+    goals:
+      - "Prune Stale Tiers: _foundation, paths, layout"
+  phase_3_7:
+    name: "Phase 3.7: Total Erasure"
+    status: "complete"
+    goals:
+      - "Kill List Execution: Purged trainer, optimizers, loss, dataloaders, lightning_modules"
+  phase_3_8:
+    name: "Phase 3.8: Final Surgical Purge & Metadata"
+    status: "complete"
+    goals:
+      - "Surgical Purge: Deleted base.yaml, _foundation, paths. Consolidated data configs."
+      - "Model Consolidation: Merged architectures into presets (North Star PARSeq created)."
+      - "Metadata: v5.0 Headers applied. Strict namespace enforcement."
+    outcome: "Success. configs/ clean and compliant. Zero-Leakage test passed."

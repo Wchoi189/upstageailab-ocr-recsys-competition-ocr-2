@@ -1,4 +1,4 @@
-# @package _global_
+# @package _group_
 # Preprocessing Configuration with CamScanner document detection
 # This preset enables CamScanner-style LSD line detection for document boundaries
 

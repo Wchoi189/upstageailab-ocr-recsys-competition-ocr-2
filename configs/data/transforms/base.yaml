@@ -1,4 +1,4 @@
-# @package _global_
+# @package _group_
 
 # Default interpolation method for performance optimization
 # 1 = cv2.INTER_LINEAR (faster), 3 = cv2.INTER_CUBIC (higher quality)

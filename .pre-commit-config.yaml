@@ -73,6 +73,13 @@ repos:
         language: system
         files: ^(scripts/.*\.(sh|py)|AgentQMS/bin/Makefile)$
 
+      - id: arch-guard
+        name: Architecture Guard
+        entry: uv run python scripts/audit/arch_guard.py
+        language: system
+        files: ^configs/.*\.yaml$
+        pass_filenames: false
+
       - id: validate-feature-first-architecture
         name: Validate Feature-First Architecture
         entry: uv run python scripts/hooks/validate_architecture.py

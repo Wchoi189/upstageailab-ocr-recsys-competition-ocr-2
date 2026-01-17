@@ -1,17 +1,19 @@
-# @package _global_
+# @package data
 # Recognition Dataset Configuration
 # Used for text recognition models (PARSeq)
 
 defaults:
-  - /data/dataloaders/default
   - /data/transforms/recognition@transforms
 
-# Tokenizer (Nested under data for consistency with domain config)
-data:
-  tokenizer:
-    _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
-    char_path: ${global.paths.root_dir}/ocr/data/charset.json
-    max_len: 25
+# Data Globals
+batch_size: 128
+num_workers: 4
+
+# Tokenizer
+tokenizer:
+  _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+  char_path: ${global.paths.root_dir}/ocr/data/charset.json
+  max_len: 25
 
 # Dataset Template
 _dataset_template: &dataset_template
@@ -19,7 +21,7 @@ _dataset_template: &dataset_template
   lmdb_path: ${global.paths.datasets.train}/recognition/aihub_lmdb_validation
   tokenizer: ${data.tokenizer}
   max_len: ${data.tokenizer.max_len}
-  transform: ${transforms}
+  transform: ${data.transforms}
   config: null  # Suppress inherited 'config' key from base.yaml merge
 
 # Explicit dataset definitions for factory (at root/datasets)
