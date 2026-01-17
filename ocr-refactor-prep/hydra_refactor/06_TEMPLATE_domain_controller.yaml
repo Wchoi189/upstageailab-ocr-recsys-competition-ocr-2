@@ -1,0 +1,132 @@
+# ============================================================================
+# DOMAIN CONTROLLER TEMPLATE - Recognition Example
+# ============================================================================
+# Purpose: Serve as the master logic switch for a specific domain
+# Location: configs/domain/recognition.yaml
+#
+# This file demonstrates the "Domain Controller" pattern that enforces
+# strict domain isolation and prevents configuration leakage.
+# ============================================================================
+
+defaults:
+  - _self_
+  # Component selections for this domain
+  - /model/recognition/parseq
+  - /data/recognition/lmdb
+  - /runtime/performance/none
+  # Optional: training configuration
+  - /train/recognition/default
+
+# ============================================================================
+# CRITICAL: Domain Isolation - Nullify Other Domains
+# ============================================================================
+# These explicit nullifications prevent "ghost variables" that cause:
+# - CUDA segfaults
+# - Unexpected behavior
+# - AI agent confusion
+#
+# Rule: If a key belongs to another domain, it MUST be set to null here.
+# ============================================================================
+
+# Nullify Detection Domain
+detection: null
+max_polygons: null
+shrink_ratio: null
+thresh_min: null
+thresh_max: null
+box_thresh: null
+unclip_ratio: null
+
+# Nullify KIE Domain
+kie: null
+max_entities: null
+relation_types: null
+entity_categories: null
+linking_mode: null
+
+# ============================================================================
+# Recognition-Specific Configuration
+# ============================================================================
+
+recognition:
+  # Character recognition settings
+  max_label_length: 25
+  charset: korean
+  case_sensitive: false
+
+  # Decoding strategy
+  decode_mode: greedy  # Options: greedy, beam_search
+  beam_width: 5        # Only used if decode_mode=beam_search
+
+  # Special tokens
+  use_eos_token: true
+  use_pad_token: true
+
+# ============================================================================
+# Domain Metadata (Optional but Recommended)
+# ============================================================================
+
+domain_info:
+  name: recognition
+  description: "Korean text recognition using PARSeq architecture"
+  version: "2.0"
+
+  # Validation rules for runtime checks
+  required_keys:
+    - recognition.max_label_length
+    - recognition.charset
+
+  forbidden_keys:
+    - max_polygons
+    - max_entities
+
+# ============================================================================
+# Usage Instructions
+# ============================================================================
+#
+# To use this domain configuration:
+#
+#   python train.py domain=recognition
+#
+# To override specific settings:
+#
+#   python train.py domain=recognition \
+#     recognition.max_label_length=30 \
+#     model=recognition/svtr
+#
+# To verify resolved configuration:
+#
+#   python train.py domain=recognition --print-config
+#
+# ============================================================================
+
+# ============================================================================
+# Adaptation Guide for Other Domains
+# ============================================================================
+#
+# To create a controller for another domain (e.g., detection):
+#
+# 1. Copy this file to configs/domain/detection.yaml
+#
+# 2. Update defaults to point to detection components:
+#    defaults:
+#      - _self_
+#      - /model/detection/dbnet
+#      - /data/detection/icdar
+#
+# 3. Nullify OTHER domains (recognition, kie):
+#    recognition: null
+#    max_label_length: null
+#    charset: null
+#
+#    kie: null
+#    max_entities: null
+#
+# 4. Define detection-specific config:
+#    detection:
+#      max_polygons: 1000
+#      shrink_ratio: 0.4
+#
+# 5. Update domain_info metadata
+#
+# ============================================================================
