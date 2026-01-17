@@ -1,4 +1,0 @@
-# @package hydra.job_logging
-handlers: {}
-root:
-  handlers: []

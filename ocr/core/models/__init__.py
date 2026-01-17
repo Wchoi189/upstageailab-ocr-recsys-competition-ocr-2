@@ -8,4 +8,9 @@ def get_model_by_cfg(config):
     if arch_name == "parseq":
         from ocr.features.recognition.models import PARSeq
         return PARSeq(config)
+
+    if "architecture" in config and "_target_" in config.architecture:
+        import hydra
+        return hydra.utils.instantiate(config.architecture)
+
     return OCRModel(config)

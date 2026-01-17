@@ -248,7 +248,7 @@ def _initialise_wandb_logger(
             "Install wandb to enable logging or disable it in the benchmark configuration."
         ) from exc
 
-    from ocr.core.utils.wandb_utils import generate_run_name, load_env_variables
+    from ocr.core.utils.wandb_base import generate_run_name, load_env_variables
 
     load_env_variables()
 

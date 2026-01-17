@@ -24,26 +24,20 @@ phases:
       - "Domains First" Architecture Design
       - Comprehensive File Mapping (Proposed Tree)
 
-  - name: Phase 2: Execution (Next)
-    status: pending
-    steps:
-      - name: Initialize Directory Structure
-        action: "mkdir -p ocr/domains/{detection,recognition,kie,layout}"
-
-      - name: Infrastructure Setup
-        action: "Create ocr/pipelines/ and ocr/core/interfaces/"
-
-      - name: The Bridge
-        action: "Create ocr/core/interfaces/schemas.py (Box, PageResult)"
-
-      - name: Bulk Migration (The Mover)
-        action: "Move files based on Proposed Tree artifact"
-
-      - name: Surgical Refactor (The Splitter)
+  - name: Phase 2: Execution (In Progress)
+    status: in_progress
+    completed_steps:
+      - Initialize Directory Structure
+      - Infrastructure Setup (pipelines, core/interfaces)
+      - The Bridge (schemas.py created with Box, DetectionResult, RecognitionResult, PageResult)
+      - Bulk Migration Complete (all domain files moved)
+      - "wandb_utils.py → domains/{det,rec}/callbacks/wandb*.py + core/utils/wandb_base.py (COMPLETE)"
+      - "OCRDataPLModule → ocr/data/lightning_data.py (COMPLETE)"
+    pending_steps:
+      - name: Surgical Refactor (The Splitter) - Remaining
         targets:
-          - "ocr/core/utils/wandb_utils.py -> domains/{det,rec}/callbacks/wandb.py"
-          - "ocr/core/lightning/ocr_pl.py -> domains/{det,rec}/module.py"
-          - "ocr/core/evaluation/evaluator.py -> domains/{det,rec}/evaluation.py"
+          - "ocr/core/evaluation/evaluator.py → domains/{det,rec}/evaluation.py"
+
 
   - name: Phase 3: Verification
     status: pending

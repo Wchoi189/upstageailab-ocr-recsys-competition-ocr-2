@@ -13,7 +13,7 @@ import torch
 from torchmetrics import Metric
 
 from ..utils.logging import logger
-from .box_types import POLY
+from ocr.domains.detection.metrics.box_types import POLY
 from .data import SampleResult
 from .eval_functions import evaluation
 

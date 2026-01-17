@@ -12,7 +12,7 @@ num_workers: 4
 # Tokenizer
 tokenizer:
   _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
-  char_path: ${global.paths.root_dir}/ocr/data/charset.json
+  charset_path: ${global.paths.root_dir}/ocr/data/charset.json
   max_len: 25
 
 # Dataset Template

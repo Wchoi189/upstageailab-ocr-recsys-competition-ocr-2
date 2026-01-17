@@ -58,7 +58,7 @@ def _create_tensorboard_logger(config: DictConfig, wandb_cfg: dict) -> TensorBoa
 
 def _create_wandb_logger(config: DictConfig, wandb_cfg: dict) -> WandbLogger:
     """Create Weights & Biases logger (default)."""
-    from ocr.core.utils.wandb_utils import generate_run_name, load_env_variables
+    from ocr.core.utils.wandb_base import generate_run_name, load_env_variables
 
     # Load environment variables for W&B API key
     load_env_variables()

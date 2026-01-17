@@ -1,7 +1,7 @@
 ---
 ads_version: "1.0"
 type: qwen_context
-date: "2026-01-05"
+date: "2026-01-18"
 status: active
 
 # Core Project Context for AI Agents
@@ -16,11 +16,22 @@ instructions:
   experiment_protocols: "experiment_manager/.ai-instructions/"
   # NOTE: These are independent systems with different purposes
 
-# Context Loading System
+# Context Loading System (using new context bundling)
 context:
-  context_map: "AgentQMS/standards/context_map.yaml"
-  context_priority: "AgentQMS/standards/context_priority.yaml"
-  context_classification: "AgentQMS/standards/context_classification.yaml"
+  # Context bundling system - replaces deprecated context_map
+  context_bundles_dir: "AgentQMS/.agentqms/plugins/context_bundles/"
+  context_bundles:
+    - "pipeline-development.yaml"
+    - "ocr-experiment.yaml"
+    - "documentation-update.yaml"
+    - "compliance-check.yaml"
+    - "hydra-configuration.yaml"
+    - "ocr-debugging.yaml"
+    - "ocr-information-extraction.yaml"
+    - "ocr-layout-analysis.yaml"
+    - "ocr-text-detection.yaml"
+    - "ocr-text-recognition.yaml"
+    - "security-review.yaml"
 
 # Key Configuration Files
 config_files:
@@ -37,6 +48,7 @@ directories:
   agents: "AgentQMS/"
   docs: "docs/artifacts/"
   configs: "configs/"
+  context_bundles: "AgentQMS/.agentqms/plugins/context_bundles/"
 
 # Task Classifications
 task_types:
@@ -45,15 +57,28 @@ task_types:
   - pipeline_development
   - agent_configuration
   - compliance_check
+  - ocr_debugging
+  - ocr_information_extraction
+  - ocr_layout_analysis
+  - ocr_text_detection
+  - ocr_text_recognition
 
 # System Architecture
 architecture:
   general_standards: "AgentQMS/standards/ (tier1-4)"
   experiment_protocols: "experiment_manager/.ai-instructions/ (independent)"
-  distinction: "These systems operate independently with different purposes"
+  context_bundling_system: "AgentQMS/.agentqms/plugins/context_bundles/ (task-specific file collections)"
+  distinction: "These systems operate independently with context bundling providing task-specific file loading"
 
 # MCP Integration
 mcp:
   unified_server: "scripts/mcp/unified_server.py"
   config: "scripts/mcp/shared_config.json"
   description: "Shared MCP server combining Project Compass, AgentQMS, and Experiment Manager functionality"
+
+# Context Bundling Integration
+context_bundling:
+  description: "Task-specific file collections for efficient context loading"
+  location: "AgentQMS/.agentqms/plugins/context_bundles/"
+  purpose: "Reduces token usage and improves AI agent performance by loading only relevant files"
+  integration_notes: "Automatically detects task type and suggests appropriate context bundle"

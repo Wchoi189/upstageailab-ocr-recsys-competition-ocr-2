@@ -3,7 +3,7 @@ from __future__ import annotations
 import pytest
 from omegaconf import OmegaConf
 
-from ocr.core.utils.wandb_utils import generate_run_name
+from ocr.core.utils.wandb_base import generate_run_name
 
 
 @pytest.fixture(autouse=True)

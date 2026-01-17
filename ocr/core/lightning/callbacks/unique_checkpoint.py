@@ -419,7 +419,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             self._generate_checkpoint_metadata(checkpoint_path, metrics)
 
         # Log checkpoint directory to wandb
-        from ocr.core.utils.wandb_utils import _get_wandb
+        from ocr.core.utils.wandb_base import _get_wandb
 
         wandb = _get_wandb()
         if wandb.run and self.dirpath:

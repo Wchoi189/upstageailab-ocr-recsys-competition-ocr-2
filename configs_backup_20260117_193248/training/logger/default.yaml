@@ -1,6 +1,0 @@
-# Logger config
-
-defaults:
-  - wandb
-  - csv
-  - _self_

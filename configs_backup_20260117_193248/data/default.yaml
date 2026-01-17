@@ -1,7 +1,0 @@
-# @package _global_
-
-defaults:
-  - /data/base
-  - /data/transforms/base
-  - /data/dataloaders/default
-  - performance_preset: none

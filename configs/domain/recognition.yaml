@@ -15,7 +15,7 @@ defaults:
   - _self_
   # Component selections for this domain
   - /global/paths
-  - /model/architectures/parseq
+  - /model/presets/parseq
   - /data/recognition
 
   # Optional: training configuration

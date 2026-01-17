@@ -44,7 +44,7 @@ def _lazy_import_training_deps():
 
     import wandb  # noqa: F401
     from ocr.core.lightning import get_pl_modules_by_cfg
-    from ocr.core.utils.wandb_utils import (
+    from ocr.core.utils.wandb_base import (
         finalize_run,
         generate_run_name,
         load_env_variables,

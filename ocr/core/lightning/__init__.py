@@ -1,7 +1,6 @@
 from ocr.data.datasets import get_datasets_by_cfg
 from ocr.core.models import get_model_by_cfg
-
-from .ocr_pl import OCRDataPLModule, OCRPLModule
+from ocr.data.lightning_data import OCRDataPLModule
 
 
 def get_pl_modules_by_cfg(config):
@@ -28,6 +27,16 @@ def get_pl_modules_by_cfg(config):
     if "metrics" in config and "eval" in config.metrics:
         metric_cfg = config.metrics.eval
 
-    modules = OCRPLModule(model=model, dataset=dataset, config=config, metric_cfg=metric_cfg)
+    # Select domain-specific Lightning module
+    domain = getattr(config, "domain", None)
+    if domain == "detection":
+        from ocr.domains.detection.module import DetectionPLModule
+        modules = DetectionPLModule(model=model, dataset=dataset, config=config, metric_cfg=metric_cfg)
+    elif domain == "recognition":
+        from ocr.domains.recognition.module import RecognitionPLModule
+        modules = RecognitionPLModule(model=model, dataset=dataset, config=config, metric_cfg=metric_cfg)
+    else:
+        raise ValueError(f"Unknown domain: {domain}. Must be 'detection' or 'recognition'.")
+
     data_modules = OCRDataPLModule(dataset=dataset, config=config)
     return modules, data_modules
