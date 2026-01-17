@@ -320,9 +320,12 @@ class SessionManager:
         if not is_valid:
             return False, f"Session data failed schema validation: {error_msg}"
 
-        # User note 2026-01-13: compass.json requires synchronization
-        # We must update the Compass State to reflect activity
-        self._update_compass_manifest()
+        # Update compass.json with session info
+        self._update_compass_status(
+            phase=active_pipeline,
+            health="healthy",
+            note=f"Active session: {objective[:80]}..."
+        )
 
         # Atomic write
         header = (
@@ -336,29 +339,44 @@ class SessionManager:
         except Exception as e:
             return False, f"Failed to write session file: {e}"
 
-    def _update_compass_manifest(self) -> None:
-        """Update compass.json with latest activity timestamp."""
+    def _update_compass_status(self, phase: str | None = None, health: str | None = None, note: str | None = None) -> bool:
+        """Update compass.json with current project status.
+
+        Args:
+            phase: Current project phase (e.g., 'hydra_config_refactor', 'kie')
+            health: Overall health status ('healthy', 'degraded', 'blocked')
+            note: Human-readable status note
+
+        Returns:
+            True if update succeeded, False otherwise
+        """
         if not self.paths.compass_json.exists():
-            return
+            return False
 
         try:
             with open(self.paths.compass_json, encoding="utf-8") as f:
                 compass_data = json.load(f)
 
-            # Update timestamp
+            # Always update timestamp
             kst_time = datetime.now().strftime("%Y-%m-%d %H:%M (KST)")
             compass_data["last_updated"] = kst_time
 
-            # Atomic write back
-            with tempfile.NamedTemporaryFile("w", dir=str(self.paths.compass_json.parent), delete=False) as tf:
-                json.dump(compass_data, tf, indent=2)
-                temp_path = Path(tf.name)
+            # Update provided fields
+            if phase:
+                compass_data.setdefault("project_status", {})["current_phase"] = phase
+            if health:
+                compass_data.setdefault("project_status", {})["overall_health"] = health
+            if note:
+                compass_data.setdefault("project_status", {})["note"] = note
 
-            temp_path.replace(self.paths.compass_json)
+            # Atomic write
+            atomic_json_write(compass_data, self.paths.compass_json)
+            return True
 
         except Exception as e:
             # Non-critical failure, just warn
-            print(f"WARNING: Failed to sync compass.json: {e}", file=sys.stderr)
+            print(f"WARNING: Failed to update compass.json: {e}", file=sys.stderr)
+            return False
 
     def _load_current_session(self) -> dict[str, Any]:
         """Load current session data if exists."""

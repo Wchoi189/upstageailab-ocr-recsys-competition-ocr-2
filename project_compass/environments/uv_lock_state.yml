@@ -1,5 +1,5 @@
 # PERSISTENT ENVIRONMENT LOCK
-# MANDATORY: 'etk check-env' must pass against this file before training.
+# MANDATORY: 'uv run python -m project_compass.cli check-env' must pass before training.
 # SCHEMA: ../.config/schemas/env_lock.schema.json
 
 uv_binary:

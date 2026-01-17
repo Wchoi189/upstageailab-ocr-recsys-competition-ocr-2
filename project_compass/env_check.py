@@ -10,7 +10,7 @@ from pathlib import Path
 project_root = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(project_root))
 
-from etk.compass import EnvironmentChecker
+from project_compass.src.core import EnvironmentChecker
 
 def main():
     print("🔒 Environment Guard: Checking against Project Compass lock state...\n")

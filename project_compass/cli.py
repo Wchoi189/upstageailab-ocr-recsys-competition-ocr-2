@@ -59,6 +59,12 @@ def main():
     session_export_parser.add_argument("--note", "-n", help="Note for the manifest")
     session_export_parser.add_argument("--force", "-f", action="store_true", help="Bypass stale session check")
 
+    # update-status command (Manual Compass Update)
+    update_status_parser = subparsers.add_parser("update-status", help="Update compass.json project status")
+    update_status_parser.add_argument("--phase", help="Current project phase")
+    update_status_parser.add_argument("--health", choices=["healthy", "degraded", "blocked"], help="Overall health status")
+    update_status_parser.add_argument("--note", help="Status note")
+
     args = parser.parse_args()
 
     if not args.command:
@@ -115,6 +121,27 @@ def main():
             # Invoke legacy logic
             legacy_session_manager.export_session(note=args.note, force=args.force)
             sys.exit(0)
+
+        elif args.command == "session-export":
+            print("📦 Session Management: Exporting session...\\n")
+            # Invoke legacy logic
+            legacy_session_manager.export_session(note=args.note, force=args.force)
+            sys.exit(0)
+
+        elif args.command == "update-status":
+            print("📊 Updating compass.json status...\\n")
+            manager = SessionManager()
+            success = manager._update_compass_status(
+                phase=args.phase,
+                health=args.health,
+                note=args.note
+            )
+            if success:
+                print("✅ compass.json updated successfully")
+                sys.exit(0)
+            else:
+                print("❌ Failed to update compass.json")
+                sys.exit(1)
 
     except Exception as e:
         print(f"❌ ERROR: {str(e)}", file=sys.stderr)

@@ -261,7 +261,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     try:
         if name == "init_experiment":
             exp_name = arguments["name"]
-            cmd = ["uv", "run", "python3", "-m", "etk.factory", "init", "--name", exp_name]
+            cmd = ["uv", "run", "python3", "-m", "etk.cli", "init", "--name", exp_name]
 
             if "description" in arguments:
                 cmd.extend(["-d", arguments["description"]])
@@ -305,7 +305,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         elif name == "get_experiment_status":
             exp_id = arguments.get("experiment_id", "")
-            cmd = ["uv", "run", "python3", "-m", "etk.factory", "status"]
+            cmd = ["uv", "run", "python3", "-m", "etk.cli", "status"]
             if exp_id:
                 cmd.append(exp_id)
 
@@ -361,7 +361,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             insight = arguments["insight"]
             log_type = arguments.get("type", "insight")
 
-            cmd = ["uv", "run", "python3", "-m", "etk.factory", "log", "--msg", insight, "--type", log_type]
+            cmd = ["uv", "run", "python3", "-m", "etk.cli", "log", "--msg", insight, "--type", log_type]
 
             result = subprocess.run(
                 cmd,
@@ -385,7 +385,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         elif name == "sync_experiment":
             exp_id = arguments.get("experiment_id", "")
-            cmd = ["uv", "run", "python3", "-m", "etk.factory", "sync"]
+            cmd = ["uv", "run", "python3", "-m", "etk.cli", "sync"]
             if exp_id:
                 cmd.append(exp_id)
 

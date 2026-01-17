@@ -1,26 +1,57 @@
 # Project Compass Active Session
-session_id: "session-planning-refactor-01"
-status: "completed"
+session_id: "session-hydra-config-refactor-01"
+status: "active"
 started_date: "2026-01-17"
-completed_date: "2026-01-17"
+completed_date: null
 
 objective: |
-  Plan the OCR Domain Separation Refactor ("Domains First" Architecture).
-  Audit the codebase for domain leakage and define the migration strategy.
+  Execute Hydra Configuration Audit and "Domains First" V5 Refactor.
+  Goals:
+  - Reduce 123 config files by 35-50%
+  - Enforce strict domain isolation (detection/recognition/kie)
+  - Centralize all path interpolations
+  - Eliminate legacy and UI bloat
+  - Validate with automated tools
 
-implementation_plan: "docs/artifacts/implementation_plans/2026-01-17_0340_implementation_plan_ocr-proposed-directory-tree.md"
-source_walkthrough: null
+implementation_plan: null
+source_walkthrough: "/home/vscode/.gemini/antigravity/brain/fc4327ec-3a2b-4d7b-a2e0-5aefa21cad51/walkthrough.md"
 
 phases:
-  planning:
-    status: completed
+  preparation:
+    status: pending
     notes: |
-      - Architecture defined: Domains First (ocr/domains/{detection,recognition,kie,layout}).
-      - Core restricted: Generic utilities only.
-      - Pipelines introduced: ocr/pipelines/ for orchestration.
-      - Interfaces defined: ocr/core/interfaces/schemas.py.
-      - Roadmap created: project_compass/roadmap/ocr-domain-refactor.yml.
+      - Run baseline audit with 02_SCRIPT_migration_auditor.py
+      - Create backup of configs/ directory
+      - Create archive directories for legacy/UI files
 
-next_session:
-  objective: "Execute the Refactor: Initialize directories, Bulk Move, and Surgical Splits."
-  blockers: []
+  structural_migration:
+    status: pending
+    notes: |
+      - Establish global layer (configs/global/paths.yaml)
+      - Move legacy files to archive/__LEGACY__/
+      - Relocate UI configs to archive/ui_configs/
+      - Create domain controllers with proper isolation
+
+  validation:
+    status: pending
+    notes: |
+      - Run migration auditor to verify improvements
+      - Run Hydra Guard for runtime validation
+      - Test training runs for all domains
+
+blockers: []
+
+artifacts:
+  - "ocr-refactor-prep/hydra_refactor/README.md"
+  - "ocr-refactor-prep/hydra_refactor/01_PROTOCOL_hydra_architectural_laws.md"
+  - "ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
+  - "ocr-refactor-prep/hydra_refactor/03_SCRIPT_hydra_guard.py"
+  - "ocr-refactor-prep/hydra_refactor/04_TEMPLATE_global_paths.yaml"
+  - "ocr-refactor-prep/hydra_refactor/05_PROMPT_ai_architect_audit.md"
+  - "ocr-refactor-prep/hydra_refactor/06_TEMPLATE_domain_controller.yaml"
+  - "ocr-refactor-prep/hydra_refactor/07_GUIDE_refactor_execution.md"
+
+next_steps:
+  - "Run baseline audit: python ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
+  - "Review audit report and document current violations"
+  - "Begin Phase 1: Preparation (backup, archive setup)"

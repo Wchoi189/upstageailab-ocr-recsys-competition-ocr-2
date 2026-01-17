@@ -1,15 +1,15 @@
 {
   "$schema": ".config/schemas/compass.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-01-16 20:01 (KST)",
+  "last_updated": "2026-01-17 17:52 (KST)",
   "active_handoff": "active_context/current_session.yml",
   "uv_constraints": {
     "min_version": "0.9.0",
     "required_path": ""
   },
   "project_status": {
-    "current_phase": "airflow_batch_processor_phase1",
+    "current_phase": "hydra_config_refactor",
     "overall_health": "healthy",
-    "note": "Airflow Batch Processor implementation in progress. Phase 1: Foundation (80% complete - 40% overall). Docker, DAG, and API client scaffolds complete. See project_compass/roadmap/04_airflow_batch_processor.yaml"
+    "note": "MCP drift fixes complete. Documentation updated. Ready for Hydra audit execution."
   }
 }
