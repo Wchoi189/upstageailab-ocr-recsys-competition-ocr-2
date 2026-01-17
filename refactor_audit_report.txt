@@ -1,0 +1,104 @@
+================================================================================
+HYDRA CONFIGURATION AUDIT REPORT
+================================================================================
+
+Total Violations: 87
+  - Critical: 57
+  - Errors: 30
+  - Warnings: 0
+
+
+================================================================================
+CRITICAL VIOLATIONS (Must Fix Before Refactor)
+================================================================================
+🚩 [MISSING HEADER] configs/eval.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/predict.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/train.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/data/transforms/background_removal.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/data/transforms/recognition.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/debug/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/extraction/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/extraction/hybrid.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/layout/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/paths/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/recognition/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/recognition/paddleocr.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/trainer/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/early_stopping.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/metadata.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/model_checkpoint.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/model_summary.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/performance_profiler.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/callbacks/rich_progress_bar.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/consolidated.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/csv.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/csv.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/default.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/logger/inference.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/inference.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/preprocessing_profiles.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/preprocessing_profiles.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/unified_app.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/unified_app.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/wandb.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/logger/architectures/craft.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/architectures/craft.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/architectures/dbnet.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/architectures/dbnet.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/architectures/dbnetpp.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/architectures/dbnetpp.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/modes/comparison.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/modes/comparison.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/modes/inference.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/modes/inference.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/modes/preprocessing.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/modes/preprocessing.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/optimizers/adam.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/optimizers/adam.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/logger/optimizers/adamw.yaml: No @package directive found
+🚩 [UI BLOAT] configs/training/logger/optimizers/adamw.yaml: Contains UI-related logic in training tree. Should be in archive/ui_configs/
+🚩 [MISSING HEADER] configs/training/profiling/cache_performance_test.yaml: No @package directive found
+🚩 [MISSING HEADER] configs/training/profiling/performance_test.yaml: No @package directive found
+🚩 [LEGACY POLLUTION] configs/__EXTENDED__: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__EXTENDED__/benchmarks: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__EXTENDED__/examples: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__EXTENDED__/experiments: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__EXTENDED__/kie_variants: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__LEGACY__: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__LEGACY__/data: Legacy directory found in configs/. Should be moved to archive/
+🚩 [LEGACY POLLUTION] configs/__LEGACY__/model: Legacy directory found in configs/. Should be moved to archive/
+
+================================================================================
+ERRORS (Should Fix)
+================================================================================
+⚠️ [PACKAGE ERROR] configs/synthetic.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/base.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/canonical.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/craft.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/default.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/recognition.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/datasets/db.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/datasets/preprocessing.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/datasets/preprocessing_camscanner.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/datasets/preprocessing_docTR_demo.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/performance_preset/balanced.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/performance_preset/memory_efficient.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/performance_preset/minimal.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/performance_preset/none.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/performance_preset/validation_optimized.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/transforms/base.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/data/transforms/with_background_removal.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/domain/detection.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/domain/kie.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/domain/layout.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/domain/recognition.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/evaluation/metrics.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/model/lightning_modules/base.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/trainer/debug_crash.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/trainer/debug_safe.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/trainer/fp16_safe.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/training/logger/consolidated.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/_foundation/core.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/_foundation/data.yaml: Uses @package _global_ but not in hardware/experiment/global directory
+⚠️ [PACKAGE ERROR] configs/_foundation/preprocessing.yaml: Uses @package _global_ but not in hardware/experiment/global directory

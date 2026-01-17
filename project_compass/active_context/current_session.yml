@@ -6,38 +6,11 @@ completed_date: null
 
 objective: |
   Execute Hydra Configuration Audit and "Domains First" V5 Refactor.
-  Goals:
-  - Reduce 123 config files by 35-50%
-  - Enforce strict domain isolation (detection/recognition/kie)
-  - Centralize all path interpolations
-  - Eliminate legacy and UI bloat
-  - Validate with automated tools
+  See roadmap/hydra_config_refactor.yml for detailed phases and objectives.
 
 implementation_plan: null
 source_walkthrough: "/home/vscode/.gemini/antigravity/brain/fc4327ec-3a2b-4d7b-a2e0-5aefa21cad51/walkthrough.md"
-
-phases:
-  preparation:
-    status: pending
-    notes: |
-      - Run baseline audit with 02_SCRIPT_migration_auditor.py
-      - Create backup of configs/ directory
-      - Create archive directories for legacy/UI files
-
-  structural_migration:
-    status: pending
-    notes: |
-      - Establish global layer (configs/global/paths.yaml)
-      - Move legacy files to archive/__LEGACY__/
-      - Relocate UI configs to archive/ui_configs/
-      - Create domain controllers with proper isolation
-
-  validation:
-    status: pending
-    notes: |
-      - Run migration auditor to verify improvements
-      - Run Hydra Guard for runtime validation
-      - Test training runs for all domains
+roadmap_reference: "project_compass/roadmap/hydra_config_refactor.yml"
 
 blockers: []
 

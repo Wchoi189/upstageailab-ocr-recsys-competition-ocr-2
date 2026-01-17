@@ -11,7 +11,7 @@
 
 ### 1.1 Baseline Audit
 ```bash
-python 02_SCRIPT_migration_auditor.py --config-root ../../configs
+uv run python 02_SCRIPT_migration_auditor.py --config-root ../../configs
 ```
 
 ### 1.2 Create Backup
@@ -60,12 +60,12 @@ cp 06_TEMPLATE_domain_controller.yaml configs/domain/recognition.yaml
 
 ### 3.1 Run Auditor
 ```bash
-python 02_SCRIPT_migration_auditor.py --config-root ../../configs
+uv run python 02_SCRIPT_migration_auditor.py --config-root ../../configs
 ```
 
 ### 3.2 Run Hydra Guard
 ```bash
-python 03_SCRIPT_hydra_guard.py --domain recognition
+uv run python 03_SCRIPT_hydra_guard.py --domain recognition --config-name train
 ```
 
 ### 3.3 Test Training

@@ -3,7 +3,7 @@
 Hydra Guard - Runtime Configuration Validator
 
 Purpose: Validate resolved Hydra configurations against domain isolation rules
-Usage:   python 03_SCRIPT_hydra_guard.py --domain recognition
+Usage:   uv run python 03_SCRIPT_hydra_guard.py --domain recognition --config-name train
 Output:  Configuration health report + resolved YAML for AI context
 
 This script performs RUNTIME validation by:
@@ -63,12 +63,13 @@ class HydraGuard:
         self.config_path = config_path
         self.results: list[ValidationResult] = []
 
-    def audit_domain(self, domain_name: str, overrides: list[str] | None = None) -> DictConfig:
+    def audit_domain(self, domain_name: str, config_name: str = "train", overrides: list[str] | None = None) -> DictConfig:
         """
         Audit a specific domain configuration
 
         Args:
             domain_name: Domain to audit (detection, recognition, kie)
+            config_name: Name of config file to load (without .yaml extension)
             overrides: Optional Hydra overrides
 
         Returns:
@@ -84,7 +85,7 @@ class HydraGuard:
             overrides = overrides or []
             overrides.append(f"domain={domain_name}")
 
-            cfg = compose(config_name="config", overrides=overrides)
+            cfg = compose(config_name=config_name, overrides=overrides)
 
             # Run validation checks
             self._check_domain_leakage(cfg, domain_name)
@@ -221,6 +222,8 @@ def main():
                        help="Domain to audit")
     parser.add_argument("--config-path", default="../configs",
                        help="Path to Hydra configs directory")
+    parser.add_argument("--config-name", default="train",
+                       help="Config file name to load (without .yaml extension, default: train)")
     parser.add_argument("--overrides", nargs="*", default=[],
                        help="Additional Hydra overrides")
     parser.add_argument("--output", default="config_health_report.txt",
@@ -231,7 +234,7 @@ def main():
     guard = HydraGuard(config_path=args.config_path)
 
     try:
-        guard.audit_domain(args.domain, overrides=args.overrides)
+        guard.audit_domain(args.domain, config_name=args.config_name, overrides=args.overrides)
         is_healthy = guard.generate_health_report(output_file=args.output)
 
         if is_healthy:

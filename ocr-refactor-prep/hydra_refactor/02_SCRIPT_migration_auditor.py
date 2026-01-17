@@ -3,7 +3,7 @@
 Migration Auditor Script - Hydra Configuration Structural Debt Detector
 
 Purpose: Identify violations of Hydra architectural laws before refactoring
-Usage:   python 02_SCRIPT_migration_auditor.py [--config-root configs]
+Usage:   uv run python 02_SCRIPT_migration_auditor.py [--config-root configs]
 Output:  refactor_audit_report.txt with categorized violations
 
 This script detects:

@@ -1,0 +1,67 @@
+version: 1.0
+project: Hydra Configuration Refactor
+status: active
+architecture: Domains First V5
+
+objectives:
+  - name: Reduce Configuration Files
+    description: Reduce 123 config files by 35-50%
+    success_criteria:
+      - "Final count: 60-80 config files"
+      - "All configs have @package directives"
+
+  - name: Enforce Domain Isolation
+    description: Strict separation of detection/recognition/kie domains
+    success_criteria:
+      - "No domain leakage in configs"
+      - "Domain controllers with explicit nullification"
+
+  - name: Centralize Path Interpolations
+    description: All dynamic paths in configs/global/paths.yaml
+    success_criteria:
+      - "Zero hardcoded paths in domain configs"
+      - "Single source of truth for all paths"
+
+  - name: Eliminate Legacy and UI Bloat
+    description: Remove obsolete and UI-specific configurations
+    success_criteria:
+      - "All legacy configs moved to archive/__LEGACY__/"
+      - "All UI configs moved to archive/ui_configs/"
+
+phases:
+  - name: "Phase 1: Preparation"
+    status: pending
+    steps:
+      - "Run baseline audit with 02_SCRIPT_migration_auditor.py"
+      - "Create backup of configs/ directory"
+      - "Create archive directories for legacy/UI files"
+
+  - name: "Phase 2: Structural Migration"
+    status: pending
+    steps:
+      - "Establish global layer (configs/global/paths.yaml)"
+      - "Move legacy files to archive/__LEGACY__/"
+      - "Relocate UI configs to archive/ui_configs/"
+      - "Create domain controllers with proper isolation"
+
+  - name: "Phase 3: Validation"
+    status: pending
+    steps:
+      - "Run migration auditor to verify improvements"
+      - "Run Hydra Guard for runtime validation"
+      - "Test training runs for all domains"
+
+artifacts:
+  - "ocr-refactor-prep/hydra_refactor/README.md"
+  - "ocr-refactor-prep/hydra_refactor/01_PROTOCOL_hydra_architectural_laws.md"
+  - "ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
+  - "ocr-refactor-prep/hydra_refactor/03_SCRIPT_hydra_guard.py"
+  - "ocr-refactor-prep/hydra_refactor/04_TEMPLATE_global_paths.yaml"
+  - "ocr-refactor-prep/hydra_refactor/05_PROMPT_ai_architect_audit.md"
+  - "ocr-refactor-prep/hydra_refactor/06_TEMPLATE_domain_controller.yaml"
+  - "ocr-refactor-prep/hydra_refactor/07_GUIDE_refactor_execution.md"
+
+next_steps:
+  - "Run baseline audit: uv run python ocr-refactor-prep/hydra_refactor/02_SCRIPT_migration_auditor.py"
+  - "Review audit report and document current violations"
+  - "Begin Phase 1: Preparation (backup, archive setup)"

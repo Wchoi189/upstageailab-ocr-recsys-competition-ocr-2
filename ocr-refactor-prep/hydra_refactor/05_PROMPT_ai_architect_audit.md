@@ -265,8 +265,8 @@ Requiring explicit nullification forces AI to think about security and isolation
 
 Once this proposal is approved:
 
-1. Run `02_SCRIPT_migration_auditor.py` to get baseline violations
+1. Run baseline audit: `uv run python 02_SCRIPT_migration_auditor.py --config-root ../../configs`
 2. Execute migration (manual or scripted)
-3. Run `03_SCRIPT_hydra_guard.py` to validate runtime behavior
+3. Run validation: `uv run python 03_SCRIPT_hydra_guard.py --domain <domain> --config-name train`
 4. Verify with provided `sg_search` patterns
 5. Generate resolved configs for AI context

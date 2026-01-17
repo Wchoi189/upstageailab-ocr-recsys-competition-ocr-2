@@ -35,10 +35,10 @@
 3. Execute steps in `07_GUIDE_refactor_execution.md`
 
 ### For Humans
-1. Run baseline audit: `python 02_SCRIPT_migration_auditor.py`
+1. Run baseline audit: `uv run python 02_SCRIPT_migration_auditor.py --config-root ../../configs`
 2. Review violations in generated report
 3. Follow `07_GUIDE_refactor_execution.md` step-by-step
-4. Validate with `python 03_SCRIPT_hydra_guard.py --domain <domain>`
+4. Validate with `uv run python 03_SCRIPT_hydra_guard.py --domain <domain> --config-name train`
 
 ---
 
