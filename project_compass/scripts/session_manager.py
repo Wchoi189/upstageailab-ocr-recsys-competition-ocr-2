@@ -96,21 +96,16 @@ def export_session(note=None, force=False):
     # 1. Copy active_context
     shutil.copytree(ACTIVE_CONTEXT_DIR, dest_dir / "active_context", dirs_exist_ok=True)
 
-    # 2. CRITICAL FIX: Create timestamped copy of session_handover.md
-    # This preserves the exact state at export time
+    # 2. Copy session_handover.md with timestamp to preserve session state
     handover_file = COMPASS_DIR / "session_handover.md"
     if handover_file.exists():
         # Copy to timestamped filename to preserve this session's state
         timestamped_handover = dest_dir / f"session_handover_{timestamp}.md"
         shutil.copy2(handover_file, timestamped_handover)
-
-        # Also copy to standard name for backwards compatibility
-        shutil.copy2(handover_file, dest_dir / "session_handover.md")
-
         print(f"✓ Preserved session handover: session_handover_{timestamp}.md")
     else:
         print("Warning: No session_handover.md found. Creating placeholder.")
-        placeholder = dest_dir / "session_handover.md"
+        placeholder = dest_dir / f"session_handover_{timestamp}.md"
         with open(placeholder, "w") as f:
             f.write(f"# Session Handover\n\nSession ID: {session_id}\nExported: {timestamp}\n\nNo handover document was created for this session.\n")
 
@@ -182,11 +177,16 @@ def import_session(session_folder_name):
     else:
         print("Warning: No active_context found in archived session.")
 
-    # Copy back session_handover.md
-    src_handover = src_dir / "session_handover.md"
-    if src_handover.exists():
+    # Copy back session_handover.md (find timestamped version)
+    # Look for session_handover_*.md files
+    handover_files = list(src_dir.glob("session_handover_*.md"))
+    if handover_files:
+        # Use the first (should only be one)
+        src_handover = handover_files[0]
         shutil.copy2(src_handover, COMPASS_DIR / "session_handover.md")
-        print("Restored session_handover.md")
+        print(f"Restored session_handover.md from {src_handover.name}")
+    else:
+        print("Warning: No session_handover file found in archived session.")
 
 
 def _reset_workspace():

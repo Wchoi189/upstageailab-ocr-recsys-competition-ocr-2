@@ -2,7 +2,7 @@
   "$schema": ".config/schemas/compass.schema.json",
   "version": "1.0.0",
   "last_updated": "2026-01-17 17:52 (KST)",
-  "active_handoff": "active_context/current_session.yml",
+  "active_handoff": "project_compass/history/sessions/20260117_172703_session-planning-refactor-01/active_context/current_session.yml",
   "uv_constraints": {
     "min_version": "0.9.0",
     "required_path": ""

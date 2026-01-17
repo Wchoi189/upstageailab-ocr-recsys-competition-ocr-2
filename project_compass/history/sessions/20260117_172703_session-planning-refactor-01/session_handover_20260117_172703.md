@@ -1,3 +1,3 @@
 # Session Handover
 
-No active session.
+No active session. (Not started yet)
