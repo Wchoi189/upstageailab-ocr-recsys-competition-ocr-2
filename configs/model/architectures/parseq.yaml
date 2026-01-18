@@ -1,0 +1,29 @@
+# @package model.architectures
+# v5.0 Standard | Purpose: Atomic PARSeq Architecture (Flattened)
+# ============================================================================
+
+# Target-First: Immediate identification of the class
+_target_: ocr.domains.recognition.models.PARSeq
+
+backbone:
+  _target_: ocr.core.models.encoder.TimmBackbone
+  model_name: resnet18
+  pretrained: true
+
+decoder:
+  _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+  d_model: 512
+  nhead: 8
+  num_layers: 12
+
+# Atomic constants (No optimizer or loss here)
+max_len: 25
+
+# 2. Tokenizer (Moved to Domain Controller)
+# tokenizer: null
+
+# 3. Loss Configuration (Moved to Domain Controller)
+# loss: null
+
+# 4. Local Optimization Defaults (Moved to Train/Optimizer)
+# optimizer: null

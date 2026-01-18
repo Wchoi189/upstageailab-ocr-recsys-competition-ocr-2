@@ -3,7 +3,8 @@
 # Standalone CRAFT data configuration
 
 defaults:
-  - /data/transforms/base
+  - /data/transforms/base@transforms
+  - _self_
 
 batch_size: 16
 
@@ -12,37 +13,37 @@ data:
   val_num_samples: null
   test_num_samples: null
 
-dataset_base_path: "${hydra:runtime.cwd}/data/datasets/"   # Relative to current working directory
+dataset_base_path: "${global.paths.datasets_root}"
 
 datasets:
   train_dataset:
-    _target_: ${dataset_path}.ValidatedOCRDataset
+    _target_: ${data.dataset_path}.ValidatedOCRDataset
     config:
-      _target_: ${dataset_config_path}.DatasetConfig
-      image_path: ${dataset_base_path}images/train
-      annotation_path: ${dataset_base_path}jsons/train.json
-    transform: ${transforms.train_transform}
+      _target_: ${data.dataset_config_path}.DatasetConfig
+      image_path: ${data.dataset_base_path}images/train
+      annotation_path: ${data.dataset_base_path}jsons/train.json
+    transform: ${data.transforms.train_transform}
   val_dataset:
-    _target_: ${dataset_path}.ValidatedOCRDataset
+    _target_: ${data.dataset_path}.ValidatedOCRDataset
     config:
-      _target_: ${dataset_config_path}.DatasetConfig
-      image_path: ${dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
-      annotation_path: ${dataset_base_path}jsons/val.json
-    transform: ${transforms.val_transform}
+      _target_: ${data.dataset_config_path}.DatasetConfig
+      image_path: ${data.dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
+      annotation_path: ${data.dataset_base_path}jsons/val.json
+    transform: ${data.transforms.val_transform}
   test_dataset:
-    _target_: ${dataset_path}.ValidatedOCRDataset
+    _target_: ${data.dataset_path}.ValidatedOCRDataset
     config:
-      _target_: ${dataset_config_path}.DatasetConfig
-      image_path: ${dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
-      annotation_path: ${dataset_base_path}jsons/val.json
-    transform: ${transforms.test_transform}
+      _target_: ${data.dataset_config_path}.DatasetConfig
+      image_path: ${data.dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
+      annotation_path: ${data.dataset_base_path}jsons/val.json
+    transform: ${data.transforms.test_transform}
   predict_dataset:
-    _target_: ${dataset_path}.ValidatedOCRDataset
+    _target_: ${data.dataset_path}.ValidatedOCRDataset
     config:
-      _target_: ${dataset_config_path}.DatasetConfig
-      image_path: ${dataset_base_path}images/test
+      _target_: ${data.dataset_config_path}.DatasetConfig
+      image_path: ${data.dataset_base_path}images/test
       annotation_path: null
-    transform: ${transforms.test_transform}
+    transform: ${data.transforms.test_transform}
 
 transforms:
   train_transform:

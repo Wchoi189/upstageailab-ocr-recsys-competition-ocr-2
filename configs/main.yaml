@@ -6,7 +6,7 @@ defaults:
   - global: default
   - hardware: rtx3060
   - domain: ???          # Must be provided (detection, recognition, kie)
-  - runtime: performance/none
+  - /data/runtime/performance/none@runtime
   - experiment: null
 
 # The 'mode' determines which orchestrator or pipeline script is called

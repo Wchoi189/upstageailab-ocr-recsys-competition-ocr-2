@@ -1,0 +1,5 @@
+# @package _group_
+_target_: torch.optim.lr_scheduler.CosineAnnealingLR
+T_max: ${trainer.max_epochs} # Absolute Anchor to Global Trainer
+eta_min: 1e-6
+last_epoch: -1

@@ -12,11 +12,21 @@
 # ============================================================================
 
 defaults:
-  - _self_
   # Component selections for this domain
+  - /global/default
   - /global/paths
-  - /model/presets/parseq
-  - /data/recognition
+  # This alias forces parseq.yaml into 'model.architectures'
+  - /model/architectures/parseq
+  - /data/datasets: recognition
+  - _self_
+
+# Rule: _self_ at bottom ensures domain overrides take precedence
+
+# Absolute Root Anchoring for Model Constants
+model:
+  vocab_size: 1000
+  # References a key inside the aliased architecture file
+  max_len: ${model.architectures.max_len}
 
   # Optional: training configuration
 

@@ -1,0 +1,5 @@
+# @package _group_
+# WandB Completion Callback
+# Automatically marks the run as finished in Weights & Biases
+
+_target_: ocr.core.lightning.callbacks.wandb_completion.WandbCompletionCallback

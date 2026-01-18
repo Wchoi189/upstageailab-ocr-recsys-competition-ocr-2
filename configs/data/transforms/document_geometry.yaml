@@ -1,0 +1,21 @@
+# @package _group_
+# v5.0 Standard | Purpose: Document Detection & Rectification
+# ============================================================================
+
+_target_: ocr.core.transforms.DocumentGeometryTransform
+
+# --- DocumentDetector ---
+enable_detection: true
+min_area_ratio: 0.18
+use_adaptive: true
+use_fallback_box: true
+
+# --- PerspectiveCorrector ---
+enable_rectification: true
+use_doctr_geometry: false
+doctr_assume_horizontal: false
+
+# --- OrientationCorrector ---
+enable_orientation_correction: false
+angle_threshold: 2.0
+expand_canvas: true

@@ -4,6 +4,10 @@ defaults:
   - paths
   - _self_
 
+# Global Constants
+global:
+  default_interpolation: 1
+
 # Global Trainer Defaults
 trainer:
   max_steps: -1

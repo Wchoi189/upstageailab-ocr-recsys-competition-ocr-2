@@ -1,0 +1,14 @@
+# @package _global_
+defaults:
+  - override /domain: recognition
+  - override /hardware: rtx3060
+  - override /data/runtime/performance: balanced
+  - _self_
+
+# Experiment-specific logic overrides
+trainer:
+  max_epochs: 50
+  precision: "16-mixed"
+
+data:
+  batch_size: 64

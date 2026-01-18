@@ -32,6 +32,7 @@ task_mappings:
     standards:
     - AgentQMS/standards/tier2-framework/configuration-standards.yaml
     - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+    - AgentQMS/standards/tier2-framework/hydra-v5-patterns.yaml
     triggers:
       keywords:
       - config

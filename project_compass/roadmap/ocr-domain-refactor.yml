@@ -37,6 +37,9 @@ phases:
       - name: Surgical Refactor (The Splitter) - Remaining
         targets:
           - "ocr/core/evaluation/evaluator.py → domains/{det,rec}/evaluation.py"
+      - name: Emergency Hydra Config Refactor (V5.0 Standards)
+        targets:
+          - "All configs/* to Strict V5 (Absolute Paths, Flattening)"
 
 
   - name: Phase 3: Verification

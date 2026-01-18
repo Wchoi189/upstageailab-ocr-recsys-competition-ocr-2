@@ -1,10 +1,10 @@
-# @package _group_
+# @package data
 
 defaults:
   - /data/transforms/base@transforms
   - _self_
 
-batch_size: 4
+batch_size: 16
 
 train_num_samples: null
 val_num_samples: null
@@ -17,40 +17,30 @@ train_dataset:
     _target_: ocr.core.validation.DatasetConfig
     image_path: ${global.paths.datasets_root}/images/train
     annotation_path: ${global.paths.datasets_root}/jsons/train.json
-    enable_background_normalization: false
+    # Explicitly disable caching to prevent default override
     cache_config:
       _target_: ocr.core.validation.CacheConfig
       cache_transformed_tensors: false
       cache_images: false
       cache_maps: false
       log_statistics_every_n: null
-  transform: ${transforms.train_transform}
+  transform: ${data.transforms.train_transform}
 
 val_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
   config:
     _target_: ocr.core.validation.DatasetConfig
-    image_path: ${global.paths.datasets_root}/images_val_canonical
+    image_path: ${global.paths.datasets_root}/images_val_canonical  # Using canonical (rotation-corrected) data
     annotation_path: ${global.paths.datasets_root}/jsons/val.json
-    enable_background_normalization: false
-    preload_images: false
-    load_maps: false
-    cache_config:
-      _target_: ocr.core.validation.CacheConfig
-      cache_transformed_tensors: false
-      cache_images: false
-      cache_maps: false
-      log_statistics_every_n: null
-  transform: ${transforms.val_transform}
+  transform: ${data.transforms.val_transform}
 
 test_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
   config:
     _target_: ocr.core.validation.DatasetConfig
-    image_path: ${global.paths.datasets_root}/images_val_canonical
+    image_path: ${global.paths.datasets_root}/images_val_canonical  # Using canonical (rotation-corrected) data
     annotation_path: ${global.paths.datasets_root}/jsons/val.json
-    enable_background_normalization: false
-  transform: ${transforms.test_transform}
+  transform: ${data.transforms.test_transform}
 
 predict_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
@@ -58,8 +48,7 @@ predict_dataset:
     _target_: ocr.core.validation.DatasetConfig
     image_path: ${global.paths.datasets_root}/images/test
     annotation_path: null
-    enable_background_normalization: false
-  transform: ${transforms.test_transform}
+  transform: ${data.transforms.test_transform}
 
 collate_fn:
   _target_: ocr.data.datasets.DBCollateFN

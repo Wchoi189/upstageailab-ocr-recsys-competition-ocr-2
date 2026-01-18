@@ -1,0 +1,22 @@
+# @package _global_
+# v5.0 Standard | Purpose: Specific Training Run Overrides
+# ============================================================================
+
+defaults:
+  - override /domain: detection
+  - override /hardware: rtx3060
+  - override /data/runtime/performance: balanced
+  - _self_
+
+# Experiment-specific Overrides
+model:
+  architectures:
+    encoder:
+      model_name: "resnet50" # Swap backbone without touching architecture file
+
+trainer:
+  max_epochs: 100
+  precision: "16-mixed"
+
+data:
+  batch_size: 8

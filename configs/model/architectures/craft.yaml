@@ -1,13 +1,8 @@
 # @package model
 # v5.0 | Purpose: Monolithic CRAFT Preset (Detection)
 # Validated: 2026-01-18 | Deps: ocr.domains.detection
-defaults:
-  - /model/architectures: craft
-  - /train/optimizer: adamw
-  - _self_
-
 encoder:
-  _target_: ${encoder_path}.CraftVGGEncoder
+  _target_: ocr.domains.detection.models.encoders.craft_vgg.CraftVGGEncoder
   model_name: "vgg16_bn"
   pretrained: true
   output_indices: [1, 2, 3, 4]
@@ -15,14 +10,14 @@ encoder:
   freeze_backbone: false
 
 decoder:
-  _target_: ${decoder_path}.CraftDecoder
+  _target_: ocr.domains.detection.models.decoders.craft_decoder.CraftDecoder
   in_channels: [64, 128, 256, 512]
   inner_channels: 256
   out_channels: 256
   use_batch_norm: true
 
 head:
-  _target_: ${head_path}.CraftHead
+  _target_: ocr.domains.detection.models.heads.craft_head.CraftHead
   in_channels: 256
   hidden_channels: 128
   postprocess:
@@ -31,13 +26,3 @@ head:
     low_text: 0.3
     min_area: 16
     expand_ratio: 1.5
-
-loss:
-  _target_: ${loss_path}.CraftLoss
-  region_weight: 1.0
-  affinity_weight: 1.0
-  eps: 1.0e-6
-
-optimizer:
-  lr: 0.0005
-  weight_decay: 0.0001

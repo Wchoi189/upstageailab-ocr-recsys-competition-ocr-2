@@ -1,6 +1,0 @@
-# @package _group_
-
-defaults:
-  - /data/base
-  - /transforms/base
-  - /dataloaders/default

@@ -158,10 +158,10 @@ config_registry:
 domain_switching:
   mechanism: Hydra defaults composition via optional domain parameter
   syntax:
-  - python runners/train.py domain=detection
-  - python runners/train.py domain=recognition
-  - python runners/train.py domain=kie
-  - python runners/train.py domain=layout
+  - uv run python runners/train.py domain=detection
+  - uv run python runners/train.py domain=recognition
+  - uv run python runners/train.py domain=kie
+  - uv run python runners/train.py domain=layout
   train_yaml_structure: "defaults:\n  - _self_\n  - base\n  - optional domain: detection\
     \  # Default domain\n  - /_foundation/model\n  - /_foundation/data\n  - /_foundation/trainer\n"
   domain_configs:
@@ -249,7 +249,7 @@ entry_point_mapping:
     config_name: train
     config_file: configs/train.yaml
     domain_switching: true
-    usage: python runners/train.py [domain=X] [overrides...]
+    usage: uv run python runners/train.py [domain=X] [overrides...]
   runners/test.py:
     config_name: eval
     config_file: configs/eval.yaml
@@ -266,7 +266,7 @@ entry_point_mapping:
     note: Changed from train_kie to train; uses domain composition
 composition_patterns:
   basic_training:
-    command: python runners/train.py
+    command: uv run python runners/train.py
     defaults_used:
     - base
     - domain/detection
@@ -274,21 +274,21 @@ composition_patterns:
     - _foundation/data
     - _foundation/trainer
   domain_switch:
-    command: python runners/train.py domain=kie
+    command: uv run python runners/train.py domain=kie
     effect: Replaces domain/detection with domain/kie
   model_architecture:
-    command: python runners/train.py model/architectures=dbnetpp
+    command: uv run python runners/train.py model/architectures=dbnetpp
     effect: Changes model architecture to DBNet++
   performance_preset:
-    command: python runners/train.py data/performance_preset=memory_efficient
+    command: uv run python runners/train.py data/performance_preset=memory_efficient
     effect: Applies memory-efficient data loading settings
   multiple_overrides:
-    command: python runners/train.py domain=recognition model/recognition=parseq data=recognition
+    command: uv run python runners/train.py domain=recognition model/recognition=parseq data=recognition
     effect: Complete configuration switch for recognition task
 validation:
   composition_tests:
     required: true
-    test_command: python runners/X.py --help
+    test_command: uv run python runners/X.py --help
     expected: No ConfigCompositionException
     coverage:
     - train
@@ -303,7 +303,7 @@ validation:
     - recognition
     - kie
     - layout
-    test_command: python runners/train.py domain=X --cfg job
+    test_command: uv run python runners/train.py domain=X --cfg job
     expected: Valid composed configuration output
   smoke_tests:
     required: true
@@ -317,10 +317,10 @@ migration_map:
     callbacks/X.yaml: training/callbacks/X.yaml
     logger/X.yaml: training/logger/X.yaml
   common_workflows:
-    kie_training_old: python runners/train_kie.py
-    kie_training_new: python runners/train_kie.py (now uses train.yaml internally)
-    testing_old: python runners/test.py
-    testing_new: python runners/test.py (uses eval.yaml internally)
+    kie_training_old: uv run python runners/train_kie.py
+    kie_training_new: uv run python runners/train_kie.py (now uses train.yaml internally)
+    testing_old: uv run python runners/test.py
+    testing_new: uv run python runners/test.py (uses eval.yaml internally)
     architecture_old: Edit train_kie.yaml directly
     architecture_new: 'Use domain config: configs/domain/kie.yaml or override via
       CLI'

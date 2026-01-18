@@ -1,15 +1,16 @@
 # @package _group_
 # Logger config
-wandb:
-  enabled: true
-  log_model: "all"
-project_name: "receipt-text-recognition-ocr-project"
-exp_version: "v1.0"
+_target_: lightning.pytorch.loggers.WandbLogger
+project: "receipt-text-recognition-ocr-project"
+log_model: "all"
+save_dir: "${global.paths.wandb}"
+
 # Configure W&B to save offline data under the canonical outputs root
 settings:
   offline: false  # Don't run in offline mode
   save_code: false  # Don't save code snapshots
-  sync_dir: "${paths.wandb_sync_root}"  # Custom sync directory under outputs/
+  sync_dir: "${global.paths.wandb_sync_root}"  # Custom sync directory under outputs/
+
 
 # Per batch image logging for error analysis
 per_batch_image_logging:

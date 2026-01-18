@@ -1,20 +1,15 @@
 # @package model
 # v5.0 | Purpose: Monolithic DBNet++ Preset (Detection)
 # Validated: 2026-01-18 | Deps: ocr.domains.detection
-defaults:
-  - /model/architectures: dbnetpp
-  - /train/optimizer: adamw
-  - _self_
-
 encoder:
-  _target_: ${encoder_path}.TimmBackbone
+  _target_: ocr.core.models.encoder.timm_backbone.TimmBackbone
   model_name: "resnet50"
   pretrained: true
   output_indices: [1, 2, 3, 4]
   in_channels: 3
 
 decoder:
-  _target_: ${decoder_path}.DBPHeadDecoder
+  _target_: ocr.domains.detection.models.decoders.dbpp_decoder.DBPHeadDecoder
   in_channels: [64, 128, 256, 512]
   inner_channels: 256
   out_channels: 128  # from component_overrides
@@ -23,20 +18,8 @@ decoder:
   attention: true
 
 head:
-  _target_: ${head_path}.DBHead
+  _target_: ocr.domains.detection.models.heads.db_head.DBHead
   in_channels: 128  # matched with decoder out_channels
   upscale: 4        # from component_overrides already matching, but explicit
   binarization_threshold: 0.3
   expand_ratio: 1.5
-
-loss:
-  _target_: ${loss_path}.DBLoss
-  negative_ratio: 3.0
-  eps: 1e-6
-  prob_map_loss_weight: 5.0
-  thresh_map_loss_weight: 10.0
-  binary_map_loss_weight: 1.0
-
-optimizer:
-  lr: 0.0003
-  weight_decay: 0.0001

@@ -1,5 +1,3 @@
-# @package callbacks
-
-wandb_image_logging:
-  _target_: ocr.core.lightning.callbacks.wandb_image_logging.WandbImageLoggingCallback
-  log_every_n_epochs: 1
+# @package _group_
+_target_: ocr.core.lightning.callbacks.wandb_image_logging.WandbImageLoggingCallback
+log_every_n_epochs: 1

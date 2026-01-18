@@ -2,6 +2,6 @@
 # Logger config
 
 defaults:
-  - wandb
-  - csv
+  - wandb@_group_.wandb_logger
+  - csv@_group_.csv_logger
   - _self_
