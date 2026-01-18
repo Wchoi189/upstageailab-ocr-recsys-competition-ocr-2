@@ -7,15 +7,25 @@ validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: pass
 memory_footprint: 680
 id: hydra-config-architecture
-migration_completed: '2026-01-08'
+migration_completed: '2026-01-18'
+v5_refactor_completed: '2026-01-18'
 baseline:
   yaml_files: 107
   directories: 37
   root_configs: 6
-current:
-  yaml_files: 112
-  directories: 41
+current_v5:
+  yaml_files: ~95  # Reduced after V5.0 pruning
+  directories: ~28  # Streamlined
   root_configs: 7
+  deleted_directories:
+    - model/lightning_modules
+    - model/loss
+    - model/optimizers (moved to train/optimizer)
+    - model/presets (renamed to architectures)
+    - data/dataloaders
+    - data/performance_preset
+    - train/profiling
+    - configs/runtime (moved to data/runtime)
 structure:
   entry_points:
   - train.yaml
@@ -42,31 +52,39 @@ structure:
       - kie.yaml
       - layout.yaml
     model:
-      purpose: Architecture components
+      purpose: Architecture components (V5.0)
       subdirs:
-      - architectures
+      - architectures  # ✅ RENAMED from 'presets' (Atomic layer definitions only)
       - decoder
       - encoder
       - head
-      - loss
-      - optimizers
-      - presets
-      - recognition
-      - lightning_modules
+      note: |
+        V5.0 DELETIONS:
+        - lightning_modules/ (deleted, logic moved to code)
+        - loss/ (deleted, moved to domain controllers)
+        - optimizers/ (moved to train/optimizer/)
+        - presets/ (renamed to architectures/)
+        - recognition/ (moved to domains/recognition/)
     data:
-      purpose: Dataset configurations
+      purpose: Dataset configurations (V5.0)
       subdirs:
-      - dataloaders
-      - datasets
-      - performance_preset
-      - transforms
-    training:
-      purpose: Training infrastructure
+      - datasets  # ✅ PRIMARY (source paths and metadata only)
+      - transforms  # ✅ ATOMIC (augmentation logic)
+      - runtime  # ✅ RELOCATED from configs/runtime/
+      note: |
+        V5.0 DELETIONS:
+        - dataloaders/ (deleted, settings moved to global/default.yaml)
+        - performance_preset/ (deleted)
+    train:
+      purpose: Training optimization (V5.0)
       subdirs:
+      - optimizer  # ✅ RELOCATED from model/optimizers/
+      - scheduler  # ✅ NEW (learning rate schedules)
       - callbacks
       - logger
-      - profiling
-      note: Consolidated from callbacks/, logger/, ui/, ui_meta/
+      note: |
+        V5.0 DELETIONS:
+        - profiling/ (archived to __EXTENDED__/)
     __EXTENDED__:
       purpose: Edge cases, experiments, archived configs
       subdirs:

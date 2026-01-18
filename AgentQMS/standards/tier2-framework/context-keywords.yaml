@@ -57,3 +57,28 @@ hydra-configuration:
   - conf
   - config.yaml
   - configuration
+  - hydra v5
+  - domains first
+  - package directive
+  - interpolation
+
+hydra-v5-patterns:
+  - atomic architecture
+  - domain isolation
+  - flattening rule
+  - absolute interpolation
+  - self-mounting
+  - aliasing pattern
+  - namespace collision
+  - double wrap
+  - passive refactor cycle
+
+ocr-architecture:
+  - OCRProjectOrchestrator
+  - domain separation
+  - ocr/pipelines
+  - ocr/domains
+  - detection domain
+  - recognition domain
+  - orchestration flow
+  - component interfaces

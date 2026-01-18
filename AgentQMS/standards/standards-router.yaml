@@ -33,6 +33,7 @@ task_mappings:
     - AgentQMS/standards/tier2-framework/configuration-standards.yaml
     - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
     - AgentQMS/standards/tier2-framework/hydra-v5-patterns.yaml
+    - AgentQMS/standards/tier2-framework/hydra-v5-core-rules.yaml
     triggers:
       keywords:
       - config
@@ -41,6 +42,11 @@ task_mappings:
       - configuration
       - training config
       - omegaconf
+      - hydra v5
+      - domains first
+      - atomic architecture
+      - domain isolation
+      - flattening rule
       patterns:
       - \bconfig(uration)?\b
       - \bhydra\b

@@ -103,7 +103,7 @@ for filename in dataset:
 **Impact**: Unknown, but likely 10-30s
 
 **Recommendations**:
-- Profile with `python -m cProfile main.py --help` to see Hydra overhead
+- Profile with `uv run python -m cProfile main.py --help` to see Hydra overhead
 - Simplify config inheritance chains
 - Consider config caching for development
 

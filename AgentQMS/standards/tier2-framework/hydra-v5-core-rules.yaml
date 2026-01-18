@@ -1,0 +1,380 @@
+ads_version: '1.0'
+type: rule_set
+agent: all
+tier: 2
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+id: hydra-v5-core-rules
+name: Hydra V5.0 Core Rules ("Domains First")
+description: Critical configuration rules and patterns for Hydra 1.3.2 V5.0 architecture
+version: 5.0
+hydra_version: 1.3.2
+last_updated: '2026-01-19'
+source_sessions:
+  - 20260118_013857_session-refactor-execution
+replaces:
+  - project_compass/history/sessions/20260118_013857_session-refactor-execution/hydra-config-domains-policy.md
+  - project_compass/history/sessions/20260118_013857_session-refactor-execution/hydra-quick-reference.md
+  - project_compass/history/sessions/20260118_013857_session-refactor-execution/hydra-standards-v5.md
+
+# ============================================================================
+# SECTION 1: CRITICAL RULES (NEVER VIOLATE)
+# ============================================================================
+
+critical_rules:
+  flattening_rule:
+    name: The Flattening Rule
+    priority: critical
+    description: >
+      Files using `# @package _group_` MUST NOT contain a top-level key
+      matching the folder name. All keys including `_target_` must start at column 0.
+    failure_mode: Double namespacing (e.g., `data.data.*` instead of `data.*`)
+    rationale: >
+      Hydra's `@package _group_` directive automatically wraps content in the
+      parent folder's namespace. Adding a redundant wrapper key causes double nesting.
+    implementation:
+      correct: |
+        # configs/train/callbacks/early_stopping.yaml
+        # @package _group_
+        _target_: lightning.pytorch.callbacks.EarlyStopping
+        monitor: "val/hmean"
+        patience: 5
+      incorrect: |
+        # configs/train/callbacks/early_stopping.yaml
+        # @package _group_
+        early_stopping:  # ❌ Creates train.callbacks.early_stopping.early_stopping
+          _target_: lightning.pytorch.callbacks.EarlyStopping
+    validation:
+      check: Verify no top-level key matches parent folder name
+      command: python scripts/utils/show_config.py main domain=detection
+
+  absolute_interpolation_law:
+    name: Absolute Root Anchoring
+    priority: critical
+    description: >
+      All cross-file references MUST use absolute paths anchored to root namespace.
+      Never use relative interpolations without explicit namespace prefix.
+    failure_mode: "InterpolationKeyError: 'key' not found"
+    rationale: >
+      Relative interpolations like `${train_transform}` fail because Hydra cannot
+      determine the root namespace. Absolute paths provide unambiguous resolution.
+    patterns:
+      forbidden:
+        - "${train_transform}"
+        - "${optimizer}"
+        - "./data"
+        - "${dataset_base_path}"
+      required:
+        - "${data.transforms.train_transform}"
+        - "${train.optimizer.adamw}"
+        - "${global.paths.data_dir}"
+        - "${global.paths.datasets_root}"
+    special_cases:
+      local_variables: >
+        Use `${.local_key}` ONLY for variables defined within the same file
+      global_constants: >
+        Always anchor to `${global.paths.*}` for system paths
+
+  domain_isolation:
+    name: Domain Isolation Protocol
+    priority: critical
+    description: >
+      Domain controllers MUST explicitly nullify irrelevant keys from other domains
+      to prevent cross-contamination and CUDA segfaults.
+    rationale: >
+      Unused domain keys can cause memory leaks, CUDA errors, and unpredictable
+      behavior during validation/testing when models load irrelevant components.
+    implementation:
+      example: |
+        # configs/domain/recognition.yaml
+        # @package _group_
+        defaults:
+          - /model/architectures: parseq
+          - _self_
+
+        # Nullify detection-specific keys
+        detection: null
+        max_polygons: null
+        shrink_ratio: null
+        thresh_min: null
+        thresh_max: null
+
+# ============================================================================
+# SECTION 2: DIRECTORY RESPONSIBILITIES
+# ============================================================================
+
+directory_structure:
+  tier1_global:
+    location: configs/global/
+    package: "# @package _global_"
+    responsibility: System-wide constants (paths, seeds, trainer defaults)
+    allowed_keys:
+      - paths
+      - seed
+      - trainer (base settings only)
+    forbidden: Domain-specific logic, model architecture, data transforms
+
+  tier2_hardware:
+    location: configs/hardware/
+    package: "# @package _global_"
+    responsibility: Resource constraints and hardware-specific overrides
+    allowed_keys:
+      - batch_size
+      - num_workers
+      - pin_memory
+      - precision
+      - gpu_limits
+    rationale: Hardware configs must override global defaults
+
+  tier3_domain:
+    location: configs/domain/
+    package: "# @package _group_"
+    responsibility: Task orchestrators bridging model, data, and train logic
+    required_actions:
+      - Link to model architectures via defaults
+      - Link to datasets via defaults
+      - Inject task-dependent components (tokenizer, loss)
+      - Nullify other domain keys
+    forbidden: Direct model layer definitions, data paths
+
+  tier4_model_architectures:
+    location: configs/model/architectures/
+    package: "# @package _group_"
+    responsibility: Pure neural network layer definitions (Atomic)
+    allowed_keys:
+      - _target_
+      - backbone
+      - decoder
+      - head
+      - encoder
+      - architectural hyperparameters (d_model, num_layers, etc.)
+    forbidden:
+      - optimizer
+      - loss
+      - tokenizer
+      - training logic
+    rationale: Prevents passive refactor cycle where invisible overrides cause training inconsistencies
+
+  tier5_data_datasets:
+    location: configs/data/datasets/
+    package: "# @package data"  # Self-mounting pattern
+    responsibility: Source identity (paths and metadata ONLY)
+    allowed_keys:
+      - dataset_base_path
+      - image_path
+      - annotation_path
+      - lmdb_path
+      - _target_ (for dataset class)
+    forbidden:
+      - transforms
+      - augmentations
+      - preprocessing logic
+    rationale: Separates data source from data transformation logic
+
+  tier6_data_transforms:
+    location: configs/data/transforms/
+    package: "# @package _group_"
+    responsibility: Atomic augmentation and preprocessing components
+    examples:
+      - document_geometry.yaml
+      - image_enhancement.yaml
+      - normalization.yaml
+    forbidden: Dataset paths, model logic
+
+  tier7_train:
+    location: configs/train/
+    package: "# @package _group_"
+    subdirs:
+      - optimizer/
+      - scheduler/
+      - callbacks/
+      - logger/
+    responsibility: Training optimization and instrumentation
+    forbidden: Model architecture, data source definitions
+
+  tier8_experiment:
+    location: configs/experiment/
+    package: "# @package _global_"
+    responsibility: Execution-ready configs for specific runs
+    pattern: Compose domain + hardware + specific overrides
+    example: |
+      # configs/experiment/rec_baseline_v1.yaml
+      # @package _global_
+      defaults:
+        - /domain/recognition
+        - /hardware/rtx3060
+        - _self_
+      train:
+        max_epochs: 50
+
+# ============================================================================
+# SECTION 3: DESIGN PATTERNS
+# ============================================================================
+
+design_patterns:
+  self_mounting_components:
+    name: Self-Mounting Atomic Units
+    principle: Components declare their own namespace via @package directive
+    examples:
+      dataset: |
+        # configs/data/datasets/canonical.yaml
+        # @package data
+        dataset_base_path: "${global.paths.datasets_root}"
+        train_dataset:
+          _target_: ocr.data.datasets.ValidatedOCRDataset
+      architecture: |
+        # configs/model/architectures/dbnet_atomic.yaml
+        # @package model.architectures
+        _target_: ocr.domains.detection.models.DBNet
+        backbone:
+          _target_: ocr.core.models.encoder.TimmBackbone
+    benefits:
+      - No fragile aliasing in domain controllers
+      - Clear component namespace ownership
+      - Predictable composition
+
+  domain_injection:
+    name: Domain Injection Pattern
+    principle: Domain controllers inject data-dependent components
+    rationale: Tokenizers and loss functions depend on task type and dataset
+    implementation: |
+      # configs/domain/recognition.yaml
+      # @package _group_
+      defaults:
+        - /model/architectures: parseq
+        - /data/datasets: recognition_canonical
+        - _self_
+
+      model:
+        tokenizer:  # Inject here, not in architecture
+          _target_: ocr.domains.recognition.data.tokenizer.KoreanOCRTokenizer
+          char_path: ${global.paths.root_dir}/ocr/data/charset.json
+
+      train:
+        loss:  # Task-dependent loss
+          _target_: torch.nn.CrossEntropyLoss
+          ignore_index: 0
+
+  multi_component_aliasing:
+    name: Multi-Logger/Callback Aliasing
+    problem: Multiple components of same type cause namespace collision
+    syntax: "[filename]@_group_.[custom_alias]"
+    breakdown:
+      file_selection: "wandb (loads configs/train/logger/wandb.yaml)"
+      package_directive: "@_group_ (place in parent namespace)"
+      custom_alias: ".wandb_logger (unique key)"
+    implementation: |
+      # configs/train/logger/default.yaml
+      # @package _group_
+      defaults:
+        - wandb@_group_.wandb_logger  # → train.logger.wandb_logger
+        - csv@_group_.csv_logger      # → train.logger.csv_logger
+
+  atomic_architecture:
+    name: Atomic Architecture Pattern
+    principle: Model configs contain ONLY neural network structure
+    anti_pattern: Including optimizer/loss in model files (Passive Refactor Cycle)
+    problem: Invisible overrides cause training inconsistencies
+    solution: Move all training logic to train/ or domain/ controllers
+
+# ============================================================================
+# SECTION 4: PRE-COMMIT VALIDATION
+# ============================================================================
+
+pre_commit_checklist:
+  - name: Flattening Rule
+    check: No top-level key matches folder name in @package _group_ files
+    command: grep -r "^[a-z_]*:$" configs/*/
+
+  - name: Absolute Interpolation
+    check: All interpolations use absolute paths
+    command: grep -r '\${[^.}]*}' configs/ | grep -v '\${global\|${data\|${train\|${model'
+
+  - name: Global Anchoring
+    check: All paths anchor to ${global.paths.*}
+    command: grep -r 'path:.*\$' configs/ | grep -v '\${global.paths'
+
+  - name: Architecture Purity
+    check: Model architectures have NO optimizer or loss keys
+    command: grep -r 'optimizer:\|loss:' configs/model/architectures/
+
+  - name: Callback Flattening
+    check: Callbacks have no wrapper keys
+    script: python scripts/audit/verify_hydra_flattening.py
+
+validation_commands:
+  composition_check:
+    detection: python scripts/utils/show_config.py main domain=detection
+    recognition: python scripts/utils/show_config.py main domain=recognition
+  sanity_audit:
+    command: python scripts/audit/hydra_sanity_check.py
+    success_output: "⭐ Domain 'X' is COMPLIANT with v5.0 Standards."
+
+# ============================================================================
+# SECTION 5: COMMON FAILURE MODES
+# ============================================================================
+
+failure_modes:
+  double_namespacing:
+    symptom: "data.data.train_num_samples instead of data.train_num_samples"
+    root_cause: File uses @package _group_ but contains top-level wrapper key
+    resolution: Remove redundant wrapper key, flatten structure
+    example_fix: |
+      # BEFORE (incorrect)
+      # @package _group_
+      data:
+        train_num_samples: 1000
+
+      # AFTER (correct)
+      # @package _group_
+      train_num_samples: 1000
+
+  interpolation_key_error:
+    symptom: "InterpolationKeyError: 'train_transform' not found"
+    root_cause: Relative interpolation without absolute root anchor
+    resolution: Use absolute path ${data.transforms.train_transform}
+    prevention: Always prefix with namespace (data., train., model., global.)
+
+  passive_refactor_cycle:
+    symptom: Optimizer changes in CLI ignored, model preset override wins
+    root_cause: Model architecture includes optimizer/loss keys
+    resolution: Remove all optimizer/loss from model/architectures/, manage in train/ or domain/
+    impact: Causes training inconsistencies and invisible bugs
+
+  cross_domain_contamination:
+    symptom: CUDA segfault during validation, memory leaks
+    root_cause: Domain keys not nullified (e.g., detection keys active in recognition run)
+    resolution: Explicitly set unused domain keys to null in domain controller
+    example: |
+      # configs/domain/recognition.yaml
+      detection: null
+      max_polygons: null
+
+# ============================================================================
+# SECTION 6: INTEGRATION
+# ============================================================================
+
+integration:
+  companion_standards:
+    - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+    - AgentQMS/standards/tier2-framework/hydra-v5-patterns.yaml
+
+  triggers:
+    - config refactor
+    - hydra v5
+    - domains first
+    - atomic architecture
+    - domain isolation
+    - flattening rule
+    - absolute interpolation
+
+  validation_scripts:
+    - scripts/audit/hydra_sanity_check.py
+    - scripts/utils/show_config.py
+    - scripts/audit/arch_guard.py
+
+compliance:
+  agentqms_validated: '2026-01-19'
+  source_extraction: Consolidated from 3 session documents
+  ai_optimized: true
+  extraction_method: Aggressive pruning, removal of verbose narratives

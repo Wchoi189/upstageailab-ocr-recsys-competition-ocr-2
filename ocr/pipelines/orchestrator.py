@@ -1,627 +1,215 @@
-"""Inference orchestrator for OCR pipeline.
+"""OCR Project Orchestrator - Bridges V5.0 Hydra configs to PyTorch Lightning.
 
-This module provides a thin coordination layer that integrates all inference
-components:
-- ModelManager: Model lifecycle management
-- PreprocessingPipeline: Image preprocessing
-- PostprocessingPipeline: Prediction postprocessing
-- PreviewGenerator: Preview image generation
-- TextRecognizer: Text recognition (optional, disabled by default)
-- CropExtractor: Crop extraction for recognition
-
-The orchestrator follows the single responsibility principle: it only coordinates
-the flow between components, delegating all actual work to specialized classes.
+This orchestrator implements the "Domains First" architecture by:
+1. Delegating to existing model/dataset factories
+2. Domain-specific Lightning module routing
+3. Trainer configuration from merged Hydra tiers
+4. Vocab size injection for recognition models
 """
 
-from __future__ import annotations
-
+import hydra
+from omegaconf import DictConfig, OmegaConf
+from lightning.pytorch import Trainer
 import logging
-from typing import TYPE_CHECKING, Any
 
-import numpy as np
+from ocr.core.models import get_model_by_cfg
+from ocr.data.datasets import get_datasets_by_cfg
+from ocr.data.lightning_data import OCRDataPLModule
 
-from .config_loader import PostprocessSettings
-from .dependencies import OCR_MODULES_AVAILABLE
-from .model_manager import ModelManager
-from .postprocessing_pipeline import PostprocessingPipeline
-from .preprocessing_pipeline import PreprocessingPipeline
-from .preview_generator import PreviewGenerator
-
-if TYPE_CHECKING:
-    from ocr.features.kie.inference.extraction.field_extractor import ReceiptFieldExtractor
-    from ocr.features.layout.inference.grouper import LineGrouper
-
-    from .crop_extractor import CropExtractor
-    from .recognizer import TextRecognizer
-
-LOGGER = logging.getLogger(__name__)
+logger = logging.getLogger(__name__)
 
 
-class InferenceOrchestrator:
-    """Orchestrates OCR inference pipeline.
+class OCRProjectOrchestrator:
+    """Orchestrates OCR training/evaluation pipeline with V5.0 Hydra configs.
 
-    This class coordinates the inference workflow by delegating to specialized
-    components:
-    1. ModelManager handles model loading and lifecycle
-    2. PreprocessingPipeline handles image preprocessing
-    3. Model performs inference (coordinated by ModelManager)
-    4. PostprocessingPipeline handles prediction postprocessing
-    5. PreviewGenerator creates preview images with overlays
-
-    The orchestrator maintains minimal state and focuses solely on coordination.
+    This class bridges V5.0 "Domains First" configs to the existing
+    infrastructure, handling vocab injection and domain routing.
     """
 
-    def __init__(self, device: str | None = None, enable_recognition: bool = False):
-        """Initialize inference orchestrator.
+    def __init__(self, cfg: DictConfig):
+        """Initialize orchestrator with Hydra configuration.
 
         Args:
-            device: Device for inference ("cuda" or "cpu", auto-detected if None)
-            enable_recognition: Whether to enable text recognition (default: False)
+            cfg: Resolved Hydra configuration
         """
-        self.model_manager = ModelManager(device=device)
-        self.preprocessing_pipeline: PreprocessingPipeline | None = None
-        self.postprocessing_pipeline: PostprocessingPipeline | None = None
-        self.preview_generator = PreviewGenerator(jpeg_quality=85)
+        self.cfg = cfg
+        self.domain = cfg.get("domain", cfg.get("task", "detection"))
+        self.mode = cfg.get("mode", "train")
 
-        # Recognition components (disabled by default)
-        self._enable_recognition = enable_recognition
-        self._recognizer: TextRecognizer | None = None
-        self._crop_extractor: CropExtractor | None = None
+        logger.info("🎯 OCRProjectOrchestrator initialized")
+        logger.info(f"   Domain: {self.domain}")
+        logger.info(f"   Mode: {self.mode}")
 
-        # Layout and extraction components (disabled by default)
-        self._enable_layout = False
-        self._enable_extraction = False
-        self._layout_grouper: LineGrouper | None = None
-        self._field_extractor: ReceiptFieldExtractor | None = None
+    def _inject_vocab_size(self):
+        """Inject vocab_size into recognition model config.
 
-        if enable_recognition:
-            self._init_recognition_components()
-
-        LOGGER.info(
-            "InferenceOrchestrator initialized (device: %s, recognition: %s)",
-            self.model_manager.device,
-            enable_recognition,
-        )
-
-    def load_model(self, checkpoint_path: str, config_path: str | None = None) -> bool:
-        """Load model from checkpoint.
-
-        Args:
-            checkpoint_path: Path to model checkpoint
-            config_path: Optional config path (auto-detected if not provided)
-
-        Returns:
-            True if model loaded successfully
+        This handles the Recognition-specific dependency where the
+        model head and decoder need to know the tokenizer vocab size.
         """
-        success = self.model_manager.load_model(checkpoint_path, config_path)
-
-        if success:
-            # Initialize pipelines from config
-            bundle = self.model_manager.get_config_bundle()
-            if bundle is not None:
-                self.preprocessing_pipeline = PreprocessingPipeline.from_settings(bundle.preprocess)
-                self.postprocessing_pipeline = PostprocessingPipeline(settings=bundle.postprocess)
-
-        return success
-
-    def _init_recognition_components(self) -> None:
-        """Initialize text recognition components.
-
-        Lazy initialization of recognition module to avoid loading
-        when recognition is disabled.
-        """
-        try:
-            from .crop_extractor import CropConfig, CropExtractor
-            from .recognizer import RecognizerConfig, TextRecognizer
-
-            self._crop_extractor = CropExtractor(config=CropConfig())
-            self._recognizer = TextRecognizer(config=RecognizerConfig())
-            LOGGER.info("Recognition components initialized")
-        except Exception as e:
-            LOGGER.warning("Failed to initialize recognition: %s", e)
-            self._enable_recognition = False
-            self._recognizer = None
-            self._crop_extractor = None
-
-    def enable_extraction_pipeline(self) -> None:
-        """Enable layout + extraction modules.
-
-        This initializes the LineGrouper and ReceiptFieldExtractor components
-        to enable full receipt extraction functionality.
-        """
-        try:
-            from ocr.features.kie.inference.extraction.field_extractor import ExtractorConfig, ReceiptFieldExtractor
-            from ocr.features.layout.inference.grouper import LineGrouper, LineGrouperConfig
-
-            self._enable_layout = True
-            self._enable_extraction = True
-            self._layout_grouper = LineGrouper(config=LineGrouperConfig())
-            self._field_extractor = ReceiptFieldExtractor(config=ExtractorConfig())
-            LOGGER.info("Extraction pipeline components initialized")
-        except Exception as e:
-            LOGGER.warning("Failed to initialize extraction pipeline: %s", e)
-            self._enable_layout = False
-            self._enable_extraction = False
-            self._layout_grouper = None
-            self._field_extractor = None
-
-    def predict(
-        self,
-        image: np.ndarray,
-        return_preview: bool = True,
-        enable_perspective_correction: bool = False,
-        perspective_display_mode: str = "corrected",
-        enable_grayscale: bool = False,
-        enable_background_normalization: bool = False,
-        enable_sepia_enhancement: bool = False,
-        enable_clahe: bool = False,
-        sepia_display_mode: str = "enhanced",
-        enable_extraction: bool = False,
-    ) -> dict[str, Any] | None:
-        """Run inference on image array.
-
-        This is the main orchestration method. It coordinates the full pipeline:
-        1. Preprocessing (resize, normalize, metadata)
-        2. Model inference
-        3. Postprocessing (decode, format)
-        4. Text recognition (if enabled)
-        5. Layout grouping (if extraction enabled)
-        6. Field extraction (if enabled)
-        7. Preview generation (if requested)
-
-        Args:
-            image: Input image as BGR numpy array (H, W, C)
-            return_preview: Whether to generate and attach preview image
-            enable_perspective_correction: Whether to apply perspective correction
-            perspective_display_mode: "corrected" or "original" display mode
-            enable_grayscale: Whether to apply grayscale preprocessing
-            enable_background_normalization: Whether to apply gray-world background normalization
-            enable_sepia_enhancement: Whether to apply sepia tone transformation
-            enable_clahe: Whether to apply CLAHE contrast enhancement
-            sepia_display_mode: Display mode for sepia ("enhanced" or "original")
-            enable_extraction: Whether to enable layout + field extraction pipeline
-
-        Returns:
-            Predictions dict with polygons, texts, confidences, and optional preview
-
-        Example:
-            >>> orchestrator = InferenceOrchestrator()
-            >>> orchestrator.load_model("checkpoint.pth")
-            >>> result = orchestrator.predict(image_bgr)
-            >>> if result:
-            ...     print(f"Found {len(result['texts'])} detections")
-        """
-        if not self.model_manager.is_loaded():
-            LOGGER.error("Model not loaded. Call load_model() first.")
-            return None
-
-        if self.preprocessing_pipeline is None or self.postprocessing_pipeline is None:
-            LOGGER.error("Pipelines not initialized")
-            return None
-
-        # Stage 1: Preprocessing
-        preprocess_result = self.preprocessing_pipeline.process(
-            image,
-            enable_perspective_correction=enable_perspective_correction,
-            perspective_display_mode=perspective_display_mode,
-            enable_grayscale=enable_grayscale,
-            enable_background_normalization=enable_background_normalization,
-            enable_sepia_enhancement=enable_sepia_enhancement,
-            enable_clahe=enable_clahe,
-            sepia_display_mode=sepia_display_mode,
-        )
-
-        if preprocess_result is None:
-            LOGGER.error("Preprocessing failed")
-            return None
-
-        # Stage 2: Model inference
-        if not OCR_MODULES_AVAILABLE:
-            LOGGER.error("OCR modules not available for inference")
-            return None
-
-        if self.model_manager.model is None:
-            LOGGER.error("Model not loaded")
-            return None
-
-        try:
-            import torch
-
-            with torch.no_grad():
-                predictions = self.model_manager.model(return_loss=False, images=preprocess_result.batch.to(self.model_manager.device))
-        except Exception:
-            LOGGER.exception("Model inference failed")
-            return None
-
-        # Stage 3: Postprocessing
-        postprocess_result = self.postprocessing_pipeline.process(
-            self.model_manager.model,
-            preprocess_result.batch,
-            predictions,
-            preprocess_result.original_shape,
-        )
-
-        if postprocess_result is None:
-            LOGGER.error("Postprocessing failed")
-            return None
-
-        # Convert to dict format
-        result = {
-            "polygons": postprocess_result.polygons,
-            "texts": postprocess_result.texts,
-            "confidences": postprocess_result.confidences,
-        }
-
-        # Optional Stage: Text Recognition
-        if self._enable_recognition and self._recognizer and self._crop_extractor:
-            result = self._run_text_recognition(
-                image=image,
-                result=result,
-            )
-
-        # Stage 5: Layout grouping (if extraction enabled)
-        layout_result = None
-        if self._enable_layout and self._enable_recognition:
-            layout_result = self._run_layout_grouping(result)
-            result["layout"] = layout_result.model_dump()
-
-        # Stage 6: Field extraction with hybrid gating (if requested)
-        if enable_extraction and self._enable_extraction and layout_result is not None:
-            receipt_data = self._run_extraction_with_gating(layout_result, image)
-            result["receipt_data"] = receipt_data.model_dump()
-
-        # Stage 7: Handle inverse perspective transformation if needed
-        if (
-            preprocess_result.perspective_matrix is not None
-            and perspective_display_mode == "original"
-            and preprocess_result.original_image is not None
-        ):
-            # Transform polygons back to original space
-            from ocr.core.utils.perspective_correction import transform_polygons_inverse
-
-            polygons = result["polygons"]
-            if polygons and isinstance(polygons, str):
-                result["polygons"] = transform_polygons_inverse(
-                    polygons,
-                    preprocess_result.perspective_matrix,
-                )
-
-            # Create preview from original image
-            original_preview = self.preprocessing_pipeline.process_for_original_display(preprocess_result.original_image)
-            if original_preview is not None:
-                preview_image, metadata = original_preview
-                img_shape = preprocess_result.original_image.shape
-                # Cast to expected 3D shape (H, W, C)
-                assert len(img_shape) == 3, f"Expected 3D image, got shape {img_shape}"
-                original_shape_3d = (img_shape[0], img_shape[1], img_shape[2])
-                preprocess_result = preprocess_result.__class__(
-                    batch=preprocess_result.batch,
-                    preview_image=preview_image,
-                    original_shape=original_shape_3d,
-                    metadata=metadata,
-                    perspective_matrix=preprocess_result.perspective_matrix,
-                    original_image=preprocess_result.original_image,
-                )
-
-        # Stage 8: Preview generation
-        if return_preview:
-            result = self.preview_generator.attach_preview_to_payload(
-                payload=result,
-                preview_image=preprocess_result.preview_image,
-                metadata=preprocess_result.metadata,
-                transform_polygons=True,
-                original_shape=(
-                    preprocess_result.original_shape[0],
-                    preprocess_result.original_shape[1],
-                ),
-                target_size=self.preprocessing_pipeline._target_size,
-            )
-
-        return result
-
-    def update_postprocessor_params(
-        self,
-        binarization_thresh: float | None = None,
-        box_thresh: float | None = None,
-        max_candidates: int | None = None,
-        min_detection_size: int | None = None,
-    ) -> None:
-        """Update postprocessing parameters.
-
-        Args:
-            binarization_thresh: Binarization threshold
-            box_thresh: Box confidence threshold
-            max_candidates: Maximum number of candidates
-            min_detection_size: Minimum detection size in pixels
-        """
-        if self.postprocessing_pipeline is None:
-            LOGGER.warning("Postprocessing pipeline not initialized")
+        if "tokenizer" not in self.cfg.data:
             return
 
-        # Get current settings
-        current = self.postprocessing_pipeline._settings
-        if current is None:
-            LOGGER.warning("No current settings to update")
-            return
+        logger.info("💉 Injecting vocab_size for recognition model...")
+        tokenizer = hydra.utils.instantiate(self.cfg.data.tokenizer)
 
-        # Create updated settings
-        updated = PostprocessSettings(
-            binarization_thresh=binarization_thresh if binarization_thresh is not None else current.binarization_thresh,
-            box_thresh=box_thresh if box_thresh is not None else current.box_thresh,
-            max_candidates=int(max_candidates) if max_candidates is not None else current.max_candidates,
-            min_detection_size=int(min_detection_size) if min_detection_size is not None else current.min_detection_size,
-        )
+        # Disable struct mode to allow runtime injection
+        OmegaConf.set_struct(self.cfg, False)
 
-        self.postprocessing_pipeline.set_settings(updated)
+        if "component_overrides" in self.cfg.model and self.cfg.model.component_overrides:
+            # Inject into head (output layer)
+            if "head" in self.cfg.model.component_overrides:
+                if "params" not in self.cfg.model.component_overrides.head:
+                    self.cfg.model.component_overrides.head.params = {}
+                self.cfg.model.component_overrides.head.params.out_channels = tokenizer.vocab_size
+                logger.info(f"   ✓ Head out_channels = {tokenizer.vocab_size}")
 
-        # Also update model head if available
-        if self.model_manager.model is not None:
-            head = getattr(self.model_manager.model, "head", None)
-            postprocess = getattr(head, "postprocess", None)
-            if postprocess is not None:
-                if hasattr(postprocess, "thresh") and binarization_thresh is not None:
-                    postprocess.thresh = binarization_thresh
-                if hasattr(postprocess, "box_thresh") and box_thresh is not None:
-                    postprocess.box_thresh = box_thresh
-                if hasattr(postprocess, "max_candidates") and max_candidates is not None:
-                    postprocess.max_candidates = int(max_candidates)
-                if hasattr(postprocess, "min_size") and min_detection_size is not None:
-                    postprocess.min_size = int(min_detection_size)
+            # Inject into decoder (transformer embeddings)
+            if "decoder" in self.cfg.model.component_overrides:
+                if "params" not in self.cfg.model.component_overrides.decoder:
+                    self.cfg.model.component_overrides.decoder.params = {}
+                self.cfg.model.component_overrides.decoder.params.vocab_size = tokenizer.vocab_size
+                logger.info(f"   ✓ Decoder vocab_size = {tokenizer.vocab_size}")
 
-    def _run_text_recognition(
-        self,
-        image: np.ndarray,
-        result: dict[str, Any],
-    ) -> dict[str, Any]:
-        """Run text recognition on detected regions.
-
-        Args:
-            image: Original input image (BGR numpy array)
-            result: Detection result with polygons
+    def setup_modules(self):
+        """Create Lightning modules using existing factories.
 
         Returns:
-            Updated result with recognized text
+            Tuple of (pl_module, data_module)
         """
-        # Type narrowing for optional components
-        assert self._crop_extractor is not None
-        assert self._recognizer is not None
+        logger.info("🏗️ Building model and datasets...")
 
-        if not result.get("polygons"):
-            return result
+        # Inject vocab size for recognition domain
+        if self.domain == "recognition":
+            self._inject_vocab_size()
 
-        try:
-            from .recognizer import RecognitionInput
+        # Use existing model factory
+        model = get_model_by_cfg(self.cfg.model)
+        logger.info(f"   ✓ Model created: {type(model).__name__}")
 
-            # Parse polygons from string format
-            polygon_strs = result["polygons"].split("|") if isinstance(result["polygons"], str) else result["polygons"]
-            polygons = []
-            for poly_str in polygon_strs:
-                if isinstance(poly_str, str):
-                    coords = list(map(float, poly_str.split()))
-                    polygons.append(np.array(coords).reshape(-1, 2))
-                else:
-                    polygons.append(np.array(poly_str))
+        # Use existing dataset factory
+        data_config = getattr(self.cfg, "data", None)
+        dataset = get_datasets_by_cfg(self.cfg.datasets, data_config, self.cfg)
+        logger.info("   ✓ Datasets created")
 
-            # Extract crops
-            crop_results = self._crop_extractor.extract_crops(image, polygons)
+        # Extract metric config
+        metric_cfg = None
+        if "metrics" in self.cfg and "eval" in self.cfg.metrics:
+            metric_cfg = self.cfg.metrics.eval
 
-            # Prepare recognition inputs (only successful crops)
-            recognition_inputs = []
-            crop_indices = []  # Track which detections have valid crops
-            for i, crop_result in enumerate(crop_results):
-                if crop_result.success and crop_result.crop is not None:
-                    detection_conf = result["confidences"][i] if i < len(result["confidences"]) else 0.5
-                    recognition_inputs.append(
-                        RecognitionInput(
-                            crop=crop_result.crop,
-                            polygon=crop_result.original_polygon,
-                            detection_confidence=detection_conf,
-                        )
-                    )
-                    crop_indices.append(i)
-
-            if not recognition_inputs:
-                LOGGER.debug("No valid crops for recognition")
-                return result
-
-            # Run recognition
-            recognition_outputs = self._recognizer.recognize_batch(recognition_inputs)
-
-            # Update result with recognized text
-            recognized_texts = list(result["texts"])  # Copy
-            recognition_confidences = [0.0] * len(result["texts"])
-
-            for idx, output in zip(crop_indices, recognition_outputs, strict=False):
-                if idx < len(recognized_texts):
-                    recognized_texts[idx] = output.text
-                    recognition_confidences[idx] = output.confidence
-
-            result["recognized_texts"] = recognized_texts
-            result["recognition_confidences"] = recognition_confidences
-
-            LOGGER.debug(
-                "Recognition complete: %d/%d texts recognized",
-                len(recognition_outputs),
-                len(polygon_strs),
+        # Domain-specific Lightning module routing
+        if self.domain == "detection":
+            from ocr.domains.detection.module import DetectionPLModule
+            pl_module = DetectionPLModule(
+                model=model,
+                dataset=dataset,
+                config=self.cfg,
+                metric_cfg=metric_cfg
             )
-
-        except Exception as e:
-            LOGGER.warning("Text recognition failed: %s", e)
-            # Don't fail the whole pipeline - just skip recognition
-
-        return result
-
-    def _run_layout_grouping(self, result: dict) -> Any:
-        """Group recognized text into lines and blocks.
-
-        Args:
-            result: Detection/recognition result dict with polygons and texts
-
-        Returns:
-            LayoutResult with hierarchical text structure
-        """
-        # Type narrowing for optional components
-        assert self._layout_grouper is not None
-
-        from ocr.features.layout.inference.contracts import BoundingBox, TextElement
-
-        elements = []
-        for i, (poly, text, conf) in enumerate(
-            zip(
-                result.get("polygons", []),
-                result.get("recognized_texts", []),
-                result.get("recognition_confidences", []),
-                strict=False,
+            logger.info("   ✓ DetectionPLModule created")
+        elif self.domain == "recognition":
+            from ocr.domains.recognition.module import RecognitionPLModule
+            pl_module = RecognitionPLModule(
+                model=model,
+                dataset=dataset,
+                config=self.cfg,
+                metric_cfg=metric_cfg
             )
-        ):
-            # Convert polygon string to coordinates
-            coords = self._parse_polygon(poly)
-            if not coords:
-                continue
-
-            bbox = BoundingBox(
-                x_min=min(c[0] for c in coords),
-                y_min=min(c[1] for c in coords),
-                x_max=max(c[0] for c in coords),
-                y_max=max(c[1] for c in coords),
-            )
-            elements.append(
-                TextElement(
-                    polygon=coords,
-                    bbox=bbox,
-                    text=text,
-                    confidence=conf,
-                )
-            )
-
-        return self._layout_grouper.group_elements(elements)
-
-    def _parse_polygon(self, poly: str | list) -> list[list[float]]:
-        """Parse polygon from string or list format.
-
-        Args:
-            poly: Polygon as string "x1 y1 x2 y2 ..." or list of coordinates
-
-        Returns:
-            List of [x, y] coordinate pairs
-        """
-        if isinstance(poly, str):
-            try:
-                coords = list(map(float, poly.split()))
-                # Convert flat list to pairs [[x1,y1], [x2,y2], ...]
-                return [[coords[i], coords[i + 1]] for i in range(0, len(coords), 2)]
-            except (ValueError, IndexError):
-                LOGGER.warning("Failed to parse polygon string: %s", poly)
-                return []
-        elif isinstance(poly, list):
-            # Already in list format
-            return poly
+            logger.info("   ✓ RecognitionPLModule created")
         else:
-            return []
+            raise ValueError(
+                f"Unknown domain: {self.domain}. "
+                f"Must be 'detection' or 'recognition'."
+            )
 
-    def _run_extraction_with_gating(
-        self,
-        layout_result: Any,
-        original_image: np.ndarray,
-    ) -> Any:
-        """Extract receipt data with hybrid rule/VLM gating.
+        # Create data module
+        data_module = OCRDataPLModule(dataset=dataset, config=self.cfg)
+        logger.info("   ✓ DataModule created")
 
-        Args:
-            layout_result: LayoutResult from grouping stage
-            original_image: Original BGR image
+        return pl_module, data_module
 
-        Returns:
-            ReceiptData with extracted fields
-        """
-        # Type narrowing for optional components
-        assert self._field_extractor is not None
-
-        # Try rule-based first (fast path: 80% of receipts)
-        receipt = self._field_extractor.extract(layout=layout_result)
-
-        # Gate to VLM if confidence too low or complex layout
-        if self._should_use_vlm(receipt, layout_result):
-            LOGGER.debug("Gating to VLM extraction (confidence=%.2f)", receipt.extraction_confidence)
-            receipt = self._run_vlm_extraction(original_image, layout_result)
-
-        return receipt
-
-    def _should_use_vlm(self, receipt: Any, layout: Any) -> bool:
-        """Determine if VLM extraction should be used.
-
-        Args:
-            receipt: ReceiptData from rule-based extraction
-            layout: LayoutResult
+    def setup_trainer(self):
+        """Build PyTorch Lightning Trainer from V5.0 Hydra configs.
 
         Returns:
-            True if VLM should be used
+            Configured Trainer instance
         """
-        # Low confidence from rule-based extraction
-        if receipt.extraction_confidence < 0.7:
-            return True
+        logger.info("⚡ Configuring Lightning Trainer...")
 
-        # Complex layout indicators
-        if len(layout.blocks) > 5:  # Many separate text blocks
-            return True
-        if layout.tables:  # Table structures detected
-            return True
+        # Merge configs from multiple tiers
+        trainer_kwargs = {}
 
-        return False
+        # Tier 1: Global trainer defaults
+        if hasattr(self.cfg, "trainer"):
+            trainer_kwargs.update(self.cfg.trainer)
 
-    def _run_vlm_extraction(
-        self,
-        image: np.ndarray,
-        layout: Any,
-    ) -> Any:
-        """Run VLM extraction with fallback to rule-based.
+        # Tier 2: Hardware settings (accelerator, devices, precision)
+        if hasattr(self.cfg, "hardware"):
+            if hasattr(self.cfg.hardware, "accelerator"):
+                trainer_kwargs["accelerator"] = self.cfg.hardware.accelerator
+            if hasattr(self.cfg.hardware, "devices"):
+                trainer_kwargs["devices"] = self.cfg.hardware.devices
+            if hasattr(self.cfg.hardware, "precision"):
+                trainer_kwargs["precision"] = self.cfg.hardware.precision
 
-        Args:
-            image: Original BGR image
-            layout: LayoutResult for context
+        # Tier 7: Training configs (loggers, callbacks)
+        if hasattr(self.cfg, "train"):
+            # Instantiate loggers
+            if hasattr(self.cfg.train, "logger") and self.cfg.train.logger:
+                loggers = [
+                    hydra.utils.instantiate(logger_cfg)
+                    for logger_cfg in self.cfg.train.logger.values()
+                ]
+                trainer_kwargs["logger"] = loggers
+                logger.info(f"   ✓ {len(loggers)} logger(s) configured")
 
-        Returns:
-            ReceiptData from VLM or rule-based fallback
-        """
-        # Type narrowing for optional components
-        assert self._field_extractor is not None
+            # Instantiate callbacks
+            if hasattr(self.cfg.train, "callbacks") and self.cfg.train.callbacks:
+                callbacks = [
+                    hydra.utils.instantiate(cb_cfg)
+                    for cb_cfg in self.cfg.train.callbacks.values()
+                ]
+                trainer_kwargs["callbacks"] = callbacks
+                logger.info(f"   ✓ {len(callbacks)} callback(s) configured")
 
-        try:
-            import cv2
-            from PIL import Image
+        trainer = Trainer(**trainer_kwargs)
+        logger.info("   ✓ Trainer ready")
+        return trainer
 
-            from ocr.features.kie.inference.extraction.vlm_extractor import VLMExtractor
+    def run(self):
+        """Execute the orchestrated pipeline."""
+        logger.info(f"\n{'='*60}")
+        logger.info(f"🚀 Starting {self.mode.upper()} for {self.domain} domain")
+        logger.info(f"{'='*60}\n")
 
-            vlm = VLMExtractor()
-            if not vlm.is_server_healthy():
-                LOGGER.warning("VLM server unavailable, using rule-based")
-                return self._field_extractor.extract(layout=layout)
+        # Setup components
+        pl_module, data_module = self.setup_modules()
+        trainer = self.setup_trainer()
 
-            pil_image = Image.fromarray(cv2.cvtColor(image, cv2.COLOR_BGR2RGB))
-            return vlm.extract(pil_image, ocr_context=layout.text)
-        except Exception as e:
-            LOGGER.warning("VLM extraction failed: %s", e)
-            return self._field_extractor.extract(layout=layout)
+        # Execute based on mode
+        checkpoint_path = self.cfg.get("checkpoint_path", None)
 
-    def cleanup(self) -> None:
-        """Clean up resources."""
-        self.model_manager.cleanup()
+        if self.mode == "train":
+            logger.info("🏋️ Starting training...\n")
+            trainer.fit(pl_module, data_module, ckpt_path=checkpoint_path)
+            logger.info("\n✅ Training complete!")
 
-        # Clean up recognition components
-        if self._recognizer is not None:
-            self._recognizer.cleanup()
-            self._recognizer = None
-        self._crop_extractor = None
+        elif self.mode == "eval" or self.mode == "test":
+            if not checkpoint_path:
+                raise ValueError("checkpoint_path required for eval/test mode")
+            logger.info(f"🧪 Starting evaluation from {checkpoint_path}...\n")
+            trainer.test(pl_module, data_module, ckpt_path=checkpoint_path)
+            logger.info("\n✅ Evaluation complete!")
 
-    def __enter__(self):
-        """Context manager entry."""
-        return self
+        elif self.mode == "predict":
+            logger.info("🔮 Starting prediction...\n")
+            trainer.predict(pl_module, data_module, ckpt_path=checkpoint_path)
+            logger.info("\n✅ Prediction complete!")
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        """Context manager exit with cleanup."""
-        self.cleanup()
-        return False
+        else:
+            raise ValueError(
+                f"Unknown mode: {self.mode}. "
+                f"Must be 'train', 'eval', 'test', or 'predict'."
+            )
 
 
-__all__ = [
-    "InferenceOrchestrator",
-]
+__all__ = ["OCRProjectOrchestrator"]

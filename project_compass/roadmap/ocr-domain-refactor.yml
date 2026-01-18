@@ -24,8 +24,8 @@ phases:
       - "Domains First" Architecture Design
       - Comprehensive File Mapping (Proposed Tree)
 
-  - name: Phase 2: Execution (In Progress)
-    status: in_progress
+  - name: Phase 2: Execution (Complete)
+    status: completed
     completed_steps:
       - Initialize Directory Structure
       - Infrastructure Setup (pipelines, core/interfaces)
@@ -33,13 +33,17 @@ phases:
       - Bulk Migration Complete (all domain files moved)
       - "wandb_utils.py → domains/{det,rec}/callbacks/wandb*.py + core/utils/wandb_base.py (COMPLETE)"
       - "OCRDataPLModule → ocr/data/lightning_data.py (COMPLETE)"
-    pending_steps:
-      - name: Surgical Refactor (The Splitter) - Remaining
+      - "OCRProjectOrchestrator Implementation (2026-01-19)"
+    notes:
+      - "Orchestrator bridges V5.0 Hydra configs to existing factories"
+      - "Vocab injection for recognition + domain routing complete"
+    remaining_cleanup:
+      - name: Optional Legacy Factory Cleanup
+        targets:
+          - "ocr/core/lightning/__init__.py (get_pl_modules_by_cfg can be deprecated)"
+      - name: Evaluator Surgical Refactor (Low Priority)
         targets:
           - "ocr/core/evaluation/evaluator.py → domains/{det,rec}/evaluation.py"
-      - name: Emergency Hydra Config Refactor (V5.0 Standards)
-        targets:
-          - "All configs/* to Strict V5 (Absolute Paths, Flattening)"
 
 
   - name: Phase 3: Verification
