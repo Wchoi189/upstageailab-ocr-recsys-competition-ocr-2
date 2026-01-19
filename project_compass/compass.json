@@ -1,15 +1,15 @@
 {
   "$schema": ".config/schemas/compass.schema.json",
   "version": "1.0.0",
-  "last_updated": "2026-01-17 17:52 (KST)",
+  "last_updated": "2026-01-20 04:41 (KST)",
   "active_handoff": "project_compass/history/sessions/20260117_200722_session-hydra-config-refactor-01/active_context/current_session.yml",
   "uv_constraints": {
     "min_version": "0.9.0",
     "required_path": ""
   },
   "project_status": {
-    "current_phase": "Phase 3: Validation",
+    "current_phase": "performance_audit",
     "overall_health": "healthy",
-    "note": "Audit and fix defaults list paths to match actual directory structure."
+    "note": "Phase 1 complete: debug guard applied to detection and recognition modules"
   }
 }

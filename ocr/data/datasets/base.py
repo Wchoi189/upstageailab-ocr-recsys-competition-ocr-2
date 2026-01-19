@@ -565,7 +565,7 @@ class ValidatedOCRDataset(Dataset):
         transformed_polygons = transformed.get("polygons", []) or []
 
         # Filter degenerate polygons using polygon_utils
-        from ocr.core.utils.polygon_utils import ensure_polygon_array, filter_degenerate_polygons
+        from ocr.domains.detection.utils.polygons import ensure_polygon_array, filter_degenerate_polygons
 
         if transformed_polygons:
             normalized_polygons = []
@@ -597,7 +597,7 @@ class ValidatedOCRDataset(Dataset):
                         loaded_thresh_map = maps_data["thresh_map"]
 
                         # Validate map shapes
-                        from ocr.core.utils.polygon_utils import validate_map_shapes
+                        from ocr.domains.detection.utils.polygons import validate_map_shapes
 
                         if hasattr(transformed_image, "shape"):
                             image_height, image_width = transformed_image.shape[-2], transformed_image.shape[-1]

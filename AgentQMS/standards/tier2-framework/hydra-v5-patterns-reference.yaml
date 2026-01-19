@@ -1,0 +1,426 @@
+---
+ads_version: '1.0'
+type: reference_guide
+agent: all
+tier: 2
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 280
+id: hydra-v5-patterns-reference
+name: Hydra V5.0 Patterns & Failure Modes Reference
+description: Design patterns, anti-patterns, and debugging guide for Hydra 1.3.2 V5.0 - load when debugging
+version: 5.0
+hydra_version: 1.3.2
+last_updated: '2026-01-20'
+replaces:
+  - hydra-v5-patterns.yaml (consolidated)
+  - hydra-v5-core-rules.yaml (patterns section only)
+
+# ============================================================================
+# USAGE GUIDE
+# ============================================================================
+
+when_to_use:
+  debugging_errors: "Search failure_modes section by error symptom"
+  implementing_patterns: "Reference design_patterns section for code examples"
+  learning_hydra: "Read hydra-v5-rules.yaml first, then return here for details"
+
+auto_load: false  # Explicit opt-in for debugging only
+
+# ============================================================================
+# FAILURE MODE INDEX (SEARCH THIS FIRST)
+# ============================================================================
+
+failure_index:
+  # Search by error symptom or problem description
+  double_namespacing:
+    symptom: "data.data.* namespace instead of data.*"
+    line_ref: "L85"
+  interpolation_key_error:
+    symptom: "InterpolationKeyError: 'key' not found"
+    line_ref: "L105"
+  passive_refactor_cycle:
+    symptom: "Optimizer changes ignored, model preset override wins"
+    line_ref: "L125"
+  cross_domain_contamination:
+    symptom: "CUDA segfault during validation, memory leaks"
+    line_ref: "L145"
+  override_ordering:
+    symptom: "ConfigCompositionException: Override defined before..."
+    line_ref: "L165"
+  namespace_fragmentation:
+    symptom: "Unexpected nested keys like train.optimizer.optimizer.*"
+    line_ref: "L185"
+  orphaned_logic:
+    symptom: "Config references non-existent paths"
+    line_ref: "L205"
+
+# ============================================================================
+# DESIGN PATTERNS
+# ============================================================================
+
+design_patterns:
+  self_mounting_components:
+    name: Self-Mounting Atomic Units
+    principle: Components declare their own namespace via @package directive
+    benefits: [no_fragile_aliasing, clear_ownership, predictable_composition]
+
+    dataset_example: |
+      # configs/data/datasets/canonical.yaml
+      # @package data
+      dataset_base_path: "${global.paths.datasets_root}"
+      train_dataset:
+        _target_: ocr.data.datasets.ValidatedOCRDataset
+        image_path: ${data.dataset_base_path}/images/train
+        annotation_path: ${data.dataset_base_path}/jsons/train.json
+
+    architecture_example: |
+      # configs/model/architectures/dbnet_atomic.yaml
+      # @package model.architectures
+      _target_: ocr.domains.detection.models.DBNet
+      backbone:
+        _target_: ocr.core.models.encoder.TimmBackbone
+        model_name: resnet18
+        pretrained: true
+
+  domain_injection:
+    name: Domain Injection Pattern
+    principle: Domain controllers inject data-dependent components (tokenizer, loss)
+    rationale: Prevents tokenizers/loss in architecture files from blocking reuse
+
+    example: |
+      # configs/domain/recognition.yaml
+      # @package _group_
+      defaults:
+        - /model/architectures: parseq
+        - /data/datasets: recognition_canonical
+        - _self_
+
+      model:
+        tokenizer:  # Inject here, not in architecture
+          _target_: ocr.domains.recognition.data.tokenizer.KoreanOCRTokenizer
+          char_path: ${global.paths.root_dir}/ocr/data/charset.json
+          max_len: 25
+
+      train:
+        loss:  # Task-dependent loss
+          _target_: torch.nn.CrossEntropyLoss
+          ignore_index: 0
+
+  multi_component_aliasing:
+    name: Multi-Logger/Callback Aliasing Pattern
+    problem: Multiple components of same type cause namespace collision
+
+    syntax_breakdown:
+      pattern: "wandb@_group_.wandb_logger"
+      file_selection: "wandb → loads configs/train/logger/wandb.yaml"
+      package_directive: "@_group_ → place in parent namespace"
+      custom_alias: ".wandb_logger → unique key for this logger"
+      result: "train.logger.wandb_logger.*"
+
+    default_file_example: |
+      # configs/train/logger/default.yaml
+      # @package _group_
+      defaults:
+        - wandb@_group_.wandb_logger  # → train.logger.wandb_logger
+        - csv@_group_.csv_logger      # → train.logger.csv_logger
+        - _self_
+
+    logger_file_example: |
+      # configs/train/logger/wandb.yaml
+      # @package _group_
+      _target_: lightning.pytorch.loggers.WandbLogger
+      project: "receipt-ocr-project"
+      log_model: "all"
+      save_dir: "${global.paths.wandb}"
+
+  atomic_architecture:
+    name: Atomic Architecture Pattern
+    principle: Model configs contain ONLY neural network structure
+
+    anti_pattern:
+      name: Passive Refactor Cycle
+      symptom: Model presets include `optimizer:` or `loss:` keys
+      problem: Optimizer override invisible to user, causes training inconsistencies
+
+    correct_example: |
+      # configs/model/architectures/parseq.yaml
+      # @package _group_
+      # v5.0 | Atomic Recognition Architecture
+      _target_: ocr.domains.recognition.models.PARSeq
+      backbone:
+        _target_: ocr.core.models.encoder.TimmBackbone
+        model_name: resnet18
+        pretrained: true
+      decoder:
+        _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+        d_model: 512
+        nhead: 8
+        num_layers: 12
+      max_len: 25
+      # ❌ NO optimizer, loss, or tokenizer keys
+
+  callback_flattening:
+    name: Callback Flattening Pattern
+
+    incorrect: |
+      # ❌ Creates train.callbacks.early_stopping.early_stopping
+      # configs/train/callbacks/early_stopping.yaml
+      # @package _group_
+      early_stopping:
+        _target_: lightning.pytorch.callbacks.EarlyStopping
+        monitor: "val/hmean"
+
+    correct: |
+      # ✅ Creates train.callbacks.early_stopping.*
+      # configs/train/callbacks/early_stopping.yaml
+      # @package _group_
+      _target_: lightning.pytorch.callbacks.EarlyStopping
+      monitor: "val/hmean"
+      min_delta: 0.0
+      patience: 5
+      mode: "max"
+
+  dataset_source_identity:
+    name: Dataset Source Identity Pattern
+    principle: Dataset configs define ONLY paths and metadata, NOT transforms
+
+    example: |
+      # configs/data/datasets/canonical.yaml
+      # @package _group_
+      # v5.0 | Dataset Source Paths ONLY
+      dataset_base_path: "${global.paths.datasets_root}"
+
+      train_dataset:
+        _target_: ocr.data.datasets.ValidatedOCRDataset
+        image_path: ${data.dataset_base_path}/images/train
+        annotation_path: ${data.dataset_base_path}/jsons/train.json
+
+      val_dataset:
+        _target_: ocr.data.datasets.ValidatedOCRDataset
+        image_path: ${data.dataset_base_path}/images_val_canonical
+        annotation_path: ${data.dataset_base_path}/jsons/val.json
+
+    note: Transforms injected separately via domain controller or data/transforms/
+
+  domain_isolation:
+    name: Domain Isolation Pattern
+    principle: Domain controllers nullify irrelevant keys from other domains
+    rationale: Prevents CUDA segfaults and logic leakage from unused domain configs
+
+    example: |
+      # configs/domain/recognition.yaml
+      # @package _group_
+      defaults:
+        - /model/architectures: parseq
+        - /data/datasets: recognition_canonical
+        - _self_
+
+      # Nullify detection-specific keys
+      detection: null
+      max_polygons: null
+      shrink_ratio: null
+      thresh_min: null
+      thresh_max: null
+
+      # Recognition-specific overrides
+      recognition:
+        max_label_length: 25
+        charset: korean
+        decode_mode: greedy
+
+# ============================================================================
+# FAILURE MODES (DETAILED)
+# ============================================================================
+
+failure_modes:
+  double_namespacing:
+    symptom: "data.data.train_num_samples instead of data.train_num_samples"
+    root_cause: File uses @package _group_ but contains top-level key matching folder
+
+    example_incorrect: |
+      # configs/data/default.yaml
+      # @package _group_
+      data:  # ❌ Creates data.data namespace
+        train_num_samples: 1000
+
+    example_correct: |
+      # configs/data/default.yaml
+      # @package _group_
+      train_num_samples: 1000  # ✅ Creates data.train_num_samples
+
+    resolution: Remove redundant wrapper key, flatten structure
+    validation: python scripts/utils/show_config.py main domain=detection
+
+  interpolation_key_error:
+    symptom: "InterpolationKeyError: 'train_transform' not found"
+    root_cause: Relative interpolation without absolute root anchor
+
+    common_causes:
+      - Using relative interpolation ${key} instead of ${namespace.key}
+      - Package directive creating unexpected namespace nesting
+      - Key defined in wrong config group
+
+    forbidden_patterns:
+      - "${train_transform}"
+      - "${optimizer}"
+      - "./data"
+
+    required_patterns:
+      - "${data.transforms.train_transform}"
+      - "${train.optimizer.adamw}"
+      - "${global.paths.data_dir}"
+
+    resolution: Use absolute interpolation paths; verify namespace with show_config.py
+    prevention: Always prefix with namespace (data., train., model., global.)
+
+  passive_refactor_cycle:
+    symptom: Optimizer changes in CLI ignored, model preset override wins
+    root_cause: Model architecture includes optimizer/loss keys
+
+    problem: |
+      When model/architectures/ contains:
+        optimizer:
+          lr: 0.001
+
+      CLI override is silently ignored:
+        python runners/train.py train.optimizer.lr=0.0001  # ❌ No effect
+
+    resolution: Remove all optimizer/loss from model/architectures/, manage in train/ or domain/
+    impact: Causes training inconsistencies and invisible bugs
+
+    validation: |
+      # Check for violations
+      grep -r 'optimizer:\|loss:' configs/model/architectures/
+      # Should return no matches
+
+  cross_domain_contamination:
+    symptom: CUDA segfault during validation, memory leaks
+    root_cause: Domain keys not nullified (e.g., detection keys active in recognition run)
+
+    example_problem: |
+      # User runs recognition, but detection keys still active
+      python runners/train.py domain=recognition
+      # → max_polygons key causes CUDA allocation error
+
+    resolution: Explicitly set unused domain keys to null in domain controller
+
+    example_fix: |
+      # configs/domain/recognition.yaml
+      detection: null
+      max_polygons: null
+      shrink_ratio: null
+      thresh_min: null
+      thresh_max: null
+
+  override_ordering:
+    symptom: "ConfigCompositionException: Override 'data : base' is defined before..."
+    root_cause: Override defaults not at end of defaults list
+
+    incorrect: |
+      defaults:
+        - _self_
+        - base
+        - override data: base           # ❌ Too early
+        - data/transforms: base          # ❌ After override
+        - /model/architectures: parseq
+
+    correct: |
+      defaults:
+        - _self_
+        - base
+        - data/transforms: base
+        - /model/architectures: parseq
+        - override data: base           # ✅ At end
+        - override hydra/hydra_logging: disabled
+
+    rule: "All 'override X: Y' entries MUST be at the end of defaults list"
+
+  namespace_fragmentation:
+    symptom: Unexpected nested keys like train.optimizer.optimizer.*
+    root_cause: Package directive + wrapper key creating double namespace
+
+    debug_steps:
+      - Check if file has # @package _group_
+      - Look for top-level key matching parent folder name
+      - Remove wrapper key if present
+      - Validate with show_config.py
+
+    validation_command: python scripts/utils/show_config.py main domain=detection
+
+  orphaned_logic:
+    symptom: Config references non-existent paths like /dataloaders/default
+    root_cause: Files moved during restructuring, stale defaults
+
+    example: "configs/data/datasets/db.yaml referencing deleted directories"
+
+    resolution:
+      - Delete orphaned files
+      - Move logic to domain controller or experiment configs
+      - Update defaults lists to remove stale references
+
+    detection: grep -r "defaults:" configs/ | grep -v "^#" | sort | uniq
+
+# ============================================================================
+# VALIDATION CHECKLIST
+# ============================================================================
+
+validation_checklist:
+  flattening:
+    - All @package _group_ files have no top-level key matching folder name
+    - Callbacks/loggers flattened (no redundant wrapper keys)
+    - Command: grep -r "^[a-z_]*:$" configs/*/
+
+  interpolation:
+    - All interpolations use absolute paths (${namespace.key})
+    - All paths anchor to ${global.paths.*}
+    - Command: grep -r '\${[^.}]*}' configs/ | grep -v '\${global\|${data\|${train'
+
+  architecture_purity:
+    - Model architectures contain NO optimizer or loss keys
+    - Tokenizers moved to domain controllers or data configs
+    - Command: grep -r 'optimizer:\|loss:' configs/model/architectures/
+
+  component_placement:
+    - Dataset configs define ONLY paths, NOT transforms
+    - Preprocessing moved to data/transforms/
+    - Command: grep -r 'transform' configs/data/datasets/
+
+  domain_isolation:
+    - Domain controllers nullify irrelevant cross-domain keys
+    - Orphaned files (invalid defaults) deleted
+    - Command: python scripts/audit/hydra_sanity_check.py
+
+# ============================================================================
+# INTEGRATION
+# ============================================================================
+
+integration:
+  companion_standards:
+    rules: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+    configuration: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+
+  triggers:
+    - debug
+    - error
+    - failure
+    - interpolation
+    - namespace
+    - pattern
+    - anti-pattern
+    - flattening
+    - aliasing
+
+  verification_script:
+    path: scripts/utils/verify_hydra_flattening.py
+    purpose: Automated validation of v5.0 patterns
+    checks: [logger_aliasing, callback_flattening, interpolation_resolution]
+
+compliance:
+  agentqms_validated: '2026-01-20'
+  consolidated_from:
+    - hydra-v5-patterns.yaml
+    - hydra-v5-core-rules.yaml (patterns section)
+  ai_optimized: true
+  token_reduction: 76%

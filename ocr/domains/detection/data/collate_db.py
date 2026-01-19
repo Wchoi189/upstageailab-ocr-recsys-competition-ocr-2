@@ -333,7 +333,7 @@ class DBCollateFN:
             List of validated polygon lists with invalid polygons removed.
             Each polygon is normalized to (N, 2) shape.
         """
-        from ocr.core.utils.polygon_utils import is_valid_polygon
+        from ocr.domains.detection.utils.polygons import is_valid_polygon
 
         validated_batch = []
 

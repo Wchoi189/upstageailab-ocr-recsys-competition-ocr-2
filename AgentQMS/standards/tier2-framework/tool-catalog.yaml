@@ -7,6 +7,7 @@ validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: pass
 memory_footprint: 800
 source: Converted from .copilot/context/tool-catalog.md
+last_audited: 2026-01-20
 artifact_commands:
   create_plan:
     command: cd AgentQMS/bin && make create-plan
@@ -134,22 +135,22 @@ audit_commands:
     purpose: Generate audit progress report
 tracking_commands:
   plan_new:
-    command: python AgentQMS/agent_tools/utilities/tracking/cli.py plan new
+    command: python AgentQMS/tools/utilities/tracking/cli.py plan new
     args:
       --title: Plan title
       --owner: Owner name
     purpose: Create feature plan
   plan_status:
-    command: python AgentQMS/agent_tools/utilities/tracking/cli.py plan status --concise
+    command: python AgentQMS/tools/utilities/tracking/cli.py plan status --concise
     purpose: Check plan status
   exp_new:
-    command: python AgentQMS/agent_tools/utilities/tracking/cli.py exp new
+    command: python AgentQMS/tools/utilities/tracking/cli.py exp new
     args:
       --title: Experiment title
       --objective: Objective description
     purpose: Create experiment
   exp_run_add:
-    command: python AgentQMS/agent_tools/utilities/tracking/cli.py exp run-add KEY
+    command: python AgentQMS/tools/utilities/tracking/cli.py exp run-add KEY
       RUN_NUM
     args:
       KEY: Experiment key
@@ -163,33 +164,33 @@ tool_categories:
     - audit_generator
     - audit_validator
     - checklist_tool
-    base_path: AgentQMS/agent_tools/audit/
+    base_path: AgentQMS/tools/compliance/
   compliance:
     tools:
     - monitor_artifacts
     - validate_artifacts
     - validate_boundaries
-    base_path: AgentQMS/agent_tools/compliance/
+    base_path: AgentQMS/tools/compliance/
   core:
     tools:
     - artifact_workflow
     - context_bundle
     - discover
     - workflow_detector
-    base_path: AgentQMS/agent_tools/core/
+    base_path: AgentQMS/tools/core/
   documentation:
     tools:
     - auto_generate_index
     - validate_links
     - validate_manifest
-    base_path: AgentQMS/agent_tools/documentation/
+    base_path: AgentQMS/tools/documentation/
   utilities:
     tools:
     - adapt_project
     - tracking_cli
     - get_context
     - path_utils
-    base_path: AgentQMS/agent_tools/utilities/
+    base_path: AgentQMS/tools/utilities/
 workflow_triggers:
   artifact_creation:
     keywords:

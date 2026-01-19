@@ -3,6 +3,9 @@ type: specification
 agent: all
 tier: 2
 priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+last_updated: '2026-01-20'
 
 component: preprocessing_logic
 description: Prepares raw images for inference.
@@ -25,9 +28,10 @@ critical_logic:
          - Converts to Float32 Tensor (1, C, H, W).
   - id: configuration
     description: |
-      Configuration is loaded from 'configs/predict/default_predict.yaml' but can be overridden per request.
+      Configuration is loaded from Hydra V5.0 domain configs (domain/detection.yaml, etc.) or can be overridden per request.
       - target_size: int (default 640)
       - transform_pipeline: List[str] (names of albumentations transforms)
+      See: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
   - id: display-modes
     description: |
       Corrected: The preview image shows the 'After Warp' view.

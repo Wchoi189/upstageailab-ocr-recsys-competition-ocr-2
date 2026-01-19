@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-14T09:22:06.411714+00:00'
+  generated_at: '2026-01-19T23:09:44.103204+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -19,7 +19,6 @@ plugins_loaded:
   - agent-configuration
   - compliance-check
   - documentation-update
-  - hydra-configuration
   - ocr-debugging
   - ocr-experiment
   - ocr-information-extraction
@@ -95,11 +94,6 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/documentation-update.yaml
-- name: hydra-configuration
-  type: context_bundle
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml
 - name: ocr-debugging
   type: context_bundle
   version: '1.0'
@@ -145,7 +139,18 @@ plugin_metadata:
   version: '1.0'
   source: framework
   path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
-validation_errors: []
+validation_errors:
+- path: AgentQMS/.agentqms/plugins/context_bundles/ast-debugging-tools.yaml
+  type: context_bundle
+  error: 'Additional properties are not allowed (''ast_vs_basic_tools'', ''auto_suggest_scenarios'',
+    ''decision_tree'', ''integration'', ''notes'', ''success_indicators'', ''tools'',
+    ''when_not_to_use'' were unexpected) (path: [])'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+- path: AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml
+  type: context_bundle
+  error: 'Additional properties are not allowed (''notes'' was unexpected) (path:
+    [])'
+  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
 resolved:
   artifact_types:
     assessment:
@@ -1058,92 +1063,6 @@ resolved:
           - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
             priority: low
             description: Workflow requirements
-    hydra-configuration:
-      name: hydra-configuration
-      title: Hydra Configuration Framework
-      ads_version: '1.0'
-      scope: project
-      description: 'Context for understanding and working with Hydra configuration
-        system
-
-        including configuration architecture, best practices, examples, and
-
-        schema definitions.
-
-        '
-      tags:
-      - hydra
-      - configuration
-      - config
-      - experiment
-      - yaml
-      triggers:
-        keywords:
-        - hydra
-        - configuration
-        - config
-        - configs
-        - settings
-        - parameters
-        - experiment
-        - yaml
-        - compose
-        - omegaconf
-        - merge
-        - override
-        patterns:
-        - hydra.*config
-        - config.*hydra
-        - yaml.*config
-        - experiment.*config
-      tiers:
-        tier1:
-          name: Hydra Architecture
-          description: Hydra configuration fundamentals and architecture
-          max_files: 4
-          files:
-          - path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
-            priority: critical
-            description: Hydra architecture design and patterns
-          - path: configs/base.yaml
-            priority: critical
-            description: Base configuration example
-          - path: pyproject.toml
-            priority: high
-            description: Project dependencies and Hydra setup
-        tier2:
-          name: Configuration Details
-          description: Detailed configuration specifications and standards
-          max_files: 6
-          files:
-          - path: configs/
-            priority: high
-            description: All configuration files (base, train, eval, etc.)
-          - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
-            priority: high
-            description: Configuration standards and best practices
-          - path: configs/_foundation/
-            priority: medium
-            description: Foundation configuration defaults
-            optional: true
-          - path: configs/debug/
-            priority: low
-            description: Debug configurations
-            optional: true
-        tier3:
-          name: Examples & Tools
-          description: Configuration examples and experiment management tools
-          max_files: 3
-          files:
-          - path: experiment_manager/etk.py
-            priority: medium
-            description: Experiment manager with Hydra config integration
-          - path: README.md
-            priority: low
-            description: Project documentation with config examples
-          - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
-            priority: low
-            description: Available tools including config management
     ocr-debugging:
       name: ocr-debugging
       title: OCR Debugging & AST Analysis

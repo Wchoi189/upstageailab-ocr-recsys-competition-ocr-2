@@ -9,6 +9,8 @@ from __future__ import annotations
 import importlib
 from typing import Any
 
+from ocr.core.utils.config_utils import ensure_dict
+
 __all__ = [
     "ValidatedOCRDataset",
     "CraftCollateFN",
@@ -21,12 +23,12 @@ __all__ = [
 
 
 _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
-    "ValidatedOCRDataset": (".base", "ValidatedOCRDataset"),
-    "CraftCollateFN": (".craft_collate_fn", "CraftCollateFN"),
-    "DBCollateFN": (".db_collate_fn", "DBCollateFN"),
-    "DocumentPreprocessor": (".preprocessing", "DocumentPreprocessor"),
-    "LensStylePreprocessorAlbumentations": (".preprocessing", "LensStylePreprocessorAlbumentations"),
-    "DBTransforms": (".transforms", "DBTransforms"),
+    "ValidatedOCRDataset": ("ocr.data.datasets.base", "ValidatedOCRDataset"),
+    "CraftCollateFN": ("ocr.domains.detection.data.collate_craft", "CraftCollateFN"),
+    "DBCollateFN": ("ocr.domains.detection.data.collate_db", "DBCollateFN"),
+    "DocumentPreprocessor": ("ocr.data.datasets.preprocessing", "DocumentPreprocessor"),
+    "LensStylePreprocessorAlbumentations": ("ocr.data.datasets.preprocessing", "LensStylePreprocessorAlbumentations"),
+    "DBTransforms": ("ocr.data.datasets.transforms", "DBTransforms"),
 }
 
 
@@ -53,7 +55,7 @@ def get_datasets_by_cfg(datasets_config, data_config=None, full_config=None):
     # Handle custom image directory for prediction
     if full_config is not None and hasattr(full_config, "image_dir") and full_config.image_dir is not None:
         # Override predict_dataset to use custom image directory
-        predict_config = OmegaConf.create(OmegaConf.to_container(datasets_config.predict_dataset, resolve=True))
+        predict_config = OmegaConf.create(ensure_dict(datasets_config.predict_dataset, resolve=True))
         predict_config.config.image_path = full_config.image_dir
         predict_dataset = instantiate(predict_config)
     else:

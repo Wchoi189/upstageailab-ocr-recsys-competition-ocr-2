@@ -70,8 +70,10 @@ class WandbProblemLogger:
         """
         batch_metrics = self._compute_batch_metrics(batch, predictions)
 
-        per_batch_cfg = getattr(self.config.logger, "per_batch_image_logging", None)
-        if per_batch_cfg is None or not per_batch_cfg.enabled:
+        # Safely access logger config (may not exist in all configurations)
+        from omegaconf import OmegaConf
+        per_batch_cfg = OmegaConf.select(self.config, "logger.per_batch_image_logging", default=None)
+        if per_batch_cfg is None or not getattr(per_batch_cfg, "enabled", False):
             return batch_metrics
 
         # Check if we should log this batch

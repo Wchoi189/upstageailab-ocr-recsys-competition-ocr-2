@@ -16,7 +16,14 @@
 - **Phase 4 Debugging (CRITICAL FIXES)**:
   - **Fixed `ConfigAttributeError`**: Patch `ocr/pipelines/orchestrator.py` to use `self.cfg.data` instead of `self.cfg.data.datasets` (config flattening structure).
   - **Fixed `ImportError`**: Patch `ocr/data/datasets/transforms.py` to import geometry utils from `ocr.domains.detection.utils.geometry` (missing core utility).
-  - **Verified**: Training pipeline `det_resnet50_v1` runs successfully (Model created -> Datasets created -> module created).
+  - **Fixed `collate_fn` Config Error**: Patch `ocr/data/lightning_data.py` to correctly resolve `collate_fn` from either the root or `data` namespace (Hydra V5 flattening support).
+  - **Fixed `DBCollateFN` Import Error**: Updated `ocr/data/datasets/__init__.py` to correctly alias `DBCollateFN` and `CraftCollateFN` to their new locations in `ocr/domains/detection/data/`.
+  - **Fixed `Optimizer` Config Error**: Updated `detection.yaml` defaults and `OCRPLModule.configure_optimizers` to support V5 `train.optimizer` config.
+  - **Optimized Model Architectures**:
+    - **Refactored `ocr/core/models/__init__.py`**: Added V5.0 `_target_` support for architecture factories.
+    - **Refactored `PARSeq`**: Migrated `PARSeq` components in `ocr/domains/recognition` to use relative local imports, removing dependencies on legacy `ocr.features`.
+    - **Fixed `_target_` Bug**: Patched `OCRModel` to strip `_target_` from component configs to preventing `TypeError` during registry initialization.
+  - **Verified**: Training pipeline `det_resnet50_v1` runs successfully. `verify_model.py` confirms `PARSeq` initializes correctly with new factory logic.
 
 **Architecture**: Bridges V5.0 "Domains First" Hydra configs to existing factories
 - **Key Features**:
@@ -54,7 +61,7 @@ orchestrator.run()
 ## Immediate Next Steps (New Session)
 
 1. **Training Verification**:
-   - Run detection training smoke test (PASSED 2026-01-19)
+   - Run detection training smoke test (PASSED 2026-01-20)
    - Run recognition training smoke test
    - Verify no regression
 
@@ -69,4 +76,23 @@ orchestrator.run()
 - `ocr/domains/recognition/module.py` (Existing - RecognitionPLModule)
 - `runners/train.py` (Entry point - already uses Orchestrator)
 - `ocr/data/datasets/transforms.py` (Fixed dependencies)
+- `ocr/data/lightning_data.py` (Fixed config resolution)
+- `ocr/core/lightning/base.py` (Fixed optimizer config)
+- `configs/domain/detection.yaml` (Added defaults)
 
+
+## Continuation Prompt
+**Context**: Phase 4 Refactor (Resumed). Fixed `DBCollateFN` import error. Detection training smoke test PASSED.
+**Next Objective**: "Optimize Model Architectures" (Phase 4 Refinement).
+**Action**:
+1. Review `ocr/core/models/__init__.py` for hardcoded `parseq` logic and refactor to use strict Hydra instantiation if possible.
+2. Verify `ocr/domains/recognition/models/architecture.py` alignment with "Atomic Architecture".
+3. Update specific documentation as noted in "Immediate Next Steps".
+
+## Continuation Prompt (Architecture Optimization)
+**Context**: "Optimize Model Architectures" complete for Recognition domain.
+**Next Objective**: "Update Documentation".
+**Action**:
+1. Run `adt meta-query --kind imports --target ocr/features` to find any remaining legacy references.
+2. Update `docs` directory to reflect new domain structure.
+3. Finalize `roadmap/ocr-domain-refactor.yml` moving Phase 4 to completed.

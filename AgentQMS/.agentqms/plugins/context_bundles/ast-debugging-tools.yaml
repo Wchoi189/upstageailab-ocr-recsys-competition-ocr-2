@@ -1,0 +1,361 @@
+# AST Debugging Tools Context Bundle Plugin
+
+name: ast-debugging-tools
+title: AST Analysis & Code Intelligence Tools
+ads_version: "1.0"
+scope: project
+description: |
+  Advanced code analysis tools using AST parsing, static analysis, and intelligent
+  search. These tools are MORE POWERFUL than basic grep/find but often underutilized
+  by AI agents. Auto-suggest when analyzing config patterns, Hydra usage, dependencies,
+  or navigating unfamiliar code.
+
+tags:
+  - ast
+  - debugging
+  - code analysis
+  - hydra
+  - config
+  - static analysis
+  - dependency graph
+  - code intelligence
+
+triggers:
+  keywords:
+    # Config analysis
+    - config usage
+    - find config
+    - cfg.
+    - config['
+    - config access
+    - config patterns
+    - where is config used
+
+    # Hydra analysis
+    - hydra usage
+    - instantiate
+    - '@hydra.main'
+    - hydra decorator
+    - omegaconf
+    - merge order
+    - config merge
+    - merge precedence
+
+    # Code navigation
+    - find class
+    - find function
+    - where is defined
+    - locate symbol
+    - find implementation
+    - symbol search
+    - code search
+
+    # Dependency analysis
+    - import graph
+    - dependency graph
+    - what imports
+    - what calls
+    - dependency tree
+
+    # Code structure
+    - code complexity
+    - cyclomatic complexity
+    - directory structure
+    - module overview
+    - context tree
+    - semantic tree
+
+    # Component patterns
+    - factory pattern
+    - component instantiation
+    - get_X_by_cfg
+    - instantiate_
+
+  patterns:
+    - "find.*config"
+    - "hydra.*usage"
+    - "where.*defined"
+    - "dependency.*graph"
+    - "code.*complexity"
+    - "analyze.*imports"
+    - "search.*symbol"
+    - "module.*structure"
+
+# ============================================================================
+# WHEN TO USE AST TOOLS (AUTO-SUGGEST SCENARIOS)
+# ============================================================================
+
+auto_suggest_scenarios:
+  config_usage_analysis:
+    trigger: "User asks 'where is X config used' or 'find cfg.model'"
+    tool: config_access
+    why: "Grep can't distinguish cfg.model.encoder from cfg.model - AST parsing gives precise matches"
+    example: "mcp_unified_proje_adt_meta_query kind=config_access target=ocr/"
+
+  hydra_pattern_discovery:
+    trigger: "User asks 'find all @hydra.main' or 'where is instantiate used'"
+    tool: hydra_usage
+    why: "AST finds decorators and function calls that regex would miss"
+    example: "mcp_unified_proje_adt_meta_query kind=hydra_usage target=ocr/"
+
+  merge_debugging:
+    trigger: "User debugging config merge issues or asks 'what order do configs merge'"
+    tool: merge_order
+    why: "Traces OmegaConf.merge() calls to understand precedence"
+    example: "mcp_unified_proje_adt_meta_query kind=merge_order target=ocr/core/lightning/lightning_module.py"
+
+  symbol_location:
+    trigger: "User asks 'where is TimmBackbone defined' or 'find PARSeq class'"
+    tool: symbol_search
+    why: "Handles fuzzy matching, qualified paths, and reverse lookups"
+    example: "mcp_unified_proje_adt_meta_query kind=symbol_search target=TimmBackbone"
+
+  dependency_understanding:
+    trigger: "User asks 'what imports X' or 'dependency graph for module'"
+    tool: dependency_graph
+    why: "Builds call/import graph that grep can't construct"
+    example: "mcp_unified_proje_adt_meta_query kind=dependency_graph target=ocr/domains/detection"
+
+  code_navigation:
+    trigger: "User exploring unfamiliar directory or asks 'what's in ocr/domains'"
+    tool: context_tree
+    why: "Semantic tree with docstrings > plain ls/tree"
+    example: "mcp_unified_proje_adt_meta_query kind=context_tree target=ocr/domains options={depth:2}"
+
+  component_discovery:
+    trigger: "User asks 'how are encoders instantiated' or 'find factory patterns'"
+    tool: component_instantiations
+    why: "Finds get_X_by_cfg patterns that grep would miss"
+    example: "mcp_unified_proje_adt_meta_query kind=component_instantiations target=ocr/ options={component:encoder}"
+
+# ============================================================================
+# TOOL COMPARISON (Why AST > Basic Tools)
+# ============================================================================
+
+ast_vs_basic_tools:
+  finding_config_usage:
+    basic_tool: "grep -r 'cfg\\.' ocr/"
+    problem: "False positives (comments, strings), can't distinguish cfg.model vs cfg.model.encoder"
+    ast_tool: "config_access"
+    advantage: "Parse actual code, understand structure, give exact line numbers with context"
+
+  finding_hydra_decorators:
+    basic_tool: "grep '@hydra' ocr/"
+    problem: "Misses imports, can't find instantiate() calls, no context"
+    ast_tool: "hydra_usage"
+    advantage: "Finds decorators, instantiate(), compose(), with full context"
+
+  locating_symbols:
+    basic_tool: "grep -r 'class TimmBackbone' ocr/"
+    problem: "Typos fail, can't resolve qualified paths, no reverse lookup"
+    ast_tool: "symbol_search"
+    advantage: "Fuzzy matching, qualified path resolution, finds all import paths"
+
+  understanding_dependencies:
+    basic_tool: "grep 'import' file.py"
+    problem: "Just shows imports, can't build graph, no call analysis"
+    ast_tool: "dependency_graph"
+    advantage: "Builds visual graph, shows who imports what, call chains"
+
+# ============================================================================
+# QUICK REFERENCE (Copy-Paste Ready)
+# ============================================================================
+
+tiers:
+  tier1:
+    name: Core AST Tools & Quick Reference
+    description: Essential tools and usage guide (ALWAYS LOAD for debugging)
+    max_files: 3
+    files:
+      - path: agent-debug-toolkit/AI_USAGE.yaml
+        priority: critical
+        description: Complete tool reference with examples (209 lines)
+      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+        priority: high
+        description: All available tools including AST commands
+      - path: agent-debug-toolkit/README.md
+        priority: medium
+        description: Installation and architecture overview
+
+  tier2:
+    name: MCP Tool Integration
+    description: How to call AST tools via MCP (mcp_unified_proje_adt_meta_query)
+    max_files: 2
+    files:
+      - path: AgentQMS/mcp_server.py
+        priority: high
+        description: MCP server implementation with adt_meta_query
+        optional: true
+      - path: agent-debug-toolkit/src/agent_debug_toolkit/mcp/
+        priority: medium
+        description: MCP integration code
+        optional: true
+
+  tier3:
+    name: Examples & Use Cases
+    description: Real-world usage patterns from artifacts
+    max_files: 3
+    files:
+      - path: docs/artifacts/
+        priority: low
+        description: Search for "adt " or "mcp_unified_proje" to find usage examples
+        optional: true
+
+# ============================================================================
+# TOOL CATALOG (Comprehensive)
+# ============================================================================
+
+tools:
+  config_access:
+    cli: "uv run adt analyze-config <path>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=config_access target=<path>"
+    purpose: "Find all cfg.X, config['X'] patterns"
+    use_when: ["debugging config usage", "finding where config keys are accessed", "config refactoring"]
+    output: "List of files with line numbers and context"
+
+  hydra_usage:
+    cli: "uv run adt find-hydra <path>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=hydra_usage target=<path>"
+    purpose: "Find @hydra.main, instantiate(), compose()"
+    use_when: ["finding hydra patterns", "understanding hydra architecture", "migration planning"]
+    output: "All Hydra usage locations with context"
+
+  merge_order:
+    cli: "uv run adt trace-merges <file>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=merge_order target=<file>"
+    purpose: "Debug OmegaConf.merge() precedence"
+    use_when: ["config override not working", "understanding merge order", "debugging config conflicts"]
+    output: "Merge call chain with precedence order"
+
+  component_instantiations:
+    cli: "uv run adt find-instantiations <path> --component <name>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=component_instantiations target=<path> options={component:<name>}"
+    purpose: "Track factory patterns (get_X_by_cfg)"
+    use_when: ["finding how components are created", "factory pattern analysis", "dependency injection patterns"]
+    output: "All factory calls with component types"
+
+  dependency_graph:
+    cli: "uv run adt analyze-dependencies <path>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=dependency_graph target=<path>"
+    purpose: "Build import/call dependency graph"
+    use_when: ["understanding module relationships", "refactoring planning", "circular dependency detection"]
+    output: "Visual dependency graph (GraphViz format)"
+
+  context_tree:
+    cli: "uv run adt context-tree <path> --depth <n>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=context_tree target=<path> options={depth:<n>}"
+    purpose: "Semantic directory tree with docstrings"
+    use_when: ["exploring unfamiliar code", "understanding module structure", "onboarding to codebase"]
+    output: "Annotated tree with classes/functions/docstrings"
+
+  symbol_search:
+    cli: "uv run adt intelligent-search <query> --fuzzy --threshold 0.7"
+    mcp: "mcp_unified_proje_adt_meta_query kind=symbol_search target=<query> options={fuzzy:true,threshold:0.7}"
+    purpose: "Find symbols with fuzzy matching"
+    use_when: ["finding class/function definitions", "resolving qualified paths", "typo-tolerant search"]
+    output: "Symbol locations with all import paths"
+
+  complexity:
+    cli: "uv run adt analyze-complexity <path> -t <threshold>"
+    mcp: "mcp_unified_proje_adt_meta_query kind=complexity target=<path> options={threshold:<n>}"
+    purpose: "Cyclomatic complexity analysis"
+    use_when: ["code quality review", "finding complex functions", "refactoring candidates"]
+    output: "Functions exceeding complexity threshold"
+
+# ============================================================================
+# ANTI-PATTERNS (When NOT to use AST tools)
+# ============================================================================
+
+when_not_to_use:
+  simple_file_search:
+    scenario: "Find all Python files"
+    use: "file_search or find"
+    not: "AST tools"
+
+  text_search:
+    scenario: "Search for string in comments/docs"
+    use: "grep_search"
+    not: "AST tools (they parse code, not text)"
+
+  file_content_reading:
+    scenario: "Read entire file"
+    use: "read_file"
+    not: "AST tools (overkill for simple reads)"
+
+  simple_symbol_grep:
+    scenario: "Quick check if symbol appears"
+    use: "grep_search"
+    not: "AST tools (use for precise analysis only)"
+
+# ============================================================================
+# DECISION TREE (What Tool When)
+# ============================================================================
+
+decision_tree:
+  user_asks_about_config:
+    question: "Is it about WHERE config is USED?"
+    yes: "Use config_access AST tool"
+    no: "Is it about config FILE structure?"
+    yes_nested: "Use read_file or hydra-v5-rules.yaml"
+    no_nested: "Use grep_search for text search"
+
+  user_asks_about_hydra:
+    question: "Is it about Hydra PATTERNS in code?"
+    yes: "Use hydra_usage AST tool"
+    no: "Is it about Hydra CONFIGURATION?"
+    yes_nested: "Use hydra-v5-rules.yaml context"
+
+  user_asks_where_is_X:
+    question: "Is X a class/function/symbol?"
+    yes: "Use symbol_search AST tool (handles typos)"
+    no: "Is X a file?"
+    yes_nested: "Use file_search"
+
+  user_exploring_code:
+    question: "First time in this directory?"
+    yes: "Use context_tree AST tool (semantic overview)"
+    no: "Looking for specific pattern?"
+    yes_nested: "Use appropriate AST tool from catalog"
+
+# ============================================================================
+# INTEGRATION NOTES
+# ============================================================================
+
+integration:
+  mcp_server:
+    tool_name: "mcp_unified_proje_adt_meta_query"
+    available_kinds: [config_access, merge_order, hydra_usage, component_instantiations, dependency_graph, context_tree, symbol_search, complexity]
+    syntax: "kind=<tool> target=<path> options={key:value,...}"
+
+  cli_fallback:
+    when: "MCP not available or direct CLI needed"
+    prefix: "uv run adt"
+    commands: "See tools section for full list"
+
+  companion_standards:
+    - AgentQMS/standards/tier2-framework/tool-catalog.yaml
+    - AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+    - agent-debug-toolkit/AI_USAGE.yaml
+
+# ============================================================================
+# SUCCESS METRICS
+# ============================================================================
+
+success_indicators:
+  agent_should:
+    - "Suggest AST tools when user asks about config/hydra patterns"
+    - "Use context_tree before exploring unfamiliar directories"
+    - "Prefer symbol_search over grep for finding definitions"
+    - "Use config_access instead of grep for cfg. patterns"
+    - "Mention AST tools exist when grep gives poor results"
+
+  agent_should_not:
+    - "Use AST tools for simple text search"
+    - "Use AST tools for reading file content"
+    - "Overcomplicate simple grep tasks"
+
+notes:
+  created: "2026-01-20"
+  motivation: "AI agents underutilize powerful AST tools due to unfamiliarity with CLI commands and use cases"
+  goal: "Auto-suggest AST tools in appropriate scenarios without explicit user instruction"
+  documentation_source: "agent-debug-toolkit/AI_USAGE.yaml"

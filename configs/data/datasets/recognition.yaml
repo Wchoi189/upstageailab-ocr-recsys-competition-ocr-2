@@ -24,19 +24,18 @@ _dataset_template: &dataset_template
   transform: ${data.transforms}
   config: null  # Suppress inherited 'config' key from base.yaml merge
 
-# Explicit dataset definitions for factory (at root/datasets)
-datasets:
-  train_dataset:
-    <<: *dataset_template
+# Dataset definitions at root level (expected by factory)
+train_dataset:
+  <<: *dataset_template
 
-  val_dataset:
-    <<: *dataset_template
+val_dataset:
+  <<: *dataset_template
 
-  test_dataset:
-    <<: *dataset_template
+test_dataset:
+  <<: *dataset_template
 
-  predict_dataset:
-    <<: *dataset_template
+predict_dataset:
+  <<: *dataset_template
 
 # Collate (at root)
 collate_fn:

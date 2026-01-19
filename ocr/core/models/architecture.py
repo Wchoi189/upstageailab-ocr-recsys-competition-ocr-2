@@ -304,11 +304,14 @@ class OCRModel(nn.Module):
                 params = section.get("params")
                 if params is None:
                     # If no 'params' key, assume everything else is params
-                    params = {k: v for k, v in section.items() if k != "name"}
+                    params = {k: v for k, v in section.items() if k not in ("name", "_target_")}
 
                 out[f"{name}_config"] = ensure_dict(params)
             else:
                 # Flat config, assume it's just params for the default component
-                out[f"{name}_config"] = section
+                params = ensure_dict(section)
+                if "_target_" in params:
+                    params = {k: v for k, v in params.items() if k != "_target_"}
+                out[f"{name}_config"] = params
 
         return out

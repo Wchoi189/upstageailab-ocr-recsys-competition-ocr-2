@@ -1,3 +1,13 @@
+---
+category: architecture
+status: active
+type: implementation_plan
+date: 2024-10-18 10:00 (KST)
+title: OCR Proposed Directory Tree Structure (Comprehensive)
+version: 1.0.0
+ads_version: "1.0"
+---
+
 # OCR Proposed Directory Tree Structure (Comprehensive)
 
 > [!IMPORTANT]

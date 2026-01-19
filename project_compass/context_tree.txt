@@ -1,0 +1,61 @@
+# Context Tree: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/configs
+
+📁 **/workspaces/upstageailab-ocr-recsys-competition-ocr-2/configs/** - *⚙️ Config*
+  📁 **data/** - *📊 Data*
+    📁 **datasets/** - *📊 Data*
+      📄 `canonical.yaml`
+      📄 `craft.yaml`
+      📄 `recognition.yaml`
+    📁 **runtime/**
+      📁 **performance/**
+    📁 **transforms/**
+      📄 `background_removal.yaml`
+      📄 `base.yaml`
+      📄 `document_geometry.yaml`
+      📄 `image_enhancement.yaml`
+      📄 `recognition.yaml`
+      📄 `with_background_removal.yaml`
+    📄 `default.yaml`
+  📁 **domain/**
+    📄 `detection.yaml`
+    📄 `kie.yaml`
+    📄 `layout.yaml`
+    📄 `recognition.yaml`
+  📁 **experiment/**
+    📄 `det_resnet50_v1.yaml`
+    📄 `rec_baseline_v1.yaml`
+  📁 **global/**
+    📄 `default.yaml`
+    📄 `paths.yaml`
+  📁 **hardware/**
+    📄 `rtx3060.yaml`
+  📁 **model/** - *🤖 Models*
+    📁 **architectures/**
+      📄 `craft.yaml`
+      📄 `dbnet_atomic.yaml`
+      📄 `dbnetpp.yaml`
+      📄 `parseq.yaml`
+  📁 **train/**
+    📁 **callbacks/**
+      📄 `default.yaml`
+      📄 `early_stopping.yaml`
+      📄 `metadata.yaml`
+      📄 `model_checkpoint.yaml`
+      📄 `model_summary.yaml`
+      📄 `performance_profiler.yaml`
+      📄 `recognition_wandb.yaml`
+      📄 `rich_progress_bar.yaml`
+      📄 `wandb_completion.yaml`
+      📄 `wandb_image_logging.yaml`
+    📁 **logger/**
+      📄 `default.yaml`
+      📄 `wandb.yaml`
+    📁 **optimizer/**
+      📄 `adam.yaml`
+      📄 `adamw.yaml`
+    📁 **scheduler/**
+      📄 `cosine.yaml`
+  📄 `README.md`
+  📄 `main.yaml`
+
+**Summary**: 17 directories, 40 files

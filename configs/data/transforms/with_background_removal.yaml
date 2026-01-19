@@ -20,7 +20,7 @@ transforms:
         p: 1.0  # Apply to all training images
       - _target_: albumentations.LongestMaxSize
         max_size: 640
-        interpolation: ${default_interpolation}
+        interpolation: ${global.default_interpolation}
         p: 1.0
       - _target_: albumentations.PadIfNeeded
         min_width: 640
@@ -47,7 +47,7 @@ transforms:
         p: 1.0
       - _target_: albumentations.LongestMaxSize
         max_size: 640
-        interpolation: ${default_interpolation}
+        interpolation: ${global.default_interpolation}
         p: 1.0
       - _target_: albumentations.PadIfNeeded
         min_width: 640
@@ -72,7 +72,7 @@ transforms:
         p: 1.0
       - _target_: albumentations.LongestMaxSize
         max_size: 640
-        interpolation: ${default_interpolation}
+        interpolation: ${global.default_interpolation}
         p: 1.0
       - _target_: albumentations.PadIfNeeded
         min_width: 640

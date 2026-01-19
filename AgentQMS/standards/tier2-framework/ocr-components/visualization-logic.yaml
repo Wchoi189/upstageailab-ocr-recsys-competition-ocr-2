@@ -3,6 +3,9 @@ type: specification
 agent: all
 tier: 2
 priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+last_updated: '2026-01-20'
 
 component: visualization_logic
 description: Draws detected bounding boxes and class labels onto the image.

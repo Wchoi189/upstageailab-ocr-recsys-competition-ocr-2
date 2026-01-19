@@ -31,9 +31,7 @@ task_mappings:
     priority: 2
     standards:
     - AgentQMS/standards/tier2-framework/configuration-standards.yaml
-    - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
-    - AgentQMS/standards/tier2-framework/hydra-v5-patterns.yaml
-    - AgentQMS/standards/tier2-framework/hydra-v5-core-rules.yaml
+    - AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
     triggers:
       keywords:
       - config
@@ -102,6 +100,41 @@ task_mappings:
       patterns:
       - \bpydantic\b
       - \bBaseModel\b
+  code_analysis:
+    description: Code analysis, debugging, finding patterns with AST tools
+    priority: 2
+    standards:
+    - AgentQMS/standards/tier2-framework/tool-catalog.yaml
+    context_bundles:
+    - ast-debugging-tools
+    triggers:
+      keywords:
+      - find config
+      - config usage
+      - hydra usage
+      - where is used
+      - find class
+      - find function
+      - symbol search
+      - dependency graph
+      - import graph
+      - code complexity
+      - context tree
+      - module structure
+      - factory pattern
+      - component instantiation
+      - merge order
+      - merge precedence
+      - cfg.
+      - config['
+      - instantiate
+      - ast analysis
+      patterns:
+      - \bfind\b.*\b(config|hydra|class|function|symbol)\b
+      - \bwhere.*\b(is|used|defined)\b
+      - \b(dependency|import).*\bgraph\b
+      - \bcode.*\b(complexity|structure|analysis)\b
+      - \bast\b.*\b(analysis|tool)\b
   inference_pipeline:
     description: OCR inference pipeline work
     priority: 2

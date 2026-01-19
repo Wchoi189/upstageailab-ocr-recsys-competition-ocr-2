@@ -186,3 +186,8 @@ AgentQMS/.agentqms/state/
 .agentqms/state/
 .agentqms/effective.yaml
 !archive/__TEMP__
+# Project Compass large analysis files
+project_compass/dependency_graph.txt
+project_compass/config_access.txt
+project_compass/context_tree.txt
+project_compass/config_deps.txt

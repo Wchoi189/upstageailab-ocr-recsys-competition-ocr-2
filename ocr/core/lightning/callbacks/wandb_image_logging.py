@@ -12,7 +12,7 @@ from ocr.core.lightning.processors.image_processor import ImageProcessor
 from ocr.core.utils.config_utils import is_config
 from ocr.core.utils.geometry_utils import apply_padding_offset_to_polygons, compute_padding_offsets
 from ocr.core.utils.orientation import normalize_pil_image, remap_polygons
-from ocr.core.utils.polygon_utils import ensure_polygon_array
+from ocr.domains.detection.utils.polygons import ensure_polygon_array
 from ocr.domains.detection.callbacks.wandb import log_validation_images
 
 
@@ -232,7 +232,7 @@ class WandbImageLoggingCallback(pl.Callback):
     @staticmethod
     def _postprocess_polygons(polygons: Sequence[np.ndarray] | None, image_size: tuple[int, int]) -> list[np.ndarray]:
         """Filter degenerate polygons using shared validators from polygon_utils."""
-        from ocr.core.utils.polygon_utils import has_duplicate_consecutive_points
+        from ocr.domains.detection.utils.polygons import has_duplicate_consecutive_points
 
         if not polygons:
             return []

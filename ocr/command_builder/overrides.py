@@ -3,6 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ocr.core.utils.config import ConfigParser
+from ocr.core.utils.config_utils import is_config
 
 
 def build_additional_overrides(values: dict[str, Any], config_parser: ConfigParser | None = None) -> list[str]:
@@ -15,7 +16,7 @@ def build_additional_overrides(values: dict[str, Any], config_parser: ConfigPars
     if isinstance(profile_key, str) and profile_key and profile_key != "none":
         profiles = cp.get_preprocessing_profiles()
         profile = profiles.get(profile_key)
-        if isinstance(profile, dict):
+        if is_config(profile):
             overrides.extend(profile.get("overrides", []))
 
     return overrides

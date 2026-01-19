@@ -1,8 +1,9 @@
 import torch
+from omegaconf import DictConfig
 from ocr.core.models.architecture import OCRModel
 from ocr.core import registry
-from ocr.features.recognition.models.decoder import PARSeqDecoder
-from ocr.features.recognition.models.head import PARSeqHead
+from .decoder import PARSeqDecoder
+from .head import PARSeqHead
 from ocr.core.models.encoder.timm_backbone import TimmBackbone
 from ocr.core.models.loss.cross_entropy_loss import CrossEntropyLoss
 
@@ -32,8 +33,40 @@ class PARSeq(OCRModel):
     This class orchestrates the Encoder (ViT/ResNet), Decoder (Transformer), and Head.
     It currently supports standard Autoregressive (AR) training.
     """
-    def __init__(self, cfg):
+    def __init__(
+        self,
+        cfg=None,
+        encoder=None,
+        decoder=None,
+        head=None,
+        loss=None,
+        **kwargs
+    ):
+        # Handle Atomic Instantiation where 'cfg' might be missing or minimal
+        if cfg is None:
+            # Create a DictConfig from kwargs if needed, or empty
+            # We ensure "architectures" key exists to avoid OCRModel registry lookup if components are passed
+            cfg_dict = kwargs.copy()
+            if encoder is not None:
+                # Mark as 'atomic' in a way OCRModel respects?
+                # Actually, OCRModel checks self.architecture_name.
+                pass
+            cfg = DictConfig(cfg_dict)
+
+        if encoder:
+            # Atomic Mode: Bypass OCRModel.__init__ component loading
+            # We must manually call nn.Module's init
+            super(OCRModel, self).__init__()
+            self.cfg = cfg
+            self.encoder = encoder
+            self.decoder = decoder
+            self.head = head
+            self.loss = loss
+            return
+
+        # Legacy Mode: Rely on OCRModel to load from config
         super().__init__(cfg)
+
         self.image_size = cfg.get("image_size", [32, 128]) # H, W
 
     def forward(self, images, return_loss=True, **kwargs):

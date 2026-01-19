@@ -1,47 +1,36 @@
 # @package _group_
-# v5.0 | Purpose: Master Controller for Text Recognition (PARSeq)
-# Validated: 2026-01-18 | Deps: model/presets/parseq, data/recognition
+# v5.0 | Purpose: Recognition Domain Controller
 # ============================================================================
-# DOMAIN CONTROLLER TEMPLATE - Recognition Example
-# ============================================================================
-# Purpose: Serve as the master logic switch for a specific domain
-# Location: configs/domain/recognition.yaml
-#
-# This file demonstrates the "Domain Controller" pattern that enforces
-# strict domain isolation and prevents configuration leakage.
+# Domain controllers orchestrate components via defaults ONLY.
+# Inline overrides go to _group_ namespace and don't merge with loaded configs.
 # ============================================================================
 
 defaults:
-  # Component selections for this domain
   - /global/default
   - /global/paths
-  # This alias forces parseq.yaml into 'model.architectures'
   - /model/architectures/parseq
+  - /model/constants/recognition
   - /data/datasets: recognition
   - _self_
 
-# Rule: _self_ at bottom ensures domain overrides take precedence
-
-# Absolute Root Anchoring for Model Constants
-model:
-  vocab_size: 1000
-  # References a key inside the aliased architecture file
-  max_len: ${model.architectures.max_len}
-
-  # Optional: training configuration
+# Domain-specific keys (go to _group_ namespace, read by orchestrator)
+task: recognition
 
 # ============================================================================
-# CRITICAL: Domain Isolation - Nullify Other Domains
+# Recognition-Specific Configuration
 # ============================================================================
-# These explicit nullifications prevent "ghost variables" that cause:
-# - CUDA segfaults
-# - Unexpected behavior
-# - AI agent confusion
-#
-# Rule: If a key belongs to another domain, it MUST be set to null here.
-# ============================================================================
+recognition:
+  max_label_length: 25
+  charset: korean
+  case_sensitive: false
+  decode_mode: greedy
+  beam_width: 5
+  use_eos_token: true
+  use_pad_token: true
 
-# Nullify Detection Domain
+# ============================================================================
+# Domain Isolation - Nullify Other Domains
+# ============================================================================
 detection: null
 max_polygons: null
 shrink_ratio: null
@@ -50,49 +39,8 @@ thresh_max: null
 box_thresh: null
 unclip_ratio: null
 
-# Nullify KIE Domain
 kie: null
 max_entities: null
 relation_types: null
 entity_categories: null
 linking_mode: null
-
-# ============================================================================
-# Recognition-Specific Configuration
-# ============================================================================
-
-recognition:
-  # Character recognition settings
-  max_label_length: 25
-  charset: korean
-  case_sensitive: false
-
-  # Decoding strategy
-  decode_mode: greedy  # Options: greedy, beam_search
-  beam_width: 5        # Only used if decode_mode=beam_search
-
-  # Special tokens
-  use_eos_token: true
-  use_pad_token: true
-
-# ============================================================================
-# Domain Metadata (Optional but Recommended)
-# ============================================================================
-
-domain_info:
-  name: recognition
-  description: "Korean text recognition using PARSeq architecture"
-  version: "2.0"
-
-  # Validation rules for runtime checks
-  required_keys:
-    - recognition.max_label_length
-    - recognition.charset
-
-  forbidden_keys:
-    - max_polygons
-    - max_entities
-
-# ============================================================================
-# Adaptation Guide for Other Domains
-# ============================================================================

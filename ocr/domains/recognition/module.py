@@ -28,14 +28,16 @@ class RecognitionPLModule(OCRPLModule):
         self.rec_cer = CharErrorRate()
 
     def training_step(self, batch, batch_idx):
-        """Recognition-specific training step with tensor validation."""
+        """Recognition-specific training step with optional tensor validation."""
         pred = self.model(**batch)
 
-        # Validate model outputs (BUG-20251112-001/013 prevention)
-        try:
-            ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
-        except ValidationError as exc:
-            raise ValueError(f"Training step model output validation failed at step {batch_idx}: {exc}") from exc
+        # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
+        # NOTE: Pydantic validation causes GPU sync - disabled by default for performance
+        if getattr(getattr(self.config, "global", None), "debug", False):
+            try:
+                ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
+            except ValidationError as exc:
+                raise ValueError(f"Training step model output validation failed at step {batch_idx}: {exc}") from exc
 
         self.log("train/loss", pred["loss"], batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():
@@ -49,11 +51,12 @@ class RecognitionPLModule(OCRPLModule):
         """
         pred = self.model(**batch)
 
-        # Validate model outputs (BUG-20251112-001/013 prevention)
-        try:
-            ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
-        except ValidationError as exc:
-            raise ValueError(f"Validation step model output validation failed at step {batch_idx}: {exc}") from exc
+        # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
+        if getattr(getattr(self.config, "global", None), "debug", False):
+            try:
+                ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
+            except ValidationError as exc:
+                raise ValueError(f"Validation step model output validation failed at step {batch_idx}: {exc}") from exc
 
         self.log("val_loss", pred["loss"], batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():

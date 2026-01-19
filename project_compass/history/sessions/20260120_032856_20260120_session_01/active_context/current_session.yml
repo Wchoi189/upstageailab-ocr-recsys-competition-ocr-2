@@ -1,0 +1,18 @@
+# ACTIVE SESSION CONTEXT
+# MANDATORY: Verify env_lock before execution.
+# AUTO-GENERATED: Do not edit manually. Use CLI/wizard to update.
+# SCHEMA: ../.config/schemas/session.schema.json
+session_id: 20260120_session_01
+objective:
+  primary_goal: Debug Hydra configuration interpolation error and Resume Phase 4 Refactoring
+  active_pipeline: text_recognition
+  success_criteria: ''
+env_lock:
+  uv_path: /opt/uv/bin/uv
+  python_version: 3.11.14
+  is_gpu_required: true
+  verified_at: 2026-01-20 02:42 (KST)
+status: completed
+completed_date: 2026-01-20
+active_blockers: []
+working_references: {}

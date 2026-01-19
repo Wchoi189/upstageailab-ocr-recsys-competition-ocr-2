@@ -20,6 +20,8 @@ from typing import Any
 
 import yaml
 
+from ocr.core.utils.config_utils import is_config
+
 from ocr.core.utils.path_utils import get_path_resolver
 
 
@@ -196,7 +198,7 @@ class ConfigParser:
                 name = yaml_file.stem
                 ui_metadata = payload.get("ui_metadata", payload)
                 learning_rate_meta = ui_metadata.get("learning_rate", {})
-                if isinstance(learning_rate_meta, dict):
+                if is_config(learning_rate_meta):
                     learning_rate_meta.setdefault("min", None)
                     learning_rate_meta.setdefault("max", None)
                     learning_rate_meta.setdefault("default", None)
@@ -224,9 +226,9 @@ class ConfigParser:
             except yaml.YAMLError:
                 payload = {}
             profiles = payload.get("profiles", {})
-            if isinstance(profiles, dict):
+            if is_config(profiles):
                 for key, info in profiles.items():
-                    if not isinstance(info, dict):
+                    if not is_config(info):
                         info = {}
                     metadata[key] = {
                         "label": info.get("label", key.replace("_", " ").title()),

@@ -49,7 +49,7 @@ config_system:
     training: configs/training/
     extended: configs/__EXTENDED__/
     legacy: configs/__LEGACY__/
-  documentation: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+  documentation: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
   domain_switching:
     enabled: true
     domains:

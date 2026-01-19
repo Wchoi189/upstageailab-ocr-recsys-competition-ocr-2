@@ -1,0 +1,46 @@
+================================================================================
+Configuration Standards Compliance Audit
+Module: ocr/
+Standard: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+================================================================================
+
+📊 Summary:
+  Total Violations: 10
+  Critical Rules Violated: 2
+
+🚨 Rule: no-isinstance-dict (8 violations)
+
+  📄 ocr/command_builder/overrides.py (1 violations)
+     Line 19: if isinstance(profile, dict):
+            overrides.extend(profile.get("overrides", []))
+     💡 Fix: Use is_config() from ocr.core.utils.config_utils
+
+  📄 ocr/core/utils/config_utils.py (1 violations)
+     Line 35: if isinstance(cfg, dict):
+        return {k: ensure_dict(v, resolve) for k, v in cfg.items()}
+    if
+     💡 Fix: Use is_config() from ocr.core.utils.config_utils
+
+  📄 ocr/data/lightning_data.py (6 violations)
+     Line 31: # Last resort: try dictionary key access if it's a dict
+             if isinstance(self.config, dict
+     💡 Fix: Use is_config() from ocr.core.utils.config_utils
+
+     Line 31: # Last resort: try dictionary key access if it's a dict
+             if isinstance(self.config, dict
+     💡 Fix: Use is_config() from ocr.core.utils.config_utils
+
+     Line 32: if isinstance(self.config, dict) or OmegaConf.is_dict(self.config):
+                 self.collate_cf
+     💡 Fix: Use is_config() from ocr.core.utils.config_utils
+
+
+🚨 Rule: use-ensure-dict (2 violations)
+
+  📄 ocr/data/datasets/__init__.py (2 violations)
+     Line 57: predict_config = OmegaConf.create(OmegaConf.to_container(datasets_config.predict_dataset, resolve=Tr
+     💡 Fix: Use ensure_dict() from ocr.core.utils.config_utils
+
+     Line 57: predict_config = OmegaConf.create(OmegaConf.to_container(datasets_config.predict_dataset, resolve=Tr
+     💡 Fix: Use ensure_dict() from ocr.core.utils.config_utils
+

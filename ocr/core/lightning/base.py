@@ -126,17 +126,7 @@ class OCRPLModule(pl.LightningModule):
         """
         pass
 
-    def on_train_epoch_start(self) -> None:
-        """Reset collate function logging at epoch start."""
-        import ocr.data.datasets.db_collate_fn
 
-        ocr.data.datasets.db_collate_fn._db_collate_logged_stats = False
-
-    def on_validation_epoch_start(self) -> None:
-        """Reset collate function logging at validation epoch start."""
-        import ocr.data.datasets.db_collate_fn
-
-        ocr.data.datasets.db_collate_fn._db_collate_logged_stats = False
 
     def on_save_checkpoint(self, checkpoint):
         """Save additional metrics in the checkpoint."""
@@ -147,7 +137,18 @@ class OCRPLModule(pl.LightningModule):
         CheckpointHandler.on_load_checkpoint(self, checkpoint)
 
     def configure_optimizers(self):
-        """Configure optimizers and learning rate schedulers."""
+        """Configure optimizers and learning rate schedulers.
+
+        V5 Update: Prioritizes Hydra 'train.optimizer' config.
+        Legacy: Falls back to 'model.get_optimizers()'.
+        """
+        # V5 Standard: Optimizer configured in 'train/optimizer'
+        if hasattr(self.config, "train") and hasattr(self.config.train, "optimizer"):
+            # Instantiate optimizer (partial config needs params)
+           optimizer = instantiate(self.config.train.optimizer, params=self.model.parameters())
+           return optimizer
+
+        # Legacy Support: Optimizer embedded in model config
         optimizers, schedulers = self.model.get_optimizers()
         optimizer_list = optimizers if isinstance(optimizers, list) else [optimizers]
 

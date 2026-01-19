@@ -1,0 +1,5 @@
+# @package model
+# v5.0 | Purpose: Recognition Model Constants
+# Data-dependent constants injected by domain controller
+
+vocab_size: 1000

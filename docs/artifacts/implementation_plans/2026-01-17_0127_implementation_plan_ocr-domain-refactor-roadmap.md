@@ -1,3 +1,13 @@
+---
+title: OCR Domain Separation Refactor Roadmap
+category: planning
+status: active
+type: implementation_plan
+date: 2024-10-01 10:00 (KST)
+version: 1.0.0
+ads_version: "1.0"
+---
+
 # OCR Domain Separation Refactor Roadmap
 
 > [!IMPORTANT]

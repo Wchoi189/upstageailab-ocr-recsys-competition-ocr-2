@@ -3,16 +3,16 @@
 # Use lazy imports to avoid circular dependencies
 def __getattr__(name):
     if name == "PARSeq":
-        from ocr.features.recognition.models.architecture import PARSeq
+        from .architecture import PARSeq
         return PARSeq
     elif name == "register_parseq_components":
-        from ocr.features.recognition.models.architecture import register_parseq_components
+        from .architecture import register_parseq_components
         return register_parseq_components
     elif name == "PARSeqDecoder":
-        from ocr.features.recognition.models.decoder import PARSeqDecoder
+        from .decoder import PARSeqDecoder
         return PARSeqDecoder
     elif name == "PARSeqHead":
-        from ocr.features.recognition.models.head import PARSeqHead
+        from .head import PARSeqHead
         return PARSeqHead
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 

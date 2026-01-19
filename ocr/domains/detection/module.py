@@ -68,26 +68,28 @@ class DetectionPLModule(OCRPLModule):
         return self._test_evaluator
 
     def training_step(self, batch, batch_idx):
-        """Detection-specific training step with tensor validation."""
+        """Detection-specific training step with optional tensor validation."""
         pred = self.model(**batch)
 
-        # Validate model outputs (BUG-20251112-001/013 prevention)
-        try:
-            ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
+        # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
+        # NOTE: Pydantic validation causes GPU sync - disabled by default for performance
+        if getattr(getattr(self.config, "global", None), "debug", False):
+            try:
+                ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
 
-            if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
-                ValidatedTensorData(
-                    tensor=pred["prob_maps"],
-                    expected_device=batch["images"].device,
-                    value_range=(0.0, 1.0),
-                    allow_nan=False,
-                    allow_inf=False,
-                )
+                if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
+                    ValidatedTensorData(
+                        tensor=pred["prob_maps"],
+                        expected_device=batch["images"].device,
+                        value_range=(0.0, 1.0),
+                        allow_nan=False,
+                        allow_inf=False,
+                    )
 
-            if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
-                ValidatedTensorData(tensor=pred["thresh_maps"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
-        except ValidationError as exc:
-            raise ValueError(f"Training step model output validation failed at step {batch_idx}: {exc}") from exc
+                if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
+                    ValidatedTensorData(tensor=pred["thresh_maps"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
+            except ValidationError as exc:
+                raise ValueError(f"Training step model output validation failed at step {batch_idx}: {exc}") from exc
 
         self.log("train/loss", pred["loss"], batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():
@@ -99,31 +101,33 @@ class DetectionPLModule(OCRPLModule):
 
         Extracts polygons from probability/threshold maps and computes detection metrics.
         """
-        # Validate input batch against detection data contract
-        try:
-            CollateOutput(**batch)
-        except Exception as e:
-            raise ValueError(f"Batch validation failed: {e}") from e
+        # Validate input batch only in debug mode (performance optimization)
+        if getattr(getattr(self.config, "global", None), "debug", False):
+            try:
+                CollateOutput(**batch)
+            except Exception as e:
+                raise ValueError(f"Batch validation failed: {e}") from e
 
         pred = self.model(**batch)
 
-        # Validate model outputs (BUG-20251112-001/013 prevention)
-        try:
-            ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
+        # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
+        if getattr(getattr(self.config, "global", None), "debug", False):
+            try:
+                ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
 
-            if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
-                ValidatedTensorData(
-                    tensor=pred["prob_maps"],
-                    expected_device=batch["images"].device,
-                    value_range=(0.0, 1.0),
-                    allow_nan=False,
-                    allow_inf=False,
-                )
+                if "prob_maps" in pred and isinstance(pred["prob_maps"], torch.Tensor):
+                    ValidatedTensorData(
+                        tensor=pred["prob_maps"],
+                        expected_device=batch["images"].device,
+                        value_range=(0.0, 1.0),
+                        allow_nan=False,
+                        allow_inf=False,
+                    )
 
-            if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
-                ValidatedTensorData(tensor=pred["thresh_maps"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
-        except ValidationError as exc:
-            raise ValueError(f"Validation step model output validation failed at step {batch_idx}: {exc}") from exc
+                if "thresh_maps" in pred and isinstance(pred["thresh_maps"], torch.Tensor):
+                    ValidatedTensorData(tensor=pred["thresh_maps"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
+            except ValidationError as exc:
+                raise ValueError(f"Validation step model output validation failed at step {batch_idx}: {exc}") from exc
 
         self.log("val_loss", pred["loss"], batch_size=batch["images"].shape[0])
         for key, value in pred["loss_dict"].items():
@@ -154,14 +158,22 @@ class DetectionPLModule(OCRPLModule):
 
     def on_validation_epoch_start(self) -> None:
         """Reset validation outputs and wandb logger at epoch start."""
-        super().on_validation_epoch_start()
+        # super().on_validation_epoch_start() # Removed as base no longer implements this
         self.validation_step_outputs.clear()
         self.wandb_logger.reset_epoch_counter()
 
+        # Reset collate function logging
+        import ocr.domains.detection.data.collate_db
+        ocr.domains.detection.data.collate_db._db_collate_logged_stats = False
+
     def on_train_epoch_start(self) -> None:
         """Reset wandb logger at training epoch start."""
-        super().on_train_epoch_start()
+        # super().on_train_epoch_start() # Removed as base no longer implements this
         self.wandb_logger.reset_epoch_counter()
+
+        # Reset collate function logging
+        import ocr.domains.detection.data.collate_db
+        ocr.domains.detection.data.collate_db._db_collate_logged_stats = False
 
     def on_validation_epoch_end(self):
         """Compute and log epoch-level detection metrics."""
@@ -182,11 +194,12 @@ class DetectionPLModule(OCRPLModule):
 
     def test_step(self, batch):
         """Detection-specific test step."""
-        # Validate input batch
-        try:
-            CollateOutput(**batch)
-        except Exception as e:
-            raise ValueError(f"Batch validation failed: {e}") from e
+        # Validate input batch only in debug mode (performance optimization)
+        if getattr(getattr(self.config, "global", None), "debug", False):
+            try:
+                CollateOutput(**batch)
+            except Exception as e:
+                raise ValueError(f"Batch validation failed: {e}") from e
 
         pred = self.model(return_loss=False, **batch)
 

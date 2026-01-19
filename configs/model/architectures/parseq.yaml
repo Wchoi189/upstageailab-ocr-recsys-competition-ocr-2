@@ -4,17 +4,20 @@
 
 # Target-First: Immediate identification of the class
 _target_: ocr.domains.recognition.models.PARSeq
+name: parseq
 
-backbone:
+encoder:
   _target_: ocr.core.models.encoder.TimmBackbone
   model_name: resnet18
   pretrained: true
 
 decoder:
   _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+  in_channels: 512  # From ResNet18 last layer
   d_model: 512
   nhead: 8
   num_layers: 12
+  vocab_size: ${model.vocab_size}
 
 # Atomic constants (No optimizer or loss here)
 max_len: 25

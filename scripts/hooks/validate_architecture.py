@@ -25,6 +25,9 @@ KNOWN_FEATURES = {
     "layout",
     "features",  # Features parent directory
     "core",  # Core infrastructure
+    "domains",  # Domains directory
+    "data",  # Data utilities
+    "command_builder",  # Command builder utilities
 }
 
 
@@ -51,7 +54,7 @@ def validate_path(file_path: str) -> tuple[bool, str]:
     if len(parts) < 4:
         # Special case: allow ocr/agents/*.py and ocr/communication/*.py
         # These are legacy top-level directories that we validate as exceptions
-        if len(parts) == 3 and parts[1] in {"agents", "communication", "synthetic_data", "validation"}:
+        if len(parts) == 3 and parts[1] in {"agents", "communication", "synthetic_data", "validation", "data", "command_builder"}:
             return True, ""
 
         # Special case: allow ocr/core/<domain>/file.py (3 parts + filename = 4)

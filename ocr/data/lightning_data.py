@@ -8,6 +8,8 @@ import lightning.pytorch as pl
 from hydra.utils import instantiate
 from torch.utils.data import DataLoader
 
+from ocr.core.utils.config_utils import is_config
+
 
 class OCRDataPLModule(pl.LightningDataModule):
     """Domain-agnostic Lightning DataModule for OCR datasets.
@@ -20,7 +22,18 @@ class OCRDataPLModule(pl.LightningDataModule):
         self.dataset = dataset
         self.config = config
         self.dataloaders_cfg = self.config.dataloaders
-        self.collate_cfg = self.config.collate_fn
+        # Try to find collate_fn in root or data namespace
+        if hasattr(self.config, "collate_fn"):
+            self.collate_cfg = self.config.collate_fn
+        elif hasattr(self.config, "data") and hasattr(self.config.data, "collate_fn"):
+            self.collate_cfg = self.config.data.collate_fn
+        else:
+             # Last resort: try dictionary key access if it's a config
+             if is_config(self.config):
+                 self.collate_cfg = self.config.get("collate_fn") or self.config.get("data", {}).get("collate_fn")
+
+             if not self.collate_cfg:
+                raise AttributeError("Missing 'collate_fn' in config (checked root and 'data.collate_fn')")
 
     def _build_collate_fn(self, *, inference_mode: bool) -> Any:
         # Create collate function (no longer using cache - using pre-processed maps instead)

@@ -19,7 +19,14 @@ from ocr.core.validation import ValidatedTensorData
 
 
 class BCELoss(nn.Module):
-    def __init__(self, negative_ratio=3.0, eps=1e-6, validate_inputs=True):
+    def __init__(self, negative_ratio=3.0, eps=1e-6, validate_inputs=False):
+        """BCE Loss with OHEM (Online Hard Example Mining).
+
+        Args:
+            negative_ratio: Ratio of negative to positive samples for OHEM
+            eps: Small epsilon for numerical stability
+            validate_inputs: Enable Pydantic validation (SLOW - debug only)
+        """
         super().__init__()
         self.negative_ratio = negative_ratio
         self.eps = eps
@@ -29,10 +36,9 @@ class BCELoss(nn.Module):
         if mask is None:
             mask = torch.ones_like(gt, device=gt.device, dtype=gt.dtype)
 
-        # Validate inputs using ValidatedTensorData (BUG-20251112-013 prevention)
+        # Pydantic validation (debug mode only - causes GPU sync)
         if self.validate_inputs:
             try:
-                # Validate prediction logits: shape, device, no NaN/Inf
                 ValidatedTensorData(
                     tensor=pred_logits,
                     expected_shape=tuple(pred_logits.shape),
@@ -40,7 +46,6 @@ class BCELoss(nn.Module):
                     allow_nan=False,
                     allow_inf=False,
                 )
-                # Validate ground truth tensor: shape, device, value range [0, 1]
                 ValidatedTensorData(
                     tensor=gt,
                     expected_shape=tuple(gt.shape),
@@ -49,7 +54,6 @@ class BCELoss(nn.Module):
                     allow_nan=False,
                     allow_inf=False,
                 )
-                # Validate mask tensor: shape, device, no NaN/Inf
                 ValidatedTensorData(
                     tensor=mask, expected_shape=tuple(mask.shape), expected_device=mask.device, allow_nan=False, allow_inf=False
                 )
@@ -59,8 +63,12 @@ class BCELoss(nn.Module):
         positive = (gt * mask) > 0
         negative = ((1 - gt) * mask) > 0
 
-        positive_count = int(positive.sum().item())
-        negative_count = min(int(negative.sum().item()), int(positive_count * self.negative_ratio))
+        # Single GPU sync for OHEM topk (unavoidable for topk k parameter)
+        positive_count = positive.sum()
+        neg_sum = negative.sum()
+        max_neg = (positive_count * self.negative_ratio).int()
+        negative_count = torch.minimum(neg_sum, max_neg).item()
+        positive_count = positive_count.item()
 
         loss = nn.functional.binary_cross_entropy_with_logits(pred_logits, gt, reduction="none")
 
@@ -68,17 +76,11 @@ class BCELoss(nn.Module):
         negative_loss = loss * negative.float()
 
         if negative_count > 0:
-            negative_loss, _ = torch.topk(negative_loss.view(-1), negative_count)
+            negative_loss, _ = torch.topk(negative_loss.view(-1), int(negative_count))
             negative_loss_sum = negative_loss.sum()
         else:
             negative_loss_sum = torch.zeros((), device=loss.device, dtype=loss.dtype)
 
         balance_loss = (positive_loss.sum() + negative_loss_sum) / (positive_count + negative_count + self.eps)
-
-        # Validate output for NaN/Inf after computation
-        if torch.isnan(balance_loss):
-            raise ValueError("NaN detected in BCE loss output")
-        if torch.isinf(balance_loss):
-            raise ValueError("Inf detected in BCE loss output")
 
         return balance_loss

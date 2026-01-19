@@ -16,15 +16,14 @@ import torch.nn as nn
 
 
 class MaskL1Loss(nn.Module):
-    def __init__(self):
+    def __init__(self, eps=1e-6):
         super().__init__()
+        self.eps = eps
 
     def forward(self, pred: torch.Tensor, gt, mask=None):
         if mask is None:
             mask = torch.ones_like(gt).to(device=gt.device)
         mask_sum = mask.sum()
-        if mask_sum.item() == 0:
-            return mask_sum
-        else:
-            loss = (torch.abs(pred - gt) * mask).sum() / mask_sum
-            return loss
+        # Avoid GPU sync: use eps to prevent division by zero
+        loss = (torch.abs(pred - gt) * mask).sum() / (mask_sum + self.eps)
+        return loss

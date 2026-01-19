@@ -1,40 +1,22 @@
 # @package _group_
-
-# Text Detection Domain Configuration
-# Use with: python runners/train.py +domain=detection
+# v5.0 | Purpose: Detection Domain Controller
+# ============================================================================
+# Domain controllers orchestrate components via defaults ONLY.
+# Inline overrides go to _group_ namespace and don't merge with loaded configs.
+# ============================================================================
 
 defaults:
   - /global/default
-  # Rule: Alias the architecture file to 'architectures'
-  # - /model/architectures/dbnet_atomic
   - /model/architectures/dbnet_atomic
-  # - /data/datasets/canonical
+  - /model/loss/db_loss
   - /data/datasets/canonical
-  # - /data/transforms/document_geometry@document_geometry
-  # - /data/transforms/image_enhancement@image_enhancement
+  - /train/optimizer: adam
   - _self_
 
-# Rule: _self_ at bottom ensures domain-specific overrides win
-# Domain-specific logic
+# Domain-specific keys (go to _group_ namespace, read by orchestrator)
 task: detection
 batch_size: 16
 skip_test: true
-
-model:
-  type: detection
-  task_type: detection
-  # Override specific components here
-  head:
-    binarization_threshold: 0.4
-  # Loss function for detection task
-  loss:
-    _target_: ocr.core.models.loss.db_loss.DBLoss
-    alpha: 1.0
-    beta: 10.0
-    ohem_ratio: 3.0
-
-data:
-  task_type: detection
 
 # ============================================================================
 # Domain Isolation - Nullify Other Domains
