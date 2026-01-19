@@ -15,8 +15,8 @@ import numpy as np
 from numba import njit
 from numpy.typing import NDArray
 
-from .data import DetBoxResult, GTBoxResult, MatchReleation, MatchResult, Point, SampleResult
-from .utils import harmonic_mean, lcs
+from ocr.core.metrics.data import DetBoxResult, GTBoxResult, MatchReleation, MatchResult, Point, SampleResult
+from ocr.core.metrics.utils import harmonic_mean, lcs
 
 
 @dataclass

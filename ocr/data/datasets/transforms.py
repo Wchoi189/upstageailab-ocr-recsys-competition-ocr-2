@@ -66,7 +66,7 @@ from pydantic import ValidationError
 
 from ocr.core.validation import ImageMetadata, PolygonData, TransformInput, TransformOutput
 from ocr.core.utils.config_utils import is_config
-from ocr.core.utils.geometry_utils import calculate_cropbox, calculate_inverse_transform
+from ocr.domains.detection.utils.geometry import calculate_cropbox, calculate_inverse_transform
 
 
 class ConditionalNormalize(A.ImageOnlyTransform):

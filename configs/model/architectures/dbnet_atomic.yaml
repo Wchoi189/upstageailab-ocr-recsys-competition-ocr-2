@@ -1,4 +1,4 @@
-# @package model.architectures
+# @package model
 # v5.0 Standard | Purpose: Atomic DBNet Architecture (Flattened)
 # ============================================================================
 
@@ -10,18 +10,18 @@ encoder:
   model_name: "resnet18"
   pretrained: true
   output_indices: [1, 2, 3, 4]
-  in_channels: 3
 
 decoder:
-  _target_: ocr.domains.detection.models.decoder.DBPHeadDecoder
+  _target_: ocr.domains.detection.models.decoders.fpn_decoder.FPNDecoder
   in_channels: [64, 128, 256, 512]
   inner_channels: 256
   out_channels: 256
-  use_batch_norm: true
 
 head:
-  _target_: ocr.domains.detection.models.head.DBHead
+  _target_: ocr.domains.detection.models.heads.db_head.DBHead
   in_channels: 256
   upscale: 4
   binarization_threshold: 0.3
   expand_ratio: 1.5
+
+

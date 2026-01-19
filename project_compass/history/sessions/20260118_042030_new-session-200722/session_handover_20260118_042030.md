@@ -1,15 +1,24 @@
-# Session Handover: OCR Project Orchestrator Implementation
+# Session Handover: OCR Domain Refactor - Phase 4 Complete
 
-**Status**: Phase 4 (Orchestrator Implementation) Complete
-**Ready For**: Training Verification and Documentation Updates
+**Status**: Phase 2-3 Complete, Phase 4 (Deferred Cleanup) Complete
+**Ready For**: Optional evaluator refactor (low priority, deferred)
 
 ## Context
 
 **Previous Status**: Session claimed Phase 3.5 "Bridge Implementation" complete, but `OCRProjectOrchestrator` didn't exist.
 
 **Actual Work Done** (2026-01-19):
-- **Implemented**: `OCRProjectOrchestrator` in `ocr/pipelines/orchestrator.py`
-- **Architecture**: Bridges V5.0 "Domains First" Hydra configs to existing factories
+- **Phase 4 Orchestrator** (Previous session): `OCRProjectOrchestrator` in `ocr/pipelines/orchestrator.py`
+- **Phase 4 Cleanup** (Current session 2026-01-19):
+  - **Deleted**: `ocr/core/utils/wandb_utils.py` (orphaned duplicate, zero imports)
+  - **Deprecated**: `get_pl_modules_by_cfg()` with migration guide to `OCRProjectOrchestrator`
+  - **Verified**: No import breakage, clean domain separation
+- **Phase 4 Debugging (CRITICAL FIXES)**:
+  - **Fixed `ConfigAttributeError`**: Patch `ocr/pipelines/orchestrator.py` to use `self.cfg.data` instead of `self.cfg.data.datasets` (config flattening structure).
+  - **Fixed `ImportError`**: Patch `ocr/data/datasets/transforms.py` to import geometry utils from `ocr.domains.detection.utils.geometry` (missing core utility).
+  - **Verified**: Training pipeline `det_resnet50_v1` runs successfully (Model created -> Datasets created -> module created).
+
+**Architecture**: Bridges V5.0 "Domains First" Hydra configs to existing factories
 - **Key Features**:
   - Vocab size injection for Recognition domain
   - Domain routing to Detection/RecognitionPLModule
@@ -45,13 +54,13 @@ orchestrator.run()
 ## Immediate Next Steps (New Session)
 
 1. **Training Verification**:
-   - Run detection training smoke test
+   - Run detection training smoke test (PASSED 2026-01-19)
    - Run recognition training smoke test
-   - Verify no regressions
+   - Verify no regression
 
 2. **Documentation**:
-   - Finalize session handover
-   - Update roadmap Phase 3.5 → Complete
+   - Update `detection` component path in `docs` to reflect `ocr.domains.detection.utils.geometry` (if needed).
+   - Finalize roadmap Phase 4 scope (Refinement & Optimization).
 
 ## Critical Files
 
@@ -59,4 +68,5 @@ orchestrator.run()
 - `ocr/domains/detection/module.py` (Existing - DetectionPLModule)
 - `ocr/domains/recognition/module.py` (Existing - RecognitionPLModule)
 - `runners/train.py` (Entry point - already uses Orchestrator)
+- `ocr/data/datasets/transforms.py` (Fixed dependencies)
 

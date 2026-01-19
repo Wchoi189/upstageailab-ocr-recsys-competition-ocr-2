@@ -1,8 +1,8 @@
 # @package _global_
 defaults:
+  - /data/runtime/performance/balanced@runtime
   - override /domain: recognition
   - override /hardware: rtx3060
-  - override /data/runtime/performance: balanced
   - _self_
 
 # Experiment-specific logic overrides

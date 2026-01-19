@@ -27,99 +27,99 @@ current_v5:
     - train/profiling
     - configs/runtime (moved to data/runtime)
 structure:
-  entry_points:
-  - train.yaml
-  - eval.yaml
-  - predict.yaml
-  - synthetic.yaml
-  - train_kie.py
-  core_directories:
-    _foundation:
-      purpose: Core composition fragments
-      files:
-      - defaults.yaml
-      - core.yaml
-      - data.yaml
-      - model.yaml
-      - trainer.yaml
-      - logging.yaml
-      - preprocessing.yaml
-    domain:
-      purpose: Multi-domain unified configs
-      files:
-      - detection.yaml
-      - recognition.yaml
-      - kie.yaml
-      - layout.yaml
-    model:
-      purpose: Architecture components (V5.0)
-      subdirs:
-      - architectures  # ✅ RENAMED from 'presets' (Atomic layer definitions only)
-      - decoder
-      - encoder
-      - head
-      note: |
-        V5.0 DELETIONS:
-        - lightning_modules/ (deleted, logic moved to code)
-        - loss/ (deleted, moved to domain controllers)
-        - optimizers/ (moved to train/optimizer/)
-        - presets/ (renamed to architectures/)
-        - recognition/ (moved to domains/recognition/)
-    data:
-      purpose: Dataset configurations (V5.0)
-      subdirs:
-      - datasets  # ✅ PRIMARY (source paths and metadata only)
-      - transforms  # ✅ ATOMIC (augmentation logic)
-      - runtime  # ✅ RELOCATED from configs/runtime/
-      note: |
-        V5.0 DELETIONS:
-        - dataloaders/ (deleted, settings moved to global/default.yaml)
-        - performance_preset/ (deleted)
-    train:
-      purpose: Training optimization (V5.0)
-      subdirs:
-      - optimizer  # ✅ RELOCATED from model/optimizers/
-      - scheduler  # ✅ NEW (learning rate schedules)
-      - callbacks
-      - logger
-      note: |
-        V5.0 DELETIONS:
-        - profiling/ (archived to __EXTENDED__/)
-    __EXTENDED__:
-      purpose: Edge cases, experiments, archived configs
-      subdirs:
-      - kie_variants
-      - benchmarks
-      - examples
-      - experiments
-    __LEGACY__:
-      purpose: Deprecated configurations (read-only)
-      subdirs:
-      - data
-      - model
+  # entry_points:
+  # - train.yaml
+  # - eval.yaml
+  # - predict.yaml
+  # - synthetic.yaml
+  # - train_kie.py
+  # core_directories:
+  #   _foundation:
+  #     purpose: Core composition fragments
+  #     files:
+  #     - defaults.yaml
+  #     - core.yaml
+  #     - data.yaml
+  #     - model.yaml
+  #     - trainer.yaml
+  #     - logging.yaml
+  #     - preprocessing.yaml
+  #   domain:
+  #     purpose: Multi-domain unified configs
+  #     files:
+  #     - detection.yaml
+  #     - recognition.yaml
+  #     - kie.yaml
+  #     - layout.yaml
+  #   model:
+  #     purpose: Architecture components (V5.0)
+  #     subdirs:
+  #     - architectures  # ✅ RENAMED from 'presets' (Atomic layer definitions only)
+  #     - decoder
+  #     - encoder
+  #     - head
+  #     note: |
+  #       V5.0 DELETIONS:
+  #       - lightning_modules/ (deleted, logic moved to code)
+  #       - loss/ (deleted, moved to domain controllers)
+  #       - optimizers/ (moved to train/optimizer/)
+  #       - presets/ (renamed to architectures/)
+  #       - recognition/ (moved to domains/recognition/)
+  #   data:
+  #     purpose: Dataset configurations (V5.0)
+  #     subdirs:
+  #     - datasets  # ✅ PRIMARY (source paths and metadata only)
+  #     - transforms  # ✅ ATOMIC (augmentation logic)
+  #     - runtime  # ✅ RELOCATED from configs/runtime/
+  #     note: |
+  #       V5.0 DELETIONS:
+  #       - dataloaders/ (deleted, settings moved to global/default.yaml)
+  #       - performance_preset/ (deleted)
+  #   train:
+  #     purpose: Training optimization (V5.0)
+  #     subdirs:
+  #     - optimizer  # ✅ RELOCATED from model/optimizers/
+  #     - scheduler  # ✅ NEW (learning rate schedules)
+  #     - callbacks
+  #     - logger
+  #     note: |
+  #       V5.0 DELETIONS:
+  #       - profiling/ (archived to __EXTENDED__/)
+  #   __EXTENDED__:
+  #     purpose: Edge cases, experiments, archived configs
+  #     subdirs:
+  #     - kie_variants
+  #     - benchmarks
+  #     - examples
+  #     - experiments
+  #   __LEGACY__:
+  #     purpose: Deprecated configurations (read-only)
+  #     subdirs:
+  #     - data
+  #     - model
 config_registry:
   entry_points:
-    train.yaml:
-      purpose: Universal training entry point
-      domain_switching: true
-      default_domain: detection
-      breaking_changes_date: '2026-01-08'
-      migration_from:
-      - train_kie.yaml
-      - train_kie_aihub.yaml
-      - train_kie_merged.yaml
-      runner: runners/train.py
-    eval.yaml:
-      purpose: Testing and evaluation
-      renamed_from: test.yaml
-      rename_date: '2026-01-08'
-      runner: runners/test.py
-    predict.yaml:
-      purpose: Inference and prediction
-      runner: runners/predict.py
-    synthetic.yaml:
-      purpose: Synthetic data generation
-      runner: runners/generate_synthetic.py
+    # train.yaml:
+    #   purpose: Universal training entry point
+    #   domain_switching: true
+    #   default_domain: detection
+    #   breaking_changes_date: '2026-01-08'
+    #   migration_from:
+    #   - train_kie.yaml
+    #   - train_kie_aihub.yaml
+    #   - train_kie_merged.yaml
+    #   runner: runners/train.py
+    # eval.yaml:
+    #   purpose: Testing and evaluation
+    #   renamed_from: test.yaml
+    #   rename_date: '2026-01-08'
+    #   runner: runners/test.py
+    # predict.yaml:
+    #   purpose: Inference and prediction
+    #   runner: runners/predict.py
+    # synthetic.yaml:
+    #   purpose: Synthetic data generation
+    #   runner: runners/generate_synthetic.py
   domain_configs:
     domain/detection.yaml:
       domain: detection
@@ -154,25 +154,25 @@ config_registry:
       created: '2026-01-08'
       description: Document layout analysis and segmentation
   archived_configs:
-    __EXTENDED__/kie_variants/:
-      contents:
-      - train_kie.yaml
-      - train_kie_aihub.yaml
-      - train_kie_aihub_only.yaml
-      - train_kie_aihub_production.yaml
-      - train_kie_baseline_optimized_v2.yaml
-      - train_kie_merged_3090_10ep.yaml
-      migration_date: '2026-01-08'
-      replacement: train.yaml with domain=kie
-      still_functional: true
-    __EXTENDED__/examples/:
-      contents:
-      - predict_shadow_removal.yaml
-      migration_date: '2026-01-08'
-    __EXTENDED__/experiments/:
-      contents:
-      - train_v2.yaml
-      migration_date: '2026-01-08'
+    # __EXTENDED__/kie_variants/:
+    #   contents:
+    #   - train_kie.yaml
+    #   - train_kie_aihub.yaml
+    #   - train_kie_aihub_only.yaml
+    #   - train_kie_aihub_production.yaml
+    #   - train_kie_baseline_optimized_v2.yaml
+    #   - train_kie_merged_3090_10ep.yaml
+    #   migration_date: '2026-01-08'
+    #   replacement: train.yaml with domain=kie
+    #   still_functional: true
+    # __EXTENDED__/examples/:
+    #   contents:
+    #   - predict_shadow_removal.yaml
+    #   migration_date: '2026-01-08'
+    # __EXTENDED__/experiments/:
+    #   contents:
+    #   - train_v2.yaml
+    #   migration_date: '2026-01-08'
 domain_switching:
   mechanism: Hydra defaults composition via optional domain parameter
   syntax:
@@ -241,46 +241,46 @@ defaults_ordering:
     fix: 'Move all ''override X: Y'' to end of defaults list'
 archival_policy:
   deprecated_configs:
-    base.yaml:
-      status: Retained temporarily
-      replacement: _foundation/defaults.yaml
-      removal_trigger: After migration period (user discretion)
-    test.yaml:
-      status: Renamed → eval.yaml
-      migration_date: '2026-01-08'
-    train_kie*.yaml:
-      status: Archived → __EXTENDED__/kie_variants/
-      replacement: train.yaml with domain=kie
-    predict_shadow_removal.yaml:
-      status: Archived → __EXTENDED__/examples/
-    train_v2.yaml:
-      status: Archived → __EXTENDED__/experiments/
-  legacy_directories:
-    callbacks: Moved → training/callbacks/
-    logger: Moved → training/logger/
-    ui: Merged → training/logger/
-    ui_meta: Merged → training/logger/
-    benchmark: Archived → __EXTENDED__/benchmarks/
-    examples: Archived → __EXTENDED__/examples/
+  #   base.yaml:
+  #     status: Retained temporarily
+  #     replacement: _foundation/defaults.yaml
+  #     removal_trigger: After migration period (user discretion)
+  #   test.yaml:
+  #     status: Renamed → eval.yaml
+  #     migration_date: '2026-01-08'
+  #   train_kie*.yaml:
+  #     status: Archived → __EXTENDED__/kie_variants/
+  #     replacement: train.yaml with domain=kie
+  #   predict_shadow_removal.yaml:
+  #     status: Archived → __EXTENDED__/examples/
+  #   train_v2.yaml:
+  #     status: Archived → __EXTENDED__/experiments/
+  # legacy_directories:
+  #   callbacks: Moved → training/callbacks/
+  #   logger: Moved → training/logger/
+  #   ui: Merged → training/logger/
+  #   ui_meta: Merged → training/logger/
+  #   benchmark: Archived → __EXTENDED__/benchmarks/
+  #   examples: Archived → __EXTENDED__/examples/
 entry_point_mapping:
-  runners/train.py:
-    config_name: train
-    config_file: configs/train.yaml
-    domain_switching: true
-    usage: uv run python runners/train.py [domain=X] [overrides...]
-  runners/test.py:
-    config_name: eval
-    config_file: configs/eval.yaml
-    note: Renamed from test.yaml
-  runners/predict.py:
-    config_name: predict
-    config_file: configs/predict.yaml
-  runners/generate_synthetic.py:
-    config_name: synthetic
-    config_file: configs/synthetic.yaml
-  runners/train_kie.py:
-    config_name: train
-    config_file: configs/train.yaml
+  # runners/train.py:
+  #   config_name: train
+  #   config_file: configs/train.yaml
+  #   domain_switching: true
+  #   usage: uv run python runners/train.py [domain=X] [overrides...]
+  # runners/test.py:
+  #   config_name: eval
+  #   config_file: configs/eval.yaml
+  #   note: Renamed from test.yaml
+  # runners/predict.py:
+  #   config_name: predict
+  #   config_file: configs/predict.yaml
+  # runners/generate_synthetic.py:
+  #   config_name: synthetic
+  #   config_file: configs/synthetic.yaml
+  # runners/train_kie.py:
+  #   config_name: train
+  #   config_file: configs/train.yaml
     note: Changed from train_kie to train; uses domain composition
 composition_patterns:
   basic_training:
@@ -288,9 +288,9 @@ composition_patterns:
     defaults_used:
     - base
     - domain/detection
-    - _foundation/model
-    - _foundation/data
-    - _foundation/trainer
+    # - _foundation/model
+    # - _foundation/data
+    # - _foundation/trainer
   domain_switch:
     command: uv run python runners/train.py domain=kie
     effect: Replaces domain/detection with domain/kie

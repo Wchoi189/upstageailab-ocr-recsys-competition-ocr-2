@@ -43,6 +43,7 @@ def main():
     # session-init command (Session Management)
     session_init_parser = subparsers.add_parser("session-init", help="Initialize or update current session context")
     session_init_parser.add_argument("--objective", "-o", required=True, help="Primary goal for this session")
+    session_init_parser.add_argument("--name", "-n", help="Descriptive session name (format: domain-action-target)")
     session_init_parser.add_argument(
         "--pipeline",
         "-p",
@@ -100,8 +101,33 @@ def main():
 
         elif args.command == "session-init":
             print("📋 Session Management: Initializing session...\n")
+
+            # NEW: Run environment check first
+            print("🔒 Environment Guard: Verifying environment...")
+            checker = EnvironmentChecker()
+            passed, errors, warnings = checker.check_all()
+
+            if warnings:
+                for warning in warnings:
+                    print(f"⚠️  {warning}")
+
+            if errors:
+                print("\n❌ Environment validation failed:")
+                for error in errors:
+                    print(f"  ✗ {error}")
+                print("\n🔧 Fix environment issues before initializing session.")
+                print("   Run: uv run python -m project_compass.cli check-env")
+                sys.exit(1)
+
+            print("✅ Environment validated\n")
+
+            # Initialize session
             manager = SessionManager()
-            success, message = manager.init_session(objective=args.objective, active_pipeline=args.pipeline)
+            success, message = manager.init_session(
+                objective=args.objective,
+                session_name=args.name,
+                active_pipeline=args.pipeline
+            )
 
             if success:
                 print(f"✅ {message}")

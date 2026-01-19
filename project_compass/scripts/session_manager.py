@@ -7,6 +7,14 @@ import json
 import yaml
 from pathlib import Path
 
+# Import validation functions
+try:
+    from project_compass.src.validation import validate_session_content, validate_session_name
+except ImportError:
+    # Fallback for direct execution
+    sys.path.insert(0, str(Path(__file__).parent.parent))
+
+
 # Paths
 PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
 COMPASS_DIR = PROJECT_ROOT / "project_compass"
@@ -67,11 +75,51 @@ def export_session(note=None, force=False):
     CRITICAL FIX (2026-01-08): Creates timestamped copy of session_handover.md
     to preserve session-specific state. Previous implementation lost data by
     copying from a single overwritten file.
+
+    UPDATE (2026-01-19): Added content and naming validation to prevent
+    empty session exports and enforce naming standards.
     """
     session_id = get_current_session_id()
     if not session_id:
         print("Error: No active session found in active_context/current_session.yml")
         sys.exit(1)
+
+    # NEW: Validate session name
+    name_valid, name_error = validate_session_name(session_id)
+    if not name_valid:
+        print("❌ INVALID SESSION NAME:")
+        print(f"  {name_error}")
+        if not force:
+            print("\n💡 Fix: Update session_id in active_context/current_session.yml")
+            print("   Use format: domain-action-target (e.g., 'hydra-refactor-domains')")
+            print("   Or use --force to bypass naming validation.")
+            sys.exit(1)
+        else:
+            print("⚠️  Continuing due to --force flag")
+
+    # NEW: Validate session content
+    session_handover_path = COMPASS_DIR / "session_handover.md"
+    current_session_path = ACTIVE_CONTEXT_DIR / "current_session.yml"
+
+    content_valid, content_errors = validate_session_content(
+        session_handover_path,
+        current_session_path
+    )
+
+    if not content_valid:
+        print("❌ EMPTY SESSION DETECTED:")
+        for error in content_errors:
+            print(f"  ✗ {error}")
+
+        if not force:
+            print("\n💡 Before exporting:")
+            print("  1. Update session_handover.md with session summary")
+            print("  2. Ensure current_session.yml has real objective")
+            print("  3. Document key decisions and outcomes")
+            print("\nUse --force to bypass content validation (not recommended).")
+            sys.exit(1)
+        else:
+            print("⚠️  Exporting potentially empty session due to --force flag")
 
     if not force:
         last_id = get_last_exported_session_id()
@@ -81,6 +129,7 @@ def export_session(note=None, force=False):
             print("   Protocol Violation: You MUST update 'active_context/current_session.yml' before exporting.")
             print("   Use --force to override this check.")
             sys.exit(1)
+
 
     timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
     # Folder name: YYYYMMDD_HHMMSS_session_id

@@ -109,7 +109,7 @@ async def list_tools() -> list[Tool]:
         ),
         Tool(
             name="manage_session",
-            description="Manage project sessions (export, import, list, new) to save/restore context.",
+            description="Manage project sessions (export, import, list, new) to save/restore context. NOTE: Export now validates session content and naming. Use 'force' to bypass validation.",
             inputSchema={
                 "type": "object",
                 "properties": {
@@ -120,6 +120,7 @@ async def list_tools() -> list[Tool]:
                     },
                     "session_name": {"type": "string", "description": "Name of the session to import (required for import action)."},
                     "note": {"type": "string", "description": "Note to attach to the session (optional for export)."},
+                    "force": {"type": "boolean", "description": "Bypass validation checks for export (not recommended). Skips session content and naming validation."},
                 },
                 "required": ["action"],
             },
@@ -175,6 +176,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         action = arguments.get("action")
         session_name = arguments.get("session_name")
         note = arguments.get("note")
+        force = arguments.get("force", False)
 
         # Use new CLI entry point: uv run python -m project_compass.cli
         # Note: Only 'session-init' and 'check-env' are currently in CLI.
@@ -188,12 +190,16 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         script_path = COMPASS_DIR / "scripts/session_manager.py"
         cmd = ["uv", "run", "python", str(script_path), action]
 
-        if action == "export" and note:
-            cmd.extend(["--note", note])
+        if action == "export":
+            if note:
+                cmd.extend(["--note", note])
+            if force:
+                cmd.append("--force")
         elif action == "import":
             if not session_name:
                 raise ValueError("session_name is required for import action")
             cmd.append(session_name)
+
 
         try:
             result = subprocess.run(cmd, capture_output=True, text=True, cwd=PROJECT_ROOT)

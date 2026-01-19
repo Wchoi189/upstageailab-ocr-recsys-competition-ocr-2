@@ -21,7 +21,10 @@ resources:
 
   - uri: compass://current_session.yml
     name: Active Session Context
-    description: Session ID, timestamps, objective, active pipeline, env lock
+    description: |
+      Session ID, timestamps, objective, active pipeline, env lock.
+      AUTO-GENERATED: Use CLI/wizard to update, do not edit manually.
+      Auto-syncs with compass.json when project status changes.
     mime_type: application/x-yaml
     path: active_context/current_session.yml
 
@@ -42,7 +45,17 @@ tools:
   - name: get_server_info
     description: Get information about the Project Compass MCP server
   - name: manage_session
-    description: Manage project sessions (export, import, list, new)
+    description: |
+      Manage project sessions (export, import, list, new).
+      IMPORTANT: Export now validates session content and naming standards.
+      - Content validation: Checks for meaningful session_handover.md (min 200 chars)
+      - Naming validation: Rejects generic names like 'new-session-*' or 'test-*'
+      - Use 'force: true' to bypass validation (not recommended)
+    parameters:
+      action: export | import | list | new
+      session_name: Name for import action
+      note: Optional note for export
+      force: Bypass validation (export only)
   - name: get_effective_config
     description: Retrieve the effective Hydra configuration (resolved)
 

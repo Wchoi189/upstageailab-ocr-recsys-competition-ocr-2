@@ -15,7 +15,7 @@ from torchmetrics import Metric
 from ..utils.logging import logger
 from ocr.domains.detection.metrics.box_types import POLY
 from .data import SampleResult
-from .eval_functions import evaluation
+from ocr.domains.detection.metrics.functional import evaluation
 
 
 class Options:

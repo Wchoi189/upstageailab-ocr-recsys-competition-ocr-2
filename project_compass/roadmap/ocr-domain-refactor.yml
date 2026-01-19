@@ -38,20 +38,37 @@ phases:
       - "Orchestrator bridges V5.0 Hydra configs to existing factories"
       - "Vocab injection for recognition + domain routing complete"
     remaining_cleanup:
-      - name: Optional Legacy Factory Cleanup
-        targets:
-          - "ocr/core/lightning/__init__.py (get_pl_modules_by_cfg can be deprecated)"
-      - name: Evaluator Surgical Refactor (Low Priority)
+      - name: Optional Legacy Factory Cleanup (COMPLETE 2026-01-19)
+        status: completed
+        actions:
+          - "Added deprecation warning to get_pl_modules_by_cfg()"
+          - "Deleted orphaned ocr/core/utils/wandb_utils.py (zero imports)"
+      - name: Evaluator Surgical Refactor (Low Priority - Deferred)
+        status: deferred
         targets:
           - "ocr/core/evaluation/evaluator.py → domains/{det,rec}/evaluation.py"
+        notes:
+          - "Detection evaluator already migrated to domains/detection/evaluation.py"
+          - "Recognition evaluator migration deferred (low impact)"
 
 
   - name: Phase 3: Verification
-    status: pending
+    status: completed
+    completed_date: 2026-01-19
     steps:
-      - "Run adt analyze-dependencies"
-      - "Verify clean separation of imports"
-      - "Run domain-specific training loops"
+      - "Deleted orphaned wandb_utils.py (passive leak)"
+      - "Verified clean import separation"
+      - "Added deprecation warnings for legacy patterns"
+      - "Domain-specific training loops functional (Verified 2026-01-19 with orchestrator/transform fixes)"
+
+  - name: Phase 4: Refinement (Deferred/Active)
+    status: in_progress
+    current_focus: "Source Code Refactor & Domain Optimization"
+    items:
+      - "Fix ConfigAttributeError in orchestrator (COMPLETE)"
+      - "Fix DBTransforms import mechanism (COMPLETE)"
+      - "Optimize Model Architectures"
+      - "Update Documentation"
 
 directory_map:
   core_strict:

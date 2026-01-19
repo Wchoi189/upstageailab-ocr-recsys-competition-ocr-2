@@ -88,7 +88,7 @@ class OCRProjectOrchestrator:
 
         # Use existing dataset factory
         data_config = getattr(self.cfg, "data", None)
-        dataset = get_datasets_by_cfg(self.cfg.datasets, data_config, self.cfg)
+        dataset = get_datasets_by_cfg(self.cfg.data, data_config, self.cfg)
         logger.info("   ✓ Datasets created")
 
         # Extract metric config

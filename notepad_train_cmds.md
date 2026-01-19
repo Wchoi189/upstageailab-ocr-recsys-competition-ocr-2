@@ -1,5 +1,11 @@
 **Notepad for train cmd's**
 
+
+## Hydra Config Check
+```bash
+uv run python runners/train.py --cfg job
+uv run python scripts/utils/show_config.py
+uv run python runners/train.py experiment=det_resnet50_v1 --cfg job 2>&1 | grep -B 5 -A 5 "loss:"
 ## Fast Iterative Training Commands (Detection Domain)
 ```bash
 # Debug run (Detection) - 1 epoch, minimal batches
@@ -168,4 +174,13 @@ UV_INDEX_STRATEGY=unsafe-best-match uv run --no-sync python runners/train.py \
   trainer.precision=32 \
   logger.wandb.enabled=true \
   ++logger.wandb.project="ocr-debug"
+```
+
+
+```bash
+# Detection (minimal):
+uv run python runners/train.py experiment=det_resnet50_v1 trainer.max_epochs=1 trainer.fast_dev_run=True
+
+# Recognition (minimal):
+uv run python runners/train.py experiment=rec_baseline_v1 trainer.max_epochs=1 trainer.fast_dev_run=True
 ```

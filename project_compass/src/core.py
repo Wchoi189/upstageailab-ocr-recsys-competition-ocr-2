@@ -26,6 +26,12 @@ try:
 except ImportError:
     HAS_JSONSCHEMA = False
 
+# Import validation functions
+try:
+    from project_compass.src.validation import validate_session_name
+except ImportError:
+    from src.validation import validate_session_name
+
 
 class CompassPaths:
     """Resolve paths to Project Compass directories and files."""
@@ -280,12 +286,13 @@ class SessionManager:
     def __init__(self, paths: CompassPaths | None = None):
         self.paths = paths or CompassPaths()
 
-    def init_session(self, objective: str, active_pipeline: str = "kie") -> tuple[bool, str]:
+    def init_session(self, objective: str, session_name: str = None, active_pipeline: str = "kie") -> tuple[bool, str]:
         """
         Initialize or update the current session.
 
         Args:
             objective: Primary goal for this session
+            session_name: Descriptive session name (optional, will be validated)
             active_pipeline: One of text_detection, text_recognition, layout_analysis, kie
 
         Returns:
@@ -294,10 +301,20 @@ class SessionManager:
         # Load current session if exists
         current_data = self._load_current_session()
 
-        # Generate new session ID
+        # Generate session ID
         today = datetime.now().strftime("%Y%m%d")
-        session_num = self._get_next_session_number(today, current_data)
-        new_session_id = f"{today}_session_{session_num:02d}"
+
+        if session_name:
+            # Use provided name with validation
+            name_valid, name_error = validate_session_name(session_name)
+            if not name_valid:
+                return False, f"Invalid session name: {name_error}"
+            new_session_id = f"{today}_{session_name}"
+        else:
+            # Fall back to sequential numbering (legacy)
+            session_num = self._get_next_session_number(today, current_data)
+            new_session_id = f"{today}_session_{session_num:02d}"
+            print("⚠️  Warning: Using auto-generated session ID. Consider using --name for better discoverability.")
 
         # Get current environment info for env_lock
         env_lock = self._build_env_lock()
@@ -331,6 +348,7 @@ class SessionManager:
         header = (
             "# ACTIVE SESSION CONTEXT\n"
             "# MANDATORY: Verify env_lock before execution.\n"
+            "# AUTO-GENERATED: Do not edit manually. Use CLI/wizard to update.\n"
             "# SCHEMA: ../.config/schemas/session.schema.json"
         )
         try:
@@ -371,12 +389,51 @@ class SessionManager:
 
             # Atomic write
             atomic_json_write(compass_data, self.paths.compass_json)
+
+            # NEW: Auto-sync to current_session.yml
+            self._sync_current_session(phase, note)
+
             return True
 
         except Exception as e:
             # Non-critical failure, just warn
             print(f"WARNING: Failed to update compass.json: {e}", file=sys.stderr)
             return False
+
+    def _sync_current_session(self, phase: str | None = None, note: str | None = None) -> None:
+        """Auto-sync current_session.yml from compass.json changes.
+
+        Args:
+            phase: Updated pipeline phase
+            note: Updated objective note
+        """
+        try:
+            current = self._load_current_session()
+            if not current:
+                return  # No session to sync
+
+            # Update active_pipeline if phase changed
+            if phase and "objective" in current:
+                if isinstance(current["objective"], dict):
+                    current["objective"]["active_pipeline"] = phase
+
+            # Update primary_goal if note provided (and not too long)
+            if note and len(note) < 200 and "objective" in current:
+                if isinstance(current["objective"], dict):
+                    current["objective"]["primary_goal"] = note
+
+            # Write back atomically
+            header = (
+                "# ACTIVE SESSION CONTEXT\n"
+                "# MANDATORY: Verify env_lock before execution.\n"
+                "# AUTO-GENERATED: Do not edit manually. Use CLI/wizard to update.\n"
+                "# SCHEMA: ../.config/schemas/session.schema.json"
+            )
+            atomic_yaml_write(current, self.paths.current_session, header)
+
+        except Exception:
+            # Silent fail - sync is non-critical
+            pass
 
     def _load_current_session(self) -> dict[str, Any]:
         """Load current session data if exists."""

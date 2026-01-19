@@ -4,6 +4,19 @@ from ocr.data.lightning_data import OCRDataPLModule
 
 
 def get_pl_modules_by_cfg(config):
+    """Legacy factory for Lightning modules. Deprecated in favor of OCRProjectOrchestrator.
+
+    .. deprecated:: 2026-01-19
+        Use `ocr.pipelines.orchestrator.OCRProjectOrchestrator` instead.
+        This function will be removed in a future version.
+    """
+    import warnings
+    warnings.warn(
+        "get_pl_modules_by_cfg() is deprecated. Use OCRProjectOrchestrator instead. "
+        "See ocr/pipelines/orchestrator.py for the new entry point.",
+        DeprecationWarning,
+        stacklevel=2
+    )
     import hydra
     # Inject vocab size into model config if needed
     if "tokenizer" in config.data:

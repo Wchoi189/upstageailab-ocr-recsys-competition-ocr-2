@@ -6,10 +6,12 @@
 defaults:
   - /global/default
   # Rule: Alias the architecture file to 'architectures'
+  # - /model/architectures/dbnet_atomic
   - /model/architectures/dbnet_atomic
+  # - /data/datasets/canonical
   - /data/datasets/canonical
-  - /data/transforms/document_geometry@document_geometry
-  - /data/transforms/image_enhancement@image_enhancement
+  # - /data/transforms/document_geometry@document_geometry
+  # - /data/transforms/image_enhancement@image_enhancement
   - _self_
 
 # Rule: _self_ at bottom ensures domain-specific overrides win
@@ -21,10 +23,15 @@ skip_test: true
 model:
   type: detection
   task_type: detection
-  # Example: Override a specific architecture hyperparameter here
-  architectures:
-    head:
-      binarization_threshold: 0.4
+  # Override specific components here
+  head:
+    binarization_threshold: 0.4
+  # Loss function for detection task
+  loss:
+    _target_: ocr.core.models.loss.db_loss.DBLoss
+    alpha: 1.0
+    beta: 10.0
+    ohem_ratio: 3.0
 
 data:
   task_type: detection

@@ -6,7 +6,7 @@
 # Rule: Hardcoded or absolute interpolation for constants
 train_transform:
   # Rule: _target_ at column 0 and top of block
-  _target_: ocr.data.datasets.DBTransforms
+  _target_: ocr.data.datasets.transforms.DBTransforms
   transforms:
     - _target_: albumentations.LongestMaxSize
       max_size: 640
@@ -28,7 +28,7 @@ train_transform:
     format: 'xy'
     remove_invisible: True
 val_transform:
-  _target_: ocr.data.datasets.DBTransforms
+  _target_: ocr.data.datasets.transforms.DBTransforms
   transforms:
 # BugRef: BUG-2025-001 — enforce top-left padding to simplify inverse mapping
     # Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
@@ -51,7 +51,7 @@ val_transform:
     format: 'xy'
     remove_invisible: True
 test_transform:
-  _target_: ocr.data.datasets.DBTransforms
+  _target_: ocr.data.datasets.transforms.DBTransforms
   transforms:
 # BugRef: BUG-2025-001 — enforce top-left padding to simplify inverse mapping
     # Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
@@ -74,7 +74,7 @@ test_transform:
     format: 'xy'
     remove_invisible: True
 predict_transform:
-  _target_: ocr.data.datasets.DBTransforms
+  _target_: ocr.data.datasets.transforms.DBTransforms
   transforms:
 # BugRef: BUG-2025-001 — enforce top-left padding to simplify inverse mapping
     # Report: docs/bug_reports/BUG-2025-001_inference_padding_scaling_mismatch.md
