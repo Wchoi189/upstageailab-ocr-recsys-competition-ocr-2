@@ -86,7 +86,7 @@ from .utils import generate_mock_predictions     # ❌ No pipelines/utils.py
 
 **The class NEVER existed** after the refactor:
 - Before refactor: Likely existed in `ocr/core/inference/orchestrator.py`
-- After refactor: File moved to `ocr/pipelines/orchestrator.py` 
+- After refactor: File moved to `ocr/pipelines/orchestrator.py`
 - New class name: `OCRProjectOrchestrator` (for training only)
 - `InferenceOrchestrator` class: **DELETED/NEVER MIGRATED**
 

@@ -58,7 +58,7 @@ def __init__(self) -> None:
 - No renaming needed
 
 **Main Branch:**
-- Class renamed to `OCRProjectOrchestrator` 
+- Class renamed to `OCRProjectOrchestrator`
 - Created confusion about which class `engine.py` should use
 
 ## Root Cause Analysis
@@ -122,7 +122,7 @@ Feature branch summary mentions updating 23 files vs our 11 files. The pre-commi
 ```
 ocr/core/inference/
 ├── dependencies.py      ✅ EXISTS
-├── image_loader.py      ✅ EXISTS  
+├── image_loader.py      ✅ EXISTS
 ├── utils.py             ✅ EXISTS
 └── [other inference utilities]
 
@@ -151,7 +151,7 @@ ocr/pipelines/
 
 **Keep our current fixes** (d10cd89). Our approach is correct:
 1. ✅ Removed broken import from `ocr/core/inference/__init__.py`
-2. ✅ Added comment explaining where to import from  
+2. ✅ Added comment explaining where to import from
 3. ✅ Commented out non-existent orchestrator (vs silently failing)
 4. ✅ Imports work for all critical components
 

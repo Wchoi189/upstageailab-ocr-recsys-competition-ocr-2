@@ -1,8 +1,8 @@
 # Architecture Restoration Summary
 
-**Date**: 2026-01-20  
-**Issue**: Dual architecture regression from CI fixes  
-**Resolution**: Complete restoration of "Domains First" architecture  
+**Date**: 2026-01-20
+**Issue**: Dual architecture regression from CI fixes
+**Resolution**: Complete restoration of "Domains First" architecture
 **Commit**: bec9353
 
 ---
