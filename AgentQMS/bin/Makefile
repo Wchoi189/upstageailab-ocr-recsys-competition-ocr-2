@@ -136,7 +136,7 @@ artifacts-repair-moves-preview: ## Preview manual move repairs
 
 .PHONY: plugins-snapshot
 plugins-snapshot: ## Refresh .agentqms/state/plugins.yaml (auto)
-	@uv run python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null
+	@python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null 2>&1 || echo "⚠️  Plugin snapshot skipped (optional)"
 
 validate: plugins-snapshot ## Validate all artifacts
 	uv run python ../tools/compliance/validate_artifacts.py --all
