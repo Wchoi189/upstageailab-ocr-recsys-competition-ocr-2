@@ -1,0 +1,415 @@
+ads_version: '1.0'
+type: unified_registry
+agent: all
+tier: 1
+priority: critical
+name: AgentQMS Standards Registry
+description: Unified discovery registry mapping task types and file paths to applicable standards
+
+# Metadata
+metadata:
+  generated_at: '2026-01-19T00:00:00Z'
+  generator: AgentQMS Refactor - Path-Aware Discovery
+  schema_version: '0.3'
+  replaces:
+    - AgentQMS/standards/INDEX.yaml
+    - AgentQMS/standards/standards-router.yaml
+
+# Root paths for quick reference
+root_map:
+  schema: AgentQMS/standards/schemas/ads-v1.0-spec.yaml
+  sst: AgentQMS/standards/tier1-sst/
+  framework: AgentQMS/standards/tier2-framework/
+  agents: AgentQMS/standards/tier3-agents/
+  workflows: AgentQMS/standards/tier4-workflows/
+
+# Consolidated Task and Path Mappings
+task_mappings:
+  artifact_creation:
+    description: Creating any artifact (assessment, plan, audit, design, etc.)
+    priority: 1
+    standards:
+      - AgentQMS/standards/tier1-sst/naming-conventions.yaml
+      - AgentQMS/standards/tier1-sst/artifact-types.yaml
+      - AgentQMS/standards/tier1-sst/artifact_rules.yaml
+    triggers:
+      keywords:
+        - create artifact
+        - new artifact
+        - assessment
+        - implementation plan
+        - audit
+        - design document
+        - bug report
+        - walkthrough
+      patterns:
+        - \bcreate\b.*\bartifact\b
+        - \bnew\b.*\b(assessment|plan|audit|design)\b
+      path_patterns:
+        - docs/artifacts/**/*.md
+
+  config_files:
+    description: Working with YAML configuration files (Hydra, training configs)
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/configuration-standards.yaml
+      - AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+      - AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+    triggers:
+      keywords:
+        - config
+        - yaml
+        - hydra
+        - configuration
+        - training config
+        - omegaconf
+        - hydra v5
+        - domains first
+        - atomic architecture
+        - domain isolation
+        - flattening rule
+      patterns:
+        - \bconfig(uration)?\b
+        - \bhydra\b
+        - \byaml\b.*\b(file|edit|update)\b
+      path_patterns:
+        - configs/**/*.yaml
+        - configs/**/*.yml
+        - "**/config.yaml"
+        - "**/conf/*.yaml"
+
+  code_changes:
+    description: Writing or modifying Python code
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/coding/python-core.yaml
+      - AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+    triggers:
+      keywords:
+        - python
+        - code
+        - implement
+        - refactor
+        - function
+        - class
+        - module
+      patterns:
+        - \b(implement|write|create)\b.*\b(code|function|class)\b
+        - \brefactor\b
+        - \bpython\b
+      path_patterns:
+        - "**/*.py"
+
+  unit_testing:
+    description: Writing tests
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/coding/testing.yaml
+      - AgentQMS/standards/tier2-framework/coding/python-core.yaml
+    triggers:
+      keywords:
+        - test
+        - pytest
+        - mock
+        - fixture
+      patterns:
+        - \btest_
+        - \bpytest\b
+      path_patterns:
+        - tests/**/*.py
+        - "**/test_*.py"
+        - "**/*_test.py"
+
+  async_development:
+    description: AsyncIO and FastAPI work
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/coding/async-concurrency.yaml
+      - AgentQMS/standards/tier2-framework/coding/python-core.yaml
+    triggers:
+      keywords:
+        - async
+        - await
+        - fastapi
+        - route
+      patterns:
+        - \basync\b
+        - \bfastapi\b
+      path_patterns:
+        - apps/**/*.py
+        - "**/api/**/*.py"
+        - "**/routes/**/*.py"
+
+  data_validation:
+    description: Pydantic models
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/coding/pydantic-validation.yaml
+    triggers:
+      keywords:
+        - pydantic
+        - model
+        - schema
+        - validation
+      patterns:
+        - \bpydantic\b
+        - \bBaseModel\b
+      path_patterns:
+        - "**/models/**/*.py"
+        - "**/schemas/**/*.py"
+
+  code_analysis:
+    description: Code analysis, debugging, finding patterns with AST tools
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/tool-catalog.yaml
+    context_bundles:
+      - ast-debugging-tools
+    triggers:
+      keywords:
+        - find config
+        - config usage
+        - hydra usage
+        - where is used
+        - find class
+        - find function
+        - symbol search
+        - dependency graph
+        - import graph
+        - code complexity
+        - context tree
+        - module structure
+        - factory pattern
+        - component instantiation
+        - merge order
+        - merge precedence
+        - cfg.
+        - config['
+        - instantiate
+        - ast analysis
+      patterns:
+        - \bfind\b.*\b(config|hydra|class|function|symbol)\b
+        - \bwhere.*\b(is|used|defined)\b
+        - \b(dependency|import).*\bgraph\b
+        - \bcode.*\b(complexity|structure|analysis)\b
+        - \bast\b.*\b(analysis|tool)\b
+      path_patterns:
+        - "**/*.py"
+
+  inference_pipeline:
+    description: OCR inference pipeline work
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/inference-framework.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+    triggers:
+      keywords:
+        - inference
+        - ocr
+        - pipeline
+        - detection
+        - recognition
+        - kie
+      patterns:
+        - \b(inference|ocr|pipeline)\b
+        - \b(detection|recognition|kie)\b.*\b(model|code)\b
+      path_patterns:
+        - ocr/inference/**/*.py
+        - ocr/models/**/*.py
+        - apps/ocr_inference_console/**/*.py
+
+  ocr_geometry:
+    description: Coordinate transforms and geometry handling
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+    triggers:
+      keywords:
+        - coordinate
+        - polygon
+        - box
+        - bbox
+        - geometry
+        - transform
+        - padding
+      patterns:
+        - \b(coordinate|polygon|bbox)\b
+        - \bcoordinate\b.*\b(collapse|transform)\b
+      path_patterns:
+        - ocr/**/geometry/**/*.py
+        - ocr/**/transforms/**/*.py
+
+  ocr_postprocessing:
+    description: Post-processing and logic
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml
+    triggers:
+      keywords:
+        - postprocessing
+        - binarization
+        - threshold
+        - filter
+      patterns:
+        - \bpost-?processing\b
+        - \bbinariz\w+\b
+      path_patterns:
+        - ocr/**/postprocessing/**/*.py
+        - ocr/**/filters/**/*.py
+
+  ocr_architecture:
+    description: Defining component interfaces and architecture patterns
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/ocr-components/component-interfaces.yaml
+      - AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+    triggers:
+      keywords:
+        - architecture
+        - interface
+        - component
+        - head
+        - loss
+        - refactor
+        - feature first
+        - generic
+      patterns:
+        - \barchitecture\b
+        - \binterface\b
+        - \bcomponent\b
+        - \brefactor\b
+      path_patterns:
+        - ocr/**/interfaces/**/*.py
+        - ocr/**/components/**/*.py
+        - ocr/models/**/*.py
+
+  api_development:
+    description: API and contract development
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/api-contracts.yaml
+      - AgentQMS/standards/tier2-framework/data-contracts.yaml
+    triggers:
+      keywords:
+        - api
+        - endpoint
+        - contract
+        - schema
+        - request
+        - response
+      patterns:
+        - \bapi\b
+        - \b(endpoint|contract|schema)\b
+      path_patterns:
+        - apps/**/*.py
+        - "**/api/**/*.py"
+        - "**/routes/**/*.py"
+
+  git_workflow:
+    description: Git operations and version control
+    priority: 3
+    standards:
+      - AgentQMS/standards/tier2-framework/git-conventions.yaml
+    triggers:
+      keywords:
+        - git
+        - commit
+        - branch
+        - merge
+        - pull request
+      patterns:
+        - \bgit\b
+        - \b(commit|branch|merge|pr)\b
+      path_patterns:
+        - .git/**/*
+        - .github/**/*
+
+  validation:
+    description: Running validation and compliance checks
+    priority: 1
+    standards:
+      - AgentQMS/standards/tier1-sst/validation-protocols.yaml
+      - AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+    triggers:
+      keywords:
+        - validate
+        - compliance
+        - check
+        - verify
+      patterns:
+        - \b(validate|compliance|verify)\b
+      path_patterns:
+        - AgentQMS/tools/compliance/**/*.py
+        - tests/**/*.py
+
+# Quick reference indices (maintained for backwards compatibility)
+tier1_sst:
+  architecture: AgentQMS/standards/tier1-sst/system-architecture.yaml
+  naming: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+  placement: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+  prohibited: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+  artifacts: AgentQMS/standards/tier1-sst/artifact-types.yaml
+  validation: AgentQMS/standards/tier1-sst/validation-protocols.yaml
+  workflows: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+
+tier2_framework:
+  contracts: AgentQMS/standards/tier2-framework/data-contracts.yaml
+  api_contracts: AgentQMS/standards/tier2-framework/api-contracts.yaml
+  inference: AgentQMS/standards/tier2-framework/inference-framework.yaml
+  tools: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+  quickstart: AgentQMS/standards/tier2-framework/quickstart.yaml
+  debugging: AgentQMS/standards/tier2-framework/debugging-sessions.yaml
+  coding_standards:
+    core: AgentQMS/standards/tier2-framework/coding/python-core.yaml
+    testing: AgentQMS/standards/tier2-framework/coding/testing.yaml
+    async: AgentQMS/standards/tier2-framework/coding/async-concurrency.yaml
+    pydantic: AgentQMS/standards/tier2-framework/coding/pydantic-validation.yaml
+    ml: AgentQMS/standards/tier2-framework/coding/ml-frameworks.yaml
+  configuration_standards: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+  hydra_rules: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+  hydra_patterns_reference: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
+  git_conventions: AgentQMS/standards/tier2-framework/git-conventions.yaml
+  datasets: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
+  ocr_components:
+    coordinate_transforms: AgentQMS/standards/tier2-framework/ocr-components/coordinate-transforms.yaml
+    image_loading: AgentQMS/standards/tier2-framework/ocr-components/image-loading.yaml
+    model_management: AgentQMS/standards/tier2-framework/ocr-components/model-management.yaml
+    orchestration_flow: AgentQMS/standards/tier2-framework/ocr-components/orchestration-flow.yaml
+    pipeline_contracts: AgentQMS/standards/tier2-framework/ocr-components/pipeline-contracts.yaml
+    postprocessing_logic: AgentQMS/standards/tier2-framework/ocr-components/postprocessing-logic.yaml
+    preprocessing_logic: AgentQMS/standards/tier2-framework/ocr-components/preprocessing-logic.yaml
+    visualization_logic: AgentQMS/standards/tier2-framework/ocr-components/visualization-logic.yaml
+
+tier3_agents:
+  claude: AgentQMS/standards/tier3-agents/claude/config.yaml
+  copilot: AgentQMS/standards/tier3-agents/copilot/config.yaml
+  cursor: AgentQMS/standards/tier3-agents/cursor/config.yaml
+  gemini: AgentQMS/standards/tier3-agents/gemini/config.yaml
+  vlm: AgentQMS/standards/tier3-agents/vlm-tools.yaml
+  multi_agent_system: AgentQMS/standards/tier3-agents/multi-agent-system.yaml
+
+tier4_workflows:
+  middleware: AgentQMS/standards/tier4-workflows/middleware-policies.yaml
+  experiment_workflow: AgentQMS/standards/tier4-workflows/experiment-workflow.yaml
+  workflow_detector: AgentQMS/standards/tier4-workflows/workflow-detector.yaml
+  compliance: AgentQMS/standards/tier4-workflows/compliance-reporting/generate-compliance-report.py
+  hooks: AgentQMS/standards/tier4-workflows/pre-commit-hooks/
+  utilities:
+    index_generator: AgentQMS/tools/documentation/auto_generate_index.py
+
+# Integration configuration
+integration:
+  loader: AgentQMS.tools.utils.config_loader.ConfigLoader
+  cache_ttl: 3600
+  fallback_standards:
+    - AgentQMS/standards/registry.yaml
+  path_aware_discovery:
+    enabled: true
+    description: Automatically resolve standards based on current working directory
+
+# Validation configuration
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: active
+memory_footprint: 180
