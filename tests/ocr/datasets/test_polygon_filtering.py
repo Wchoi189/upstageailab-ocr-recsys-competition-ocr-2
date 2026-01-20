@@ -11,7 +11,7 @@ from unittest.mock import patch
 
 import numpy as np
 
-from ocr.core.utils.polygon_utils import filter_degenerate_polygons
+from ocr.domains.detection.utils.polygons import filter_degenerate_polygons
 
 
 class TestPolygonFiltering:

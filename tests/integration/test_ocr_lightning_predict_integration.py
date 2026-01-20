@@ -7,7 +7,7 @@ import pytest
 import torch
 from omegaconf import OmegaConf
 
-from ocr.core.lightning.ocr_pl import OCRPLModule
+from ocr.core.lightning.base import OCRPLModule
 
 
 class MockModel:

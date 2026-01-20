@@ -9,7 +9,7 @@ import torch
 from PIL import Image
 
 from ocr.data.datasets.base import Dataset as OCRDataset
-from ocr.data.datasets.db_collate_fn import DBCollateFN
+from ocr.domains.detection.data.collate_db import DBCollateFN
 from ocr.data.datasets.schemas import DatasetConfig
 
 

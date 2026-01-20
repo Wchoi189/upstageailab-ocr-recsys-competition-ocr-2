@@ -12,7 +12,7 @@ import numpy as np
 import pytest
 import torch
 
-from ocr.data.datasets.db_collate_fn import DBCollateFN
+from ocr.domains.detection.data.collate_db import DBCollateFN
 
 
 class TestDBCollatePolygonShapes:

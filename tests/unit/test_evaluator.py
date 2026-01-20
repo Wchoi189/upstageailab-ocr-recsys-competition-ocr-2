@@ -4,7 +4,7 @@ from unittest.mock import MagicMock, patch
 
 import numpy as np
 
-from ocr.core.evaluation.evaluator import CLEvalEvaluator
+from ocr.domains.detection.evaluation import CLEvalEvaluator
 from ocr.validation.models import LightningStepPrediction
 
 

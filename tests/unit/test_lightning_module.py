@@ -3,7 +3,7 @@ from types import SimpleNamespace
 
 import numpy as np
 
-from ocr.core.lightning.ocr_pl import OCRPLModule
+from ocr.core.lightning.base import OCRPLModule
 from ocr.core.utils.orientation import remap_polygons
 
 

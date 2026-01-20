@@ -357,7 +357,7 @@ class TestMapLoadingCaching:
         sample = dataset[0]
 
         # Generate maps using collate function
-        from ocr.data.datasets.db_collate_fn import DBCollateFN
+        from ocr.domains.detection.data.collate_db import DBCollateFN
 
         collate_fn = DBCollateFN()
         # Remove batch dimension for make_prob_thresh_map
