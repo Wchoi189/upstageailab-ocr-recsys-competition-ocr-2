@@ -1,7 +1,7 @@
 layers:
   settings: AgentQMS/.agentqms/settings.yaml
 metadata:
-  generated_at: '2026-01-12T14:01:20.559481Z'
+  generated_at: '2026-01-20T12:06:52.502821Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:
@@ -89,26 +89,18 @@ resolved:
       validate_context: true
   tool_mappings:
     tool_mappings:
-      artifact_workflow:
-        path: ../tools/core/artifact_workflow.py
-        description: Unified interface for artifact creation
+      qms:
+        path: ../bin/qms
+        description: Unified AgentQMS CLI tool - ONLY supported interface for artifact
+          management
         agent_only: true
-      validate_artifacts:
-        path: ../tools/compliance/validate_artifacts.py
-        description: Validates naming conventions and structure
-        agent_only: true
-      monitor_artifacts:
-        path: ../tools/compliance/monitor_artifacts.py
-        description: Compliance monitoring and alerts
-        agent_only: true
-      agent_feedback:
-        path: ../tools/utilities/agent_feedback.py
-        description: Agent feedback and issue reporting
-        agent_only: true
-      documentation_quality_monitor:
-        path: ../tools/compliance/documentation_quality_monitor.py
-        description: Documentation quality monitoring
-        agent_only: true
+        subcommands:
+        - artifact: Create, validate, and manage artifacts
+        - validate: Run validation checks on artifacts
+        - monitor: Compliance monitoring and alerts
+        - feedback: Report issues and suggestions
+        - quality: Documentation quality checks
+        - generate-config: Path-aware configuration generation
     workflow_scripts:
       create_artifact: ../bin/workflows/create-artifact.sh
       validate: ../bin/workflows/validate.sh

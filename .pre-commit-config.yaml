@@ -52,7 +52,7 @@ repos:
 
       - id: validate-agentqms-artifacts
         name: validate-agentqms-artifacts
-        entry: uv run python AgentQMS/tools/compliance/validate_artifacts.py --no-refresh
+        entry: qms validate
         language: system
         pass_filenames: true
         files: ^docs/artifacts/.*\.md$

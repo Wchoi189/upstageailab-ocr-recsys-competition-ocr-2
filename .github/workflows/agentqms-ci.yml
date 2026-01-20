@@ -48,7 +48,7 @@ jobs:
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
           cd AgentQMS/bin
-          python ../tools/compliance/validate_artifacts.py --all --json > /tmp/validation.json 2> /tmp/validation.err || true
+          qms validate --all --json > /tmp/validation.json 2> /tmp/validation.err || true
 
           # Check if JSON file is valid before parsing
           if [ ! -s /tmp/validation.json ] || ! jq empty /tmp/validation.json 2>/dev/null; then
