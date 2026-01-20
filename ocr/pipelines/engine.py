@@ -19,7 +19,9 @@ warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has 
 
 from ocr.core.inference.dependencies import OCR_MODULES_AVAILABLE
 from ocr.core.inference.image_loader import ImageLoader
-from .orchestrator import InferenceOrchestrator
+# Note: InferenceOrchestrator was renamed to OCRProjectOrchestrator
+# This import is commented out to avoid circular dependency - engine.py may need refactoring
+# from .orchestrator import OCRProjectOrchestrator as InferenceOrchestrator
 from ocr.core.inference.utils import generate_mock_predictions
 from ocr.core.inference.utils import get_available_checkpoints as scan_checkpoints
 
@@ -36,11 +38,14 @@ class InferenceEngine:
 
     def __init__(self) -> None:
         """Initialize inference engine with orchestrator delegation."""
-        self._orchestrator = InferenceOrchestrator()
+        # TODO: Restore orchestrator integration after circular import is resolved
+        # self._orchestrator = InferenceOrchestrator()
+        self._orchestrator = None
         self._image_loader = ImageLoader()
 
         # Expose device for backward compatibility
-        self.device = self._orchestrator.model_manager.device
+        # self.device = self._orchestrator.model_manager.device if self._orchestrator else "cpu"
+        self.device = "cpu"  # Fallback until orchestrator is restored
 
         # Legacy attributes for backward compatibility (deprecated, use orchestrator)
         self.model = None  # Populated after load_model() for backward compat
