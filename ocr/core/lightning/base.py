@@ -13,7 +13,6 @@ from hydra.utils import instantiate
 from omegaconf import DictConfig
 
 from ocr.core.lightning.utils import CheckpointHandler, extract_metric_kwargs, extract_normalize_stats
-from ocr.core.metrics import CLEvalMetric
 
 
 class OCRPLModule(pl.LightningModule):
@@ -57,7 +56,7 @@ class OCRPLModule(pl.LightningModule):
         self.dataset = dataset
         self.metric_cfg = metric_cfg
         self.metric_kwargs = extract_metric_kwargs(metric_cfg)
-        self.metric = instantiate(metric_cfg) if metric_cfg is not None else CLEvalMetric(**self.metric_kwargs)
+        self.metric = instantiate(metric_cfg) if metric_cfg is not None else None
         self.config = config
         self.lr_scheduler = None
         self._normalize_mean, self._normalize_std = extract_normalize_stats(config)

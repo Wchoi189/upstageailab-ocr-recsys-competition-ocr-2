@@ -4,7 +4,7 @@ import numpy as np
 import pytest
 import torch
 
-from ocr.core.metrics.cleval_metric import CLEvalMetric, Options
+from ocr.domains.detection.metrics.cleval_metric import CLEvalMetric, Options
 
 
 class TestCLEvalMetric:
@@ -183,7 +183,7 @@ class TestCLEvalMetric:
 
         assert len(metric.scalewise_metric) > 0  # Should have scale-wise metrics initialized
 
-    @patch("ocr.core.metrics.cleval_metric.evaluation")
+    @patch("ocr.domains.detection.metrics.cleval_metric.evaluation")
     def test_evaluation_function_called_with_correct_options(
         self,
         mock_evaluation,

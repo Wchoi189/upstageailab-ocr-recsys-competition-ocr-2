@@ -45,7 +45,7 @@ Adhere to this cycle to ensure correct history tracking and prevent stale sessio
 2.  **WORK**: Execute tasks. Update `task.md` and `implementation_plan.md`.
 3.  **UPDATE CONTEXT (CRITICAL)**:
     *   **Target**: `active_context/current_session.yml` (Sprint Context)
-    *   **Action**: Change `session_id`, set `status="completed"`, update `completed_date`, and add `notes`.
+    *   **Action**: Use `manage_session` tool or `session-manager` script. **DO NOT EDIT current_session.yml MANUALLY.**
     *   **Constraint**: *Must* be done **BEFORE** export.
 4.  **EXPORT SESSION**: `uv run python -m project_compass.cli session-export --note "Session completion note"`
 

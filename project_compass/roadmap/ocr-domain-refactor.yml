@@ -51,7 +51,6 @@ phases:
           - "Detection evaluator already migrated to domains/detection/evaluation.py"
           - "Recognition evaluator migration deferred (low impact)"
 
-
   - name: 'Phase 3: Verification'
     status: completed
     completed_date: 2026-01-19
@@ -75,6 +74,23 @@ phases:
       - 'ocr/features acts as backward compatibility facade'
       - 'ocr/domains contains actual implementations'
       - 'Model factory supports V5.0 Hydra _target_ instantiation'
+
+  - name: 'Phase 5: Surgical Audit 2 (The Data Purge)'
+    status: planning
+    start_date: 2026-01-21
+    items:
+      - 'Audit ocr/data/datasets for domain leakage (advanced_detector.py, etc)'
+      - 'Relocate domain-specific data logic to ocr/domains/{domain}/data/'
+      - 'Refactor ocr/data/__init__.py to prevent eager loading'
+      - 'Decouple validation logic from dataset initialization'
+
+  - name: 'Phase 6: The Registry Purge'
+    status: planning
+    items:
+      - 'Deprecate ocr.core.registry'
+      - 'Convert all YAML configs to use Hydra _target_ instantiation'
+      - 'Remove factory patterns and eager imports in __init__ files'
+      - 'Ensure 0 cross-domain imports at startup'
 
 directory_map:
   core_strict:

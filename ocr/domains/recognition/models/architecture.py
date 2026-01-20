@@ -5,7 +5,7 @@ from ocr.core import registry
 from .decoder import PARSeqDecoder
 from .head import PARSeqHead
 from ocr.core.models.encoder.timm_backbone import TimmBackbone
-from ocr.core.models.loss.cross_entropy_loss import CrossEntropyLoss
+from ocr.domains.recognition.models.loss.cross_entropy_loss import CrossEntropyLoss
 
 def register_parseq_components():
     # Register components if not already registered

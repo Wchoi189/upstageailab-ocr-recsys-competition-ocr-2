@@ -14,9 +14,9 @@
 import torch
 
 from ocr.core import BaseLoss
-from ocr.core.models.loss.bce_loss import BCELoss
-from ocr.core.models.loss.dice_loss import DiceLoss
-from ocr.core.models.loss.l1_loss import MaskL1Loss
+from ocr.domains.detection.models.loss.bce_loss import BCELoss
+from ocr.domains.detection.models.loss.dice_loss import DiceLoss
+from ocr.domains.detection.models.loss.l1_loss import MaskL1Loss
 
 
 class DBLoss(BaseLoss):
