@@ -221,6 +221,126 @@ class ConfigLoader:
             "cached_files": list(self._cache_order),
         }
 
+    def resolve_active_standards(
+        self,
+        current_path: Path | str | None = None,
+        registry_path: Path | str = "AgentQMS/standards/registry.yaml",
+    ) -> list[str]:
+        """
+        Resolve active standards based on current working directory.
+
+        This implements path-aware discovery by checking the current path against
+        path_patterns defined in the registry and returning matching standards.
+
+        Args:
+            current_path: Current working directory or file path. If None, uses os.getcwd()
+            registry_path: Path to the registry.yaml file
+
+        Returns:
+            List of standard file paths that match the current path
+
+        Example:
+            loader = ConfigLoader()
+            # Working in ocr/inference/
+            standards = loader.resolve_active_standards("ocr/inference/pipeline.py")
+            # Returns inference-related standards
+        """
+        import fnmatch
+        import os
+
+        if current_path is None:
+            current_path = Path.cwd()
+        else:
+            current_path = Path(current_path)
+
+        # Load registry
+        registry = self.get_config(registry_path)
+        if not registry or "task_mappings" not in registry:
+            return []
+
+        active_standards = []
+        seen = set()  # Avoid duplicates
+
+        # Check each task mapping for path pattern matches
+        for task_name, task_config in registry["task_mappings"].items():
+            triggers = task_config.get("triggers", {})
+            path_patterns = triggers.get("path_patterns", [])
+
+            for pattern in path_patterns:
+                # Convert current_path to relative path for matching
+                try:
+                    rel_path = current_path.relative_to(Path.cwd())
+                except ValueError:
+                    rel_path = current_path
+
+                # Check if path matches pattern (using fnmatch for glob patterns)
+                if fnmatch.fnmatch(str(rel_path), pattern) or fnmatch.fnmatch(str(current_path), pattern):
+                    # Add standards to active list
+                    standards = task_config.get("standards", [])
+                    for std in standards:
+                        if std not in seen:
+                            active_standards.append(std)
+                            seen.add(std)
+
+        return active_standards
+
+    def generate_effective_config(
+        self,
+        settings_path: Path | str = "AgentQMS/.agentqms/settings.yaml",
+        registry_path: Path | str = "AgentQMS/standards/registry.yaml",
+        current_path: Path | str | None = None,
+    ) -> dict[str, Any]:
+        """
+        Generate effective.yaml with dynamic context injection.
+
+        Combines base settings with path-aware standard discovery to create
+        a context-aware configuration.
+
+        Args:
+            settings_path: Path to settings.yaml
+            registry_path: Path to registry.yaml
+            current_path: Current working directory for path-aware discovery
+
+        Returns:
+            Complete effective configuration dict with active standards injected
+
+        Example:
+            loader = ConfigLoader()
+            effective = loader.generate_effective_config(current_path="ocr/inference")
+            # effective["resolved"]["context_integration"]["active_standards"] contains
+            # inference-related standards
+        """
+        from datetime import datetime, timezone
+
+        # Load base settings
+        settings = self.get_config(settings_path, defaults={})
+
+        # Resolve active standards based on current path
+        active_standards = self.resolve_active_standards(current_path, registry_path)
+
+        # Build effective config
+        effective = {
+            "layers": {"settings": str(settings_path)},
+            "metadata": {
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "generator": "AgentQMS ConfigLoader v0.3 (Path-Aware)",
+                "schema_version": "0.3",
+            },
+            "resolved": settings.get("resolved", {}),
+        }
+
+        # Inject active standards into context_integration
+        if "context_integration" not in effective["resolved"]:
+            effective["resolved"]["context_integration"] = {}
+
+        effective["resolved"]["context_integration"]["active_standards"] = active_standards
+        effective["resolved"]["context_integration"]["discovery_method"] = "path_aware"
+
+        if current_path:
+            effective["resolved"]["context_integration"]["current_path"] = str(current_path)
+
+        return effective
+
 
 # Module-level convenience instance for basic use cases
 _default_loader = ConfigLoader(cache_size=10)

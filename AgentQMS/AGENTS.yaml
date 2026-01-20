@@ -9,7 +9,7 @@ title: "AgentQMS Agents Entrypoint"
 description: "Compact index of key AgentQMS resources and commands for AI agents"
 
 resources:
-  standards_index: "AgentQMS/standards/INDEX.yaml"
+  standards_registry: "AgentQMS/standards/registry.yaml"
   tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
   quickstart: "AgentQMS/standards/tier2-framework/quickstart.yaml"
   compass_entrypoint: "project_compass/AGENTS.md"
@@ -17,8 +17,17 @@ resources:
   plugin_snapshot: "AgentQMS/.agentqms/state/plugins.yaml"
   bin_makefile: "AgentQMS/bin/Makefile"
   bin_readme: "AgentQMS/bin/README.md"
+  qms_cli: "AgentQMS/bin/qms"
 
 commands:
+  # Unified QMS CLI (Recommended)
+  qms_help: "AgentQMS/bin/qms --help"
+  qms_validate: "AgentQMS/bin/qms validate --all"
+  qms_monitor: "AgentQMS/bin/qms monitor --check"
+  qms_artifact_create: "AgentQMS/bin/qms artifact create --type <type> --name <name> --title \"<title>\""
+  qms_generate_config: "AgentQMS/bin/qms generate-config --path <current_path>"
+
+  # Legacy Makefile commands (Deprecated - use qms CLI instead)
   help: "cd AgentQMS/bin && make help"
   validate: "cd AgentQMS/bin && make validate"
   compliance: "cd AgentQMS/bin && make compliance"
