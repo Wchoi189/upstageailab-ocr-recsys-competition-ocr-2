@@ -17,11 +17,11 @@ import numpy as np
 warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:", category=UserWarning)
 warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has been renamed to 'validate_by_name'", category=UserWarning)
 
-from .dependencies import OCR_MODULES_AVAILABLE
-from .image_loader import ImageLoader
+from ocr.core.inference.dependencies import OCR_MODULES_AVAILABLE
+from ocr.core.inference.image_loader import ImageLoader
 from .orchestrator import InferenceOrchestrator
-from .utils import generate_mock_predictions
-from .utils import get_available_checkpoints as scan_checkpoints
+from ocr.core.inference.utils import generate_mock_predictions
+from ocr.core.inference.utils import get_available_checkpoints as scan_checkpoints
 
 LOGGER = logging.getLogger(__name__)
 

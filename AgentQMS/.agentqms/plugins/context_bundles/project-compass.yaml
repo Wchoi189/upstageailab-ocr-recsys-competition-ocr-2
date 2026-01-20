@@ -14,6 +14,7 @@ tags:
 triggers:
   keywords:
     - "compass"
+    - "@compass"
     - "session"
     - "roadmap"
     - "checkout"
