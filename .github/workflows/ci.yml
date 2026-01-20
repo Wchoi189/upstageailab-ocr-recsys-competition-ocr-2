@@ -73,6 +73,7 @@ jobs:
       - name: Install dependencies and validate
         run: |
           export PYTHONPATH=$GITHUB_WORKSPACE
+          export PATH=$GITHUB_WORKSPACE/AgentQMS/bin:$PATH
           cd AgentQMS/bin
           uv pip install -r requirements.txt --system
           make validate

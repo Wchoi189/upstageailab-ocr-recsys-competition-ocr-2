@@ -1,14 +1,25 @@
-"""
+"""\nDEPRECATED: 
 Legacy import path compatibility shim.
 
 This module provides backward compatibility for tests importing from:
     from etk.compass import CompassPaths, EnvironmentChecker, ...
 
 The actual implementation is in:
-    project_compass.src.core
+⚠️  WARNING: This compatibility shim will be REMOVED in v0.4.0
+⚠️  Update your imports to use the new path
 
-This shim will be deprecated in a future release.
 """
+
+import warnings
+
+warnings.warn(
+    "Importing from 'etk.compass' is deprecated. "
+    "Use 'project_compass.src.core' instead. "
+    "This compatibility shim will be removed in v0.4.0.",
+    DeprecationWarning,
+    stacklevel=2
+)
+
 
 import sys
 from pathlib import Path

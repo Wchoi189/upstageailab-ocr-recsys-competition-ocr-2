@@ -1,16 +1,72 @@
-# AgentQMS Legacy Tool Deprecation Plan
+# ⚠️ DEPRECATION COMPLETE - NUCLEAR REFACTOR EXECUTED
 
-**Version:** 0.3.0
-**Date:** 2026-01-20
-**Status:** Phase 1 (Soft Deprecation) - In Progress
+**Status:** ✅ COMPLETED (Phase 3 - Nuclear Refactor)
+**Completion Date:** 2026-01-20
+**Outcome:** Legacy system completely removed
+
+## What Happened
+
+**Nuclear refactor executed instead of gradual 3-phase deprecation.**
+
+### Actions Taken:
+- ✅ **All legacy tool scripts DELETED** (artifact_workflow.py, validate_artifacts.py, etc.)
+- ✅ **Archived discovery files DELETED** (AgentQMS/standards/.archive/)
+- ✅ **settings.yaml cleaned** - Only qms CLI remains in tool_mappings
+- ✅ **Documentation rewritten** - Single source of truth (AgentQMS/README.md)
+- ✅ **AGENTS.yaml updated** - All legacy references removed
+- ✅ **qms CLI made globally accessible** - Symlink to /usr/local/bin/qms
+
+### Breaking Changes:
+- ⚠️ No backward compatibility for legacy tool calls
+- ⚠️ Old Makefile commands removed/simplified
+- ⚠️ Legacy imports still work via compatibility shims (OCR domain refactor)
+
+### Why Nuclear Instead of Gradual:
+- Hybrid state caused confusion and split-brain syndrome
+- Legacy system continued getting updates
+- Risk of divergence too high
+- Clean break better than gradual deprecation
 
 ---
 
-## Overview
+## Current State (Post-Nuclear)
 
-This document outlines the deprecation plan for legacy AgentQMS tools and discovery files that have been replaced by the unified registry and QMS CLI.
+**ONLY supported interface:** `qms` CLI
 
-**Goal:** Gracefully transition from 5 separate tools + 2 discovery files to 1 unified CLI + 1 registry while maintaining backward compatibility.
+```bash
+# All operations use qms
+qms --help
+qms validate --all
+qms artifact create --type implementation_plan --name my-feature
+qms generate-config --path ocr/inference
+```
+
+**Documentation:** See `AgentQMS/README.md`
+
+---
+
+## For Historical Reference: Original Deprecation Plan
+
+The content below is the original gradual deprecation plan that was **NOT** executed.
+Instead, a nuclear refactor was performed.
+
+---
+
+# AgentQMS Legacy Tool Deprecation Plan (ORIGINAL - NOT EXECUTED)
+
+**Original Version:** 0.3.0
+**Original Date:** 2026-01-20
+**Original Status:** Phase 1 (Soft Deprecation) - Planned (but not executed)
+
+---
+
+## Overview (ORIGINAL PLAN)
+
+This document outlined the deprecation plan for legacy AgentQMS tools and discovery files that have been replaced by the unified registry and QMS CLI.
+
+**Original Goal:** Gracefully transition from 5 separate tools + 2 discovery files to 1 unified CLI + 1 registry while maintaining backward compatibility.
+
+**Actual Outcome:** Nuclear refactor executed - all legacy removed immediately.
 
 ---
 

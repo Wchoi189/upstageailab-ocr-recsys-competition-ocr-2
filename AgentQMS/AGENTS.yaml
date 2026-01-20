@@ -9,31 +9,28 @@ title: "AgentQMS Agents Entrypoint"
 description: "Compact index of key AgentQMS resources and commands for AI agents"
 
 resources:
+  readme: "AgentQMS/README.md"
   standards_registry: "AgentQMS/standards/registry.yaml"
   tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
   quickstart: "AgentQMS/standards/tier2-framework/quickstart.yaml"
   compass_entrypoint: "project_compass/AGENTS.md"
   mcp_server: "AgentQMS/mcp_server.py"
   plugin_snapshot: "AgentQMS/.agentqms/state/plugins.yaml"
-  bin_makefile: "AgentQMS/bin/Makefile"
-  bin_readme: "AgentQMS/bin/README.md"
   qms_cli: "AgentQMS/bin/qms"
 
 commands:
-  # Unified QMS CLI (Recommended)
-  qms_help: "AgentQMS/bin/qms --help"
-  qms_validate: "AgentQMS/bin/qms validate --all"
-  qms_monitor: "AgentQMS/bin/qms monitor --check"
-  qms_artifact_create: "AgentQMS/bin/qms artifact create --type <type> --name <name> --title \"<title>\""
-  qms_generate_config: "AgentQMS/bin/qms generate-config --path <current_path>"
-
-  # Legacy Makefile commands (Deprecated - use qms CLI instead)
-  help: "cd AgentQMS/bin && make help"
-  validate: "cd AgentQMS/bin && make validate"
-  compliance: "cd AgentQMS/bin && make compliance"
-  create_plan: "cd AgentQMS/bin && make create-plan NAME=<name> TITLE=\"<title>\""
-  create_assessment: "cd AgentQMS/bin && make create-assessment NAME=<name> TITLE=\"<title>\""
-  create_design: "cd AgentQMS/bin && make create-design NAME=<name> TITLE=\"<title>\""
+  # Unified QMS CLI (ONLY supported interface)
+  qms_help: "qms --help"
+  qms_validate_all: "qms validate --all"
+  qms_validate_file: "qms validate --file <path>"
+  qms_monitor_check: "qms monitor --check"
+  qms_monitor_report: "qms monitor --report"
+  qms_artifact_create: "qms artifact create --type <type> --name <name> --title \"<title>\""
+  qms_artifact_validate: "qms artifact validate --all"
+  qms_generate_config: "qms generate-config --path <current_path>"
+  qms_feedback_report: "qms feedback report --issue-type <type> --description \"<desc>\""
+  qms_quality_check: "qms quality --check"
+  qms_token_analysis: "python AgentQMS/bin/monitor-token-usage.py"
 
 context_bundles:
   - name: "compliance-check"
@@ -46,7 +43,10 @@ context_bundles:
     path: "AgentQMS/.agentqms/plugins/context_bundles/ocr-experiment.yaml"
 
 notes:
-  - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-01-10T15:20:00+0900)."
-  - "Prefer canonical artifact types: assessment, audit, bug_report, design_document, implementation_plan, vlm_report, walkthrough."
-  - "Run plugins snapshot before validation (make plugins-snapshot)."
-  - "ads_version should only be used with schema_reference to the validation schema."
+  - "AgentQMS v0.3.0 - Use 'qms' CLI for ALL artifact operations"
+  - "Legacy tools and Makefile commands REMOVED - only qms CLI supported"
+  - "Standards registry: AgentQMS/standards/registry.yaml (single source of truth)"
+  - "Path-aware discovery reduces token usage by 85% (qms generate-config)"
+  - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-01-10T15:20:00+0900)"
+  - "Canonical artifact types: assessment, audit, bug_report, design_document, implementation_plan, vlm_report, walkthrough"
+  - "For help: qms --help or see AgentQMS/README.md"

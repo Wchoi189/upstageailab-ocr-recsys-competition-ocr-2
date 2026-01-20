@@ -90,41 +90,15 @@ tool_mappings:
   tool_mappings:
     qms:
       path: ../bin/qms
-      description: Unified AgentQMS CLI tool with subcommands (artifact, validate, monitor, feedback, quality, generate-config)
+      description: Unified AgentQMS CLI tool - ONLY supported interface for artifact management
       agent_only: true
       subcommands:
-        - artifact: Artifact workflow management (create, validate, update-indexes, check-compliance)
-        - validate: Validate artifacts and compliance (--file, --all, --directory)
-        - monitor: Monitor artifact organization and compliance (--check, --alert, --report)
-        - feedback: Collect agent feedback and suggestions (report, suggest, list)
-        - quality: Documentation quality monitoring (--check, --consistency, --tool-paths)
-        - generate-config: Generate effective.yaml with path-aware discovery
-    # Legacy tools (deprecated - use 'qms' CLI instead)
-    artifact_workflow:
-      path: ../tools/core/artifact_workflow.py
-      description: "[DEPRECATED] Use 'qms artifact' instead"
-      agent_only: true
-      deprecated: true
-    validate_artifacts:
-      path: ../tools/compliance/validate_artifacts.py
-      description: "[DEPRECATED] Use 'qms validate' instead"
-      agent_only: true
-      deprecated: true
-    monitor_artifacts:
-      path: ../tools/compliance/monitor_artifacts.py
-      description: "[DEPRECATED] Use 'qms monitor' instead"
-      agent_only: true
-      deprecated: true
-    agent_feedback:
-      path: ../tools/utilities/agent_feedback.py
-      description: "[DEPRECATED] Use 'qms feedback' instead"
-      agent_only: true
-      deprecated: true
-    documentation_quality_monitor:
-      path: ../tools/compliance/documentation_quality_monitor.py
-      description: "[DEPRECATED] Use 'qms quality' instead"
-      agent_only: true
-      deprecated: true
+        - artifact: Create, validate, and manage artifacts
+        - validate: Run validation checks on artifacts
+        - monitor: Compliance monitoring and alerts
+        - feedback: Report issues and suggestions
+        - quality: Documentation quality checks
+        - generate-config: Path-aware configuration generation
   workflow_scripts:
     create_artifact: ../bin/workflows/create-artifact.sh
     validate: ../bin/workflows/validate.sh
