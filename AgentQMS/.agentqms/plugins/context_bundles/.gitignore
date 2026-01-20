@@ -1,0 +1,7 @@
+# Redundant generic bundles - we have more specific ones
+# These overlap with existing bundles and cause confusion
+development.yaml
+debugging.yaml
+documentation.yaml
+planning.yaml
+general.yaml

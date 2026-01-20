@@ -2,7 +2,7 @@
 import pytest
 import torch
 import torch.nn as nn
-from ocr.features.detection.models.heads.db_head import DBHead
+from ocr.domains.detection.models.heads.db_head import DBHead
 
 @pytest.mark.regression
 @pytest.mark.bug_001

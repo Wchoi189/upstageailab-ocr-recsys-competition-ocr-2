@@ -5,6 +5,58 @@ All notable changes to AgentQMS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.0] - 2026-01-21 (ADS v1.0 Compliance)
+
+### CONSOLIDATED - Single CLI Architecture
+
+**BREAKING:** Eliminated dual CLI architecture. One interface: `aqms`
+
+#### What Changed:
+1. **Unified CLI Entry Point**
+   - **Old:** Two CLIs (`qms` and `aqms`) with overlapping functionality
+   - **New:** Single `aqms` CLI (in `bin/aqms`)
+   - Implementation: Bash wrapper → Python CLI (`AgentQMS/bin/qms`)
+   - **In PATH:** Add `export PATH="$PROJECT_ROOT/bin:$PATH"` to use `aqms` globally
+
+2. **Version Alignment**
+   - **Old:** AgentQMS v0.3.0, ADS v1.0 (conflicting versions)
+   - **New:** AgentQMS v1.0.0 = ADS v1.0 (unified)
+   - All artifacts, standards, and tools now use consistent ADS v1.0 spec
+
+3. **Context Bundling Fixed**
+   - **Issue:** System expected generic task type bundles that didn't exist
+   - **Fix:** Added intelligent task type → specialized bundle mapping
+   - `development` → `pipeline-development`
+   - `documentation` → `documentation-update`
+   - `debugging` → `ocr-debugging`
+   - `planning` → `project-compass`
+   - Fallback → `compliance-check`
+
+4. **Command Consistency**
+   - All commands now use `aqms <subcommand>`
+   - No more confusion between `qms`, `aqms`, `make`, or direct Python scripts
+   - Example: `aqms validate --all`, `aqms artifact create ...`
+
+#### Migration:
+```bash
+# Old (multiple ways)
+qms validate --all                    # Didn't work (not in PATH)
+make validate                         # Worked but indirect
+python scripts/aqms.py validate       # Worked but verbose
+
+# New (one way)
+aqms validate --all                   # Works everywhere if in PATH
+```
+
+#### Files Changed:
+- **Modified:** `bin/aqms` - Now single entry point
+- **Removed:** `scripts/aqms`, `scripts/aqms.py` - Eliminated duplicates
+- **Updated:** `AgentQMS/AGENTS.yaml` - Single CLI reference
+- **Updated:** `AGENTS.md` - Simplified quick start
+- **Fixed:** Context bundle mapping in `context_bundle.py`
+
+---
+
 ## [0.3.0] - 2026-01-20
 
 ### 🚨 BREAKING CHANGES - Nuclear Refactor
@@ -13,12 +65,16 @@ This release represents a complete architectural overhaul of AgentQMS, aggressiv
 
 #### Removed (Legacy System Deletion)
 
-**Deleted Tool Scripts:**
-- `AgentQMS/tools/core/artifact_workflow.py` - Replaced by `qms artifact` subcommand
-- `AgentQMS/tools/compliance/validate_artifacts.py` - Replaced by `qms validate` subcommand
-- `AgentQMS/tools/compliance/monitor_artifacts.py` - Replaced by `qms monitor` subcommand
-- `AgentQMS/tools/utilities/agent_feedback.py` - Replaced by `qms feedback` subcommand
-- `AgentQMS/tools/compliance/documentation_quality_monitor.py` - Replaced by `qms quality` subcommand
+> ⚠️ **CORRECTION (2026-01-21):** The tools listed below were NOT actually deleted.
+> They were marked as "deprecated" in documentation but remain functional in the codebase.
+> See v0.3.1 changelog entry for clarification.
+
+**~~Deleted~~ DEPRECATED (but still functional) Tool Scripts:**
+- `AgentQMS/tools/core/artifact_workflow.py` - **Still exists**, replaced by `qms artifact` subcommand
+- `AgentQMS/tools/compliance/validate_artifacts.py` - **Still exists**, replaced by `qms validate` subcommand
+- `AgentQMS/tools/compliance/monitor_artifacts.py` - **Still exists**, replaced by `qms monitor` subcommand
+- `AgentQMS/tools/utilities/agent_feedback.py` - **Still exists**, replaced by `qms feedback` subcommand
+- `AgentQMS/tools/compliance/documentation_quality_monitor.py` - **Still exists**, replaced by `qms quality` subcommand
 
 **Deleted Archived Files:**
 - `AgentQMS/standards/.archive/INDEX.yaml` - Consolidated into registry.yaml

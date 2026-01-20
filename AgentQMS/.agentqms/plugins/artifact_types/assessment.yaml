@@ -21,7 +21,6 @@ metadata:
     type: assessment
     category: evaluation
     status: active
-    version: "1.0"
     tags: [assessment, evaluation, analysis]
 
 validation:
@@ -31,7 +30,6 @@ validation:
     - type
     - category
     - status
-    - version
   required_sections:
     - "## Purpose"
     - "## Findings"

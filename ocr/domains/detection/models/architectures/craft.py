@@ -3,10 +3,10 @@
 from __future__ import annotations
 
 from ocr.core import registry
-from ocr.features.detection.models.decoders.craft_decoder import CraftDecoder
-from ocr.features.detection.models.encoders.craft_vgg import CraftVGGEncoder
-from ocr.features.detection.models.heads.craft_head import CraftHead
-from ocr.core.models.loss.craft_loss import CraftLoss
+from ocr.domains.detection.models.decoders.craft_decoder import CraftDecoder
+from ocr.domains.detection.models.encoders.craft_vgg import CraftVGGEncoder
+from ocr.domains.detection.models.heads.craft_head import CraftHead
+from ocr.domains.detection.models.loss.craft_loss import CraftLoss
 
 
 def register_craft_components() -> None:

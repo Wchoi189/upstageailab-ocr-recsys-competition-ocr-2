@@ -5,10 +5,10 @@ from __future__ import annotations
 import numpy as np
 import torch
 
-from ocr.features.detection.models.decoders.craft_decoder import CraftDecoder
-from ocr.features.detection.models.encoders.craft_vgg import CraftVGGEncoder
-from ocr.features.detection.models.heads.craft_head import CraftHead
-from ocr.features.detection.models.postprocess.craft_postprocess import CraftPostProcessor
+from ocr.domains.detection.models.decoders.craft_decoder import CraftDecoder
+from ocr.domains.detection.models.encoders.craft_vgg import CraftVGGEncoder
+from ocr.domains.detection.models.heads.craft_head import CraftHead
+from ocr.domains.detection.models.postprocess.craft_postprocess import CraftPostProcessor
 from ocr.core.models.loss.craft_loss import CraftLoss
 
 

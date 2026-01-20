@@ -139,7 +139,7 @@ plugins-snapshot: ## Refresh .agentqms/state/plugins.yaml (auto)
 	@python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null 2>&1 || echo "⚠️  Plugin snapshot skipped (optional)"
 
 validate: plugins-snapshot ## Validate all artifacts
-	qms validate --all
+	uv run python $(CURDIR)/qms validate --all
 
 .PHONY: reindex
 reindex: ## Reindex artifacts
@@ -323,10 +323,10 @@ context: ## Generate context bundle for task (usage: make context TASK="task des
 	uv run python ../tools/utilities/get_context.py --task "$(TASK)"
 
 context-development: ## Get development context bundle
-	uv run python ../tools/utilities/get_context.py --type development
+	uv run python ../tools/utilities/get_context.py --task "development task"
 
 context-docs: ## Get documentation context bundle
-	uv run python ../tools/utilities/get_context.py --type documentation
+	uv run python ../tools/utilities/get_context.py --task "documentation task"
 
 context-debug: ## Get debugging context bundle
 	uv run python ../tools/utilities/get_context.py --type debugging
@@ -335,7 +335,7 @@ context-plan: ## Get planning context bundle
 	uv run python ../tools/utilities/get_context.py --type planning
 
 context-list: ## List all available context bundles
-	uv run python ../tools/utilities/get_context.py --list-bundles
+	uv run python ../tools/utilities/get_context.py --list-context-bundles
 
 context-suggest: ## Suggest context bundles for task (usage: make context-suggest TASK="task description")
 	@if [ -z "$(TASK)" ]; then \

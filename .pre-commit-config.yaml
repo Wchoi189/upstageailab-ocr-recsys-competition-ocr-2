@@ -2,6 +2,24 @@
 # It helps catch and fix issues automatically before code is even committed.
 # To use, run `pre-commit install` in your local repository.
 repos:
+  # ============================================================================
+  # ARCHITECTURE GUARDIAN - Prevents architectural violations (NEW!)
+  # This catches the issues that caused 5 refactors. It persists beyond conversations.
+  # ============================================================================
+  - repo: local
+    hooks:
+      - id: architecture-guardian
+        name: 🏛️  Architecture Guardian
+        entry: python3 .pre-commit-hooks/architecture_guardian.py
+        language: system
+        types: [python]
+        pass_filenames: false
+        always_run: true
+        verbose: true
+
+  # ============================================================================
+  # STANDARD CHECKS
+  # ============================================================================
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v4.6.0
     hooks:

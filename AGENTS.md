@@ -8,11 +8,11 @@ This file gives humans and AI a concise starting point. Machine-parsable keys st
 - You need to know which commands to run first (without scanning YAML).
 
 ## Quick Start
-1. Load context: `cd AgentQMS/bin && make context TASK="<what you are doing>"` (or `make context-development`).
-2. Follow standards map: AgentQMS/standards/INDEX.yaml (root index) → tool catalog: AgentQMS/standards/tier2-framework/tool-catalog.yaml.
+1. Load context: `aqms context "<what you are doing>"` (or `make context-development` from AgentQMS/bin).
+2. Follow standards: AgentQMS/standards/registry.yaml (unified registry) → tool catalog: AgentQMS/standards/tier2-framework/tool-catalog.yaml.
 3. Package policy: use `uv` only (no raw `pip`); commands: `uv add`, `uv sync`, `uv run ...`.
-4. Artifact workflow: NEVER hand-write docs/artifacts/*. Use `make create-plan|assessment|design|research|audit|bug-report` (auto-validates). Then `cd AgentQMS/bin && make validate`.
-5. Compliance/safety: `cd AgentQMS/bin && make compliance`; for boundary checks run `make boundary`.
+4. Artifact workflow: NEVER hand-write docs/artifacts/*. Use `aqms artifact create --type <type> --name <name> --title "<title>"` (auto-validates). Then `aqms validate --all`.
+5. Compliance/safety: `aqms monitor --check`; for boundary checks run `make boundary` from AgentQMS/bin.
 
 ## Key Entry Points
 - Project standards: see INDEX.yaml for the map; naming/workflow rules live under tier1-sst/*.

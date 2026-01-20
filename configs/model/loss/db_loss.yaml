@@ -3,7 +3,7 @@
 # Loaded via domain controller defaults
 
 loss:
-  _target_: ocr.core.models.loss.db_loss.DBLoss
+  _target_: ocr.domains.detection.models.loss.db_loss.DBLoss
   alpha: 1.0
   beta: 10.0
   ohem_ratio: 3.0

@@ -17,8 +17,8 @@ from typing import Any
 import torch
 import torch.nn as nn
 
-from ocr.features.detection.interfaces import DetectionHead
-from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
+from ocr.domains.detection.interfaces import DetectionHead
+from ocr.domains.detection.models.postprocess.db_postprocess import DBPostProcessor
 
 
 class DBHead(DetectionHead):

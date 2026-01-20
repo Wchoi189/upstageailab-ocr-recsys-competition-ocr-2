@@ -18,7 +18,6 @@ metadata:
     type: walkthrough
     category: documentation
     status: active
-    version: "1.0"
     tags: [walkthrough, documentation, guide]
 
 validation:
@@ -28,7 +27,6 @@ validation:
     - type
     - category
     - status
-    - version
   required_sections:
     - "## Goal"
     - "## Steps"

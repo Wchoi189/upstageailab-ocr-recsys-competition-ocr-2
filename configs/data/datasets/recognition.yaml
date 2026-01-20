@@ -11,13 +11,13 @@ num_workers: 4
 
 # Tokenizer
 tokenizer:
-  _target_: ocr.features.recognition.data.tokenizer.KoreanOCRTokenizer
+  _target_: ocr.domains.recognition.data.tokenizer.KoreanOCRTokenizer
   charset_path: ${global.paths.root_dir}/ocr/data/charset.json
   max_len: 25
 
 # Dataset Template
 _dataset_template: &dataset_template
-  _target_: ocr.features.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+  _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
   lmdb_path: ${global.paths.datasets.train}/recognition/aihub_lmdb_validation
   tokenizer: ${data.tokenizer}
   max_len: ${data.tokenizer.max_len}

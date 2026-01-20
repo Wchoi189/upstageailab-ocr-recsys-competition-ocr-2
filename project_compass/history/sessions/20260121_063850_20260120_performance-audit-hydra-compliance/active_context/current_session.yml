@@ -1,0 +1,18 @@
+# ACTIVE SESSION CONTEXT
+# MANDATORY: Verify env_lock before execution.
+# AUTO-GENERATED: Do not edit manually. Use CLI/wizard to update.
+# SCHEMA: ../.config/schemas/session.schema.json
+
+session_id: 20260120_performance-audit-hydra-compliance
+objective:
+  primary_goal: 'Performance Audit + Hydra Standards Compliance'
+  active_pipeline: complete
+  success_criteria: Detection ~2.77 it/s, configs use @package _group_
+env_lock:
+  uv_path: /opt/uv/bin/uv
+  python_version: 3.11.14
+  is_gpu_required: true
+  verified_at: 2026-01-20 06:06 (KST)
+active_blockers: []
+working_references:
+  roadmap: project_compass/roadmap/performance-audit.yml

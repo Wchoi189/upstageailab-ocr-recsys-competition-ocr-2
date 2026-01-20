@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 
 from ocr.core import BaseHead
-from ocr.features.detection.models.postprocess.craft_postprocess import CraftPostProcessor
+from ocr.domains.detection.models.postprocess.craft_postprocess import CraftPostProcessor
 
 
 class CraftHead(BaseHead):

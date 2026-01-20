@@ -11,7 +11,8 @@ import sys
 from pathlib import Path
 from typing import Any
 
-from agent.tools.audio.message_templates import (
+# Fix: Import from correct location (not non-existent agent.tools)
+from AgentQMS.bin.cli_tools.audio.message_templates import (
     get_message,
     get_random_message,
     list_categories,

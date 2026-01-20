@@ -199,6 +199,9 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             if not session_name:
                 raise ValueError("session_name is required for import action")
             cmd.append(session_name)
+        elif action == "new":
+            if force:
+                cmd.append("--force")
 
 
         try:

@@ -16,18 +16,18 @@ resources:
   compass_entrypoint: "project_compass/AGENTS.md"
   mcp_server: "AgentQMS/mcp_server.py"
   plugin_snapshot: "AgentQMS/.agentqms/state/plugins.yaml"
-  qms_cli: "AgentQMS/bin/qms"
+  cli: "bin/aqms"
 
 commands:
-  # Unified QMS CLI (ONLY supported interface)
-  qms_help: "qms --help"
-  qms_validate_all: "qms validate --all"
-  qms_validate_file: "qms validate --file <path>"
-  qms_monitor_check: "qms monitor --check"
-  qms_monitor_report: "qms monitor --report"
-  qms_artifact_create: "qms artifact create --type <type> --name <name> --title \"<title>\""
-  qms_artifact_validate: "qms artifact validate --all"
-  qms_generate_config: "qms generate-config --path <current_path>"
+  # Unified CLI - Use 'aqms' (single interface)
+  help: "aqms --help"
+  validate_all: "aqms validate --all"
+  validate_file: "aqms validate --file <path>"
+  monitor_check: "aqms monitor --check"
+  monitor_report: "aqms monitor --report"
+  artifact_create: "aqms artifact create --type <type> --name <name> --title \"<title>\""
+  artifact_validate: "aqms artifact validate --all"
+  generate_config: "aqms generate-config --path <current_path>"
   qms_feedback_report: "qms feedback report --issue-type <type> --description \"<desc>\""
   qms_quality_check: "qms quality --check"
   qms_token_analysis: "python AgentQMS/bin/monitor-token-usage.py"

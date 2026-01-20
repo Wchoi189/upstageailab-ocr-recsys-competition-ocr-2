@@ -77,7 +77,7 @@ def analyze_task_type(description: str) -> str:
         description: Task description text
 
     Returns:
-        Task type: 'development', 'documentation', 'debugging', 'planning', or 'general'
+        Task type or bundle name that best matches the description
     """
     description_lower = description.lower()
 
@@ -91,11 +91,25 @@ def analyze_task_type(description: str) -> str:
         if score > 0:
             scores[task_type] = score
 
-    # Return task type with highest score, or 'general' if no matches
+    # If we have a match, map to appropriate bundle
     if scores:
-        return max(scores.items(), key=lambda x: x[1])[0]
+        task_type = max(scores.items(), key=lambda x: x[1])[0]
 
-    return "general"
+        # Map task types to existing specialized bundles
+        TASK_TO_BUNDLE_MAP = {
+            "development": "pipeline-development",  # Use more specific bundle
+            "documentation": "documentation-update",  # Existing comprehensive bundle
+            "debugging": "ocr-debugging",  # AST-based debugging bundle
+            "planning": "project-compass",  # Project planning and management
+            "hydra-configuration": "hydra-configuration",  # Direct match
+            "hydra-v5-patterns": "hydra-configuration",  # Map to hydra bundle
+            "ocr-architecture": "pipeline-development",  # OCR architecture work
+        }
+
+        return TASK_TO_BUNDLE_MAP.get(task_type, task_type)
+
+    # Default fallback for unmatched tasks - use a comprehensive bundle
+    return "compliance-check"  # Good general-purpose bundle with standards
 
 
 def load_bundle_definition(bundle_name: str) -> dict[str, Any]:

@@ -220,14 +220,38 @@ def run_validate_command(args):
     validator = ArtifactValidator()
 
     if args.file:
-        success = validator.validate_file(Path(args.file))
-        return 0 if success else 1
+        results = validator.validate_single_file(Path(args.file))
+        if results["valid"]:
+            print(f"✅ {args.file}: Valid")
+            return 0
+        else:
+            print(f"❌ {args.file}: Invalid")
+            for error in results.get("errors", []):
+                print(f"  - {error}")
+            return 1
     elif args.directory:
-        success = validator.validate_directory(Path(args.directory))
-        return 0 if success else 1
+        results = validator.validate_directory(Path(args.directory))
+        valid_count = sum(1 for r in results if r["valid"])
+        total_count = len(results)
+        print(f"✅ Validated {valid_count}/{total_count} artifacts in {args.directory}")
+        if valid_count < total_count:
+            print(f"❌ {total_count - valid_count} artifacts have errors")
+            return 1
+        return 0
     elif args.all:
-        success = validator.validate_all()
-        return 0 if success else 1
+        results = validator.validate_all()
+        valid_count = sum(1 for r in results if r["valid"])
+        total_count = len(results)
+        print(f"✅ Validated {valid_count}/{total_count} artifacts")
+        if valid_count < total_count:
+            print(f"❌ {total_count - valid_count} artifacts have errors")
+            for result in results:
+                if not result["valid"]:
+                    print(f"\n{result['file']}:")
+                    for error in result.get("errors", []):
+                        print(f"  - {error}")
+            return 1
+        return 0
     elif args.check_naming:
         success = validator.check_naming_conventions()
         return 0 if success else 1
@@ -243,13 +267,14 @@ def run_monitor_command(args):
     monitor = ArtifactMonitor()
 
     if args.check:
-        results = monitor.check_compliance()
+        results = monitor.check_organization_compliance()
         if args.json:
             import json
             print(json.dumps(results, indent=2))
         else:
-            monitor.print_results(results)
-        return 0 if all(r.get("status") == "passed" for r in results) else 1
+            report_text = monitor.generate_compliance_report(results)
+            print(report_text)
+        return 0 if results.get("compliance_rate", 0) >= 95 else 1
 
     elif args.alert:
         alerts = monitor.generate_alerts()
@@ -427,7 +452,7 @@ def main():
         epilog=__doc__,
     )
 
-    parser.add_argument("--version", action="version", version="AgentQMS CLI v0.3.0")
+    parser.add_argument("--version", action="version", version="AgentQMS CLI v1.0.0 (ADS v1.0)")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 

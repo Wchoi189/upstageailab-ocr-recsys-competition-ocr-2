@@ -1,6 +1,6 @@
 import torch
 
-from ocr.features.detection.models.heads.db_head import DBHead
+from ocr.domains.detection.models.heads.db_head import DBHead
 
 
 def test_db_head_outputs_prob_maps_alias():

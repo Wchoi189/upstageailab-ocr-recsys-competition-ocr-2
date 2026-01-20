@@ -18,7 +18,6 @@ metadata:
     type: implementation_plan
     category: development
     status: active
-    version: "1.0"
     tags: [implementation, plan, development]
 
 validation:
@@ -28,7 +27,6 @@ validation:
     - type
     - category
     - status
-    - version
   required_sections:
     - "## Goal"
     - "## Proposed Changes"

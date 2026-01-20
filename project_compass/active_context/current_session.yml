@@ -1,4 +1,14 @@
-# ACTIVE SESSION CONTEXT
-# MANDATORY: Verify env_lock before execution.
-# AUTO-GENERATED: Do not edit manually. Use CLI/wizard to update.
-# SCHEMA: ../.config/schemas/session.schema.json
+---
+# Project Compass Active Session
+session_id: "new-session-071542"
+status: "active"
+started_date: "2026-01-21"
+completed_date: null
+
+objective: |
+  [Enter objective here]
+
+implementation_plan: null
+source_walkthrough: null
+
+phases: {}

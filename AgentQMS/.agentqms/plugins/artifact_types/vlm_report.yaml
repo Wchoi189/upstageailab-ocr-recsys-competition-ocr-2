@@ -18,7 +18,6 @@ metadata:
     type: vlm_report
     category: evaluation
     status: active
-    version: "1.0"
     tags: [vlm, report, analysis]
 
 validation:
@@ -28,7 +27,6 @@ validation:
     - type
     - category
     - status
-    - version
   required_sections:
     - "## Overview"
     - "## Analysis Result"

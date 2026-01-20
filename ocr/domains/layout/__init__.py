@@ -4,14 +4,14 @@ This module provides layout analysis capabilities for grouping text elements
 into lines and blocks based on spatial relationships.
 """
 
-from ocr.features.layout.inference.contracts import (
+from ocr.domains.layout.inference.contracts import (
     BoundingBox,
     LayoutResult,
     TextBlock,
     TextElement,
     TextLine,
 )
-from ocr.features.layout.inference.grouper import (
+from ocr.domains.layout.inference.grouper import (
     LineGrouper,
     LineGrouperConfig,
     create_text_element,

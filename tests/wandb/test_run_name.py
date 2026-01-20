@@ -34,7 +34,7 @@ def test_generate_run_name_full_descriptor(monkeypatch: pytest.MonkeyPatch):
                 "encoder": {"model_name": "resnet18"},
                 "decoder": {"name": "unet"},
                 "head": {"_target_": "ocr.core.models.head.db_head.DBHead"},
-                "loss": {"_target_": "ocr.core.models.loss.db_loss.DBLoss"},
+                "loss": {"_target_": "ocr.domains.detection.models.loss.db_loss.DBLoss"},
             },
         }
     )

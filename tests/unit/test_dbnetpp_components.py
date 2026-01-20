@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import torch
 
-from ocr.features.detection.models.decoders.dbpp_decoder import DBPPDecoder
+from ocr.domains.detection.models.decoders.dbpp_decoder import DBPPDecoder
 
 
 def test_dbpp_decoder_output_shape():

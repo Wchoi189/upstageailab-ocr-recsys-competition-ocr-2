@@ -37,69 +37,23 @@ CONFIG_PATH = STANDARDS_CONFIG_DIR / "workflow-detector.yaml"
 _CONFIG_CACHE: dict[str, Any] | None = None
 _CONFIG_LOADER = ConfigLoader(cache_size=5)
 
-DEFAULT_CONFIG: dict[str, Any] = {
-    "version": "1.0",
-    "task_types": {
-        "development": {
-            "context_bundle": "development",
-            "suggested_workflows": ["create-plan", "validate", "compliance"],
-            "suggested_tools": ["artifact_workflow", "validate_artifacts", "context_bundle"],
-        },
-        "documentation": {
-            "context_bundle": "documentation",
-            "suggested_workflows": ["docs-generate", "docs-validate-links", "docs-update-indexes"],
-            "suggested_tools": ["auto_generate_index", "validate_links", "update_artifact_indexes"],
-        },
-        "debugging": {
-            "context_bundle": "debugging",
-            "suggested_workflows": ["create-bug-report", "validate", "context-debug"],
-            "suggested_tools": ["artifact_workflow", "validate_artifacts", "context_bundle"],
-        },
-        "planning": {
-            "context_bundle": "planning",
-            "suggested_workflows": ["create-plan", "create-design", "context-plan"],
-            "suggested_tools": ["artifact_workflow", "context_bundle"],
-        },
-        "general": {
-            "context_bundle": "general",
-            "suggested_workflows": ["discover", "status", "validate"],
-            "suggested_tools": ["discover", "validate_artifacts"],
-        },
-    },
-    "artifact_triggers": {
-        "plan": ["plan", "design", "architecture", "blueprint", "strategy", "roadmap"],
-        "assessment": ["assess", "evaluate", "review", "analysis"],
-        "audit": [
-            "audit",
-            "compliance",
-            "framework audit",
-            "quality audit",
-            "security audit",
-            "accessibility audit",
-            "performance audit",
-            "code quality audit",
-        ],
-        "bug_report": ["bug", "error", "issue", "fix", "broken", "crash", "exception"],
-        "design": ["design", "spec", "specification", "schema"],
-        "research": ["research", "investigate", "explore", "study"],
-    },
-    "command_templates": {
-        "context": "make context-{context_bundle}",
-        "artifact": {
-            "plan": "make create-plan NAME=my-{artifact_type} TITLE=\"...\"",
-            "bug_report": "make create-bug-report NAME=my-{artifact_type} TITLE=\"...\"",
-            "design": "make create-design NAME=my-{artifact_type} TITLE=\"...\"",
-            "assessment": "make create-assessment NAME=my-{artifact_type} TITLE=\"...\"",
-            "research": "make create-research NAME=my-{artifact_type} TITLE=\"...\"",
-        },
-    },
-}
+# DEFAULT_CONFIG removed - all workflow detection config now loaded from:
+# AgentQMS/standards/tier1-foundations/workflow-detector.yaml
+# This enforces the plugin/YAML-only architecture with no hardcoded fallbacks.
+# System will fail loudly if config is missing, making issues immediately visible.
 
 
 def _get_config() -> dict[str, Any]:
+    """Load workflow detection config from YAML (no hardcoded defaults)."""
     global _CONFIG_CACHE
     if _CONFIG_CACHE is None:
-        _CONFIG_CACHE = _CONFIG_LOADER.get_config(CONFIG_PATH, defaults=DEFAULT_CONFIG)
+        # Fail-fast: no defaults, must load from YAML
+        _CONFIG_CACHE = _CONFIG_LOADER.get_config(CONFIG_PATH)
+        if not _CONFIG_CACHE:
+            raise ValueError(
+                f"Workflow detection config missing: {CONFIG_PATH}. "
+                "No hardcoded fallbacks - config must be explicitly defined in YAML."
+            )
     return _CONFIG_CACHE
 
 

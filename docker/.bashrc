@@ -209,3 +209,4 @@ fi
 # fi
 
 # === End of .bashrc ===
+export PATH="$PWD/AgentQMS/bin:$PATH"

@@ -18,7 +18,6 @@ metadata:
     type: assessment
     category: governance
     status: pending
-    version: "1.0"
     tags: [change-request, governance, approval]
 
 validation:

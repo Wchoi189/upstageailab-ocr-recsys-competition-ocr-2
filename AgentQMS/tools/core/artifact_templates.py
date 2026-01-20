@@ -27,14 +27,6 @@ from AgentQMS.tools.utils.config_loader import ConfigLoader
 
 
 DEFAULT_CONFIG: dict[str, Any] = {
-    "frontmatter_defaults": {
-        "type": "{artifact_type}",
-        "category": "development",
-        "status": "active",
-        "version": "1.0",
-        "tags": ["{artifact_type}"],
-        "ads_version": "1.0",
-    },
     "frontmatter_denylist": [
         "output_dir",
         "interactive",
@@ -197,23 +189,25 @@ class ArtifactTemplates:
             return [self._replace_artifact_type(item, artifact_type) for item in value]
         return value
 
-    def _build_default_frontmatter(self, artifact_type: str) -> dict[str, Any]:
-        """Build default frontmatter with placeholders resolved and ADS metadata ensured."""
-        config = self._get_config()
-        defaults = config.get("frontmatter_defaults", DEFAULT_CONFIG["frontmatter_defaults"]).copy()
-        resolved = {k: self._replace_artifact_type(v, artifact_type) for k, v in defaults.items()}
-        resolved.setdefault("ads_version", "1.0")
-        resolved.setdefault("type", artifact_type)
-        resolved.setdefault("artifact_type", artifact_type)
-        return resolved
-
     def _merge_frontmatter(self, artifact_type: str, metadata_frontmatter: dict[str, Any] | None) -> dict[str, Any]:
-        """Merge plugin frontmatter over defaults while keeping required keys."""
-        base = self._build_default_frontmatter(artifact_type)
-        if metadata_frontmatter:
-            for key, value in metadata_frontmatter.items():
-                base[key] = self._replace_artifact_type(value, artifact_type)
-        return base
+        """Use plugin frontmatter directly - no hardcoded defaults (fail-fast approach).
+
+        Raises:
+            ValueError: If no plugin frontmatter provided (forces explicit plugin definition).
+        """
+        if not metadata_frontmatter:
+            raise ValueError(
+                f"No plugin frontmatter defined for artifact type: {artifact_type}. "
+                f"Plugin system is the single source of truth - check .agentqms/plugins/artifact_types/{artifact_type}.yaml"
+            )
+        frontmatter = metadata_frontmatter.copy()
+        # Resolve any {artifact_type} placeholders
+        for key, value in frontmatter.items():
+            frontmatter[key] = self._replace_artifact_type(value, artifact_type)
+        # Ensure ADS framework version is present
+        frontmatter.setdefault("ads_version", "1.0")
+        frontmatter.setdefault("type", artifact_type)
+        return frontmatter
 
     def _convert_plugin_to_template(self, name: str, plugin_def: dict[str, Any]) -> dict[str, Any] | None:
         """Convert a plugin artifact type definition to template format.
@@ -477,26 +471,49 @@ class ArtifactTemplates:
         return "\n".join(lines)
 
     def create_frontmatter(self, template_type: str, title: str, **kwargs) -> str:
-        """Create frontmatter for an artifact."""
+        """Create frontmatter with strict plugin schema validation.
+
+        Only fields defined in the plugin schema or system-generated fields are allowed.
+        This enforces the plugin-only architecture and prevents frontmatter pollution.
+
+        Raises:
+            ValueError: If unknown fields are passed in kwargs that are not in plugin schema.
+        """
         template = self.get_template(template_type)
         if not template:
             raise ValueError(f"Unknown template type: {template_type}")
 
+        # Start with plugin-defined frontmatter
         frontmatter = template["frontmatter"].copy()
+
+        # System-generated fields (always allowed)
         frontmatter["title"] = title
         frontmatter["date"] = self._get_kst_timestamp_str()
         frontmatter.setdefault("ads_version", "1.0")
-        frontmatter.setdefault("artifact_type", template_type)
 
         if "branch" not in kwargs:
             frontmatter["branch"] = self._get_branch_name()
 
-        # Merge kwargs, excluding denylist
+        # Get allowed fields from plugin schema
+        allowed_fields = set(template["frontmatter"].keys())
+        allowed_fields.update(["title", "date", "branch", "ads_version"])  # System fields
+
+        # Validate kwargs against schema (fail-fast on unknown fields)
         config = self._get_config()
         denylist = set(config["frontmatter_denylist"])
+
         for key, value in kwargs.items():
-            if key not in denylist:
-                frontmatter[key] = value
+            if key in denylist:
+                continue  # Skip denylist (e.g., output_dir, quiet)
+
+            if key not in allowed_fields:
+                raise ValueError(
+                    f"Field '{key}' not allowed in '{template_type}' frontmatter. "
+                    f"Plugin schema only defines: {sorted(allowed_fields)}. "
+                    f"To add this field, update: .agentqms/plugins/artifact_types/{template_type}.yaml"
+                )
+
+            frontmatter[key] = value
 
         return self._format_frontmatter_yaml(frontmatter)
 
@@ -619,29 +636,8 @@ class ArtifactTemplates:
 
 
 # Convenience functions
-def get_template(template_type: str) -> dict[str, Any] | None:
-    """Get template configuration for a specific type."""
-    templates = ArtifactTemplates()
-    return templates.get_template(template_type)
-
-
-def create_artifact(
-    template_type: str,
-    name: str,
-    title: str,
-    output_dir: str = "docs/artifacts/",
-    quiet: bool = False,
-    **kwargs,
-) -> str:
-    """Create a complete artifact file."""
-    templates = ArtifactTemplates()
-    return templates.create_artifact(template_type, name, title, output_dir, quiet=quiet, **kwargs)
-
-
-def get_available_templates() -> list[str]:
-    """Get list of available template types."""
-    templates = ArtifactTemplates()
-    return templates.get_available_templates()
+# Wrapper functions removed - use ArtifactTemplates() class directly for explicit control.
+# Example: templates = ArtifactTemplates(); templates.create_artifact(...)
 
 
 if __name__ == "__main__":

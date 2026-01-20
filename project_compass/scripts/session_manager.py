@@ -45,6 +45,59 @@ def get_current_session_id():
         return None
 
 
+def restore_session_from_handover():
+    """
+    Attempts to reconstruct current_session.yml from session_handover.md
+    Returns: session_id if successful, None otherwise.
+    """
+    handover_path = COMPASS_DIR / "session_handover.md"
+    if not handover_path.exists():
+        return None
+
+    try:
+        content = handover_path.read_text(encoding="utf-8")
+        lines = content.splitlines()
+        session_id = None
+
+        # Simple parsing for session_id in yaml block
+        for line in lines:
+            if "session_id:" in line:
+                parts = line.split(":", 1)
+                if len(parts) > 1:
+                    session_id = parts[1].strip()
+                    break
+
+        if not session_id:
+            return None
+
+        # Reconstruct minimal valid session file
+        print(f"⚠️  Missing current_session.yml. Auto-recovering from handover: {session_id}")
+
+        # Ensure directory exists
+        ACTIVE_CONTEXT_DIR.mkdir(parents=True, exist_ok=True)
+
+        restored_session = {
+            "session_id": session_id,
+            "objective": {
+                "primary_goal": "Restored from session_handover.md",
+                "active_pipeline": "unknown",
+                "success_criteria": "Refer to session_handover.md"
+            },
+            "active_blockers": [],
+            "working_references": {}
+        }
+
+        session_file = ACTIVE_CONTEXT_DIR / "current_session.yml"
+        with open(session_file, "w") as f:
+            yaml.dump(restored_session, f, default_flow_style=False)
+
+        return session_id
+
+    except Exception as e:
+        print(f"Failed to auto-recover session: {e}")
+        return None
+
+
 def get_last_exported_session_id():
     """Retrieves the original_session_id from the most recent export."""
     if not SESSIONS_DIR.exists():
@@ -80,6 +133,10 @@ def export_session(note=None, force=False):
     empty session exports and enforce naming standards.
     """
     session_id = get_current_session_id()
+    if not session_id:
+        # Attempt recovery
+        session_id = restore_session_from_handover()
+
     if not session_id:
         print("Error: No active session found in active_context/current_session.yml")
         sys.exit(1)
@@ -282,13 +339,17 @@ phases: {{}}
     print("Session cleared. Ready for new context.")
 
 
-def new_session(session_id=None):
+def new_session(session_id=None, force=False):
     """Clears active context for a fresh start."""
     # Auto-export current before clearing
     current_id = get_current_session_id()
     if current_id:
-        print(f"Auto-exporting current session {current_id}...")
-        export_session(note="Auto-save before new session")
+        last_exported = get_last_exported_session_id()
+        if last_exported == current_id and not force:
+            print(f"Session {current_id} already exported. Skipping auto-export.")
+        else:
+            print(f"Auto-exporting current session {current_id}...")
+            export_session(note="Auto-save before new session", force=force)
     else:
         # If no session, just reset
         _reset_workspace()
@@ -312,6 +373,7 @@ def main():
 
     # New
     new_parser = subparsers.add_parser("new", help="Start fresh session (archives current)")
+    new_parser.add_argument("--force", "-f", action="store_true", help="Bypass validation checks during auto-export")
 
     args = parser.parse_args()
 
@@ -322,7 +384,7 @@ def main():
     elif args.command == "import":
         import_session(args.session_name)
     elif args.command == "new":
-        new_session()
+        new_session(force=args.force)
 
 
 if __name__ == "__main__":

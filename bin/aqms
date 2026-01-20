@@ -1,10 +1,14 @@
 #!/bin/bash
-# AgentQMS Task Runner Wrapper
-# Delegates to AgentQMS/bin/Makefile
-# Ensures commands are run from project root context
+# AgentQMS Unified CLI Entrypoint
+# Single source of truth for AgentQMS commands
 
-# Get project root (where this script is in bin/)
-PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
+set -e
 
-# Run make in AgentQMS/bin
-make -C "$PROJECT_ROOT/AgentQMS/bin" "$@"
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Ensure we're using project venv
+export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
+
+# Route to Python CLI implementation (the actual tool)
+exec uv run python "$PROJECT_ROOT/AgentQMS/bin/qms" "$@"

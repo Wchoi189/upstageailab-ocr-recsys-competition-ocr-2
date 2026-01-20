@@ -9,7 +9,7 @@ from PIL import Image
 from torch.utils.data import Dataset
 from transformers import PreTrainedTokenizerBase, ProcessorMixin
 
-from ocr.features.kie.validation import KIEDataItem
+from ocr.domains.kie.validation import KIEDataItem
 
 logger = logging.getLogger(__name__)
 

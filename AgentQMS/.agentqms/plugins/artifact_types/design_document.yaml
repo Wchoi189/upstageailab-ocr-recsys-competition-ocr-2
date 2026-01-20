@@ -18,7 +18,6 @@ metadata:
     type: design
     category: architecture
     status: active
-    version: "1.0"
     tags: [design, architecture, specification]
 
 validation:
@@ -28,7 +27,6 @@ validation:
     - type
     - category
     - status
-    - version
   required_sections:
     - "## Overview"
     - "## Goals"

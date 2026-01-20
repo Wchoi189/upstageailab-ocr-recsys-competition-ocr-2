@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-20T16:12:20.993758+00:00'
+  generated_at: '2026-01-20T22:55:09.763060+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -170,7 +170,6 @@ resolved:
           type: assessment
           category: research
           status: draft
-          version: '1.0'
           tags:
           - ocr
           - experiment
@@ -331,7 +330,6 @@ resolved:
           type: audit
           category: compliance
           status: draft
-          version: '1.0'
           related_artifacts: []
           generated_artifacts: []
           tags:
@@ -406,7 +404,6 @@ resolved:
           category: troubleshooting
           status: active
           severity: medium
-          version: '1.0'
           tags:
           - bug
           - issue
@@ -419,7 +416,6 @@ resolved:
         - category
         - status
         - severity
-        - version
         required_sections:
         - '## Summary'
         - '## Environment'
@@ -505,7 +501,6 @@ resolved:
           type: design
           category: architecture
           status: active
-          version: '1.0'
           tags:
           - design
           - architecture
@@ -517,7 +512,6 @@ resolved:
         - type
         - category
         - status
-        - version
         required_sections:
         - '## Overview'
         - '## Goals'
@@ -555,7 +549,6 @@ resolved:
           type: implementation_plan
           category: development
           status: active
-          version: '1.0'
           tags:
           - implementation
           - plan
@@ -567,7 +560,6 @@ resolved:
         - type
         - category
         - status
-        - version
         required_sections:
         - '## Goal'
         - '## Proposed Changes'
@@ -631,7 +623,6 @@ resolved:
           type: vlm_report
           category: evaluation
           status: active
-          version: '1.0'
           tags:
           - vlm
           - report
@@ -643,7 +634,6 @@ resolved:
         - type
         - category
         - status
-        - version
         required_sections:
         - '## Overview'
         - '## Analysis Result'
@@ -704,7 +694,6 @@ resolved:
           type: walkthrough
           category: documentation
           status: active
-          version: '1.0'
           tags:
           - walkthrough
           - documentation
@@ -716,7 +705,6 @@ resolved:
         - type
         - category
         - status
-        - version
         required_sections:
         - '## Goal'
         - '## Steps'

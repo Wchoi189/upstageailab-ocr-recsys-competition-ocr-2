@@ -12,8 +12,8 @@ import pytest
 # Skip all tests if paddleocr is not installed
 pytest.importorskip("paddleocr", reason="PaddleOCR not installed")
 
-from ocr.features.recognition.inference.backends.paddleocr_recognizer import PaddleOCRRecognizer
-from ocr.features.recognition.inference.recognizer import RecognitionInput, RecognitionOutput, RecognizerBackend, RecognizerConfig
+from ocr.domains.recognition.inference.backends.paddleocr_recognizer import PaddleOCRRecognizer
+from ocr.domains.recognition.inference.recognizer import RecognitionInput, RecognitionOutput, RecognizerBackend, RecognizerConfig
 
 
 class TestPaddleOCRRecognizerInitialization:

@@ -1,10 +1,10 @@
 """Registration of DBNet architecture components."""
 
 from ocr.core import registry
-from ocr.core.models.decoder.unet import UNetDecoder
+from ocr.domains.detection.models.decoders.unet import UNetDecoder
 from ocr.core.models.encoder.timm_backbone import TimmBackbone
-from ocr.features.detection.models.heads.db_head import DBHead
-from ocr.core.models.loss.db_loss import DBLoss
+from ocr.domains.detection.models.heads.db_head import DBHead
+from ocr.domains.detection.models.loss.db_loss import DBLoss
 
 
 def register_dbnet_components():

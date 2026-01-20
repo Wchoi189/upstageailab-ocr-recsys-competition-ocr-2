@@ -38,7 +38,6 @@ class InferenceEngine:
 
     def __init__(self) -> None:
         """Initialize inference engine with orchestrator delegation."""
-        # TODO: Restore orchestrator integration after circular import is resolved
         # self._orchestrator = InferenceOrchestrator()
         self._orchestrator = None
         self._image_loader = ImageLoader()

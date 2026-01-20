@@ -19,7 +19,6 @@ metadata:
     category: troubleshooting
     status: active
     severity: medium
-    version: "1.0"
     tags: [bug, issue, troubleshooting]
 
 validation:
@@ -30,7 +29,6 @@ validation:
     - category
     - status
     - severity
-    - version
   required_sections:
     - "## Summary"
     - "## Environment"
