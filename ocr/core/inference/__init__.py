@@ -1,7 +1,9 @@
 """Modular helpers for OCR inference utilities."""
 
 from .config_loader import ModelConfigBundle, PostprocessSettings, PreprocessSettings
-from .engine import InferenceEngine, get_available_checkpoints, run_inference_on_image
+
+# Note: InferenceEngine moved to ocr.pipelines.engine during domain refactor
+# Import directly from: from ocr.pipelines.engine import InferenceEngine
 
 __all__ = [
     "InferenceEngine",
