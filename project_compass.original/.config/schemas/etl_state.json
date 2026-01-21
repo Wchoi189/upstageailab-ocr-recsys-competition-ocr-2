@@ -1,0 +1,24 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "title": "OCR ETL State",
+    "type": "object",
+    "properties": {
+        "processed_files": {
+            "type": "array",
+            "description": "List of absolute paths of JSON files that have been successfully processed.",
+            "items": {
+                "type": "string"
+            }
+        },
+        "current_index": {
+            "type": "integer",
+            "description": "The next available index for writing samples to LMDB (1-based).",
+            "minimum": 1
+        }
+    },
+    "required": [
+        "processed_files",
+        "current_index"
+    ],
+    "additionalProperties": false
+}

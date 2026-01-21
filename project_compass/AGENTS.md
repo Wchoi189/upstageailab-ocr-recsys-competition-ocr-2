@@ -1,68 +1,100 @@
-# **Project Compass: AI Entrypoints & Protocols**
+# Project Compass V2: Vessel AI Protocols
 
-## **1. Interaction Protocol**
+## 1. Core Concepts
 
-Every session **MUST** start with the AI executing the following sequence:
+| Term                | Concept           | Explanation                                                               | Usage Example                             |
+| :------------------ | :---------------- | :------------------------------------------------------------------------ | :---------------------------------------- |
+| **Project Compass** | **The Product**   | The overall name of the AI Interface / Strategy system.                   | "Using Project Compass to manage work."   |
+| **Vessel**          | **The Engine**    | The V2.0 architecture (Code). Powers the system with strict state rules.  | "State is stored in `.vessel/`."          |
+| **Pulse**           | **The Work Unit** | A single session or cycle of work. **Replaces "Session"**.                | "Starting a pulse to refactor OCR."       |
+| **Compass**         | **The Tool**      | The CLI command you type.                                                 | `uv run compass pulse-init ...`           |
+| **Star-Chart**      | **The Map**       | Roadmap milestones defining long-term goals.                              | "Linking pulse to `ocr-domain-refactor`." |
+| **Staging**         | **The Workspace** | `pulse_staging/artifacts/`. **The ONLY writable location** for new files. | "Drafting `design.md` in staging."        |
+| **Vault**           | **The Library**   | `vault/`. Read-only source for injected rules and directives.             | "Pulse loaded rules from vault."          |
 
-1. **Read project_compass/compass.json**: Identify the current phase and health.
-2. **Read project_compass/active_context/current_session.yml**: Understand immediate goals and blockers.
-3. **Validate Environment**: Compare system state against project_compass/environments/uv_lock_state.yml.
-   * *Failure to match uv_path or torch_version results in immediate halt and recovery request.*
+## 2. Interaction Protocol
 
-## **2. Chat Dialogue Nomenclature**
+Every conversation **MUST** start with:
 
-When discussing the project in chat, use these specific references to minimize ambiguity:
+1. Read `vessel://state` (via MCP) or `.vessel/vessel_state.json`
+2. Check if active pulse exists
+3. If no pulse: init one with `pulse-init`
 
-| Reference | Scope | Target File |
-| [Compass:State] | Global Health | compass.json |
-| [Compass:Session] | Sprint Context (Active) | active_context/current_session.yml |
-| [Compass:Lock] | Environment Constraints | environments/uv_lock_state.yml |
-| [Compass:Roadmap] | Pipeline Milestones | roadmap/*.yml |
+## 3. CLI Commands
 
-## **3. Atomic Operations**
+```bash
+# Check environment
+uv run compass check-env
 
-Agents are prohibited from manual YAML editing. Use the following internal CLI patterns (Run from project root):
+# Start pulse
+uv run compass pulse-init \
+  --id "domain-action-target" \
+  --obj "Objective (20-500 chars)" \
+  --milestone "milestone-id"
 
-* `uv run python -m project_compass.cli session-init --objective "..."` : Initializes a new Sprint Context (auto-updates compass.json).
-* `uv run python -m project_compass.cli update-status --phase "..." --health "..." --note "..."` : Manually update compass.json project status.
-* `uv run python scripts/utils/show_config.py [config_name] [overrides...]` : Inspects effective Hydra configuration.
-* `uv run python -m project_compass.cli check-env` : Compares current shell uv and torch against [Compass:Lock].
+# Check status
+uv run compass pulse-status
 
-## **4. Hard Constraints**
+# Register artifact
+uv run compass pulse-sync \
+  --path "filename.md" \
+  --type "design|research|walkthrough|implementation_plan|bug_report|audit"
 
-* **NO PIP/PYTHON**: All execution must be prefixed with uv run.
-* **NO PROSE**: Status updates must be numeric or enum-based indicators in YAML shards.
-*   **NO PIP/PYTHON**: All execution must be prefixed with uv run.
-*   **NO PROSE**: Status updates must be numeric or enum-based indicators in YAML shards.
-*   **NO DATA MIXING**: KIE and Layout Analysis data paths must remain strictly isolated.
+# Export pulse (blocks if unregistered files exist)
+uv run compass pulse-export
 
-## **5. Session Lifecycle Protocol**
+# Update token burden
+uv run compass pulse-checkpoint --burden high
+```
 
-Adhere to this cycle to ensure correct history tracking and prevent stale session artifacts.
+## 4. Hard Constraints
 
-1.  **INIT**: `uv run python -m project_compass.cli session-init --objective "{objective}" --pipeline "{pipeline}"`
-    *   **Auto-Update**: compass.json is automatically updated with phase, health, and objective.
-2.  **WORK**: Execute tasks. Update `task.md` and `implementation_plan.md`.
-3.  **UPDATE CONTEXT (CRITICAL)**:
-    *   **Target**: `active_context/current_session.yml` (Sprint Context)
-    *   **Action**: Use `manage_session` tool or `session-manager` script. **DO NOT EDIT current_session.yml MANUALLY.**
-    *   **Constraint**: *Must* be done **BEFORE** export.
-4.  **EXPORT SESSION**: `uv run python -m project_compass.cli session-export --note "Session completion note"`
+- **ALL artifacts** must be in `pulse_staging/artifacts/`
+- **ALL state changes** must go through CLI/MCP tools
+- **NO manual YAML/JSON editing**
+- **NO generic pulse IDs** (banned: "new", "session", "test", "tmp")
+- **MAX 20 words** for any status note
 
-## **6. Compass State Management**
+## 5. Pulse Lifecycle
 
-The `compass.json` file tracks global project state and is automatically synchronized during session lifecycle:
+```
+┌─────────────────────────────────────────────────┐
+│                   PULSE INIT                    │
+│  pulse-init --id X --obj Y --milestone Z        │
+│  → Creates vessel_state.json                    │
+│  → Injects rules from vault/                    │
+└─────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────┐
+│                     WORK                        │
+│  - Create files in pulse_staging/artifacts/     │
+│  - Register with pulse-sync                     │
+│  - Check maturity with pulse-checkpoint         │
+└─────────────────────────────────────────────────┘
+                        ↓
+┌─────────────────────────────────────────────────┐
+│                  PULSE EXPORT                   │
+│  pulse-export                                   │
+│  → Audits staging vs manifest                   │
+│  → BLOCKS if unregistered files exist           │
+│  → Moves artifacts to history/{timestamp}/      │
+└─────────────────────────────────────────────────┘
+```
 
-* **Automatic Updates**: `session-init` automatically updates phase, health, and note.
-* **Manual Updates**: Use `update-status` command when compass.json becomes stale or needs correction:
-  ```bash
-  uv run python -m project_compass.cli update-status \
-    --phase "current_phase" \
-    --health "healthy|degraded|blocked" \
-    --note "Current status description"
-  ```
-* **Fields Updated**:
-  * `last_updated`: Timestamp in KST (always updated)
-  * `project_status.current_phase`: Active pipeline or work area
-  * `project_status.overall_health`: System health indicator
-  * `project_status.note`: Human-readable status description
+## 6. MCP Resources
+
+| URI                | Description                           |
+| ------------------ | ------------------------------------- |
+| `vessel://state`   | Current VesselState JSON              |
+| `vessel://rules`   | Injected vault rules for active pulse |
+| `vessel://staging` | List of staging artifacts             |
+
+## 7. Vault Directives
+
+Rules in `vault/directives/` are auto-injected on pulse-init:
+
+- `00_meta_cognition.md` - [Compass:Reflection] protocol
+- `01_naming_standards.md` - Pulse ID and artifact naming
+- `02_artifact_purity.md` - Staging constraints, zero-narrative policy
+
+Milestone-specific rules: `vault/milestones/{milestone_id}.md`

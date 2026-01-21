@@ -1,0 +1,15 @@
+{
+  "pulse_id": "ocr-domain-audit",
+  "objective": "Surgical audit of ocr/data and ocr/core",
+  "milestone_id": "ocr-domain-refactor",
+  "artifacts": [
+    {
+      "path": "context_restoration.md",
+      "artifact_type": "audit",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-21T21:07:17.762895"
+    }
+  ],
+  "started_at": "2026-01-21 21:07:01.596891",
+  "exported_at": "2026-01-21T21:07:20.213034"
+}

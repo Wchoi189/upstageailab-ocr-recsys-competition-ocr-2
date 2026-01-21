@@ -1,0 +1,107 @@
+version: 1.0
+project: OCR Domain Separation Refactor
+status: completed
+architecture: Domains First
+
+objectives:
+  - name: Eliminate Domain Leakage
+    description: Strictly separate Detection, Recognition, KIE, and Layout domains.
+    success_criteria:
+      - "ocr/core contains no domain-specific keywords (polygon, bbox, tokenizer)"
+      - "No cross-domain imports without interfaces"
+
+tooling:
+  adt_cli: "Available (requires .venv activation)"
+  sg_search: "Available (MCP)"
+  sg_lint: "Available (MCP)"
+
+phases:
+  - name: 'Phase 1: Preparation (Complete)'
+    status: completed
+    items:
+      - 'Project Initialization'
+      - 'Tooling Audit'
+      - 'Domains First Architecture Design'
+      - 'Comprehensive File Mapping (Proposed Tree)'
+
+  - name: 'Phase 2: Execution (Complete)'
+    status: completed
+    completed_steps:
+      - 'Initialize Directory Structure'
+      - 'Infrastructure Setup (pipelines, core/interfaces)'
+      - 'The Bridge (schemas.py created with Box, DetectionResult, RecognitionResult, PageResult)'
+      - 'Bulk Migration Complete (all domain files moved)'
+      - 'wandb_utils.py -> domains/{det,rec}/callbacks/wandb*.py + core/utils/wandb_base.py (COMPLETE)'
+      - 'OCRDataPLModule -> ocr/data/lightning_data.py (COMPLETE)'
+      - 'OCRProjectOrchestrator Implementation (2026-01-19)'
+    notes:
+      - "Orchestrator bridges V5.0 Hydra configs to existing factories"
+      - "Vocab injection for recognition + domain routing complete"
+    remaining_cleanup:
+      - name: Optional Legacy Factory Cleanup (COMPLETE 2026-01-19)
+        status: completed
+        actions:
+          - "Added deprecation warning to get_pl_modules_by_cfg()"
+          - "Deleted orphaned ocr/core/utils/wandb_utils.py (zero imports)"
+      - name: Evaluator Surgical Refactor (Low Priority - Deferred)
+        status: deferred
+        targets:
+          - "ocr/core/evaluation/evaluator.py -> domains/{det,rec}/evaluation.py"
+        notes:
+          - "Detection evaluator already migrated to domains/detection/evaluation.py"
+          - "Recognition evaluator migration deferred (low impact)"
+
+  - name: 'Phase 3: Verification'
+    status: completed
+    completed_date: 2026-01-19
+    steps:
+      - 'Deleted orphaned wandb_utils.py (passive leak)'
+      - 'Verified clean import separation'
+      - "Added deprecation warnings for legacy patterns"
+      - "Domain-specific training loops functional (Verified 2026-01-19 with orchestrator/transform fixes)"
+
+  - name: 'Phase 4: Refinement (Complete)'
+    status: completed
+    completed_date: 2026-01-20
+    current_focus: 'Source Code Refactor & Domain Optimization'
+    items:
+      - 'Fix ConfigAttributeError in orchestrator (COMPLETE)'
+      - 'Fix DBTransforms import mechanism (COMPLETE)'
+      - 'Fix DBCollateFN import mechanism (COMPLETE)'
+      - 'Optimize Model Architectures (COMPLETE 2026-01-20)'
+      - 'Update Documentation (COMPLETE 2026-01-20)'
+    notes:
+      - 'ocr/features acts as backward compatibility facade'
+      - 'ocr/domains contains actual implementations'
+      - 'Model factory supports V5.0 Hydra _target_ instantiation'
+
+  - name: 'Phase 5: Surgical Audit 2 (The Data Purge)'
+    status: planning
+    start_date: 2026-01-21
+    items:
+      - 'Audit ocr/data/datasets for domain leakage (advanced_detector.py, etc)'
+      - 'Relocate domain-specific data logic to ocr/domains/{domain}/data/'
+      - 'Refactor ocr/data/__init__.py to prevent eager loading'
+      - 'Decouple validation logic from dataset initialization'
+
+  - name: 'Phase 6: The Registry Purge'
+    status: planning
+    items:
+      - 'Deprecate ocr.core.registry'
+      - 'Convert all YAML configs to use Hydra _target_ instantiation'
+      - 'Remove factory patterns and eager imports in __init__ files'
+      - 'Ensure 0 cross-domain imports at startup'
+
+directory_map:
+  core_strict:
+    - "ocr/core/utils/image_utils.py"
+    - "ocr/core/utils/logging.py"
+  domains:
+    detection:
+      - "ocr/domains/detection/utils/geometry.py"
+      - "ocr/domains/detection/inference/perspective/"
+    recognition:
+      - "ocr/domains/recognition/utils/visualization.py"
+  pipelines:
+    - "ocr/pipelines/engine.py"
+    - "ocr/pipelines/orchestrator.py"

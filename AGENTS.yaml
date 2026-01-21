@@ -35,6 +35,24 @@ environment_tools:
       sync_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py"
       init_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py --init"
 
+  # V2 Vessel Architecture (replaces legacy session management)
+  project_compass:
+    location: "project_compass/"
+    cli_entrypoint: "uv run python -m project_compass.cli"
+    state_file: "project_compass/.vessel/vessel_state.json"
+    commands:
+      check_env: "uv run python -m project_compass.cli check-env"
+      pulse_init: "uv run python -m project_compass.cli pulse-init --id <domain-action-target> --obj <objective> --milestone <id>"
+      pulse_status: "uv run python -m project_compass.cli pulse-status"
+      pulse_sync: "uv run python -m project_compass.cli pulse-sync --path <file> --type <type>"
+      pulse_export: "uv run python -m project_compass.cli pulse-export"
+      pulse_checkpoint: "uv run python -m project_compass.cli pulse-checkpoint --burden <low|medium|high>"
+    terminology:
+      vessel: "Project container (replaces 'project')"
+      pulse: "Work cycle (replaces 'session')"
+      staging: "pulse_staging/artifacts/ - ONLY writable location"
+      vault: "vault/ - Rule injection source"
+
   research:
     tool: "Perplexity Client"
     command: "python scripts/research/perplexity_client.py --query 'Query'"
@@ -43,9 +61,6 @@ environment_tools:
 experiment_manager:
   entrypoint: "experiment_manager/etk.py"
   guides_dir: "experiment_manager/.ai-instructions/"
-  # NOTE: This is an independent system from AgentQMS/standards/
-  # experiment_manager/.ai-instructions/ contains experiment-specific protocols
-  # AgentQMS/standards/ contains general project AI instructions
   key_commands: ["init", "reconcile", "validate"]
 
 agent_debug_toolkit:
@@ -80,3 +95,4 @@ critical_directives:
   - "Do not hallucinate project standards. Read the `INDEX.yaml` first."
   - "Follow the Agentic Documentation Standard (ADS) v1.0."
   - "Always check `AgentQMS/standards` for the latest rules."
+  - "Project Compass uses Vessel V2: read project_compass/AGENTS.md for pulse lifecycle."

@@ -25,7 +25,7 @@ This file gives humans and AI a concise starting point. Machine-parsable keys st
 Keep these ultra-concise to avoid context overload. Use links for depth.
 
 - AgentQMS: Standards + artifact tooling to enforce format/placement/naming. Core commands: `cd AgentQMS/bin && make create-*`, `make validate`, `make compliance`. Read the root map in [AgentQMS/standards/INDEX.yaml](AgentQMS/standards/INDEX.yaml).
-- project_compass: Sessionized feature workflows and artifact bundling; supports export/clear of active session state. See entrypoint [project_compass/AGENTS.md](project_compass/AGENTS.md).
+- project_compass: Vessel-based pulse lifecycle with staging enforcement; all artifacts go to `pulse_staging/artifacts/`. Commands: `pulse-init`, `pulse-sync`, `pulse-export`. See [project_compass/AGENTS.md](project_compass/AGENTS.md).
 - experiment_manager: Fast iteration runner for image-processing experiments with schemas/templates. CLI: [experiment_manager/etk.py](experiment_manager/etk.py) (`init`, `reconcile`, `validate`).
 - agent-debug-toolkit: AST/Hydra analyzer for config precedence, merges, and instantiation discovery. CLI: `uv run adt ...`. Reference [agent-debug-toolkit/AI_USAGE.yaml](agent-debug-toolkit/AI_USAGE.yaml).
 

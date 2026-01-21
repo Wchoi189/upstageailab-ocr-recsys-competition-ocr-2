@@ -100,6 +100,9 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["ocr", "AgentQMS"]
 
+[project.scripts]
+compass = "project_compass.cli:main"
+
 [tool.uv]
 extra-index-url = ["https://download.pytorch.org/whl/cu124"]
 index-strategy = "unsafe-best-match"

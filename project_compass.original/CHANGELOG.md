@@ -1,17 +1,5 @@
 # Project Compass Changelog
 
-## [2.1.0] - 2026-01-21
-
-### Added
-- **Global CLI:** `compass` command available system-wide (via `pyproject.toml`).
-- **Vessel Architecture:** Full integration of Pydantic state (`vessel_state.json`), Vault, and Pulse system.
-- **Pulse Commands:** `pulse-init`, `pulse-sync`, `pulse-export`, `pulse-status`, `pulse-checkpoint`.
-- **Vault:** Directives and milestones now managed in `project_compass/vault/`.
-
-### Changed
-- **Unified State:** Replaced `compass.json`/`current_session.yml` with `.vessel/vessel_state.json`.
-- **Artifact Management:** Strict staging in `pulse_staging/artifacts/` with manifesto-based export.
-
 ## [2.0.0] - 2026-01-17
 
 ### Added

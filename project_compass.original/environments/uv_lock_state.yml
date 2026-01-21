@@ -1,0 +1,16 @@
+# PERSISTENT ENVIRONMENT LOCK
+# MANDATORY: 'uv run python -m project_compass.cli check-env' must pass before training.
+# SCHEMA: ../.config/schemas/env_lock.schema.json
+
+uv_binary:
+  expected_path: "/opt/uv/bin/uv"
+  version: "0.9.11"
+
+python:
+  version: "3.11.14"
+  venv_path: ".venv"
+
+cuda:
+  enabled: true
+  torch_version: "2.6.0+cu124" # Updated 2026-01-02: Using cu124 for cross-compatibility
+  compute_capability: "8.6"

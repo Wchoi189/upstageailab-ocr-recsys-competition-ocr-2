@@ -1,22 +1,23 @@
 #!/usr/bin/env python3
 """
-Project Compass MCP Server
+Project Compass V2 - Vessel MCP Server
 
-Exposes project state and configuration files as MCP resources for improved
-discoverability and standardized access by AI assistants.
+Exposes vessel state and pulse tools via Model Context Protocol.
 
-Resources exposed:
-- compass://compass.json - Main project state
-- compass://session_handover.md - Current session handover
-- compass://current_session.yml - Active session context
-- compass://uv_lock_state.yml - Environment lock state
-- compass://agents.yaml - Agent configuration
+Resources:
+- vessel://state - Current vessel state (THE Source of Truth)
+- vessel://rules - Injected rules for active pulse
+- vessel://staging - List of staging artifacts
+
+Tools:
+- pulse_init - Initialize a new pulse
+- pulse_sync - Register staging artifact
+- pulse_export - Archive pulse to history
+- pulse_status - Get current pulse status
 """
 
 import asyncio
 import json
-import sys
-import yaml
 from pathlib import Path
 from typing import Any
 
@@ -30,60 +31,55 @@ from mcp.server.lowlevel.helper_types import ReadResourceContents
 def find_project_root() -> Path:
     """Find project root by locating project_compass/ directory."""
     current = Path(__file__).resolve().parent
-
-    # We're already in project_compass/
     if current.name == "project_compass":
         return current.parent
-
-    # Search upward
     for parent in current.parents:
         if (parent / "project_compass").exists():
             return parent
-
     raise RuntimeError("Cannot find project root with project_compass/")
 
 
 PROJECT_ROOT = find_project_root()
 COMPASS_DIR = PROJECT_ROOT / "project_compass"
-SCHEMA_PATH = COMPASS_DIR / "mcp_schema.yaml"
 
-
-def load_resources_from_schema() -> list[dict[str, Any]]:
-    """Load resources configuration from mcp_schema.yaml."""
-    if not SCHEMA_PATH.exists():
-        print(f"CRITICAL: Schema not found at {SCHEMA_PATH}", file=sys.stderr)
-        sys.exit(1)
-
-    try:
-        with open(SCHEMA_PATH) as f:
-            schema = yaml.safe_load(f)
-
-        resources = []
-        for item in schema.get("resources", []):
-            resources.append({
-                "uri": item["uri"],
-                "name": item["name"],
-                "description": item["description"],
-                "path": COMPASS_DIR / item["path"],
-                "mimeType": item["mime_type"],
-            })
-        return resources
-    except Exception as e:
-        print(f"CRITICAL: Failed to load resources from schema: {e}", file=sys.stderr)
-        sys.exit(1)
-
-
-# Define available resources from schema (No Fallback)
-RESOURCES = load_resources_from_schema()
+# V2 Paths
+VESSEL_DIR = COMPASS_DIR / ".vessel"
+VESSEL_STATE = VESSEL_DIR / "vessel_state.json"
+VAULT_DIR = COMPASS_DIR / "vault"
+STAGING_DIR = COMPASS_DIR / "pulse_staging"
 
 
 # Create MCP server
-app = Server("project_compass")
+app = Server("vessel")
+
+
+# ============ Resources ============
+
+RESOURCES = [
+    {
+        "uri": "vessel://state",
+        "name": "Vessel State",
+        "description": "THE Single Source of Truth - current project and pulse state",
+        "mimeType": "application/json",
+    },
+    {
+        "uri": "vessel://rules",
+        "name": "Active Rules",
+        "description": "Injected rules for the current pulse (from vault)",
+        "mimeType": "text/plain",
+    },
+    {
+        "uri": "vessel://staging",
+        "name": "Staging Artifacts",
+        "description": "List of files in pulse_staging/artifacts/",
+        "mimeType": "text/plain",
+    },
+]
 
 
 @app.list_resources()
 async def list_resources() -> list[Resource]:
-    """List all available compass resources."""
+    """List all available vessel resources."""
     return [
         Resource(
             uri=res["uri"],
@@ -95,48 +91,133 @@ async def list_resources() -> list[Resource]:
     ]
 
 
+@app.read_resource()
+async def read_resource(uri: str) -> list[ReadResourceContents]:
+    """Read content of a vessel resource."""
+    uri = str(uri).strip()
+
+    if uri == "vessel://state":
+        if not VESSEL_STATE.exists():
+            content = json.dumps({"error": "No vessel_state.json found. Run pulse-init first."})
+        else:
+            content = VESSEL_STATE.read_text(encoding="utf-8")
+        return [ReadResourceContents(content=content, mime_type="application/json")]
+
+    elif uri == "vessel://rules":
+        try:
+            from project_compass.src.core import PulseManager
+            from project_compass.src.rule_injector import get_injected_context
+
+            manager = PulseManager()
+            state = manager.load_state()
+            content = get_injected_context(state)
+        except Exception as e:
+            content = f"Error loading rules: {e}"
+        return [ReadResourceContents(content=content, mime_type="text/plain")]
+
+    elif uri == "vessel://staging":
+        artifacts_dir = STAGING_DIR / "artifacts"
+        if not artifacts_dir.exists():
+            content = "No staging directory. Create files in: project_compass/pulse_staging/artifacts/"
+        else:
+            files = [str(p.relative_to(artifacts_dir)) for p in artifacts_dir.rglob("*") if p.is_file()]
+            if files:
+                content = "\n".join(files)
+            else:
+                content = "(empty - no artifacts in staging)"
+        return [ReadResourceContents(content=content, mime_type="text/plain")]
+
+    raise ValueError(f"Unknown resource URI: {uri}")
+
+
+# ============ Tools ============
+
 @app.list_tools()
 async def list_tools() -> list[Tool]:
-    """List all available tools."""
+    """List all pulse management tools."""
     return [
         Tool(
-            name="get_server_info",
-            description="Get information about the Project Compass MCP server",
+            name="pulse_init",
+            description="Initialize a new pulse (work cycle). Requires pulse_id (domain-action-target format), objective (20-500 chars), and milestone_id.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "pulse_id": {
+                        "type": "string",
+                        "description": "Pulse ID in domain-action-target format (e.g., 'recognition-optimize-vocab')",
+                    },
+                    "objective": {
+                        "type": "string",
+                        "description": "Work objective (20-500 characters)",
+                    },
+                    "milestone_id": {
+                        "type": "string",
+                        "description": "Milestone ID from star-chart (e.g., 'rec-opt')",
+                    },
+                    "phase": {
+                        "type": "string",
+                        "enum": ["detection", "recognition", "kie", "integration"],
+                        "description": "Active pipeline phase (default: kie)",
+                    },
+                },
+                "required": ["pulse_id", "objective", "milestone_id"],
+            },
+        ),
+        Tool(
+            name="pulse_sync",
+            description="Register a staging artifact in the manifest. File must exist in pulse_staging/artifacts/.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "path": {
+                        "type": "string",
+                        "description": "Artifact path relative to pulse_staging/artifacts/",
+                    },
+                    "artifact_type": {
+                        "type": "string",
+                        "enum": ["design", "research", "walkthrough", "implementation_plan", "bug_report", "audit"],
+                        "description": "Type of artifact",
+                    },
+                    "milestone_id": {
+                        "type": "string",
+                        "description": "Override milestone ID (defaults to pulse milestone)",
+                    },
+                },
+                "required": ["path", "artifact_type"],
+            },
+        ),
+        Tool(
+            name="pulse_export",
+            description="Archive current pulse to history. Performs staging audit - blocks if unregistered files exist.",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "force": {
+                        "type": "boolean",
+                        "description": "Skip staging audit (NOT RECOMMENDED)",
+                    },
+                },
+            },
+        ),
+        Tool(
+            name="pulse_status",
+            description="Get current pulse status including artifact count and token burden.",
             inputSchema={
                 "type": "object",
                 "properties": {},
             },
         ),
         Tool(
-            name="manage_session",
-            description="Manage project sessions (export, import, list, new) to save/restore context. NOTE: Export now validates session content and naming. Use 'force' to bypass validation.",
+            name="pulse_checkpoint",
+            description="Update token burden and get pulse maturity assessment.",
             inputSchema={
                 "type": "object",
                 "properties": {
-                    "action": {
+                    "token_burden": {
                         "type": "string",
-                        "enum": ["export", "import", "list", "new"],
-                        "description": "Action to perform on the session.",
+                        "enum": ["low", "medium", "high"],
+                        "description": "Update token burden level",
                     },
-                    "session_name": {"type": "string", "description": "Name of the session to import (required for import action)."},
-                    "note": {"type": "string", "description": "Note to attach to the session (optional for export)."},
-                    "force": {"type": "boolean", "description": "Bypass validation checks for export (not recommended). Skips session content and naming validation."},
-                },
-                "required": ["action"],
-            },
-        ),
-        Tool(
-            name="get_effective_config",
-            description="Retrieve the effective (resolved) Hydra configuration.",
-            inputSchema={
-                "type": "object",
-                "properties": {
-                    "config_name": {"type": "string", "description": "Base config name (default: train)"},
-                    "overrides": {
-                        "type": "array",
-                        "items": {"type": "string"},
-                        "description": "Hydra overrides (e.g. ['experiment=foo', 'model.backbone=resnet'])"
-                    }
                 },
             },
         ),
@@ -145,98 +226,67 @@ async def list_tools() -> list[Tool]:
 
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
-    """Execute a tool."""
-    if name == "get_server_info":
-        return [TextContent(type="text", text=json.dumps({"name": "project_compass", "version": "0.1.0", "status": "running"}, indent=2))]
+    """Execute a pulse tool."""
+    try:
+        from project_compass.src.core import PulseManager, VesselPaths
+        from project_compass.src.pulse_exporter import export_pulse, register_artifact
+    except ImportError:
+        from src.core import PulseManager, VesselPaths
+        from src.pulse_exporter import export_pulse, register_artifact
 
-    if name == "get_effective_config":
-        import subprocess
+    paths = VesselPaths()
+    manager = PulseManager(paths)
 
-        config_name = arguments.get("config_name", "train")
-        overrides = arguments.get("overrides", [])
+    if name == "pulse_init":
+        success, message = manager.init_pulse(
+            pulse_id=arguments["pulse_id"],
+            objective=arguments["objective"],
+            milestone_id=arguments["milestone_id"],
+            phase=arguments.get("phase", "kie"),
+        )
+        result = {"success": success, "message": message}
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
-        script_path = PROJECT_ROOT / "scripts/utils/show_config.py"
-        cmd = ["uv", "run", "python", str(script_path), config_name]
-        if overrides:
-            cmd.extend(overrides)
+    elif name == "pulse_sync":
+        success, message = register_artifact(
+            state_path=paths.vessel_state,
+            artifact_path=arguments["path"],
+            artifact_type=arguments["artifact_type"],
+            milestone_id=arguments.get("milestone_id"),
+        )
+        result = {"success": success, "message": message}
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=PROJECT_ROOT)
-            if result.returncode != 0:
-                output = f"Error retrieving config:\n{result.stderr}\n{result.stdout}"
-            else:
-                output = result.stdout
-            return [TextContent(type="text", text=output)]
-        except Exception as e:
-            return [TextContent(type="text", text=f"Failed to execute config viewer: {str(e)}")]
+    elif name == "pulse_export":
+        result = export_pulse(
+            state_path=paths.vessel_state,
+            staging_path=paths.staging_dir,
+            history_path=paths.history_dir,
+        )
+        return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
-    if name == "manage_session":
-        import subprocess
+    elif name == "pulse_status":
+        status = manager.get_pulse_status()
+        return [TextContent(type="text", text=json.dumps(status, indent=2))]
 
-        action = arguments.get("action")
-        session_name = arguments.get("session_name")
-        note = arguments.get("note")
-        force = arguments.get("force", False)
+    elif name == "pulse_checkpoint":
+        state = manager.load_state()
+        if not state.active_pulse:
+            return [TextContent(type="text", text=json.dumps({"error": "No active pulse"}))]
 
-        # Use new CLI entry point: uv run python -m project_compass.cli
-        # Note: Only 'session-init' and 'check-env' are currently in CLI.
-        # 'manage_session' seems to rely on project_compass/scripts/session_manager.py
-        # We will preserve the script path but enforce UV module usage where possible,
-        # or stick to the script if it hasn't been migrated to CLI yet.
+        if arguments.get("token_burden"):
+            state.active_pulse.token_burden = arguments["token_burden"]
+            manager.save_state(state)
 
-        # Checking file context: project_compass/scripts/session_manager.py exists.
-        # We should invoke it via uv run python.
-
-        script_path = COMPASS_DIR / "scripts/session_manager.py"
-        cmd = ["uv", "run", "python", str(script_path), action]
-
-        if action == "export":
-            if note:
-                cmd.extend(["--note", note])
-            if force:
-                cmd.append("--force")
-        elif action == "import":
-            if not session_name:
-                raise ValueError("session_name is required for import action")
-            cmd.append(session_name)
-        elif action == "new":
-            if force:
-                cmd.append("--force")
-
-
-        try:
-            result = subprocess.run(cmd, capture_output=True, text=True, cwd=PROJECT_ROOT)
-            if result.returncode != 0:
-                output = f"Error executing session manager:\n{result.stderr}\n{result.stdout}"
-            else:
-                output = result.stdout
-
-            return [TextContent(type="text", text=output)]
-        except Exception as e:
-            return [TextContent(type="text", text=f"Failed to execute session manager: {str(e)}")]
+        assessment = {
+            "pulse_id": state.active_pulse.pulse_id,
+            "artifact_count": len(state.active_pulse.artifacts),
+            "token_burden": state.active_pulse.token_burden,
+            "recommendation": "export" if state.active_pulse.token_burden == "high" else "continue",
+        }
+        return [TextContent(type="text", text=json.dumps(assessment, indent=2))]
 
     raise ValueError(f"Unknown tool: {name}")
-
-
-@app.read_resource()
-async def read_resource(uri: str) -> list[ReadResourceContents]:
-    """Read content of a compass resource."""
-    # Find matching resource
-    uri = str(uri).strip()
-    resource = next((r for r in RESOURCES if r["uri"] == uri), None)
-
-    if not resource:
-        raise ValueError(f"Unknown resource URI: {repr(uri)}. Available: {[r['uri'] for r in RESOURCES]}")
-
-    path: Path = resource["path"]
-
-    if not path.exists():
-        raise FileNotFoundError(f"Resource file not found: {path}")
-
-    # Read and return content wrapped in proper MCP types
-    content = path.read_text(encoding="utf-8")
-
-    return [ReadResourceContents(content=content, mime_type=resource["mimeType"])]
 
 
 async def main():

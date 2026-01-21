@@ -1,0 +1,48 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Environment Lock State",
+  "description": "Persistent hardware and software configuration. Prevents accidental library overwrites.",
+  "type": "object",
+  "required": ["uv_binary", "python", "cuda"],
+  "properties": {
+    "uv_binary": {
+      "type": "object",
+      "required": ["expected_path", "version"],
+      "properties": {
+        "expected_path": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        }
+      }
+    },
+    "python": {
+      "type": "object",
+      "required": ["version", "venv_path"],
+      "properties": {
+        "version": {
+          "type": "string"
+        },
+        "venv_path": {
+          "type": "string"
+        }
+      }
+    },
+    "cuda": {
+      "type": "object",
+      "required": ["enabled", "torch_version"],
+      "properties": {
+        "enabled": {
+          "type": "boolean"
+        },
+        "torch_version": {
+          "type": "string"
+        },
+        "compute_capability": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}
