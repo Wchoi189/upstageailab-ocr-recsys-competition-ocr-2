@@ -11,7 +11,7 @@
 
 from dataclasses import dataclass, field
 
-from .utils import harmonic_mean
+from .cleval_utils import harmonic_mean
 
 
 class MatchReleation:

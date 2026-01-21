@@ -1,0 +1,2 @@
+# JWT generation dependencies
+PyJWT>=2.8.0

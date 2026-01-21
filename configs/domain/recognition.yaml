@@ -11,6 +11,7 @@ defaults:
   - /model/architectures/parseq
   - /model/constants/recognition
   - /data/datasets: recognition
+  - /train/optimizer: adam
   - _self_
 
 # Domain-specific keys (go to _group_ namespace, read by orchestrator)

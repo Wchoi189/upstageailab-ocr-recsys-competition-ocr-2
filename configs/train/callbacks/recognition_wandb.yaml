@@ -1,6 +1,6 @@
 # @package callbacks
 
 recognition_wandb:
-  _target_: ocr.features.recognition.callbacks.wandb_image_logging.RecognitionWandbImageLogger
+  _target_: ocr.domains.recognition.callbacks.wandb.RecognitionWandbImageLogger
   log_every_n_epochs: 1
   num_samples: 8

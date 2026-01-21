@@ -17,37 +17,37 @@ dataset_base_path: "${global.paths.datasets_root}"
 
 datasets:
   train_dataset:
-    _target_: ${data.dataset_path}.ValidatedOCRDataset
+    _target_: ocr.domains.detection.data.dataset.ValidatedOCRDataset
     config:
-      _target_: ${data.dataset_config_path}.DatasetConfig
+      _target_: ocr.domains.detection.data.dataset.DatasetConfig
       image_path: ${data.dataset_base_path}images/train
       annotation_path: ${data.dataset_base_path}jsons/train.json
     transform: ${data.transforms.train_transform}
   val_dataset:
-    _target_: ${data.dataset_path}.ValidatedOCRDataset
+    _target_: ocr.domains.detection.data.dataset.ValidatedOCRDataset
     config:
-      _target_: ${data.dataset_config_path}.DatasetConfig
+      _target_: ocr.domains.detection.data.dataset.DatasetConfig
       image_path: ${data.dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
       annotation_path: ${data.dataset_base_path}jsons/val.json
     transform: ${data.transforms.val_transform}
   test_dataset:
-    _target_: ${data.dataset_path}.ValidatedOCRDataset
+    _target_: ocr.domains.detection.data.dataset.ValidatedOCRDataset
     config:
-      _target_: ${data.dataset_config_path}.DatasetConfig
+      _target_: ocr.domains.detection.data.dataset.DatasetConfig
       image_path: ${data.dataset_base_path}images_val_canonical  # Using canonical (rotation-corrected) data
       annotation_path: ${data.dataset_base_path}jsons/val.json
     transform: ${data.transforms.test_transform}
   predict_dataset:
-    _target_: ${data.dataset_path}.ValidatedOCRDataset
+    _target_: ocr.domains.detection.data.dataset.ValidatedOCRDataset
     config:
-      _target_: ${data.dataset_config_path}.DatasetConfig
+      _target_: ocr.domains.detection.data.dataset.DatasetConfig
       image_path: ${data.dataset_base_path}images/test
       annotation_path: null
     transform: ${data.transforms.test_transform}
 
 transforms:
   train_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
       - _target_: albumentations.LongestMaxSize
         max_size: 768
@@ -67,7 +67,7 @@ transforms:
       format: 'xy'
       remove_invisible: True
   val_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
       - _target_: albumentations.LongestMaxSize
         max_size: 768
@@ -85,7 +85,7 @@ transforms:
       format: 'xy'
       remove_invisible: True
   test_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
       - _target_: albumentations.LongestMaxSize
         max_size: 768
@@ -103,7 +103,7 @@ transforms:
       format: 'xy'
       remove_invisible: True
   predict_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
       - _target_: albumentations.LongestMaxSize
         max_size: 768
@@ -119,7 +119,7 @@ transforms:
     keypoint_params: null
 
 collate_fn:
-  _target_: ${dataset_path}.CraftCollateFN
+  _target_: ocr.domains.detection.data.collate_craft.CraftCollateFN
   region_blur_scale: 0.35
   affinity_kernel_ratio: 0.25
   affinity_blur_scale: 0.15

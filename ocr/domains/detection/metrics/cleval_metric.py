@@ -12,9 +12,10 @@
 import torch
 from torchmetrics import Metric
 
-from ..utils.logging import logger
+import logging
+logger = logging.getLogger(__name__)
 from ocr.domains.detection.metrics.box_types import POLY
-from .data import SampleResult
+from .cleval_data import SampleResult
 from ocr.domains.detection.metrics.functional import evaluation
 
 

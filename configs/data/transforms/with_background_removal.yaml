@@ -11,10 +11,10 @@ defaults:
 transforms:
   # Training transform with background removal
   train_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
       # Background removal should be applied early in the pipeline
-      - _target_: ocr.data.datasets.preprocessing.external.BackgroundRemoval
+      - _target_: ocr.domains.detection.data.preprocessing.background_removal.BackgroundRemoval
         model: "u2net"
         alpha_matting: true
         p: 1.0  # Apply to all training images
@@ -39,9 +39,9 @@ transforms:
 
   # Validation transform with background removal
   val_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
-      - _target_: ocr.data.datasets.preprocessing.external.BackgroundRemoval
+      - _target_: ocr.domains.detection.data.preprocessing.external.BackgroundRemoval
         model: "u2net"
         alpha_matting: true
         p: 1.0
@@ -64,9 +64,9 @@ transforms:
 
   # Test transform with background removal
   test_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
-      - _target_: ocr.data.datasets.preprocessing.external.BackgroundRemoval
+      - _target_: ocr.domains.detection.data.preprocessing.external.BackgroundRemoval
         model: "u2net"
         alpha_matting: true
         p: 1.0
@@ -89,9 +89,9 @@ transforms:
 
   # Prediction transform with background removal
   predict_transform:
-    _target_: ${dataset_path}.DBTransforms
+    _target_: ocr.domains.detection.data.transforms.db_transforms.DBTransforms
     transforms:
-      - _target_: ocr.data.datasets.preprocessing.external.BackgroundRemoval
+      - _target_: ocr.domains.detection.data.preprocessing.external.BackgroundRemoval
         model: "u2net"
         alpha_matting: true
         p: 1.0

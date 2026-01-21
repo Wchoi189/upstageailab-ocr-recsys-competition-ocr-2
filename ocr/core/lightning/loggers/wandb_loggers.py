@@ -10,7 +10,7 @@ import numpy as np
 from PIL import Image
 
 from ocr.core.lightning.processors import ImageProcessor
-from ocr.core.metrics import CLEvalMetric
+from ocr.domains.detection.metrics.cleval_metric import CLEvalMetric
 from ocr.core.utils.orientation import remap_polygons
 
 if TYPE_CHECKING:

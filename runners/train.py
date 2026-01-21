@@ -7,6 +7,10 @@ from ocr.pipelines.orchestrator import OCRProjectOrchestrator
 # Suppress known wandb warning
 warnings.filterwarnings("ignore", message=r"The '(repr|frozen)' attribute.*Field.*function.*no effect", category=UserWarning)
 
+from ocr.core.lightning.base import OCRPLModule
+import inspect
+print(f"DEBUG: OCRPLModule loaded from: {inspect.getfile(OCRPLModule)}")
+
 log = logging.getLogger(__name__)
 
 @hydra.main(config_path="../configs", config_name="main", version_base=None)

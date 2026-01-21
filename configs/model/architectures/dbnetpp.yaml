@@ -9,7 +9,7 @@ encoder:
   in_channels: 3
 
 decoder:
-  _target_: ocr.domains.detection.models.decoders.dbpp_decoder.DBPHeadDecoder
+  _target_: ocr.domains.detection.models.decoders.dbpp_decoder.DBPPDecoder
   in_channels: [64, 128, 256, 512]
   inner_channels: 256
   out_channels: 128  # from component_overrides

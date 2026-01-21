@@ -51,7 +51,7 @@ predict_dataset:
   transform: ${data.transforms.test_transform}
 
 collate_fn:
-  _target_: ocr.data.datasets.DBCollateFN
+  _target_: ocr.domains.detection.data.collate_db.DBCollateFN
   shrink_ratio: 0.4
   thresh_min: 0.3
   thresh_max: 0.7

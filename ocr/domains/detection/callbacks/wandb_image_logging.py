@@ -10,7 +10,7 @@ from PIL import Image
 
 from ocr.core.lightning.processors.image_processor import ImageProcessor
 from ocr.core.utils.config_utils import is_config
-from ocr.core.utils.geometry_utils import apply_padding_offset_to_polygons, compute_padding_offsets
+from ocr.domains.detection.utils.geometry import apply_padding_offset_to_polygons, compute_padding_offsets
 from ocr.core.utils.orientation import normalize_pil_image, remap_polygons
 from ocr.domains.detection.utils.polygons import ensure_polygon_array
 from ocr.domains.detection.callbacks.wandb import log_validation_images

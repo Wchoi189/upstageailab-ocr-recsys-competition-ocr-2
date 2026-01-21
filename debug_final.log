@@ -1,0 +1,21 @@
+[2026-01-22 08:42:07,583][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-01-22 08:42:07,584][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-01-22 08:42:07,585][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-01-22 08:42:07,586][ocr.pipelines.orchestrator][INFO] - 
+============================================================
+[2026-01-22 08:42:07,586][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-01-22 08:42:07,587][ocr.pipelines.orchestrator][INFO] - ============================================================
+
+[2026-01-22 08:42:07,588][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-01-22 08:42:07,588][ocr.pipelines.orchestrator][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-01-22 08:42:07,661][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-01-22 08:42:09,994][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-01-22 08:42:10,263][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-01-22 08:42:10,469][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-01-22 08:42:10,680][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+Error executing job with overrides: ['experiment=rec_baseline_v1', '+trainer.fast_dev_run=True']
+Error in call to target 'torch.optim.adam.Adam':
+TypeError("Adam.__init__() missing 1 required positional argument: 'params'")
+full_key: model.architectures.cfg.optimizer
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

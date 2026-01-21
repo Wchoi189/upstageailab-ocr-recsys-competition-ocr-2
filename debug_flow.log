@@ -1,0 +1,22 @@
+DEBUG: OCRPLModule loaded from: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/base.py
+[2026-01-22 08:48:59,339][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-01-22 08:48:59,340][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-01-22 08:48:59,341][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-01-22 08:48:59,342][ocr.pipelines.orchestrator][INFO] - 
+============================================================
+[2026-01-22 08:48:59,343][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-01-22 08:48:59,343][ocr.pipelines.orchestrator][INFO] - ============================================================
+
+[2026-01-22 08:48:59,344][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-01-22 08:48:59,345][ocr.pipelines.orchestrator][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-01-22 08:48:59,432][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-01-22 08:49:01,816][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-01-22 08:49:02,082][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-01-22 08:49:02,305][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-01-22 08:49:02,512][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+Error executing job with overrides: ['experiment=rec_baseline_v1', '+trainer.fast_dev_run=True']
+Error in call to target 'torch.optim.adam.Adam':
+TypeError("Adam.__init__() missing 1 required positional argument: 'params'")
+full_key: model.architectures.cfg.optimizer
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

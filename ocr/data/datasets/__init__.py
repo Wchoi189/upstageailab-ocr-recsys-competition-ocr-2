@@ -13,22 +13,14 @@ from ocr.core.utils.config_utils import ensure_dict
 
 __all__ = [
     "ValidatedOCRDataset",
-    "CraftCollateFN",
-    "DBCollateFN",
-    "DocumentPreprocessor",
     "LensStylePreprocessorAlbumentations",
-    "DBTransforms",
     "get_datasets_by_cfg",
 ]
 
 
 _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
-    "ValidatedOCRDataset": ("ocr.data.datasets.base", "ValidatedOCRDataset"),
-    "CraftCollateFN": ("ocr.domains.detection.data.collate_craft", "CraftCollateFN"),
-    "DBCollateFN": ("ocr.domains.detection.data.collate_db", "DBCollateFN"),
-    "DocumentPreprocessor": ("ocr.data.datasets.preprocessing", "DocumentPreprocessor"),
-    "LensStylePreprocessorAlbumentations": ("ocr.data.datasets.preprocessing", "LensStylePreprocessorAlbumentations"),
-    "DBTransforms": ("ocr.data.datasets.transforms", "DBTransforms"),
+    "ValidatedOCRDataset": ("ocr.domains.detection.data.dataset", "ValidatedOCRDataset"),
+    "LensStylePreprocessorAlbumentations": ("ocr.domains.detection.data.preprocessing", "LensStylePreprocessorAlbumentations"),
 }
 
 

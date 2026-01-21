@@ -1,4 +1,4 @@
-from . import architectures as _architectures  # noqa: F401
+
 
 
 def get_model_by_cfg(config):
@@ -8,7 +8,17 @@ def get_model_by_cfg(config):
     architectures = getattr(config, "architectures", None)
     if architectures and "_target_" in architectures:
         import hydra
-        return hydra.utils.instantiate(architectures)
+        # Disable recursive instantiation to prevent Hydra from trying to instantiate
+        # the 'optimizer' inside cfg (which fails due to missing params)
+        if hasattr(architectures, "_recursive_"):
+             architectures._recursive_ = False
+        else:
+             from omegaconf import OmegaConf
+             OmegaConf.set_struct(architectures, False) 
+             architectures["_recursive_"] = False
+             OmegaConf.set_struct(architectures, True)
+
+        return hydra.utils.instantiate(architectures, cfg=config)
 
     # Legacy: Check for singular architecture with _target_
     if "architecture" in config and "_target_" in config.architecture:

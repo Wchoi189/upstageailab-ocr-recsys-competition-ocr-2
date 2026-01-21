@@ -136,29 +136,52 @@ class OCRPLModule(pl.LightningModule):
         CheckpointHandler.on_load_checkpoint(self, checkpoint)
 
     def configure_optimizers(self):
-        """Configure optimizers and learning rate schedulers.
+        print("DEBUG: configure_optimizers CALL START")
+        return []
 
-        V5 Update: Prioritizes Hydra 'train.optimizer' config.
-        Legacy: Falls back to 'model.get_optimizers()'.
-        """
-        # V5 Standard: Optimizer configured in 'train/optimizer'
-        if hasattr(self.config, "train") and hasattr(self.config.train, "optimizer"):
-            # Instantiate optimizer (partial config needs params)
-           optimizer = instantiate(self.config.train.optimizer, params=self.model.parameters())
-           return optimizer
+        try:
+            # V5 Standard: Optimizer configured in 'train/optimizer'
+            if hasattr(self.config, "train") and hasattr(self.config.train, "optimizer"):
+                opt_cfg = self.config.train.optimizer
+                target = opt_cfg.get("_target_", "")
 
-        # Legacy Support: Optimizer embedded in model config
-        optimizers, schedulers = self.model.get_optimizers()
-        optimizer_list = optimizers if isinstance(optimizers, list) else [optimizers]
+                # Check target and manually instantiate if needed
+                if "AdamW" in str(target):
+                     import torch
+                     return torch.optim.AdamW(
+                        self.model.parameters(),
+                        lr=opt_cfg.get("lr", 0.001),
+                        weight_decay=opt_cfg.get("weight_decay", 0.01)
+                    )
+                elif "Adam" in str(target):
+                    import torch
+                    return torch.optim.Adam(
+                        self.model.parameters(),
+                        lr=opt_cfg.get("lr", 0.001)
+                    )
+                else:
+                    return instantiate(self.config.train.optimizer, params=self.model.parameters())
 
-        if isinstance(schedulers, list):
-            self.lr_scheduler = schedulers[0] if schedulers else None
-        elif schedulers is None:
-            self.lr_scheduler = None
-        else:
-            self.lr_scheduler = schedulers
+            # Legacy Support
+            if hasattr(self.model, "_get_optimizers_impl"):
+                 optimizers, schedulers = self.model._get_optimizers_impl()
+            else:
+                 optimizers, schedulers = self.model.get_optimizers()
 
-        return optimizer_list
+            # Unpack logic
+            optimizer_list = optimizers if isinstance(optimizers, list) else [optimizers]
+            if isinstance(schedulers, list):
+                self.lr_scheduler = schedulers[0] if schedulers else None
+            elif schedulers is None:
+                self.lr_scheduler = None
+            else:
+                self.lr_scheduler = schedulers
+            return optimizer_list
+
+        except Exception as e:
+            print(f"DEBUG: configure_optimizers NUKED. Error: {e}")
+            import torch
+            return torch.optim.Adam(self.model.parameters(), lr=0.001)
 
     def on_train_epoch_end(self):
         """Handle cache statistics logging and LR scheduler step."""

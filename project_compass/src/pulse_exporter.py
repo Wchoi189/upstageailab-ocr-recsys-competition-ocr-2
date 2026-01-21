@@ -118,8 +118,11 @@ def export_pulse(
 
     # 4. Execute export
     pulse_id = state.active_pulse.pulse_id
+    milestone_id = state.active_pulse.milestone_id
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    export_dir = history_path / f"{timestamp}_{pulse_id}"
+
+    # Structure: history/{milestone_id}/{timestamp}_{pulse_id}
+    export_dir = history_path / milestone_id / f"{timestamp}_{pulse_id}"
     export_dir.mkdir(parents=True, exist_ok=True)
 
     # Move artifacts

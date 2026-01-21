@@ -12,7 +12,23 @@
 | **Staging**         | **The Workspace** | `pulse_staging/artifacts/`. **The ONLY writable location** for new files. | "Drafting `design.md` in staging."        |
 | **Vault**           | **The Library**   | `vault/`. Read-only source for injected rules and directives.             | "Pulse loaded rules from vault."          |
 
-## 2. Interaction Protocol
+## 2. Directory Structure
+
+```text
+project_compass/
+├── .vessel/                  # State storage (vessel_state.json)
+├── vault/                    # Read-only rule library
+│   ├── directives/           # Core protocols
+│   └── milestones/           # Star-chart definitions
+├── pulse_staging/
+│   └── artifacts/            # ACTIVE WORKSPACE (Write here)
+└── history/                  # Archived pulses
+    ├── {milestone_id}/       # Grouped by goal
+    │   └── {timestamp}_{id}/ # Pulse snapshot
+    └── legacy/               # Old session archives
+```
+
+## 3. Interaction Protocol
 
 Every conversation **MUST** start with:
 

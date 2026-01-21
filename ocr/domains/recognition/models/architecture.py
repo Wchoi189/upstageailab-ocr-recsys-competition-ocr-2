@@ -1,30 +1,9 @@
 import torch
 from omegaconf import DictConfig
 from ocr.core.models.architecture import OCRModel
-from ocr.core import registry
-from .decoder import PARSeqDecoder
-from .head import PARSeqHead
-from ocr.core.models.encoder.timm_backbone import TimmBackbone
-from ocr.domains.recognition.models.loss.cross_entropy_loss import CrossEntropyLoss
 
-def register_parseq_components():
-    # Register components if not already registered
-    try:
-        registry.register_encoder("timm_backbone", TimmBackbone)
-    except KeyError:
-        pass # Already registered? Registry raises? No, dict assignment. But just in case.
 
-    registry.register_decoder("parseq_decoder", PARSeqDecoder)
-    registry.register_head("parseq_head", PARSeqHead)
-    registry.register_loss("cross_entropy", CrossEntropyLoss)
 
-    registry.register_architecture(
-        name="parseq",
-        encoder="timm_backbone",
-        decoder="parseq_decoder",
-        head="parseq_head",
-        loss="cross_entropy"
-    )
 
 class PARSeq(OCRModel):
     """
@@ -276,4 +255,4 @@ class PARSeq(OCRModel):
 
         return {"tokens": best_beams}
 
-register_parseq_components()
+
