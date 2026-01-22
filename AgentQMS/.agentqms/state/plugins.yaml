@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-01-20T22:55:09.763060+00:00'
+  generated_at: '2026-01-22T11:20:07.525242+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -1087,13 +1087,13 @@ resolved:
         - analyze
         - trace
         - merge
-        - configuration-issue
+        - config issue
         - component
         - instantiation
-        - merge-order
+        - merge order
         - hydra
-        - config-access
-        - data-flow
+        - config access
+        - data flow
         - ast
       tiers:
         tier1:
@@ -1708,57 +1708,69 @@ resolved:
             description: Coding standards
     project-compass:
       name: project-compass
-      title: Project Compass Lifecycle
+      title: Project Compass V2 - Vessel Pulse Lifecycle
       ads_version: '1.0'
       scope: project
-      description: 'Core lifecycle protocols and session management for Project Compass.
-        Use this bundle to understand how to initialize, update, and finalize work
-        sessions (Sprint Contexts).
+      description: 'Vessel V2 pulse lifecycle management. Unified Pydantic state with
+        staging enforcement.
+
+        Core concepts: Vessel (project), Pulse (work cycle), Staging (artifact location),
+        Vault (rule injection).
 
         '
       tags:
       - compass
+      - vessel
+      - pulse
       - lifecycle
-      - session
-      - management
-      - roadmap
+      - staging
       triggers:
         keywords:
         - compass
         - '@compass'
-        - session
-        - roadmap
-        - checkout
-        - handover
+        - vessel
+        - pulse
+        - staging
+        - vault
         - init
         - export
       tiers:
         tier1:
-          name: Core Protocols
-          description: Essential rules and active Sprint Context state. MUST READ.
+          name: Core State & Protocols
+          description: Vessel state and AI protocols. MUST READ.
           files:
           - path: project_compass/AGENTS.md
             priority: high
-            description: Defines the strict lifecycle protocols, chat nomenclature,
-              and atomic operations for agents.
-          - path: project_compass/active_context/current_session.yml
+            description: 'Vessel V2 AI protocols: pulse lifecycle, CLI commands, MCP
+              resources.'
+          - path: project_compass/.vessel/vessel_state.json
             priority: high
-            description: The Single Source of Truth for the current active Sprint
-              Context, including objectives and phase status.
+            description: THE Single Source of Truth. Contains active pulse, artifacts,
+              and injected rules.
         tier2:
-          name: Tooling & State
-          description: Helper tools and global project health.
+          name: Vault Rules
+          description: Directives auto-injected on pulse-init.
           files:
-          - path: project_compass/compass.json
+          - path: project_compass/vault/directives/00_meta_cognition.md
             priority: medium
-            description: Global project health status and current phase markers.
-          - path: project_compass/cli.py
+            description: '[Compass:Reflection] protocol - deliberate reasoning before
+              file creation.'
+          - path: project_compass/vault/directives/01_naming_standards.md
             priority: medium
-            description: CLI entry points for session management (init, check-env,
-              export).
-          - path: project_compass/session_handover.md
+            description: Pulse ID and artifact naming conventions.
+          - path: project_compass/vault/directives/02_artifact_purity.md
+            priority: medium
+            description: Staging constraints and zero-narrative policy.
+        tier3:
+          name: Implementation
+          description: Core modules for understanding the system.
+          files:
+          - path: project_compass/src/state_schema.py
             priority: low
-            description: Template or previous record of session handover.
+            description: 'Pydantic models: VesselState, Pulse, Artifact.'
+          - path: project_compass/cli.py
+            priority: low
+            description: 'CLI commands: pulse-init, pulse-sync, pulse-export, etc.'
     security-review:
       name: security-review
       title: Security Review Context Bundle

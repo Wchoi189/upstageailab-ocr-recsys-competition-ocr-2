@@ -1,0 +1,27 @@
+============================================================
+MINIMAL LMDB + MODEL INFERENCE TEST
+============================================================
+Device: cuda
+Tokenizer loaded: vocab_size=1027
+Dataset loaded: 616366 samples
+
+--- Loading PARSeq model ---
+Model loaded: 51.2M params
+
+--- Testing config: {'num_workers': 0, 'pin_memory': False} ---
+  Batch 0: loss=0.0000
+  Batch 5: loss=0.0000
+  Batch 10: loss=0.0000
+  Batch 15: loss=0.0000
+  ✅ PASSED: Completed 20 batches with {'num_workers': 0, 'pin_memory': False}
+
+--- Testing config: {'num_workers': 2, 'pin_memory': True} ---
+  Batch 0: loss=0.0000
+  Batch 5: loss=0.0000
+  Batch 10: loss=0.0000
+  Batch 15: loss=0.0000
+  ✅ PASSED: Completed 20 batches with {'num_workers': 2, 'pin_memory': True}
+
+============================================================
+TEST COMPLETE
+============================================================

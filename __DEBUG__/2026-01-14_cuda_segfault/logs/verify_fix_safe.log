@@ -1,0 +1,72 @@
+INFO: Seed set to 42
+[2026-01-15 03:41:31,183][lightning.fabric.utilities.seed][INFO] - Seed set to 42
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:41:31,335][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-01-15 03:41:31,602][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/vit_small_patch16_224.augreg_in21k_ft_in1k)
+[2026-01-15 03:41:32,019][timm.models._hub][INFO] - [timm/vit_small_patch16_224.augreg_in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:41:32,111][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:41:32,121][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:41:32,129][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:41:32,133][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:41:32,142][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:41:32,148][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:41:32,155][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:41:32,160][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+INFO: GPU available: True (cuda), used: True
+[2026-01-15 03:41:33,114][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-01-15 03:41:33,115][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+wandb: Currently logged in as: wchoi189 (ocr-team2) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run sh01tbl7
+wandb: Tracking run with wandb version 0.23.0
+wandb: Run data is saved locally in ./wandb/run-20260115_034134-sh01tbl7
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run user_parseq-timm-backbone-parseq-decoder-parseq-head-cross-entropy-bs32-lr1e-3_SCORE_PLACEHOLDER
+wandb: ⭐️ View project at https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project
+wandb: 🚀 View run at https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project/runs/sh01tbl7
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-01-15 03:41:39,576][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+┏━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┓
+┃   ┃ Name   ┃ Type         ┃ Params ┃ Mode  ┃
+┡━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━┩
+│ 0 │ model  │ PARSeq       │ 51.3 M │ train │
+│ 1 │ metric │ CLEvalMetric │      0 │ train │
+└───┴────────┴──────────────┴────────┴───────┘
+Trainable params: 51.3 M                                                                                                                                                             
+Non-trainable params: 0                                                                                                                                                              
+Total params: 51.3 M                                                                                                                                                                 
+Total estimated model params size (MB): 205                                                                                                                                          
+Modules in train mode: 443                                                                                                                                                           
+Modules in eval mode: 0                                                                                                                                                              
+[2026-01-15 03:41:41,198][root][WARNING] - No val predictions found. This may indicate a data loading or prediction issue.
+Traceback (most recent call last):
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/resource_sharer.py", line 138, in _serve
+    with self._listener.accept() as conn:
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/connection.py", line 483, in accept
+    answer_challenge(c, self._authkey)
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/connection.py", line 774, in answer_challenge
+    response = connection.recv_bytes(256)        # reject large message
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/connection.py", line 216, in recv_bytes
+    buf = self._recv_bytes(maxlength)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/connection.py", line 437, in _recv_bytes
+    return self._recv(size)
+           ^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/connection.py", line 395, in _recv
+    chunk = read(handle, remaining)
+            ^^^^^^^^^^^^^^^^^^^^^^^
+TypeError: 'Transaction' object cannot be interpreted as an integer

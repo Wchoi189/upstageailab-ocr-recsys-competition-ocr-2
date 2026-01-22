@@ -1,0 +1,777 @@
+/ocr/pipelines/orchestrator.py", line 185, in run
+    pl_module, data_module = self.setup_modules()
+                             ^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/orchestrator.py", line 101, in setup_modules
+    from ocr.domains.detection.module import DetectionPLModule
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/module.py", line 11, in <module>
+    from ocr.core.lightning.loggers import WandbProblemLogger
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/loggers/__init__.py", line 3, in <module>
+    from .wandb_loggers import WandbProblemLogger
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/loggers/wandb_loggers.py", line 13, in <module>
+    from ocr.domains.detection.metrics.cleval_metric import CLEvalMetric
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/metrics/cleval_metric.py", line 15, in <module>
+    from ..utils.logging import logger
+ModuleNotFoundError: No module named 'ocr.domains.detection.utils.logging'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+upstageailab-ocr-recsys-competition-ocr-2 ❯ rm configs/data/transforms/document_geometry.yaml configs/data/transforms/image_enhancement.yaml
+upstageailab-ocr-recsys-competition-ocr-2 ❯ python runners/train.py experiment=det_resnet50_v1 +trainer.fast_dev_run=True
+[2026-01-22 07:52:31,044][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-01-22 07:52:31,045][ocr.pipelines.orchestrator][INFO] -    Domain: detection
+[2026-01-22 07:52:31,045][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-01-22 07:52:31,046][ocr.pipelines.orchestrator][INFO] -
+============================================================
+[2026-01-22 07:52:31,047][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for detection domain
+[2026-01-22 07:52:31,047][ocr.pipelines.orchestrator][INFO] - ============================================================
+
+[2026-01-22 07:52:31,048][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-01-22 07:52:34,519][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet50.a1_in1k)
+[2026-01-22 07:52:34,804][timm.models._hub][INFO] - [timm/resnet50.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-01-22 07:52:35,220][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: OCRModel
+[2026-01-22 07:52:57,395][ocr.domains.detection.data.dataset][WARNING] - ⚠️ Maps caching enabled but load_maps=false. Cached maps won't be used during __getitem__.
+[2026-01-22 07:52:59,966][ocr.domains.detection.data.dataset][INFO] - Cache initialized with version: fa3c8cf4
+[2026-01-22 07:52:59,966][ocr.domains.detection.data.dataset][INFO] - Cache config: tensor=False, images=True, maps=True, load_maps=False
+[2026-01-22 07:53:04,674][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+Error executing job with overrides: ['experiment=det_resnet50_v1', '+trainer.fast_dev_run=True']
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/runners/train.py", line 32, in train
+    orchestrator.run()
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/orchestrator.py", line 185, in run
+    pl_module, data_module = self.setup_modules()
+                             ^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/orchestrator.py", line 101, in setup_modules
+    from ocr.domains.detection.module import DetectionPLModule
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/module.py", line 11, in <module>
+    from ocr.core.lightning.loggers import WandbProblemLogger
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/loggers/__init__.py", line 3, in <module>
+    from .wandb_loggers import WandbProblemLogger
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/loggers/wandb_loggers.py", line 13, in <module>
+    from ocr.domains.detection.metrics.cleval_metric import CLEvalMetric
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/metrics/cleval_metric.py", line 18, in <module>
+    from .cleval_data import SampleResult
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/metrics/cleval_data.py", line 14, in <module>
+    from .utils import harmonic_mean
+ModuleNotFoundError: No module named 'ocr.domains.detection.metrics.utils'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+upstageailab-ocr-recsys-competition-ocr-2 ❯ echo "Smoke test still running..."
+Smoke test still running...
+upstageailab-ocr-recsys-competition-ocr-2 ❯ python runners/train.py experiment=det_resnet50_v1 +trainer.fast_dev_run=True
+[2026-01-22 07:53:35,384][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-01-22 07:53:35,384][ocr.pipelines.orchestrator][INFO] -    Domain: detection
+[2026-01-22 07:53:35,385][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-01-22 07:53:35,385][ocr.pipelines.orchestrator][INFO] -
+============================================================
+[2026-01-22 07:53:35,385][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for detection domain
+[2026-01-22 07:53:35,386][ocr.pipelines.orchestrator][INFO] - ============================================================
+
+[2026-01-22 07:53:35,386][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-01-22 07:53:38,198][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet50.a1_in1k)
+[2026-01-22 07:53:38,488][timm.models._hub][INFO] - [timm/resnet50.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-01-22 07:53:38,965][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: OCRModel
+[2026-01-22 07:54:02,759][ocr.domains.detection.data.dataset][WARNING] - ⚠️ Maps caching enabled but load_maps=false. Cached maps won't be used during __getitem__.
+[2026-01-22 07:54:05,491][ocr.domains.detection.data.dataset][INFO] - Cache initialized with version: fa3c8cf4
+[2026-01-22 07:54:05,492][ocr.domains.detection.data.dataset][INFO] - Cache config: tensor=False, images=True, maps=True, load_maps=False
+[2026-01-22 07:54:10,327][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+Error executing job with overrides: ['experiment=det_resnet50_v1', '+trainer.fast_dev_run=True']
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/runners/train.py", line 32, in train
+    orchestrator.run()
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/orchestrator.py", line 185, in run
+    pl_module, data_module = self.setup_modules()
+                             ^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/orchestrator.py", line 101, in setup_modules
+    from ocr.domains.detection.module import DetectionPLModule
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/module.py", line 13, in <module>
+    from ocr.domains.detection.evaluation import CLEvalEvaluator
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/evaluation.py", line 16, in <module>
+    from ocr.core.metrics import CLEvalMetric
+ModuleNotFoundError: No module named 'ocr.core.metrics'
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+upstageailab-ocr-recsys-competition-ocr-2 ❯ python scripts/audit/master_audit.py
+INFO: Scanning Python files for broken imports...
+INFO: PyTorch version 2.6.0 available.
+INFO: Scanning Hydra configs for broken targets...
+INFO: Checking for known problematic paths...
+
+================================================================================
+AUDIT REPORT | Scanned 390 .py files, 45 .yaml files
+================================================================================
+
+🚨 BROKEN IMPORTS (53):
+  [File] ocr/agents/ocr_agent.py:7
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] ocr/agents/llm/grok_client.py:156
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/agents/llm/openai_client.py:142
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/evaluation/__init__.py:4
+    --> Import: ocr.domains.detection.evaluation ['CLEvalEvaluator']
+    --> Error: Module or attribute not found
+  [File] ocr/core/infrastructure/agents/ocr_agent.py:7
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] ocr/core/infrastructure/agents/llm/grok_client.py:156
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/infrastructure/agents/llm/openai_client.py:142
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/lightning/callbacks/metadata_callback.py:256
+    --> Import: ocr.core.utils.checkpoints.index ['CheckpointIndex']
+    --> Error: Module or attribute not found
+  [File] ocr/core/utils/config.py:126
+    --> Import: ocr.core.models ['architectures']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/evaluation.py:16
+    --> Import: ocr.core.metrics ['CLEvalMetric']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/module.py:13
+    --> Import: ocr.domains.detection.evaluation ['CLEvalEvaluator']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/callbacks/wandb.py:26
+    --> Import: ocr.core.utils.text_rendering ['put_text_utf8']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/inference/preprocess.py:12
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/recognition/callbacks/wandb.py:68
+    --> Import: ocr.core.utils.text_rendering ['put_text_utf8']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:20
+    --> Import: ocr.core.inference.dependencies ['OCR_MODULES_AVAILABLE']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:21
+    --> Import: ocr.core.inference.image_loader ['ImageLoader']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:25
+    --> Import: ocr.core.inference.utils ['generate_mock_predictions']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:26
+    --> Import: ocr.core.inference.utils ['get_available_checkpoints']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/orchestrator.py:101
+    --> Import: ocr.domains.detection.module ['DetectionPLModule']
+    --> Error: Module or attribute not found
+  [File] runners/batch_pseudo_labels_aws.py:40
+    --> Import: batch_pseudo_labels ['ResumableBatchProcessor']
+    --> Error: Module or attribute not found
+  [File] runners/predict.py:41
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] runners/test.py:26
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] scripts/checkpoints/convert_legacy_checkpoints.py:95
+    --> Import: ui.apps.inference.services.checkpoint.types ['CheckpointingConfig', 'CheckpointMetadataV1', 'DecoderInfo', 'EncoderInfo', 'HeadInfo', 'LossInfo', 'MetricsInfo', 'ModelInfo', 'TrainingInfo']
+    --> Error: Module or attribute not found
+  [File] scripts/data/clean_dataset.py:46
+    --> Import: ocr.core.utils.polygon_utils ['filter_degenerate_polygons']
+    --> Error: Module or attribute not found
+  [File] scripts/data/debug_etl_core.py:6
+    --> Import: etl.core ['process_single_json', 'infer_image_path']
+    --> Error: Module or attribute not found
+  [File] scripts/data/generate_pseudo_labels.py:25
+    --> Import: ocr.core.inference.preprocessing_pipeline ['apply_optional_perspective_correction']
+    --> Error: Module or attribute not found
+  [File] scripts/data/etl/cli.py:1
+    --> Import: typer
+    --> Error: Module not found
+  [File] scripts/data/etl/cli.py:3
+    --> Import: etl.core ['LMDBConverter']
+    --> Error: Module or attribute not found
+  [File] scripts/debug/data_analyzer.py:13
+    --> Import: ocr.data.datasets.base ['ValidatedOCRDataset']
+    --> Error: Module or attribute not found
+  [File] scripts/debug/generate_offline_samples.py:19
+    --> Import: ocr.data.datasets.preprocessing ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/compare_preprocessors.py:16
+    --> Import: ocr.data.datasets.preprocessing ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_document_flattening.py:13
+    --> Import: ocr.data.datasets.preprocessing.document_flattening ['DocumentFlattener', 'FlatteningConfig', 'FlatteningMethod']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_evaluation_viewer.py:12
+    --> Import: ocr.core.utils.path_utils ['get_outputs_path', 'setup_project_paths']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_evaluation_viewer.py:16
+    --> Import: ui.utils.config_parser ['ConfigParser']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_ui.py:14
+    --> Import: ui.utils.command ['CommandBuilder']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_ui.py:15
+    --> Import: ui.utils.config_parser ['ConfigParser']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/offline_perspective_preprocess_train.py:24
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_perspective_inference.py:19
+    --> Import: ocr.core.inference.engine ['InferenceEngine']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_perspective_on_pseudo_label.py:21
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_preprocessing_systematic.py:22
+    --> Import: ocr.data.datasets.preprocessing.pipeline ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/type_checking_demo/debug_canonical_size.py:43
+    --> Import: ocr.data.datasets.base ['Dataset']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/type_checking_demo/debug_canonical_size.py:87
+    --> Import: ocr.data.datasets.db_collate_fn ['DBCollateFN']
+    --> Error: Module or attribute not found
+  [File] scripts/documentation/translate_readme.py:149
+    --> Import: deep_translator ['GoogleTranslator']
+    --> Error: Module or attribute not found
+  [File] scripts/huggingface/hf_inference.py:20
+    --> Import: ocr.core.inference.model_loader ['instantiate_model', 'load_state_dict', 'register_safe_globals']
+    --> Error: Module or attribute not found
+  [File] scripts/mcp/verify_server.py:10
+    --> Import: scripts.mcp.unified_server ['RESOURCES_CONFIG', 'URI_MAP', 'PATH_MAP', 'list_tools', 'read_resource']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_optimizations.py:18
+    --> Import: ocr.data.datasets.transforms ['DBTransforms']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_pipeline.py:46
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_recognition.py:26
+    --> Import: ocr.domains.recognition.inference.recognizer ['RecognitionInput', 'RecognizerBackend', 'RecognizerConfig', 'TextRecognizer']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/decoder_benchmark.py:27
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/decoder_benchmark.py:293
+    --> Import: ocr.core.lightning.callbacks.wandb_image_logging ['WandbImageLoggingCallback']
+    --> Error: Module or attribute not found
+  [File] scripts/troubleshooting/test_model_forward_backward.py:15
+    --> Import: ocr.detection.models.decoders.fpn_decoder ['FPNDecoder']
+    --> Error: Module or attribute not found
+  [File] scripts/troubleshooting/test_model_forward_backward.py:17
+    --> Import: ocr.detection.models.heads.db_head ['DBHead']
+    --> Error: Module or attribute not found
+  [File] scripts/validation/checkpoints/validate_coordinate_consistency.py:143
+    --> Import: ui.utils.inference.engine ['run_inference_on_image']
+    --> Error: Module or attribute not found
+
+🚨 BROKEN HYDRA TARGETS (18):
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.train_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.train_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.val_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.val_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.test_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.test_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.predict_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.predict_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.train_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.val_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.test_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.predict_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: collate_fn
+    --> Target: ${dataset_path}.CraftCollateFN
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/transforms/background_removal.yaml
+    --> Key: background_removal_default
+    --> Target: ocr.data.datasets.preprocessing.external.create_background_removal_transform
+    --> Error: Module 'ocr.data.datasets.preprocessing.external' not found
+  [Config] configs/data/transforms/with_background_removal.yaml
+    --> Key: transforms.train_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/transforms/with_background_removal.yaml
+    --> Key: transforms.val_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/transforms/with_background_removal.yaml
+    --> Key: transforms.test_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/transforms/with_background_removal.yaml
+    --> Key: transforms.predict_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+
+❌ Anomalies detected. See kill list above.
+upstageailab-ocr-recsys-competition-ocr-2 ❯ python scripts/audit/master_audit.py
+INFO: Scanning Python files for broken imports...
+INFO: PyTorch version 2.6.0 available.
+INFO: Scanning Hydra configs for broken targets...
+INFO: Checking for known problematic paths...
+
+================================================================================
+AUDIT REPORT | Scanned 390 .py files, 45 .yaml files
+================================================================================
+
+🚨 BROKEN IMPORTS (53):
+  [File] ocr/agents/ocr_agent.py:7
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] ocr/agents/llm/grok_client.py:156
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/agents/llm/openai_client.py:142
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/evaluation/__init__.py:4
+    --> Import: ocr.domains.detection.evaluation ['CLEvalEvaluator']
+    --> Error: Module or attribute not found
+  [File] ocr/core/infrastructure/agents/ocr_agent.py:7
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] ocr/core/infrastructure/agents/llm/grok_client.py:156
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/infrastructure/agents/llm/openai_client.py:142
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/lightning/callbacks/metadata_callback.py:256
+    --> Import: ocr.core.utils.checkpoints.index ['CheckpointIndex']
+    --> Error: Module or attribute not found
+  [File] ocr/core/utils/config.py:126
+    --> Import: ocr.core.models ['architectures']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/evaluation.py:16
+    --> Import: ocr.core.metrics ['CLEvalMetric']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/module.py:13
+    --> Import: ocr.domains.detection.evaluation ['CLEvalEvaluator']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/callbacks/wandb.py:26
+    --> Import: ocr.core.utils.text_rendering ['put_text_utf8']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/inference/preprocess.py:12
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/recognition/callbacks/wandb.py:68
+    --> Import: ocr.core.utils.text_rendering ['put_text_utf8']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:20
+    --> Import: ocr.core.inference.dependencies ['OCR_MODULES_AVAILABLE']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:21
+    --> Import: ocr.core.inference.image_loader ['ImageLoader']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:25
+    --> Import: ocr.core.inference.utils ['generate_mock_predictions']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:26
+    --> Import: ocr.core.inference.utils ['get_available_checkpoints']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/orchestrator.py:101
+    --> Import: ocr.domains.detection.module ['DetectionPLModule']
+    --> Error: Module or attribute not found
+  [File] runners/batch_pseudo_labels_aws.py:40
+    --> Import: batch_pseudo_labels ['ResumableBatchProcessor']
+    --> Error: Module or attribute not found
+  [File] runners/predict.py:41
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] runners/test.py:26
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] scripts/checkpoints/convert_legacy_checkpoints.py:95
+    --> Import: ui.apps.inference.services.checkpoint.types ['CheckpointingConfig', 'CheckpointMetadataV1', 'DecoderInfo', 'EncoderInfo', 'HeadInfo', 'LossInfo', 'MetricsInfo', 'ModelInfo', 'TrainingInfo']
+    --> Error: Module or attribute not found
+  [File] scripts/data/clean_dataset.py:46
+    --> Import: ocr.core.utils.polygon_utils ['filter_degenerate_polygons']
+    --> Error: Module or attribute not found
+  [File] scripts/data/debug_etl_core.py:6
+    --> Import: etl.core ['process_single_json', 'infer_image_path']
+    --> Error: Module or attribute not found
+  [File] scripts/data/generate_pseudo_labels.py:25
+    --> Import: ocr.core.inference.preprocessing_pipeline ['apply_optional_perspective_correction']
+    --> Error: Module or attribute not found
+  [File] scripts/data/etl/cli.py:1
+    --> Import: typer
+    --> Error: Module not found
+  [File] scripts/data/etl/cli.py:3
+    --> Import: etl.core ['LMDBConverter']
+    --> Error: Module or attribute not found
+  [File] scripts/debug/data_analyzer.py:13
+    --> Import: ocr.data.datasets.base ['ValidatedOCRDataset']
+    --> Error: Module or attribute not found
+  [File] scripts/debug/generate_offline_samples.py:19
+    --> Import: ocr.data.datasets.preprocessing ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/compare_preprocessors.py:16
+    --> Import: ocr.data.datasets.preprocessing ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_document_flattening.py:13
+    --> Import: ocr.data.datasets.preprocessing.document_flattening ['DocumentFlattener', 'FlatteningConfig', 'FlatteningMethod']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_evaluation_viewer.py:12
+    --> Import: ocr.core.utils.path_utils ['get_outputs_path', 'setup_project_paths']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_evaluation_viewer.py:16
+    --> Import: ui.utils.config_parser ['ConfigParser']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_ui.py:14
+    --> Import: ui.utils.command ['CommandBuilder']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_ui.py:15
+    --> Import: ui.utils.config_parser ['ConfigParser']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/offline_perspective_preprocess_train.py:24
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_perspective_inference.py:19
+    --> Import: ocr.core.inference.engine ['InferenceEngine']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_perspective_on_pseudo_label.py:21
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_preprocessing_systematic.py:22
+    --> Import: ocr.data.datasets.preprocessing.pipeline ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/type_checking_demo/debug_canonical_size.py:43
+    --> Import: ocr.data.datasets.base ['Dataset']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/type_checking_demo/debug_canonical_size.py:87
+    --> Import: ocr.data.datasets.db_collate_fn ['DBCollateFN']
+    --> Error: Module or attribute not found
+  [File] scripts/documentation/translate_readme.py:149
+    --> Import: deep_translator ['GoogleTranslator']
+    --> Error: Module or attribute not found
+  [File] scripts/huggingface/hf_inference.py:20
+    --> Import: ocr.core.inference.model_loader ['instantiate_model', 'load_state_dict', 'register_safe_globals']
+    --> Error: Module or attribute not found
+  [File] scripts/mcp/verify_server.py:10
+    --> Import: scripts.mcp.unified_server ['RESOURCES_CONFIG', 'URI_MAP', 'PATH_MAP', 'list_tools', 'read_resource']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_optimizations.py:18
+    --> Import: ocr.data.datasets.transforms ['DBTransforms']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_pipeline.py:46
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_recognition.py:26
+    --> Import: ocr.domains.recognition.inference.recognizer ['RecognitionInput', 'RecognizerBackend', 'RecognizerConfig', 'TextRecognizer']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/decoder_benchmark.py:27
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/decoder_benchmark.py:293
+    --> Import: ocr.core.lightning.callbacks.wandb_image_logging ['WandbImageLoggingCallback']
+    --> Error: Module or attribute not found
+  [File] scripts/troubleshooting/test_model_forward_backward.py:15
+    --> Import: ocr.detection.models.decoders.fpn_decoder ['FPNDecoder']
+    --> Error: Module or attribute not found
+  [File] scripts/troubleshooting/test_model_forward_backward.py:17
+    --> Import: ocr.detection.models.heads.db_head ['DBHead']
+    --> Error: Module or attribute not found
+  [File] scripts/validation/checkpoints/validate_coordinate_consistency.py:143
+    --> Import: ui.utils.inference.engine ['run_inference_on_image']
+    --> Error: Module or attribute not found
+
+🚨 BROKEN HYDRA TARGETS (13):
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.train_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.train_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.val_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.val_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.test_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.test_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.predict_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.predict_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.train_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.val_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.test_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.predict_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: collate_fn
+    --> Target: ${dataset_path}.CraftCollateFN
+    --> Error: Module '${dataset_path}' not found
+
+❌ Anomalies detected. See kill list above.
+upstageailab-ocr-recsys-competition-ocr-2 ❯ python scripts/audit/master_audit.py
+INFO: Scanning Python files for broken imports...
+INFO: PyTorch version 2.6.0 available.
+INFO: Scanning Hydra configs for broken targets...
+INFO: Checking for known problematic paths...
+
+================================================================================
+AUDIT REPORT | Scanned 390 .py files, 45 .yaml files
+================================================================================
+
+🚨 BROKEN IMPORTS (49):
+  [File] ocr/agents/ocr_agent.py:7
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] ocr/agents/llm/grok_client.py:156
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/agents/llm/openai_client.py:142
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/infrastructure/agents/ocr_agent.py:7
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] ocr/core/infrastructure/agents/llm/grok_client.py:156
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/infrastructure/agents/llm/openai_client.py:142
+    --> Import: tiktoken
+    --> Error: Module not found
+  [File] ocr/core/lightning/callbacks/metadata_callback.py:256
+    --> Import: ocr.core.utils.checkpoints.index ['CheckpointIndex']
+    --> Error: Module or attribute not found
+  [File] ocr/core/utils/config.py:126
+    --> Import: ocr.core.models ['architectures']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/callbacks/wandb.py:26
+    --> Import: ocr.core.utils.text_rendering ['put_text_utf8']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/detection/inference/preprocess.py:12
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] ocr/domains/recognition/callbacks/wandb.py:68
+    --> Import: ocr.core.utils.text_rendering ['put_text_utf8']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:20
+    --> Import: ocr.core.inference.dependencies ['OCR_MODULES_AVAILABLE']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:21
+    --> Import: ocr.core.inference.image_loader ['ImageLoader']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:25
+    --> Import: ocr.core.inference.utils ['generate_mock_predictions']
+    --> Error: Module or attribute not found
+  [File] ocr/pipelines/engine.py:26
+    --> Import: ocr.core.inference.utils ['get_available_checkpoints']
+    --> Error: Module or attribute not found
+  [File] runners/batch_pseudo_labels_aws.py:40
+    --> Import: batch_pseudo_labels ['ResumableBatchProcessor']
+    --> Error: Module or attribute not found
+  [File] runners/predict.py:41
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] runners/test.py:26
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] scripts/checkpoints/convert_legacy_checkpoints.py:95
+    --> Import: ui.apps.inference.services.checkpoint.types ['CheckpointingConfig', 'CheckpointMetadataV1', 'DecoderInfo', 'EncoderInfo', 'HeadInfo', 'LossInfo', 'MetricsInfo', 'ModelInfo', 'TrainingInfo']
+    --> Error: Module or attribute not found
+  [File] scripts/data/clean_dataset.py:46
+    --> Import: ocr.core.utils.polygon_utils ['filter_degenerate_polygons']
+    --> Error: Module or attribute not found
+  [File] scripts/data/debug_etl_core.py:6
+    --> Import: etl.core ['process_single_json', 'infer_image_path']
+    --> Error: Module or attribute not found
+  [File] scripts/data/generate_pseudo_labels.py:25
+    --> Import: ocr.core.inference.preprocessing_pipeline ['apply_optional_perspective_correction']
+    --> Error: Module or attribute not found
+  [File] scripts/data/etl/cli.py:1
+    --> Import: typer
+    --> Error: Module not found
+  [File] scripts/data/etl/cli.py:3
+    --> Import: etl.core ['LMDBConverter']
+    --> Error: Module or attribute not found
+  [File] scripts/debug/data_analyzer.py:13
+    --> Import: ocr.data.datasets.base ['ValidatedOCRDataset']
+    --> Error: Module or attribute not found
+  [File] scripts/debug/generate_offline_samples.py:19
+    --> Import: ocr.data.datasets.preprocessing ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/compare_preprocessors.py:16
+    --> Import: ocr.data.datasets.preprocessing ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_document_flattening.py:13
+    --> Import: ocr.data.datasets.preprocessing.document_flattening ['DocumentFlattener', 'FlatteningConfig', 'FlatteningMethod']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_evaluation_viewer.py:12
+    --> Import: ocr.core.utils.path_utils ['get_outputs_path', 'setup_project_paths']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_evaluation_viewer.py:16
+    --> Import: ui.utils.config_parser ['ConfigParser']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_ui.py:14
+    --> Import: ui.utils.command ['CommandBuilder']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/demo_ui.py:15
+    --> Import: ui.utils.config_parser ['ConfigParser']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/offline_perspective_preprocess_train.py:24
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_perspective_inference.py:19
+    --> Import: ocr.core.inference.engine ['InferenceEngine']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_perspective_on_pseudo_label.py:21
+    --> Import: ocr.core.utils.perspective_correction ['correct_perspective_from_mask', 'remove_background_and_mask']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/test_preprocessing_systematic.py:22
+    --> Import: ocr.data.datasets.preprocessing.pipeline ['DocumentPreprocessor']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/type_checking_demo/debug_canonical_size.py:43
+    --> Import: ocr.data.datasets.base ['Dataset']
+    --> Error: Module or attribute not found
+  [File] scripts/demos/type_checking_demo/debug_canonical_size.py:87
+    --> Import: ocr.data.datasets.db_collate_fn ['DBCollateFN']
+    --> Error: Module or attribute not found
+  [File] scripts/documentation/translate_readme.py:149
+    --> Import: deep_translator ['GoogleTranslator']
+    --> Error: Module or attribute not found
+  [File] scripts/huggingface/hf_inference.py:20
+    --> Import: ocr.core.inference.model_loader ['instantiate_model', 'load_state_dict', 'register_safe_globals']
+    --> Error: Module or attribute not found
+  [File] scripts/mcp/verify_server.py:10
+    --> Import: scripts.mcp.unified_server ['RESOURCES_CONFIG', 'URI_MAP', 'PATH_MAP', 'list_tools', 'read_resource']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_optimizations.py:18
+    --> Import: ocr.data.datasets.transforms ['DBTransforms']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_pipeline.py:46
+    --> Import: ocr.core.inference.orchestrator ['InferenceOrchestrator']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/benchmark_recognition.py:26
+    --> Import: ocr.domains.recognition.inference.recognizer ['RecognitionInput', 'RecognizerBackend', 'RecognizerConfig', 'TextRecognizer']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/decoder_benchmark.py:27
+    --> Import: ocr.core.lightning ['get_pl_modules_by_cfg']
+    --> Error: Module or attribute not found
+  [File] scripts/performance/decoder_benchmark.py:293
+    --> Import: ocr.core.lightning.callbacks.wandb_image_logging ['WandbImageLoggingCallback']
+    --> Error: Module or attribute not found
+  [File] scripts/troubleshooting/test_model_forward_backward.py:15
+    --> Import: ocr.detection.models.decoders.fpn_decoder ['FPNDecoder']
+    --> Error: Module or attribute not found
+  [File] scripts/troubleshooting/test_model_forward_backward.py:17
+    --> Import: ocr.detection.models.heads.db_head ['DBHead']
+    --> Error: Module or attribute not found
+  [File] scripts/validation/checkpoints/validate_coordinate_consistency.py:143
+    --> Import: ui.utils.inference.engine ['run_inference_on_image']
+    --> Error: Module or attribute not found
+
+🚨 BROKEN HYDRA TARGETS (13):
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.train_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.train_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.val_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.val_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.test_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.test_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.predict_dataset
+    --> Target: ${data.dataset_path}.ValidatedOCRDataset
+    --> Error: Module '${data.dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: datasets.predict_dataset.config
+    --> Target: ${data.dataset_config_path}.DatasetConfig
+    --> Error: Module '${data.dataset_config_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.train_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.val_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.test_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: transforms.predict_transform
+    --> Target: ${dataset_path}.DBTransforms
+    --> Error: Module '${dataset_path}' not found
+  [Config] configs/data/datasets/craft.yaml
+    --> Key: collate_fn
+    --> Target: ${dataset_path}.CraftCollateFN
+    --> Error: Module '${dataset_path}' not found
+
+❌ Anomalies detected. See kill list above.

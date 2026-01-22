@@ -171,7 +171,8 @@ data/datasets/
 !/data/export/
 logs/
 .hydra/hydra.log
-
+!__DEBUG__/**/logs
+!__DEBUG__/**/artifacts
 
 # Claude Code - Runtime directories
 AgentQMS/standards/tier3-agents/claude/*

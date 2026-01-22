@@ -41,5 +41,5 @@
 
 ## Training Pipeline Observations
 - **Symptom**: "Training run initialization: >60 seconds"
-- **Hypothesis**: The combination of `runners/train.py` -> `orchestrator.py` -> `lightning` + `hydra` overhead + potentially unoptimized `__init__` in dataset/model classes causes the delay.
+- **Hypothesis**: The combination of `runners/train.py` -> `orchestrator.py` -> `lightning` + `hydra` overhead + potentially unoptimized `__init__` in dataset/mod5l classes causes the delay.
 - **Next Step**: Profile imports using `python -X importtime runners/train.py ...`.

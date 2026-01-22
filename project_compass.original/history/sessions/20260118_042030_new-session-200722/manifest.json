@@ -1,5 +1,0 @@
-{
-  "original_session_id": "new-session-200722",
-  "exported_at": "20260118_042030",
-  "note": "Phase 2 Complete: Surgical refactor finished - ocr_pl.py split into base+domain modules, CLEvalEvaluator moved to detection domain. 100% complete, ready for Phase 3 verification."
-}

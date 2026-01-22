@@ -31,6 +31,14 @@ triggers:
     - config patterns
     - where is config used
 
+    # Batch Editing / Refactoring
+    - batch edit
+    - bulk update
+    - yaml refactor
+    - fix all configs
+    - update target
+    - yq
+
     # Hydra analysis
     - hydra usage
     - instantiate
@@ -127,6 +135,12 @@ auto_suggest_scenarios:
     tool: component_instantiations
     why: "Finds get_X_by_cfg patterns that grep would miss"
     example: "mcp_unified_proje_adt_meta_query kind=component_instantiations target=ocr/ options={component:encoder}"
+
+  batch_config_refactoring:
+    trigger: "User asks to 'update all configs', 'change target X to Y', or 'bulk fix yaml'"
+    tool: yq_batch_edit
+    why: "Fastest way to modify multiple YAML files without opening editors"
+    example: "find configs/ -name '*.yaml' | xargs -I {} yq -i '...' {}"
 
 # ============================================================================
 # TOOL COMPARISON (Why AST > Basic Tools)
@@ -261,6 +275,12 @@ tools:
     purpose: "Cyclomatic complexity analysis"
     use_when: ["code quality review", "finding complex functions", "refactoring candidates"]
     output: "Functions exceeding complexity threshold"
+
+  yq_batch_edit:
+    cli: "yq -i '<expression>' <files>"
+    purpose: "Batch update, delete, or modify keys in YAML files"
+    use_when: ["refactoring class paths", "updating parameter values globally", "fixing broken configs"]
+    output: "Modified YAML files"
 
 # ============================================================================
 # ANTI-PATTERNS (When NOT to use AST tools)

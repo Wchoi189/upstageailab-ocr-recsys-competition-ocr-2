@@ -36,6 +36,9 @@ triggers:
     - flattening
     - interpolation
     - atomic architecture
+    - yq
+    - batch edit
+    - bulk update
   patterns:
     - "hydra.*config"
     - "config.*hydra"

@@ -1,0 +1,120 @@
+INFO: Seed set to 42
+[2026-01-15 03:54:17,658][lightning.fabric.utilities.seed][INFO] - Seed set to 42
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, 
+         [33mmax_len[0m=[1;36m25[0m                                                                               
+[2026-01-15 03:54:17,764][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-01-15 03:54:17,985][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/vit_small_patch16_224.augreg_in21k_ft_in1k)
+[2026-01-15 03:54:18,321][timm.models._hub][INFO] - [timm/vit_small_patch16_224.augreg_in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, 
+         [33mmax_len[0m=[1;36m25[0m                                                                               
+[2026-01-15 03:54:18,408][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from 
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lm[0m
+         [95mdb_validation[0m                                                                            
+[2026-01-15 03:54:18,415][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, 
+         [33mmax_len[0m=[1;36m25[0m                                                                               
+[2026-01-15 03:54:18,423][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from 
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lm[0m
+         [95mdb_validation[0m                                                                            
+[2026-01-15 03:54:18,427][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, 
+         [33mmax_len[0m=[1;36m25[0m                                                                               
+[2026-01-15 03:54:18,435][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from 
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lm[0m
+         [95mdb_validation[0m                                                                            
+[2026-01-15 03:54:18,438][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, 
+         [33mmax_len[0m=[1;36m25[0m                                                                               
+[2026-01-15 03:54:18,446][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from 
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lm[0m
+         [95mdb_validation[0m                                                                            
+[2026-01-15 03:54:18,450][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+INFO: GPU available: True (cuda), used: True
+[2026-01-15 03:54:18,867][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-01-15 03:54:18,867][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+wandb: Currently logged in as: wchoi189 (ocr-team2) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run 866tdq9l
+wandb: Tracking run with wandb version 0.23.0
+wandb: Run data is saved locally in ./wandb/run-20260115_035419-866tdq9l
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run user_parseq-timm-backbone-parseq-decoder-parseq-head-cross-entropy-bs32-lr1e-3_SCORE_PLACEHOLDER
+wandb: ⭐️ View project at https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project
+wandb: 🚀 View run at https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project/runs/866tdq9l
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-01-15 03:54:23,921][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+┏━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┓
+┃   ┃ Name   ┃ Type         ┃ Params ┃ Mode  ┃
+┡━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━┩
+│ 0 │ model  │ PARSeq       │ 51.3 M │ train │
+│ 1 │ metric │ CLEvalMetric │      0 │ train │
+└───┴────────┴──────────────┴────────┴───────┘
+Trainable params: 51.3 M                                                                          
+Non-trainable params: 0                                                                           
+Total params: 51.3 M                                                                              
+Total estimated model params size (MB): 205                                                       
+Modules in train mode: 443                                                                        
+Modules in eval mode: 0                                                                           
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:433: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=15` in the `DataLoader` to improve performance.
+[2026-01-15 03:54:24,667][root][WARNING] - No val predictions found. This may indicate a data loading or prediction issue.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:433: The 'train_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=15` in the `DataLoader` to improve performance.
+[2026-01-15 03:54:30,709][root][WARNING] - No val predictions found. This may indicate a data loading or prediction issue.
+[1;31mERROR   [0m ocr.core.lightning.callbacks.metadata_callback - Failed to generate metadata for         
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verif[0m
+         [35my_fix_safe_v4/20260115_035321_42/checkpoints/[0m[95mbest.ckpt[0m: No module named                  
+         [32m'ocr.core.utils.checkpoints'[0m                                                             
+         Traceback [1m([0mmost recent call last[1m)[0m:                                                       
+           File                                                                                   
+         [32m"/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/metad[0m
+         [32mata_callback.py"[0m, line [1;36m193[0m, in _generate_metadata_for_checkpoint                         
+             from ocr.core.utils.checkpoints.metadata_loader import save_metadata                 
+         ModuleNotFoundError: No module named [32m'ocr.core.utils.checkpoints'[0m                        
+[2026-01-15 03:54:38,114][ocr.core.lightning.callbacks.metadata_callback][ERROR] - Failed to generate metadata for /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verify_fix_safe_v4/20260115_035321_42/checkpoints/best.ckpt: No module named 'ocr.core.utils.checkpoints'
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/metadata_callback.py", line 193, in _generate_metadata_for_checkpoint
+    from ocr.core.utils.checkpoints.metadata_loader import save_metadata
+ModuleNotFoundError: No module named 'ocr.core.utils.checkpoints'
+INFO: `Trainer.fit` stopped: `max_epochs=1` reached.
+[2026-01-15 03:54:44,137][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer.fit` stopped: `max_epochs=1` reached.
+[1;31mERROR   [0m ocr.core.lightning.callbacks.metadata_callback - Failed to generate metadata for         
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verif[0m
+         [35my_fix_safe_v4/20260115_035321_42/checkpoints/[0m[95mbest.ckpt[0m: No module named                  
+         [32m'ocr.core.utils.checkpoints'[0m                                                             
+         Traceback [1m([0mmost recent call last[1m)[0m:                                                       
+           File                                                                                   
+         [32m"/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/metad[0m
+         [32mata_callback.py"[0m, line [1;36m193[0m, in _generate_metadata_for_checkpoint                         
+             from ocr.core.utils.checkpoints.metadata_loader import save_metadata                 
+         ModuleNotFoundError: No module named [32m'ocr.core.utils.checkpoints'[0m                        
+[2026-01-15 03:54:44,142][ocr.core.lightning.callbacks.metadata_callback][ERROR] - Failed to generate metadata for /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verify_fix_safe_v4/20260115_035321_42/checkpoints/best.ckpt: No module named 'ocr.core.utils.checkpoints'
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/metadata_callback.py", line 193, in _generate_metadata_for_checkpoint
+    from ocr.core.utils.checkpoints.metadata_loader import save_metadata
+ModuleNotFoundError: No module named 'ocr.core.utils.checkpoints'
+[1;31mERROR   [0m ocr.core.lightning.callbacks.metadata_callback - Failed to generate metadata for         
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verif[0m
+         [35my_fix_safe_v4/20260115_035321_42/checkpoints/[0m[95mlast.ckpt[0m: No module named                  
+         [32m'ocr.core.utils.checkpoints'[0m                                                             
+         Traceback [1m([0mmost recent call last[1m)[0m:                                                       
+           File                                                                                   
+         [32m"/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/metad[0m
+         [32mata_callback.py"[0m, line [1;36m193[0m, in _generate_metadata_for_checkpoint                         
+             from ocr.core.utils.checkpoints.metadata_loader import save_metadata                 
+         ModuleNotFoundError: No module named [32m'ocr.core.utils.checkpoints'[0m                        
+[2026-01-15 03:54:44,150][ocr.core.lightning.callbacks.metadata_callback][ERROR] - Failed to generate metadata for /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verify_fix_safe_v4/20260115_035321_42/checkpoints/last.ckpt: No module named 'ocr.core.utils.checkpoints'
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/metadata_callback.py", line 193, in _generate_metadata_for_checkpoint
+    from ocr.core.utils.checkpoints.metadata_loader import save_metadata
+ModuleNotFoundError: No module named 'ocr.core.utils.checkpoints'
+Successfully tagged W&B run as completed.
+Created success sentinel file at: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verify_fix_safe_v4/20260115_035321_42/checkpoints/.SUCCESS
+Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━ 50/50 0:00:05 • 0:00:00 10.32it/s v_num: dq9l val/recall:   
+                                                                        0.000 val/precision: 0.000
+                                                                        val/hmean: 0.000          
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-01-15 03:54:44,508][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:433: The 'test_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=15` in the `DataLoader` to improve performance.

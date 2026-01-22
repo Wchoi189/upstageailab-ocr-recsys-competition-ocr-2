@@ -1,0 +1,156 @@
+INFO: Seed set to 42
+[2026-01-15 03:46:30,828][lightning.fabric.utilities.seed][INFO] - Seed set to 42
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:46:30,990][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-01-15 03:46:31,240][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/vit_small_patch16_224.augreg_in21k_ft_in1k)
+[2026-01-15 03:46:31,575][timm.models._hub][INFO] - [timm/vit_small_patch16_224.augreg_in21k_ft_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:46:31,685][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:46:31,691][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:46:31,698][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:46:31,703][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:46:31,710][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:46:31,714][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+[34mINFO    [0m ocr.features.recognition.data.tokenizer - Loaded tokenizer: [1;36m1023[0m chars, [33mvocab_size[0m=[1;36m1027[0m, [33mmax_len[0m=[1;36m25[0m                                                                         
+[2026-01-15 03:46:31,721][ocr.features.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[34mINFO    [0m ocr.features.recognition.data.lmdb_dataset - LMDBRecognitionDataset: [1;36m616366[0m samples from                                                                                    
+         [35m/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/[0m[95maihub_lmdb_validation[0m                                                                      
+[2026-01-15 03:46:31,725][ocr.features.recognition.data.lmdb_dataset][INFO] - LMDBRecognitionDataset: 616366 samples from /workspaces/upstageailab-ocr-recsys-competition-ocr-2/data/processed/recognition/aihub_lmdb_validation
+INFO: GPU available: True (cuda), used: True
+[2026-01-15 03:46:32,437][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-01-15 03:46:32,438][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+wandb: Currently logged in as: wchoi189 (ocr-team2) to https://api.wandb.ai. Use `wandb login --relogin` to force relogin
+wandb: setting up run oiy575xx
+wandb: Tracking run with wandb version 0.23.0
+wandb: Run data is saved locally in ./wandb/run-20260115_034633-oiy575xx
+wandb: Run `wandb offline` to turn off syncing.
+wandb: Syncing run user_parseq-timm-backbone-parseq-decoder-parseq-head-cross-entropy-bs32-lr1e-3_SCORE_PLACEHOLDER
+wandb: ⭐️ View project at https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project
+wandb: 🚀 View run at https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project/runs/oiy575xx
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-01-15 03:46:38,410][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+┏━━━┳━━━━━━━━┳━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┓
+┃   ┃ Name   ┃ Type         ┃ Params ┃ Mode  ┃
+┡━━━╇━━━━━━━━╇━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━┩
+│ 0 │ model  │ PARSeq       │ 51.3 M │ train │
+│ 1 │ metric │ CLEvalMetric │      0 │ train │
+└───┴────────┴──────────────┴────────┴───────┘
+Trainable params: 51.3 M                                                                                                                                                             
+Non-trainable params: 0                                                                                                                                                              
+Total params: 51.3 M                                                                                                                                                                 
+Total estimated model params size (MB): 205                                                                                                                                          
+Modules in train mode: 443                                                                                                                                                           
+Modules in eval mode: 0                                                                                                                                                              
+[2026-01-15 03:46:39,397][root][WARNING] - No val predictions found. This may indicate a data loading or prediction issue.
+Exception in thread Thread-2 (_pin_memory_loop)Epoch 0/0  ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 50/50 0:00:04 • 0:00:00 13.46it/s v_num: 75xx
+Validation ━━━━━━━━━━━━━━━━                         8/20  0:00:33 • 0:00:01 38.87it/s            :
+Traceback (most recent call last):
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 1045, in _bootstrap_inner
+
+    self.run()
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/_utils/pin_memory.py", line 59, in _pin_memory_loop
+    do_one_step()
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/_utils/pin_memory.py", line 35, in do_one_step
+    r = in_queue.get(timeout=MP_STATUS_CHECK_INTERVAL)
+        ^^^^^^^Created failure sentinel file at: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/outputs/experiments/train/ocr/verify_fix_safe_v2/20260115_034436_42/checkpoints/.FAILURE
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/queues.py", line 122, in get
+    return _ForkingPickler.loads(res)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/multiprocessing/reductions.py", line 541, in rebuild_storage_fd
+    fd = df.detach()
+         ^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/resource_sharer.py", line 58, in detach
+    return reduction.recv_handle(conn)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/reduction.py", line 189, in recv_handle
+    return recvfds(s, 1)[0]
+           ^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/multiprocessing/reduction.py", line 157, in recvfds
+    msg, ancdata, flags, addr = sock.recvmsg(1, socket.CMSG_SPACE(bytes_size))
+                                ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [Errno 104] Connection reset by peer
+Error executing job with overrides: ['domain=recognition', 'trainer=debug_safe', 'exp_name=verify_fix_safe_v2', '++trainer.max_epochs=1', '++trainer.limit_train_batches=50', '++trainer.limit_val_batches=20', '++logger.per_batch_image_logging.enabled=false', 'wandb=false']
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 1251, in _try_get_data
+    data = self._data_queue.get(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/queue.py", line 180, in get
+    self.not_empty.wait(remaining)
+  File "/home/vscode/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 331, in wait
+    gotit = waiter.acquire(True, timeout)
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/_utils/signal_handling.py", line 73, in handler
+    _error_if_any_worker_fails()
+RuntimeError: DataLoader worker (pid 85315) is killed by signal: Segmentation fault. 
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/runners/train.py", line 126, in train
+    trainer.fit(
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 560, in fit
+    call._call_and_handle_interrupt(
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/call.py", line 49, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 598, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path)
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 1011, in _run
+    results = self._run_stage()
+              ^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 1055, in _run_stage
+    self.fit_loop.run()
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fit_loop.py", line 216, in run
+    self.advance()
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fit_loop.py", line 458, in advance
+    self.epoch_loop.run(self._data_fetcher)
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/training_epoch_loop.py", line 153, in run
+    self.on_advance_end(data_fetcher)
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/training_epoch_loop.py", line 398, in on_advance_end
+    self.val_loop.run()
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/utilities.py", line 179, in _decorator
+    return loop_run(self, *args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/evaluation_loop.py", line 138, in run
+    batch, batch_idx, dataloader_idx = next(data_fetcher)
+                                       ^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fetchers.py", line 134, in __next__
+    batch = super().__next__()
+            ^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fetchers.py", line 61, in __next__
+    batch = next(self.iterator)
+            ^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/utilities/combined_loader.py", line 341, in __next__
+    out = next(self._iterator)
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/utilities/combined_loader.py", line 142, in __next__
+    out = next(self.iterators[0])
+          ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 708, in __next__
+    data = self._next_data()
+           ^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 1458, in _next_data
+    idx, data = self._get_data()
+                ^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 1410, in _get_data
+    success, data = self._try_get_data()
+                    ^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/torch/utils/data/dataloader.py", line 1264, in _try_get_data
+    raise RuntimeError(
+RuntimeError: DataLoader worker (pid(s) 85315) exited unexpectedly
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.
+[1;34mwandb[0m: 
+[1;34mwandb[0m: 🚀 View run [33muser_parseq-timm-backbone-parseq-decoder-parseq-head-cross-entropy-bs32-lr1e-3_SCORE_PLACEHOLDER[0m at: [34m[0m

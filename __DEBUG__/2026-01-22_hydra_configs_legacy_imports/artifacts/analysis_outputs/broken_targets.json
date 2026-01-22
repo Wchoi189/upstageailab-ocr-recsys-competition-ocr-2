@@ -1,0 +1,40 @@
+{
+    "project_context": "ocr-recsys-competition-v2",
+    "global_overrides": {
+        "architectures._recursive_": false,
+        "environment": "editable"
+    },
+    "kill_list": [
+        {
+            "config_file": "configs/data/datasets/craft.yaml",
+            "faulty_keys": [
+                "train_dataset",
+                "val_dataset",
+                "test_dataset",
+                "predict_dataset"
+            ],
+            "interpolation_variable": "data.dataset_path",
+            "suggested_new_path": "ocr.data.datasets.base.ValidatedOCRDataset"
+        },
+        {
+            "config_file": "configs/data/transforms/background_removal.yaml",
+            "faulty_keys": [
+                "background_removal_default"
+            ],
+            "target": "ocr.data.datasets.preprocessing.external.create_background_removal_transform",
+            "issue": "Module moved or deleted during refactor",
+            "action": "adt intelligent-search 'create_background_removal_transform'"
+        },
+        {
+            "config_file": "configs/data/transforms/with_background_removal.yaml",
+            "faulty_keys": [
+                "train_transform",
+                "val_transform",
+                "test_transform",
+                "predict_transform"
+            ],
+            "interpolation_variable": "dataset_path",
+            "note": "Check if ${dataset_path} vs ${data.dataset_path} is an intentional distinction."
+        }
+    ]
+}

@@ -30,13 +30,13 @@ triggers:
     - analyze
     - trace
     - merge
-    - configuration-issue
+    - config issue
     - component
     - instantiation
-    - merge-order
+    - merge order
     - hydra
-    - config-access
-    - data-flow
+    - config access
+    - data flow
     - ast
 
 tiers:

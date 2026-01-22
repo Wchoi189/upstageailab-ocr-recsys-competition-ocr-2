@@ -1,0 +1,20 @@
+Found 21 matches for pattern "compatibility shim|backward compatibility|deprecated|DEPRECATED|warnings\.warn|DeprecationWarning|import.*compat" in path "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr":
+---
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/validation/models.py:1:"""Backward compatibility shim for ocr.validation.models.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/validation/models.py:3:DEPRECATED: All models moved to ocr.core.validation.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/validation/models.py:9:warnings.warn("ocr.validation.models is deprecated. Import from ocr.core.validation instead.", DeprecationWarning, stacklevel=2)
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/engine.py:6:InferenceOrchestrator. It maintains backward compatibility with existing code
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/engine.py:35:    backward compatibility with existing code while delegating to the new
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/engine.py:45:        # Expose device for backward compatibility
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/engine.py:49:        # Legacy attributes for backward compatibility (deprecated, use orchestrator)
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/engine.py:106:            # Update legacy attributes for backward compatibility
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/utils/polygons.py:120:      These parameters are accepted for backward compatibility but are not used
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/utils/geometry.py:180:        position: Padding position - "top_left" or "center" (default: "center" for backward compatibility)
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/sepia_enhancement.py:102:    DEPRECATED: Use enhance_sepia() and enhance_clahe() separately for finer control.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/path_utils.py:376:# Convenience functions for backward compatibility and easy importing
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/orientation_constants.py:117:# Legacy integer-based mapping for backward compatibility
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/image_utils.py:27:- MAINTAIN backward compatibility with existing code
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/models/architectures/dbnetpp.py:2:DEPRECATED: Registry logic removed.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/models/architectures/dbnet.py:2:DEPRECATED: Registry logic removed.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/models/architectures/craft.py:2:DEPRECATED: Registry logic removed.
+/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks/unique_checkpoint.py:49:            experiment_tag: Optional experiment identifier (deprecated in favor of index-based structure)

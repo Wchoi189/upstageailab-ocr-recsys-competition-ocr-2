@@ -1,0 +1,33 @@
+# Debugging Recognition and Metrics
+
+- [x] Fix [vocab_size](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/features/recognition/data/tokenizer.py#66-70) mismatch for [PARSeqDecoder](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/features/recognition/models/decoder.py#7-116) and [PARSeqHead](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/features/recognition/models/head.py#4-12)
+    - [x] Identify the mismatch (100 vs 1027) <!-- id: 0 -->
+    - [x] Update [decoder.py](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/features/recognition/models/decoder.py) to enforce explicit [vocab_size](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/features/recognition/data/tokenizer.py#66-70) <!-- id: 1 -->
+    - [x] Update [parseq.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/configs/model/architectures/parseq.yaml) and [recognition.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/configs/data/recognition.yaml) with correct overrides <!-- id: 2 -->
+- [x] Verify GPU Utilization and Training Speed <!-- id: 3 -->
+    - [x] Check `trainer` accelerator configuration <!-- id: 4 -->
+    - [x] Verify GPU availability in environment <!-- id: 5 -->
+    - [ ] Run valid training command with GPU enabled <!-- id: 6 -->
+- [x] Verify Validation Predictions
+    - [x] Run short training (10 steps) to check output <!-- id: 8 -->
+    - [x] Confirmed AR Shift fixed BOS-loop (Tokens: [1, 2]) <!-- id: 9 -->
+- [x] Fix Model Convergence (Repeated Character Issue) <!-- id: 12 -->
+    - [x] Run longer training (300 steps) to allow learning <!-- id: 13 -->
+    - [x] Check if loss decreases (Value: ~4.29) <!-- id: 14 -->
+- [x] Document Dataset Strategy (New Request)
+    - [x] Analyze AI Hub and Perplexity docs
+    - [x] Create DATASET_STRATEGY.md to resolve usage ambiguity
+- [ ] Verify Mojibake Fix <!-- id: 10 -->
+    - [ ] Check WandB logs for correct Korean text rendering (User to verify) <!-- id: 11 -->
+- [ ] Optimize GPU Utilization (New Request)
+    - [x] Analyze current config (workers=4, precision=32, batch=128)
+    - [x] Recommendation: Enable Mixed Precision (16-mixed)
+    - [x] Recommendation: Increase Batch Size (128 -> 448)
+- [x] Fix ViT [CLS] Token Issue
+    - [x] Slice `visual_feat[:, 1:, :]` in architecture.py
+- [x] Check Image Normalization
+    - [x] Confirmed [transforms/recognition.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/configs/data/transforms/recognition.yaml) uses ImageNet stats
+- [x] Fix Positional Embedding Scaling
+    - [x] Scaled `pos_emb` by `sqrt(d_model)` to match token embeddings.
+- [x] Diagnostic: Low LR Overfit (Result: Loss decreased but too slow)
+    - [ ] Run High LR Overfit (Next Step)

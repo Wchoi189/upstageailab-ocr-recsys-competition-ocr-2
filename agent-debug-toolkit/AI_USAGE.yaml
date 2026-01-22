@@ -157,6 +157,27 @@ edit_tools:
     example: |
       adt format src/module.py --style black
 
+  yq_batch_edit:
+    desc: "Batch update YAML files using yq (wrapper for jq). FASTEST way to refactor Hydra configs."
+    args:
+      command: "The yq expression to apply"
+      files: "Files to update (use find | xargs for batch)"
+    example: |
+      # 1. Update a value in a single file
+      yq -i '.optimizer.lr = 0.001' configs/train.yaml
+
+      # 2. Batch update ALL matching targets (CRITICAL for refactoring)
+      # "Find all configs where _target_ is OldClass and change it to NewClass"
+      find configs/ -name "*.yaml" | xargs -I {} yq -i \
+        '(.[] | select(has("_target_")) | select(._target_ == "old.path.Class") | ._target_) = "new.path.Class"' {}
+
+      # 3. Add a new key to all model configs
+      find configs/model -name "*.yaml" | xargs -I {} yq -i '.new_key = "value"' {}
+
+      # 4. Delete a key
+      yq -i 'del(.deprecated_key)' configs/config.yaml
+    best_practice: "ALWAYS use single quotes for the expression to avoid shell expansion."
+
 best_practices:
   editing_large_files:
     - "Use read_file_slice to view target region first"
