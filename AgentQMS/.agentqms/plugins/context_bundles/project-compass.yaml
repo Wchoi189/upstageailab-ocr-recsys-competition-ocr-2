@@ -30,9 +30,11 @@ tiers:
     files:
       - path: "project_compass/AGENTS.md"
         priority: high
+        mode: reference
         description: "Vessel V2 AI protocols: pulse lifecycle, CLI commands, MCP resources."
       - path: "project_compass/.vessel/vessel_state.json"
         priority: high
+        mode: full
         description: "THE Single Source of Truth. Contains active pulse, artifacts, and injected rules."
 
   tier2:
@@ -41,12 +43,15 @@ tiers:
     files:
       - path: "project_compass/vault/directives/00_meta_cognition.md"
         priority: medium
+        mode: reference
         description: "[Compass:Reflection] protocol - deliberate reasoning before file creation."
       - path: "project_compass/vault/directives/01_naming_standards.md"
         priority: medium
+        mode: reference
         description: "Pulse ID and artifact naming conventions."
       - path: "project_compass/vault/directives/02_artifact_purity.md"
         priority: medium
+        mode: reference
         description: "Staging constraints and zero-narrative policy."
 
   tier3:
@@ -55,7 +60,5 @@ tiers:
     files:
       - path: "project_compass/src/state_schema.py"
         priority: low
+        mode: structure
         description: "Pydantic models: VesselState, Pulse, Artifact."
-      - path: "project_compass/cli.py"
-        priority: low
-        description: "CLI commands: pulse-init, pulse-sync, pulse-export, etc."

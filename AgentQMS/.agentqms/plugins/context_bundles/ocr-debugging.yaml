@@ -47,27 +47,32 @@ tiers:
     files:
       - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
         priority: critical
+        mode: structure
         description: Config access pattern analyzer
       - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
         priority: critical
+        mode: structure
         description: OmegaConf merge order tracer
       - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
         priority: critical
+        mode: structure
         description: Hydra pattern detector
       - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
         priority: critical
+        mode: structure
         description: Component instantiation tracker
       - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/explain.py
         priority: high
+        mode: structure
         description: Config flow explanation generator
-      - path: agent-debug-toolkit/src/agent_debug_toolkit/cli.py
-        priority: high
-        description: AST debugging CLI interface
+
       - path: agent-debug-toolkit/README.md
         priority: high
+        mode: reference
         description: Debugging toolkit documentation
       - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
         priority: high
+        mode: reference
         description: Tool catalog and usage patterns
 
   tier2:
@@ -77,33 +82,40 @@ tiers:
     files:
       - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/__init__.py
         priority: high
+        mode: structure
         description: Analyzer module initialization
-      - path: agent-debug-toolkit/src/agent_debug_toolkit/mcp_server.py
-        priority: high
-        description: MCP server integration
+
       - path: configs/hydra/*.yaml
         priority: high
+        mode: full
         description: Hydra configuration files
       - path: configs/_foundation/*.yaml
         priority: high
+        mode: full
         description: Foundation configuration patterns
       - path: ocr/__init__.py
         priority: medium
+        mode: structure
         description: OCR module structure
       - path: ocr/core/__init__.py
         priority: medium
+        mode: structure
         description: Core module organization
       - path: ocr/features/detection/__init__.py
         priority: medium
+        mode: structure
         description: Detection feature structure
       - path: ocr/features/recognition/__init__.py
         priority: medium
+        mode: structure
         description: Recognition feature structure
       - path: ocr/features/layout/__init__.py
         priority: medium
+        mode: structure
         description: Layout feature structure
       - path: ocr/features/kie/__init__.py
         priority: medium
+        mode: structure
         description: KIE feature structure
 
   tier3:
@@ -113,23 +125,30 @@ tiers:
     files:
       - path: agent-debug-toolkit/tests/test_config_access.py
         priority: low
+        mode: reference
         description: Config access analyzer tests
       - path: agent-debug-toolkit/tests/test_merge_order.py
         priority: low
+        mode: reference
         description: Merge order tracer tests
       - path: agent-debug-toolkit/tests/test_hydra_usage.py
         priority: low
+        mode: reference
         description: Hydra usage analyzer tests
       - path: ocr/core/inference/__init__.py
         priority: low
+        mode: structure
         description: Component factory examples
       - path: ocr/core/models/__init__.py
         priority: low
+        mode: structure
         description: Model management examples
       - path: ocr/core/lightning/__init__.py
         priority: low
+        mode: structure
         description: Lightning training examples
       - path: configs/train.yaml
         priority: low
+        mode: reference
         description: Training configuration reference
 

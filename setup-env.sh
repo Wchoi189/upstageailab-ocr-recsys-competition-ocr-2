@@ -3,7 +3,14 @@
 # Source this file to add aqms to PATH
 # Usage: source setup-env.sh
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve absolute path of the script, handling symlinks
+if command -v readlink >/dev/null 2>&1; then
+    SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+else
+    # Fallback for systems without readlink -f (unlikely on Linux but good practice)
+    SCRIPT_PATH="${BASH_SOURCE[0]}"
+fi
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 
 # Add bin to PATH
 export PATH="$SCRIPT_DIR/bin:$PATH"

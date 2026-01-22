@@ -47,6 +47,7 @@ notes:
   - "Legacy tools and Makefile commands REMOVED - only qms CLI supported"
   - "Standards registry: AgentQMS/standards/registry.yaml (single source of truth)"
   - "Path-aware discovery reduces token usage by 85% (qms generate-config)"
+  - "Context Engine 2.0: Caching, parallel I/O, and strict token budgeting (default 32k) enabled."
   - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-01-10T15:20:00+0900)"
   - "Canonical artifact types: assessment, audit, bug_report, design_document, implementation_plan, vlm_report, walkthrough"
   - "For help: qms --help or see AgentQMS/README.md"

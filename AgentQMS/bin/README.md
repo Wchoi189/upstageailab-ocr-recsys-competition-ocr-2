@@ -43,13 +43,12 @@ This keeps Cursor aligned with the same rules Copilot uses while staying within 
 
 When an AI agent encounters a project using AgentQMS, these are the **entry points** in priority order:
 
-| Priority | File | Purpose |
-|----------|------|---------|
-| 1️⃣ | `AgentQMS/knowledge/agent/system.md` | **Single Source of Truth** – Core rules, do/don't, artifact creation |
-| 2️⃣ | `.agentqms/state/architecture.yaml` | Component map, capabilities, tool locations |
-| 3️⃣ | `.copilot/context/tool-catalog.md` | Available automation tools (auto-generated) |
-| 4️⃣ | `AgentQMS/knowledge/agent/tool_catalog.md` | Legacy tool catalog |
-| 5️⃣ | This README | Framework overview and installation |
+| Priority | File                                                   | Purpose                                                 |
+| -------- | ------------------------------------------------------ | ------------------------------------------------------- |
+| 1️⃣        | `AgentQMS/AGENTS.yaml`                                 | **Single Source of Truth** – Agent entrypoint and index |
+| 2️⃣        | `AgentQMS/.agentqms/state/plugins.yaml`                | Component map, capabilities, tool locations             |
+| 3️⃣        | `AgentQMS/standards/tier2-framework/tool-catalog.yaml` | Complete tool catalog                                   |
+| 4️⃣        | This README                                            | Framework overview and installation                     |
 
 ### Quick Onboarding Prompt
 
@@ -59,8 +58,8 @@ Copy this prompt to quickly orient an AI agent to this framework:
 You are working in a project that uses AgentQMS for quality management.
 
 FIRST: Read these files to understand the framework:
-1. AgentQMS/knowledge/agent/system.md (core rules - REQUIRED)
-2. .agentqms/state/architecture.yaml (component map)
+1. AgentQMS/AGENTS.yaml (Main Index - REQUIRED)
+2. AgentQMS/.agentqms/state/plugins.yaml (Component Map)
 
 KEY RULES:
 - Use automation tools; never create artifacts manually
@@ -256,7 +255,7 @@ project_root/
 - **MCP integration** – `AgentQMS/mcp_server.py` provides tool access for Claude Desktop
   and compatible AI clients.
 - **Context bundling** – Task-specific file collections reduce token usage and improve
-  AI context relevance.
+  AI context relevance. Powered by **Context Engine 2.0** (caching, parallel I/O, token budgeting).
 
 ---
 

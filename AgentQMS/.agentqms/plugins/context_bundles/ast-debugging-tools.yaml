@@ -30,6 +30,7 @@ triggers:
     - config access
     - config patterns
     - where is config used
+    - tool
 
     # Batch Editing / Refactoring
     - batch edit
@@ -183,37 +184,16 @@ tiers:
     files:
       - path: agent-debug-toolkit/AI_USAGE.yaml
         priority: critical
+        mode: reference
         description: Complete tool reference with examples (209 lines)
       - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
         priority: high
+        mode: reference
         description: All available tools including AST commands
       - path: agent-debug-toolkit/README.md
         priority: medium
+        mode: reference
         description: Installation and architecture overview
-
-  tier2:
-    name: MCP Tool Integration
-    description: How to call AST tools via MCP (mcp_unified_proje_adt_meta_query)
-    max_files: 2
-    files:
-      - path: AgentQMS/mcp_server.py
-        priority: high
-        description: MCP server implementation with adt_meta_query
-        optional: true
-      - path: agent-debug-toolkit/src/agent_debug_toolkit/mcp/
-        priority: medium
-        description: MCP integration code
-        optional: true
-
-  tier3:
-    name: Examples & Use Cases
-    description: Real-world usage patterns from artifacts
-    max_files: 3
-    files:
-      - path: docs/artifacts/
-        priority: low
-        description: Search for "adt " or "mcp_unified_proje" to find usage examples
-        optional: true
 
 # ============================================================================
 # TOOL CATALOG (Comprehensive)

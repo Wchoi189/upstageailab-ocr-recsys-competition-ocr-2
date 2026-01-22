@@ -430,8 +430,8 @@ def create_app() -> "typer.Typer":
 
     @app.command("sg-search")
     def sg_search_cmd(
-        pattern: str = Argument(..., help="AST pattern to search for (e.g., 'def $NAME($$$)')"),
-        path: str = Option(".", "--path", "-p", help="Path to search (file or directory)"),
+        pattern: str = Option(..., "--pattern", "-p", help="AST pattern to search for (e.g., 'isinstance($CFG, dict)')"),
+        path: str = Option(".", "--path", help="Path to search (file or directory)"),
         lang: Optional[str] = Option(None, "--lang", "-l", help="Language (python, javascript, etc.)"),
         max_results: Optional[int] = Option(None, "--max", "-m", help="Maximum number of results"),
         output: str = Option("markdown", "--output", "-o", help="Output format: json or markdown"),
@@ -440,8 +440,9 @@ def create_app() -> "typer.Typer":
         Search code using ast-grep structural patterns.
 
         Examples:
-          adt sg-search "def $NAME($$$)" --lang python
-          adt sg-search "function $NAME($$$)" --path src/ --lang javascript
+          adt sg-search --pattern "def $NAME($$$)" --lang python
+          adt sg-search --pattern "isinstance($CFG, dict)" --path ocr/
+          adt sg-search -p "function $NAME($$$)" --path src/ -l javascript
         """
         from agent_debug_toolkit.astgrep import sg_search
 

@@ -54,9 +54,11 @@ tiers:
     files:
       - path: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
         priority: critical
+        mode: reference
         description: Critical rules, directory responsibilities, validation commands (350 tokens)
       - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
         priority: high
+        mode: reference
         description: General configuration standards and best practices
 
   tier2:
@@ -67,6 +69,7 @@ tiers:
     files:
       - path: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
         priority: high
+        mode: reference
         description: Design patterns, failure modes, debugging guide (280 tokens)
 
   tier3:
@@ -76,17 +79,21 @@ tiers:
     files:
       - path: configs/
         priority: high
+        mode: reference
         description: All configuration files (domain, train, eval, etc.)
       - path: configs/domain/
         priority: high
+        mode: reference
         description: Domain controllers (detection, recognition, kie, layout)
         optional: true
       - path: configs/model/architectures/
         priority: medium
+        mode: reference
         description: Atomic architecture definitions
         optional: true
       - path: pyproject.toml
         priority: low
+        mode: structure
         description: Project dependencies and Hydra setup
 
   tier4:
@@ -97,6 +104,7 @@ tiers:
     files:
       - path: archive/__EXTENDED__/config-history/README.md
         priority: low
+        mode: reference
         description: Migration history and consolidation notes
         optional: true
 

@@ -35,12 +35,15 @@ tiers:
     files:
       - path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
         priority: critical
+        mode: reference
         description: Validation protocols including security checks
       - path: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
         priority: critical
+        mode: reference
         description: Prohibited actions for safety and security
       - path: AgentQMS/.agentqms/plugins/validators.yaml
         priority: high
+        mode: reference
         description: Validation rules including security checks
 
   tier2:
@@ -50,12 +53,15 @@ tiers:
     files:
       - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
         priority: high
+        mode: reference
         description: Git conventions for secure commit practices
       - path: AgentQMS/standards/tier2-framework/coding-standards.yaml
         priority: high
+        mode: reference
         description: Coding standards including security patterns
       - path: AgentQMS/standards/tier2-framework/api-contracts.yaml
         priority: medium
+        mode: reference
         description: API contracts for secure interfaces
 
   tier3:
@@ -65,10 +71,13 @@ tiers:
     files:
       - path: README.md
         priority: medium
+        mode: reference
         description: Project overview
       - path: AgentQMS/standards/tier1-sst/system-architecture.yaml
         priority: medium
+        mode: reference
         description: System architecture for threat surface analysis
       - path: AgentQMS/standards/INDEX.yaml
         priority: low
+        mode: reference
         description: Standards index for comprehensive context

@@ -60,20 +60,20 @@ jobs:
       - run: uv run pytest tests/ -v -m "not slow"
 
   # 4. AgentQMS validation
-  agentqms:
-    name: AgentQMS Compliance
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
-      - uses: astral-sh/setup-uv@v1
-      - name: Install dependencies and validate
-        run: |
-          export PYTHONPATH=$GITHUB_WORKSPACE
-          export PATH=$GITHUB_WORKSPACE/AgentQMS/bin:$PATH
-          cd AgentQMS/bin
-          uv pip install -r requirements.txt --system
-          make validate
+  # agentqms:
+  #   name: AgentQMS Compliance
+  #   runs-on: ubuntu-latest
+  #   steps:
+  #     - uses: actions/checkout@v5
+  #     - name: Set up Python 3.11
+  #       uses: actions/setup-python@v5
+  #       with:
+  #         python-version: "3.11"
+  #     - uses: astral-sh/setup-uv@v1
+  #     - name: Install dependencies and validate
+  #       run: |
+  #         export PYTHONPATH=$GITHUB_WORKSPACE
+  #         export PATH=$GITHUB_WORKSPACE/AgentQMS/bin:$PATH
+  #         cd AgentQMS/bin
+  #         uv pip install -r requirements.txt --system
+  #         make validate

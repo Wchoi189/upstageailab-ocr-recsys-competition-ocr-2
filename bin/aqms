@@ -4,11 +4,17 @@
 
 set -e
 
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Resolve absolute path of the script, handling symlinks
+if command -v readlink >/dev/null 2>&1; then
+    SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+else
+    SCRIPT_PATH="${BASH_SOURCE[0]}"
+fi
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 # Ensure we're using project venv
 export PYTHONPATH="$PROJECT_ROOT:$PYTHONPATH"
 
 # Route to Python CLI implementation (the actual tool)
-exec uv run python "$PROJECT_ROOT/AgentQMS/bin/qms" "$@"
+exec uv run python -m AgentQMS.cli "$@"

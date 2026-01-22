@@ -33,15 +33,19 @@ tiers:
     files:
       - path: ocr/features/detection/*.py
         priority: critical
+        mode: structure
         description: Text detection feature implementation
       - path: configs/domain/detection.yaml
         priority: critical
+        mode: full
         description: Detection-specific configuration
       - path: ocr/core/inference/pipeline.py
         priority: high
+        mode: structure
         description: Inference pipeline orchestration
       - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
         priority: high
+        mode: reference
         description: Inference framework design patterns
 
   tier2:
@@ -51,18 +55,23 @@ tiers:
     files:
       - path: ocr/core/models/__init__.py
         priority: high
+        mode: structure
         description: Model loading and management
       - path: ocr/core/utils/*.py
         priority: high
+        mode: structure
         description: Utility functions and helpers
       - path: ocr/core/analysis/*.py
         priority: medium
+        mode: structure
         description: Analysis utilities for detection
       - path: configs/base.yaml
         priority: medium
+        mode: reference
         description: Base configuration template
       - path: configs/model/
         priority: low
+        mode: reference
         description: Model configurations
         optional: true
 
@@ -73,9 +82,11 @@ tiers:
     files:
       - path: tests/test_detection.py
         priority: medium
+        mode: structure
         description: Detection unit and integration tests
         optional: true
       - path: apps/ocr_inference_console/
         priority: low
+        mode: reference
         description: Inference console examples
         optional: true

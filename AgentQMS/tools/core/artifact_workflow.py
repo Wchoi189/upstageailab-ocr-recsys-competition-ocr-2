@@ -6,11 +6,11 @@ This script provides a unified interface for AI agents to create, validate,
 and manage artifacts following the project's standards.
 
 Usage:
-    python artifact_workflow.py create --type implementation_plan --name "my-feature" --title "My Feature Plan"
-    python artifact_workflow.py validate --file path/to/artifact.md
-    python artifact_workflow.py validate --all
-    python artifact_workflow.py update-indexes
-    python artifact_workflow.py check-compliance
+    uv run python artifact_workflow.py create --type implementation_plan --name "my-feature" --title "My Feature Plan"
+    uv run python artifact_workflow.py validate --file path/to/artifact.md
+    uv run python artifact_workflow.py validate --all
+    uv run python artifact_workflow.py update-indexes
+    uv run python artifact_workflow.py check-compliance
 """
 
 import argparse

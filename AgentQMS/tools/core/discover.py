@@ -36,7 +36,7 @@ def show_tools():
             tools = sorted([t for t in cat_dir.glob("*.py") if t.name != "__init__.py"])
             if tools:
                 for tool in tools:
-                    print(f"   python AgentQMS.tools/{category}/{tool.name}")
+                    print(f"   uv run python AgentQMS.tools/{category}/{tool.name}")
             else:
                 print("   (no tools found)")
             print()

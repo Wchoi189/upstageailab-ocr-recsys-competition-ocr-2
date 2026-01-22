@@ -89,7 +89,7 @@ uv pip install -e .
    )
    ```
 
-2. **Pre-Flight Validation** (`scripts/preflight.sh`):
+2. **Pre-Flight Validation** (`scripts/audit/preflight.sh`):
    ```bash
    #!/bin/bash
    PYTHON_ORIGIN=$(uv run python -c "import ocr; print(ocr.__file__)")
@@ -429,7 +429,7 @@ python runners/train.py experiment=rec_baseline_v1 +trainer.fast_dev_run=True
 
 2. **Run pre-flight check**:
    ```bash
-   bash scripts/preflight.sh
+   bash scripts/audit/preflight.sh
    ```
 
 3. **Test detection pipeline**:

@@ -1,0 +1,2813 @@
+{
+  "analyzer_name": "ContextTreeAnalyzer",
+  "target_path": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr",
+  "results": [
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr",
+      "line": 0,
+      "column": 0,
+      "pattern": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 0,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/command_builder",
+      "line": 0,
+      "column": 0,
+      "pattern": "command_builder",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/command_builder/compute.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "compute.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Pure functions for computing Hydra overrides from schema values.\n\nThis module is Streamlit-free and can be used by both the FastAPI API\nand the Streamlit UI without triggering Streamlit initialization.",
+        "key_functions": [
+          {
+            "name": "compute_overrides",
+            "doc": "Compute hydra overrides from schema and collected values (pure function)."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/command_builder/models.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "models.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "key_classes": [
+          {
+            "name": "UseCaseRecommendation",
+            "doc": "Structured recommendation tied to an OCR training use-case."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/command_builder/overrides.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "overrides.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "key_functions": [
+          {
+            "name": "build_additional_overrides",
+            "doc": "Translate high-level UI toggles into concrete Hydra overrides."
+          },
+          {
+            "name": "maybe_suffix_exp_name",
+            "doc": "Optionally append architecture/encoder info to exp_name to avoid collisions."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/command_builder/recommendations.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "recommendations.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "key_classes": [
+          {
+            "name": "UseCaseRecommendationService",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core",
+      "line": 0,
+      "column": 0,
+      "pattern": "core",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true,
+        "category": "\u26a1 Core",
+        "docstring": "Core abstract base classes and registry for OCR framework components.",
+        "exports": [
+          "BaseEncoder",
+          "BaseDecoder",
+          "BaseHead",
+          "BaseLoss",
+          "BaseMetric",
+          "ComponentRegistry",
+          "get_registry",
+          "registry"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/analysis",
+      "line": 0,
+      "column": 0,
+      "pattern": "analysis",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "docstring": "Analysis tools for OCR model debugging, validation, and data insights."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/analysis/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data",
+        "docstring": "Scripts for analyzing and preprocessing OCR training data."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/analysis/debugging",
+      "line": 0,
+      "column": 0,
+      "pattern": "debugging",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "docstring": "Scripts for debugging and visualizing OCR model behavior."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/analysis/validation",
+      "line": 0,
+      "column": 0,
+      "pattern": "validation",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "docstring": "Scripts for validating and evaluating OCR model predictions."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/analysis/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Analysis tools for OCR model debugging, validation, and data insights."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/data/schemas.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "schemas.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Core data schemas shared across domains.\n\nThis module defines generic Pydantic models for image data and metadata\nthat are used by both detection and recognition pipelines.",
+        "key_classes": [
+          {
+            "name": "ImageLoadingConfig",
+            "doc": "Configuration for image loading backends and fallbacks."
+          },
+          {
+            "name": "ImageMetadata",
+            "doc": "Metadata describing the context of an image being transformed."
+          },
+          {
+            "name": "ImageData",
+            "doc": "Cached image payload containing decoded pixel data and metadata."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/evaluation",
+      "line": 0,
+      "column": 0,
+      "pattern": "evaluation",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "docstring": "Evaluation helpers for OCR Lightning modules.",
+        "exports": [
+          "CLEvalEvaluator"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/evaluation/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Evaluation helpers for OCR Lightning modules.",
+        "exports": [
+          "CLEvalEvaluator"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/infrastructure",
+      "line": 0,
+      "column": 0,
+      "pattern": "infrastructure",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/infrastructure/agents",
+      "line": 0,
+      "column": 0,
+      "pattern": "agents",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/infrastructure/communication",
+      "line": 0,
+      "column": 0,
+      "pattern": "communication",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/infrastructure/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/interfaces",
+      "line": 0,
+      "column": 0,
+      "pattern": "interfaces",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "docstring": "Core Interface Layer - Domain-agnostic data contracts.",
+        "exports": [
+          "Box",
+          "DetectionResult",
+          "RecognitionResult",
+          "PageResult"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/interfaces/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Core Interface Layer - Domain-agnostic data contracts.",
+        "exports": [
+          "Box",
+          "DetectionResult",
+          "RecognitionResult",
+          "PageResult"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/interfaces/losses.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "losses.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Abstract base classes for OCR loss functions.",
+        "key_classes": [
+          {
+            "name": "BaseLoss",
+            "doc": "Abstract base class for OCR loss functions."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/interfaces/metrics.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "metrics.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Abstract base classes for OCR evaluation metrics.",
+        "key_classes": [
+          {
+            "name": "BaseMetric",
+            "doc": "Abstract base class for OCR evaluation metrics."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/interfaces/models.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "models.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Abstract base classes for OCR model components.",
+        "key_classes": [
+          {
+            "name": "BaseEncoder",
+            "doc": "Abstract base class for OCR encoders/backbones."
+          },
+          {
+            "name": "BaseDecoder",
+            "doc": "Abstract base class for OCR decoders."
+          },
+          {
+            "name": "BaseHead",
+            "doc": "Abstract base class for OCR prediction heads."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/interfaces/schemas.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "schemas.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Core Interface Schemas (The Bridge Layer)\n\nThis module defines domain-agnostic data contracts that allow domains to communicate\nwithout direct dependencies. All domains must use these schemas at boundaries.\n\nArchitecture Rules:\n- NO domain-specific imports allowed\n- Schemas must be serializable\n- Must support both detection and recognition workflows",
+        "key_classes": [
+          {
+            "name": "Box",
+            "doc": "Generic bounding box representation."
+          },
+          {
+            "name": "DetectionResult",
+            "doc": "Output from detection domain."
+          },
+          {
+            "name": "RecognitionResult",
+            "doc": "Output from recognition domain."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning",
+      "line": 0,
+      "column": 0,
+      "pattern": "lightning",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/callbacks",
+      "line": 0,
+      "column": 0,
+      "pattern": "callbacks",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "exports": [
+          "MetadataCallback",
+          "PerformanceProfilerCallback"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/loggers",
+      "line": 0,
+      "column": 0,
+      "pattern": "loggers",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "exports": [
+          "get_rich_console",
+          "WandbProblemLogger"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/processors",
+      "line": 0,
+      "column": 0,
+      "pattern": "processors",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "exports": [
+          "ImageProcessor"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/utils",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd27 Utils",
+        "exports": [
+          "extract_metric_kwargs",
+          "extract_normalize_stats",
+          "CheckpointHandler",
+          "format_predictions"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/lightning/base.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "base.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Base PyTorch Lightning Module for OCR tasks.\n\nThis provides shared functionality for detection and recognition modules.\nDomain-specific logic is implemented in:\n- ocr.domains.detection.module (DetectionPLModule)\n- ocr.domains.recognition.module (RecognitionPLModule)",
+        "key_classes": [
+          {
+            "name": "OCRPLModule",
+            "doc": "Base OCR PyTorch Lightning Module with shared functionality."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models",
+      "line": 0,
+      "column": 0,
+      "pattern": "models",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "category": "\ud83e\udd16 Models",
+        "key_functions": [
+          {
+            "name": "get_model_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models/decoder",
+      "line": 0,
+      "column": 0,
+      "pattern": "decoder",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "key_functions": [
+          {
+            "name": "get_decoder_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models/encoder",
+      "line": 0,
+      "column": 0,
+      "pattern": "encoder",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "key_functions": [
+          {
+            "name": "get_encoder_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models/head",
+      "line": 0,
+      "column": 0,
+      "pattern": "head",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "key_functions": [
+          {
+            "name": "get_head_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models/layers",
+      "line": 0,
+      "column": 0,
+      "pattern": "layers",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "key_functions": [
+          {
+            "name": "get_model_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/models/architecture.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "architecture.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "key_classes": [
+          {
+            "name": "OCRModel",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "category": "\ud83d\udd27 Utils"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/checkpoints",
+      "line": 0,
+      "column": 0,
+      "pattern": "checkpoints",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/command",
+      "line": 0,
+      "column": 0,
+      "pattern": "command",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "docstring": "Command Utilities Package\n\nThis package provides modular utilities for building, validating, and executing\nCLI commands for training, testing, and prediction in the OCR project.",
+        "exports": [
+          "CommandBuilder",
+          "CommandExecutor",
+          "CommandValidator"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/api_usage_tracker.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "api_usage_tracker.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Upstage API usage tracking for free tier management.\n\nTracks API calls to Document Parse and Solar APIs to monitor usage against\nfree tier limits (valid until March 2026).",
+        "exports": [
+          "APIUsageRecord",
+          "APIUsageStats",
+          "UpstageAPITracker",
+          "get_tracker"
+        ],
+        "key_classes": [
+          {
+            "name": "APIUsageRecord",
+            "doc": "Single API call record."
+          },
+          {
+            "name": "APIUsageStats",
+            "doc": "Aggregated API usage statistics."
+          },
+          {
+            "name": "UpstageAPITracker",
+            "doc": "Track and persist Upstage API usage."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "get_tracker",
+            "doc": "Get or create global API tracker instance."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/background_normalization.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "background_normalization.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Gray-world background normalization for OCR preprocessing.\n\nThis module provides color normalization to remove tinted backgrounds\nfrom document images, improving OCR accuracy on documents with colored\nbackgrounds.",
+        "key_functions": [
+          {
+            "name": "normalize_gray_world",
+            "doc": "Apply gray-world normalization to remove background color tints."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/cache_manager.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "cache_manager.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "AI_DOCS: Cache Manager - Centralized Dataset Caching System\n\nThis module implements the CacheManager class, responsible for:\n- Multi-level caching (images, tensors, maps) for dataset performance\n- Cache statistics tracking and logging\n- Memory-efficient storage with configurable limits\n- Thread-safe cache operations for DataLoader compatibility\n\nARCHITECTURE OVERVIEW:\n- Three cache types: image_cache, tensor_cache, maps_cache\n- Configurable caching via CacheConfig (Pydantic model)\n- Statistics tracking with periodic logging\n- Lazy evaluation with conditional caching\n\nDATA CONTRACTS:\n- Input: CacheConfig (Pydantic model)\n- Cache Keys: str (filenames) or int (dataset indices)\n- Cache Values: ImageData, DataItem, MapData (Pydantic models)\n- Statistics: hit/miss counts with configurable logging\n\nCORE CONSTRAINTS:\n- NEVER modify cache key formats (breaks cache invalidation)\n- ALWAYS check cache config before operations\n- PRESERVE statistics tracking for performance monitoring\n- USE Pydantic models for all cached data\n- MAINTAIN thread-safety for DataLoader compatibility\n\nPERFORMANCE FEATURES:\n- Lazy caching prevents memory bloat\n- Configurable cache sizes and eviction policies\n- Statistics logging for performance debugging\n- Memory-efficient storage of large tensors\n\nVALIDATION REQUIREMENTS:\n- All cache values must be Pydantic models\n- Cache keys must be hashable and deterministic\n- Cache operations must handle missing keys gracefully\n- Statistics must be accurate for performance analysis\n\nRELATED DOCUMENTATION:\n- Data Contracts: ocr/validation/models.py\n- Configuration: ocr.data.datasets/schemas.py\n- Base Dataset: ocr.data.datasets/base.py\n- Performance Guide: docs/ai_handbook/04_performance/\n\nMIGRATION NOTES:\n- CacheManager replaces inline caching logic\n- Pydantic models ensure data integrity\n- Configurable caching improves memory management",
+        "key_classes": [
+          {
+            "name": "CacheManager",
+            "doc": "AI_DOCS: CacheManager - Multi-Level Dataset Caching"
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/callbacks.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "callbacks.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Callback helpers for runner entrypoints.\n\nCentralizes Hydra-driven callback instantiation and resolved-config attachment\nfor callbacks that expect `_resolved_config`.",
+        "key_functions": [
+          {
+            "name": "build_callbacks",
+            "doc": "Instantiate callbacks defined under `config.callbacks` and `config.training.callbacks`."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/config.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "config.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Configuration Parser for UI components.\n\nThis module provides utilities to parse Hydra configurations and extract\navailable options for UI components. Can be used by both FastAPI API\nand Streamlit UI applications.\n\n**Dependencies:**\n- Triggers registry/model initialization when accessing architecture metadata\n- Does NOT import Streamlit - it's a pure configuration parser\n- Can be used independently of UI framework\n\n**Performance Note:**\n- Registry initialization happens on first access to model metadata\n- Use lazy loading when used in FastAPI to avoid startup delays",
+        "key_classes": [
+          {
+            "name": "ConfigParser",
+            "doc": "Parser for extracting configuration options from Hydra configs."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/config_utils.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "config_utils.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Hydra configuration schemas and validation utilities for modular OCR architectures.",
+        "key_functions": [
+          {
+            "name": "is_config",
+            "doc": "Check if object is a valid configuration object (dict or DictConfig)."
+          },
+          {
+            "name": "ensure_dict",
+            "doc": "Recursively convert DictConfig/ListConfig to native dict/list."
+          },
+          {
+            "name": "load_config",
+            "doc": "Load a Hydra config using OmegaConf to handle defaults merging."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/config_validation.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "config_validation.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Runtime configuration & data sanity checks.\n\nLightweight warnings to catch common misconfigurations early without aborting training.\nExtendable: add new check_* functions that append to the warnings list.",
+        "key_functions": [
+          {
+            "name": "validate_runtime",
+            "doc": ""
+          },
+          {
+            "name": "validate_config_paths",
+            "doc": "Validate dataset-related paths; raise RuntimeError on hard errors."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/convert_submission.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "convert_submission.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "key_functions": [
+          {
+            "name": "convert_json_to_csv",
+            "doc": ""
+          },
+          {
+            "name": "convert",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/data_utils.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "data_utils.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Shared data utilities for OCR processing.",
+        "key_functions": [
+          {
+            "name": "extract_metadata",
+            "doc": "Extract metadata from a sample dictionary."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/experiment_index.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "experiment_index.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Utility for managing sequential experiment indices for output directory naming.\n\nThis module provides thread-safe, file-based index management to ensure\nunique, sequential experiment numbers for better organization and sorting.",
+        "key_functions": [
+          {
+            "name": "get_next_experiment_index",
+            "doc": "Get the next sequential experiment index."
+          },
+          {
+            "name": "get_current_experiment_index",
+            "doc": "Get the current experiment index without incrementing."
+          },
+          {
+            "name": "reset_experiment_index",
+            "doc": "Reset the experiment index counter to 0."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/experiment_name.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "experiment_name.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "key_functions": [
+          {
+            "name": "resolve_experiment_name",
+            "doc": "Resolve experiment name for a checkpoint path."
+          },
+          {
+            "name": "resolve_run_directory_experiment_name",
+            "doc": "Resolve experiment name associated with a Hydra outputs directory."
+          },
+          {
+            "name": "find_run_dirs_for_exp_name",
+            "doc": "Locate Hydra output directories that correspond to an experiment name."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/image_loading.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "image_loading.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Optimized image loading utilities     # Try TurboJPEG for JPEG files if available and enabled\nif use_turbojpeg and TURBOJPEG_AVAILABLE and image_path.suffix.lower() in (\".jpg\", \".jpeg\"):\n    try:\n        jpeg = TurboJPEG()\n        with open(image_path, \"rb\") as f:\n            jpeg_data = f.read()\n\n        # Decode JPEG directly to numpy array, then convert to PIL\n        img_array = jpeg.decode(jpeg_data)\n        # Convert BGR to RGB (TurboJPEG outputs BGR)\n        img_array = img_array[:, :, ::-1]\n        return Image.fromarray(img_array)\n    except Exception as e:\n        if not turbojpeg_fallback:\n            raise RuntimeError(f\"TurboJPEG failed for {image_path} and fallback disabled: {e}\")\n        logger.debug(f\"TurboJPEG failed for {image_path}, falling back to PIL: {e}\")\nelif not use_turbojpeg and image_path.suffix.lower() in (\".jpg\", \".jpeg\"):\n    logger.debug(f\"TurboJPEG disabled for {image_path}, using PIL\") support.",
+        "key_functions": [
+          {
+            "name": "load_image_optimized",
+            "doc": "Load image with TurboJPEG for JPEG files, fallback to PIL."
+          },
+          {
+            "name": "get_image_loader_info",
+            "doc": "Get information about available image loading backends."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/image_utils.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "image_utils.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "AI_DOCS: Image Utils - Image Processing & Loading Utilities\n\nThis module provides specialized image processing utilities for the OCR dataset:\n- EXIF-aware image loading with orientation correction\n- RGB conversion and normalization\n- Memory-efficient PIL image handling\n- TurboJPEG integration for performance\n\nARCHITECTURE OVERVIEW:\n- Utilities extracted from monolithic dataset code\n- Focus on image loading and preprocessing\n- Memory-safe PIL image lifecycle management\n- Performance optimizations for large datasets\n\nDATA CONTRACTS:\n- Input: Path objects or strings (file paths)\n- Output: PIL Images or numpy arrays\n- Configuration: ImageLoadingConfig (Pydantic model)\n- Metadata: ImageData with EXIF information\n\nCORE CONSTRAINTS:\n- ALWAYS close PIL images to prevent memory leaks\n- PRESERVE EXIF orientation correction logic\n- USE TurboJPEG when available for performance\n- VALIDATE image loading before processing\n- MAINTAIN backward compatibility with existing code\n\nPERFORMANCE FEATURES:\n- Lazy loading prevents memory bloat\n- TurboJPEG acceleration for JPEG files\n- EXIF orientation correction without full image rotation\n- Memory-efficient image processing pipeline\n\nVALIDATION REQUIREMENTS:\n- Check file existence before loading\n- Validate image formats and dimensions\n- Handle corrupted image files gracefully\n- Provide meaningful error messages\n\nRELATED DOCUMENTATION:\n- Base Dataset: ocr.data.datasets/base.py\n- Configuration: ocr.data.datasets/schemas.py\n- EXIF Handling: ocr.core.utils/orientation.py\n- Performance Guide: docs/ai_handbook/04_performance/\n\nMIGRATION NOTES:\n- Utilities extracted from ValidatedOCRDataset._load_image_data\n- Pydantic models ensure data integrity\n- Memory management prevents leaks in long-running training",
+        "exports": [
+          "ensure_rgb",
+          "load_pil_image",
+          "pil_to_numpy",
+          "prenormalize_imagenet",
+          "safe_get_image_size"
+        ],
+        "key_functions": [
+          {
+            "name": "safe_get_image_size",
+            "doc": "Return ``(width, height)`` for a PIL image or numpy array."
+          },
+          {
+            "name": "load_pil_image",
+            "doc": "AI_DOCS: PIL Image Loading with EXIF Support"
+          },
+          {
+            "name": "ensure_rgb",
+            "doc": "AI_DOCS: RGB Conversion Utility"
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/logger_factory.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "logger_factory.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Logger factory for creating appropriate logger from configuration.\n\nProvides a centralized factory function for creating Lightning loggers\n(WandB or TensorBoard) based on configuration settings.",
+        "key_functions": [
+          {
+            "name": "create_logger",
+            "doc": "Create appropriate logger (W&B or TensorBoard) from configuration."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/logging.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "logging.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Logging utilities for OCR framework with rich console output and debugging support.",
+        "exports": [
+          "OCRLogger",
+          "DebugTools",
+          "logger",
+          "debug",
+          "log_experiment_start",
+          "log_experiment_end",
+          "create_experiment_logger",
+          "get_rich_console"
+        ],
+        "key_classes": [
+          {
+            "name": "OCRLogger",
+            "doc": "Enhanced logger with Rich console output and structured logging."
+          },
+          {
+            "name": "DebugTools",
+            "doc": "Debugging utilities with IceCream integration."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "log_experiment_start",
+            "doc": "Log experiment start with configuration."
+          },
+          {
+            "name": "log_experiment_end",
+            "doc": "Log experiment completion with final metrics."
+          },
+          {
+            "name": "create_experiment_logger",
+            "doc": "Create a logger for a specific experiment."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/orientation.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "orientation.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Utilities for normalizing EXIF-oriented images and annotations.\n\nThis module centralizes rotation handling so every pipeline stage (datasets,\nvisualizers, inference, logging) can stay in sync.",
+        "exports": [
+          "EXIF_ORIENTATION_TAG",
+          "apply_affine_transform_to_polygons",
+          "get_exif_orientation",
+          "normalize_ndarray",
+          "normalize_pil_image",
+          "orientation_requires_rotation",
+          "polygons_in_canonical_frame",
+          "remap_polygons"
+        ],
+        "key_functions": [
+          {
+            "name": "get_exif_orientation",
+            "doc": "Return EXIF orientation (defaults to 1 when missing)."
+          },
+          {
+            "name": "orientation_requires_rotation",
+            "doc": "True when EXIF orientation implies any rotation or mirroring."
+          },
+          {
+            "name": "normalize_pil_image",
+            "doc": "Rotate/mirror the PIL image according to its EXIF orientation."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/orientation_constants.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "orientation_constants.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Constants and mappings for EXIF orientation handling.\n\nThis module centralizes all orientation-related definitions to ensure consistency\nacross the codebase and make maintenance easier.",
+        "key_classes": [
+          {
+            "name": "OrientationTransform",
+            "doc": "EXIF orientation transformations with their corresponding operations."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "get_orientation_transform",
+            "doc": "Convert integer orientation value to OrientationTransform enum."
+          },
+          {
+            "name": "get_inverse_orientation",
+            "doc": "Get the inverse orientation value for the given orientation."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/path_utils.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "path_utils.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Path Utilities for OCR Project\n\nThis module provides centralized path resolution utilities for the OCR project.\nIt handles common path operations and ensures consistent path resolution across all scripts.\nEnhanced with modular path configuration for better reusability.\n\nModern API:\n    from ocr.core.utils.path_utils import setup_project_paths, get_path_resolver\n\n    # Initialize project paths\n    setup_project_paths()\n\n    # Access path configuration\n    resolver = get_path_resolver()\n    data_dir = resolver.config.data_dir",
+        "key_classes": [
+          {
+            "name": "OCRPathConfig",
+            "doc": "Configuration class for OCR project paths."
+          },
+          {
+            "name": "OCRPathResolver",
+            "doc": "Central path resolution manager for OCR project."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "get_path_resolver",
+            "doc": "Get the global OCR path resolver instance."
+          },
+          {
+            "name": "setup_project_paths",
+            "doc": "Setup project paths and return resolver."
+          },
+          {
+            "name": "ensure_output_dirs",
+            "doc": "Ensure each provided directory exists."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/registry.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "registry.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Component registry system for plug-and-play OCR architectures.",
+        "key_classes": [
+          {
+            "name": "ComponentRegistry",
+            "doc": "Central registry for OCR architecture components."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "get_registry",
+            "doc": "Get the global component registry instance."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/sepia_enhancement.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "sepia_enhancement.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Sepia enhancement with CLAHE for OCR preprocessing.\n\nThis module provides sepia tone enhancement combined with adaptive contrast\n(CLAHE) for improving OCR accuracy on low-contrast or aged document images.\n\nValidated Performance (experiment 20251220_154834):\n    - Edge improvement: +164.0% vs baseline\n    - Contrast boost: +8.2\n    - Processing time: ~25ms",
+        "key_functions": [
+          {
+            "name": "enhance_sepia",
+            "doc": "Apply sepia tone transformation with configurable brightness."
+          },
+          {
+            "name": "enhance_clahe",
+            "doc": "Apply CLAHE (Contrast Limited Adaptive Histogram Equalization)."
+          },
+          {
+            "name": "enhance_sepia_clahe",
+            "doc": "Apply sepia + CLAHE enhancement (combined - legacy function)."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/submission.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "submission.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Utilities for handling OCR prediction submissions.",
+        "key_classes": [
+          {
+            "name": "SubmissionWriter",
+            "doc": "Handles formatting and saving OCR predictions to submission files."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/utils/wandb_base.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "wandb_base.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "key_functions": [
+          {
+            "name": "load_env_variables",
+            "doc": "Load environment variables from .env/.env.local if present."
+          },
+          {
+            "name": "generate_run_name",
+            "doc": "Generate a descriptive, stable run name summarizing key components."
+          },
+          {
+            "name": "finalize_run",
+            "doc": "Finalize the active W&B run with the most relevant metric."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Core abstract base classes and registry for OCR framework components.",
+        "exports": [
+          "BaseEncoder",
+          "BaseDecoder",
+          "BaseHead",
+          "BaseLoss",
+          "BaseMetric",
+          "ComponentRegistry",
+          "get_registry",
+          "registry"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/experiment.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "experiment.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Experiment Registry System\n\nProvides structured experiment management with unique IDs and metadata tracking.\nReplaces fragile experiment-name-based system with reliable ID-based organization.",
+        "key_classes": [
+          {
+            "name": "ExperimentMetadata",
+            "doc": "Metadata for a single experiment."
+          },
+          {
+            "name": "ExperimentRegistry",
+            "doc": "Thread-safe registry for managing experiments with unique IDs."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "get_registry",
+            "doc": "Get the global experiment registry instance."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/core/validation.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "validation.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Core validation models and schemas for the OCR pipeline.\n\nConsolidates:\n- ocr.validation.models (runtime validation)\n- ocr.data.datasets.schemas (dataset contracts)\n\nThis module provides a single source of truth for all validation models.\n\nRationale (do not modularize): consolidation prevents circular imports and keeps\nschemas + runtime validators consistent across the pipeline.",
+        "exports": [
+          "VALID_EXIF_ORIENTATIONS",
+          "validator",
+          "CacheConfig",
+          "ImageLoadingConfig",
+          "DatasetConfig",
+          "ImageMetadata",
+          "PolygonData",
+          "ValidatedPolygonData",
+          "TransformInput",
+          "TransformOutput",
+          "TransformConfig",
+          "ImageData",
+          "MapData",
+          "DataItem",
+          "PolygonArray",
+          "DatasetSample",
+          "BatchSample",
+          "CollateOutput",
+          "LoaderTransformOutput",
+          "ModelOutput",
+          "LightningStepPrediction",
+          "MetricConfig",
+          "ValidatedTensorData",
+          "validate_predictions"
+        ],
+        "key_classes": [
+          {
+            "name": "CacheConfig",
+            "doc": "Configuration flags controlling dataset caching behaviour."
+          },
+          {
+            "name": "DatasetConfig",
+            "doc": "All runtime configuration required to build a validated OCR dataset."
+          },
+          {
+            "name": "PolygonData",
+            "doc": "Validated polygon representation with consistent shape."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "validate_predictions",
+            "doc": "Validate a collection of predictions against the expected schema."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/datasets",
+      "line": 0,
+      "column": 0,
+      "pattern": "datasets",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data",
+        "docstring": "OCR datasets package.\n\nThis package is imported by many modules (including lightweight schema shims).\nTo keep import-time dependencies minimal, heavy submodules are loaded lazily.",
+        "exports": [
+          "ValidatedOCRDataset",
+          "LensStylePreprocessorAlbumentations",
+          "get_datasets_by_cfg"
+        ],
+        "key_functions": [
+          {
+            "name": "get_datasets_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/datasets/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "OCR datasets package.\n\nThis package is imported by many modules (including lightweight schema shims).\nTo keep import-time dependencies minimal, heavy submodules are loaded lazily.",
+        "exports": [
+          "ValidatedOCRDataset",
+          "LensStylePreprocessorAlbumentations",
+          "get_datasets_by_cfg"
+        ],
+        "key_functions": [
+          {
+            "name": "get_datasets_by_cfg",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/datasets/schemas.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "schemas.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Backward compatibility shim for ocr.data.datasets.schemas.\n\nDEPRECATED: All schemas moved to ocr.core.validation.\nThis module will remain indefinitely for compatibility.",
+        "exports": [
+          "CacheConfig",
+          "DataItem",
+          "DatasetConfig",
+          "ImageData",
+          "ImageLoadingConfig",
+          "ImageMetadata",
+          "MapData",
+          "PolygonData",
+          "TransformConfig",
+          "TransformInput",
+          "TransformOutput",
+          "ValidatedPolygonData"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/schemas",
+      "line": 0,
+      "column": 0,
+      "pattern": "schemas",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/schemas/storage.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "storage.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Storage schemas for OCR and KIE datasets.\n\nThese schemas are designed for serialization (JSONL/Parquet) and long-term storage,\nbridging the gap between raw datasets and runtime tensor models in ocr.core.validation.\n\nDesign Goals:\n1. Serialization-friendly: Use standard Python types (list, float, str) instead of numpy/torch.\n2. Logic-agnostic: Pure data containers without validation logic (leave that to ocr.core.validation).\n3. Versioned: Include schema_version for future evolution.",
+        "key_classes": [
+          {
+            "name": "BaseStorageItem",
+            "doc": "Base schema for all storage items."
+          },
+          {
+            "name": "OCRStorageItem",
+            "doc": "Storage schema for general OCR data (Text Detection + Recognition)."
+          },
+          {
+            "name": "KIEStorageItem",
+            "doc": "Storage schema for Key Information Extraction (KIE) data."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/charset.json",
+      "line": 0,
+      "column": 0,
+      "pattern": "charset.json",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/data/lightning_data.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "lightning_data.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "key_classes": [
+          {
+            "name": "OCRDataPLModule",
+            "doc": "Domain-agnostic Lightning DataModule for OCR datasets."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains",
+      "line": 0,
+      "column": 0,
+      "pattern": "domains",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection",
+      "line": 0,
+      "column": 0,
+      "pattern": "detection",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/analysis",
+      "line": 0,
+      "column": 0,
+      "pattern": "analysis",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/callbacks",
+      "line": 0,
+      "column": 0,
+      "pattern": "callbacks",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "docstring": "Detection domain callbacks for training and logging.",
+        "exports": [
+          "log_validation_images"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/inference",
+      "line": 0,
+      "column": 0,
+      "pattern": "inference",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd2e Inference",
+        "docstring": "Modular helpers for OCR inference utilities.",
+        "exports": [
+          "InferenceEngine",
+          "run_inference_on_image",
+          "get_available_checkpoints",
+          "ModelConfigBundle",
+          "PreprocessSettings",
+          "PostprocessSettings"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/metrics",
+      "line": 0,
+      "column": 0,
+      "pattern": "metrics",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/models",
+      "line": 0,
+      "column": 0,
+      "pattern": "models",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83e\udd16 Models",
+        "docstring": "Detection model components.",
+        "exports": [
+          "CRAFT",
+          "DBNet",
+          "DBNetPP",
+          "CRAFTHead",
+          "DBHead",
+          "CRAFTPostProcessor",
+          "DBPostProcessor",
+          "CRAFTDecoder",
+          "DBPPDecoder",
+          "FPNDecoder",
+          "CRAFTVGG"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/schemas",
+      "line": 0,
+      "column": 0,
+      "pattern": "schemas",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/utils",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd27 Utils"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/evaluation.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "evaluation.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Dedicated evaluator used by the OCR Lightning module.",
+        "key_classes": [
+          {
+            "name": "CLEvalEvaluator",
+            "doc": "Accumulates predictions and computes CLEval metrics for a dataset split."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/interfaces.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "interfaces.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Interfaces for detection feature components.",
+        "key_classes": [
+          {
+            "name": "DetectionHead",
+            "doc": "Abstract base class for Detection prediction heads."
+          },
+          {
+            "name": "DetectionLoss",
+            "doc": "Abstract base class for Detection loss functions."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/detection/module.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "module.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Detection-specific PyTorch Lightning Module.",
+        "key_classes": [
+          {
+            "name": "DetectionPLModule",
+            "doc": "Detection-specific Lightning Module for text detection tasks."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie",
+      "line": 0,
+      "column": 0,
+      "pattern": "kie",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "docstring": "Key Information Extraction (KIE) feature package."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/analysis",
+      "line": 0,
+      "column": 0,
+      "pattern": "analysis",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/callbacks",
+      "line": 0,
+      "column": 0,
+      "pattern": "callbacks",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data",
+        "docstring": "KIE data handling.",
+        "exports": [
+          "KIEDataset"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/inference",
+      "line": 0,
+      "column": 0,
+      "pattern": "inference",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd2e Inference"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/lightning",
+      "line": 0,
+      "column": 0,
+      "pattern": "lightning",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/metrics",
+      "line": 0,
+      "column": 0,
+      "pattern": "metrics",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/models",
+      "line": 0,
+      "column": 0,
+      "pattern": "models",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83e\udd16 Models",
+        "docstring": "KIE model definitions.",
+        "exports": [
+          "LayoutLMv3Wrapper",
+          "LiLTWrapper"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/utils",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd27 Utils"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Key Information Extraction (KIE) feature package."
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/trainer.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "trainer.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "key_classes": [
+          {
+            "name": "KIEDataPLModule",
+            "doc": ""
+          },
+          {
+            "name": "KIEPLModule",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/kie/validation.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "validation.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "KIE validation models and schemas.\n\nThis module provides validation contracts for Key Information Extraction (KIE) data.\nIt mirrors ocr/core/validation.py but focuses on token-level and layout-aware data structures.",
+        "key_classes": [
+          {
+            "name": "KIEDataItem",
+            "doc": "Validated dataset sample for KIE models (LayoutLMv3/LiLT)."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout",
+      "line": 0,
+      "column": 0,
+      "pattern": "layout",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "docstring": "Layout detection feature for OCR pipeline.\n\nThis module provides layout analysis capabilities for grouping text elements\ninto lines and blocks based on spatial relationships.",
+        "exports": [
+          "BoundingBox",
+          "LayoutResult",
+          "TextBlock",
+          "TextElement",
+          "TextLine",
+          "LineGrouper",
+          "LineGrouperConfig",
+          "create_text_element"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/analysis",
+      "line": 0,
+      "column": 0,
+      "pattern": "analysis",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/callbacks",
+      "line": 0,
+      "column": 0,
+      "pattern": "callbacks",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/inference",
+      "line": 0,
+      "column": 0,
+      "pattern": "inference",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd2e Inference",
+        "docstring": "Layout detection module for OCR pipeline.\n\nThis module provides functionality for grouping detected text regions\ninto hierarchical structures (lines, paragraphs, tables).",
+        "exports": [
+          "BoundingBox",
+          "TextElement",
+          "TextLine",
+          "TextBlock",
+          "LayoutResult",
+          "LineGrouper",
+          "LineGrouperConfig"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/metrics",
+      "line": 0,
+      "column": 0,
+      "pattern": "metrics",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/models",
+      "line": 0,
+      "column": 0,
+      "pattern": "models",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83e\udd16 Models"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/utils",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd27 Utils"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/README.md",
+      "line": 0,
+      "column": 0,
+      "pattern": "README.md",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/layout/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Layout detection feature for OCR pipeline.\n\nThis module provides layout analysis capabilities for grouping text elements\ninto lines and blocks based on spatial relationships.",
+        "exports": [
+          "BoundingBox",
+          "LayoutResult",
+          "TextBlock",
+          "TextElement",
+          "TextLine",
+          "LineGrouper",
+          "LineGrouperConfig",
+          "create_text_element"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition",
+      "line": 0,
+      "column": 0,
+      "pattern": "recognition",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/analysis",
+      "line": 0,
+      "column": 0,
+      "pattern": "analysis",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/callbacks",
+      "line": 0,
+      "column": 0,
+      "pattern": "callbacks",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "docstring": "Recognition domain callbacks for training and logging.",
+        "exports": [
+          "log_recognition_images"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/data",
+      "line": 0,
+      "column": 0,
+      "pattern": "data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udcca Data"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/inference",
+      "line": 0,
+      "column": 0,
+      "pattern": "inference",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd2e Inference"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/metrics",
+      "line": 0,
+      "column": 0,
+      "pattern": "metrics",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/models",
+      "line": 0,
+      "column": 0,
+      "pattern": "models",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83e\udd16 Models",
+        "docstring": "Recognition-specific model components.",
+        "exports": [
+          "PARSeq",
+          "PARSeqDecoder",
+          "PARSeqHead",
+          "register_parseq_components"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/utils",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": true,
+        "category": "\ud83d\udd27 Utils"
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/domains/recognition/module.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "module.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Recognition-specific PyTorch Lightning Module.",
+        "key_classes": [
+          {
+            "name": "RecognitionPLModule",
+            "doc": "Recognition-specific Lightning Module for text recognition tasks."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines",
+      "line": 0,
+      "column": 0,
+      "pattern": "pipelines",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/engine.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "engine.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "key_classes": [
+          {
+            "name": "InferenceEngine",
+            "doc": "OCR Inference Engine for real-time predictions."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "run_inference_on_image",
+            "doc": "Run inference on an image (file path or numpy array)."
+          },
+          {
+            "name": "get_available_checkpoints",
+            "doc": ""
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/pipelines/orchestrator.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "orchestrator.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "OCR Project Orchestrator - Bridges V5.0 Hydra configs to PyTorch Lightning.\n\nThis orchestrator implements the \"Domains First\" architecture by:\n1. Delegating to existing model/dataset factories\n2. Domain-specific Lightning module routing\n3. Trainer configuration from merged Hydra tiers\n4. Vocab size injection for recognition models",
+        "exports": [
+          "OCRProjectOrchestrator"
+        ],
+        "key_classes": [
+          {
+            "name": "OCRProjectOrchestrator",
+            "doc": "Orchestrates OCR training/evaluation pipeline with V5.0 Hydra configs."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data",
+      "line": 0,
+      "column": 0,
+      "pattern": "synthetic_data",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true,
+        "docstring": "Modular synthetic data generation for OCR training.\n\nThis package provides tools for generating synthetic images with text\nfor training and augmenting OCR models. It's designed to be modular\nand extensible for future enhancements.",
+        "exports": [
+          "SyntheticDatasetGenerator",
+          "TextGenerator",
+          "BackgroundGenerator",
+          "TextRenderer",
+          "SyntheticImage",
+          "TextRegion",
+          "create_synthetic_dataset",
+          "augment_existing_dataset",
+          "setup_augmentation_pipeline"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/generators",
+      "line": 0,
+      "column": 0,
+      "pattern": "generators",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": true,
+        "docstring": "Synthetic data generators for text, backgrounds, and rendering.",
+        "exports": [
+          "TextGenerator",
+          "BackgroundGenerator",
+          "TextRenderer"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/generators/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Synthetic data generators for text, backgrounds, and rendering.",
+        "exports": [
+          "TextGenerator",
+          "BackgroundGenerator",
+          "TextRenderer"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/generators/background.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "background.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Background image generation for synthetic data.",
+        "exports": [
+          "BackgroundGenerator"
+        ],
+        "key_classes": [
+          {
+            "name": "BackgroundGenerator",
+            "doc": "Generator for synthetic image backgrounds."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/generators/renderer.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "renderer.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Text rendering on images for synthetic data.",
+        "exports": [
+          "TextRenderer"
+        ],
+        "key_classes": [
+          {
+            "name": "TextRenderer",
+            "doc": "Renderer for synthetic text on images."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/generators/text.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "text.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 3,
+        "is_dir": false,
+        "docstring": "Text content generation for synthetic data.",
+        "exports": [
+          "TextGenerator"
+        ],
+        "key_classes": [
+          {
+            "name": "TextGenerator",
+            "doc": "Generator for synthetic text content."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Modular synthetic data generation for OCR training.\n\nThis package provides tools for generating synthetic images with text\nfor training and augmenting OCR models. It's designed to be modular\nand extensible for future enhancements.",
+        "exports": [
+          "SyntheticDatasetGenerator",
+          "TextGenerator",
+          "BackgroundGenerator",
+          "TextRenderer",
+          "SyntheticImage",
+          "TextRegion",
+          "create_synthetic_dataset",
+          "augment_existing_dataset",
+          "setup_augmentation_pipeline"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/dataset.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "dataset.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Main orchestrator for synthetic OCR dataset generation.",
+        "exports": [
+          "SyntheticDatasetGenerator"
+        ],
+        "key_classes": [
+          {
+            "name": "SyntheticDatasetGenerator",
+            "doc": "Main generator for synthetic OCR datasets."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/models.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "models.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Data models and structures for synthetic data generation.",
+        "exports": [
+          "TextRegion",
+          "SyntheticImage"
+        ],
+        "key_classes": [
+          {
+            "name": "TextRegion",
+            "doc": "Represents a text region with its properties."
+          },
+          {
+            "name": "SyntheticImage",
+            "doc": "Represents a synthetic image with text regions."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/synthetic_data/utils.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "utils.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Utility functions and augmentation setup for synthetic data generation.",
+        "exports": [
+          "create_synthetic_dataset",
+          "augment_existing_dataset",
+          "setup_augmentation_pipeline"
+        ],
+        "key_functions": [
+          {
+            "name": "create_synthetic_dataset",
+            "doc": "Convenience function to create synthetic dataset."
+          },
+          {
+            "name": "augment_existing_dataset",
+            "doc": "Convenience function to augment existing dataset."
+          },
+          {
+            "name": "setup_augmentation_pipeline",
+            "doc": "Setup augmentation pipeline for synthetic data."
+          }
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/validation",
+      "line": 0,
+      "column": 0,
+      "pattern": "validation",
+      "context": "",
+      "category": "directory",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": true
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/validation/models.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "models.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 2,
+        "is_dir": false,
+        "docstring": "Backward compatibility shim for ocr.validation.models.\n\nDEPRECATED: All models moved to ocr.core.validation.\nThis module will remain indefinitely for compatibility.",
+        "exports": [
+          "VALID_EXIF_ORIENTATIONS",
+          "BatchSample",
+          "CollateOutput",
+          "DatasetSample",
+          "LightningStepPrediction",
+          "MetricConfig",
+          "ModelOutput",
+          "PolygonArray",
+          "TransformOutput",
+          "ValidatedTensorData",
+          "validate_predictions",
+          "validator"
+        ]
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/__init__.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "__init__.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": false
+      }
+    },
+    {
+      "file": "/workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr/experiment_registry.py",
+      "line": 0,
+      "column": 0,
+      "pattern": "experiment_registry.py",
+      "context": "",
+      "category": "file",
+      "code_snippet": "",
+      "metadata": {
+        "depth": 1,
+        "is_dir": false,
+        "docstring": "Experiment Registry System\n\nProvides structured experiment management with unique IDs and metadata tracking.\nReplaces fragile experiment-name-based system with reliable ID-based organization.",
+        "key_classes": [
+          {
+            "name": "ExperimentMetadata",
+            "doc": "Metadata for a single experiment."
+          },
+          {
+            "name": "ExperimentRegistry",
+            "doc": "Thread-safe registry for managing experiments with unique IDs."
+          }
+        ],
+        "key_functions": [
+          {
+            "name": "get_registry",
+            "doc": "Get the global experiment registry instance."
+          }
+        ]
+      }
+    }
+  ],
+  "summary": {
+    "total_directories": 68,
+    "total_files": 73,
+    "max_depth_reached": 3
+  },
+  "total_findings": 141
+}

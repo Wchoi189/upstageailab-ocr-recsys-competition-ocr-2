@@ -36,18 +36,23 @@ tiers:
     files:
       - path: experiment_manager/etk.py
         priority: critical
+        mode: structure
         description: Experiment Tracker Kernel - main experiment management
       - path: experiment_manager/agent_interface.yaml
         priority: critical
+        mode: reference
         description: Agent interface configuration for experiment tools
       - path: experiment_manager/AGENTS.yaml
         priority: high
+        mode: reference
         description: Agent configurations for experiment workflows
       - path: pyproject.toml
         priority: high
+        mode: structure
         description: Project dependencies including experiment tools
       - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
         priority: medium
+        mode: reference
         description: Available tools including experiment commands
 
   tier2:
@@ -57,25 +62,32 @@ tiers:
     files:
       - path: configs/base.yaml
         priority: high
+        mode: full
         description: Base configuration for all experiments
       - path: configs/train.yaml
         priority: high
+        mode: full
         description: Training configuration
       - path: configs/eval.yaml
         priority: high
+        mode: full
         description: Evaluation configuration
       - path: configs/_foundation/defaults.yaml
         priority: medium
+        mode: full
         description: Default configuration values
         optional: true
       - path: ocr/inference/pipeline.py
         priority: high
+        mode: structure
         description: OCR inference pipeline
       - path: ocr/models/__init__.py
         priority: medium
+        mode: structure
         description: OCR model management
       - path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
         priority: medium
+        mode: reference
         description: Hydra configuration architecture guide
 
   tier3:
@@ -85,18 +97,23 @@ tiers:
     files:
       - path: README.md
         priority: medium
+        mode: reference
         description: Project overview and setup
       - path: experiment_manager/docs/README.md
         priority: medium
+        mode: reference
         description: Experiment manager documentation
         optional: true
       - path: data/data_catalog.yaml
         priority: medium
+        mode: reference
         description: Data catalog for experiments
       - path: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
         priority: medium
+        mode: reference
         description: Dataset catalog and specifications
       - path: tests/test_inference.py
         priority: low
+        mode: structure
         description: Inference testing examples
         optional: true

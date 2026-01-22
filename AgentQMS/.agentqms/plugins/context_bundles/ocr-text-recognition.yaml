@@ -33,15 +33,19 @@ tiers:
     files:
       - path: ocr/features/recognition/*.py
         priority: critical
+        mode: structure
         description: Text recognition feature implementation
       - path: configs/domain/recognition.yaml
         priority: critical
+        mode: full
         description: Recognition-specific configuration
       - path: configs/model/recognition/
         priority: high
+        mode: reference
         description: Recognition model configurations (parseq, paddleocr)
       - path: ocr/core/inference/pipeline.py
         priority: high
+        mode: structure
         description: Inference pipeline orchestration
 
   tier2:
@@ -51,24 +55,31 @@ tiers:
     files:
       - path: ocr/core/models/__init__.py
         priority: high
+        mode: structure
         description: Model loading and management
       - path: ocr/core/lightning/*.py
         priority: high
+        mode: structure
         description: PyTorch Lightning training components
       - path: ocr/core/metrics/*.py
         priority: medium
+        mode: structure
         description: Character-level and sequence evaluation metrics
       - path: configs/base.yaml
         priority: medium
+        mode: reference
         description: Base configuration template
       - path: configs/data/
         priority: medium
+        mode: reference
         description: Data configuration (character sets, encoding)
       - path: configs/data/recognition.yaml
         priority: medium
+        mode: full
         description: Recognition-specific data configuration
       - path: data/data_catalog.yaml
         priority: low
+        mode: reference
         description: Dataset specifications and catalogs
 
   tier3:
@@ -78,9 +89,11 @@ tiers:
     files:
       - path: tests/test_recognition.py
         priority: low
+        mode: structure
         description: Recognition unit and integration tests
         optional: true
       - path: configs/recognition/
         priority: low
+        mode: reference
         description: Recognition configuration examples
         optional: true

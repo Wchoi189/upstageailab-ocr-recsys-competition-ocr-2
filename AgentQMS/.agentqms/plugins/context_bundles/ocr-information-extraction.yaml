@@ -30,18 +30,27 @@ tiers:
     description: Core key-value extraction feature implementation
     max_files: 5
     files:
+  tier1:
+    name: KIE Code
+    description: Core key-value extraction feature implementation
+    max_files: 5
+    files:
       - path: ocr/features/kie/*.py
         priority: critical
+        mode: structure
         description: Key-value extraction feature implementation
       - path: configs/domain/kie.yaml
         priority: critical
+        mode: full
         description: KIE-specific configuration
         optional: true
       - path: ocr/core/inference/pipeline.py
         priority: high
+        mode: structure
         description: Inference pipeline orchestration
       - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
         priority: high
+        mode: reference
         description: Inference framework design patterns
 
   tier2:
@@ -51,18 +60,23 @@ tiers:
     files:
       - path: ocr/core/models/__init__.py
         priority: high
+        mode: structure
         description: Model loading and management
       - path: ocr/core/analysis/*.py
         priority: high
+        mode: structure
         description: Analysis utilities for extraction
       - path: ocr/core/evaluation/*.py
         priority: medium
+        mode: structure
         description: Evaluation metrics for KIE
       - path: ocr/core/metrics/*.py
         priority: medium
+        mode: structure
         description: Entity-level metrics
       - path: configs/base.yaml
         priority: low
+        mode: reference
         description: Base configuration
 
   tier3:
@@ -72,9 +86,11 @@ tiers:
     files:
       - path: tests/test_kie.py
         priority: low
+        mode: structure
         description: KIE tests
         optional: true
       - path: data/debug_samples/
         priority: low
+        mode: reference
         description: Sample documents for debugging
         optional: true

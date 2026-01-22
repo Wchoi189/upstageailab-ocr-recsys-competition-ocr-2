@@ -26,10 +26,22 @@ import argparse
 import sys
 from pathlib import Path
 
-# Add project root to path
-# Use resolve() to handle symlinks correctly
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(project_root))
+# Ensure paths are set up correctly using framework utilities
+try:
+    # Try importing from installed package first
+    from AgentQMS.tools.utils.paths import get_project_root
+    # We don't have ensure_project_root_on_sys_path in the file I read,
+    # but we can implement similar logic or just use get_project_root return value
+    project_root = get_project_root()
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
+except ImportError:
+    # Fallback for development/pre-install: find root manually
+    current_path = Path(__file__).resolve()
+    # Go up from AgentQMS/cli.py to project root
+    project_root = current_path.parent.parent
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
 
 
 def setup_artifact_parser(subparsers):

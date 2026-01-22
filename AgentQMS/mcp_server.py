@@ -10,12 +10,15 @@ Resources:
 - agentqms://standards/workflows - Workflow requirements
 - agentqms://templates/list - Available templates
 - agentqms://config/settings - QMS settings
+- agentqms://context/bundles - List of available context bundles
+- agentqms://context/bundle/{name} - Specific context bundle file list
 
 Tools:
 - create_artifact - Create new artifact following standards
 - validate_artifact - Validate artifact against standards
 - list_artifact_templates - List available templates
 - check_compliance - Check overall compliance status
+- get_context_bundle - Get file paths for a specific task or bundle name
 """
 
 import asyncio
@@ -54,8 +57,8 @@ AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
 sys.path.insert(0, str(PROJECT_ROOT))
 
 
-
 from AgentQMS.tools.utils.config_loader import ConfigLoader
+from AgentQMS.tools.core.context_bundle import get_context_bundle, list_available_bundles
 
 # Initialize ConfigLoader
 CONFIG_LOADER = ConfigLoader()
@@ -87,7 +90,7 @@ app = Server("agentqms")
 @app.list_resources()
 async def list_resources() -> list[Resource]:
     """List all available AgentQMS resources."""
-    return [
+    resources = [
         Resource(
             uri=res["uri"],
             name=res["name"],
@@ -97,6 +100,30 @@ async def list_resources() -> list[Resource]:
         for res in RESOURCES
     ]
 
+    # Add dynamic context bundle resources
+    resources.append(
+        Resource(
+            uri="agentqms://context/bundles",
+            name="Context Bundles List",
+            description="List of all available context bundles",
+            mimeType="application/json",
+        )
+    )
+
+    # Add individual bundles
+    available_bundles = list_available_bundles()
+    for bundle in available_bundles:
+        resources.append(
+            Resource(
+                uri=f"agentqms://context/bundle/{bundle}",
+                name=f"Context Bundle: {bundle}",
+                description=f"File list for {bundle} context bundle",
+                mimeType="application/json",
+            )
+        )
+
+    return resources
+
 
 @app.read_resource()
 async def read_resource(uri: str) -> list[ReadResourceContents]:
@@ -104,9 +131,6 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
     # Find matching resource
     uri = str(uri).strip()
     resource = next((r for r in RESOURCES if r["uri"] == uri), None)
-
-    if not resource:
-        raise ValueError(f"Unknown resource URI: {uri}. Available: {[r['uri'] for r in RESOURCES]}")
 
     # Handle dynamic template list
     if uri == "agentqms://templates/list":
@@ -117,6 +141,34 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
     if uri == "agentqms://plugins/artifact_types":
         content = await _get_plugin_artifact_types()
         return [ReadResourceContents(content=content, mime_type="application/json")]
+
+    # Handle Context Bundles List
+    if uri == "agentqms://context/bundles":
+        bundles = list_available_bundles()
+        return [
+            ReadResourceContents(
+                content=json.dumps({"bundles": bundles}, indent=2),
+                mime_type="application/json",
+            )
+        ]
+
+    # Handle Individual Context Bundle
+    if uri.startswith("agentqms://context/bundle/"):
+        bundle_name = uri.split("/")[-1]
+        try:
+            # We use get_context_bundle with task_type=bundle_name to bypass auto-detection
+            files = get_context_bundle(task_description=f"Load {bundle_name}", task_type=bundle_name)
+            return [
+                ReadResourceContents(
+                    content=json.dumps({"bundle": bundle_name, "files": files}, indent=2),
+                    mime_type="application/json",
+                )
+            ]
+        except Exception as e:
+            raise ValueError(f"Failed to load bundle {bundle_name}: {str(e)}")
+
+    if not resource:
+        raise ValueError(f"Unknown resource URI: {uri}. Available: {[r['uri'] for r in RESOURCES]}")
 
     # Handle file-based resources
     path: Path = resource["path"]
@@ -377,10 +429,27 @@ async def list_tools() -> list[Tool]:
                 },
                 "required": ["name"]
             }
+        ),
+        Tool(
+            name="get_context_bundle",
+            description="Get relevant context files for a specific task or by bundle name",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "task_description": {"type": "string", "description": "Description of the task to get context for"},
+                    "task_type": {
+                        "type": "string",
+                        "description": "Explicit task type/bundle name (optional). If not provided, will auto-detect from description.",
+                    },
+                    "budget": {
+                        "type": "integer",
+                        "description": "Token budget limit (default: 32000).",
+                    },
+                },
+                "required": ["task_description"]
+            }
         )
     ]
-
-
 
 
 @app.call_tool()
@@ -506,6 +575,55 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                 )
             ]
 
+        elif name == "get_context_bundle":
+            task_description = arguments["task_description"]
+            task_type = arguments.get("task_type")
+
+            # Always use auto_suggest_context to get rich metadata including tokens
+            # If task_type is explicit, it might override, but let's stick to the suggestion logic for richness
+            # or we can call low-level if strictness is needed.
+            # Given the user wants visibility, let's use the rich suggester.
+
+            from AgentQMS.tools.core.context_bundle import auto_suggest_context
+
+            # If task_type is provided, effectively we might want to force it,
+            # but auto_suggest_context calculates tokens which we want.
+            # Let's rely on auto_suggest_context and if it differs from explicit task_type, we note it.
+            # Actually, `analyze_task_type` is called inside `auto_suggest_context`.
+            # To respect explicit task_type, we might need to patch/pass it, but `auto_suggest_context` doesn't take it.
+            # For now, let's just return the suggestion which includes detection + tokens.
+
+            # Set budget if provided
+            if "budget" in arguments:
+                # We need to set the global budget on the engine or pass it down
+                # Since _ENGINE is a singleton in context_bundle.py, we can strictly set it
+                from AgentQMS.tools.core.context_bundle import _ENGINE
+                _ENGINE.max_tokens = int(arguments["budget"])
+
+            suggestion = auto_suggest_context(task_description)
+
+            # If explicit task_type was requested but different from detected, we might want to fetch that specific bundle's files too
+            # to be safe, but typically detection is what's desired.
+
+            return [
+                TextContent(
+                    type="text",
+                    text=json.dumps(
+                        {
+                            "task_description": task_description,
+                            "files": suggestion["bundle_files"],
+                            "detected": suggestion,
+                            "token_usage": suggestion.get("token_usage"),
+                            "stats": {
+                                "total_files": len(suggestion["bundle_files"]),
+                                "total_tokens": suggestion.get("token_usage", {}).get("total_tokens", 0)
+                            }
+                        },
+                        indent=2,
+                    ),
+                )
+            ]
+
         else:
             return [
                 TextContent(
@@ -520,12 +638,14 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             ]
 
     except Exception as e:
+        import traceback
         return [
             TextContent(
                 type="text",
                 text=json.dumps(
                     {
                         "error": str(e),
+                        "traceback": traceback.format_exc(),
                         "tool": name,
                     },
                     indent=2,

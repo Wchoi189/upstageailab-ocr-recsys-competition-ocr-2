@@ -32,7 +32,7 @@ ensure_project_root_on_sys_path()
 
 PROJECT_ROOT = get_project_root()
 
-STANDARDS_CONFIG_DIR = PROJECT_ROOT / "AgentQMS" / "standards" / "tier1-foundations"
+STANDARDS_CONFIG_DIR = PROJECT_ROOT / "AgentQMS" / "standards" / "tier4-workflows"
 CONFIG_PATH = STANDARDS_CONFIG_DIR / "workflow-detector.yaml"
 _CONFIG_CACHE: dict[str, Any] | None = None
 _CONFIG_LOADER = ConfigLoader(cache_size=5)

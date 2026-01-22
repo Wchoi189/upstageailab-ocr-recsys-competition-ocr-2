@@ -37,23 +37,29 @@ tiers:
     files:
       - path: AGENTS.yaml
         priority: critical
+        mode: full
         description: Agent definitions and configurations
       - path: AgentQMS/standards/tier3-agents/copilot/config.yaml
         priority: high
+        mode: full
         description: GitHub Copilot configuration
       - path: AgentQMS/standards/tier3-agents/claude/config.yaml
         priority: high
+        mode: full
         description: Claude configuration
       - path: AgentQMS/standards/tier3-agents/cursor/config.yaml
         priority: high
+        mode: full
         description: Cursor configuration
         optional: true
       - path: AgentQMS/standards/tier3-agents/gemini/config.yaml
         priority: medium
+        mode: full
         description: Gemini configuration
         optional: true
       - path: .github/copilot-instructions.md
         priority: high
+        mode: reference
         description: Copilot instructions for this project
 
   tier2:
@@ -63,20 +69,20 @@ tiers:
     files:
       - path: AgentQMS/standards/INDEX.yaml
         priority: high
+        mode: reference
         description: Standards index including agent tier
       - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
         priority: high
+        mode: reference
         description: Available tools for agents
-      - path: AgentQMS/mcp_server.py
-        priority: medium
-        description: Model Context Protocol server
-        optional: true
       - path: AgentQMS/mcp_schema.yaml
         priority: medium
+        mode: reference
         description: MCP schema definition
         optional: true
       - path: experiment_manager/agent_interface.yaml
         priority: medium
+        mode: reference
         description: Agent interface for experiment tools
         optional: true
 
@@ -87,14 +93,18 @@ tiers:
     files:
       - path: AgentQMS/standards/tier2-framework/quickstart.yaml
         priority: medium
+        mode: reference
         description: Quick start guide for agents
       - path: README.md
         priority: medium
+        mode: reference
         description: Project overview
       - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
         priority: low
+        mode: reference
         description: Workflow requirements
       - path: .qwen/settings.json
         priority: low
+        mode: structure
         description: Qwen VLM settings
         optional: true

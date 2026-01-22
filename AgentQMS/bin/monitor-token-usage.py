@@ -23,9 +23,10 @@ from pathlib import Path
 
 def get_file_size(path: Path) -> int:
     """Get file size in bytes."""
-    if path.exists():
+    try:
         return path.stat().st_size
-    return 0
+    except FileNotFoundError:
+        return 0
 
 
 def count_lines(path: Path) -> int:
@@ -37,11 +38,11 @@ def count_lines(path: Path) -> int:
 
 
 def estimate_tokens(text_length: int) -> int:
-    """Estimate token count (rough approximation: 4 chars per token)."""
+    """Estimate token count (rough approximation: 4 bytes per token)."""
     return text_length // 4
 
 
-def analyze_registry_consolidation():
+def analyze_registry_consolidation(detailed: bool = False):
     """Analyze token savings from registry consolidation."""
     print("=" * 70)
     print("📊 Registry Consolidation Analysis")
@@ -57,28 +58,37 @@ def analyze_registry_consolidation():
     old_size = get_file_size(index_yaml) + get_file_size(router_yaml)
     new_size = get_file_size(registry_yaml)
 
-    old_lines = count_lines(index_yaml) + count_lines(router_yaml)
-    new_lines = count_lines(registry_yaml)
+    old_lines = new_lines = 0
+    if detailed:
+        old_lines = count_lines(index_yaml) + count_lines(router_yaml)
+        new_lines = count_lines(registry_yaml)
 
     old_tokens = estimate_tokens(old_size)
     new_tokens = estimate_tokens(new_size)
 
-    print(f"\n📁 File Sizes:")
-    print(f"   Old (INDEX.yaml + standards-router.yaml): {old_size:,} bytes ({old_lines} lines)")
-    print(f"   New (registry.yaml):                      {new_size:,} bytes ({new_lines} lines)")
+    print("\n📁 File Sizes:")
+    if detailed:
+        print(f"   Old (INDEX.yaml + standards-router.yaml): {old_size:,} bytes ({old_lines} lines)")
+        print(f"   New (registry.yaml):                      {new_size:,} bytes ({new_lines} lines)")
+    else:
+        print(f"   Old (INDEX.yaml + standards-router.yaml): {old_size:,} bytes")
+        print(f"   New (registry.yaml):                      {new_size:,} bytes")
+
     print(f"   Difference:                               {old_size - new_size:+,} bytes")
 
-    print(f"\n🪙 Estimated Tokens:")
+    print("\n🪙 Estimated Tokens:")
     print(f"   Old system:  ~{old_tokens:,} tokens")
     print(f"   New system:  ~{new_tokens:,} tokens")
-    print(f"   Savings:     ~{old_tokens - new_tokens:,} tokens ({((old_size - new_size) / old_size * 100):.1f}% reduction)")
+
+    reduction_pct = ((old_size - new_size) / old_size * 100) if old_size else 0.0
+    print(f"   Savings:     ~{old_tokens - new_tokens:,} tokens ({reduction_pct:.1f}% reduction)")
 
     return {
         "old_size": old_size,
         "new_size": new_size,
         "savings_bytes": old_size - new_size,
         "savings_tokens": old_tokens - new_tokens,
-        "reduction_pct": (old_size - new_size) / old_size * 100 if old_size > 0 else 0,
+        "reduction_pct": reduction_pct,
     }
 
 
@@ -97,7 +107,7 @@ def analyze_tool_consolidation():
         "documentation_quality_monitor",
     ]
 
-    print(f"\n📦 Tool Reduction:")
+    print("\n📦 Tool Reduction:")
     print(f"   Old: {len(old_tools)} separate tool entries")
     print(f"   New: 1 unified qms CLI with {len(old_tools)} subcommands")
     print(f"   Reduction: {len(old_tools) - 1} tool entries removed from context")
@@ -107,7 +117,7 @@ def analyze_tool_consolidation():
     old_tool_tokens = len(old_tools) * tokens_per_tool
     new_tool_tokens = tokens_per_tool + (20 * len(old_tools))  # Main entry + subcommand hints
 
-    print(f"\n🪙 Estimated Token Impact:")
+    print("\n🪙 Estimated Token Impact:")
     print(f"   Old tool mappings: ~{old_tool_tokens:,} tokens")
     print(f"   New tool mapping:  ~{new_tool_tokens:,} tokens")
     print(f"   Savings:           ~{old_tool_tokens - new_tool_tokens:,} tokens")
@@ -121,7 +131,7 @@ def analyze_tool_consolidation():
     }
 
 
-def analyze_path_aware_discovery(current_path: str | None = None):
+def analyze_path_aware_discovery(current_path: str | None = None, detailed: bool = False):
     """Analyze path-aware discovery efficiency."""
     print("\n" + "=" * 70)
     print("🎯 Path-Aware Discovery Analysis")
@@ -133,7 +143,7 @@ def analyze_path_aware_discovery(current_path: str | None = None):
         # Use the ConfigLoader to resolve standards
         try:
             import sys
-            from pathlib import Path
+
             project_root = Path(__file__).parent.parent.parent
             if str(project_root) not in sys.path:
                 sys.path.insert(0, str(project_root))
@@ -149,35 +159,46 @@ def analyze_path_aware_discovery(current_path: str | None = None):
             print(f"\n✅ Active Standards Resolved: {len(active_standards)}")
             if active_standards:
                 print("\n   Standards loaded:")
-                for std in active_standards[:10]:  # Show first 10
+                limit = 10 if not detailed else len(active_standards)
+                for std in active_standards[:limit]:
                     print(f"   - {std}")
-                if len(active_standards) > 10:
-                    print(f"   ... and {len(active_standards) - 10} more")
+                if len(active_standards) > limit:
+                    print(f"   ... and {len(active_standards) - limit} more")
 
             # Estimate token savings vs. loading all standards
-            import yaml
+            try:
+                import yaml
+            except ImportError:
+                print("\n⚠️  PyYAML not installed, skipping parts of analysis.")
+                return None
+
             registry_path = Path("AgentQMS/standards/registry.yaml")
-            with registry_path.open("r") as f:
-                registry = yaml.safe_load(f)
+            if registry_path.exists():
+                with registry_path.open("r") as f:
+                    registry = yaml.safe_load(f)
 
-            all_standards = set()
-            for task_config in registry.get("task_mappings", {}).values():
-                all_standards.update(task_config.get("standards", []))
+                all_standards = set()
+                for task_config in registry.get("task_mappings", {}).values():
+                    all_standards.update(task_config.get("standards", []))
+                total_standards = len(all_standards)
+            else:
+                total_standards = 0
 
-            total_standards = len(all_standards)
             loaded_standards = len(active_standards)
 
-            print(f"\n💡 Efficiency Gain:")
+            print("\n💡 Efficiency Gain:")
             print(f"   Total standards in registry: {total_standards}")
             print(f"   Standards loaded for path:   {loaded_standards}")
-            print(f"   Reduction:                   {total_standards - loaded_standards} standards ({((total_standards - loaded_standards) / total_standards * 100):.1f}%)")
+
+            reduction_pct = ((total_standards - loaded_standards) / total_standards * 100) if total_standards else 0.0
+            print(f"   Reduction:                   {total_standards - loaded_standards} standards ({reduction_pct:.1f}%)")
 
             # Estimate token impact (each standard ~500 tokens)
             tokens_per_standard = 500
             old_tokens = total_standards * tokens_per_standard
             new_tokens = loaded_standards * tokens_per_standard
 
-            print(f"\n🪙 Estimated Token Savings:")
+            print("\n🪙 Estimated Token Savings:")
             print(f"   Without path-aware:  ~{old_tokens:,} tokens")
             print(f"   With path-aware:     ~{new_tokens:,} tokens")
             print(f"   Savings:             ~{old_tokens - new_tokens:,} tokens")
@@ -186,7 +207,7 @@ def analyze_path_aware_discovery(current_path: str | None = None):
                 "total_standards": total_standards,
                 "loaded_standards": loaded_standards,
                 "savings_tokens": old_tokens - new_tokens,
-                "reduction_pct": (total_standards - loaded_standards) / total_standards * 100,
+                "reduction_pct": reduction_pct,
             }
 
         except Exception as e:
@@ -224,7 +245,7 @@ def generate_summary_report(results: dict):
         print(f"   3. Path-Aware Discovery:      ~{savings:,} tokens saved (per request)")
 
     print(f"\n💰 Total Estimated Savings:      ~{total_savings:,} tokens per agent session")
-    print(f"   (excluding path-aware discovery which applies per request)")
+    print("   (excluding path-aware discovery which applies per request)")
 
     print("\n📈 Performance Impact:")
     print("   - Reduced AI decision complexity (5 tools → 1 unified CLI)")
@@ -265,9 +286,9 @@ def main():
         print("\n🔍 AgentQMS Token Usage Analysis")
         print("=" * 70)
 
-    results["registry"] = analyze_registry_consolidation()
+    results["registry"] = analyze_registry_consolidation(args.detailed)
     results["tools"] = analyze_tool_consolidation()
-    results["discovery"] = analyze_path_aware_discovery(args.path)
+    results["discovery"] = analyze_path_aware_discovery(args.path, args.detailed)
 
     if args.json:
         print(json.dumps(results, indent=2))

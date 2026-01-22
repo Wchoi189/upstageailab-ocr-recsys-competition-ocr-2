@@ -36,18 +36,23 @@ tiers:
     files:
       - path: AgentQMS/standards/INDEX.yaml
         priority: critical
+        mode: reference
         description: Standards index and navigation
       - path: AgentQMS/standards/tier1-sst/artifact-types.yaml
         priority: critical
+        mode: reference
         description: Artifact type definitions
       - path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
         priority: critical
+        mode: reference
         description: Naming conventions for artifacts and files
       - path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
         priority: high
+        mode: reference
         description: File organization rules
       - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
         priority: high
+        mode: reference
         description: Available documentation tools and commands
 
   tier2:
@@ -57,24 +62,31 @@ tiers:
     files:
       - path: docs/index.md
         priority: high
+        mode: reference
         description: Documentation index
       - path: README.md
         priority: high
+        mode: reference
         description: Project README
       - path: CHANGELOG.md
         priority: high
+        mode: reference
         description: Project changelog
       - path: CONTRIBUTING.md
         priority: medium
+        mode: reference
         description: Contribution guidelines
       - path: AgentQMS/standards/tier2-framework/git-conventions.yaml
         priority: medium
+        mode: reference
         description: Git and commit conventions
       - path: AgentQMS/tools/documentation/auto_generate_index.py
         priority: medium
+        mode: structure
         description: Documentation index generator
       - path: AgentQMS/tools/compliance/validate_artifacts.py
         priority: medium
+        mode: structure
         description: Artifact validation tool
 
   tier3:
@@ -84,15 +96,19 @@ tiers:
     files:
       - path: docs/_templates/artifact-template.md
         priority: medium
+        mode: reference
         description: Artifact template
         optional: true
       - path: AgentQMS/standards/tier2-framework/quickstart.yaml
         priority: medium
+        mode: reference
         description: Quick start guide for new developers
       - path: docs/guides/
         priority: low
+        mode: reference
         description: User guides directory
         optional: true
       - path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
         priority: low
+        mode: reference
         description: Workflow requirements
