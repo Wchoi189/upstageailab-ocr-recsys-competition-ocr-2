@@ -173,7 +173,7 @@ logs/
 .hydra/hydra.log
 !__DEBUG__/**/logs
 !__DEBUG__/**/artifacts
-
+!scripts/checkpoints
 # Claude Code - Runtime directories
 AgentQMS/standards/tier3-agents/claude/*
 AgentQMS/standards/tier3-agents/claude/.claude.json
@@ -193,3 +193,26 @@ project_compass/dependency_graph.txt
 project_compass/config_access.txt
 project_compass/context_tree.txt
 project_compass/config_deps.txt
+
+# External Artifacts (Moved out of root)
+wandb/
+lightning_logs/
+outputs/
+hydra_outputs/
+data/
+.uptraint_cache/
+__pycache__/
+*.pyc
+
+# Archives
+archive/
+_archive/
+.archive/
+apps/
+
+# Dependencies & Venvs (External)
+node_modules/
+global/
+.ruff_cache/
+mcp-visibility-extension/
+packages/

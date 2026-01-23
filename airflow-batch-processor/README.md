@@ -71,3 +71,20 @@ Optional (DockerOperator use): mount Docker socket to the scheduler for launchin
 ## Notes
 - The Upstage client is a scaffold; adapt endpoint/routes and auth to your account.
 - For AWS Batch, add a separate DAG/operator and boto3 integration.
+
+
+Auth token request
+```bash
+  curl -X POST "http://172.17.0.1:8080/auth/token" -H "Content-Type: application/json" -d '{"username": "admin", "password": "admin"}'
+```
+
+Example
+```bash
+curl -X GET "http://localhost:8080/api/v2/dags" \
+--user "admin:admin"
+```
+
+Example
+```bash
+  curl -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwianRpIjoiNzg0ZTNhMTk1MzA2NGM1ZmJhOTY4ZGYyZWY4YTI4OGYiLCJpc3MiOltdLCJhdWQiOiJhcGFjaGUtYWlyZmxvdyIsIm5iZiI6MTc2OTAzNjkwNCwiZXhwIjoxNzY5MTIzMzA0LCJpYXQiOjE3NjkwMzY5MDR9.kcz-sjZFH2Dmedi9EDuT_yRycN4M8R12fyosJQnZM0FjlmY3437NiyTv3ikHAUo2grpKTTQYiYSlnS0iCzWXJg" "http://localhost:8080/api/v2/dags"
+```

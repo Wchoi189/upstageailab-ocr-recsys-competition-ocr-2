@@ -21,8 +21,26 @@
       "includePatterns": [
         "**/pyproject.toml",
         "**/AGENTS.yaml",
+        "**/AGENTS.md",
         "**/README.md",
-        "**/AgentQMS/.agentqms/plugins/context_bundles/*.yaml"
+        "**/.qwen/QWEN.md",
+        "**/AgentQMS/**/*",
+        "**/ocr/**/*",
+        "**/configs/**/*",
+        "**/project_compass/**/*",
+        "**/scripts/**/*",
+        "**/runners/**/*",
+        "**/bin/**/*",
+        "**/Makefile",
+        "**/package.json",
+        "**/pyproject.toml",
+        "**/experiment_manager/**/*",
+        "**/agent-debug-toolkit/**/*",
+        "**/airflow-batch-processor/**/*",
+        "**/analysis/**/*",
+        "**/apps/**/*",
+        "**/packages/**/*",
+        "**/tests/**/*"
       ],
       "excludePatterns": [
         "**/node_modules/**",
@@ -30,11 +48,26 @@
         "**/logs/**",
         "**/outputs/**",
         "**/data/**",
+        "**/__pycache__/**",
+        "**/*.pyc",
+        "**/.pytest_cache/**",
+        "**/dist/**",
+        "**/build/**",
+        "**/venv/**",
+        "**/.venv/**",
         "**/archive/**",
-        "**/_*/**"
+        "**/_*/**",
+        "**/docs/assets/**",
+        "**/docs/generated/**",
+        "**/experiment_manager/experiments/**/outputs/**",
+        "**/experiment_manager/experiments/**/checkpoints/**",
+        "**/experiment_manager/experiments/**/__pycache__/**",
+        "**/AgentQMS/standards/tier3-agents/claude/**/*"
       ]
     },
-    "includeDirectories": [],
+    "includeDirectories": [
+      "airflow-batch-processor"
+    ],
     "loadMemoryFromIncludeDirectories": false,
     "discoveryMaxDirs": 15,
     "importFormat": "tree"

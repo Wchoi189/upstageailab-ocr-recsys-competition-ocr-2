@@ -14,9 +14,17 @@ global:
     # ========================================================================
     # Base Directories
     # ========================================================================
+    # ========================================================================
+    # Base Directories
+    # ========================================================================
     root_dir: .
-    data_dir: ${global.paths.root_dir}/data
-    output_dir: ${global.paths.root_dir}/outputs
+    # data_dir: ${global.paths.root_dir}/data  <-- OLD (In-project)
+    # output_dir: ${global.paths.root_dir}/outputs <-- OLD (In-project)
+
+    # NEW: External Storage (Anti-Bloat)
+    # ------------------------------------------------------------------------
+    data_dir: /workspaces/project-artifacts/ocr-external-storage/data
+    output_dir: /workspaces/project-artifacts/ocr-external-storage/outputs
 
     # Dataset Root (Added for V5 Refactor)
     datasets_root: ${global.paths.data_dir}/datasets
@@ -33,9 +41,10 @@ global:
     # ========================================================================
     # Training Artifacts
     # ========================================================================
-    checkpoints: ${global.paths.output_dir}/checkpoints
-    logs: ${global.paths.output_dir}/logs
-    wandb: ${global.paths.output_dir}/wandb
+    # Pointing to External Storage Siblings (Phase 1 Structure)
+    checkpoints: /workspaces/project-artifacts/ocr-external-storage/checkpoints
+    logs: /workspaces/project-artifacts/ocr-external-storage/lightning_logs
+    wandb: /workspaces/project-artifacts/ocr-external-storage/wandb
 
     # ========================================================================
     # Data Subdirectories

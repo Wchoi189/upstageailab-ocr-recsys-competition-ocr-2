@@ -47,11 +47,14 @@ The result is an environment where AI agents can autonomously navigate, debug, a
 | :---------------------------------- | :------- | :--------- |
 | **Phase 1-4:** Core Development     | Complete | 100%       |
 | **Phase 5:** Data Refinement & ETL  | Active   | 90%        |
-| **Phase 6:** Architectural Upgrades | Planned  | 0%         |
+| **Phase 6:** Architectural Upgrades | Active   | 50%        |
 
 **Overall Progress:** 85%
 
-**Current Focus:** Training PARSeq/CRNN text recognition models on the AI Hub 공공행정문서 dataset (616,366 samples, LMDB-optimized).
+**Current Focus:**
+- **Domains First architecture refactor:** Moving source code and Hydra configs to domain-centric structure (50% complete).
+- **Inter Agent Collaboration Protocol (IACP):** Establishing protocols for multi-agent workflows (50% complete).
+- **Model Training:** Training PARSeq/CRNN text recognition models on the AI Hub 공공행정문서 dataset.
 
 ---
 
@@ -120,21 +123,21 @@ graph TD
 
 ## Core Infrastructure
 
-### Project Compass: AI Navigation
+### Project Compass V2: Vessel AI Protocols
 
 **Problem:** AI agents require extensive context to navigate complex codebases, leading to inefficient token usage and hallucinations.
 
-**Solution:** A centralized state management system exposed via **Model Context Protocol (MCP)**, acting as the project's "central nervous system."
+**Solution:** **Project Compass V2 (Vessel)** offers a strict, schema-driven architecture for state management. It enforces a "Pulse" lifecycle for work units and keeps a clean "Staging" area for artifacts, minimizing context pollution.
 
 **Key Features:**
-- **Active Context:** [Current Session](project_compass/active_context/current_session.yml), [Blocker Registry](project_compass/active_context/blockers.yml)
-- **Environment Ledger:** [Dataset Registry](project_compass/environments/dataset_registry.yml)
-- **Agentic Tools:** `env_check`, `session_init`, `reconcile`, `ocr_convert`, `ocr_inspect`
+- **Vessel Architecture:** State stored in `.vessel/` with strict rule injection from `vault/`.
+- **Pulse Lifecycle:** Explicit work units (`pulse-init`, `pulse-sync`, `pulse-export`) replacing vague sessions.
+- **Project Documentation:** [Project Compass V2 Documentation](project_compass/AGENTS.md)
 
-**Impact:** Reduced context-loading overhead in multi-session workflows:
-- Initial file reads: ~50 files → ~8 curated state files (84% reduction)
-- Eliminated ~15 clarifying questions per session through explicit state management
-- Enabled agents to start productive work in ~3 minutes vs. ~10 minutes baseline
+**Impact:**
+- **Zero-Context Start:** Agents read `AGENTS.md` and `vessel_state.json` to immediately understand the project state.
+- **Artifact Purity:** Staging area ensures only relevant files are indexed.
+- **Protocol Enforcement:** CLI tools (`compass`) allow agents to self-manage their environment.
 
 ### AST Debug Toolkit (ADT)
 
@@ -408,6 +411,18 @@ Frontend proof-of-concept inspired by the Upstage Document OCR Console.
 | **Engineering**   | UV (required), AWS Fargate, LMDB, Parquet |
 | **Frontend**      | React 19, Next.js 16, Chakra UI           |
 | **Observability** | W&B, AgentQMS, Project Compass (MCP)      |
+| **AI Context**    | QWEN.md (in .qwen/), MCP, ADT             |
+
+---
+
+## Project Context for AI Agents
+
+For AI agents working with this codebase, please refer to the following context files:
+
+- **`.qwen/QWEN.md`**: Essential project context and navigation guide for AI agents
+- **`AGENTS.md`**: Human and AI entrypoint documentation
+- **`AGENTS.yaml`**: Machine-readable project configuration
+- **`project_compass/`**: Vessel-based project navigation system
 
 ---
 

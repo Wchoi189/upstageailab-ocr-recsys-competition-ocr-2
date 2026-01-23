@@ -127,6 +127,13 @@ exclude = [
     "apps/agentqms-dashboard/",
     "tests/",  # Don't strictly type-check tests
     "runners/",  # ML runners often have dynamic types
+    # External Artifacts
+    "wandb/",
+    "lightning_logs/",
+    "hydra_outputs/",
+    "apps/",
+    "data/",
+    "packages/",
 ]
 
 # Development-friendly settings (optimized for productivity)
@@ -193,6 +200,15 @@ exclude = [
     "node_modules",
     "site-packages",
     "venv",
+    # External Artifacts (Ignored)
+    "wandb",
+    "lightning_logs",
+    "outputs",
+    "hydra_outputs",
+    "archive",
+    "apps",     # Symlinked
+    "data",     # Symlinked
+    "packages", # Symlinked
 ]
 
 [tool.ruff.lint]

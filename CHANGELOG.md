@@ -36,6 +36,8 @@
 
 ## [Unreleased]
 
+- **[2026-01-24 03:30] Codebase Partitioned**: Moved non-source artifacts (logs, data, archives) to external storage to reduce context bloat.
+
 - **[BUG-001] Fixed Detection Pipeline "Red Line" Failure (2026-01-15)**:
   - **Issue**: Uninitialized `DBHead` models output saturated probability maps (~0.5 mean) due to improper bias initialization, causing catastrophic failure.
   - **Fix**: Initialized final classification layer bias to `-4.595` (background prior `p=0.01`).

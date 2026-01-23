@@ -18,6 +18,10 @@ export PATH="$SCRIPT_DIR/bin:$PATH"
 # Set PYTHONPATH
 export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
 
+# Project Artifacts - External Storage
+export WANDB_DIR="/workspaces/project-artifacts/ocr-external-storage/wandb"
+export PYTHONDONTWRITEBYTECODE=1
+
 # Verify
 echo "✅ AgentQMS environment configured"
 echo "   CLI: $(which aqms 2>/dev/null || echo 'aqms (in $SCRIPT_DIR/bin)')"
