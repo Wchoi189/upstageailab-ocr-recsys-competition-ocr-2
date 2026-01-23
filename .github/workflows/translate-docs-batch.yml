@@ -129,6 +129,9 @@ jobs:
              if ! git diff --staged --quiet; then
                git commit -m "docs: add Korean translation for ${FILE_PATH} [skip ci]"
 
+               # Pull changes before pushing to avoid conflicts
+               git pull --rebase origin main
+
                # Retry push with pull in case of concurrent updates
                for i in {1..5}; do
                  if git push; then

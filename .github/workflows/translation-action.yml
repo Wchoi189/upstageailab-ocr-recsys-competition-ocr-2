@@ -78,6 +78,9 @@ jobs:
           if [ -f "README.ko.md" ]; then
             git add README.ko.md
             git diff --staged --quiet || git commit -m "docs: update Korean translation [skip ci]"
+
+            # Pull changes before pushing
+            git pull --rebase origin main
             git push
           else
              echo "README.ko.md not found, nothing to commit."
