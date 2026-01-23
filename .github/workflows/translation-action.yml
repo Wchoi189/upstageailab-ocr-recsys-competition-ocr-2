@@ -73,6 +73,12 @@ jobs:
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add README.ko.md
-          git diff --staged --quiet || git commit -m "docs: update Korean translation [skip ci]"
-          git push
+
+          # Only add if file exists to avoid fatal error
+          if [ -f "README.ko.md" ]; then
+            git add README.ko.md
+            git diff --staged --quiet || git commit -m "docs: update Korean translation [skip ci]"
+            git push
+          else
+             echo "README.ko.md not found, nothing to commit."
+          fi

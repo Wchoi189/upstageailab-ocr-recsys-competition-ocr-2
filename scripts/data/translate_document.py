@@ -9,6 +9,8 @@ Supports recursive translation of linked local Markdown files.
 import argparse
 import os
 import re
+import re
+import sys
 from pathlib import Path
 
 import openai
@@ -209,6 +211,7 @@ def main():
 
     translator = DocumentTranslator(model=args.model, dry_run=args.dry_run, recursive=args.recursive)
 
+    success = True
     for file_str in args.files:
         file_path = Path(file_str)
         if not file_path.exists():
@@ -226,9 +229,13 @@ def main():
         else:
             output_path = translator.normalize_artifact_name(file_path.with_suffix(".ko.md"))
 
-        translator.translate_file(file_path, output_path)
+        if not translator.translate_file(file_path, output_path):
+            success = False
 
     translator.print_usage()
+
+    if not success:
+        sys.exit(1)
 
 
 if __name__ == "__main__":

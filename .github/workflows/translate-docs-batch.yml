@@ -121,24 +121,30 @@ jobs:
           git config --local user.name "GitHub Action"
 
           # Add the specific translated files (unquoted for glob expansion)
-          git add *.ko.md *.ko.md.meta 2>/dev/null || true
+          # Use || true to suppress error if no files match, but we want to capture real errors?
+          # Actually, if no files match, git add fails. We want to avoid that if translation failed silently (but we fixed the script now).
+          # Still, safest to try/catch
 
-          if ! git diff --staged --quiet; then
-            git commit -m "docs: add Korean translation for ${FILE_PATH} [skip ci]"
+          if git add *.ko.md *.ko.md.meta 2>/dev/null; then
+             if ! git diff --staged --quiet; then
+               git commit -m "docs: add Korean translation for ${FILE_PATH} [skip ci]"
 
-            # Retry push with pull in case of concurrent updates
-            for i in {1..5}; do
-              if git push; then
-                echo "✅ Push successful"
-                break
-              else
-                echo "⚠️ Push failed, attempt $i/5. Pulling and retrying..."
-                git pull --rebase origin main
-                sleep $((i * 2))
-              fi
-            done
+               # Retry push with pull in case of concurrent updates
+               for i in {1..5}; do
+                 if git push; then
+                   echo "✅ Push successful"
+                   break
+                 else
+                   echo "⚠️ Push failed, attempt $i/5. Pulling and retrying..."
+                   git pull --rebase origin main
+                   sleep $((i * 2))
+                 fi
+               done
+             else
+               echo "No changes to commit"
+             fi
           else
-            echo "No changes to commit"
+             echo "No localized files found to add."
           fi
 
   summary:
