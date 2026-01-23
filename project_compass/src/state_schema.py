@@ -42,6 +42,10 @@ class ArtifactType(str, Enum):
     IMPLEMENTATION_PLAN = "implementation_plan"
     BUG_REPORT = "bug_report"
     AUDIT = "audit"
+    # Spec Kit artifacts
+    SPECIFICATION = "specification"
+    REQUIREMENTS = "requirements"
+    ARCHITECTURE = "architecture"
 
 
 class Artifact(BaseModel):

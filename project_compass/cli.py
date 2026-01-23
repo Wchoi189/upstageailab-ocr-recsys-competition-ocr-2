@@ -9,10 +9,14 @@ Commands:
     pulse-sync     : Register staging artifacts
     pulse-export   : Archive pulse to history
     pulse-checkpoint: Evaluate pulse maturity
-"""
+    spec-constitution: Establish project principles
+    spec-specify     : Create baseline specification
+    spec-plan        : Create implementation plan
+    spec-tasks       : Generate actionable tasks"""
 
 import argparse
 import sys
+from pathlib import Path
 
 try:
     from project_compass.src.core import (
@@ -131,6 +135,47 @@ Examples:
         "--burden",
         choices=["low", "medium", "high"],
         help="Update token burden level"
+    )
+
+    # Spec Kit Integration Commands
+    spec_constitution_parser = subparsers.add_parser(
+        "spec-constitution",
+        help="Establish project principles for spec-driven development"
+    )
+    spec_constitution_parser.add_argument(
+        "principles",
+        help="Project principles and development guidelines"
+    )
+
+    spec_specify_parser = subparsers.add_parser(
+        "spec-specify",
+        help="Create baseline specification document"
+    )
+    spec_specify_parser.add_argument(
+        "--scope", "-s",
+        help="Scope and context for the specification"
+    )
+    spec_specify_parser.add_argument(
+        "--requirements", "-r",
+        help="Key requirements to capture"
+    )
+
+    spec_plan_parser = subparsers.add_parser(
+        "spec-plan",
+        help="Create implementation plan from specification"
+    )
+    spec_plan_parser.add_argument(
+        "--approach", "-a",
+        help="Implementation approach and strategy"
+    )
+
+    spec_tasks_parser = subparsers.add_parser(
+        "spec-tasks",
+        help="Generate actionable tasks from implementation plan"
+    )
+    spec_tasks_parser.add_argument(
+        "--focus", "-f",
+        help="Specific area to focus task generation on"
     )
 
     args = parser.parse_args()
@@ -279,6 +324,188 @@ Examples:
             else:
                 print("\n✅ Pulse can continue")
             sys.exit(0)
+
+        # Spec Kit Integration Commands
+        elif args.command == "spec-constitution":
+            print("📋 Spec Constitution: Establishing project principles...\n")
+            from datetime import datetime
+
+            try:
+                # Create constitution file in staging
+                staging_dir = Path("project_compass/pulse_staging/artifacts")
+                constitution_file = staging_dir / "constitution.md"
+
+                constitution_content = f"""# Project Constitution
+
+## Principles
+{args.principles}
+
+## Established
+Date: {datetime.now().isoformat()}
+Tool: Project Compass v2 CLI
+"""
+
+                staging_dir.mkdir(parents=True, exist_ok=True)
+                constitution_file.write_text(constitution_content)
+
+                print("✅ Project constitution established")
+                print(f"📄 File: {constitution_file}")
+                print("💡 Register with: uv run compass pulse-sync --path constitution.md --type requirements")
+
+            except Exception as e:
+                print(f"❌ Error establishing constitution: {str(e)}")
+                sys.exit(1)
+
+        elif args.command == "spec-specify":
+            print("📝 Spec Specify: Creating baseline specification...\n")
+            from datetime import datetime
+
+            try:
+                # Create specification file in staging
+                staging_dir = Path("project_compass/pulse_staging/artifacts")
+                spec_file = staging_dir / "specification.md"
+
+                scope_text = getattr(args, 'scope', "General project scope")
+                requirements_text = getattr(args, 'requirements', "TBD")
+
+                spec_content = f"""# Project Specification
+
+## Scope
+{scope_text}
+
+## Requirements
+{requirements_text}
+
+## Status
+- Created: {datetime.now().isoformat()}
+- Tool: Project Compass v2 CLI
+- Status: Draft
+"""
+
+                staging_dir.mkdir(parents=True, exist_ok=True)
+                spec_file.write_text(spec_content)
+
+                print("✅ Specification created")
+                print(f"📄 File: {spec_file}")
+                print("💡 Register with: uv run compass pulse-sync --path specification.md --type specification")
+
+            except Exception as e:
+                print(f"❌ Error creating specification: {str(e)}")
+                sys.exit(1)
+
+        elif args.command == "spec-plan":
+            print("📋 Spec Plan: Creating implementation plan...\n")
+            from datetime import datetime
+
+            try:
+                # Create implementation plan file in staging
+                staging_dir = Path("project_compass/pulse_staging/artifacts")
+                plan_file = staging_dir / "implementation_plan.md"
+
+                approach_text = getattr(args, 'approach', "Standard implementation approach")
+
+                plan_content = f"""# Implementation Plan
+
+## Approach
+{approach_text}
+
+## High-Level Steps
+1. **Analysis Phase**
+   - Requirements review
+   - Architecture design
+   - Risk assessment
+
+2. **Development Phase**
+   - Core implementation
+   - Testing strategy
+   - Integration planning
+
+3. **Validation Phase**
+   - Quality assurance
+   - Performance testing
+   - Deployment preparation
+
+## Success Criteria
+- All requirements met
+- Code quality standards maintained
+- Performance benchmarks achieved
+
+## Timeline
+TBD - To be determined based on scope and resources
+
+## Status
+- Created: {datetime.now().isoformat()}
+- Tool: Project Compass v2 CLI
+- Status: Draft
+"""
+
+                staging_dir.mkdir(parents=True, exist_ok=True)
+                plan_file.write_text(plan_content)
+
+                print("✅ Implementation plan created")
+                print(f"📄 File: {plan_file}")
+                print("💡 Register with: uv run compass pulse-sync --path implementation_plan.md --type implementation_plan")
+
+            except Exception as e:
+                print(f"❌ Error creating implementation plan: {str(e)}")
+                sys.exit(1)
+
+        elif args.command == "spec-tasks":
+            print("🎯 Spec Tasks: Generating actionable tasks...\n")
+            from datetime import datetime
+
+            try:
+                # Create tasks file in staging
+                staging_dir = Path("project_compass/pulse_staging/artifacts")
+                tasks_file = staging_dir / "tasks.md"
+
+                focus_text = getattr(args, 'focus', "General development tasks")
+
+                tasks_content = f"""# Actionable Tasks
+
+## Focus Area: {focus_text}
+
+## Task Breakdown
+
+### Phase 1: Foundation
+- [ ] Set up development environment
+- [ ] Initialize project structure
+- [ ] Configure CI/CD pipeline
+- [ ] Establish coding standards
+
+### Phase 2: Core Development
+- [ ] Implement core functionality
+- [ ] Write unit tests
+- [ ] Integration testing
+- [ ] Documentation
+
+### Phase 3: Validation & Deployment
+- [ ] Performance testing
+- [ ] Security review
+- [ ] User acceptance testing
+- [ ] Production deployment
+
+## Priority Matrix
+- **High Priority**: Environment setup, core functionality
+- **Medium Priority**: Testing, documentation
+- **Low Priority**: Optimization, advanced features
+
+## Status
+- Created: {datetime.now().isoformat()}
+- Tool: Project Compass v2 CLI
+- Status: Draft
+"""
+
+                staging_dir.mkdir(parents=True, exist_ok=True)
+                tasks_file.write_text(tasks_content)
+
+                print("✅ Tasks generated")
+                print(f"📄 File: {tasks_file}")
+                print("💡 Register with: uv run compass pulse-sync --path tasks.md --type implementation_plan")
+
+            except Exception as e:
+                print(f"❌ Error generating tasks: {str(e)}")
+                sys.exit(1)
 
     except Exception as e:
         print(f"❌ ERROR: {str(e)}", file=sys.stderr)

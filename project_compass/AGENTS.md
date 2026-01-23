@@ -114,3 +114,45 @@ Rules in `vault/directives/` are auto-injected on pulse-init:
 - `02_artifact_purity.md` - Staging constraints, zero-narrative policy
 
 Milestone-specific rules: `vault/milestones/{milestone_id}.md`
+
+## 8. Spec Kit Integration
+
+Project Compass integrates with GitHub Spec Kit for spec-driven development:
+
+### MCP Tools (Meta-Tool Pattern)
+- `compass_meta_pulse` - Pulse management operations
+  - `kind: "init"` - Initialize new pulse
+  - `kind: "sync"` - Register staging artifact
+  - `kind: "export"` - Archive pulse to history
+  - `kind: "status"` - Get pulse status
+  - `kind: "checkpoint"` - Update token burden
+- `compass_meta_spec` - Spec-driven development operations
+  - `kind: "constitution"` - Establish project principles
+  - `kind: "specify"` - Create baseline specifications
+  - `kind: "plan"` - Generate implementation plans
+  - `kind: "tasks"` - Create actionable tasks
+
+### CLI Commands
+```bash
+uv run compass pulse-init \
+  --id "domain-action-target" \
+  --obj "Objective (20-500 chars)" \
+  --milestone "milestone-id"
+
+uv run compass pulse-status
+uv run compass pulse-sync --path "file.md" --type "design"
+uv run compass pulse-export
+uv run compass pulse-checkpoint --burden high
+
+uv run compass spec-constitution "principles..."
+uv run compass spec-specify --scope "context" --requirements "reqs"
+uv run compass spec-plan --approach "strategy"
+uv run compass spec-tasks --focus "area"
+```
+
+### Artifact Types
+- `specification` - Spec documents
+- `requirements` - Requirements docs
+- `architecture` - Architecture specs
+
+See: `design/spec-kit-integration.md`

@@ -137,88 +137,88 @@ async def list_tools() -> list[Tool]:
     """List all pulse management tools."""
     return [
         Tool(
-            name="pulse_init",
-            description="Initialize a new pulse (work cycle). Requires pulse_id (domain-action-target format), objective (20-500 chars), and milestone_id.",
+            name="compass_meta_pulse",
+            description="Pulse management tools: init (initialize pulse), sync (register artifact), export (archive pulse), status (get status), checkpoint (update token burden)",
             inputSchema={
                 "type": "object",
                 "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["init", "sync", "export", "status", "checkpoint"],
+                        "description": "Pulse operation type",
+                    },
                     "pulse_id": {
                         "type": "string",
-                        "description": "Pulse ID in domain-action-target format (e.g., 'recognition-optimize-vocab')",
+                        "description": "Pulse ID in domain-action-target format (required for init)",
                     },
                     "objective": {
                         "type": "string",
-                        "description": "Work objective (20-500 characters)",
+                        "description": "Work objective (20-500 characters, required for init)",
                     },
                     "milestone_id": {
                         "type": "string",
-                        "description": "Milestone ID from star-chart (e.g., 'rec-opt')",
+                        "description": "Milestone ID from star-chart (required for init/sync)",
                     },
                     "phase": {
                         "type": "string",
                         "enum": ["detection", "recognition", "kie", "integration"],
-                        "description": "Active pipeline phase (default: kie)",
+                        "description": "Active pipeline phase (optional for init)",
                     },
-                },
-                "required": ["pulse_id", "objective", "milestone_id"],
-            },
-        ),
-        Tool(
-            name="pulse_sync",
-            description="Register a staging artifact in the manifest. File must exist in pulse_staging/artifacts/.",
-            inputSchema={
-                "type": "object",
-                "properties": {
                     "path": {
                         "type": "string",
-                        "description": "Artifact path relative to pulse_staging/artifacts/",
+                        "description": "Artifact path relative to pulse_staging/artifacts/ (required for sync)",
                     },
                     "artifact_type": {
                         "type": "string",
                         "enum": ["design", "research", "walkthrough", "implementation_plan", "bug_report", "audit"],
-                        "description": "Type of artifact",
+                        "description": "Type of artifact (required for sync)",
                     },
-                    "milestone_id": {
-                        "type": "string",
-                        "description": "Override milestone ID (defaults to pulse milestone)",
-                    },
-                },
-                "required": ["path", "artifact_type"],
-            },
-        ),
-        Tool(
-            name="pulse_export",
-            description="Archive current pulse to history. Performs staging audit - blocks if unregistered files exist.",
-            inputSchema={
-                "type": "object",
-                "properties": {
                     "force": {
                         "type": "boolean",
-                        "description": "Skip staging audit (NOT RECOMMENDED)",
+                        "description": "Skip staging audit (NOT RECOMMENDED, for export)",
                     },
-                },
-            },
-        ),
-        Tool(
-            name="pulse_status",
-            description="Get current pulse status including artifact count and token burden.",
-            inputSchema={
-                "type": "object",
-                "properties": {},
-            },
-        ),
-        Tool(
-            name="pulse_checkpoint",
-            description="Update token burden and get pulse maturity assessment.",
-            inputSchema={
-                "type": "object",
-                "properties": {
                     "token_burden": {
                         "type": "string",
                         "enum": ["low", "medium", "high"],
-                        "description": "Update token burden level",
+                        "description": "Update token burden level (for checkpoint)",
                     },
                 },
+                "required": ["kind"],
+            },
+        ),
+        Tool(
+            name="compass_meta_spec",
+            description="Spec Kit tools: constitution (establish principles), specify (create spec), plan (implementation plan), tasks (generate tasks)",
+            inputSchema={
+                "type": "object",
+                "properties": {
+                    "kind": {
+                        "type": "string",
+                        "enum": ["constitution", "specify", "plan", "tasks"],
+                        "description": "Spec operation type",
+                    },
+                    "principles": {
+                        "type": "string",
+                        "description": "Project principles and guidelines (required for constitution)",
+                    },
+                    "scope": {
+                        "type": "string",
+                        "description": "Scope and context for specification (for specify)",
+                    },
+                    "requirements": {
+                        "type": "string",
+                        "description": "Key requirements to capture (for specify)",
+                    },
+                    "approach": {
+                        "type": "string",
+                        "description": "Implementation approach and strategy (for plan)",
+                    },
+                    "focus_area": {
+                        "type": "string",
+                        "description": "Specific area to focus task generation on (for tasks)",
+                    },
+                },
+                "required": ["kind"],
             },
         ),
     ]
@@ -233,6 +233,32 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     except ImportError:
         from src.core import PulseManager, VesselPaths
         from src.pulse_exporter import export_pulse, register_artifact
+
+    # --- Meta-Tool Handlers (Router Pattern) ---
+
+    if name == "compass_meta_pulse":
+        from project_compass.src.router import route_pulse
+
+        kind = arguments.pop("kind", "")
+        try:
+            routing = route_pulse(kind, arguments)
+            # Recursively call the routed tool
+            return await call_tool(routing["tool_name"], routing["arguments"])
+        except ValueError as e:
+            return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+    elif name == "compass_meta_spec":
+        from project_compass.src.router import route_spec
+
+        kind = arguments.pop("kind", "")
+        try:
+            routing = route_spec(kind, arguments)
+            # Recursively call the routed tool
+            return await call_tool(routing["tool_name"], routing["arguments"])
+        except ValueError as e:
+            return [TextContent(type="text", text=f"Error: {str(e)}")]
+
+    # --- Individual Tool Handlers ---
 
     paths = VesselPaths()
     manager = PulseManager(paths)
@@ -285,6 +311,244 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             "recommendation": "export" if state.active_pulse.token_burden == "high" else "continue",
         }
         return [TextContent(type="text", text=json.dumps(assessment, indent=2))]
+
+    # Spec Kit Tool Implementations
+    elif name == "spec_constitution":
+        from datetime import datetime
+
+        try:
+            # Create constitution file in staging
+            staging_dir = STAGING_DIR / "artifacts"
+            constitution_file = staging_dir / "constitution.md"
+
+            constitution_content = f"""# Project Constitution
+
+## Principles
+{arguments["principles"]}
+
+## Established
+Date: {datetime.now().isoformat()}
+Tool: Project Compass v2
+"""
+
+            constitution_file.parent.mkdir(parents=True, exist_ok=True)
+            constitution_file.write_text(constitution_content)
+
+            # Register as artifact
+            from project_compass.src.pulse_exporter import register_artifact
+            success, message = register_artifact(
+                state_path=paths.vessel_state,
+                artifact_path="constitution.md",
+                artifact_type="requirements",
+                milestone_id=None,
+            )
+
+            response = {
+                "success": True,
+                "message": "Project constitution established and registered",
+                "file": str(constitution_file),
+                "artifact_registered": success
+            }
+        except Exception as e:
+            response = {
+                "success": False,
+                "message": f"Error establishing constitution: {str(e)}"
+            }
+
+        return [TextContent(type="text", text=json.dumps(response, indent=2))]
+
+    elif name == "spec_specify":
+        from datetime import datetime
+
+        try:
+            # Create specification file in staging
+            staging_dir = STAGING_DIR / "artifacts"
+            spec_file = staging_dir / "specification.md"
+
+            scope_text = arguments.get("scope", "General project scope")
+            requirements_text = arguments.get("requirements", "TBD")
+
+            spec_content = f"""# Project Specification
+
+## Scope
+{scope_text}
+
+## Requirements
+{requirements_text}
+
+## Status
+- Created: {datetime.now().isoformat()}
+- Tool: Project Compass v2
+- Status: Draft
+"""
+
+            spec_file.parent.mkdir(parents=True, exist_ok=True)
+            spec_file.write_text(spec_content)
+
+            # Register as artifact
+            from project_compass.src.pulse_exporter import register_artifact
+            success, message = register_artifact(
+                state_path=paths.vessel_state,
+                artifact_path="specification.md",
+                artifact_type="specification",
+                milestone_id=None,
+            )
+
+            response = {
+                "success": True,
+                "message": "Specification created and registered",
+                "file": str(spec_file),
+                "artifact_registered": success
+            }
+        except Exception as e:
+            response = {
+                "success": False,
+                "message": f"Error creating specification: {str(e)}"
+            }
+
+        return [TextContent(type="text", text=json.dumps(response, indent=2))]
+
+    elif name == "spec_plan":
+        from datetime import datetime
+
+        try:
+            # Create implementation plan file in staging
+            staging_dir = STAGING_DIR / "artifacts"
+            plan_file = staging_dir / "implementation_plan.md"
+
+            approach_text = arguments.get("approach", "Standard implementation approach")
+
+            plan_content = f"""# Implementation Plan
+
+## Approach
+{approach_text}
+
+## High-Level Steps
+1. **Analysis Phase**
+   - Requirements review
+   - Architecture design
+   - Risk assessment
+
+2. **Development Phase**
+   - Core implementation
+   - Testing strategy
+   - Integration planning
+
+3. **Validation Phase**
+   - Quality assurance
+   - Performance testing
+   - Deployment preparation
+
+## Success Criteria
+- All requirements met
+- Code quality standards maintained
+- Performance benchmarks achieved
+
+## Timeline
+TBD - To be determined based on scope and resources
+
+## Status
+- Created: {datetime.now().isoformat()}
+- Tool: Project Compass v2
+- Status: Draft
+"""
+
+            plan_file.parent.mkdir(parents=True, exist_ok=True)
+            plan_file.write_text(plan_content)
+
+            # Register as artifact
+            from project_compass.src.pulse_exporter import register_artifact
+            success, message = register_artifact(
+                state_path=paths.vessel_state,
+                artifact_path="implementation_plan.md",
+                artifact_type="implementation_plan",
+                milestone_id=None,
+            )
+
+            response = {
+                "success": True,
+                "message": "Implementation plan created and registered",
+                "file": str(plan_file),
+                "artifact_registered": success
+            }
+        except Exception as e:
+            response = {
+                "success": False,
+                "message": f"Error creating implementation plan: {str(e)}"
+            }
+
+        return [TextContent(type="text", text=json.dumps(response, indent=2))]
+
+    elif name == "spec_tasks":
+        from datetime import datetime
+
+        try:
+            # Create tasks file in staging
+            staging_dir = STAGING_DIR / "artifacts"
+            tasks_file = staging_dir / "tasks.md"
+
+            focus_text = arguments.get("focus_area", "General development tasks")
+
+            tasks_content = f"""# Actionable Tasks
+
+## Focus Area: {focus_text}
+
+## Task Breakdown
+
+### Phase 1: Foundation
+- [ ] Set up development environment
+- [ ] Initialize project structure
+- [ ] Configure CI/CD pipeline
+- [ ] Establish coding standards
+
+### Phase 2: Core Development
+- [ ] Implement core functionality
+- [ ] Write unit tests
+- [ ] Integration testing
+- [ ] Documentation
+
+### Phase 3: Validation & Deployment
+- [ ] Performance testing
+- [ ] Security review
+- [ ] User acceptance testing
+- [ ] Production deployment
+
+## Priority Matrix
+- **High Priority**: Environment setup, core functionality
+- **Medium Priority**: Testing, documentation
+- **Low Priority**: Optimization, advanced features
+
+## Status
+- Created: {datetime.now().isoformat()}
+- Tool: Project Compass v2
+- Status: Draft
+"""
+
+            tasks_file.parent.mkdir(parents=True, exist_ok=True)
+            tasks_file.write_text(tasks_content)
+
+            # Register as artifact
+            from project_compass.src.pulse_exporter import register_artifact
+            success, message = register_artifact(
+                state_path=paths.vessel_state,
+                artifact_path="tasks.md",
+                artifact_type="implementation_plan",
+                milestone_id=None,
+            )
+
+            response = {
+                "success": True,
+                "message": "Tasks generated and registered",
+                "file": str(tasks_file),
+                "artifact_registered": success
+            }
+        except Exception as e:
+            response = {
+                "success": False,
+                "message": f"Error generating tasks: {str(e)}"
+            }
+
+        return [TextContent(type="text", text=json.dumps(response, indent=2))]
 
     raise ValueError(f"Unknown tool: {name}")
 

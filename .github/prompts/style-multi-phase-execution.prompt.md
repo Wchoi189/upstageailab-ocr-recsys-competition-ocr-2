@@ -1,6 +1,6 @@
+---
 name: Multi-Phase Execution Style
 description: Enforces structured, multi-phase execution for complex tasks.
-
 ---
 
 **Step 1: The Request Template**

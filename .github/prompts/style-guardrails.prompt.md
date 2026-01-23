@@ -1,6 +1,6 @@
+---
 name: Guardrails Style
 description: Enforces strict, dependency-first guardrails for complex migrations.
-
 ---
 
 <!-- To prevent the agent from deviating during this massive fix, present the information in a **Dependency-First Roadmap**. -->
