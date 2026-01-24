@@ -7,7 +7,7 @@ ads_version: "1.0"
 scope: project
 description: |
   Context files for configuring AI agents including Claude, Copilot, Cursor,
-  Gemini, and custom agent settings.
+  Gemini, Ollama models, and custom agent settings for multi-agent systems.
 
 tags:
   - agent
@@ -15,6 +15,9 @@ tags:
   - settings
   - copilot
   - claude
+  - ollama
+  - models
+  - multi-agent
 
 triggers:
   keywords:
@@ -28,6 +31,10 @@ triggers:
     - qwen
     - settings
     - ai
+    - ollama
+    - model
+    - multi-agent
+    - sub-agent
 
 tiers:
   tier1:
@@ -85,6 +92,10 @@ tiers:
         mode: reference
         description: Agent interface for experiment tools
         optional: true
+      - path: AgentQMS/standards/tier2-framework/ollama-models.yaml
+        priority: high
+        mode: full
+        description: Ollama model catalog for multi-agent systems
 
   tier3:
     name: Extended Configuration

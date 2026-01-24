@@ -117,6 +117,7 @@ class ContextEngine:
                 "hydra-configuration": "hydra-configuration",
                 "hydra-v5-patterns": "hydra-configuration",
                 "ocr-architecture": "pipeline-development",
+                "agent-configuration": "agent-configuration",
             }
             return TASK_TO_BUNDLE_MAP.get(task_type, task_type)
 

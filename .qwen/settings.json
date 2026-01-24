@@ -72,9 +72,6 @@
     "discoveryMaxDirs": 15,
     "importFormat": "tree"
   },
-  "model": {
-    "name": "qwen/qwen3-coder"
-  },
   "$version": 2,
   "mcpServers": {
     "unified_project": {

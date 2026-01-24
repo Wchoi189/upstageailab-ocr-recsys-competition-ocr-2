@@ -1,8 +1,8 @@
 # Project Constitution
 
 ## Principles
-Test principles
+Adhere to AgentQMS v1.0.0 unified CLI standards. Focus on State Virtualization. Reduce effective.yaml bloat.
 
 ## Established
-Date: 2026-01-24T06:45:08.881396
+Date: 2026-01-25T01:08:56.422500
 Tool: Project Compass v2

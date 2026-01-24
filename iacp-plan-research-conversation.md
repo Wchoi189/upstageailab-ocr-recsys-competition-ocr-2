@@ -436,14 +436,35 @@ This refactor ensures that the `effective` configuration is treated as a transie
 ```python
 # AgentQMS/tools/utils/config_loader.py (Partial Refactor)
 
-import json
 import os
+import json
+import yaml
+import redis
 from typing import Dict, Any
 
 class ConfigLoader:
-    def __init__(self, cache_provider=None):
-        self.cache = cache_provider # e.g., a Redis or shared-dict client
+    def __init__(self):
+        self.use_redis = os.getenv("USE_REDIS", "false").lower() == "true"
+        if self.use_redis:
+            self.r = redis.Redis(host='redis', port=6379, decode_responses=True)
 
+    def get_effective_config(self, path: str) -> Dict[str, Any]:
+        """Hybrid resolver: Checks Redis cache first, falls back to disk."""
+        cache_key = f"aqms:config:{path}"
+        
+        if self.use_redis:
+            cached_data = self.r.get(cache_key)
+            if cached_data:
+                return json.loads(cached_data)
+
+        # Fallback to existing file-based resolution logic
+        config = self._resolve_from_disk(path)
+        
+        if self.use_redis:
+            self.r.setex(cache_key, 3600, json.dumps(config)) # 1-hour TTL
+            
+        return config
+        
     def generate_virtual_config(self, current_path: str) -> Dict[str, Any]:
         """
         Generates the effective config and returns it as a dict.

@@ -18,11 +18,11 @@ services:
       - UV_LINK_MODE=copy
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
     ports:
-      - "8000:8000"   # Web interface/API
-      - "8501:8501"   # Streamlit (if used)
-      - "6006:6006"   # TensorBoard
-      - "2223:22"     # SSH access
-      - "5173:5173"   # Vite dev server
+      - "8000:8000" # Web interface/API
+      - "8501:8501" # Streamlit (if used)
+      - "6006:6006" # TensorBoard
+      - "2223:22" # SSH access
+      - "5173:5173" # Vite dev server
     # Uncomment for GPU support
     deploy:
       resources:
@@ -30,18 +30,20 @@ services:
           devices:
             - driver: nvidia
               count: 1
-              capabilities: [gpu]
-    shm_size: '8gb'  # Set shared memory size for DataLoader workers
+              capabilities: [ gpu ]
+    shm_size: '8gb' # Set shared memory size for DataLoader workers
     profiles:
       - dev
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
 
-# docker-compose --profile dev up rabbitmq -d
+  # docker-compose --profile dev up rabbitmq -d
   rabbitmq:
     image: rabbitmq:3-management
     container_name: ocr-rabbitmq
     hostname: rabbitmq
     ports:
-      - "5672:5672"   # AMQP
+      - "5672:5672" # AMQP
       - "15672:15672" # Management UI
     environment:
       - RABBITMQ_DEFAULT_USER=guest
@@ -50,9 +52,48 @@ services:
     networks:
       - default
     healthcheck:
-      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      test: [ "CMD", "rabbitmq-diagnostics", "-q", "ping" ]
       interval: 30s
       timeout: 10s
+      retries: 5
+    profiles:
+      - dev
+
+  # docker compose --profile dev up codescene -d
+  # codescene:
+    # image: codescene/codescene:latest
+    # container_name: ocr-codescene
+    # hostname: codescene
+    # ports:
+    #   - "3003:3003"
+    # volumes:
+    #   - codescene:/codescene
+    #   - ../..:/workspaces:cached
+    #   # - ../..:/repos/upstageailab-ocr-recsys-competition-ocr-2:cached
+    # env_file:
+    #   - ../.env.local
+    # environment:
+    #   - CS_ACCESS_TOKEN=${CS_ACCESS_TOKEN}
+    # profiles:
+    #   - dev
+
+  # docker compose --profile dev up redis -d
+  redis:
+    image: redis:7-alpine
+    container_name: ocr-redis
+    hostname: redis
+    ports:
+      - "6379:6379"
+    # Configured for low-latency virtual state storage
+    command: redis-server --save 60 1 --loglevel warning
+    volumes:
+      - redis_data:/data
+    networks:
+      - default
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 10s
+      timeout: 5s
       retries: 5
     profiles:
       - dev
@@ -107,3 +148,6 @@ services:
   #   command: sleep infinity
   #   profiles:
   #     - cpu
+volumes:
+  codescene:
+  redis_data:

@@ -45,7 +45,7 @@
     },
     "onCreateCommand": "echo '✅ Container created (cloud-optimized)'",
     "updateContentCommand": "uv sync --no-install || uv sync",
-    "postCreateCommand": "uv sync && uv pip install -e . --no-deps",
+    "postCreateCommand": "uv sync && uv pip install -e . --no-deps && [ -d /workspaces/node_modules_global ] && npm config set prefix /workspaces/node_modules_global || true && ~/.pyenv/bin/pyenv install 3.11.4 && ~/.pyenv/bin/pyenv global 3.11.4 && git config --global user.name 'Wchoi189' && git config --global user.email 'wchoi189@gmail.com' && git config --global init.defaultBranch main && export GITHUB_PAT=$(grep '^GITHUB_PAT=' .env.local | cut -d'=' -f2 | tr -d '\"') && [ -n \"$GITHUB_PAT\" ] && export GH_TOKEN=$GITHUB_PAT && git config --global credential.helper store && echo \"https://Wchoi189:$GITHUB_PAT@github.com\" >> ~/.git-credentials && source setup-env.sh && bash experiment_manager/install-etk.sh",
     "postStartCommand": "bash .devcontainer/scripts/start-mcp-servers.sh && python scripts/validate_environment.py && nohup uv run python scripts/mcp/unified_server.py --transport sse --port 8000 > /tmp/mcp.log 2>&1 & || echo '⚠️ Validation incomplete'",
     "forwardPorts": [
         8000,

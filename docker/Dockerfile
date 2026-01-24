@@ -42,6 +42,7 @@ RUN apt-get update && apt-get install -y \
     htop \
     tmux \
     jq \
+    lsof \
     bash-completion \
     libcudnn9-cuda-12 \
     && rm -rf /var/lib/apt/lists/*
@@ -52,6 +53,13 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
     && apt-get update \
     && apt-get install -y gh
+
+# Install Node.js LTS
+RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
+RUN apt-get install -y nodejs
+
+# Install yq
+RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq && chmod +x /usr/local/bin/yq
 
 # Set locale to UTF-8 with Korean support
 RUN locale-gen en_US.UTF-8 ko_KR.UTF-8
@@ -124,12 +132,22 @@ COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
 # Fix Windows line endings in .bashrc
 RUN sed -i 's/\r$//' /home/vscode/.bashrc
 
+# Install repomix globally
+RUN npm install -g repomix
+
+# Install pyenv
+RUN curl https://pyenv.run | bash
+
 # Set up development environment aliases
-RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
+RUN echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc && \
+    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
+    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc && \
+    echo 'alias python="uv run python"' >> ~/.bashrc && \
     echo 'alias python3="uv run python3"' >> ~/.bashrc && \
     echo 'alias etk="uv run python experiment_manager/etk.py"' >> ~/.bashrc && \
     echo 'alias pytest="uv run pytest"' >> ~/.bashrc && \
-    echo 'alias make="uv run make"' >> ~/.bashrc
+    echo 'alias make="uv run make"' >> ~/.bashrc && \
+    echo 'export PATH="/workspaces/node_modules_global/bin:/workspaces/repomix/bin:$PATH"' >> ~/.bashrc
 
 # Create startup script that starts SSH as root and keeps container running
 RUN sudo sh -c 'echo "#!/bin/bash\n\

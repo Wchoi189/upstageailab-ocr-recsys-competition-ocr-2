@@ -1,5 +1,57 @@
 # Changelog
 
+## [2026-01-24] - DevContainer Environment Enhancement
+
+### Added
+- **🐳 Docker Build Installations** (in Dockerfile):
+  - **Node.js LTS** + npm + npx for JavaScript tooling
+  - **GitHub CLI (gh)** for repository management
+  - **yq** (YAML processor) for configuration handling
+  - **lsof** (list open files) for system diagnostics
+  - **pyenv** (Python version manager) for multiple Python versions
+  - **repomix** (globally via npm) for codebase analysis
+
+- **🔧 Post-Create Configurations** (in devcontainer.json):
+  - **Python 3.11.4** installed and set as global via pyenv
+  - **Git authentication** with PAT token from .env.local
+  - **GitHub CLI authentication** with GH_TOKEN
+  - **AgentQMS environment** setup via setup-env.sh
+  - **ETK tool** installation via install-etk.sh
+  - **PATH configurations** for global npm packages and repomix
+
+- **📁 Container PATH** (in .bashrc):
+  - bin (for npm globals)
+  - bin (for repomix)
+  - `~/.pyenv/bin` and pyenv initialization
+
+- **🔑 Environment Variables**:
+  - `GH_TOKEN` (for GitHub CLI authentication)
+  - `WANDB_DIR` (conditionally set if external storage exists)
+  - `PYTHONDONTWRITEBYTECODE` (Python optimization)
+
+### Tested
+- **📊 API Integrations Verified**:
+  - ✅ **Grok API** (xAI) - Working for artifact compliance fixes
+  - ✅ **Perplexity API** - Working for search and reasoning tasks
+  - ✅ **GitHub API** (via gh CLI) - Working for repository operations
+
+### Ready-to-Use
+- **🚀 Development Tools Available**:
+  - `node`, `npm`, `npx` - JavaScript runtime and package management
+  - `gh` (authenticated) - GitHub CLI for repository management
+  - `pyenv` with Python 3.11.4 - Python version management
+  - `repomix` - Codebase analysis and documentation
+  - `yq`, `lsof` - System utilities
+  - `etk` (experiment tracker) - Experiment management
+  - All AgentQMS utilities - Quality management and standards
+
+## [2026-01-24] - Qwen Code Reinstallation
+
+### Fixed
+- **Qwen Code Corruption Issue** - Uninstalled and reinstalled `@qwen-code/qwen-code@0.7.2` to resolve corruption
+- **Verified Functionality** - Confirmed model connectivity, MCP server configuration, and prompt processing
+- **Configuration Preserved** - Local Ollama integration and project context loading intact
+
 ## [2026-01-13] - Unified MCP Server Refactoring
 
 ### Changed

@@ -82,3 +82,17 @@ ocr-architecture:
   - recognition domain
   - orchestration flow
   - component interfaces
+
+agent-configuration:
+  - agent
+  - multi-agent
+  - sub-agent
+  - ollama
+  - model
+  - ai assistant
+  - copilot
+  - claude
+  - gemini
+  - qwen
+  - side load
+  - agent system

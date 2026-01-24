@@ -91,7 +91,7 @@ class ContextControl:
             project_root = get_framework_root()
 
         self.project_root = Path(project_root)
-        self._control_dir = self.project_root / ".agentqms" / "context_control"
+        self._control_dir = get_framework_root() / ".agentqms" / "context_control"
         self._control_dir.mkdir(parents=True, exist_ok=True)
 
         self._state_file = self._control_dir / "system_state.json"

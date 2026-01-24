@@ -18,8 +18,10 @@ export PATH="$SCRIPT_DIR/bin:$PATH"
 # Set PYTHONPATH
 export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"
 
-# Project Artifacts - External Storage
-export WANDB_DIR="/workspaces/project-artifacts/ocr-external-storage/wandb"
+# Project Artifacts - External Storage (only if available)
+if [ -d "/workspaces/project-artifacts/ocr-external-storage/wandb" ]; then
+    export WANDB_DIR="/workspaces/project-artifacts/ocr-external-storage/wandb"
+fi
 export PYTHONDONTWRITEBYTECODE=1
 
 # Verify

@@ -91,18 +91,18 @@ alias uv-lint='uv run flake8 .'
 alias uv-format='uv run black . && uv run isort .'
 
 # === Conda Environment Management ===
-# Properly initialize Conda to override any external activation scripts.
-if [ -f "/opt/conda/etc/profile.d/conda.sh" ]; then
-    . "/opt/conda/etc/profile.d/conda.sh"
-elif [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-    . "$HOME/miniconda3/etc/profile.d/conda.sh"
-fi
+# # Properly initialize Conda to override any external activation scripts.
+# if [ -f "/opt/conda/etc/profile.d/conda.sh" ]; then
+#     . "/opt/conda/etc/profile.d/conda.sh"
+# elif [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
+#     . "$HOME/miniconda3/etc/profile.d/conda.sh"
+# fi
 
-# After initializing, ensure unwanted features are turned off.
-if command -v conda >/dev/null 2>&1; then
-    conda config --set auto_activate_base false
-    conda config --set changeps1 false
-fi
+# # After initializing, ensure unwanted features are turned off.
+# if command -v conda >/dev/null 2>&1; then
+#     conda config --set auto_activate_base false
+#     conda config --set changeps1 false
+# fi
 
 # === Aliases ===
 # Enable color support for common commands
@@ -174,7 +174,7 @@ add_to_path() {
 }
 
 # Add paths in order of priority
-add_to_path "/opt/uv/bin"
+add_to_path "/opt/uv"
 add_to_path "$HOME/.local/bin"
 add_to_path "$HOME/.cargo/bin"
 add_to_path "$HOME/bin"
