@@ -3,7 +3,8 @@ import logging
 import numpy as np
 from typing import Any
 
-from ocr.agents.base_agent import BaseAgent
+from ocr.core.infrastructure.agents.base_agent import BaseAgent
+from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
 from ocr.core.inference.orchestrator import InferenceOrchestrator
 
 logger = logging.getLogger("OCRAgent")
@@ -12,40 +13,31 @@ class OCRAgent(BaseAgent):
     def __init__(self):
         super().__init__(
             agent_id="agent.ocr",
-            binding_keys=["cmd.ocr.process", "cmd.ocr.inference"]
+            agent_type="ocr.inference",
+            capabilities=[], # Add capabilities definition formally later
         )
 
-        # Initialize orchestrator lazily or on start?
-        # On starup is better to fail fast if model missing.
+        # Register custom handlers
+        self.register_handler("cmd.ocr.process", self._handle_process_payload)
+        self.register_handler("cmd.ocr.inference", self._handle_process_payload)
+
+        # Initialize orchestrator
         try:
+            self.logger = logger # Fix self.logger reference
             self.logger.info("Initializing InferenceOrchestrator...")
             self.orchestrator = InferenceOrchestrator(enable_recognition=True)
-            # Find default model if not configured
-            # For now we assume models are loaded dynamically or a default exists
-            # In a real scenario we might load a default config here.
-
-            # Using orchestrator as context manager in process_payload is safer for cleanup?
-            # But loading models is heavy. We keep it persistent.
-
-            # Loading placeholder model or waiting for explicit load config?
-            # For now, we instantiate without model loaded, load on demand or if default exists.
-
         except Exception as e:
-            self.logger.error(f"Failed to initialize orchestrator: {e}")
+            logger.error(f"Failed to initialize orchestrator: {e}")
             raise
 
-    def process_payload(self, payload: dict[str, Any]) -> dict[str, Any]:
+    def get_binding_keys(self) -> list[str]:
+        return ["cmd.ocr.process", "cmd.ocr.inference"]
+
+    def _handle_process_payload(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """
         Process OCR request.
-        Expected payload:
-        {
-            "files": ["path/to/image.jpg"],
-            "options": {
-                "checkpoint_path": "optional/path/to/model.pth",
-                "enable_extraction": false
-            }
-        }
         """
+        payload = envelope.payload
         files = payload.get('files', [])
         options = payload.get('options', {})
 
@@ -56,8 +48,7 @@ class OCRAgent(BaseAgent):
         if not self.orchestrator.model_manager.is_loaded():
             if not checkpoint_path:
                  # Try to resolve a default model path or fail
-                 # For MVP, let's assume there's a known location or fail
-                 model_dir = self.resolve_path("models/ocr/default.pth") # Hypothetical default
+                 model_dir = self.resolve_path("models/ocr/default.pth") 
                  if model_dir.exists():
                      checkpoint_path = str(model_dir)
                  else:

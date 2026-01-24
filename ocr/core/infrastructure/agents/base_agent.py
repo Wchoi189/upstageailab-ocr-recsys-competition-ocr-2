@@ -15,7 +15,9 @@ from dataclasses import dataclass, field
 from datetime import datetime
 from pathlib import Path
 
-from ocr.communication.rabbitmq_transport import RabbitMQTransport
+# Updated import path for IACP Transport
+from ocr.core.infrastructure.communication.rabbitmq_transport import RabbitMQTransport
+from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
 from ocr.core.utils.path_utils import PROJECT_ROOT
 
 logger = logging.getLogger(__name__)
@@ -79,7 +81,7 @@ class BaseAgent(ABC):
             agent_id=agent_id
         )
 
-        self._handlers: dict[str, Callable] = {}
+        self._handlers: dict[str, Callable[[IACPEnvelope], dict[str, Any]]] = {}
         self._register_default_handlers()
 
         # Register signal handlers for graceful shutdown
@@ -100,12 +102,12 @@ class BaseAgent(ABC):
 
         Args:
             message_type: Type of message to handle (e.g., 'cmd.process_image')
-            handler: Callable that takes envelope and returns response payload
+            handler: Callable that takes IACPEnvelope and returns response payload
         """
         self._handlers[message_type] = handler
         logger.info(f"Registered handler for {message_type}")
 
-    def _route_message(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _route_message(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """
         Route incoming message to appropriate handler.
 
@@ -115,9 +117,11 @@ class BaseAgent(ABC):
         Returns:
             Response payload
         """
-        msg_type = envelope.get("type")
+        msg_type = envelope.type
 
         if msg_type not in self._handlers:
+            # Try partial matching for wildcards if we supported them, but strict matching is safer for now
+            # Only exact match for now as per registry
             logger.warning(f"No handler for message type: {msg_type}")
             return {
                 "status": "error",
@@ -140,7 +144,7 @@ class BaseAgent(ABC):
                 "error_type": type(e).__name__
             }
 
-    def _handle_get_status(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _handle_get_status(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """Handle status query."""
         return {
             "agent_id": self.metadata.agent_id,
@@ -151,7 +155,7 @@ class BaseAgent(ABC):
             "uptime_seconds": (datetime.now() - self.metadata.started_at).total_seconds()
         }
 
-    def _handle_get_capabilities(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _handle_get_capabilities(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """Handle capabilities query."""
         return {
             "agent_id": self.metadata.agent_id,
@@ -166,7 +170,7 @@ class BaseAgent(ABC):
             ]
         }
 
-    def _handle_health_check(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _handle_health_check(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """Handle health check query."""
         return {
             "status": "healthy",
@@ -239,14 +243,16 @@ class BaseAgent(ABC):
             timeout: Timeout in seconds
 
         Returns:
-            Response from target agent
+            Response payload from target agent
         """
-        return self.transport.send_command(
+        response_envelope = self.transport.send_command(
             target=target,
             type_suffix=command,
             payload=payload,
             timeout=timeout
         )
+        # Return only payload to maintain abstraction level for callers
+        return response_envelope.payload
 
     def publish_event(self, event_type: str, payload: dict[str, Any]):
         """
@@ -299,13 +305,13 @@ class LLMAgent(BaseAgent):
         """Get or initialize LLM client."""
         if self._llm_client is None:
             if self.llm_provider == "qwen":
-                from ocr.agents.llm.qwen_client import QwenClient
+                from ocr.core.infrastructure.agents.llm.qwen_client import QwenClient
                 self._llm_client = QwenClient()
             elif self.llm_provider == "grok4":
-                from ocr.agents.llm.grok_client import Grok4Client
+                from ocr.core.infrastructure.agents.llm.grok_client import Grok4Client
                 self._llm_client = Grok4Client()
             elif self.llm_provider == "openai":
-                from ocr.agents.llm.openai_client import OpenAIClient
+                from ocr.core.infrastructure.agents.llm.openai_client import OpenAIClient
                 self._llm_client = OpenAIClient()
             else:
                 raise ValueError(f"Unsupported LLM provider: {self.llm_provider}")

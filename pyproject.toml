@@ -90,6 +90,7 @@ dependencies = [
     "tree-sitter-languages==1.10.2",
     "typer==0.21.0",
     "agent-debug-toolkit",
+    "aiofiles>=25.1.0",
 ]
 
 

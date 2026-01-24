@@ -8,6 +8,7 @@ Supports YAML format with extensibility for other formats (JSON, TOML).
 Design principles:
 - Framework-agnostic naming and structure
 - Graceful degradation (works without PyYAML)
+- Distributed caching via Redis (optional)
 - Per-path caching for performance
 - Type-safe with clear defaults
 - Minimal dependencies
@@ -24,7 +25,7 @@ Usage:
         defaults={"enabled": True, "timeout": 30}
     )
 
-    # With caching (for repeated access)
+    # With caching (Redis -> Memory -> Disk)
     loader = ConfigLoader()
     config1 = loader.get_config("path/to/config.yaml")
     config2 = loader.get_config("path/to/config.yaml")  # From cache
@@ -37,13 +38,24 @@ from __future__ import annotations
 
 from pathlib import Path
 from typing import Any
+import os
+import json
+import logging
+
+# Set up logging
+logger = logging.getLogger(__name__)
 
 try:
     import yaml
-
     YAML_AVAILABLE = True
 except ImportError:
     YAML_AVAILABLE = False
+
+try:
+    import redis
+    REDIS_AVAILABLE = True
+except ImportError:
+    REDIS_AVAILABLE = False
 
 
 class ConfigLoader:
@@ -52,6 +64,8 @@ class ConfigLoader:
 
     Features:
     - YAML file loading with graceful fallbacks
+    - Distributed caching via Redis (priority)
+    - Local memory caching (fallback)
     - Per-path caching to avoid repeated I/O
     - Configurable cache size
     - Nested key extraction (dot notation)
@@ -61,20 +75,40 @@ class ConfigLoader:
     Design:
     - Stateless static methods for simple use cases
     - Stateful instance methods with caching for complex scenarios
-    - Graceful degradation if PyYAML unavailable
+    - Graceful degradation if PyYAML/Redis unavailable
+    - Virtual configuration support (memory-only)
     """
 
-    def __init__(self, cache_size: int = 10):
+    def __init__(self, cache_size: int = 10, redis_ttl: int = 3600):
         """
         Initialize ConfigLoader with optional caching.
 
         Args:
-            cache_size: Maximum number of configs to keep in cache (default: 10).
-                       Set to 0 to disable caching.
+            cache_size: Maximum number of configs to keep in local memory cache (default: 10).
+            redis_ttl: Time-to-live for Redis cache in seconds (default: 3600).
         """
         self._cache: dict[str, dict[str, Any]] = {}
         self._cache_size = cache_size
         self._cache_order: list[str] = []  # Track LRU order
+        self._redis_ttl = redis_ttl
+        self._redis_client = None
+
+        if REDIS_AVAILABLE:
+            try:
+                # Use environment variables for configuration
+                host = os.getenv("REDIS_HOST", "redis")
+                port = int(os.getenv("REDIS_PORT", 6379))
+                self._redis_client = redis.Redis(
+                    host=host, 
+                    port=port, 
+                    decode_responses=True, 
+                    socket_connect_timeout=1
+                )
+                # Quick health check (optional, but good for fast failover logic)
+                # self._redis_client.ping() 
+            except Exception as e:
+                logger.warning(f"Failed to initialize Redis client: {e}. Falling back to memory cache.")
+                self._redis_client = None
 
     @staticmethod
     def load_yaml(config_path: Path | str, defaults: dict[str, Any] | None = None) -> dict[str, Any]:
@@ -88,12 +122,6 @@ class ConfigLoader:
 
         Returns:
             Loaded YAML content as dict, or defaults, or empty dict.
-
-        Example:
-            config = ConfigLoader.load_yaml(
-                "config.yaml",
-                defaults={"enabled": True}
-            )
         """
         if defaults is None:
             defaults = {}
@@ -126,6 +154,11 @@ class ConfigLoader:
     ) -> dict[str, Any] | Any:
         """
         Load configuration with caching and optional nested key extraction.
+        
+        Priority:
+        1. Local Memory Cache
+        2. Redis Cache
+        3. File System
 
         Args:
             config_path: Path to YAML file (Path or str)
@@ -135,31 +168,44 @@ class ConfigLoader:
 
         Returns:
             Full config dict (if key=None), or value at key, or defaults.
-
-        Example:
-            # Load full config
-            loader = ConfigLoader()
-            config = loader.get_config("config.yaml")
-
-            # Extract nested value
-            timeout = loader.get_config("config.yaml", key="server.timeout", defaults=30)
         """
         if defaults is None:
             defaults = {}
 
         config_path_str = str(config_path)
 
-        # Try cache first
+        # 1. Try Local Memory Cache first (fastest)
         if config_path_str in self._cache:
             config = self._cache[config_path_str]
             # Update LRU order
             self._cache_order.remove(config_path_str)
             self._cache_order.append(config_path_str)
         else:
-            # Load from file
-            config = self.load_yaml(config_path, defaults={})
+            config = None
+            
+            # 2. Try Redis Cache
+            if self._redis_client:
+                try:
+                    redis_key = f"config:{config_path_str}"
+                    cached_data = self._redis_client.get(redis_key)
+                    if cached_data:
+                        config = json.loads(cached_data)
+                except Exception as e:
+                    logger.warning(f"Redis get failed for {config_path_str}: {e}")
 
-            # Add to cache
+            # 3. Load from File System if not in cache
+            if config is None:
+                config = self.load_yaml(config_path, defaults={})
+                
+                # Update Redis
+                if self._redis_client and config:
+                    try:
+                        redis_key = f"config:{config_path_str}"
+                        self._redis_client.setex(redis_key, self._redis_ttl, json.dumps(config))
+                    except Exception as e:
+                        logger.warning(f"Redis set failed for {config_path_str}: {e}")
+
+            # Update Local Memory Cache
             if self._cache_size > 0:
                 self._cache[config_path_str] = config
                 self._cache_order.append(config_path_str)
@@ -169,6 +215,7 @@ class ConfigLoader:
                     oldest = self._cache_order.pop(0)
                     del self._cache[oldest]
 
+    
         # Extract nested key if requested
         if key:
             return self._extract_nested(config, key, defaults)
@@ -187,12 +234,6 @@ class ConfigLoader:
 
         Returns:
             Value at nested key, or defaults if not found.
-
-        Example:
-            data = {"server": {"host": "localhost", "port": 8080}}
-            host = ConfigLoader._extract_nested(data, "server.host")  # "localhost"
-            port = ConfigLoader._extract_nested(data, "server.port")  # 8080
-            timeout = ConfigLoader._extract_nested(data, "server.timeout", defaults=30)  # 30
         """
         if not key or not data:
             return defaults
@@ -209,17 +250,36 @@ class ConfigLoader:
         return current
 
     def clear_cache(self) -> None:
-        """Clear all cached configurations."""
+        """Clear all cached configurations (Memory and Redis)."""
         self._cache.clear()
         self._cache_order.clear()
+        
+        if self._redis_client:
+            try:
+                # We only clear keys prefixed with config:
+                # Use scan_iter for safe iteration over keys
+                for key in self._redis_client.scan_iter("config:*"):
+                    self._redis_client.delete(key)
+            except Exception as e:
+                logger.warning(f"Redis clear failed: {e}")
 
     def get_cache_info(self) -> dict[str, Any]:
         """Get cache statistics for debugging."""
-        return {
-            "cached_paths": len(self._cache),
-            "max_size": self._cache_size,
-            "cached_files": list(self._cache_order),
+        info = {
+            "memory_cached_paths": len(self._cache),
+            "memory_max_size": self._cache_size,
+            "memory_cached_files": list(self._cache_order),
+            "redis_connected": False
         }
+        
+        if self._redis_client:
+            try:
+                self._redis_client.ping()
+                info["redis_connected"] = True
+            except Exception:
+                pass
+                
+        return info
 
     def resolve_active_standards(
         self,
@@ -238,15 +298,8 @@ class ConfigLoader:
 
         Returns:
             List of standard file paths that match the current path
-
-        Example:
-            loader = ConfigLoader()
-            # Working in ocr/inference/
-            standards = loader.resolve_active_standards("ocr/inference/pipeline.py")
-            # Returns inference-related standards
         """
         import fnmatch
-        import os
 
         if current_path is None:
             current_path = Path.cwd()
@@ -284,6 +337,52 @@ class ConfigLoader:
 
         return active_standards
 
+    def generate_virtual_config(
+        self,
+        current_path: Path | str | None = None,
+        registry_path: Path | str = "AgentQMS/standards/registry.yaml",
+        settings_path: Path | str = "AgentQMS/.agentqms/settings.yaml",
+    ) -> dict[str, Any]:
+        """
+        Generate the effective config and return it as a dict.
+        Does NOT touch the disk unless physical logging is enabled.
+        """
+        from datetime import datetime, timezone
+        import os
+
+        # Load base settings
+        settings = self.get_config(settings_path, defaults={})
+        
+        # Load registry checks
+        active_standards = self.resolve_active_standards(current_path, registry_path)
+
+        # Build the 'Resolved' object (The Virtual State)
+        effective = {
+            "metadata": {
+                "session_id": os.getenv("SESSION_ID", "local"),
+                "path": str(current_path) if current_path else str(Path.cwd()),
+                "generated_at": datetime.now(timezone.utc).isoformat(),
+                "virtual": True
+            },
+            "resolved": {
+                **settings.get("base", {}),
+                "active_standards": active_standards,
+            }
+        }
+        
+        # Merge existing resolved settings if present
+        if "resolved" in settings:
+             effective["resolved"].update(settings["resolved"])
+        
+        # Ensure context_integration exists
+        if "context_integration" not in effective["resolved"]:
+            effective["resolved"]["context_integration"] = {}
+
+        effective["resolved"]["context_integration"]["active_standards"] = active_standards
+        
+        return effective
+
+
     def generate_effective_config(
         self,
         settings_path: Path | str = "AgentQMS/.agentqms/settings.yaml",
@@ -303,12 +402,6 @@ class ConfigLoader:
 
         Returns:
             Complete effective configuration dict with active standards injected
-
-        Example:
-            loader = ConfigLoader()
-            effective = loader.generate_effective_config(current_path="ocr/inference")
-            # effective["resolved"]["context_integration"]["active_standards"] contains
-            # inference-related standards
         """
         from datetime import datetime, timezone
 
@@ -349,15 +442,7 @@ _default_loader = ConfigLoader(cache_size=10)
 def load_config(config_path: Path | str, key: str | None = None) -> dict[str, Any] | Any:
     """
     Convenience function for loading config with default loader instance.
-
     Uses module-level cached loader for consistency across imports.
-
-    Args:
-        config_path: Path to YAML file
-        key: Optional nested key to extract
-
-    Returns:
-        Loaded config or nested value
     """
     return _default_loader.get_config(config_path, key=key)
 
@@ -366,7 +451,7 @@ if __name__ == "__main__":
     # Example usage and testing
     from tempfile import NamedTemporaryFile
 
-    print("ConfigLoader Examples:")
+    print("ConfigLoader Examples (with Redis Support):")
     print("=" * 50)
 
     # Example 1: Load with defaults
@@ -381,24 +466,26 @@ if __name__ == "__main__":
         f.flush()
         temp_path = Path(f.name)
 
-        config = ConfigLoader.load_yaml(temp_path)
+        loader = ConfigLoader() # Will try to connect to Redis
+        
+        # First load (miss)
+        print("   First load (IO):")
+        config = loader.get_config(temp_path)
         print(f"   Loaded: {config}")
 
-        # Example 3: Nested key extraction
-        print("\n3. Extract nested key:")
-        loader = ConfigLoader()
-        host = loader.get_config(temp_path, key="server.host")
-        print(f"   server.host = {host}")
+        # Second load (Cache)
+        print("   Second load (Memory Cache):")
+        config2 = loader.get_config(temp_path)
+        print(f"   Loaded: {config2}")
 
-        # Example 4: Caching
-        print("\n4. Caching stats:")
-        _ = loader.get_config(temp_path)
-        _ = loader.get_config(temp_path)  # From cache
         cache_info = loader.get_cache_info()
         print(f"   {cache_info}")
 
         # Cleanup
-        temp_path.unlink()
+        try:
+           temp_path.unlink()
+        except:
+           pass
 
     print("\n" + "=" * 50)
     print("All examples completed successfully!")

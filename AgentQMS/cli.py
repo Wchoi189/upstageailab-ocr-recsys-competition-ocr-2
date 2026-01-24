@@ -12,6 +12,7 @@ Usage:
     qms feedback report --issue-type "documentation" --description "Issue description"
     qms quality check
     qms generate-config --path ocr/inference
+    qms check-infra
 
 Available Commands:
     artifact          Artifact workflow management (create, validate, update)
@@ -20,6 +21,7 @@ Available Commands:
     feedback          Collect agent feedback and suggestions
     quality           Documentation quality monitoring
     generate-config   Generate effective.yaml with path-aware discovery
+    check-infra       Verify connectivity to Redis, RabbitMQ, and Ollama
 """
 
 import argparse
@@ -177,6 +179,7 @@ def setup_generate_config_parser(subparsers):
     parser.add_argument("--registry", default="AgentQMS/standards/registry.yaml", help="Registry path")
     parser.add_argument("--settings", default="AgentQMS/.agentqms/settings.yaml", help="Settings path")
     parser.add_argument("--dry-run", action="store_true", help="Print to stdout instead of writing")
+    parser.add_argument("--json", action="store_true", help="Output in JSON format (Virtual Mode)")
 
     return parser
 
@@ -400,17 +403,20 @@ def run_quality_command(args):
 def run_generate_config_command(args):
     """Execute generate-config subcommand."""
     from AgentQMS.tools.utils.config_loader import ConfigLoader
+    import json
 
     try:
         import yaml
     except ImportError:
-        print("Error: PyYAML not available. Install with: pip install pyyaml")
-        return 1
+        # PyYAML is optional if we are just outputting JSON
+        if not args.json:
+            print("Error: PyYAML not available. Install with: pip install pyyaml or use --json")
+            return 1
 
     loader = ConfigLoader()
 
-    # Generate effective config
-    effective = loader.generate_effective_config(
+    # Generate virtual effective config
+    effective = loader.generate_virtual_config(
         settings_path=args.settings,
         registry_path=args.registry,
         current_path=args.path,
@@ -421,7 +427,18 @@ def run_generate_config_command(args):
     if "tool_mappings" in settings.get("resolved", {}):
         effective["resolved"]["tool_mappings"] = settings["resolved"]["tool_mappings"]
 
-    yaml_output = yaml.dump(effective, sort_keys=False, default_flow_style=False)
+    if args.json:
+        # Direct output for AI ingestion (No file created)
+        print(json.dumps(effective))
+        return 0
+    
+    # For YAML output (legacy or explicit file generation)
+    if "yaml" in vars() or "yaml" in globals():
+        yaml_output = yaml.dump(effective, sort_keys=False, default_flow_style=False)
+    else:
+        # Fallback if yaml not imported (should be caught above, but safety first)
+        import yaml
+        yaml_output = yaml.dump(effective, sort_keys=False, default_flow_style=False)
 
     if args.dry_run:
         print("=" * 60)
@@ -434,6 +451,13 @@ def run_generate_config_command(args):
         for std in active_standards:
             print(f"  - {std}")
     else:
+        # Only write if output path is explicitly provided or we are in legacy mode
+        # For now, we preserve writing to the default path if not --json, 
+        # but the plan says "Stop physically writing...". 
+        # However, the args.output has a default value in usage. 
+        # We will respect that for now to avoid breaking existing workflows completely,
+        # but --json is the preferred AI way.
+        
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -456,6 +480,25 @@ def run_generate_config_command(args):
     return 0
 
 
+def setup_check_infra_parser(subparsers):
+    """Setup check-infra subcommand."""
+    parser = subparsers.add_parser(
+        "check-infra",
+        help="Verify connectivity to Redis, RabbitMQ, and Ollama",
+        description="Run preflight checks on infrastructure services",
+    )
+    return parser
+
+
+def run_check_infra_command(args):
+    """Execute check-infra subcommand."""
+    from AgentQMS.tools.compliance.preflight_check import PreflightCheck
+    
+    checker = PreflightCheck()
+    success = checker.print_report()
+    return 0 if success else 1
+
+
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -475,6 +518,7 @@ def main():
     setup_feedback_parser(subparsers)
     setup_quality_parser(subparsers)
     setup_generate_config_parser(subparsers)
+    setup_check_infra_parser(subparsers)
 
     args = parser.parse_args()
 
@@ -496,6 +540,8 @@ def main():
             return run_quality_command(args)
         elif args.command == "generate-config":
             return run_generate_config_command(args)
+        elif args.command == "check-infra":
+            return run_check_infra_command(args)
         else:
             print(f"Error: Unknown command '{args.command}'")
             return 1

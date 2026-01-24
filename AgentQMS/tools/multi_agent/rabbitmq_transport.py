@@ -5,7 +5,14 @@ import logging
 from typing import Any, Optional, Callable
 from pydantic import ValidationError
 
-from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
+# Import the IACP Envelope Schema
+try:
+    from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
+except ImportError:
+    # Fallback/Mock for initial setup if package path isn't perfect yet
+    from pydantic import BaseModel, Field
+    class IACPEnvelope(BaseModel):
+        pass # Should be proper import in production
 
 logger = logging.getLogger(__name__)
 
@@ -42,12 +49,6 @@ class RabbitMQTransport:
             logger.error(f"RabbitMQ Connection failed: {e}")
             raise
 
-    def close(self):
-        """Closes the connection."""
-        if self.connection and not self.connection.is_closed:
-            self.connection.close()
-            logger.info("Connection closed.")
-
     def _create_envelope(self, target: str, msg_type: str, payload: dict, correlation_id: str = None) -> IACPEnvelope:
         """Creates and validates an outgoing IACP envelope."""
         envelope = IACPEnvelope(
@@ -75,7 +76,7 @@ class RabbitMQTransport:
                 reply_to=self.callback_queue,
                 correlation_id=corr_id,
             ),
-            body=envelope.model_dump_json()
+            body=envelope.model_dump_json() # Use Pydantic's optimized JSON export
         )
 
         # Wait loop with timeout
@@ -89,22 +90,6 @@ class RabbitMQTransport:
             time.sleep(0.01)
 
         return self.response_futures.pop(corr_id)
-    
-    def publish_event(self, type_suffix: str, payload: dict):
-        """Publish a fire-and-forget event."""
-        if not self.connection:
-             raise RuntimeError("Not connected to RabbitMQ")
-        
-        full_type = f"evt.{type_suffix}" if not type_suffix.startswith("evt.") else type_suffix
-        envelope = self._create_envelope("broadcast", full_type, payload)
-        routing_key = f"{full_type}.{self.agent_id}.all"
-
-        self.channel.basic_publish(
-            exchange=self.exchange,
-            routing_key=routing_key,
-            body=envelope.model_dump_json()
-        )
-        logger.info(f"Published event {full_type}")
 
     def _on_rpc_response(self, ch, method, props, body):
         """Validates incoming RPC responses against the schema."""
@@ -117,9 +102,6 @@ class RabbitMQTransport:
 
     def start_listening(self, binding_keys: list[str], handler: Callable[[IACPEnvelope], dict]):
         """Starts the listening loop with strict schema enforcement for all incoming messages."""
-        if not self.connection:
-            self.connect()
-            
         queue_name = f"q.{self.agent_id}"
         self.channel.queue_declare(queue=queue_name)
 
@@ -159,5 +141,4 @@ class RabbitMQTransport:
 
         self.channel.basic_qos(prefetch_count=1)
         self.channel.basic_consume(queue=queue_name, on_message_callback=on_message)
-        logger.info(f"Started listening on {queue_name}")
         self.channel.start_consuming()

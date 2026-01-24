@@ -30,6 +30,7 @@ import time
 from pathlib import Path
 
 import aiohttp
+import aiofiles
 import pandas as pd
 from tqdm.asyncio import tqdm
 
@@ -89,8 +90,8 @@ class ResumableBatchProcessor:
                 start_time = time.time()
 
                 # Read image
-                with open(image_path, 'rb') as f:
-                    image_bytes = f.read()
+                async with aiofiles.open(image_path, 'rb') as f:
+                    image_bytes = await f.read()
 
                 # Call API
                 headers = {"Authorization": f"Bearer {self.api_key}"}

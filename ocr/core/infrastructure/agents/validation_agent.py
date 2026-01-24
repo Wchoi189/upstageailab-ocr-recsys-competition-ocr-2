@@ -12,7 +12,8 @@ import logging
 from typing import Any
 import json
 
-from ocr.agents.base_agent import LLMAgent, AgentCapability
+from ocr.core.infrastructure.agents.base_agent import LLMAgent, AgentCapability
+from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
 
 logger = logging.getLogger(__name__)
 
@@ -103,9 +104,9 @@ class ValidationAgent(LLMAgent):
             "cmd.detect_errors.#"
         ]
 
-    def _handle_validate_ocr_result(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _handle_validate_ocr_result(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """Handle OCR validation request."""
-        payload = envelope.get("payload", {})
+        payload = envelope.payload
         ocr_result = payload.get("ocr_result")
         validation_rules = payload.get("validation_rules", {})
         use_llm = payload.get("use_llm", False)
@@ -234,9 +235,9 @@ Return JSON format."""
                 "score_multiplier": 1.0
             }
 
-    def _handle_score_quality(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _handle_score_quality(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """Handle quality scoring request."""
-        payload = envelope.get("payload", {})
+        payload = envelope.payload
         ocr_result = payload.get("ocr_result")
         ground_truth = payload.get("ground_truth")
 
@@ -285,9 +286,9 @@ Return JSON format."""
             logger.error(f"Quality scoring failed: {e}", exc_info=True)
             return {"status": "error", "message": str(e)}
 
-    def _handle_detect_errors(self, envelope: dict[str, Any]) -> dict[str, Any]:
+    def _handle_detect_errors(self, envelope: IACPEnvelope) -> dict[str, Any]:
         """Handle error detection request using LLM."""
-        payload = envelope.get("payload", {})
+        payload = envelope.payload
         text = payload.get("text")
         context = payload.get("context", "")
 

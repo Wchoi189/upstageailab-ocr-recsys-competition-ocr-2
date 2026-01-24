@@ -8,30 +8,34 @@ This file gives humans and AI a concise starting point. Machine-parsable keys st
 - You need to know which commands to run first (without scanning YAML).
 
 ## Quick Start
-1. Load context: `aqms context "<what you are doing>"` (or `make context-development` from AgentQMS/bin).
-2. Follow standards: AgentQMS/standards/registry.yaml (unified registry) → tool catalog: AgentQMS/standards/tier2-framework/tool-catalog.yaml.
-3. Package policy: use `uv` only (no raw `pip`); commands: `uv add`, `uv sync`, `uv run ...`.
-4. Artifact workflow: NEVER hand-write docs/artifacts/*. Use `aqms artifact create --type <type> --name <name> --title "<title>"` (auto-validates). Then `aqms validate --all`.
-5. Compliance/safety: `aqms monitor --check`; for boundary checks run `make boundary` from AgentQMS/bin.
+1. **Entry Point**: Use the `aqms` CLI for all operations. Ensure it's in your PATH or alias it.
+   - Example: `aqms context "<task>"`
+2. **Context**: `aqms context "<what you are doing>"`
+3. **Standards**: [AgentQMS/standards/registry.yaml](AgentQMS/standards/registry.yaml) (Unified Registry) - Single source of truth.
+4. **Artifacts**: `aqms artifact create --type <type> --name <name> --title "<title>"` (Auto-validates).
+5. **Validation**: `aqms validate --all`.
+6. **Infrastructure**:
+   - **IACP**: Agents communicate via `IACPEnvelope` over RabbitMQ.
+   - **Config**: distributed via Redis (`config:{path}`) with explicit fallbacks.
+   - **LLM**: Local inference via `QwenClient` (Lazy Loaded) -> Ollama.
 
 ## Key Entry Points
-- Project standards: see INDEX.yaml for the map; naming/workflow rules live under tier1-sst/*.
-- Tooling: tier2-framework/tool-catalog.yaml for commands; `cd AgentQMS/bin && make discover` for a live list.
-- Context bundles: `make context-list` to inspect; prefer task-specific `make context TASK="..."`.
-- Experiment manager (separate system): `python experiment_manager/etk.py <cmd>`; docs in experiment_manager/.ai-instructions/.
-- Agent Debug Toolkit (AST/Hydra analysis): location agent-debug-toolkit/, entrypoint `uv run adt ...`; reference AI_USAGE.yaml for tasks.
+- **CLI**: `aqms` is the unified tool. Run `aqms --help`.
+- **Standards**: `registry.yaml` maps Tasks -> Bundles -> Standards.
+- **Project Compass**: Vessel-based pulse lifecycle. Artifacts sync to `project_compass/pulse_staging/artifacts/`.
+- **Infrastructure**:
+  - `ocr/core/infrastructure/agents`: Base agents and capability definitions.
+  - `ocr/core/infrastructure/communication`: IACP and Transport layers.
 
 ## Core Packages (AI Hints)
-Keep these ultra-concise to avoid context overload. Use links for depth.
-
-- AgentQMS: Standards + artifact tooling to enforce format/placement/naming. Core commands: `cd AgentQMS/bin && make create-*`, `make validate`, `make compliance`. Read the root map in [AgentQMS/standards/INDEX.yaml](AgentQMS/standards/INDEX.yaml).
-- project_compass: Vessel-based pulse lifecycle with staging enforcement; all artifacts go to `pulse_staging/artifacts/`. Commands: `pulse-init`, `pulse-sync`, `pulse-export`. See [project_compass/AGENTS.md](project_compass/AGENTS.md).
-- experiment_manager: Fast iteration runner for image-processing experiments with schemas/templates. CLI: [experiment_manager/etk.py](experiment_manager/etk.py) (`init`, `reconcile`, `validate`).
-- agent-debug-toolkit: AST/Hydra analyzer for config precedence, merges, and instantiation discovery. CLI: `uv run adt ...`. Reference [agent-debug-toolkit/AI_USAGE.yaml](agent-debug-toolkit/AI_USAGE.yaml).
+- **AgentQMS**: Standards + Tooling. CLI: `aqms`.
+- **project_compass**: Lifecycle management. all artifacts sync here.
+- **ocr.core**: Core infrastructure (IACP, Agents, Inference).
+- **experiment_manager**: Fast iteration runner for image-processing.
 
 ## Operational Rules
-- Read INDEX.yaml before assuming standards; do not hallucinate policies.
-- Keep AGENTS.yaml minimal and schema-only; update this markdown for human guidance.
-- Avoid bulk or destructive changes without validation (`make validate`, `make docs-validate-links`).
+- **No Legacy Scripts**: Do not use `scripts/aqms.py` or `Makefile` targets directly if `aqms` covers it.
+- **IACP Strictness**: All agent communication must use `IACPEnvelope`.
+- **Lazy Loading**: Import LLM clients from `ocr.core.infrastructure.agents.llm` to avoid heavy overhead.
 
 If you need machine-readable values, go to AGENTS.yaml. Use this file to onboard fast, choose the right command, and stay within AgentQMS guardrails.

@@ -1,17 +1,8 @@
 """Core abstract base classes and registry for OCR framework components."""
 
-from .interfaces.losses import BaseLoss
-from .interfaces.metrics import BaseMetric
-from .interfaces.models import BaseDecoder, BaseEncoder, BaseHead
-from .utils.registry import ComponentRegistry, get_registry, registry
+# Explicit imports required to avoid heavy dependency loading (Torch) at package level.
+# Users should import directly from submodules:
+# from ocr.core.interfaces.losses import BaseLoss
+# from ocr.core.utils.registry import registry
 
-__all__ = [
-    "BaseEncoder",
-    "BaseDecoder",
-    "BaseHead",
-    "BaseLoss",
-    "BaseMetric",
-    "ComponentRegistry",
-    "get_registry",
-    "registry",
-]
+__all__ = []

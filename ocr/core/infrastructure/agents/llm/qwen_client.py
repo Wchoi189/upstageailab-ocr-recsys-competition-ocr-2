@@ -12,7 +12,7 @@ import os
 from typing import Optional
 from pathlib import Path
 
-from ocr.agents.llm.base_client import BaseLLMClient, LLMResponse
+from .base_client import BaseLLMClient, LLMResponse
 
 logger = logging.getLogger(__name__)
 
@@ -26,26 +26,27 @@ class QwenClient(BaseLLMClient):
 
     def __init__(
         self,
-        model_path: Optional[str] = None,
+        model_name: str = "qwen3:4b-instruct",
         api_endpoint: Optional[str] = None,
         mode: str = "api"  # 'cli' or 'api'
     ):
         """
-        Initialize Qwen client.
+        Initialize Qwen client (Ollama compatible).
 
         Args:
-            model_path: Path to Qwen model (for CLI mode)
-            api_endpoint: API endpoint URL (for API mode)
+            model_name: Model tag to use (e.g. 'qwen3:4b-instruct')
+            api_endpoint: API endpoint URL (default: http://host.docker.internal:11434)
             mode: Execution mode ('cli' or 'api')
         """
         self.mode = mode
-        self.model_path = model_path or os.getenv("QWEN_MODEL_PATH", "/models/qwen")
-        self.api_endpoint = api_endpoint or os.getenv("QWEN_API_ENDPOINT", "http://localhost:8000")
+        self.model_name = model_name
+        # Default to Ollama endpoint
+        self.api_endpoint = api_endpoint or os.getenv("QWEN_API_ENDPOINT", "http://host.docker.internal:11434")
 
-        if mode == "cli" and not Path(self.model_path).exists():
-            logger.warning(f"Qwen model not found at {self.model_path}")
+        # For CLI mode, we use model prompt/path logic, but we focus on API for now
+        self.model_path = os.getenv("QWEN_MODEL_PATH", "/models/qwen") 
 
-        logger.info(f"Initialized QwenClient in {mode} mode")
+        logger.info(f"Initialized QwenClient (Model: {self.model_name}) in {mode} mode at {self.api_endpoint}")
 
     def generate(
         self,
@@ -56,7 +57,7 @@ class QwenClient(BaseLLMClient):
         **kwargs
     ) -> str:
         """
-        Generate text using Qwen model.
+        Generate text using Qwen model via Ollama API.
 
         Args:
             prompt: User prompt
@@ -81,7 +82,7 @@ class QwenClient(BaseLLMClient):
         max_tokens: int,
         **kwargs
     ) -> str:
-        """Generate using API endpoint."""
+        """Generate using API endpoint (Ollama compatible)."""
         import httpx
 
         messages = []
@@ -90,25 +91,44 @@ class QwenClient(BaseLLMClient):
         messages.append({"role": "user", "content": prompt})
 
         payload = {
+            "model": self.model_name,
             "messages": messages,
             "temperature": temperature,
             "max_tokens": max_tokens,
+            "stream": False,
             **kwargs
         }
 
         try:
             with httpx.Client(timeout=60.0) as client:
                 response = client.post(
-                    f"{self.api_endpoint}/v1/chat/completions",
+                    f"{self.api_endpoint}/api/chat", # Ollama native API or OpenAI compat
                     json=payload
                 )
+                
+                # Check if we should use /v1/chat/completions (OpenAI compat) or /api/chat (Ollama native)
+                # The user endpoint http://host.docker.internal:11434 serves typical Ollama API.
+                # OpenAI compat is usually at /v1. Let's try to be smart or stick to one.
+                # Defaulting to OpenAI compatible endpoint as originally implemented, assuming Ollama is running valid wrapper or native compat.
+                # Actually, standard Ollama port 11434 exposes /api/chat and /v1/chat/completions (recent versions).
+                # Let's start with /v1/chat/completions as it was the original code's intent (standardized).
+                
+                if response.status_code == 404:
+                     # Fallback to Ollama native /api/chat if /v1 is missing
+                     logger.info("Fallback to /api/chat")
+                     payload.pop("max_tokens", None) # Ollama might use options
+                     payload["options"] = {"num_predict": max_tokens, "temperature": temperature}
+                     response = client.post(f"{self.api_endpoint}/api/chat", json=payload)
+
                 response.raise_for_status()
                 data = response.json()
 
                 if "choices" in data and len(data["choices"]) > 0:
                     return data["choices"][0]["message"]["content"]
+                elif "message" in data: # Ollama native format
+                    return data["message"]["content"]
                 else:
-                    raise ValueError("Invalid response format from Qwen API")
+                    raise ValueError(f"Invalid response format from API: {data.keys()}")
 
         except Exception as e:
             logger.error(f"Qwen API generation failed: {e}")

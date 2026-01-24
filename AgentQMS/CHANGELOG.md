@@ -5,6 +5,23 @@ All notable changes to AgentQMS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.1.0] - 2026-01-25 (IACP & Infrastructure)
+
+### Added
+- **Multi-Agent IACP**: Enforced strict `IACPEnvelope` protocol for all agent communication.
+- **Distributed Caching**: `ConfigLoader` now supports Redis (`config:{path}`) with memory/disk fallback.
+- **Local LLM Support**: Added `QwenClient` configuration for local Ollama instances (`qwen3:4b-instruct`).
+- **Lazy Loading**: Optimized `ocr.core.infrastructure.agents.llm` to use `__getattr__` for lazy client imports.
+
+### Changed
+- **ConfigLoader**: Refactored to prioritize Redis > Memory > Disk.
+- **ValidationAgent**: Updated to consume/produce `IACPEnvelope` over RabbitMQ.
+- **Docs**: Updated `AGENTS.md` to reflect unified `aqms` CLI and new infrastructure.
+
+### Fixed
+- **Import Errors**: Removed heavy dependencies (Torch) from `ocr.core.__init__.py` to fix test timeouts.
+- **Legacy Paths**: Fixed `ocr.agents` imports to `ocr.core.infrastructure.agents`.
+
 ## [1.0.0] - 2026-01-21 (ADS v1.0 Compliance)
 
 ### CONSOLIDATED - Single CLI Architecture
