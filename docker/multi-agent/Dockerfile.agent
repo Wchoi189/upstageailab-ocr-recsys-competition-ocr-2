@@ -1,0 +1,42 @@
+FROM python:3.11-slim
+
+# Set working directory
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    git \
+    libgl1-mesa-glx \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy requirements
+COPY pyproject.toml /app/
+
+# Install Python dependencies using pip
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir \
+    pika \
+    opencv-python-headless \
+    rembg \
+    Pillow \
+    numpy \
+    httpx \
+    openai \
+    pydantic
+
+# Copy project files
+COPY ocr /app/ocr
+COPY AgentQMS /app/AgentQMS
+
+# Set Python path
+ENV PYTHONPATH=/app
+ENV PYTHONUNBUFFERED=1
+
+# Default command (can be overridden)
+CMD ["python", "-m", "ocr.agents.linting_agent"]
