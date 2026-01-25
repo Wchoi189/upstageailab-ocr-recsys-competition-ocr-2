@@ -1,40 +1,9 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-01-25T01:57:49.742722",
+  "last_updated": "2026-01-25T02:56:01.475355",
   "health": "healthy",
   "current_phase": "kie",
-  "active_pulse": {
-    "pulse_id": "iacp-migrate-multi-agent",
-    "objective": "Migrate to Multi-Agent IACP with State Virtualization and reduce effective.yaml bloat.",
-    "milestone_id": "session-1",
-    "instructions": [
-      "# Directive: 00_meta_cognition\n# [Compass:Lock] Core Directive 00: Meta-Cognition Protocol\n\n## Purpose\nForce deliberate reasoning before any file creation or state change.\n\n## The [Compass:Reflection] Template\n\nBefore creating ANY artifact, output this reflection:\n\n```\n[Compass:Reflection]\n- Type: (design|research|walkthrough|implementation_plan|bug_report|audit)\n- Justification: Why is this file necessary for THIS pulse?\n- Redundancy: Does an existing artifact cover this? Why not update it?\n- Lifecycle: Transitional (delete after) or Archived (keep in history)?\n```\n\n## Behavioral Rules\n\n1. **Challenge Vague Instructions**: If a milestone task is unclear, ASK for clarification. Do not guess.\n2. **Evidence-Based Completion**: Cannot mark tasks complete without validation command output.\n3. **Proactive Pruning**: If legacy code exists that should be cleaned, add to `active_blockers`.\n\n## Anti-Patterns\n\n| \u274c Banned                       | \u2705 Required                                  |\n| ------------------------------ | ------------------------------------------- |\n| \"I think...\"                   | \"The code shows...\"                         |\n| \"Maybe we could...\"            | \"Will implement X by...\"                    |\n| Creating files outside staging | All artifacts in `pulse_staging/artifacts/` |\n| Narrative summaries            | Indicator-only notes (max 20 words)         |\n",
-      "# Directive: 01_naming_standards\n# [Compass:Lock] Core Directive 01: Naming Standards\n\n## Pulse ID Format\n\n**Pattern**: `{domain}-{action}-{target}`\n\n**Regex**: `^[a-z][a-z0-9]*(-[a-z][a-z0-9]*){1,4}$`\n\n**Examples**:\n- \u2705 `recognition-optimize-vocab`\n- \u2705 `detection-fix-cuda-mismatch`\n- \u2705 `hydra-refactor-domains`\n- \u274c `new_session_01`\n- \u274c `test-123`\n- \u274c `session`\n\n## Banned Terms\n\nThese words are BLOCKED in pulse IDs:\n- `new`, `session`, `test`, `tmp`, `untitled`, `default`\n\n## Artifact Naming\n\n**Pattern**: `{milestone_id}-{type}-{description}.md`\n\n**Examples**:\n- `rec-opt-research-vocab-size.md`\n- `det-scale-design-batch-tuning.md`\n- `hydra-v5-walkthrough-migration.md`\n\n## Milestone ID Format\n\n**Pattern**: `{domain_abbrev}-{short_name}`\n\n**Examples**:\n- `rec-opt` (recognition optimization)\n- `det-scale` (detection scaling)\n- `kie-align` (KIE alignment)\n",
-      "# Directive: 02_artifact_purity\n# [Compass:Lock] Core Directive 02: Artifact Purity\n\n## The Staging Constraint\n\n**THE ONLY valid artifact location**: `pulse_staging/artifacts/`\n\nFiles created ANYWHERE else are violations and will be ignored by export.\n\n## Zero-Narrative Policy\n\n**Max 20 words** for any status update or note.\n\n| \u274c Banned                                                    | \u2705 Required                   |\n| ----------------------------------------------------------- | ---------------------------- |\n| \"We discussed that the implementation could potentially...\" | \"Implemented X in Y.py\"      |\n| Multi-paragraph summaries                                   | Bullet points with file refs |\n| Future tense speculation                                    | Past tense facts             |\n\n## Artifact Lifecycle\n\n| Tier             | Status          | Location                   | Persistence                 |\n| ---------------- | --------------- | -------------------------- | --------------------------- |\n| **Transitional** | Working draft   | `pulse_staging/artifacts/` | Deleted on pulse completion |\n| **Archived**     | Historic record | `history/{pulse_id}/`      | Permanent, read-only        |\n\n## Registration Requirement\n\nBefore pulse-export, ALL files in staging MUST be registered via `pulse-sync`.\n\nUnregistered files = **BLOCKED export**.\n\n## The Scratchpad Exception\n\nIf you need verbose reasoning, use `pulse_staging/artifacts/scratchpad.md`.\n\nThis file is **auto-deleted** on export and never archived.\n"
-    ],
-    "artifacts": [
-      {
-        "path": "constitution.md",
-        "artifact_type": "requirements",
-        "milestone_id": "session-1",
-        "created_at": "2026-01-25T01:08:56.433962"
-      },
-      {
-        "path": "implementation_plan.md",
-        "artifact_type": "implementation_plan",
-        "milestone_id": "session-1",
-        "created_at": "2026-01-25T01:57:49.633809"
-      },
-      {
-        "path": "walkthrough.md",
-        "artifact_type": "walkthrough",
-        "milestone_id": "session-1",
-        "created_at": "2026-01-25T01:57:49.742712"
-      }
-    ],
-    "started_at": "2026-01-25T01:08:55.925658",
-    "token_burden": "low"
-  },
+  "active_pulse": null,
   "star_chart": [],
   "active_blockers": []
 }
