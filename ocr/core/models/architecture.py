@@ -151,55 +151,6 @@ class OCRModel(nn.Module):
         # Return the final structure expected by post-processor
         return head_out
 
-    def _get_optimizers_impl(self):
-        if "optimizer" in self.cfg:
-            optimizer_config = self.cfg.optimizer
-        elif "model" in self.cfg and "optimizer" in self.cfg.model:
-            optimizer_config = self.cfg.model.optimizer
-        elif "train" in self.cfg and "optimizer" in self.cfg.train:
-             optimizer_config = self.cfg.train.optimizer
-        else:
-            # Fallback or error prompt
-            try:
-                optimizer_config = self.cfg.optimizer
-            except Exception:
-                 import omegaconf
-                 # Debug: print available keys to find where it is
-                 logger.error(f"DEBUG: Available keys in cfg: {list(self.cfg.keys())}")
-                 if "model" in self.cfg:
-                      logger.error(f"DEBUG: Available keys in cfg.model: {list(self.cfg.model.keys())}")
-                 raise omegaconf.errors.ConfigAttributeError("Missing key optimizer (checked root, model.optimizer, train.optimizer)")
-
-        # Manual instantiation fallback for Adam/AdamW to workaround instantiate() issues
-        target = optimizer_config.get("_target_", "")
-        print(f"DEBUG: FINAL CHECK TARGET: '{target}'")
-
-        if "AdamW" in str(target):
-             optimizer = torch.optim.AdamW(
-                self.parameters(),
-                lr=optimizer_config.get("lr", 0.001),
-                betas=optimizer_config.get("betas", (0.9, 0.999)),
-                eps=optimizer_config.get("eps", 1e-8),
-                weight_decay=optimizer_config.get("weight_decay", 0.01)
-            )
-        elif "Adam" in str(target):
-            optimizer = torch.optim.Adam(
-                self.parameters(),
-                lr=optimizer_config.get("lr", 0.001),
-                betas=optimizer_config.get("betas", (0.9, 0.999)),
-                eps=optimizer_config.get("eps", 1e-8),
-                weight_decay=optimizer_config.get("weight_decay", 0)
-            )
-        else:
-            optimizer = instantiate(optimizer_config, params=self.parameters())
-
-        scheduler = None
-        if "scheduler" in self.cfg:
-            scheduler_config = self.cfg.scheduler
-            scheduler = instantiate(scheduler_config, optimizer=optimizer)
-
-        return [optimizer], [scheduler] if scheduler else []
-
     def get_polygons_from_maps(
         self,
         batch: dict[str, Any],

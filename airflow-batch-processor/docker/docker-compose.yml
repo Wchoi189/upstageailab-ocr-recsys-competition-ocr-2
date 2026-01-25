@@ -2,6 +2,9 @@ x-airflow-env: &airflow-env
   AIRFLOW__CORE__EXECUTOR: LocalExecutor
   AIRFLOW__DATABASE__SQL_ALCHEMY_CONN: postgresql+psycopg2://airflow:airflow@postgres/airflow
   AIRFLOW__CORE__LOAD_EXAMPLES: "False"
+  AIRFLOW__CORE__INTERNAL_API_URL: http://airflow-webserver:8080
+  AIRFLOW__CORE__EXECUTION_API_SERVER_URL: http://airflow-webserver:8080/execution/
+  AIRFLOW__API_AUTH__JWT_SECRET: "super-secret-jwt-token-x-1234567890"
   PYTHONPATH: /opt/airflow:/opt/airflow/src
   # GPU hints (use `docker compose --profile gpu up` with override file if needed)
   NVIDIA_VISIBLE_DEVICES: all

@@ -1,0 +1,400 @@
+---
+ads_version: '1.0'
+type: rule_set
+agent: all
+tier: 2
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 180
+id: anti-patterns
+name: Anti-Patterns Catalog
+description: Prohibited patterns with enforcement rules - machine-parseable violations
+version: '1.0'
+last_updated: '2026-01-25'
+auto_load: false  # Load when reviewing code or running checks
+source: docs/artifacts/audits/2026-01-25_2100_audit_legacy-purge.md
+
+# ============================================================================
+# CRITICAL ANTI-PATTERNS (BLOCK PR)
+# ============================================================================
+
+critical:
+  AP-001:
+    name: Model-Level Configuration
+    severity: critical
+    description: Models must not create optimizers, schedulers, or handle configuration logic
+    rationale: Violates SRP, duplicates config logic, prevents centralized management
+    
+    forbidden_patterns:
+      code:
+        - pattern: "def get_optimizers(self)"
+          context: "*.py files in ocr/*/models/"
+          message: "Models must not implement get_optimizers()"
+        - pattern: "model.get_optimizers()"
+          context: "*.py"
+          message: "Use Lightning configure_optimizers() instead"
+        - pattern: "self.config.optimizer"
+          context: "class.*nn.Module"
+          message: "Models must not access optimizer config"
+    
+    enforcement:
+      pre_commit:
+        tool: AgentQMS/tools/check_anti_patterns.py
+        rule_id: AP-001
+      linter:
+        tool: ast-grep
+        pattern: |
+          class $CLASS(nn.Module):
+            $$$
+            def get_optimizers($$$):
+              $$$
+      ci_check:
+        cmd: "grep -r 'get_optimizers' ocr/*/models/ && exit 1 || exit 0"
+    
+    migration:
+      see: docs/reference/v5-optimizer-migration.md
+      correct_pattern: Use Lightning configure_optimizers() in pl.LightningModule
+
+  AP-002:
+    name: Silent Fallback Chains
+    severity: critical
+    description: Exception handlers that silently return defaults or chain fallbacks
+    rationale: Masks errors, makes debugging impossible, hides config issues
+    
+    forbidden_patterns:
+      code:
+        - pattern: |
+            try:
+              $$$
+            except:
+              pass
+          context: "*.py"
+          message: "No bare except with pass - use explicit error handling"
+        - pattern: |
+            except Exception:
+              return $DEFAULT
+          context: "configure_optimizers, configure_*"
+          message: "No silent fallbacks in configuration methods"
+        - pattern: "strict=False"
+          context: "load_state_dict"
+          message: "Use strict=True except in migration scripts"
+    
+    allowed_exceptions:
+      - context: KeyboardInterrupt handling
+        pattern: "except KeyboardInterrupt"
+      - context: Cleanup with logging
+        pattern: |
+          except Exception as e:
+            log.debug(f"cleanup failed: {e}")
+      - context: Migration scripts only
+        path_pattern: "scripts/migration/*.py"
+    
+    enforcement:
+      linter:
+        tool: pylint
+        enable: [bare-except, broad-except]
+      ast_grep:
+        pattern: |
+          try:
+            $$$
+          except:
+            pass
+      max_fallback_levels: 2
+
+  AP-003:
+    name: Multiple Configuration Paths
+    severity: critical
+    description: Supporting multiple locations for same configuration value
+    rationale: Increases cognitive load, prevents standardization, causes confusion
+    
+    standard_paths:
+      optimizer: config.train.optimizer
+      scheduler: config.train.scheduler
+      architecture: config.model.architectures
+      dataset: config.data.datasets
+      transforms: config.data.transforms
+    
+    forbidden_alternatives:
+      optimizer:
+        - config.model.optimizer
+        - config.optimizer
+        - model.get_optimizers()
+      scheduler:
+        - config.model.scheduler
+        - config.scheduler
+      dataset:
+        - config.dataset
+        - config.data.dataset
+    
+    enforcement:
+      code_review: Flag alternative path creation
+      pre_commit: Reject PRs adding non-standard paths
+      migration: Provide explicit migration guide
+
+  AP-004:
+    name: Overly Permissive Checkpoint Loading
+    severity: critical
+    description: Using strict=False or excessive fallback chains when loading checkpoints
+    rationale: Silently ignores missing parameters, hides architecture mismatches
+    
+    rules:
+      max_fallback_levels: 2
+      strict_mode_required: true
+      strict_false_allowed_in:
+        - scripts/migration/*.py
+        - scripts/checkpoints/convert*.py
+    
+    allowed_fallbacks:
+      - direct_load_strict_true
+      - torch_compile_prefix_handling_only:
+          pattern: "._orig_mod."
+    
+    required_error_format: |
+      raise RuntimeError(
+          f"Checkpoint incompatible with current model architecture.\n"
+          f"Original error: {e}\n"
+          f"For legacy checkpoints, use: scripts/checkpoints/convert.py"
+      ) from e
+    
+    enforcement:
+      code_review: Flag strict=False usage
+      grep_check: "grep -r 'strict=False' ocr/ | grep -v migration | grep -v convert"
+
+# ============================================================================
+# HIGH SEVERITY ANTI-PATTERNS (SHOULD FIX)
+# ============================================================================
+
+high:
+  AP-005:
+    name: Magic Numbers
+    severity: high
+    description: Hardcoded numeric values without named constants
+    
+    exceptions:
+      - value: [0, 1, 2, -1]
+        context: Mathematical constants
+      - pattern: "arr[0-9]"
+        context: Array indices
+      - value: [0.5, 0.25]
+        context: Common fractions (but consider naming)
+    
+    correction:
+      location: ocr/core/constants/<domain>.py
+      format: |
+        DETECTION_IMAGE_SIZE = 640
+        CONFIDENCE_THRESHOLD = 0.7
+        MAX_BOXES = 1024
+    
+    enforcement:
+      linter: flake8-magic-numbers
+      threshold: Numbers > 2 and not in exceptions
+
+  AP-006:
+    name: Domain-Specific Code in Shared Utils
+    severity: high
+    description: Utilities containing domain-specific logic in shared locations
+    
+    forbidden:
+      - location: ocr/core/utils/
+        contains: "if domain == 'detection'"
+      - location: ocr/core/utils/
+        contains: "elif domain == 'recognition'"
+    
+    correct_structure:
+      detection_utils: ocr/domains/detection/utils/
+      recognition_utils: ocr/domains/recognition/utils/
+      kie_utils: ocr/domains/kie/utils/
+      shared_only: ocr/core/utils/
+    
+    validation:
+      cmd: "grep -r 'domain ==' ocr/core/utils/ && exit 1 || exit 0"
+
+  AP-007:
+    name: God Classes/Functions
+    severity: high
+    description: Single class or function doing too much
+    
+    thresholds:
+      function_lines: 50
+      function_lines_target: 30
+      file_lines: 500
+      file_lines_target: 300
+      cyclomatic_complexity: 10
+      function_parameters: 5
+      class_methods: 20
+    
+    solution:
+      - extract_methods
+      - create_helper_classes
+      - use_composition
+      - apply_single_responsibility
+    
+    enforcement:
+      tool: radon
+      cmd: "radon cc ocr/ -a -nb --total-average"
+      threshold: "B grade or better"
+
+# ============================================================================
+# MEDIUM SEVERITY ANTI-PATTERNS (NICE TO FIX)
+# ============================================================================
+
+medium:
+  AP-008:
+    name: Commented-Out Code
+    severity: medium
+    description: Large blocks of commented code left in repository
+    rationale: Clutters codebase, confuses readers, git history preserves old code
+    
+    rule: Delete commented code - use git history if needed
+    
+    exceptions:
+      - context: Temporary debugging
+        max_duration_days: 7
+      - context: Alternative implementations being evaluated
+        requirement: Must document reason
+    
+    detection:
+      pattern: "^\\s*#.*$"
+      consecutive_lines_threshold: 5
+
+  AP-009:
+    name: Duplicate Code
+    severity: medium
+    description: Copy-pasted code instead of extraction
+    
+    threshold:
+      min_lines: 10
+      min_similarity: 0.8
+    
+    detection:
+      tools:
+        - name: pylint
+          cmd: "pylint ocr/ --disable=all --enable=duplicate-code"
+        - name: ast-grep
+          cmd: "adt analyze sg-search --similarity 0.8 --min-lines 10"
+
+  AP-010:
+    name: Unclear Naming
+    severity: medium
+    description: Variable/function names that don't convey intent
+    
+    forbidden_names:
+      - tmp
+      - temp
+      - data
+      - result
+      - val
+      - x
+      - y
+      - d
+      - proc
+      - func
+    
+    required:
+      functions: Verb-noun pattern (process_image, extract_text)
+      variables: Descriptive nouns (predictions, confidence_scores)
+      constants: UPPER_SNAKE_CASE
+      classes: PascalCase with domain context
+
+# ============================================================================
+# ENFORCEMENT CONFIGURATION
+# ============================================================================
+
+enforcement:
+  pre_commit:
+    hook_file: .pre-commit-config.yaml
+    script: AgentQMS/tools/check_anti_patterns.py
+    fail_on:
+      - AP-001
+      - AP-002
+      - AP-003
+      - AP-004
+  
+  ci_checks:
+    - name: Anti-Pattern Detection
+      cmd: uv run python AgentQMS/tools/check_anti_patterns.py
+      fail_on_exit_code: 1
+    - name: Complexity Check
+      cmd: radon cc ocr/ -a -nb --total-average --min B
+      fail_on_exit_code: 1
+  
+  linter_config:
+    file: pyproject.toml
+    pylint_enable:
+      - bare-except
+      - broad-except
+      - duplicate-code
+      - too-many-lines
+      - too-many-arguments
+    pylint_design:
+      max-args: 5
+      max-locals: 15
+      max-branches: 12
+      max-statements: 50
+
+# ============================================================================
+# CODE REVIEW CHECKLIST
+# ============================================================================
+
+code_review_checklist:
+  critical:
+    - check: No model-level configuration (AP-001)
+      fail_pr: true
+    - check: No silent fallbacks (AP-002)
+      fail_pr: true
+    - check: Single configuration path (AP-003)
+      fail_pr: true
+    - check: Strict checkpoint loading (AP-004)
+      fail_pr: true
+  
+  high:
+    - check: No magic numbers (AP-005)
+      fail_pr: false
+    - check: Domain separation maintained (AP-006)
+      fail_pr: false
+    - check: Functions < 50 lines (AP-007)
+      fail_pr: false
+  
+  medium:
+    - check: No commented code (AP-008)
+      fail_pr: false
+    - check: No duplication (AP-009)
+      fail_pr: false
+    - check: Clear naming (AP-010)
+      fail_pr: false
+
+# ============================================================================
+# RELATED STANDARDS
+# ============================================================================
+
+related:
+  - id: hydra-v5-patterns-reference
+    path: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
+    usage: V5 architecture patterns and failure modes
+  - id: hydra-v5-rules
+    path: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+    usage: Hydra configuration rules
+  - id: naming-conventions
+    path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+    usage: Naming standards
+  - id: file-placement-rules
+    path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+    usage: File organization rules
+
+# ============================================================================
+# MAINTENANCE
+# ============================================================================
+
+maintenance:
+  review_frequency: quarterly
+  update_triggers:
+    - major_refactors
+    - new_anti_pattern_discovered
+    - obsolete_pattern_deprecated
+  
+  changelog:
+    - version: '1.0'
+      date: '2026-01-25'
+      changes: Initial catalog from Legacy Purge Audit
+      source: __DEBUG__/2026-01-25_standards-update/anti-patterns.md

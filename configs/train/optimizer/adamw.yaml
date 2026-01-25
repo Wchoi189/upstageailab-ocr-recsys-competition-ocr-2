@@ -1,4 +1,4 @@
-# @package model.optimizer
+# @package train.optimizer
 
 _target_: torch.optim.AdamW
 lr: 0.0003

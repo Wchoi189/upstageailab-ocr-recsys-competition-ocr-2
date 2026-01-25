@@ -196,6 +196,29 @@ task_mappings:
       path_patterns:
         - "**/*.py"
 
+  code_quality:
+    description: Code quality checks, anti-patterns, bloat detection
+    priority: 2
+    standards:
+      - AgentQMS/standards/tier2-framework/coding/anti-patterns.yaml
+      - AgentQMS/standards/tier2-framework/coding/bloat-detection-rules.yaml
+    triggers:
+      keywords:
+        - anti-pattern
+        - code smell
+        - bloat
+        - unused code
+        - duplicate code
+        - complexity
+        - refactor
+        - code review
+      patterns:
+        - \banti-?pattern\b
+        - \b(bloat|unused|duplicate)\b.*\bcode\b
+        - \bcode\b.*\b(smell|quality|review)\b
+      path_patterns:
+        - "**/*.py"
+
   inference_pipeline:
     description: OCR inference pipeline work
     priority: 2
@@ -361,6 +384,7 @@ tier2_framework:
   tools: AgentQMS/standards/tier2-framework/tool-catalog.yaml
   quickstart: AgentQMS/standards/tier2-framework/quickstart.yaml
   debugging: AgentQMS/standards/tier2-framework/debugging-sessions.yaml
+  anti_patterns: AgentQMS/standards/tier2-framework/coding/anti-patterns.yaml
   coding_standards:
     core: AgentQMS/standards/tier2-framework/coding/python-core.yaml
     testing: AgentQMS/standards/tier2-framework/coding/testing.yaml
@@ -394,6 +418,7 @@ tier4_workflows:
   middleware: AgentQMS/standards/tier4-workflows/middleware-policies.yaml
   experiment_workflow: AgentQMS/standards/tier4-workflows/experiment-workflow.yaml
   workflow_detector: AgentQMS/standards/tier4-workflows/workflow-detector.yaml
+  bloat_detection: AgentQMS/standards/tier2-framework/coding/bloat-detection-rules.yaml
   compliance: AgentQMS/standards/tier4-workflows/compliance-reporting/generate-compliance-report.py
   hooks: AgentQMS/standards/tier4-workflows/pre-commit-hooks/
   utilities:

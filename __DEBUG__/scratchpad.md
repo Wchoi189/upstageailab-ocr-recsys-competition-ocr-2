@@ -9,8 +9,8 @@
 ```bash
 repomix --style markdown \
   --include 'AgentQMS/*,AgentQMS/standards/tier3-agents/multi-agent-system.yaml' \
-  --ignore 'AgentQMS/standards/tier3-agents/*,*.jsonl,*.bak,AgentQMS/bin/artifacts_violations_history.json,AgentQMS/bin/cli_tools/audio' \
-  --output /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS_2026-01-23.md
+  --ignore 'AgentQMS/standards/tier3-agents/*,*.jsonl,*.bak,AgentQMS/bin/artifacts_violations_history.json,AgentQMS/bin/cli_tools/audio,AgentQMS/mcp_server.py,AgentQMS/mcp_schema.yaml,AgentQMS/context-tooling-2.0-plan.md,' \
+  --output /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS_2026-01-26.md
 
 ```
 

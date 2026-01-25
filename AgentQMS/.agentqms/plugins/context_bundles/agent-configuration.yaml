@@ -92,7 +92,7 @@ tiers:
         mode: reference
         description: Agent interface for experiment tools
         optional: true
-      - path: AgentQMS/standards/tier2-framework/ollama-models.yaml
+      - path: AgentQMS/standards/tier2-framework/agent-infra/ollama-models.yaml
         priority: high
         mode: full
         description: Ollama model catalog for multi-agent systems

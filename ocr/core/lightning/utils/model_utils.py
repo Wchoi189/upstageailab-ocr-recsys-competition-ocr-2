@@ -7,84 +7,51 @@ import torch
 
 
 def load_state_dict_with_fallback(
-    model: torch.nn.Module, state_dict: Mapping[str, Any], strict: bool = True, remove_prefix: str = "model.", _recursion_depth: int = 0
+    model: torch.nn.Module, 
+    state_dict: Mapping[str, Any], 
+    strict: bool = True
 ) -> tuple[list[str], list[str]]:
-    """Load state dict with fallback handling for different checkpoint formats.
-
-    This function handles loading checkpoints that may have different key prefixes
-    or structures, providing fallback mechanisms for common issues.
-
+    """Load state dict with torch.compile prefix handling ONLY.
+    
+    Supports:
+    1. Standard loading (strict=True)
+    2. torch.compile "._orig_mod." prefix removal
+    
+    NO LEGACY CHECKPOINT FORMATS. Migrate old checkpoints explicitly.
+    Use scripts/checkpoints/convert_legacy_checkpoints.py for old formats.
+    
     Args:
         model: The model to load state into
         state_dict: The state dictionary to load
         strict: Whether to strictly enforce key matching
-        remove_prefix: Prefix to remove from state dict keys if present
-        _recursion_depth: Internal parameter to prevent infinite recursion
-
+    
     Returns:
         Tuple of (missing_keys, unexpected_keys)
+        
+    Raises:
+        RuntimeError: If checkpoint is incompatible with model architecture
     """
-    # Prevent infinite recursion
-    if _recursion_depth > 1:
-        raise RuntimeError("Maximum recursion depth exceeded in load_state_dict_with_fallback")
-
-    # Try loading with original keys first
+    # Try 1: Direct load
     try:
         result = model.load_state_dict(state_dict, strict=strict)
         return result.missing_keys, result.unexpected_keys
     except RuntimeError as e:
         error_str = str(e)
-        # Only retry for missing/unexpected key errors, not other RuntimeErrors
-        if "Missing key(s)" not in error_str and "Unexpected key(s)" not in error_str:
-            raise
-
-    # Fallback: try removing prefix if present
-    if remove_prefix:
-        modified_state_dict = {}
-        for key, value in state_dict.items():
-            if key.startswith(remove_prefix):
-                new_key = key[len(remove_prefix) :]
-                modified_state_dict[new_key] = value
-            else:
-                modified_state_dict[key] = value
-
-        try:
-            result = model.load_state_dict(modified_state_dict, strict=strict)
-            return result.missing_keys, result.unexpected_keys
-        except RuntimeError as e:
-            error_str = str(e)
-            # Only retry for missing/unexpected key errors
-            if "Missing key(s)" not in error_str and "Unexpected key(s)" not in error_str:
-                raise
-
-    # Fallback: handle compiled model checkpoints with _orig_mod prefix
-    modified_state_dict = {}
-    for key, value in state_dict.items():
-        # Remove _orig_mod prefix that gets added by torch.compile
-        if "._orig_mod." in key:
-            new_key = key.replace("._orig_mod.", ".")
-            modified_state_dict[new_key] = value
-        else:
-            modified_state_dict[key] = value
-
-    if modified_state_dict != dict(state_dict):  # Only try if we actually modified keys
-        try:
-            result = model.load_state_dict(modified_state_dict, strict=strict)
-            return result.missing_keys, result.unexpected_keys
-        except RuntimeError as e:
-            error_str = str(e)
-            # Only retry for missing/unexpected key errors
-            if "Missing key(s)" not in error_str and "Unexpected key(s)" not in error_str:
-                raise
-
-    # Final fallback: load with strict=False
-    try:
-        result = model.load_state_dict(state_dict, strict=False)
-        return result.missing_keys, result.unexpected_keys
-    except RuntimeError as e:
-        # If even strict=False fails with a non-key-related error, re-raise it
-        error_str = str(e)
-        if "Missing key(s)" not in error_str and "Unexpected key(s)" not in error_str:
-            raise
-        # If it's still a key-related error even with strict=False, return empty lists
-        return [], []
+        # Check if this is a torch.compile prefix issue
+        has_orig_mod = any("._orig_mod." in key for key in state_dict.keys())
+        if not has_orig_mod and "_orig_mod" not in error_str:
+            # Not a torch.compile issue, fail fast
+            raise RuntimeError(
+                f"Checkpoint incompatible with current model architecture.\\n"
+                f"Original error: {e}\\n"
+                f"For legacy checkpoints, use: scripts/checkpoints/convert_legacy_checkpoints.py"
+            ) from e
+    
+    # Try 2: torch.compile prefix handling ONLY
+    modified_state_dict = {
+        key.replace("._orig_mod.", "."): value 
+        for key, value in state_dict.items()
+    }
+    
+    result = model.load_state_dict(modified_state_dict, strict=strict)
+    return result.missing_keys, result.unexpected_keys

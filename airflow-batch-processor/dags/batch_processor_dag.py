@@ -100,6 +100,7 @@ def create_dag() -> DAG:
         description="Batch processing DAG for Upstage APIs",
         tags=["ocr", "kie", "api"],
     ) as dag:
+        t_pre = PythonOperator(task_id="preprocess", python_callable=preprocess)
         t_api = PythonOperator(task_id="api_call", python_callable=call_upstage_api)
         t_val = PythonOperator(task_id="validate", python_callable=validate)
         t_exp = PythonOperator(task_id="export", python_callable=export)

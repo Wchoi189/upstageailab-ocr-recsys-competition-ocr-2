@@ -86,14 +86,25 @@ def load_state_dict(model, checkpoint: dict[str, Any]) -> bool:  # type: ignore[
 
     if dropped:
         LOGGER.warning("Dropped %d keys not present in current model: %s", len(dropped), sorted(dropped)[:10])
-    if missing:
-        LOGGER.warning("Missing %d keys expected by the model: %s", len(missing), sorted(missing)[:10])
-
+    
+    # Load with strict=True to catch architecture mismatches
     try:
-        model.load_state_dict(filtered_state, strict=False)
+        missing_keys, unexpected_keys = model.load_state_dict(filtered_state, strict=True)
+        
+        if missing_keys:
+            raise RuntimeError(
+                f"Checkpoint missing {len(missing_keys)} required keys: {sorted(missing_keys)[:10]}\\n"
+                f"This checkpoint is incompatible with current model architecture.\\n"
+                f"Convert it using scripts/checkpoints/convert_legacy_checkpoints.py"
+            )
+        
+        if unexpected_keys:
+            LOGGER.warning(f"Checkpoint has {len(unexpected_keys)} unexpected keys (will be ignored): {sorted(unexpected_keys)[:10]}")
+        
         return True
+        
     except RuntimeError as exc:
-        if "size mismatch" in str(exc):
+        if "size mismatch" in str(exc) or "Missing key(s)" in str(exc):
             LOGGER.error("Model architecture mismatch detected: %s", exc)
             return False
         raise

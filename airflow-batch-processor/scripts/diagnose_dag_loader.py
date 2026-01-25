@@ -2,7 +2,9 @@
 import sys
 import os
 from airflow import settings
-from airflow.models import DagBag
+from airflow.models import DagBag, DagModel
+from airflow.utils.session import create_session
+import subprocess
 
 print("=== Diagnostics ===")
 print(f"UID: {os.getuid()}")
@@ -50,3 +52,26 @@ try:
             print(f" - {dag_id}")
 except Exception as e:
     print(f"DagBag crash: {e}")
+
+print("\n=== Database State (DagModel) ===")
+try:
+    with create_session() as session:
+        dags = session.query(DagModel).all()
+        print(f"Total DAGs in DB: {len(dags)}")
+        for d in dags:
+            print(f" - {d.dag_id} (Active: {d.is_active}, Paused: {d.is_paused}, File: {d.fileloc})")
+except Exception as e:
+    print(f"DB Error: {e}")
+
+print("\n=== CLI Check (airflow dags list) ===")
+try:
+    # Run looking for our specific dag
+    result = subprocess.run(["airflow", "dags", "list"], capture_output=True, text=True)
+    print("Output head (first 5 lines):")
+    print("\n".join(result.stdout.splitlines()[:5]))
+    if "batch_processor_dag" in result.stdout:
+        print("✅ 'batch_processor_dag' found in CLI list")
+    else:
+        print("❌ 'batch_processor_dag' NOT found in CLI list")
+except Exception as e:
+    print(f"CLI execution failed: {e}")

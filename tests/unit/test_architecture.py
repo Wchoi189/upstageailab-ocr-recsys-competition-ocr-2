@@ -143,47 +143,31 @@ class TestOCRModel:
             patch("ocr.core.models.head.get_head_by_cfg"),
             patch("ocr.core.models.loss.get_loss_by_cfg"),
         ):
-            mock_optimizer = Mock()
-            mock_instantiate.return_value = mock_optimizer
-
+            # Legacy test - get_optimizers() no longer exists in V5
+            # Optimizer configuration is now handled by Lightning module only
+            # See ocr.core.lightning.base.OCRPLModule.configure_optimizers()
             model = OCRModel(mock_config)
-            optimizers, schedulers = model.get_optimizers()
-
-            assert len(optimizers) == 1
-            assert len(schedulers) == 0
-            assert optimizers[0] == mock_optimizer
-            assert schedulers == []
-            mock_instantiate.assert_called_once()
-            args, kwargs = mock_instantiate.call_args
-            assert args[0] == mock_config.optimizer
-            assert "params" in kwargs
+            
+            # Verify model is optimizer-agnostic
+            assert not hasattr(model, "get_optimizers")
+            assert not hasattr(model, "_get_optimizers_impl")
 
     @patch("ocr.core.models.architecture.instantiate")
     def test_get_optimizers_with_scheduler(self, mock_instantiate, mock_config):
-        """Test optimizer and scheduler creation."""
+        """Test that models no longer handle optimizer/scheduler creation (V5)."""
         with (
             patch("ocr.core.models.encoder.get_encoder_by_cfg"),
             patch("ocr.core.models.decoder.get_decoder_by_cfg"),
             patch("ocr.core.models.head.get_head_by_cfg"),
             patch("ocr.core.models.loss.get_loss_by_cfg"),
         ):
-            mock_optimizer = Mock()
-            mock_scheduler = Mock()
-            mock_instantiate.side_effect = [mock_optimizer, mock_scheduler]
-
-            # Add scheduler to config
-            from omegaconf import OmegaConf
-
-            OmegaConf.set_struct(mock_config, False)
-            mock_config.scheduler = {}
-
+            # V5 Standard: Models are optimizer-agnostic
+            # Optimizer configuration moved to Lightning modules
             model = OCRModel(mock_config)
-            optimizers, schedulers = model.get_optimizers()
-
-            assert len(optimizers) == 1
-            assert len(schedulers) == 1
-            assert optimizers[0] == mock_optimizer
-            assert schedulers[0] == mock_scheduler
+            
+            # Verify methods don't exist
+            assert not hasattr(model, "get_optimizers")
+            assert not hasattr(model, "_get_optimizers_impl")
 
     def test_get_polygons_from_maps(self, mock_config):
         """Test polygon extraction from prediction maps."""
