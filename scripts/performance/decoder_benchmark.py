@@ -24,7 +24,7 @@ from hydra.utils import get_original_cwd
 from lightning.pytorch.callbacks import Callback
 from omegaconf import DictConfig, OmegaConf
 
-from ocr.core.lightning import get_pl_modules_by_cfg
+# # from ocr.core.lightning import get_pl_modules_by_cfg  # TODO: Use OCRProjectOrchestrator  # TODO: Use OCRProjectOrchestrator
 from ocr.core.utils.path_utils import get_path_resolver
 
 
@@ -290,7 +290,7 @@ def _initialise_wandb_logger(
     max_images = int(logger_cfg.get("image_log_max_images", 8))
     if image_log_every > 0 and max_images > 0:
         try:
-            from ocr.core.lightning.callbacks.wandb_image_logging import (
+            # # from ocr.core.lightning.callbacks.wandb_image_logging import  # TODO: Check callback path  # TODO: Check callback path (
                 WandbImageLoggingCallback,
             )
 

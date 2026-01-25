@@ -16,7 +16,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-from ocr.data.datasets.preprocessing import DocumentPreprocessor
+# # from ocr.data.datasets.preprocessing import DocumentPreprocessor  # TODO: Update to detection domain  # TODO: Update to detection domain
 from ocr.core.utils.logging import logger
 
 

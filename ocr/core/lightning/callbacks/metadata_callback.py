@@ -252,13 +252,15 @@ class MetadataCallback(Callback):
             LOGGER.debug("Generated metadata: %s", metadata_path)
 
             # Update checkpoint index (Phase 4.3 optimization)
+            # NOTE: CheckpointIndex not yet implemented - future enhancement
             try:
-                from ocr.core.utils.checkpoints.index import CheckpointIndex
+                # from ocr.core.utils.checkpoints.index import CheckpointIndex
+                raise ImportError("CheckpointIndex not implemented")
 
-                if self.outputs_dir:
-                    index = CheckpointIndex(self.outputs_dir, include_legacy=True)
-                    index.add_checkpoint(checkpoint_path, metadata)
-                    LOGGER.debug("Updated checkpoint index for: %s", checkpoint_path)
+                # if self.outputs_dir:
+                #     index = CheckpointIndex(self.outputs_dir, include_legacy=True)
+                #     index.add_checkpoint(checkpoint_path, metadata)
+                #     LOGGER.debug("Updated checkpoint index for: %s", checkpoint_path)
             except Exception as e:
                 # Don't fail training if index update fails
                 LOGGER.debug("Failed to update checkpoint index: %s", e)

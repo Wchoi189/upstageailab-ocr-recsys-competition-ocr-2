@@ -23,7 +23,7 @@ try:
 except ImportError:
     TORCH_AVAILABLE = False
 
-from ocr.domains.recognition.inference.recognizer import RecognitionInput, RecognizerBackend, RecognizerConfig, TextRecognizer
+# # from ocr.domains.recognition.inference.recognizer import  # TODO: Recognizer module not implemented  # TODO: Recognizer module not implemented RecognitionInput, RecognizerBackend, RecognizerConfig, TextRecognizer
 
 
 def create_synthetic_crops(num_crops: int, height: int = 48, width: int = 200) -> list[RecognitionInput]:

@@ -1,37 +1,30 @@
 #!/usr/bin/env python3
-"""Batch fix broken imports based on audit results."""
+"""Batch fix broken imports based on audit analysis.
+
+CONSERVATIVE STRATEGY:
+- Only fix imports where the target module is VERIFIED to exist
+- Do NOT fix imports to modules that don't exist (comment those out manually)
+- Focus on high-impact, low-risk changes
+"""
 import re
 from pathlib import Path
 from typing import Dict, List, Tuple
 
-# Import mapping rules based on audit analysis
+# Import mapping rules - VERIFIED paths only
 IMPORT_FIXES = {
-    # ocr.core base components -> interfaces
-    'from ocr.core import get_registry': 'from ocr.core.registry import get_registry',
-    'from ocr.core import registry': 'from ocr.core import registry',
-    'from ocr.core import BaseEncoder': 'from ocr.core.interfaces.models import BaseEncoder',
-    'from ocr.core import BaseDecoder': 'from ocr.core.interfaces.models import BaseDecoder',
-    'from ocr.core import BaseHead': 'from ocr.core.interfaces.models import BaseHead',
-    'from ocr.core import BaseLoss': 'from ocr.core.interfaces.losses import BaseLoss',
+    # Registry fixes (4 occurrences, VERIFIED: ocr/core/utils/registry.py exists)
+    'from ocr.core import registry': 'from ocr.core.utils.registry import registry',
+    'from ocr.core import get_registry': 'from ocr.core.utils.registry import get_registry',
     
-    # Also fix models.base -> interfaces
-    'from ocr.core.models.base import BaseEncoder': 'from ocr.core.interfaces.models import BaseEncoder',
-    'from ocr.core.models.base import BaseDecoder': 'from ocr.core.interfaces.models import BaseDecoder',
-    'from ocr.core.models.base import BaseHead': 'from ocr.core.interfaces.models import BaseHead',
-    'from ocr.core.models.base import BaseLoss': 'from ocr.core.interfaces.losses import BaseLoss',
+    # Text rendering (2 occurrences, VERIFIED: ocr/domains/recognition/utils/visualization.py)
+    'from ocr.core.utils.text_rendering import': 'from ocr.domains.recognition.utils.visualization import',
     
-    # ocr.agents -> ocr.core.infrastructure.agents
-    'from ocr.agents.base_agent': 'from ocr.core.infrastructure.agents.base_agent',
-    'from ocr.agents.llm.base_client': 'from ocr.core.infrastructure.agents.llm.base_client',
-    'import ocr.agents.': 'import ocr.core.infrastructure.agents.',
+    # Perspective correction (3 occurrences, VERIFIED: ocr/domains/detection/utils/perspective_correction.py)
+    'from ocr.core.utils.perspective_correction import': 'from ocr.domains.detection.utils.perspective_correction import',
     
-    # ocr.detection -> ocr.domains.detection
-    'from ocr.detection.': 'from ocr.domains.detection.',
-    'import ocr.detection.': 'import ocr.domains.detection.',
-    
-    # ocr.communication -> ocr.core.infrastructure.communication
-    'from ocr.communication.': 'from ocr.core.infrastructure.communication.',
-    'import ocr.communication.': 'import ocr.core.infrastructure.communication.',
+    # Communication infrastructure (VERIFIED: ocr/core/infrastructure/communication/)
+    'from ocr.communication.rabbitmq_transport import': 'from ocr.core.infrastructure.communication.rabbitmq_transport import',
+    'from ocr.communication.slack_service import': 'from ocr.core.infrastructure.communication.slack_service import',
 }
 
 # Module path fixes (for actual file moves)
@@ -68,28 +61,25 @@ def main():
     
     base = Path('/workspaces/upstageailab-ocr-recsys-competition-ocr-2')
     
-    # Target files from audit
+    # Target files - Core infrastructure only (high-impact, verified fixes)
     files_to_fix = [
-        'ocr/core/infrastructure/agents/coordinator_agent.py',
-        'ocr/core/infrastructure/agents/linting_agent.py',
-        'ocr/core/infrastructure/agents/llm/grok_client.py',
-        'ocr/core/infrastructure/agents/llm/openai_client.py',
-        'ocr/core/models/architecture.py',
-        'ocr/core/models/encoder/timm_backbone.py',
+        # Utils with registry imports (4x registry)
         'ocr/core/utils/config.py',
         'ocr/core/utils/config_utils.py',
         'ocr/core/utils/wandb_base.py',
-        'ocr/domains/detection/models/decoders/craft_decoder.py',
-        'ocr/domains/detection/models/decoders/dbpp_decoder.py',
-        'ocr/domains/detection/models/decoders/fpn_decoder.py',
-        'ocr/domains/detection/models/decoders/pan_decoder.py',
-        'ocr/domains/detection/models/decoders/unet.py',
-        'ocr/domains/detection/models/encoders/craft_vgg.py',
-        'ocr/domains/detection/models/heads/craft_head.py',
-        'ocr/domains/detection/models/loss/craft_loss.py',
-        'ocr/domains/detection/models/loss/db_loss.py',
-        'ocr/domains/recognition/models/loss/cross_entropy_loss.py',
-        'scripts/troubleshooting/test_model_forward_backward.py',
+        
+        # Callbacks with text_rendering imports (2x)
+        'ocr/domains/detection/callbacks/wandb.py',
+        'ocr/domains/recognition/callbacks/wandb.py',
+        
+        # Detection utils with perspective_correction (3x)
+        'ocr/domains/detection/inference/preprocess.py',
+        'scripts/demos/offline_perspective_preprocess_train.py',
+        'scripts/demos/test_perspective_on_pseudo_label.py',
+        
+        # Communication imports (2x)
+        'scripts/prototypes/multi_agent/test_linting_loop.py',
+        'scripts/prototypes/multi_agent/test_slack.py',
     ]
     
     total_changes = 0

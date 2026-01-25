@@ -21,7 +21,7 @@ docker compose run --rm airflow-init
 
 ```bash
 docker compose up -d airflow-webserver airflow-scheduler postgres
-# Open http://localhost:8080  (admin / admin)
+# Open http://172.17.0.1:8080  (admin / admin)
 ```
 
 4. GPU (optional)
@@ -80,11 +80,11 @@ Auth token request
 
 Example
 ```bash
-curl -X GET "http://localhost:8080/api/v2/dags" \
+curl -X GET "http://172.17.0.1:8080/api/v2/dags" \
 --user "admin:admin"
 ```
 
 Example
 ```bash
-  curl -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwianRpIjoiNzg0ZTNhMTk1MzA2NGM1ZmJhOTY4ZGYyZWY4YTI4OGYiLCJpc3MiOltdLCJhdWQiOiJhcGFjaGUtYWlyZmxvdyIsIm5iZiI6MTc2OTAzNjkwNCwiZXhwIjoxNzY5MTIzMzA0LCJpYXQiOjE3NjkwMzY5MDR9.kcz-sjZFH2Dmedi9EDuT_yRycN4M8R12fyosJQnZM0FjlmY3437NiyTv3ikHAUo2grpKTTQYiYSlnS0iCzWXJg" "http://localhost:8080/api/v2/dags"
+  curl -H "Authorization: Bearer eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwianRpIjoiNzg0ZTNhMTk1MzA2NGM1ZmJhOTY4ZGYyZWY4YTI4OGYiLCJpc3MiOltdLCJhdWQiOiJhcGFjaGUtYWlyZmxvdyIsIm5iZiI6MTc2OTAzNjkwNCwiZXhwIjoxNzY5MTIzMzA0LCJpYXQiOjE3NjkwMzY5MDR9.kcz-sjZFH2Dmedi9EDuT_yRycN4M8R12fyosJQnZM0FjlmY3437NiyTv3ikHAUo2grpKTTQYiYSlnS0iCzWXJg" "http://172.17.0.1:8080/api/v2/dags"
 ```

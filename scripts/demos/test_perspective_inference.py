@@ -16,7 +16,7 @@ import cv2
 workspace_root = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(workspace_root))
 
-from ocr.core.inference.engine import InferenceEngine
+# # from ocr.core.inference.engine import  # TODO: Use ocr.pipelines.engine instead  # TODO: Use ocr.pipelines.engine instead InferenceEngine
 
 
 def test_perspective_correction(

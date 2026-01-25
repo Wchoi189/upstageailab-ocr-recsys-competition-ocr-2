@@ -40,7 +40,7 @@ def inspect_dataset_pipeline():
     """Inspect the actual dataset pipeline to see what types are being used"""
     print("\n=== Inspecting Dataset Pipeline ===")
 
-    from ocr.data.datasets.base import Dataset as OCRDataset
+    # # from ocr.data.datasets.base import Dataset  # TODO: Update to detection domain  # TODO: Update to detection domain as OCRDataset
 
     # Mock image loading config
     image_loading_config = {"use_turbojpeg": False, "turbojpeg_fallback": True}
@@ -84,7 +84,7 @@ def test_collate_function():
     """Test the collate function with different canonical_size types"""
     print("\n=== Testing Collate Function ===")
 
-    from ocr.data.datasets.db_collate_fn import DBCollateFN
+    # # from ocr.data.datasets.db_collate_fn import DBCollateFN  # TODO: Update to detection domain  # TODO: Update to detection domain
 
     # Create mock batch data
     mock_batch = [

@@ -80,7 +80,7 @@ class ConfigParser:
 
         # Add registry-discovered components (if not already present) - lazy import
         try:
-            from ocr.core import registry
+            from ocr.core.utils.registry import registry
 
             for enc in registry.list_encoders():
                 if enc not in models["encoders"]:
@@ -122,9 +122,7 @@ class ConfigParser:
     def get_available_architectures(self) -> list[str]:
         """Get available architecture presets from the registry for UI selection."""
         # Lazy import to avoid blocking during module import
-        # Ensure architectures are registered by importing the module
-        from ocr.core.models import architectures  # noqa: F401
-        from ocr.core import registry
+        from ocr.core.utils.registry import registry
 
         return registry.list_architectures()
 

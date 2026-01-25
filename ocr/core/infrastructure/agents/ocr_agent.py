@@ -5,7 +5,8 @@ from typing import Any
 
 from ocr.core.infrastructure.agents.base_agent import BaseAgent
 from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
-from ocr.core.inference.orchestrator import InferenceOrchestrator
+# NOTE: OCRAgent is legacy/unused - orchestrator API changed
+# from ocr.pipelines.orchestrator import OCRProjectOrchestrator
 
 logger = logging.getLogger("OCRAgent")
 

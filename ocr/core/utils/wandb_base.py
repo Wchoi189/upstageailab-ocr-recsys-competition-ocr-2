@@ -250,7 +250,7 @@ def _architecture_default_component(architecture_name: str | None, component: st
     # Lazy-load and cache registry on first use
     if _ARCHITECTURE_REGISTRY_CACHE is None:
         try:
-            from ocr.core import registry
+            from ocr.core.utils.registry import registry
             _ARCHITECTURE_REGISTRY_CACHE = registry
         except Exception:
             return ""

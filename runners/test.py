@@ -23,7 +23,7 @@ except ImportError:
     # Pydantic v1 doesn't have this warning class
     pass
 
-from ocr.core.lightning import get_pl_modules_by_cfg  # noqa: E402
+# # from ocr.core.lightning import get_pl_modules_by_cfg  # TODO: Use OCRProjectOrchestrator like train.py  # TODO: Use OCRProjectOrchestrator like train.py  # noqa: E402
 
 
 @hydra.main(config_path=str(get_path_resolver().config.config_dir), config_name="eval", version_base=None)

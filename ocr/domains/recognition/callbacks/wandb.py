@@ -65,7 +65,7 @@ class RecognitionWandbImageLogger(pl.Callback):
         from PIL import Image
 
         try:
-            from ocr.core.utils.text_rendering import put_text_utf8
+            from ocr.domains.recognition.utils.visualization import put_text_utf8
         except ImportError:
             # Fallback if util is missing (though it should exist)
             logger.warning("ocr.core.utils.text_rendering not found, falling back to basic PIL drawing")

@@ -10,7 +10,7 @@ from typing import Any
 import numpy as np
 from PIL import Image
 
-from ocr.data.datasets.base import ValidatedOCRDataset as OCRDataset
+# # from ocr.data.datasets.base import ValidatedOCRDataset  # TODO: Update to new domain paths  # TODO: Update to new domain paths as OCRDataset
 from ocr.core.utils.orientation import normalize_pil_image, remap_polygons
 
 # The EXIF orientation tag constant

@@ -50,10 +50,10 @@ def main():
     print("-" * 60)
 
     print("\nUsage Example:")
-    print('curl -X GET "http://localhost:8080/api/v2/dags" \\')
+    print('curl -X GET "http://172.17.0.1:8080/api/v2/dags" \\')
     print(f'  -H "Authorization: Bearer {token}"')
     print("\nOr with Basic Auth (simpler):")
-    print('curl -X GET "http://localhost:8080/api/v2/dags" \\')
+    print('curl -X GET "http://172.17.0.1:8080/api/v2/dags" \\')
     print(f'  --user "{USERNAME}:your_password"')
 
 

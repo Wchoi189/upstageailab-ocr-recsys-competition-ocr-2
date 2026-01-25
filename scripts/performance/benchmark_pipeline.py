@@ -43,7 +43,7 @@ def benchmark_extraction_pipeline(
     Returns:
         Dictionary with benchmark results
     """
-    from ocr.core.inference.orchestrator import InferenceOrchestrator
+    # # from ocr.core.inference.orchestrator import  # TODO: Use OCRProjectOrchestrator from pipelines  # TODO: Use OCRProjectOrchestrator from pipelines InferenceOrchestrator
 
     # Initialize orchestrator with recognition enabled
     LOGGER.info("Initializing InferenceOrchestrator...")

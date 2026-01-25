@@ -249,7 +249,7 @@ def validate_model_config(config: dict[str, Any]) -> list[str]:
     errors = []
 
     # Local import to avoid circular dependency
-    from ocr.core import registry
+    from ocr.core.utils.registry import registry
 
     # Check required keys
     for key in ["encoder", "decoder", "head", "loss"]:

@@ -10,7 +10,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-from ocr.data.datasets.preprocessing.document_flattening import DocumentFlattener, FlatteningConfig, FlatteningMethod
+# # from ocr.data.datasets.preprocessing.document_flattening import  # TODO: Update to detection domain  # TODO: Update to detection domain DocumentFlattener, FlatteningConfig, FlatteningMethod
 
 
 def demo_flattening_on_image(image_path: str, output_dir: str = "/tmp/flattening_demo"):

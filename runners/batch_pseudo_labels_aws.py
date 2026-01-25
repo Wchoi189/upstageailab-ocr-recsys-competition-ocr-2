@@ -33,11 +33,16 @@ import logging
 import os
 from pathlib import Path
 
-import boto3
+# Optional dependencies
+from ocr.core.utils.dependency_check import safe_import
+boto3 = safe_import('boto3')
+if not boto3:
+    raise ImportError("boto3 required for AWS Batch operations. Install with: pip install boto3")
+
 import pandas as pd
 
 # Import base processor
-from batch_pseudo_labels import ResumableBatchProcessor
+# # from batch_pseudo_labels import  # TODO: Module not in main package  # TODO: Module not in main package ResumableBatchProcessor
 
 from ocr.data.schemas.storage import OCRStorageItem
 

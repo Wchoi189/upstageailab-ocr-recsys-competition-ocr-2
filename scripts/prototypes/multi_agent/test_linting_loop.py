@@ -15,7 +15,7 @@ except ImportError:
         sys.path.insert(0, str(project_root))
 
 from ocr.core.utils.path_utils import PROJECT_ROOT
-from ocr.communication.rabbitmq_transport import RabbitMQTransport
+from ocr.core.infrastructure.communication.rabbitmq_transport import RabbitMQTransport
 
 logging.basicConfig(level=logging.INFO)
 

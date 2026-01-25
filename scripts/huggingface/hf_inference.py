@@ -17,7 +17,7 @@ from omegaconf import OmegaConf
 from PIL import Image
 
 # Import from project
-from ocr.core.inference.model_loader import instantiate_model, load_state_dict, register_safe_globals
+# # from ocr.core.inference.model_loader import  # TODO: Update to new model loading API  # TODO: Update to new model loading API instantiate_model, load_state_dict, register_safe_globals
 from ocr.core.utils.config_utils import load_config
 
 

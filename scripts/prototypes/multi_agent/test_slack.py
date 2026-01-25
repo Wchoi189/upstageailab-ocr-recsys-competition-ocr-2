@@ -14,7 +14,7 @@ except ImportError:
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
 
-from ocr.communication.slack_service import SlackNotificationService
+from ocr.core.infrastructure.communication.slack_service import SlackNotificationService
 
 # Use the webhook URL from environment variable
 TEST_WEBHOOK_URL = os.getenv("SLACK_WEBHOOK_URL", "REPLACE_WITH_YOUR_WEBHOOK_URL")

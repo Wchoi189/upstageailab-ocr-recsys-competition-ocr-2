@@ -51,6 +51,13 @@ def audit_hydra_paths(base_path: Path) -> List[Tuple[str, str, str]]:
                     if not target.startswith("ocr."):
                         continue
                     
+                    # Check if _partial_: true is present nearby (within 5 lines)
+                    has_partial = False
+                    for check_line in lines[max(0, line_num-5):min(len(lines), line_num+5)]:
+                        if "_partial_:" in check_line and "true" in check_line:
+                            has_partial = True
+                            break
+                    
                     # Count dots - should be at least 4 for ocr.domain.category.module.Class
                     # Examples:
                     #   ocr.core.models.encoder.timm_backbone.TimmBackbone (6 dots) ✅
@@ -64,14 +71,15 @@ def audit_hydra_paths(base_path: Path) -> List[Tuple[str, str, str]]:
                         last_part = parts[-1]
                         second_last = parts[-2] if len(parts) > 1 else ""
                         
-                        # If last part is lowercase (module name), it's definitely wrong
+                        # If last part is lowercase (function name), it's OK if _partial_: true
                         if last_part[0].islower():
-                            violations.append((
-                                str(yaml_file.relative_to(base_path)),
-                                str(line_num),
-                                target,
-                                "Module path without class (ends with lowercase)"
-                            ))
+                            if not has_partial:
+                                violations.append((
+                                    str(yaml_file.relative_to(base_path)),
+                                    str(line_num),
+                                    target,
+                                    "Function target without _partial_: true"
+                                ))
                             continue
                         
                         # If last part is CamelCase but second-last is generic (encoder, decoder, models)

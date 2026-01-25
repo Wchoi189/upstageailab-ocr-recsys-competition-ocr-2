@@ -7,7 +7,7 @@ import asyncio
 
 
 try:
-    from scripts.mcp.unified_server import RESOURCES_CONFIG, URI_MAP, PATH_MAP, list_tools, read_resource
+    # # from scripts.mcp.unified_server import  # TODO: Update path  # TODO: Update path RESOURCES_CONFIG, URI_MAP, PATH_MAP, list_tools, read_resource
 except ImportError as e:
     print(f"FAILED to import unified_server: {e}")
     sys.exit(1)

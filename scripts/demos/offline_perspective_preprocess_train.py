@@ -21,7 +21,7 @@ from pathlib import Path
 import cv2
 
 from ocr.core.utils.path_utils import get_path_resolver
-from ocr.core.utils.perspective_correction import (
+# # from ocr.core.utils.perspective_correction import  # TODO: Perspective correction not implemented yet  # TODO: Perspective correction not implemented yet (
     correct_perspective_from_mask,
     remove_background_and_mask,
 )

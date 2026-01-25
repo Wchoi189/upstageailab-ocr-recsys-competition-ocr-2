@@ -146,7 +146,7 @@ def _chunk_text(text: str, max_chars: int) -> list[str]:
 
 def translate_markdown(readme_text: str, target_lang: str, max_chunk_chars: int = 3500) -> str:
     try:
-        from deep_translator import GoogleTranslator
+        # from deep_translator import  # Optional dependency with error handling GoogleTranslator
     except Exception as e:  # pragma: no cover
         raise RuntimeError("Missing dependency: deep-translator. Install with: uv pip install deep-translator") from e
 

@@ -32,10 +32,3 @@ background_removal_mask_only:
   model: "u2net"
   only_mask: true
   p: 1.0
-
-# Convenience function for easy configuration
-background_removal_default:
-  _target_: ocr.domains.detection.data.preprocessing.background_removal.create_background_removal_transform
-  model: "u2net"
-  alpha_matting: true
-  p: 1.0

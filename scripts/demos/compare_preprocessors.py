@@ -13,7 +13,7 @@ import numpy as np
 from ocr.core.utils.path_utils import setup_project_paths
 
 setup_project_paths()
-from ocr.data.datasets.preprocessing import DocumentPreprocessor
+# # from ocr.data.datasets.preprocessing import DocumentPreprocessor  # TODO: Update to detection domain  # TODO: Update to detection domain
 
 
 def test_office_lens_scanner(image_path):

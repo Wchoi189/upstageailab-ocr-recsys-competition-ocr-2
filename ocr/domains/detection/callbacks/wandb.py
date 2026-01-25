@@ -23,7 +23,7 @@ def log_validation_images(images, gt_bboxes, pred_bboxes, epoch, limit=8, seed: 
     import numpy as np
     import wandb
 
-    from ocr.core.utils.text_rendering import put_text_utf8
+    from ocr.domains.recognition.utils.visualization import put_text_utf8
 
     if not wandb.run:
         return

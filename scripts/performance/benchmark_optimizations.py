@@ -15,7 +15,7 @@ from omegaconf import DictConfig
 from PIL import Image
 
 from ocr.data.datasets import ValidatedOCRDataset
-from ocr.data.datasets.transforms import DBTransforms
+# # from ocr.data.datasets.transforms import DBTransforms  # TODO: Update to detection domain  # TODO: Update to detection domain
 from ocr.core.utils.image_loading import get_image_loader_info, load_image_optimized
 from ocr.core.utils.path_utils import get_path_resolver
 

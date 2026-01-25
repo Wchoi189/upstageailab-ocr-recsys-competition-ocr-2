@@ -4,15 +4,38 @@ import os
 from datetime import datetime, timedelta
 
 from airflow import DAG
-from airflow.operators.python import PythonOperator
+from airflow import DAG
+from airflow.providers.standard.operators.python import PythonOperator
 
 # Import from project src (mounted via PYTHONPATH)
-from src.api_clients.upstage import submit_document_parse_job
+from api_clients.upstage import submit_document_parse_job
 
 
 def preprocess(**context):
-    # TODO: discover inputs from config / S3 listing
-    print("Preprocess: discover inputs, normalize paths")
+    # Scan the data directory for images
+    data_dir = "/opt/airflow/data"
+    supported_extensions = (".jpg", ".jpeg", ".png", ".pdf")
+    
+    # Get list of files
+    if not os.path.exists(data_dir):
+        print(f"Data directory {data_dir} does not exist.")
+        return []
+        
+    files = [
+        f for f in os.listdir(data_dir) 
+        if f.lower().endswith(supported_extensions)
+    ]
+    
+    # Create input items
+    items = []
+    for f in files:
+        items.append({
+            "id": f,
+            "path": os.path.join(data_dir, f)
+        })
+    
+    print(f"Preprocess: Found {len(items)} items to process in {data_dir}")
+    return items
 
 
 def call_upstage_api(**context):
@@ -38,8 +61,20 @@ def validate(**context):
 
 
 def export(**context):
-    # TODO: write to parquet/json based on config
-    print("Export: write outputs to storage")
+    results = context.get("ti").xcom_pull(task_ids="api_call") or []
+    if not results:
+        print("Export: No results to export.")
+        return
+
+    # Generate output filename with timestamp
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    output_file = f"/opt/airflow/data/output_{timestamp}.json"
+    
+    import json
+    with open(output_file, "w") as f:
+        json.dump(results, f, indent=2)
+        
+    print(f"Export: Wrote {len(results)} results to {output_file}")
 
 
 def cleanup(**context):
@@ -59,13 +94,12 @@ def create_dag() -> DAG:
     with DAG(
         dag_id="batch_processor_dag",
         start_date=datetime(2024, 1, 1),
-        schedule_interval=None,
+        schedule=None,
         default_args=default_args,
         catchup=False,
         description="Batch processing DAG for Upstage APIs",
         tags=["ocr", "kie", "api"],
     ) as dag:
-        t_pre = PythonOperator(task_id="preprocess", python_callable=preprocess)
         t_api = PythonOperator(task_id="api_call", python_callable=call_upstage_api)
         t_val = PythonOperator(task_id="validate", python_callable=validate)
         t_exp = PythonOperator(task_id="export", python_callable=export)

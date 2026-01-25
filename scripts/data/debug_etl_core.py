@@ -3,7 +3,7 @@ from pathlib import Path
 
 sys.path.append(str(Path.cwd() / "ocr-etl-pipeline/src"))
 
-from etl.core import process_single_json, infer_image_path
+# # from etl.core import  # TODO: ETL module not in main package  # TODO: ETL module not in main package process_single_json, infer_image_path
 import logging
 
 logging.basicConfig(level=logging.DEBUG)

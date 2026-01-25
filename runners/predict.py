@@ -38,7 +38,7 @@ def predict(config: DictConfig):
     # Lazy imports to keep startup light for config validation
     import lightning.pytorch as pl
 
-    from ocr.core.lightning import get_pl_modules_by_cfg
+    # # from ocr.core.lightning import get_pl_modules_by_cfg  # TODO: Use OCRProjectOrchestrator like train.py  # TODO: Use OCRProjectOrchestrator like train.py
     from ocr.core.lightning.utils.model_utils import load_state_dict_with_fallback
 
     pl.seed_everything(config.get("seed", 42), workers=True)

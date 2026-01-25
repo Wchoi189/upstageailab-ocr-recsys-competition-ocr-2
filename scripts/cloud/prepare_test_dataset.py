@@ -9,7 +9,13 @@ import os
 import sys
 from pathlib import Path
 
-import boto3
+# Optional dependencies
+sys.path.insert(0, str(Path(__file__).parent.parent.parent))
+from ocr.core.utils.dependency_check import safe_import
+boto3 = safe_import('boto3')
+if not boto3:
+    raise ImportError("boto3 required for AWS operations. Install with: pip install boto3")
+
 import pandas as pd
 from tqdm import tqdm
 

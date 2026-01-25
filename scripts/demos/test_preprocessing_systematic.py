@@ -19,7 +19,7 @@ import numpy as np
 from PIL import Image
 
 # Import preprocessing components
-from ocr.data.datasets.preprocessing.pipeline import DocumentPreprocessor
+# # from ocr.data.datasets.preprocessing.pipeline import DocumentPreprocessor  # TODO: Update to detection domain  # TODO: Update to detection domain
 
 
 class PreprocessingTester:

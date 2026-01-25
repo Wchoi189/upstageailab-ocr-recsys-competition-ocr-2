@@ -17,13 +17,13 @@ import numpy as np
 warnings.filterwarnings("ignore", message="Valid config keys have changed in V2:", category=UserWarning)
 warnings.filterwarnings("ignore", message="'allow_population_by_field_name' has been renamed to 'validate_by_name'", category=UserWarning)
 
-from ocr.core.inference.dependencies import OCR_MODULES_AVAILABLE
-from ocr.core.inference.image_loader import ImageLoader
+from ocr.domains.detection.inference.dependencies import OCR_MODULES_AVAILABLE
+from ocr.domains.detection.inference.image_loader import ImageLoader
 # Note: InferenceOrchestrator was renamed to OCRProjectOrchestrator
 # This import is commented out to avoid circular dependency - engine.py may need refactoring
 # from .orchestrator import OCRProjectOrchestrator as InferenceOrchestrator
-from ocr.core.inference.utils import generate_mock_predictions
-from ocr.core.inference.utils import get_available_checkpoints as scan_checkpoints
+from ocr.domains.detection.inference.utils import generate_mock_predictions
+from ocr.domains.detection.inference.utils import get_available_checkpoints as scan_checkpoints
 
 LOGGER = logging.getLogger(__name__)
 
