@@ -13,7 +13,7 @@
 
 import torch
 
-from ocr.core import BaseLoss
+from ocr.core.interfaces.losses import BaseLoss
 from ocr.domains.detection.models.loss.bce_loss import BCELoss
 from ocr.domains.detection.models.loss.dice_loss import DiceLoss
 from ocr.domains.detection.models.loss.l1_loss import MaskL1Loss

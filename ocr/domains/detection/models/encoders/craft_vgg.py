@@ -8,7 +8,7 @@ import timm
 import torch
 import torch.nn as nn
 
-from ocr.core import BaseEncoder
+from ocr.core.interfaces.models import BaseEncoder
 
 
 class CraftVGGEncoder(BaseEncoder):

@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Any
 
-from ocr.agents.base_agent import BaseAgent
+from ocr.core.infrastructure.agents.base_agent import BaseAgent
 
 logger = logging.getLogger("LintingAgent")
 

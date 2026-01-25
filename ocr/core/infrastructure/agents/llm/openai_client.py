@@ -8,7 +8,7 @@ import os
 import logging
 from typing import Optional
 
-from ocr.agents.llm.base_client import BaseLLMClient, LLMResponse
+from ocr.core.infrastructure.agents.llm.base_client import BaseLLMClient, LLMResponse
 
 logger = logging.getLogger(__name__)
 

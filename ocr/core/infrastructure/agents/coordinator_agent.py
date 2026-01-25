@@ -17,7 +17,7 @@ import json
 import time
 import uuid
 
-from ocr.agents.base_agent import LLMAgent, AgentCapability
+from ocr.core.infrastructure.agents.base_agent import LLMAgent, AgentCapability
 
 logger = logging.getLogger(__name__)
 

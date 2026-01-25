@@ -5,7 +5,7 @@ from __future__ import annotations
 import torch
 import torch.nn.functional as F
 
-from ocr.core import BaseLoss
+from ocr.core.interfaces.losses import BaseLoss
 
 
 class CraftLoss(BaseLoss):

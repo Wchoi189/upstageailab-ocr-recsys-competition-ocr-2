@@ -8,7 +8,7 @@ from hydra.utils import instantiate
 
 from ocr.core.utils.config_utils import ensure_dict, is_config
 
-from ocr.core import get_registry
+from ocr.core.utils.registry import get_registry
 
 logger = logging.getLogger(__name__)
 

@@ -5,7 +5,7 @@ from collections.abc import Sequence
 import timm
 import torch
 
-from ocr.core import BaseEncoder
+from ocr.core.interfaces.models import BaseEncoder
 
 
 class TimmBackbone(BaseEncoder):

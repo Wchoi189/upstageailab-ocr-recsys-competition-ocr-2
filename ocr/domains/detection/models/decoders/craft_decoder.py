@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ocr.core import BaseDecoder
+from ocr.core.interfaces.models import BaseDecoder
 
 
 class CraftDecoder(BaseDecoder):

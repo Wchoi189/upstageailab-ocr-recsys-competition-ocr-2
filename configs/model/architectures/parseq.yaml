@@ -3,11 +3,11 @@
 # ============================================================================
 
 # Target-First: Immediate identification of the class
-_target_: ocr.domains.recognition.models.PARSeq
+_target_: ocr.domains.recognition.models.architecture.PARSeq
 name: parseq
 
 encoder:
-  _target_: ocr.core.models.encoder.TimmBackbone
+  _target_: ocr.core.models.encoder.timm_backbone.TimmBackbone
   model_name: resnet18
   pretrained: true
 

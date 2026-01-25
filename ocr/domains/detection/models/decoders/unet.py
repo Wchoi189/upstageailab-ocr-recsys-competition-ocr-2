@@ -5,7 +5,7 @@ from itertools import accumulate
 import torch
 import torch.nn as nn
 
-from ocr.core import BaseDecoder
+from ocr.core.interfaces.models import BaseDecoder
 
 
 class UNetDecoder(BaseDecoder):

@@ -6,7 +6,7 @@ _target_: ocr.core.models.architecture.OCRModel
 
 # Standardized Component Definitions
 encoder:
-  _target_: ocr.core.models.encoder.TimmBackbone
+  _target_: ocr.core.models.encoder.timm_backbone.TimmBackbone
   model_name: "resnet18"
   pretrained: true
   output_indices: [1, 2, 3, 4]
