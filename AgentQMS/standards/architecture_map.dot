@@ -1,0 +1,15 @@
+digraph AgentQMS_Architecture {
+  rankdir=LR;
+  node [shape=box, style=rounded];
+
+  subgraph cluster_tier1 {
+    label="Constitution (Tier 1)";
+    style=filled;
+    color="#FFE6E6";
+
+    "SC-002" [label="SC-002\nArtifact type system with plugin-base...", penwidth=2, color=red];
+    "SC-001" [label="SC-001\nFile and artifact naming conventions ...", penwidth=2, color=red];
+  }
+
+  "SC-001" -> "SC-002";
+}

@@ -1,0 +1,185 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://agentqms.io/schemas/ads-header-v2.0.json",
+  "title": "ADS Header v2.0 Schema",
+  "description": "Agent Discovery System v2.0 header schema for AgentQMS standards with strict validation, dependency tracking, and fuzzy search support",
+  "type": "object",
+  "required": [
+    "ads_version",
+    "id",
+    "type",
+    "agent",
+    "tier",
+    "priority",
+    "validates_with",
+    "compliance_status",
+    "memory_footprint",
+    "dependencies"
+  ],
+  "properties": {
+    "ads_version": {
+      "type": "string",
+      "const": "2.0",
+      "description": "ADS schema version (must be 2.0)"
+    },
+    "id": {
+      "type": "string",
+      "pattern": "^[A-Z]{2,3}-[0-9]{3}$",
+      "description": "Unique identifier (e.g., SC-001, FW-042, AG-003, WF-012)",
+      "examples": ["SC-001", "FW-042", "AG-003", "WF-012"]
+    },
+    "type": {
+      "type": "string",
+      "enum": [
+        "schema_specification",
+        "agent_configuration",
+        "tool_catalog",
+        "rule_set",
+        "quick_reference",
+        "workflow_definition",
+        "validation_script",
+        "component_interface",
+        "data_contract"
+      ],
+      "description": "Standard type classification"
+    },
+    "agent": {
+      "type": "string",
+      "enum": ["claude", "copilot", "cursor", "gemini", "qwen", "all"],
+      "description": "Target AI agent (use 'all' for universal standards)"
+    },
+    "tier": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 4,
+      "description": "Hierarchy tier: 1=SST/Constitution, 2=Framework, 3=Agents, 4=Workflows"
+    },
+    "priority": {
+      "type": "string",
+      "enum": ["critical", "high", "medium", "low"],
+      "description": "Enforcement priority level"
+    },
+    "validates_with": {
+      "type": "string",
+      "description": "Path to validation script or schema",
+      "examples": ["AgentQMS/standards/schemas/compliance-checker.py"]
+    },
+    "compliance_status": {
+      "type": "string",
+      "enum": ["pass", "fail", "unknown", "pending"],
+      "description": "Current compliance state"
+    },
+    "memory_footprint": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Estimated token count for AI context loading"
+    },
+    "dependencies": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "pattern": "^[A-Z]{2,3}-[0-9]{3}$"
+      },
+      "uniqueItems": true,
+      "description": "Array of standard IDs this standard depends on (empty array if none)",
+      "examples": [["SC-001", "SC-002"], []]
+    },
+    "keywords": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "minLength": 2
+      },
+      "uniqueItems": true,
+      "description": "Keywords for fuzzy search and task detection",
+      "examples": [["hydra", "config", "yaml"], ["naming", "kebab-case"]]
+    },
+    "fuzzy_threshold": {
+      "type": "number",
+      "minimum": 0.0,
+      "maximum": 1.0,
+      "default": 0.8,
+      "description": "Fuzzy matching sensitivity (0.0-1.0, default 0.8)"
+    },
+    "triggers": {
+      "type": "object",
+      "properties": {
+        "keywords": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Keywords that trigger this standard's activation"
+        },
+        "patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "Regex patterns for task detection"
+        },
+        "path_patterns": {
+          "type": "array",
+          "items": {"type": "string"},
+          "description": "File path patterns (glob format)"
+        }
+      },
+      "description": "Automatic task detection triggers"
+    },
+    "description": {
+      "type": "string",
+      "maxLength": 200,
+      "description": "Brief description of standard purpose (AI-optimized, <200 chars)"
+    },
+    "replaces": {
+      "type": "array",
+      "items": {"type": "string"},
+      "description": "IDs or paths of deprecated standards replaced by this one"
+    },
+    "deprecated": {
+      "type": "boolean",
+      "default": false,
+      "description": "Mark standard as deprecated"
+    },
+    "deprecated_reason": {
+      "type": "string",
+      "description": "Reason for deprecation (required if deprecated=true)"
+    }
+  },
+  "if": {
+    "properties": {
+      "deprecated": {"const": true}
+    }
+  },
+  "then": {
+    "required": ["deprecated_reason"]
+  },
+  "additionalProperties": true,
+  "examples": [
+    {
+      "ads_version": "2.0",
+      "id": "SC-001",
+      "type": "rule_set",
+      "agent": "all",
+      "tier": 1,
+      "priority": "critical",
+      "validates_with": "AgentQMS/standards/schemas/compliance-checker.py",
+      "compliance_status": "pass",
+      "memory_footprint": 80,
+      "dependencies": [],
+      "keywords": ["naming", "kebab-case", "artifacts", "conventions"],
+      "fuzzy_threshold": 0.85,
+      "description": "File and artifact naming conventions for the project"
+    },
+    {
+      "ads_version": "2.0",
+      "id": "FW-012",
+      "type": "rule_set",
+      "agent": "all",
+      "tier": 2,
+      "priority": "high",
+      "validates_with": "AgentQMS/standards/schemas/compliance-checker.py",
+      "compliance_status": "pass",
+      "memory_footprint": 250,
+      "dependencies": ["SC-001", "SC-003"],
+      "keywords": ["hydra", "config", "yaml", "omegaconf"],
+      "description": "Hydra v5 configuration rules and patterns"
+    }
+  ]
+}
