@@ -1,0 +1,73 @@
+ads_version: '2.0'
+type: component_interface
+agent: all
+tier: 2
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+last_updated: '2026-01-20'
+component: component_interfaces
+description: Defines the interface contracts for OCR components and the Domain-First
+  architecture pattern.
+role: 'Establishes the separation between Core (Generic) and Feature (Specific) interfaces.
+
+  Ensures that the Core remains task-agnostic while Features can enforce strict contracts.
+
+  '
+critical_logic:
+- id: domain-first-inheritance
+  description: 'Domain-specific logic MUST NOT reside in `ocr/core`.
+
+    Instead, create `ocr/domains/<domain>/interfaces.py` that inherits from generic
+    core interfaces.
+
+    Example: `DetectionHead(BaseHead)` adds `get_polygons_from_maps`.
+
+    Note: Both `ocr/domains/` and `ocr/features/` may coexist during migration.
+
+    '
+- id: generic-core
+  description: '`ocr/core/interfaces/*.py` MUST remain Generic.
+
+    Signatures should be `(x, **kwargs)` or `(preds, targets, **kwargs)`.
+
+    Do not import feature-specific types into core.
+
+    '
+- id: detection-contract
+  description: 'Detection Heads require `get_polygons_from_maps(batch, pred)`.
+
+    Detection Losses require strict `pred, gt_binary, gt_thresh` inputs for debugging
+    clarity, but should use `**kwargs` for forward compatibility.
+
+    '
+- id: recognition-contract
+  description: 'recognition Heads are simple functional blocks (Linear) and do not
+    require complex post-processing interfaces within the Head definition itself (delegated
+    to Decoder/PostProcessor).
+
+    '
+data_contract:
+  implementation_rules:
+  - rule: All specific heads must inherit from their Domain Interface (e.g. `DBHead(DetectionHead)`),
+      NOT `BaseHead` directly if a Domain Interface exists.
+  - rule: Core interfaces must not contain methods that return empty/dummy values
+      just to satisfy a specific domain (e.g. no empty `get_polygons` in `BaseHead`).
+  migration_note: Legacy references to ocr/features/ should be updated to ocr/domains/
+    as the codebase migrates to domain-first architecture.
+id: FW-007
+memory_footprint: 100
+dependencies:
+- SC-003
+keywords:
+- defines
+- interface
+- contracts
+- ocr
+- components
+- domain
+- first
+- architecture
+- pattern
+- validates
+fuzzy_threshold: 0.8

@@ -28,7 +28,7 @@ def submit_document_parse_job(image_path: str, api_key: str, cfg: UpstageConfig 
     This is a scaffold; adapt to the actual endpoint/contract.
     """
     cfg = cfg or UpstageConfig()
-    url = f"{cfg.base_url}/document-parse"
+    url = f"{cfg.base_url}/document-digitization"
 
     if not os.path.exists(image_path):
         # For scaffolding, don't fail hard — simulate success

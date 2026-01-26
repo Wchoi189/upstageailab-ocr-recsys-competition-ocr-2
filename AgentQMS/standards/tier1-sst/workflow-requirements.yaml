@@ -1,0 +1,84 @@
+ads_version: '2.0'
+type: rule_set
+agent: all
+tier: 1
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 90
+depends_on:
+- naming-conventions.yaml
+- file-placement-rules.yaml
+required_workflows:
+  artifact_creation:
+    command_base: cd AgentQMS/bin && make create-{TYPE}
+    args_required:
+    - NAME: lowercase-slug-format
+    - TITLE: quoted-string
+    available_types:
+    - create-plan
+    - create-assessment
+    - create-design
+    - create-research
+    - create-audit
+    - create-bug-report
+    auto_generation:
+    - Proper naming with timestamp
+    - Valid frontmatter
+    - Correct directory placement
+    - Blueprint protocol template (for plans)
+    enforcement: MANDATORY - Manual creation PROHIBITED
+  validation_workflow:
+    commands:
+      validate: cd AgentQMS/bin && make validate
+      compliance: cd AgentQMS/bin && make compliance
+      boundary: cd AgentQMS/bin && make boundary
+    frequency: After EVERY artifact operation
+    failure_mode: BLOCK until resolved
+  discovery_workflow:
+    commands:
+      help: cd AgentQMS/bin && make help
+      discover: cd AgentQMS/bin && make discover
+      status: cd AgentQMS/bin && make status
+    usage: When operation unclear or tool not found
+frontmatter_requirements:
+  required_fields:
+  - type
+  - category
+  - status
+  - version
+  - tags
+  - title
+  - date
+  - branch
+  date_format: YYYY-MM-DD HH:MM (KST)
+  status_values:
+  - active
+  - completed
+  - archived
+  - deprecated
+  auto_generated: Via make create-* commands
+blueprint_protocol:
+  applies_to: implementation_plan artifacts
+  template: AgentQMS/knowledge/templates/blueprint_protocol_template.md
+  components:
+  - Master Prompt
+  - Living Implementation Blueprint
+  - Progress Tracker
+  - Goal-Execute-Update Loop
+  auto_applied: true
+validation_command: cd AgentQMS/bin && make validate
+id: SC-010
+dependencies: []
+keywords:
+- validates
+- compliance
+- status
+- memory
+- footprint
+- depends
+- required
+- workflows
+- frontmatter
+- requirements
+fuzzy_threshold: 0.8

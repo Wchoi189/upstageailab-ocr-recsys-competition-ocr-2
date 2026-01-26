@@ -1,0 +1,234 @@
+ads_version: '2.0'
+type: rule_set
+agent: all
+tier: 2
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 680
+id: FW-017
+migration_completed: '2026-01-18'
+v5_refactor_completed: '2026-01-18'
+baseline:
+  yaml_files: 107
+  directories: 37
+  root_configs: 6
+current_v5:
+  yaml_files: ~95
+  directories: ~28
+  root_configs: 7
+  deleted_directories:
+  - model/lightning_modules
+  - model/loss
+  - model/optimizers (moved to train/optimizer)
+  - model/presets (renamed to architectures)
+  - data/dataloaders
+  - data/performance_preset
+  - train/profiling
+  - configs/runtime (moved to data/runtime)
+config_registry:
+  domain_configs:
+    domain/detection.yaml:
+      domain: detection
+      task_type: text_detection
+      models:
+      - DBNet
+      - DBNet++
+      - CRAFT
+      created: '2026-01-08'
+      description: Text detection in document images
+    domain/recognition.yaml:
+      domain: recognition
+      task_type: text_recognition
+      models:
+      - PARSeq
+      created: '2026-01-08'
+      description: Text recognition (OCR) from text regions
+    domain/kie.yaml:
+      domain: kie
+      task_type: key_information_extraction
+      models:
+      - LayoutLMv3
+      created: '2026-01-08'
+      description: Key information extraction from documents
+      features:
+      - ocr_tokens
+      - layout_features
+      - visual_features
+    domain/layout.yaml:
+      domain: layout
+      task_type: layout_analysis
+      created: '2026-01-08'
+      description: Document layout analysis and segmentation
+domain_switching:
+  mechanism: Hydra defaults composition via optional domain parameter
+  syntax:
+  - uv run python runners/train.py domain=detection
+  - uv run python runners/train.py domain=recognition
+  - uv run python runners/train.py domain=kie
+  - uv run python runners/train.py domain=layout
+  train_yaml_structure: "defaults:\n  - _self_\n  - base\n  - optional domain: detection\
+    \  # Default domain\n  - /_foundation/model\n  - /_foundation/data\n  - /_foundation/trainer\n"
+  domain_configs:
+    detection:
+      task_type: detection
+      model: DBNet/DBNet++ family
+      datasets: Text detection datasets
+    recognition:
+      task_type: recognition
+      model: PARSeq (Vision Transformer)
+      datasets: Text recognition datasets
+    kie:
+      task_type: kie
+      model: LayoutLMv3
+      datasets: Receipt/document KIE datasets
+      special:
+        use_ocr_features: true
+        use_layout_features: true
+    layout:
+      task_type: layout_analysis
+      model: Layout analysis models
+      datasets: Document layout datasets
+override_rules:
+  base_defaults_check:
+    rule: Check if config group exists in base.yaml defaults list
+    in_defaults: Override WITHOUT + prefix
+    not_in_defaults: Override WITH + prefix
+  examples:
+    without_plus:
+    - model=craft
+    - data=canonical
+    - trainer=rtx3060_12gb
+    - domain=kie
+    with_plus:
+    - +debug=default
+    - +extraction=hybrid
+    - +data/datasets=db
+  hydra_overrides:
+    syntax: ++key=value
+    use_case: Override config values directly
+    examples:
+    - ++model.optimizer.lr=0.0001
+    - ++batch_size=16
+    - ++seed=123
+defaults_ordering:
+  critical_rule: Overrides MUST be at the end of defaults list
+  correct_order:
+  - _self_
+  - base
+  - regular defaults (data/transforms, model/presets, etc.)
+  - 'override defaults (override data: base, override hydra/...)'
+  example_correct: "defaults:\n  - _self_\n  - base\n  - data/performance_preset:\
+    \ none\n  - data/transforms: base\n  - /model/presets/model_example\n  - override\
+    \ data: base           # MUST be after regular defaults\n  - override hydra/hydra_logging:\
+    \ disabled\n"
+  common_error:
+    symptom: 'ConfigCompositionException: Override ''data : base'' is defined before...'
+    cause: Override placed before regular defaults
+    fix: 'Move all ''override X: Y'' to end of defaults list'
+archival_policy:
+  note: V5.0 migration completed 2026-01-18; archived configs in __EXTENDED__/
+composition_patterns:
+  basic_training:
+    command: uv run python runners/train.py
+    defaults_used:
+    - base
+    - domain/detection
+  domain_switch:
+    command: uv run python runners/train.py domain=kie
+    effect: Replaces domain/detection with domain/kie
+  model_architecture:
+    command: uv run python runners/train.py model/architectures=dbnetpp
+    effect: Changes model architecture to DBNet++
+  performance_preset:
+    command: uv run python runners/train.py data/performance_preset=memory_efficient
+    effect: Applies memory-efficient data loading settings
+  multiple_overrides:
+    command: uv run python runners/train.py domain=recognition model/recognition=parseq
+      data=recognition
+    effect: Complete configuration switch for recognition task
+validation:
+  composition_tests:
+    required: true
+    test_command: uv run python runners/X.py --help
+    expected: No ConfigCompositionException
+    coverage:
+    - train
+    - eval
+    - predict
+    - synthetic
+    - train_kie
+  domain_switching:
+    required: true
+    domains_to_test:
+    - detection
+    - recognition
+    - kie
+    - layout
+    test_command: uv run python runners/train.py domain=X --cfg job
+    expected: Valid composed configuration output
+  smoke_tests:
+    required: true
+    test_type: Entry point help messages
+    expected: All entry points display configuration groups
+migration_map:
+  old_to_new:
+    test.yaml: eval.yaml
+    base.yaml: _foundation/defaults.yaml
+    train_kie.yaml: train.yaml with domain=kie
+    callbacks/X.yaml: training/callbacks/X.yaml
+    logger/X.yaml: training/logger/X.yaml
+  common_workflows:
+    kie_training_old: uv run python runners/train_kie.py
+    kie_training_new: uv run python runners/train_kie.py (now uses train.yaml internally)
+    testing_old: uv run python runners/test.py
+    testing_new: uv run python runners/test.py (uses eval.yaml internally)
+    architecture_old: Edit train_kie.yaml directly
+    architecture_new: 'Use domain config: configs/domain/kie.yaml or override via
+      CLI'
+troubleshooting:
+  config_composition_error:
+    error: ConfigCompositionException
+    cause: Override defaults not at end of list
+    solution: 'Move all ''override X: Y'' entries to end of defaults list'
+  missing_config_group:
+    error: Could not find 'X'
+    cause: Config group not in search path or typo
+    solution: Check configs/ directory structure, verify file exists
+  multiple_values_for_domain:
+    error: Multiple values for domain
+    cause: Using +domain=X when domain already in defaults
+    solution: Use domain=X (without +) for override, not addition
+  import_error_after_restructure:
+    error: Config file not found
+    cause: Files moved during restructuring
+    solution: Check migration_map above for new locations
+performance:
+  config_loading:
+    overhead: Negligible (< 100ms)
+    caching: Hydra caches composed configs
+    recommendation: Use domain switching for multi-task training
+  memory_footprint:
+    domain_configs: ~5KB each
+    full_composition: ~50KB total
+    optimization: Lazy loading for unused groups
+compliance:
+  agentqms_validated: '2026-01-08'
+  compliance_rate: 100%
+  artifacts_valid: 74/74
+  test_coverage: All entry points verified
+  breaking_changes: test.yaml → eval.yaml, train_kie configs archived
+dependencies:
+- SC-003
+keywords:
+- compliance
+- migration
+- completed
+- validates
+- status
+- memory
+- footprint
+- refactor
+- baseline
+- current
+fuzzy_threshold: 0.8

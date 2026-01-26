@@ -1,0 +1,30 @@
+ads_version: '2.0'
+type: rule_set
+agent: all
+tier: 2
+priority: high
+heavy_modules:
+  ml_frameworks:
+  - torch
+  - torchvision
+  - lightning
+  - tensorflow
+  - jax
+  data_processing:
+  - numpy
+  - pandas
+  - scipy
+  model_libraries:
+  - timm
+  - transformers
+  - huggingface_hub
+id: FW-022
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 100
+dependencies:
+- SC-003
+keywords:
+- heavy
+- modules
+fuzzy_threshold: 0.8

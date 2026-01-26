@@ -1,0 +1,63 @@
+ads_version: '2.0'
+type: rule_set
+agent: all
+tier: 2
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 300
+id: FW-011
+description: Standards for safely handling OmegaConf configuration objects to prevent
+  silent failures from invalid type checks.
+rules:
+- id: no-isinstance-dict
+  severity: critical
+  description: NEVER use `isinstance(obj, dict)` on objects that might be configurations.
+    OmegaConf's DictConfig does not inherit from dict.
+  bad_patterns:
+  - isinstance(cfg, dict)
+  - 'if type(cfg) is dict:'
+  good_patterns:
+  - from ocr.core.utils.config_utils import is_config; is_config(cfg)
+- id: use-is-config
+  severity: critical
+  description: ALWAYS use `ocr.core.utils.config_utils.is_config(obj)` to check for
+    dictionary-like config objects.
+  example: "from ocr.core.utils.config_utils import is_config\nif is_config(cfg):\n\
+    \    process(cfg)\n"
+- id: use-ensure-dict
+  severity: critical
+  description: ALWAYS use `ocr.core.utils.config_utils.ensure_dict(obj)` when you
+    need a native Python dictionary.
+  bad_patterns:
+  - dict(cfg)
+  - OmegaConf.to_container(cfg)
+  good_patterns:
+  - ensure_dict(cfg)
+  example: 'from ocr.core.utils.config_utils import ensure_dict
+
+    native_dict = ensure_dict(cfg)
+
+    '
+utilities:
+- name: is_config
+  signature: 'is_config(obj: Any) -> TypeGuard[dict | DictConfig]'
+  description: Returns True if object is dict or DictConfig.
+- name: ensure_dict
+  signature: 'ensure_dict(cfg: Any, resolve: bool = True) -> dict | list | Any'
+  description: Recursively converts OmegaConf objects to native Python types. resolve=True
+    handles variable interpolation.
+dependencies:
+- SC-003
+keywords:
+- standards
+- safely
+- handling
+- omegaconf
+- configuration
+- objects
+- prevent
+- silent
+- failures
+- invalid
+fuzzy_threshold: 0.8

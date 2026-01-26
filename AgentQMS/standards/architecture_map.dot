@@ -8,8 +8,123 @@ digraph AgentQMS_Architecture {
     color="#FFE6E6";
 
     "SC-002" [label="SC-002\nArtifact type system with plugin-base...", penwidth=2, color=red];
+    "SC-003" [label="SC-003\nUnified artifact naming and placement...", penwidth=2, color=red];
+    "SC-004" [label="SC-004", penwidth=2, color=red];
+    "SC-005" [label="SC-005\nSingle source of truth for artifact f...", penwidth=2, color=red];
     "SC-001" [label="SC-001\nFile and artifact naming conventions ...", penwidth=2, color=red];
+    "SC-006" [label="SC-006", penwidth=2, color=red];
+    "SC-007" [label="SC-007", penwidth=2, color=red];
+    "SC-008" [label="SC-008", penwidth=2, color=red];
+    "SC-009" [label="SC-009", penwidth=2, color=red];
+    "SC-010" [label="SC-010", penwidth=2, color=red];
+  }
+
+  subgraph cluster_tier2 {
+    label="Framework (Tier 2)";
+    style=filled;
+    color="#E6F3FF";
+
+    "FW-001" [label="FW-001\nDefines the architecture, communicati...", penwidth=2, color=red];
+    "FW-002" [label="FW-002\nProtocol for handling runtime telemet...", penwidth=2, color=red];
+    "FW-003" [label="FW-003\nProhibited patterns with enforcement ...", penwidth=1.5, color=orange];
+    "FW-004" [label="FW-004", penwidth=2, color=red];
+    "FW-005" [label="FW-005", penwidth=1.5, color=orange];
+    "FW-006" [label="FW-006", penwidth=1.5, color=orange];
+    "FW-007" [label="FW-007\nDefines the interface contracts for O...", penwidth=1.5, color=orange];
+    "FW-008" [label="FW-008", penwidth=1.5, color=orange];
+    "FW-009" [label="FW-009", ];
+    "FW-010" [label="FW-010", penwidth=1.5, color=orange];
+    "FW-011" [label="FW-011\nStandards for safely handling OmegaCo...", penwidth=2, color=red];
+    "FW-012" [label="FW-012\nHandles mapping between resized/padde...", penwidth=1.5, color=orange];
+    "FW-013" [label="FW-013", penwidth=1.5, color=orange];
+    "FW-014" [label="FW-014", penwidth=1.5, color=orange];
+    "FW-015" [label="FW-015", penwidth=1.5, color=orange];
+    "FW-016" [label="FW-016", penwidth=1.5, color=orange];
+    "FW-017" [label="FW-017", penwidth=2, color=red];
+    "FW-018" [label="FW-018\nDesign patterns, anti-patterns, and d...", penwidth=1.5, color=orange];
+    "FW-019" [label="FW-019\nCritical configuration rules for Hydr...", penwidth=2, color=red];
+    "FW-020" [label="FW-020\nHandles loading and validation of inp...", penwidth=1.5, color=orange];
+    "FW-021" [label="FW-021", penwidth=1.5, color=orange];
+    "FW-022" [label="FW-022", penwidth=1.5, color=orange];
+    "FW-023" [label="FW-023\nManages the lifecycle of models (dete...", penwidth=1.5, color=orange];
+    "FW-024" [label="FW-024\nThe central controller for the OCR in...", penwidth=1.5, color=orange];
+    "FW-025" [label="FW-025", ];
+    "FW-026" [label="FW-026\nDefines the canonical data structures...", penwidth=1.5, color=orange];
+    "FW-027" [label="FW-027\nDecodes raw model output into structu...", penwidth=1.5, color=orange];
+    "FW-028" [label="FW-028\nPrepares raw images for inference.", penwidth=1.5, color=orange];
+    "FW-029" [label="FW-029", penwidth=1.5, color=orange];
+    "FW-030" [label="FW-030", penwidth=1.5, color=orange];
+    "FW-031" [label="FW-031", penwidth=1.5, color=orange];
+    "FW-032" [label="FW-032", penwidth=1.5, color=orange];
+    "FW-033" [label="FW-033", penwidth=1.5, color=orange];
+    "FW-034" [label="FW-034", penwidth=2, color=red];
+    "FW-035" [label="FW-035\nDraws detected bounding boxes and cla...", penwidth=1.5, color=orange];
+    "FW-036" [label="FW-036", penwidth=1.5, color=orange];
+  }
+
+  subgraph cluster_tier3 {
+    label="Agents (Tier 3)";
+    style=filled;
+    color="#E6FFE6";
+
+    "AG-001" [label="AG-001\nAutomated criteria for identifying un...", ];
+    "AG-002" [label="AG-002", penwidth=2, color=red];
+    "AG-003" [label="AG-003", penwidth=1.5, color=orange];
+    "AG-004" [label="AG-004", penwidth=2, color=red];
+    "AG-005" [label="AG-005", penwidth=1.5, color=orange];
+  }
+
+  subgraph cluster_tier4 {
+    label="Workflows (Tier 4)";
+    style=filled;
+    color="#FFF9E6";
+
+    "WF-001" [label="WF-001", penwidth=1.5, color=orange];
+    "WF-002" [label="WF-002\nRuntime middleware policies enforced ...", penwidth=1.5, color=orange];
   }
 
   "SC-001" -> "SC-002";
+  "SC-003" -> "FW-001";
+  "SC-003" -> "FW-002";
+  "SC-003" -> "FW-003";
+  "SC-003" -> "FW-004";
+  "SC-003" -> "FW-005";
+  "SC-003" -> "FW-006";
+  "SC-003" -> "FW-007";
+  "SC-003" -> "FW-008";
+  "SC-003" -> "FW-009";
+  "SC-003" -> "FW-010";
+  "SC-003" -> "FW-011";
+  "SC-003" -> "FW-012";
+  "SC-003" -> "FW-013";
+  "SC-003" -> "FW-014";
+  "SC-003" -> "FW-015";
+  "SC-003" -> "FW-016";
+  "SC-003" -> "FW-017";
+  "SC-003" -> "FW-018";
+  "SC-003" -> "FW-019";
+  "SC-003" -> "FW-020";
+  "SC-003" -> "FW-021";
+  "SC-003" -> "FW-022";
+  "SC-003" -> "FW-023";
+  "SC-003" -> "FW-024";
+  "SC-003" -> "FW-025";
+  "SC-003" -> "FW-026";
+  "SC-003" -> "FW-027";
+  "SC-003" -> "FW-028";
+  "SC-003" -> "FW-029";
+  "SC-003" -> "FW-030";
+  "SC-003" -> "FW-031";
+  "SC-003" -> "FW-032";
+  "SC-003" -> "FW-033";
+  "SC-003" -> "FW-034";
+  "SC-003" -> "FW-035";
+  "SC-003" -> "FW-036";
+  "SC-003" -> "AG-001";
+  "SC-003" -> "AG-002";
+  "SC-003" -> "AG-003";
+  "SC-003" -> "AG-004";
+  "SC-003" -> "AG-005";
+  "SC-003" -> "WF-001";
+  "SC-003" -> "WF-002";
 }

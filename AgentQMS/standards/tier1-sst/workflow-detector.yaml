@@ -1,0 +1,119 @@
+ads_version: '2.0'
+type: agent_configuration
+agent: all
+tier: 1
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 100
+task_types:
+  development:
+    context_bundle: development
+    suggested_workflows:
+    - create-plan
+    - validate
+    - compliance
+    suggested_tools:
+    - artifact_workflow
+    - validate_artifacts
+    - context_bundle
+  documentation:
+    context_bundle: documentation
+    suggested_workflows:
+    - docs-generate
+    - docs-validate-links
+    - docs-update-indexes
+    suggested_tools:
+    - auto_generate_index
+    - validate_links
+    - update_artifact_indexes
+  debugging:
+    context_bundle: debugging
+    suggested_workflows:
+    - create-bug-report
+    - validate
+    - context-debug
+    suggested_tools:
+    - artifact_workflow
+    - validate_artifacts
+    - context_bundle
+  planning:
+    context_bundle: planning
+    suggested_workflows:
+    - create-plan
+    - create-design
+    - context-plan
+    suggested_tools:
+    - artifact_workflow
+    - context_bundle
+  general:
+    context_bundle: general
+    suggested_workflows:
+    - discover
+    - status
+    - validate
+    suggested_tools:
+    - discover
+    - validate_artifacts
+artifact_triggers:
+  plan:
+  - plan
+  - design
+  - architecture
+  - blueprint
+  - strategy
+  - roadmap
+  assessment:
+  - assess
+  - evaluate
+  - review
+  - analysis
+  audit:
+  - audit
+  - compliance
+  - framework audit
+  - quality audit
+  - security audit
+  - accessibility audit
+  - performance audit
+  - code quality audit
+  bug_report:
+  - bug
+  - error
+  - issue
+  - fix
+  - broken
+  - crash
+  - exception
+  design:
+  - design
+  - spec
+  - specification
+  - schema
+  research:
+  - research
+  - investigate
+  - explore
+  - study
+command_templates:
+  context: make context-{context_bundle}
+  artifact:
+    plan: make create-plan NAME=my-{artifact_type} TITLE="..."
+    bug_report: make create-bug-report NAME=my-{artifact_type} TITLE="..."
+    design: make create-design NAME=my-{artifact_type} TITLE="..."
+    assessment: make create-assessment NAME=my-{artifact_type} TITLE="..."
+    research: make create-research NAME=my-{artifact_type} TITLE="..."
+id: SC-009
+dependencies: []
+keywords:
+- validates
+- compliance
+- status
+- memory
+- footprint
+- task
+- types
+- artifact
+- triggers
+- command
+fuzzy_threshold: 0.8

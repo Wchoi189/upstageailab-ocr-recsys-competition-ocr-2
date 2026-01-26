@@ -6,18 +6,1105 @@ priority: critical
 name: AgentQMS Standards Registry v2.0
 description: Auto-generated unified discovery registry with dependency tracking
 metadata:
-  generated_at: '2026-01-26T16:50:42.648229Z'
+  generated_at: '2026-01-26T17:05:18.875307Z'
   generator: sync_registry.py v2.0
   schema_version: '2.0'
-  total_standards: 2
+  total_standards: 53
   pulse_delta:
     added:
+    - AG-001
+    - AG-002
+    - AG-003
+    - AG-004
+    - AG-005
+    - FW-001
+    - FW-002
+    - FW-003
+    - FW-004
+    - FW-005
+    - FW-006
+    - FW-007
+    - FW-008
+    - FW-009
+    - FW-010
+    - FW-011
+    - FW-012
+    - FW-013
+    - FW-014
+    - FW-015
+    - FW-016
+    - FW-017
+    - FW-018
+    - FW-019
+    - FW-020
+    - FW-021
+    - FW-022
+    - FW-023
+    - FW-024
+    - FW-025
+    - FW-026
+    - FW-027
+    - FW-028
+    - FW-029
+    - FW-030
+    - FW-031
+    - FW-032
+    - FW-033
+    - FW-034
+    - FW-035
+    - FW-036
     - SC-001
     - SC-002
+    - SC-003
+    - SC-004
+    - SC-005
+    - SC-006
+    - SC-007
+    - SC-008
+    - SC-009
+    - SC-010
+    - WF-001
+    - WF-002
     removed: []
     modified: []
     unchanged: []
 standards:
+  AG-001:
+    ads_version: '2.0'
+    id: AG-001
+    type: rule_set
+    agent: all
+    tier: 3
+    priority: medium
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 220
+    dependencies:
+    - SC-003
+    keywords:
+    - automated
+    - criteria
+    - archival
+    - identifying
+    - unused
+    - low
+    - value
+    - candidate
+    - code
+    - validates
+    fuzzy_threshold: 0.8
+    description: Automated criteria for identifying unused, low-value, or archival-candidate
+      code
+    deprecated: false
+    file_path: AgentQMS/standards/tier3-agents/bloat-detection-rules.yaml
+  AG-002:
+    ads_version: '2.0'
+    id: AG-002
+    type: agent_configuration
+    agent: qwen
+    tier: 3
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 240
+    dependencies:
+    - SC-003
+    keywords:
+    - validation
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - depends
+    - agent
+    - identity
+    - critical
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier3-agents/config.yaml
+  AG-003:
+    ads_version: '2.0'
+    id: AG-003
+    type: quick_reference
+    agent: all
+    tier: 3
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 500
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - discovery
+    - trigger
+    - core
+    - components
+    - architecture
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier3-agents/multi-agent-system.yaml
+  AG-004:
+    ads_version: '2.0'
+    id: AG-004
+    type: quick_reference
+    agent: gemini
+    tier: 3
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 50
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - mandatory
+    - rules
+    - common
+    - commands
+    - when
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier3-agents/quick-reference.yaml
+  AG-005:
+    ads_version: '2.0'
+    id: AG-005
+    type: quick_reference
+    agent: all
+    tier: 3
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 350
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - discovery
+    - trigger
+    - core
+    - command
+    - analysis
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier3-agents/vlm-tools.yaml
+  FW-001:
+    ads_version: '2.0'
+    id: FW-001
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - defines
+    - architecture
+    - communication
+    - protocols
+    - patterns
+    - multi
+    - agent
+    - collaboration
+    - system
+    - title
+    fuzzy_threshold: 0.8
+    description: 'Defines the architecture, communication protocols, and patterns
+      for the
+
+      Multi-Agent Collaboration System.
+
+      '
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/agent-architecture.yaml
+  FW-002:
+    ads_version: '2.0'
+    id: FW-002
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 300
+    dependencies:
+    - SC-003
+    keywords:
+    - protocol
+    - telemetry
+    - handling
+    - runtime
+    - feedback
+    - enforcement
+    - validates
+    - compliance
+    - status
+    - memory
+    fuzzy_threshold: 0.8
+    description: Protocol for handling runtime telemetry feedback and enforcement.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/agent-feedback-protocol.yaml
+  FW-003:
+    ads_version: '2.0'
+    id: FW-003
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 180
+    dependencies:
+    - SC-003
+    keywords:
+    - enforcement
+    - prohibited
+    - patterns
+    - rules
+    - machine
+    - parseable
+    - violations
+    - validates
+    - compliance
+    - status
+    fuzzy_threshold: 0.8
+    description: Prohibited patterns with enforcement rules - machine-parseable violations
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/anti-patterns.yaml
+  FW-004:
+    ads_version: '2.0'
+    id: FW-004
+    type: quick_reference
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 450
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - service
+    - endpoints
+    - models
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/api-contracts.yaml
+  FW-005:
+    ads_version: '2.0'
+    id: FW-005
+    type: agent_configuration
+    agent: copilot
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - frontmatter
+    - defaults
+    - denylist
+    - default
+    - branch
+    - delimiter
+    - date
+    - formats
+    - content
+    - naming
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/artifact_template_config.yaml
+  FW-006:
+    ads_version: '2.0'
+    id: FW-006
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - async
+    - patterns
+    - rules
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/async-concurrency.yaml
+  FW-007:
+    ads_version: '2.0'
+    id: FW-007
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - defines
+    - interface
+    - contracts
+    - ocr
+    - components
+    - domain
+    - first
+    - architecture
+    - pattern
+    - validates
+    fuzzy_threshold: 0.8
+    description: Defines the interface contracts for OCR components and the Domain-First
+      architecture pattern.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/component-interfaces.yaml
+  FW-008:
+    ads_version: '2.0'
+    id: FW-008
+    type: quick_reference
+    agent: copilot
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - artifact
+    - templates
+    - externalization
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/config-externalization-checklist.yaml
+  FW-009:
+    ads_version: '2.0'
+    id: FW-009
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: medium
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - config
+    - externalization
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/config-externalization-index.yaml
+  FW-010:
+    ads_version: '2.0'
+    id: FW-010
+    type: rule_set
+    agent: copilot
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - pattern
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/config-externalization-pattern.yaml
+  FW-011:
+    ads_version: '2.0'
+    id: FW-011
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 300
+    dependencies:
+    - SC-003
+    keywords:
+    - standards
+    - safely
+    - handling
+    - omegaconf
+    - configuration
+    - objects
+    - prevent
+    - silent
+    - failures
+    - invalid
+    fuzzy_threshold: 0.8
+    description: Standards for safely handling OmegaConf configuration objects to
+      prevent silent failures from invalid type checks.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+  FW-012:
+    ads_version: '2.0'
+    id: FW-012
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - handles
+    - mapping
+    - between
+    - resized
+    - padded
+    - images
+    - original
+    - coordinates
+    - validates
+    - compliance
+    fuzzy_threshold: 0.8
+    description: Handles mapping between resized/padded images and original coordinates.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/coordinate-transforms.yaml
+  FW-013:
+    ads_version: '2.0'
+    id: FW-013
+    type: quick_reference
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 180
+    dependencies:
+    - SC-003
+    keywords:
+    - config
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - schema
+    - location
+    - schemas
+    - locations
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/data-contracts.yaml
+  FW-014:
+    ads_version: '2.0'
+    id: FW-014
+    type: quick_reference
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 300
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - datasets
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
+  FW-015:
+    ads_version: '2.0'
+    id: FW-015
+    type: workflow_definition
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 400
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - session
+    - structure
+    - frontmatter
+    - schema
+    - workflow
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/debugging-sessions.yaml
+  FW-016:
+    ads_version: '2.0'
+    id: FW-016
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - depends
+    - commit
+    - message
+    - format
+    - branch
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/git-conventions.yaml
+  FW-017:
+    ads_version: '2.0'
+    id: FW-017
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 680
+    dependencies:
+    - SC-003
+    keywords:
+    - compliance
+    - migration
+    - completed
+    - validates
+    - status
+    - memory
+    - footprint
+    - refactor
+    - baseline
+    - current
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+  FW-018:
+    ads_version: '2.0'
+    id: FW-018
+    type: quick_reference
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 280
+    dependencies:
+    - SC-003
+    keywords:
+    - patterns
+    - design
+    - debugging
+    - hydra
+    - load
+    - when
+    - compliance
+    - version
+    - failure
+    - anti
+    fuzzy_threshold: 0.8
+    description: Design patterns, anti-patterns, and debugging guide for Hydra 1.3.2
+      V5.0 - load when debugging
+    replaces:
+    - hydra-v5-patterns.yaml (consolidated)
+    - hydra-v5-core-rules.yaml (patterns section only)
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
+  FW-019:
+    ads_version: '2.0'
+    id: FW-019
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 350
+    dependencies:
+    - SC-003
+    keywords:
+    - critical
+    - rules
+    - hydra
+    - reading
+    - compliance
+    - version
+    - configuration
+    - architecture
+    - mandatory
+    - config
+    fuzzy_threshold: 0.8
+    description: Critical configuration rules for Hydra 1.3.2 V5.0 architecture -
+      mandatory reading for config changes
+    replaces:
+    - hydra-v5-core-rules.yaml (consolidated)
+    - hydra-configuration-architecture.yaml (archived)
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+  FW-020:
+    ads_version: '2.0'
+    id: FW-020
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - handles
+    - loading
+    - validation
+    - input
+    - images
+    - validates
+    - compliance
+    - status
+    - last
+    - updated
+    fuzzy_threshold: 0.8
+    description: Handles loading and validation of input images.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/image-loading.yaml
+  FW-021:
+    ads_version: '2.0'
+    id: FW-021
+    type: quick_reference
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 350
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - last
+    - updated
+    - memory
+    - footprint
+    - components
+    - dependency
+    - graph
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+  FW-022:
+    ads_version: '2.0'
+    id: FW-022
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - heavy
+    - modules
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/ml-frameworks.yaml
+  FW-023:
+    ads_version: '2.0'
+    id: FW-023
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - manages
+    - lifecycle
+    - models
+    - detection
+    - recognition
+    - etc
+    - loading
+    - inference
+    - unloading
+    - validates
+    fuzzy_threshold: 0.8
+    description: Manages the lifecycle of models (detection, recognition, etc.) for
+      loading, inference, and unloading.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/model-management.yaml
+  FW-024:
+    ads_version: '2.0'
+    id: FW-024
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - central
+    - controller
+    - ocr
+    - inference
+    - pipeline
+    - validates
+    - compliance
+    - status
+    - last
+    - updated
+    fuzzy_threshold: 0.8
+    description: The central controller for the OCR inference pipeline.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/orchestration-flow.yaml
+  FW-025:
+    ads_version: '2.0'
+    id: FW-025
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: medium
+    validates_with: scripts/performance/benchmark_api.py
+    compliance_status: unknown
+    memory_footprint: 10
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - slas
+    - enforcement
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/performance-slas.yaml
+  FW-026:
+    ads_version: '2.0'
+    id: FW-026
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - data
+    - defines
+    - canonical
+    - structures
+    - contracts
+    - used
+    - pass
+    - between
+    - pipeline
+    - stages
+    fuzzy_threshold: 0.8
+    description: Defines the canonical data structures and contracts used to pass
+      data between pipeline stages.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/pipeline-contracts.yaml
+  FW-027:
+    ads_version: '2.0'
+    id: FW-027
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - decodes
+    - raw
+    - model
+    - output
+    - into
+    - structured
+    - textregion
+    - objects
+    - validates
+    - compliance
+    fuzzy_threshold: 0.8
+    description: Decodes raw model output into structured TextRegion objects.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/postprocessing-logic.yaml
+  FW-028:
+    ads_version: '2.0'
+    id: FW-028
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - prepares
+    - raw
+    - images
+    - inference
+    - validates
+    - compliance
+    - status
+    - last
+    - updated
+    - component
+    fuzzy_threshold: 0.8
+    description: Prepares raw images for inference.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/preprocessing-logic.yaml
+  FW-029:
+    ads_version: '2.0'
+    id: FW-029
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - pydantic
+    - validation
+    - rules
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/pydantic-validation.yaml
+  FW-030:
+    ads_version: '2.0'
+    id: FW-030
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - rules
+    - type
+    - annotation
+    - error
+    - handling
+    - logging
+    - path
+    - resolution
+    - deprecation
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/python-core.yaml
+  FW-031:
+    ads_version: '2.0'
+    id: FW-031
+    type: quick_reference
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 200
+    dependencies:
+    - SC-003
+    keywords:
+    - setup
+    - commands
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - prerequisites
+    - verification
+    - frontend
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/quickstart.yaml
+  FW-032:
+    ads_version: '2.0'
+    id: FW-032
+    type: agent_configuration
+    agent: copilot
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - version
+    - last
+    - updated
+    - defaults
+    - bug
+    - report
+    - frontmatter
+    - denylist
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/template_defaults.yaml
+  FW-033:
+    ads_version: '2.0'
+    id: FW-033
+    type: rule_set
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - rules
+    - lazy
+    - import
+    - test
+    - file
+    - rationale
+    - enforcement
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/testing.yaml
+  FW-034:
+    ads_version: '2.0'
+    id: FW-034
+    type: tool_catalog
+    agent: all
+    tier: 2
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 800
+    dependencies:
+    - SC-003
+    keywords:
+    - commands
+    - vlm
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - source
+    - last
+    - audited
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+  FW-035:
+    ads_version: '2.0'
+    id: FW-035
+    type: component_interface
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - draws
+    - detected
+    - bounding
+    - boxes
+    - class
+    - labels
+    - onto
+    - image
+    - validates
+    - compliance
+    fuzzy_threshold: 0.8
+    description: Draws detected bounding boxes and class labels onto the image.
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/visualization-logic.yaml
+  FW-036:
+    ads_version: '2.0'
+    id: FW-036
+    type: agent_configuration
+    agent: copilot
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - version
+    - task
+    - types
+    - artifact
+    - triggers
+    - command
+    - templates
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/workflow_detector_config.yaml
   SC-001:
     ads_version: '2.0'
     id: SC-001
@@ -89,24 +1176,564 @@ standards:
     description: Artifact type system with plugin-based validation and naming rules
     deprecated: false
     file_path: AgentQMS/standards/tier1-sst/artifact-types.yaml
+  SC-003:
+    ads_version: '2.0'
+    id: SC-003
+    type: rule_set
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies: []
+    keywords:
+    - artifact
+    - unified
+    - naming
+    - placement
+    - rules
+    - agentqms
+    - version
+    - description
+    - patterns
+    - types
+    fuzzy_threshold: 0.8
+    description: Unified artifact naming and placement rules for AgentQMS
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/artifact_rules.yaml
+  SC-004:
+    ads_version: '2.0'
+    id: SC-004
+    type: rule_set
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 70
+    dependencies: []
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - depends
+    - placement
+    - rules
+    - prohibited
+    - actions
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+  SC-005:
+    ads_version: '2.0'
+    id: SC-005
+    type: schema_specification
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies: []
+    keywords:
+    - single
+    - source
+    - truth
+    - artifact
+    - frontmatter
+    - field
+    - definitions
+    - name
+    - description
+    - schema
+    fuzzy_threshold: 0.8
+    description: Single source of truth for artifact frontmatter field definitions
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/frontmatter-master.yaml
+  SC-006:
+    ads_version: '2.0'
+    id: SC-006
+    type: rule_set
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 50
+    dependencies: []
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - depends
+    - prohibited
+    - actions
+    - enforcement
+    - priority
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/prohibited-actions.yaml
+  SC-007:
+    ads_version: '2.0'
+    id: SC-007
+    type: quick_reference
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 80
+    dependencies: []
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - applications
+    - inference
+    - engine
+    - config
+    - system
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/system-architecture.yaml
+  SC-008:
+    ads_version: '2.0'
+    id: SC-008
+    type: rule_set
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 60
+    dependencies: []
+    keywords:
+    - validation
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - depends
+    - commands
+    - workflow
+    - mandatory
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
+  SC-009:
+    ads_version: '2.0'
+    id: SC-009
+    type: agent_configuration
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 100
+    dependencies: []
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - task
+    - types
+    - artifact
+    - triggers
+    - command
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/workflow-detector.yaml
+  SC-010:
+    ads_version: '2.0'
+    id: SC-010
+    type: rule_set
+    agent: all
+    tier: 1
+    priority: critical
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 90
+    dependencies: []
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - depends
+    - required
+    - workflows
+    - frontmatter
+    - requirements
+    fuzzy_threshold: 0.8
+    deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+  WF-001:
+    ads_version: '2.0'
+    id: WF-001
+    type: workflow_definition
+    agent: all
+    tier: 4
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: unknown
+    memory_footprint: 200
+    dependencies:
+    - SC-003
+    keywords:
+    - validates
+    - compliance
+    - status
+    - memory
+    - footprint
+    - workflow
+    - paths
+    - triggers
+    - rules
+    fuzzy_threshold: 0.8
+    triggers:
+    - pattern: ocr/models/**/*.py
+      workflow: check.validate
+    - pattern: configs/**/*.yaml
+      workflow: check.validate
+    - pattern: experiment_manager/**/*.py
+      workflow: database.reconcile
+    deprecated: false
+    file_path: AgentQMS/standards/tier4-workflows/experiment-workflow.yaml
+  WF-002:
+    ads_version: '2.0'
+    id: WF-002
+    type: rule_set
+    agent: all
+    tier: 4
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 100
+    dependencies:
+    - SC-003
+    keywords:
+    - runtime
+    - middleware
+    - policies
+    - enforced
+    - agentqms
+    - server
+    - compliance
+    - status
+    - description
+    - items
+    fuzzy_threshold: 0.8
+    description: Runtime middleware policies enforced by the AgentQMS server.
+    deprecated: false
+    file_path: AgentQMS/standards/tier4-workflows/middleware-policies.yaml
 tier_index:
   tier1:
   - SC-002
+  - SC-003
+  - SC-004
+  - SC-005
   - SC-001
+  - SC-006
+  - SC-007
+  - SC-008
+  - SC-009
+  - SC-010
+  tier2:
+  - FW-001
+  - FW-002
+  - FW-003
+  - FW-004
+  - FW-005
+  - FW-006
+  - FW-007
+  - FW-008
+  - FW-009
+  - FW-010
+  - FW-011
+  - FW-012
+  - FW-013
+  - FW-014
+  - FW-015
+  - FW-016
+  - FW-017
+  - FW-018
+  - FW-019
+  - FW-020
+  - FW-021
+  - FW-022
+  - FW-023
+  - FW-024
+  - FW-025
+  - FW-026
+  - FW-027
+  - FW-028
+  - FW-029
+  - FW-030
+  - FW-031
+  - FW-032
+  - FW-033
+  - FW-034
+  - FW-035
+  - FW-036
+  tier3:
+  - AG-001
+  - AG-002
+  - AG-003
+  - AG-004
+  - AG-005
+  tier4:
+  - WF-001
+  - WF-002
 keyword_index:
   artifacts:
   - SC-002
   - SC-001
   types:
   - SC-002
+  - SC-003
+  - SC-009
+  - FW-036
   plugin system:
   - SC-002
   validation:
   - SC-002
+  - SC-008
+  - FW-020
+  - FW-029
+  - AG-002
   frontmatter:
   - SC-002
+  - SC-005
+  - SC-010
+  - FW-005
+  - FW-015
+  - FW-032
+  artifact:
+  - SC-003
+  - SC-005
+  - SC-009
+  - FW-008
+  - FW-036
+  unified:
+  - SC-003
   naming:
+  - SC-003
   - SC-001
+  - FW-005
+  placement:
+  - SC-003
+  - SC-004
+  rules:
+  - SC-003
+  - SC-004
+  - FW-003
+  - FW-006
+  - FW-019
+  - FW-029
+  - FW-030
+  - FW-033
+  - AG-004
+  - WF-001
+  agentqms:
+  - SC-003
+  - WF-002
+  version:
+  - SC-003
+  - FW-018
+  - FW-019
+  - FW-032
+  - FW-036
+  description:
+  - SC-003
+  - SC-005
+  - WF-002
+  patterns:
+  - SC-003
+  - FW-001
+  - FW-003
+  - FW-006
+  - FW-018
+  validates:
+  - SC-004
+  - SC-006
+  - SC-007
+  - SC-008
+  - SC-009
+  - SC-010
+  - FW-002
+  - FW-003
+  - FW-004
+  - FW-007
+  - FW-012
+  - FW-013
+  - FW-014
+  - FW-015
+  - FW-016
+  - FW-017
+  - FW-020
+  - FW-021
+  - FW-023
+  - FW-024
+  - FW-025
+  - FW-027
+  - FW-028
+  - FW-031
+  - FW-034
+  - FW-035
+  - AG-001
+  - AG-002
+  - AG-003
+  - AG-004
+  - AG-005
+  - WF-001
+  compliance:
+  - SC-004
+  - SC-006
+  - SC-007
+  - SC-008
+  - SC-009
+  - SC-010
+  - FW-002
+  - FW-003
+  - FW-004
+  - FW-012
+  - FW-013
+  - FW-014
+  - FW-015
+  - FW-016
+  - FW-017
+  - FW-018
+  - FW-019
+  - FW-020
+  - FW-021
+  - FW-024
+  - FW-025
+  - FW-027
+  - FW-028
+  - FW-031
+  - FW-034
+  - FW-035
+  - AG-002
+  - AG-003
+  - AG-004
+  - AG-005
+  - WF-001
+  - WF-002
+  status:
+  - SC-004
+  - SC-006
+  - SC-007
+  - SC-008
+  - SC-009
+  - SC-010
+  - FW-002
+  - FW-003
+  - FW-004
+  - FW-013
+  - FW-014
+  - FW-015
+  - FW-016
+  - FW-017
+  - FW-020
+  - FW-021
+  - FW-024
+  - FW-025
+  - FW-028
+  - FW-031
+  - FW-034
+  - AG-002
+  - AG-003
+  - AG-004
+  - AG-005
+  - WF-001
+  - WF-002
+  memory:
+  - SC-004
+  - SC-006
+  - SC-007
+  - SC-008
+  - SC-009
+  - SC-010
+  - FW-002
+  - FW-004
+  - FW-013
+  - FW-014
+  - FW-015
+  - FW-016
+  - FW-017
+  - FW-021
+  - FW-025
+  - FW-031
+  - FW-034
+  - AG-002
+  - AG-003
+  - AG-004
+  - AG-005
+  - WF-001
+  footprint:
+  - SC-004
+  - SC-006
+  - SC-007
+  - SC-008
+  - SC-009
+  - SC-010
+  - FW-004
+  - FW-013
+  - FW-014
+  - FW-015
+  - FW-016
+  - FW-017
+  - FW-021
+  - FW-025
+  - FW-031
+  - FW-034
+  - AG-002
+  - AG-003
+  - AG-004
+  - AG-005
+  - WF-001
+  depends:
+  - SC-004
+  - SC-006
+  - SC-008
+  - SC-010
+  - FW-016
+  - AG-002
+  prohibited:
+  - SC-004
+  - SC-006
+  - FW-003
+  actions:
+  - SC-004
+  - SC-006
+  single:
+  - SC-005
+  source:
+  - SC-005
+  - FW-034
+  truth:
+  - SC-005
+  field:
+  - SC-005
+  definitions:
+  - SC-005
+  name:
+  - SC-005
+  schema:
+  - SC-005
+  - FW-013
+  - FW-015
   kebab-case:
   - SC-001
   conventions:
@@ -115,7 +1742,426 @@ keyword_index:
   - SC-001
   timestamp:
   - SC-001
+  enforcement:
+  - SC-006
+  - FW-002
+  - FW-003
+  - FW-025
+  - FW-033
+  priority:
+  - SC-006
+  applications:
+  - SC-007
+  inference:
+  - SC-007
+  - FW-023
+  - FW-024
+  - FW-028
+  engine:
+  - SC-007
+  config:
+  - SC-007
+  - FW-009
+  - FW-013
+  - FW-019
+  system:
+  - SC-007
+  - FW-001
+  commands:
+  - SC-008
+  - FW-031
+  - FW-034
+  - AG-004
+  workflow:
+  - SC-008
+  - FW-015
+  - WF-001
+  mandatory:
+  - SC-008
+  - FW-019
+  - AG-004
+  task:
+  - SC-009
+  - FW-036
+  triggers:
+  - SC-009
+  - FW-036
+  - WF-001
+  command:
+  - SC-009
+  - FW-036
+  - AG-005
+  required:
+  - SC-010
+  workflows:
+  - SC-010
+  requirements:
+  - SC-010
+  defines:
+  - FW-001
+  - FW-007
+  - FW-026
+  architecture:
+  - FW-001
+  - FW-007
+  - FW-019
+  - AG-003
+  communication:
+  - FW-001
+  protocols:
+  - FW-001
+  multi:
+  - FW-001
+  agent:
+  - FW-001
+  - AG-002
+  collaboration:
+  - FW-001
+  title:
+  - FW-001
+  protocol:
+  - FW-002
+  telemetry:
+  - FW-002
+  handling:
+  - FW-002
+  - FW-011
+  - FW-030
+  runtime:
+  - FW-002
+  - WF-002
+  feedback:
+  - FW-002
+  machine:
+  - FW-003
+  parseable:
+  - FW-003
+  violations:
+  - FW-003
+  service:
+  - FW-004
+  endpoints:
+  - FW-004
+  models:
+  - FW-004
+  - FW-023
+  defaults:
+  - FW-005
+  - FW-032
+  denylist:
+  - FW-005
+  - FW-032
+  default:
+  - FW-005
+  branch:
+  - FW-005
+  - FW-016
+  delimiter:
+  - FW-005
+  date:
+  - FW-005
+  formats:
+  - FW-005
+  content:
+  - FW-005
+  async:
+  - FW-006
+  interface:
+  - FW-007
+  contracts:
+  - FW-007
+  - FW-026
+  ocr:
+  - FW-007
+  - FW-024
+  components:
+  - FW-007
+  - FW-021
+  - AG-003
+  domain:
+  - FW-007
+  first:
+  - FW-007
+  pattern:
+  - FW-007
+  - FW-010
+  templates:
+  - FW-008
+  - FW-036
+  externalization:
+  - FW-008
+  - FW-009
+  standards:
+  - FW-011
+  safely:
+  - FW-011
+  omegaconf:
+  - FW-011
+  configuration:
+  - FW-011
+  - FW-019
+  objects:
+  - FW-011
+  - FW-027
+  prevent:
+  - FW-011
+  silent:
+  - FW-011
+  failures:
+  - FW-011
+  invalid:
+  - FW-011
+  handles:
+  - FW-012
+  - FW-020
+  mapping:
+  - FW-012
+  between:
+  - FW-012
+  - FW-026
+  resized:
+  - FW-012
+  padded:
+  - FW-012
+  images:
+  - FW-012
+  - FW-020
+  - FW-028
+  original:
+  - FW-012
+  coordinates:
+  - FW-012
+  location:
+  - FW-013
+  schemas:
+  - FW-013
+  locations:
+  - FW-013
+  datasets:
+  - FW-014
+  session:
+  - FW-015
+  structure:
+  - FW-015
+  commit:
+  - FW-016
+  message:
+  - FW-016
+  format:
+  - FW-016
+  migration:
+  - FW-017
+  completed:
+  - FW-017
+  refactor:
+  - FW-017
+  baseline:
+  - FW-017
+  current:
+  - FW-017
+  design:
+  - FW-018
+  debugging:
+  - FW-018
+  hydra:
+  - FW-018
+  - FW-019
+  load:
+  - FW-018
+  when:
+  - FW-018
+  - AG-004
+  failure:
+  - FW-018
+  anti:
+  - FW-018
+  critical:
+  - FW-019
+  - AG-002
+  reading:
+  - FW-019
+  loading:
+  - FW-020
+  - FW-023
+  input:
+  - FW-020
+  last:
+  - FW-020
+  - FW-021
+  - FW-024
+  - FW-028
+  - FW-032
+  - FW-034
+  updated:
+  - FW-020
+  - FW-021
+  - FW-024
+  - FW-028
+  - FW-032
+  dependency:
+  - FW-021
+  graph:
+  - FW-021
+  heavy:
+  - FW-022
+  modules:
+  - FW-022
+  manages:
+  - FW-023
+  lifecycle:
+  - FW-023
+  detection:
+  - FW-023
+  recognition:
+  - FW-023
+  etc:
+  - FW-023
+  unloading:
+  - FW-023
+  central:
+  - FW-024
+  controller:
+  - FW-024
+  pipeline:
+  - FW-024
+  - FW-026
+  slas:
+  - FW-025
+  data:
+  - FW-026
+  canonical:
+  - FW-026
+  structures:
+  - FW-026
+  used:
+  - FW-026
+  pass:
+  - FW-026
+  stages:
+  - FW-026
+  decodes:
+  - FW-027
+  raw:
+  - FW-027
+  - FW-028
+  model:
+  - FW-027
+  output:
+  - FW-027
+  into:
+  - FW-027
+  structured:
+  - FW-027
+  textregion:
+  - FW-027
+  prepares:
+  - FW-028
+  component:
+  - FW-028
+  pydantic:
+  - FW-029
+  type:
+  - FW-030
+  annotation:
+  - FW-030
+  error:
+  - FW-030
+  logging:
+  - FW-030
+  path:
+  - FW-030
+  resolution:
+  - FW-030
+  deprecation:
+  - FW-030
+  setup:
+  - FW-031
+  prerequisites:
+  - FW-031
+  verification:
+  - FW-031
+  frontend:
+  - FW-031
+  bug:
+  - FW-032
+  report:
+  - FW-032
+  lazy:
+  - FW-033
+  import:
+  - FW-033
+  test:
+  - FW-033
+  file:
+  - FW-033
+  rationale:
+  - FW-033
+  vlm:
+  - FW-034
+  audited:
+  - FW-034
+  draws:
+  - FW-035
+  detected:
+  - FW-035
+  bounding:
+  - FW-035
+  boxes:
+  - FW-035
+  class:
+  - FW-035
+  labels:
+  - FW-035
+  onto:
+  - FW-035
+  image:
+  - FW-035
+  automated:
+  - AG-001
+  criteria:
+  - AG-001
+  archival:
+  - AG-001
+  identifying:
+  - AG-001
+  unused:
+  - AG-001
+  low:
+  - AG-001
+  value:
+  - AG-001
+  candidate:
+  - AG-001
+  code:
+  - AG-001
+  identity:
+  - AG-002
+  discovery:
+  - AG-003
+  - AG-005
+  trigger:
+  - AG-003
+  - AG-005
+  core:
+  - AG-003
+  - AG-005
+  common:
+  - AG-004
+  analysis:
+  - AG-005
+  paths:
+  - WF-001
+  middleware:
+  - WF-002
+  policies:
+  - WF-002
+  enforced:
+  - WF-002
+  server:
+  - WF-002
+  items:
+  - WF-002
 dependency_summary:
-  total_dependencies: 1
-  standards_with_deps: 1
+  total_dependencies: 44
+  standards_with_deps: 44
   orphan_standards: []

@@ -1,0 +1,70 @@
+ads_version: '2.0'
+type: agent_configuration
+agent: copilot
+tier: 2
+priority: high
+version: '1.0'
+last_updated: '2026-01-11'
+defaults:
+  title: Artifact Title
+  description: Description of the artifact.
+  purpose: documentation
+  subject: the system
+  methodology: systematic analysis
+  component/system: the component
+bug_report:
+  bug_id: '001'
+  summary: Brief description of the bug.
+  os_info: Operating system
+  python_version: Python version
+  dependencies: Key dependencies and versions
+  browser: Browser and version (if applicable)
+  reproduction_steps: '1. Step 1
+
+    2. Step 2
+
+    3. Step 3'
+  expected_behavior: What should happen.
+  actual_behavior: What actually happens.
+  error_messages: Error message here
+  impact: '- **Severity**: High/Medium/Low
+
+    - **Affected Users**: Who is affected
+
+    - **Workaround**: Any temporary workarounds'
+  root_cause: '- **Cause**: What is causing the issue
+
+    - **Location**: Where in the code
+
+    - **Trigger**: What triggers the issue'
+  proposed_solution: Short description of the applied fix, if any.
+frontmatter_denylist:
+- expected_behavior
+- actual_behavior
+- impact
+- root_cause
+- proposed_solution
+- investigation
+- analysis
+- summary
+- error_messages
+- os_info
+- python_version
+- dependencies
+- browser
+id: FW-032
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 100
+dependencies:
+- SC-003
+keywords:
+- version
+- last
+- updated
+- defaults
+- bug
+- report
+- frontmatter
+- denylist
+fuzzy_threshold: 0.8

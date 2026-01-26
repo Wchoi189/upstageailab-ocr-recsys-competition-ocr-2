@@ -1,0 +1,68 @@
+ads_version: '2.0'
+type: component_interface
+agent: all
+tier: 2
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+last_updated: '2026-01-20'
+component: preprocessing_logic
+description: Prepares raw images for inference.
+role: 'Applies resolution standardization, padding, normalization, and optional geometric
+  corrections.
+
+  '
+critical_logic:
+- id: pipeline-stages
+  description: "1. Decode: Convert Base64/Bytes to BGR Numpy Array (Opencv format).\n\
+    2. Perspective Correction (Optional):\n   - If 'enable_perspective_correction=True'.\n\
+    \   - Uses 'rembg' or corner detection logic to find document corners.\n   - Warps\
+    \ image to 'flat' view.\n   - Note: This changes the 'original_size' effective\
+    \ for downstream coordinate mapping.\n3. Resize & Pad:\n   - Resizes to 'target_size'\
+    \ (default 640) preserving aspect ratio.\n   - Pads right/bottom to reach exact\
+    \ 640x640 square.\n4. Normalize:\n   - Standard ImageNet mean/std (if generic\
+    \ model) or custom stats.\n   - Converts to Float32 Tensor (1, C, H, W).\n"
+- id: configuration
+  description: 'Configuration is loaded from Hydra V5.0 domain configs (domain/detection.yaml,
+    etc.) or can be overridden per request.
+
+    - target_size: int (default 640)
+
+    - transform_pipeline: List[str] (names of albumentations transforms)
+
+    See: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+
+    '
+- id: display-modes
+  description: 'Corrected: The preview image shows the ''After Warp'' view.
+
+    Original: The preview image shows the raw input, requiring inverse-inverse mapping
+    (complex). Currently defaults to Corrected view for simplicity.
+
+    '
+data_contract:
+  input:
+  - field: image
+    type: np.ndarray
+  - field: settings
+    type: PreprocessSettings
+  output:
+  - field: result
+    type: PreprocessingResult
+    description: Tensor + Metadata + OriginalImage
+id: FW-028
+memory_footprint: 100
+dependencies:
+- SC-003
+keywords:
+- prepares
+- raw
+- images
+- inference
+- validates
+- compliance
+- status
+- last
+- updated
+- component
+fuzzy_threshold: 0.8
