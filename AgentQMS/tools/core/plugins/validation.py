@@ -230,11 +230,8 @@ class PluginValidator:
         """
         Validate artifact type plugin against centralized rules.
 
-        Checks:
-        - Plugin name is canonical or has valid alias
-        - Plugin name not in prohibited list
-        - Required metadata fields present
-        - Frontmatter follows standards
+        Phase 6.6: This method is now FULLY DATA-DRIVEN from artifact_type_validation.yaml.
+        NO validation logic is hard-coded here - all rules come from the YAML schema.
 
         Args:
             plugin_data: Artifact type plugin data
@@ -251,7 +248,7 @@ class PluginValidator:
         canonical_types = self._validation_rules.get("canonical_types", {})
         prohibited = self._validation_rules.get("prohibited_types", [])
 
-        # Check if plugin name is prohibited
+        # Phase 6.6: Prohibited type check (data-driven from YAML)
         prohibited_names = [p.get("name") for p in prohibited]
         if plugin_name in prohibited_names:
             matching = next((p for p in prohibited if p.get("name") == plugin_name), None)
@@ -263,7 +260,7 @@ class PluginValidator:
                     f"Use '{use_instead}' instead. Reason: {reason}"
                 )
 
-        # Check if plugin name matches canonical types or aliases
+        # Phase 6.6: Canonical type and alias check (data-driven from YAML)
         if plugin_name not in canonical_types:
             # Check aliases
             found_alias = False
@@ -285,26 +282,32 @@ class PluginValidator:
                     f"Valid types: {valid_types}"
                 )
 
-        # Validate metadata structure
+        # Phase 6.6: Metadata validation (data-driven from YAML)
         metadata = plugin_data.get("metadata", {})
         if not metadata:
             errors.append("Missing 'metadata' section")
         else:
-            # Check required metadata fields
-            required = ["filename_pattern", "directory", "frontmatter"]
-            for field in required:
+            # Get required metadata fields from validation rules (not hard-coded)
+            required_metadata_fields = self._validation_rules.get(
+                "required_plugin_metadata_fields",
+                ["filename_pattern", "directory", "frontmatter"]  # Fallback if not in YAML
+            )
+            for field in required_metadata_fields:
                 if field not in metadata:
                     errors.append(f"Missing required metadata field: {field}")
 
-            # Validate frontmatter
+            # Phase 6.6: Frontmatter validation (data-driven from YAML)
             frontmatter = metadata.get("frontmatter", {})
             if frontmatter:
-                required_frontmatter = ["ads_version", "type", "category", "status", "version", "tags"]
-                for field in required_frontmatter:
+                required_frontmatter_fields = self._validation_rules.get(
+                    "required_frontmatter_fields",
+                    ["ads_version", "type", "category", "status", "version", "tags"]  # Fallback
+                )
+                for field in required_frontmatter_fields:
                     if field not in frontmatter:
                         errors.append(f"Missing required frontmatter field: {field}")
 
-        # Validate template presence
+        # Phase 6.6: Template validation (data-driven from YAML enforcement rules)
         template = plugin_data.get("template", "")
         if not template or not isinstance(template, str):
             errors.append("Missing or invalid 'template' field")

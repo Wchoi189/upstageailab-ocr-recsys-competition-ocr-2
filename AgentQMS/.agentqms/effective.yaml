@@ -1,7 +1,7 @@
 layers:
   settings: AgentQMS/.agentqms/settings.yaml
 metadata:
-  generated_at: '2026-01-23T19:18:27.735103Z'
+  generated_at: '2026-01-26T21:39:52.369467Z'
   generator: AgentQMS ConfigLoader
   schema_version: '0.2'
 resolved:
@@ -89,8 +89,8 @@ resolved:
       validate_context: true
   tool_mappings:
     tool_mappings:
-      qms:
-        path: ../bin/qms
+      aqms:
+        path: ../bin/aqms
         description: Unified AgentQMS CLI tool - ONLY supported interface for artifact
           management
         agent_only: true

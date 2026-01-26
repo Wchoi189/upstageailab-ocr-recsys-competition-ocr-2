@@ -8,7 +8,7 @@ This is the main entry point for loading plugins into a registry.
 from __future__ import annotations
 
 import sys
-from datetime import UTC, datetime
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
@@ -76,7 +76,7 @@ class PluginLoader:
         if self._registry is not None and not force:
             return self._registry
 
-        registry = PluginRegistry(loaded_at=datetime.now(UTC).isoformat())
+        registry = PluginRegistry(loaded_at=datetime.now(timezone.utc).isoformat())
 
         # Discover all plugins
         discovered = self.discovery.discover_by_type()

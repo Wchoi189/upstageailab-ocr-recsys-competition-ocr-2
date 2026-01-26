@@ -1,0 +1,220 @@
+#!/usr/bin/env python3
+"""
+AQMS - AgentQMS Unified CLI
+Phase 6.6: Single Entry Point for Registry and Plugin Operations
+
+This CLI enforces the functional boundary between:
+- Registry (Discovery): resolve_standards.py
+- Plugins (Enforcement): tools/core/plugins/
+
+Usage:
+  aqms registry resolve --task <task>       # Discovery: Find applicable standards
+  aqms registry resolve --path <path>       # Discovery: Find standards by file path
+  aqms registry sync                        # Discovery: Rebuild registry cache
+
+  aqms plugin list                          # Enforcement: List available plugins
+  aqms plugin validate                      # Enforcement: Validate plugins
+  aqms plugin show <name>                   # Enforcement: Show plugin details
+
+  aqms artifact create --type <type> --name <name> --title <title>
+  aqms artifact validate --file <file>      # Enforcement: Validate artifact
+
+Standard Discovery → Enforcement Flow (SC-002 Handshake):
+  1. Agent calls: aqms registry resolve --task artifact_creation
+  2. Registry returns: SC-002 (Artifact Type System)
+  3. Agent reads SC-002 to find plugin system location
+  4. Agent calls: aqms plugin list --artifact-types
+  5. Plugin system loads validation rules from .agentqms/schemas/artifact_type_validation.yaml
+  6. Agent calls: aqms artifact create --type <canonical_type>
+"""
+
+import argparse
+import os
+import subprocess
+import sys
+from pathlib import Path
+
+# Project root detection
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
+AGENTQMS_ROOT = PROJECT_ROOT / "AgentQMS"
+
+# Tool paths (Discovery vs Enforcement)
+REGISTRY_RESOLVER = AGENTQMS_ROOT / "tools" / "resolve_standards.py"
+REGISTRY_SYNC = AGENTQMS_ROOT / "tools" / "sync_registry.py"
+PLUGIN_CLI_MODULE = "AgentQMS.tools.core.plugins"
+
+
+def run_command(cmd: list[str], description: str = "") -> int:
+    """Execute a command and return exit code."""
+    if description:
+        print(f"🔧 {description}", file=sys.stderr)
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = f"{PROJECT_ROOT}:{env.get('PYTHONPATH', '')}"
+
+    result = subprocess.run(cmd, env=env)
+    return result.returncode
+
+
+def registry_resolve(args: argparse.Namespace) -> int:
+    """Discovery: Resolve standards by task, path, or keywords."""
+    cmd = [sys.executable, str(REGISTRY_RESOLVER)]
+
+    if args.task:
+        cmd.extend(["--task", args.task])
+    if args.path:
+        cmd.extend(["--path", args.path])
+    if args.keywords:
+        cmd.extend(["--keywords", args.keywords])
+    if args.query:
+        cmd.extend(["--query", args.query])
+    if args.fuzzy:
+        cmd.append("--fuzzy")
+    if args.paths_only:
+        cmd.append("--paths-only")
+    if args.verbose:
+        cmd.append("--verbose")
+
+    return run_command(cmd, "Resolving standards (Discovery Layer)")
+
+
+def registry_sync(args: argparse.Namespace) -> int:
+    """Discovery: Rebuild registry cache and indices."""
+    cmd = [sys.executable, str(REGISTRY_SYNC)]
+
+    if args.force:
+        cmd.append("--force")
+
+    return run_command(cmd, "Syncing registry (Discovery Layer)")
+
+
+def plugin_list(args: argparse.Namespace) -> int:
+    """Enforcement: List available plugins."""
+    cmd = [sys.executable, "-m", PLUGIN_CLI_MODULE, "--list"]
+
+    if args.artifact_types:
+        cmd.append("--artifact-types")
+    if args.context_bundles:
+        cmd.append("--context-bundles")
+    if args.validators:
+        cmd.append("--validators")
+    if args.json:
+        cmd.append("--json")
+
+    return run_command(cmd, "Listing plugins (Enforcement Layer)")
+
+
+def plugin_validate(args: argparse.Namespace) -> int:
+    """Enforcement: Validate plugins against schemas."""
+    cmd = [sys.executable, "-m", PLUGIN_CLI_MODULE, "--validate"]
+
+    if args.json:
+        cmd.append("--json")
+
+    return run_command(cmd, "Validating plugins (Enforcement Layer)")
+
+
+def plugin_show(args: argparse.Namespace) -> int:
+    """Enforcement: Show plugin details."""
+    cmd = [sys.executable, "-m", PLUGIN_CLI_MODULE, "--show", args.name]
+
+    if args.json:
+        cmd.append("--json")
+
+    return run_command(cmd, f"Showing plugin '{args.name}' (Enforcement Layer)")
+
+
+def artifact_create(args: argparse.Namespace) -> int:
+    """Enforcement: Create artifact using plugin system."""
+    print("⚠️  Artifact creation is not yet implemented in Phase 6.6", file=sys.stderr)
+    print("   This requires the SC-002 handshake to be fully implemented.", file=sys.stderr)
+    return 1
+
+
+def artifact_validate(args: argparse.Namespace) -> int:
+    """Enforcement: Validate artifact."""
+    print("⚠️  Artifact validation is not yet implemented in Phase 6.6", file=sys.stderr)
+    print("   This requires the SC-002 handshake to be fully implemented.", file=sys.stderr)
+    return 1
+
+
+def main() -> int:
+    parser = argparse.ArgumentParser(
+        description="AQMS - AgentQMS Unified CLI (Phase 6.6)",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog=__doc__,
+    )
+
+    subparsers = parser.add_subparsers(dest="command", help="Command category")
+
+    # ========== REGISTRY (DISCOVERY) COMMANDS ==========
+    registry_parser = subparsers.add_parser("registry", help="Registry operations (Discovery)")
+    registry_sub = registry_parser.add_subparsers(dest="registry_action", help="Registry action")
+
+    # registry resolve
+    resolve_parser = registry_sub.add_parser("resolve", help="Resolve standards by task/path/keywords")
+    resolve_parser.add_argument("--task", help="Resolve by task type")
+    resolve_parser.add_argument("--path", help="Resolve by file path")
+    resolve_parser.add_argument("--keywords", help="Resolve by keywords")
+    resolve_parser.add_argument("--query", help="Shorthand for --keywords")
+    resolve_parser.add_argument("--fuzzy", action="store_true", help="Enable fuzzy matching")
+    resolve_parser.add_argument("--paths-only", action="store_true", help="Output only file paths")
+    resolve_parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+    resolve_parser.set_defaults(func=registry_resolve)
+
+    # registry sync
+    sync_parser = registry_sub.add_parser("sync", help="Rebuild registry cache")
+    sync_parser.add_argument("--force", action="store_true", help="Force full rebuild")
+    sync_parser.set_defaults(func=registry_sync)
+
+    # ========== PLUGIN (ENFORCEMENT) COMMANDS ==========
+    plugin_parser = subparsers.add_parser("plugin", help="Plugin operations (Enforcement)")
+    plugin_sub = plugin_parser.add_subparsers(dest="plugin_action", help="Plugin action")
+
+    # plugin list
+    list_parser = plugin_sub.add_parser("list", help="List available plugins")
+    list_parser.add_argument("--artifact-types", action="store_true", help="Show artifact types only")
+    list_parser.add_argument("--context-bundles", action="store_true", help="Show context bundles only")
+    list_parser.add_argument("--validators", action="store_true", help="Show validators only")
+    list_parser.add_argument("--json", action="store_true", help="JSON output")
+    list_parser.set_defaults(func=plugin_list)
+
+    # plugin validate
+    validate_parser = plugin_sub.add_parser("validate", help="Validate all plugins")
+    validate_parser.add_argument("--json", action="store_true", help="JSON output")
+    validate_parser.set_defaults(func=plugin_validate)
+
+    # plugin show
+    show_parser = plugin_sub.add_parser("show", help="Show plugin details")
+    show_parser.add_argument("name", help="Plugin name")
+    show_parser.add_argument("--json", action="store_true", help="JSON output")
+    show_parser.set_defaults(func=plugin_show)
+
+    # ========== ARTIFACT (ENFORCEMENT) COMMANDS ==========
+    artifact_parser = subparsers.add_parser("artifact", help="Artifact operations (Enforcement)")
+    artifact_sub = artifact_parser.add_subparsers(dest="artifact_action", help="Artifact action")
+
+    # artifact create
+    create_parser = artifact_sub.add_parser("create", help="Create artifact from plugin")
+    create_parser.add_argument("--type", required=True, help="Artifact type (canonical name)")
+    create_parser.add_argument("--name", required=True, help="Artifact name (kebab-case)")
+    create_parser.add_argument("--title", required=True, help="Artifact title")
+    create_parser.set_defaults(func=artifact_create)
+
+    # artifact validate
+    validate_artifact_parser = artifact_sub.add_parser("validate", help="Validate artifact")
+    validate_artifact_parser.add_argument("--file", required=True, help="Artifact file path")
+    validate_artifact_parser.set_defaults(func=artifact_validate)
+
+    # Parse and execute
+    args = parser.parse_args()
+
+    if not hasattr(args, "func"):
+        parser.print_help()
+        return 1
+
+    return args.func(args)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

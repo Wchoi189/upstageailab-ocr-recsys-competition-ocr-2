@@ -266,6 +266,33 @@ def generate_dot_graph(standards: Dict[str, Dict[str, Any]]) -> str:
     """
     Generate DOT format dependency graph.
 
+    Phase 6.5: Uses mechanized architecture with governance and dependency flows.
+
+    Args:
+        standards: Dictionary mapping standard IDs to their headers
+
+    Returns:
+        DOT format string
+    """
+    # Import the mechanized graph generator
+    try:
+        # Add tools directory to path for import
+        tools_dir = Path(__file__).parent
+        if str(tools_dir) not in sys.path:
+            sys.path.insert(0, str(tools_dir))
+
+        from generate_mechanized_graph import generate_mechanized_graph
+        return generate_mechanized_graph(standards, include_legend=True, include_domains=True)
+    except Exception as e:
+        # Fallback to basic graph if mechanized generator not available
+        print(f"   ⚠️  Warning: Mechanized graph generator error ({e}), using basic graph")
+        return generate_basic_dot_graph(standards)
+
+
+def generate_basic_dot_graph(standards: Dict[str, Dict[str, Any]]) -> str:
+    """
+    Generate basic DOT format dependency graph (fallback).
+
     Args:
         standards: Dictionary mapping standard IDs to their headers
 
@@ -314,15 +341,18 @@ def generate_dot_graph(standards: Dict[str, Dict[str, Any]]) -> str:
             label = f"{std_id}\\n{desc}" if desc else std_id
             priority = header.get("priority", "medium")
 
-            # Style by priority
+            # Style by priority - FIX: No trailing comma
             if priority == "critical":
                 style = 'penwidth=2, color=red'
             elif priority == "high":
                 style = 'penwidth=1.5, color=orange'
             else:
-                style = ''
+                style = None
 
-            lines.append(f'    "{std_id}" [label="{label}", {style}];')
+            if style:
+                lines.append(f'    "{std_id}" [label="{label}", {style}];')
+            else:
+                lines.append(f'    "{std_id}" [label="{label}"];')
 
         lines.append("  }")
         lines.append("")

@@ -1,0 +1,154 @@
+# Artifact Type Validation Rules
+# Source: SC-002 (AgentQMS/standards/tier1-sst/artifact-types.yaml)
+#
+# This file is the SINGLE SOURCE OF TRUTH for artifact type validation.
+# The plugin validation system is PROHIBITED from hard-coding any of these rules.
+# All validation logic must be data-driven from this schema.
+
+ads_version: "2.0"
+source_standard: SC-002
+description: Centralized validation rules for artifact type plugins
+last_updated: "2026-01-27"
+
+# Canonical artifact types (definitive list)
+canonical_types:
+  assessment:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml
+    location: docs/artifacts/assessments/
+    purpose: Current investigations, analysis, reviews
+    frontmatter_type: assessment
+    aliases: []
+
+  audit:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
+    location: docs/artifacts/audits/
+    purpose: Compliance checks, project closure audits
+    frontmatter_type: audit
+    aliases: []
+
+  bug_report:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml
+    location: docs/artifacts/bug_reports/
+    purpose: Issue tracking, defect documentation
+    frontmatter_type: bug_report
+    aliases: []
+
+  design_document:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/design_document.yaml
+    location: docs/artifacts/design_documents/
+    purpose: Specs, features, architectural designs
+    frontmatter_type: design_document
+    aliases:
+      - design
+
+  implementation_plan:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
+    location: docs/artifacts/implementation_plans/
+    purpose: Proposed changes, phased execution plans
+    frontmatter_type: implementation_plan
+    aliases: []
+
+  completed_plan:
+    plugin: null  # Generated from implementation_plan
+    location: docs/artifacts/completed_plans/
+    purpose: Completion reports, session summaries
+    frontmatter_type: completed_plan
+    aliases: []
+
+  vlm_report:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/vlm_report.yaml
+    location: docs/artifacts/vlm_reports/
+    purpose: VLM image analysis outputs
+    frontmatter_type: vlm_report
+    aliases: []
+
+  walkthrough:
+    plugin: AgentQMS/.agentqms/plugins/artifact_types/walkthrough.yaml
+    location: docs/artifacts/walkthroughs/
+    purpose: Step-by-step guides, verification proofs, demo documentation
+    frontmatter_type: walkthrough
+    aliases: []
+
+# Prohibited artifact types (with migration guidance)
+prohibited_types:
+  - name: completion_report
+    use_instead: completed_plan
+    reason: Naming standardization (deprecated 2026-01-10)
+
+  - name: report
+    use_instead: completed_plan
+    reason: Ambiguous - use specific type (deprecated 2026-01-10)
+
+  - name: implementation_guide
+    use_instead: completed_plan
+    reason: Renamed to completed_plan for clarity (deprecated 2026-01-10)
+
+  - name: spec
+    use_instead: design_document
+    reason: Spec is informal alias - use design_document (deprecated 2026-01-10)
+
+  - name: feature
+    use_instead: design_document
+    reason: Feature designs belong in design_document (deprecated 2026-01-10)
+
+  - name: template
+    use_instead: docs/_templates/
+    reason: Templates should not be artifacts - use _templates/ directory (deprecated 2026-01-10)
+
+  - name: research
+    use_instead: assessment
+    reason: Research is a form of assessment (deprecated 2026-01-10)
+
+# Naming convention rules
+naming_convention:
+  pattern: "YYYY-MM-DD_HHMM_{type}_{description}.md"
+  examples:
+    - "2026-01-27_1430_implementation_plan_phase-6-6.md"
+    - "2026-01-27_1430_assessment_registry-performance.md"
+  rules:
+    - Date must be in YYYY-MM-DD format
+    - Time must be in HHMM format (24-hour)
+    - Type must be a canonical type
+    - Description must be kebab-case
+    - Extension must be .md
+
+# Required frontmatter fields (applies to ALL artifact types)
+required_frontmatter_fields:
+  - ads_version
+  - type
+  - category
+  - status
+  - version
+  - tags
+
+# Required metadata fields in plugin definitions
+required_plugin_metadata_fields:
+  - filename_pattern
+  - directory
+  - frontmatter
+
+# Validation enforcement rules
+validation_enforcement:
+  - rule: canonical_name_check
+    description: Plugin name must match a canonical type or be explicitly prohibited
+    severity: critical
+
+  - rule: prohibited_type_rejection
+    description: Prohibited types must be rejected at plugin load time
+    severity: critical
+
+  - rule: alias_deprecation_warning
+    description: Plugin names using aliases should emit deprecation warning
+    severity: warning
+
+  - rule: metadata_completeness
+    description: All required metadata fields must be present
+    severity: critical
+
+  - rule: frontmatter_schema
+    description: Frontmatter must conform to required fields schema
+    severity: critical
+
+  - rule: template_presence
+    description: Plugin must include a template string
+    severity: critical
