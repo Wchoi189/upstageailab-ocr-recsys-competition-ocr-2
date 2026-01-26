@@ -70,9 +70,9 @@ repos:
 
       - id: validate-agentqms-artifacts
         name: validate-agentqms-artifacts
-        entry: qms validate
+        entry: uv run python -m AgentQMS.cli validate --all
         language: system
-        pass_filenames: true
+        pass_filenames: false
         files: ^docs/artifacts/.*\.md$
         exclude: /(archive|walkthroughs)/
 
