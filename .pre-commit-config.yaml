@@ -77,13 +77,13 @@ repos:
         exclude: /(archive|walkthroughs)/
 
       - id: ads-compliance-check
-        name: ADS v1.0 Compliance Check
-        entry: uv run python AgentQMS/standards/schemas/compliance-checker.py
+        name: ADS v2.0 Compliance Check
+        entry: uv run python AgentQMS/tools/sync_registry.py --dry-run
         language: system
-        # Validate tier1-sst and tier2-framework only (pure YAML)
-        # Exclude: DEPRECATED/, tier3-agents/*.yaml (hybrid), tier4-workflows/ (hybrid docs)
-        files: ^\AgentQMS/standards/(tier1-sst|tier2-framework)/.*\.yaml$
-        pass_filenames: true
+        # Validate all tier directories with ADS v2.0 headers
+        files: ^AgentQMS/standards/(tier1-sst|tier2-framework|tier3-agents|tier4-workflows)/.*\.yaml$
+        pass_filenames: false
+        always_run: false
 
       - id: forbid-pip-install
         name: forbid-pip-install

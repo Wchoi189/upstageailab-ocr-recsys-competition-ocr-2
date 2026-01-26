@@ -41,6 +41,17 @@ try:
 except ImportError:
     PLUGINS_AVAILABLE = False
 
+# Try to import ADS v2.0 resolver integration
+try:
+    from AgentQMS.tools.core.standards_resolver_integration import (
+        resolve_standards_for_task,
+        resolve_standards_for_path,
+        get_standards_as_bundle_files,
+    )
+    RESOLVER_AVAILABLE = True
+except ImportError:
+    RESOLVER_AVAILABLE = False
+
 
 class ContextEngine:
     """
@@ -378,15 +389,66 @@ class ContextEngine:
 
         return kept_files
 
-    def get_context_bundle(self, description: str, task_type: str | None = None) -> list[dict[str, Any]]:
-        """Main method to generate bundle."""
+    def get_context_bundle(
+        self,
+        description: str,
+        task_type: str | None = None,
+        use_resolver: bool = False,
+        include_bundle: bool = True,
+    ) -> list[dict[str, Any]]:
+        """
+        Main method to generate bundle.
+
+        Args:
+            description: Task description
+            task_type: Explicit task type (if known)
+            use_resolver: Use ADS v2.0 resolver for standard resolution
+            include_bundle: Include traditional bundle files (when use_resolver=True)
+
+        Returns:
+            List of file specifications with token estimates
+        """
         self.clear_cache()
 
-        if task_type is None:
-            task_type = self.analyze_task_type(description)
+        files = []
 
-        bundle_def = self.load_bundle_definition(task_type)
-        files = self.validate_bundle_files(bundle_def)
+        # Use ADS v2.0 resolver if requested and available
+        if use_resolver and RESOLVER_AVAILABLE:
+            try:
+                # Resolve standards using ADS v2.0 registry
+                standard_paths = resolve_standards_for_task(
+                    description,
+                    include_deps=True,
+                    include_tier1=True,
+                )
+
+                if standard_paths:
+                    # Convert to bundle format
+                    resolver_files = get_standards_as_bundle_files(
+                        standard_paths,
+                        mode="full"
+                    )
+                    files.extend(resolver_files)
+                    print(f"[ContextBundle] ADS v2.0 resolver: {len(resolver_files)} standards", file=sys.stderr)
+            except Exception as e:
+                print(f"[ContextBundle] Resolver error: {e}", file=sys.stderr)
+
+        # Include traditional bundle if requested
+        if include_bundle or not use_resolver:
+            if task_type is None:
+                task_type = self.analyze_task_type(description)
+
+            try:
+                bundle_def = self.load_bundle_definition(task_type)
+                bundle_files = self.validate_bundle_files(bundle_def)
+                files.extend(bundle_files)
+            except FileNotFoundError:
+                # Bundle not found, continue with resolver results only
+                if not use_resolver:
+                    # If not using resolver and bundle not found, this is an error
+                    raise
+
+        # Apply token budget
         final_files = self.apply_budget(files)
 
         return final_files
@@ -401,8 +463,18 @@ TASK_KEYWORDS = _ENGINE.load_task_keywords()
 def analyze_task_type(description: str) -> str:
     return _ENGINE.analyze_task_type(description)
 
-def get_context_bundle(task_description: str, task_type: str | None = None) -> list[dict[str, Any]]:
-    return _ENGINE.get_context_bundle(task_description, task_type)
+def get_context_bundle(
+    task_description: str,
+    task_type: str | None = None,
+    use_resolver: bool = False,
+    include_bundle: bool = True,
+) -> list[dict[str, Any]]:
+    return _ENGINE.get_context_bundle(
+        task_description,
+        task_type,
+        use_resolver=use_resolver,
+        include_bundle=include_bundle,
+    )
 
 def list_available_bundles() -> list[str]:
     return _ENGINE.list_available_bundles()

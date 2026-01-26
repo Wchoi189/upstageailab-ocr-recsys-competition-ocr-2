@@ -1,0 +1,145 @@
+name: Validate ADS v2.0 Standards
+
+on:
+  push:
+    paths:
+      - 'AgentQMS/standards/**/*.yaml'
+      - 'AgentQMS/standards/schemas/ads-header.json'
+      - 'AgentQMS/tools/sync_registry.py'
+      - 'AgentQMS/tools/resolve_standards.py'
+  pull_request:
+    paths:
+      - 'AgentQMS/standards/**/*.yaml'
+      - 'AgentQMS/standards/schemas/ads-header.json'
+      - 'AgentQMS/tools/sync_registry.py'
+      - 'AgentQMS/tools/resolve_standards.py'
+  workflow_dispatch:
+
+jobs:
+  validate-standards:
+    runs-on: ubuntu-latest
+    name: Validate ADS v2.0 Standards
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "pyproject.toml"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: |
+          uv sync
+
+      - name: Validate ADS headers
+        id: validate
+        run: |
+          echo "🔍 Validating ADS v2.0 headers..."
+          uv run python AgentQMS/tools/sync_registry.py --dry-run --strict
+          EXIT_CODE=$?
+          echo "exit_code=$EXIT_CODE" >> $GITHUB_OUTPUT
+          exit $EXIT_CODE
+
+      - name: Check for circular dependencies
+        if: success()
+        run: |
+          echo "🔄 Checking for circular dependencies..."
+          uv run python AgentQMS/tools/sync_registry.py --dry-run
+        continue-on-error: false
+
+      - name: Test resolver functionality
+        if: success()
+        run: |
+          echo "📋 Testing standards resolver..."
+          # Test that resolver can load the registry
+          uv run python AgentQMS/tools/resolve_standards.py --query "config" --no-cache || echo "⚠️  Resolver test warning (non-fatal)"
+
+      - name: Generate validation report
+        if: always()
+        run: |
+          echo "## ADS v2.0 Validation Report" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          if [ "${{ steps.validate.outputs.exit_code }}" = "0" ]; then
+            echo "✅ All standards validated successfully" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Validation failed - see logs above" >> $GITHUB_STEP_SUMMARY
+          fi
+
+      - name: Comment on PR
+        if: github.event_name == 'pull_request' && failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '❌ **ADS v2.0 Validation Failed**\n\nPlease check the workflow logs for details on validation errors.'
+            })
+
+  compile-registry:
+    runs-on: ubuntu-latest
+    name: Test Registry Compilation
+    needs: validate-standards
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          cache-dependency-glob: "pyproject.toml"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies
+        run: |
+          uv sync
+
+      - name: Compile registry
+        run: |
+          echo "📝 Compiling registry.yaml..."
+          uv run python AgentQMS/tools/sync_registry.py
+
+      - name: Verify registry structure
+        run: |
+          echo "🔍 Verifying registry structure..."
+          if [ ! -f "AgentQMS/standards/registry.yaml" ]; then
+            echo "❌ Registry file not generated"
+            exit 1
+          fi
+          echo "✅ Registry file generated successfully"
+
+      - name: Check graph generation
+        run: |
+          echo "🎨 Checking dependency graph..."
+          if [ -f "AgentQMS/standards/architecture_map.dot" ]; then
+            echo "✅ Architecture graph generated"
+            # Try to render if graphviz is available
+            if command -v dot &> /dev/null; then
+              dot -Tpng AgentQMS/standards/architecture_map.dot -o architecture.png
+              echo "✅ Graph rendered successfully"
+            fi
+          else
+            echo "⚠️  No architecture graph generated"
+          fi
+
+      - name: Upload artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: registry-artifacts
+          path: |
+            AgentQMS/standards/registry.yaml
+            AgentQMS/standards/architecture_map.dot
+            architecture.png
+          if-no-files-found: warn

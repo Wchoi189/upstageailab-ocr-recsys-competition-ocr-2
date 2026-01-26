@@ -480,6 +480,50 @@ def run_generate_config_command(args):
     return 0
 
 
+def setup_registry_parser(subparsers):
+    """Setup registry management subcommand."""
+    parser = subparsers.add_parser(
+        "registry",
+        help="ADS v2.0 Registry management",
+        description="Manage standards registry, resolve dependencies, and migrate standards",
+    )
+
+    registry_subparsers = parser.add_subparsers(dest="registry_command", help="Registry commands")
+
+    # registry sync
+    sync_parser = registry_subparsers.add_parser("sync", help="Compile registry from ADS headers")
+    sync_parser.add_argument("--dry-run", action="store_true", help="Validate without writing")
+    sync_parser.add_argument("--strict", action="store_true", help="Strict mode: fail if no standards")
+    sync_parser.add_argument("--no-graph", action="store_true", help="Skip DOT graph generation")
+
+    # registry resolve
+    resolve_parser = registry_subparsers.add_parser("resolve", help="Resolve standards by task/path/keywords")
+    resolve_parser.add_argument("--task", help="Resolve by task type")
+    resolve_parser.add_argument("--path", help="Resolve by file path")
+    resolve_parser.add_argument("--keywords", help="Resolve by keywords (space-separated)")
+    resolve_parser.add_argument("--query", help="Shorthand for --keywords")
+    resolve_parser.add_argument("--fuzzy", action="store_true", help="Enable fuzzy matching")
+    resolve_parser.add_argument("--threshold", type=float, default=0.8, help="Fuzzy threshold (0.0-1.0)")
+    resolve_parser.add_argument("--no-deps", action="store_true", help="Don't expand dependencies")
+    resolve_parser.add_argument("--no-tier1", action="store_true", help="Don't include Tier 1 standards")
+    resolve_parser.add_argument("--paths-only", action="store_true", help="Output only file paths")
+    resolve_parser.add_argument("--no-cache", action="store_true", help="Disable binary cache")
+    resolve_parser.add_argument("-v", "--verbose", action="store_true", help="Verbose output")
+
+    # registry suggest-header
+    suggest_parser = registry_subparsers.add_parser("suggest-header", help="Suggest ADS v2.0 header for legacy standard")
+    suggest_parser.add_argument("file", help="Legacy standard file path")
+    suggest_parser.add_argument("--apply", action="store_true", help="Apply suggested header")
+    suggest_parser.add_argument("--force", action="store_true", help="Force overwrite existing file")
+
+    # registry validate
+    validate_parser = registry_subparsers.add_parser("validate", help="Validate ADS v2.0 compliance")
+    validate_parser.add_argument("files", nargs="*", help="Files to validate (default: all)")
+    validate_parser.add_argument("--strict", action="store_true", help="Strict validation mode")
+
+    return parser
+
+
 def setup_check_infra_parser(subparsers):
     """Setup check-infra subcommand."""
     parser = subparsers.add_parser(
@@ -490,10 +534,87 @@ def setup_check_infra_parser(subparsers):
     return parser
 
 
+def run_registry_command(args):
+    """Execute registry subcommand."""
+    import subprocess
+    from pathlib import Path
+
+    project_root = Path(__file__).resolve().parent.parent
+
+    if args.registry_command == "sync":
+        # Run sync_registry.py
+        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "sync_registry.py")]
+        if args.dry_run:
+            cmd.append("--dry-run")
+        if args.strict:
+            cmd.append("--strict")
+        if args.no_graph:
+            cmd.append("--no-graph")
+
+        result = subprocess.run(cmd, cwd=project_root)
+        return result.returncode
+
+    elif args.registry_command == "resolve":
+        # Run resolve_standards.py
+        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "resolve_standards.py")]
+
+        if args.task:
+            cmd.extend(["--task", args.task])
+        if args.path:
+            cmd.extend(["--path", args.path])
+        if args.keywords:
+            cmd.extend(["--keywords", args.keywords])
+        if args.query:
+            cmd.extend(["--query", args.query])
+        if args.fuzzy:
+            cmd.append("--fuzzy")
+        if args.threshold != 0.8:
+            cmd.extend(["--threshold", str(args.threshold)])
+        if args.no_deps:
+            cmd.append("--no-deps")
+        if args.no_tier1:
+            cmd.append("--no-tier1")
+        if args.paths_only:
+            cmd.append("--paths-only")
+        if args.no_cache:
+            cmd.append("--no-cache")
+        if args.verbose:
+            cmd.append("-v")
+
+        result = subprocess.run(cmd, cwd=project_root)
+        return result.returncode
+
+    elif args.registry_command == "suggest-header":
+        # Run suggest_header.py
+        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "suggest_header.py"), args.file]
+
+        if args.apply:
+            cmd.append("--apply")
+        if args.force:
+            cmd.append("--force")
+
+        result = subprocess.run(cmd, cwd=project_root)
+        return result.returncode
+
+    elif args.registry_command == "validate":
+        # Run validation using sync_registry.py in dry-run mode
+        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "sync_registry.py"), "--dry-run"]
+
+        if args.strict:
+            cmd.append("--strict")
+
+        result = subprocess.run(cmd, cwd=project_root)
+        return result.returncode
+
+    else:
+        print("Error: Unknown registry command")
+        return 1
+
+
 def run_check_infra_command(args):
     """Execute check-infra subcommand."""
     from AgentQMS.tools.compliance.preflight_check import PreflightCheck
-    
+
     checker = PreflightCheck()
     success = checker.print_report()
     return 0 if success else 1
@@ -507,7 +628,7 @@ def main():
         epilog=__doc__,
     )
 
-    parser.add_argument("--version", action="version", version="AgentQMS CLI v1.0.0 (ADS v1.0)")
+    parser.add_argument("--version", action="version", version="AgentQMS CLI v1.1.0 (ADS v2.0)")
 
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -518,6 +639,7 @@ def main():
     setup_feedback_parser(subparsers)
     setup_quality_parser(subparsers)
     setup_generate_config_parser(subparsers)
+    setup_registry_parser(subparsers)
     setup_check_infra_parser(subparsers)
 
     args = parser.parse_args()
@@ -540,6 +662,8 @@ def main():
             return run_quality_command(args)
         elif args.command == "generate-config":
             return run_generate_config_command(args)
+        elif args.command == "registry":
+            return run_registry_command(args)
         elif args.command == "check-infra":
             return run_check_infra_command(args)
         else:
