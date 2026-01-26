@@ -68,8 +68,6 @@ validation_workflow:
 self_validation_command: uv run python AgentQMS/standards/schemas/compliance-checker.py
   AgentQMS/standards/tier3-agents/qwen/config.yaml
 id: AG-002
-dependencies:
-- SC-003
 keywords:
 - validation
 - validates

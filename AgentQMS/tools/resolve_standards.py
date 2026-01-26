@@ -57,7 +57,13 @@ class RegistryCache:
                 cache_age = time.time() - cached.get("timestamp", 0)
 
                 if cache_age < self.ttl:
-                    self._data = cached.get("data")
+                    # Phase 6: Cache data is stored directly, not wrapped in "data" key
+                    if "data" in cached:
+                        # Old format (pre-Phase 6)
+                        self._data = cached.get("data")
+                    else:
+                        # New format (Phase 6) - cache IS the data
+                        self._data = cached
                     self._timestamp = cached.get("timestamp", 0)
                     return self._data
                 else:
@@ -93,30 +99,48 @@ def load_registry(use_cache: bool = True) -> Dict[str, Any]:
     """
     Load registry with optional caching.
 
+    Phase 6: Loads from cache if available (contains full metadata + indices).
+    Falls back to YAML + merges cache data for backward compatibility.
+
     Args:
         use_cache: Whether to use binary cache
 
     Returns:
-        Registry dictionary
+        Registry dictionary (may be enriched from cache)
     """
-    if use_cache:
+    # Phase 6: Try cache first (contains full metadata + search indices)
+    if use_cache and CACHE_PATH.exists():
         cache = RegistryCache(CACHE_PATH)
         cached_data = cache.load()
 
         if cached_data:
-            return cached_data
+            # Load minimal registry from YAML
+            if not REGISTRY_PATH.exists():
+                raise ResolverError(f"Registry not found: {REGISTRY_PATH}")
 
-    # Load from YAML
+            with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+                registry = yaml.safe_load(f)
+
+            # Merge search indices from cache into registry for resolver compatibility
+            registry["keyword_index"] = cached_data.get("keyword_index", {})
+            registry["tier_index"] = cached_data.get("tier_index", {})
+            registry["dependency_summary"] = cached_data.get("dependency_summary", {})
+
+            # Optionally enrich standards with full metadata from cache
+            cached_standards = cached_data.get("standards", {})
+            for std_id, cached_std in cached_standards.items():
+                if std_id in registry.get("standards", {}):
+                    # Merge full metadata from cache (for verbose mode, etc.)
+                    registry["standards"][std_id]["_full_metadata"] = cached_std
+
+            return registry
+
+    # Fallback: Load from YAML only (pre-Phase 6 compatibility)
     if not REGISTRY_PATH.exists():
         raise ResolverError(f"Registry not found: {REGISTRY_PATH}")
 
     with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
         registry = yaml.safe_load(f)
-
-    # Save to cache
-    if use_cache:
-        cache = RegistryCache(CACHE_PATH)
-        cache.save(registry)
 
     return registry
 
@@ -269,10 +293,13 @@ def expand_dependencies(
     """
     Expand standard IDs to include dependencies.
 
+    Phase 6: Tier 1 standards are ALWAYS injected (constitutional laws apply globally).
+    The include_tier1 parameter is kept for API compatibility but ignored.
+
     Args:
         registry: Registry dictionary
         standard_ids: Initial list of standard IDs
-        include_tier1: Auto-include all Tier 1 standards
+        include_tier1: Ignored (Tier 1 always injected). Kept for API compatibility.
 
     Returns:
         Expanded list of standard IDs (deduplicated, sorted)
@@ -280,10 +307,10 @@ def expand_dependencies(
     standards = registry.get("standards", {})
     expanded = set(standard_ids)
 
-    # Add Tier 1 standards (constitutional laws apply to everything)
-    if include_tier1:
-        tier1_ids = registry.get("tier_index", {}).get("tier1", [])
-        expanded.update(tier1_ids)
+    # Phase 6: ALWAYS inject Tier 1 standards (SC-001 through SC-010)
+    # Tier 1 is a global constitutional law, not a file-level dependency
+    tier1_ids = registry.get("tier_index", {}).get("tier1", [])
+    expanded.update(tier1_ids)
 
     # Recursively add dependencies
     def add_deps(std_id: str, visited: Set[str]):

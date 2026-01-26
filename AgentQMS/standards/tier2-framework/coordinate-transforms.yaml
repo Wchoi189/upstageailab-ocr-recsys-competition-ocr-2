@@ -46,8 +46,6 @@ data_contract:
     description: Coordinates in original image space
 id: FW-012
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - handles
 - mapping

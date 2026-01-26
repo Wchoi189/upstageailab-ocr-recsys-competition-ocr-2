@@ -299,8 +299,6 @@ compliance:
   - hydra-v5-core-rules.yaml (patterns section)
   ai_optimized: true
   token_reduction: 76%
-dependencies:
-- SC-003
 keywords:
 - patterns
 - design

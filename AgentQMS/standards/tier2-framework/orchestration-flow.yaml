@@ -42,8 +42,6 @@ data_contract:
     type: Dict
 id: FW-024
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - central
 - controller

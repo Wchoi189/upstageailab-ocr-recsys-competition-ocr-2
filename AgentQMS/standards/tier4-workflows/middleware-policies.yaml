@@ -7,13 +7,17 @@ priority: high
 validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: pass
 memory_footprint: 100
-dependencies: []
 keywords:
 - runtime
 - middleware
 - policies
 - enforced
 - agentqms
+- server
+- compliance
+- status
+- description
+- items
 fuzzy_threshold: 0.8
 description: Runtime middleware policies enforced by the AgentQMS server.
 items:
@@ -41,20 +45,3 @@ items:
   rules:
   - AgentQMS/config/ directory is READ-ONLY for agents.
   - Configurations should be placed in AgentQMS/standards/ or AgentQMS/env/.
-id: WF-002
-validates_with: AgentQMS/standards/schemas/compliance-checker.py
-memory_footprint: 100
-dependencies:
-- SC-003
-keywords:
-- runtime
-- middleware
-- policies
-- enforced
-- agentqms
-- server
-- compliance
-- status
-- description
-- items
-fuzzy_threshold: 0.8

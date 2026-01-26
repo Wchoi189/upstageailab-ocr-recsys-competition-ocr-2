@@ -267,8 +267,6 @@ vlm_integration:
   customization: Create experiment-specific prompts in prompts/ directory
   output_location: '{experiment_id}/vlm_reports/'
 id: FW-034
-dependencies:
-- SC-003
 keywords:
 - commands
 - vlm

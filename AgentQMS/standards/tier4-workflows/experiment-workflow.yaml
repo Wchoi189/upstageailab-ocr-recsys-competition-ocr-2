@@ -43,8 +43,6 @@ rules:
 - Always run "etk reconcile --all" and "etk sync --all" after creating artifacts.
 - Never create artifacts manually.
 id: WF-001
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

@@ -105,8 +105,6 @@ id: FW-036
 validates_with: AgentQMS/standards/schemas/compliance-checker.py
 compliance_status: unknown
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - version
 - task

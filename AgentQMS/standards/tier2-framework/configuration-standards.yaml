@@ -47,8 +47,6 @@ utilities:
   signature: 'ensure_dict(cfg: Any, resolve: bool = True) -> dict | list | Any'
   description: Recursively converts OmegaConf objects to native Python types. resolve=True
     handles variable interpolation.
-dependencies:
-- SC-003
 keywords:
 - standards
 - safely

@@ -79,8 +79,6 @@ models:
       preview_image_base64: str (optional)
       meta: InferenceMetadata (optional)
 id: FW-004
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

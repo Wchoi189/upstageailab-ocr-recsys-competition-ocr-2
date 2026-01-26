@@ -57,8 +57,6 @@ documentation:
   implementation: ocr/agents/
   standards: AgentQMS/standards/tier3-agents/multi-agent-system.yaml
 id: AG-003
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

@@ -43,8 +43,6 @@ config_locations:
   trainer_configs: configs/trainer/
 config_note: 106 YAML files total in configs/
 id: FW-013
-dependencies:
-- SC-003
 keywords:
 - config
 - validates

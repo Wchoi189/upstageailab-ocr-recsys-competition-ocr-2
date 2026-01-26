@@ -218,8 +218,6 @@ compliance:
   artifacts_valid: 74/74
   test_coverage: All entry points verified
   breaking_changes: test.yaml → eval.yaml, train_kie configs archived
-dependencies:
-- SC-003
 keywords:
 - compliance
 - migration

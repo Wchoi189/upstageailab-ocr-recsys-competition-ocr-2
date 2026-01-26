@@ -315,8 +315,6 @@ maintenance:
     date: '2026-01-25'
     changes: Initial catalog from Legacy Purge Audit
     source: __DEBUG__/2026-01-25_standards-update/anti-patterns.md
-dependencies:
-- SC-003
 keywords:
 - enforcement
 - prohibited

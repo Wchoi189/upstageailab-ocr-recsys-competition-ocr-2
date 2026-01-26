@@ -42,8 +42,6 @@ enforcement:
   frequency: On release
   failure_protocol: Block deployment if P90 > Threshold + 10%
 id: FW-025
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

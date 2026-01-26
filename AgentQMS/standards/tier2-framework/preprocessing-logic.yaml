@@ -52,8 +52,6 @@ data_contract:
     description: Tensor + Metadata + OriginalImage
 id: FW-028
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - prepares
 - raw

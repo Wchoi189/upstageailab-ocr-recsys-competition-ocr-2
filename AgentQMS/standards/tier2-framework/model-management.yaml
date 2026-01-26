@@ -58,8 +58,6 @@ data_contract:
     description: Loaded model on device
 id: FW-023
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - manages
 - lifecycle

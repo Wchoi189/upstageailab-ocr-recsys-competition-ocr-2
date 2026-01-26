@@ -48,8 +48,6 @@ data_contract:
     description: BGR image array (H, W, 3)
 id: FW-020
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - handles
 - loading

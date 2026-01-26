@@ -37,8 +37,6 @@ ports:
   frontend_dev: 5173
 execution_pattern: uv run python <script>
 id: FW-031
-dependencies:
-- SC-003
 keywords:
 - setup
 - commands

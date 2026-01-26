@@ -55,8 +55,6 @@ data_contract:
     type: List[TextRegion]
 id: FW-027
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - decodes
 - raw

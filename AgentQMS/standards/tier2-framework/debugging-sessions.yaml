@@ -94,8 +94,6 @@ integration:
   agentqms: AgentQMS/agent_tools/utilities/init_debug_session.py
   artifact_types: Add debug_session to tier1-sst/artifact-types.yaml
 id: FW-015
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

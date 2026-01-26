@@ -29,8 +29,6 @@ prohibited:
 - Files at docs/ root
 - Manual artifact creation
 id: AG-004
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

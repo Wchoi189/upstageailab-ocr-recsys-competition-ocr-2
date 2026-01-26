@@ -68,10 +68,10 @@ digraph AgentQMS_Architecture {
     style=filled;
     color="#E6FFE6";
 
+    "AG-006" [label="AG-006\nOllama model catalog with specificati...", penwidth=1.5, color=orange];
     "AG-001" [label="AG-001\nAutomated criteria for identifying un...", ];
     "AG-002" [label="AG-002", penwidth=2, color=red];
     "AG-003" [label="AG-003", penwidth=1.5, color=orange];
-    "AG-006" [label="AG-006\nOllama model catalog with specificati...", penwidth=1.5, color=orange];
     "AG-004" [label="AG-004", penwidth=2, color=red];
     "AG-005" [label="AG-005", penwidth=1.5, color=orange];
   }
@@ -86,50 +86,7 @@ digraph AgentQMS_Architecture {
   }
 
   "SC-001" -> "SC-002";
-  "SC-003" -> "FW-001";
-  "SC-003" -> "FW-002";
-  "SC-003" -> "FW-003";
-  "SC-003" -> "FW-004";
-  "SC-003" -> "FW-005";
-  "SC-003" -> "FW-006";
-  "SC-003" -> "FW-007";
-  "SC-003" -> "FW-008";
-  "SC-003" -> "FW-009";
-  "SC-003" -> "FW-010";
-  "SC-003" -> "FW-011";
   "FW-034" -> "FW-037";
-  "SC-003" -> "FW-012";
-  "SC-003" -> "FW-013";
-  "SC-003" -> "FW-014";
-  "SC-003" -> "FW-015";
-  "SC-003" -> "FW-016";
-  "SC-003" -> "FW-017";
-  "SC-003" -> "FW-018";
-  "SC-003" -> "FW-019";
-  "SC-003" -> "FW-020";
-  "SC-003" -> "FW-021";
-  "SC-003" -> "FW-022";
-  "SC-003" -> "FW-023";
-  "SC-003" -> "FW-024";
-  "SC-003" -> "FW-025";
-  "SC-003" -> "FW-026";
-  "SC-003" -> "FW-027";
-  "SC-003" -> "FW-028";
-  "SC-003" -> "FW-029";
-  "SC-003" -> "FW-030";
-  "SC-003" -> "FW-031";
-  "SC-003" -> "FW-032";
-  "SC-003" -> "FW-033";
-  "SC-003" -> "FW-034";
-  "SC-003" -> "FW-035";
-  "SC-003" -> "FW-036";
-  "SC-003" -> "AG-001";
-  "SC-003" -> "AG-002";
-  "SC-003" -> "AG-003";
   "SC-007" -> "AG-006";
   "FW-034" -> "AG-006";
-  "SC-003" -> "AG-004";
-  "SC-003" -> "AG-005";
-  "SC-003" -> "WF-001";
-  "SC-003" -> "WF-002";
 }

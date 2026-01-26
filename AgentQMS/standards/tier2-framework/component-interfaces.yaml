@@ -57,8 +57,6 @@ data_contract:
     as the codebase migrates to domain-first architecture.
 id: FW-007
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - defines
 - interface

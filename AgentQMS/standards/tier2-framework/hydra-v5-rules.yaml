@@ -260,8 +260,6 @@ compliance:
   - hydra-configuration-architecture.yaml (partial)
   ai_optimized: true
   token_reduction: 57%
-dependencies:
-- SC-003
 keywords:
 - critical
 - rules

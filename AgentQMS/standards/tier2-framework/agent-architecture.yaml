@@ -52,8 +52,6 @@ rules:
 - Path handling MUST use ocr.core.utils.path_utils.PROJECT_ROOT.
 - Log messages MUST output to stdout/stderr for container logging.
 id: FW-001
-dependencies:
-- SC-003
 keywords:
 - defines
 - architecture

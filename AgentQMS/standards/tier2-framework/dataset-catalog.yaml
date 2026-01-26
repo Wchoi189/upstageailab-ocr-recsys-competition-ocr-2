@@ -143,8 +143,6 @@ datasets:
       BOS: 1
       EOS: 2
 id: FW-014
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

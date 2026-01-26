@@ -85,8 +85,6 @@ external_deps:
 - cv2
 - PIL
 id: FW-021
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance

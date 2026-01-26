@@ -39,8 +39,6 @@ telemetry:
   logging: All violations tracked
   impact: Trust score penalty
 id: FW-002
-dependencies:
-- SC-003
 keywords:
 - protocol
 - telemetry

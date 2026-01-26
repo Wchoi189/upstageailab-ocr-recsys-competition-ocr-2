@@ -45,8 +45,6 @@ data_contract:
     description: JPEG encoded
 id: FW-035
 memory_footprint: 100
-dependencies:
-- SC-003
 keywords:
 - draws
 - detected

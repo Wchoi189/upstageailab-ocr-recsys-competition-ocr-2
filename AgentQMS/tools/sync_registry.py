@@ -28,6 +28,7 @@ SCHEMA_PATH = STANDARDS_DIR / "schemas" / "ads-header.json"
 REGISTRY_PATH = STANDARDS_DIR / "registry.yaml"
 ARCHIVE_DIR = STANDARDS_DIR / "_archive"
 DOT_OUTPUT = STANDARDS_DIR / "architecture_map.dot"
+CACHE_PATH = STANDARDS_DIR / ".ads_cache.pickle"
 
 # Tier directories to scan
 TIER_DIRS = [
@@ -36,6 +37,24 @@ TIER_DIRS = [
     STANDARDS_DIR / "tier3-agents",
     STANDARDS_DIR / "tier4-workflows",
 ]
+
+# Phase 6: Mini-Registry Protocol - Stop words for keyword filtering
+KEYWORD_STOPWORDS = {
+    "validates", "compliance", "status", "memory", "footprint",
+    "last", "updated", "standard", "agent", "tier"
+}
+
+# Maximum number of standards a keyword can point to before being pruned
+KEYWORD_SATURATION_LIMIT = 10
+
+# Fields to KEEP in registry (pointer-mapping only)
+# All other fields are moved to cache
+PERMITTED_FIELDS = {
+    "id", "tier", "file_path", "description", "dependencies"
+}
+
+# Maximum description length in registry (full text in cache)
+MAX_DESCRIPTION_LENGTH = 60
 
 
 class RegistryCompilationError(Exception):
@@ -370,61 +389,101 @@ def compute_pulse_delta(
     return delta
 
 
+def filter_keywords(standards: Dict[str, Dict[str, Any]]) -> Dict[str, List[str]]:
+    """
+    Build keyword index with stop-word filtering and saturation limits.
+
+    Phase 6: Context-Thin optimization.
+
+    Args:
+        standards: Dictionary mapping standard IDs to their headers
+
+    Returns:
+        Filtered keyword index
+    """
+    # Build initial index
+    raw_index = defaultdict(list)
+    for std_id, header in standards.items():
+        for keyword in header.get("keywords", []):
+            kw_lower = keyword.lower()
+            # Skip stop words
+            if kw_lower not in KEYWORD_STOPWORDS:
+                raw_index[kw_lower].append(std_id)
+
+    # Apply saturation limit
+    filtered_index = {}
+    for keyword, std_ids in raw_index.items():
+        if len(std_ids) <= KEYWORD_SATURATION_LIMIT:
+            filtered_index[keyword] = std_ids
+
+    return filtered_index
+
+
+def save_full_cache(
+    standards: Dict[str, Dict[str, Any]],
+    pulse_delta: Dict[str, Any],
+    keyword_index: Dict[str, List[str]],
+    tier_index: Dict[str, List[str]],
+    dependency_summary: Dict[str, Any]
+) -> None:
+    """
+    Save complete standard metadata to binary cache.
+
+    Phase 6: Offload stripped metadata + search indices to .ads_cache.pickle
+
+    Args:
+        standards: Full standards dictionary with all metadata
+        pulse_delta: Pulse Delta change summary
+        keyword_index: Keyword search index
+        tier_index: Tier grouping index
+        dependency_summary: Dependency statistics
+    """
+    import pickle
+    import time
+
+    cache_data = {
+        "standards": standards,
+        "pulse_delta": pulse_delta,
+        "keyword_index": keyword_index,
+        "tier_index": tier_index,
+        "dependency_summary": dependency_summary,
+        "timestamp": time.time(),
+        "generated_at": datetime.utcnow().isoformat() + "Z",
+    }
+
+    try:
+        with open(CACHE_PATH, "wb") as f:
+            pickle.dump(cache_data, f, protocol=pickle.HIGHEST_PROTOCOL)
+    except Exception as e:
+        print(f"   ⚠️  Warning: Failed to write cache: {e}")
+
+
 def generate_registry(
     standards: Dict[str, Dict[str, Any]],
     pulse_delta: Dict[str, Any]
-) -> Dict[str, Any]:
+) -> tuple[Dict[str, Any], Dict[str, List[str]], Dict[str, List[str]], Dict[str, Any]]:
     """
-    Generate registry.yaml structure.
+    Generate minimal registry.yaml structure + search indices for cache.
+
+    Phase 6: Mini-Registry Protocol - pointer-mapping ONLY in registry.
+    All search indices moved to .ads_cache.pickle
 
     Args:
         standards: Dictionary mapping standard IDs to their headers
         pulse_delta: Pulse Delta change summary
 
     Returns:
-        Registry dictionary
+        Tuple of (minimal_registry, keyword_index, tier_index, dependency_summary)
     """
-    registry = {
-        "ads_version": "2.0",
-        "type": "unified_registry",
-        "agent": "all",
-        "tier": 1,
-        "priority": "critical",
-        "name": "AgentQMS Standards Registry v2.0",
-        "description": "Auto-generated unified discovery registry with dependency tracking",
-        "metadata": {
-            "generated_at": datetime.utcnow().isoformat() + "Z",
-            "generator": "sync_registry.py v2.0",
-            "schema_version": "2.0",
-            "total_standards": len(standards),
-            "pulse_delta": pulse_delta,
-        },
-        "standards": {},
-    }
-
-    # Add all standards indexed by ID
-    for std_id, header in sorted(standards.items()):
-        # Keep all fields including file_path (rename _file_path to file_path)
-        clean_header = {
-            k if not k.startswith("_") else k[1:]: v
-            for k, v in header.items()
-        }
-        registry["standards"][std_id] = clean_header
-
-    # Group by tier for quick reference
-    registry["tier_index"] = defaultdict(list)
+    # Build search indices (will be moved to cache)
+    tier_index = defaultdict(list)
     for std_id, header in standards.items():
         tier = header.get("tier", 0)
-        registry["tier_index"][f"tier{tier}"].append(std_id)
+        tier_index[f"tier{tier}"].append(std_id)
 
-    # Group by keywords for search
-    registry["keyword_index"] = defaultdict(list)
-    for std_id, header in standards.items():
-        for keyword in header.get("keywords", []):
-            registry["keyword_index"][keyword.lower()].append(std_id)
+    keyword_index = filter_keywords(standards)
 
-    # Dependency graph summary
-    registry["dependency_summary"] = {
+    dependency_summary = {
         "total_dependencies": sum(
             len(h.get("dependencies", [])) for h in standards.values()
         ),
@@ -437,7 +496,39 @@ def generate_registry(
         ],
     }
 
-    return registry
+    # Minimal registry - pointer mapping only
+    registry = {
+        "ads_version": "2.0",
+        "type": "unified_registry",
+        "name": "AgentQMS Registry v2.0 P6",
+        "total_standards": len(standards),
+        "standards": {},
+    }
+
+    # Add standards with stripped metadata (keep only pointer-mapping fields)
+    for std_id, header in sorted(standards.items()):
+        # Keep ONLY permitted pointer-mapping fields
+        clean_header = {}
+        for k, v in header.items():
+            # Rename _file_path to file_path
+            key = k[1:] if k.startswith("_") else k
+
+            # Only keep fields in PERMITTED_FIELDS
+            if key in PERMITTED_FIELDS:
+                # Skip empty/None values to save space
+                if not v:
+                    continue
+
+                # Truncate long descriptions (full text in cache)
+                if key == "description":
+                    if len(v) > MAX_DESCRIPTION_LENGTH:
+                        v = v[:MAX_DESCRIPTION_LENGTH - 3] + "..."
+
+                clean_header[key] = v
+
+        registry["standards"][std_id] = clean_header
+
+    return registry, keyword_index, tier_index, dependency_summary
 
 
 def display_pulse_delta(pulse_delta: Dict[str, Any]) -> None:
@@ -567,10 +658,17 @@ def main():
         pulse_delta = compute_pulse_delta(old_registry, standards)
         display_pulse_delta(pulse_delta)
 
-        # Generate registry
-        print(f"📝 Generating registry...")
-        registry = generate_registry(standards, pulse_delta)
-        print(f"   ✓ Registry generated ({len(standards)} standards)")
+        # Generate minimal registry + search indices (Phase 6: Mini-Registry Protocol)
+        print(f"\n📝 Generating minimal registry...")
+        registry, keyword_index, tier_index, dependency_summary = generate_registry(standards, pulse_delta)
+        print(f"   ✓ Registry generated ({len(standards)} standards, metadata stripped)")
+        print(f"   ✓ Search indices built: {len(keyword_index)} keywords, {len(tier_index)} tiers")
+
+        # Save full metadata + indices to cache (Phase 6: Binary offloading)
+        if not args.dry_run:
+            print(f"\n💾 Saving full metadata to cache...")
+            save_full_cache(standards, pulse_delta, keyword_index, tier_index, dependency_summary)
+            print(f"   ✓ Cache saved: {CACHE_PATH.name}")
 
         # Generate DOT graph
         if not args.no_graph:

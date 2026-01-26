@@ -80,8 +80,6 @@ key_principle:
   - Before/after comparisons
   - Failure investigation requiring visual inspection
 id: AG-005
-dependencies:
-- SC-003
 keywords:
 - validates
 - compliance
