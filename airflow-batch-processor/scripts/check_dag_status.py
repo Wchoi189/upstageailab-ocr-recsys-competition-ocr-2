@@ -5,7 +5,7 @@ import sys
 # Configuration
 AIRFLOW_URL = "http://172.17.0.1:8080"
 DAG_ID = "batch_processor_dag"
-DAG_RUN_ID = "manual__2024-01-26T20:00:00+00:00"  # Updated ID
+DAG_RUN_ID = "manual__2026-01-26T16:00:00+00:00"  # Updated ID
 
 def get_token():
     try:

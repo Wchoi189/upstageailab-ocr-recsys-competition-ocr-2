@@ -50,27 +50,27 @@ status: ## Check overall system status
 
 # Artifact Management
 create-plan: ## Create implementation plan (usage: make create-plan NAME=my-plan TITLE="My Plan")
-	qms artifact create --type implementation_plan --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type implementation_plan --name $(NAME) --title "$(TITLE)"
 
 create-assessment: ## Create assessment (usage: make create-assessment NAME=my-assessment TITLE="My Assessment")
-	qms artifact create --type assessment --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type assessment --name $(NAME) --title "$(TITLE)"
 
 create-audit: ## Create audit (usage: make create-audit NAME=my-audit TITLE="My Audit")
-	qms artifact create --type audit --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type audit --name $(NAME) --title "$(TITLE)"
 
 create-design: ## Create design document (canonical: design_document) (usage: make create-design NAME=my-design TITLE="My Design")
-	qms artifact create --type design_document --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type design_document --name $(NAME) --title "$(TITLE)"
 
 create-research: ## Create research document (mapped to assessment) (usage: make create-research NAME=my-research TITLE="My Research")
 	@echo "ℹ️  'research' is not a canonical artifact type; mapping to 'assessment'."
-	qms artifact create --type assessment --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type assessment --name $(NAME) --title "$(TITLE)"
 
 create-template: ## Deprecated – use docs/_templates for reusable templates
 	@echo "⚠️  'template' artifact type is deprecated. Place reusable templates under docs/_templates/."
 	@echo "   For new documentation, prefer canonical types (assessment, design_document, implementation_plan, etc.)."
 
 create-bug-report: ## Create bug report (usage: make create-bug-report NAME=my-bug TITLE="My Bug Report")
-	qms artifact create --type bug_report --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type bug_report --name $(NAME) --title "$(TITLE)"
 
 # Smart Auto-Population for Artifacts
 smart-suggest-metadata: ## Suggest metadata for artifact (usage: make smart-suggest-metadata TYPE=implementation_plan)
@@ -139,7 +139,7 @@ plugins-snapshot: ## Refresh .agentqms/state/plugins.yaml (auto)
 	@python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null 2>&1 || echo "⚠️  Plugin snapshot skipped (optional)"
 
 validate: plugins-snapshot ## Validate all artifacts
-	uv run python $(CURDIR)/qms validate --all
+	uv run python $(CURDIR)/aqmsvalidate --all
 
 .PHONY: reindex
 reindex: ## Reindex artifacts
@@ -168,10 +168,10 @@ commit-fixes: ## Commit artifact fixes with standard message (usage: make commit
 	fi
 
 validate-file: ## Validate specific file (usage: make validate-file FILE=path/to/file.md)
-	qms validate --file $(FILE)
+	aqmsvalidate --file $(FILE)
 
 validate-naming: ## Check naming conventions only
-	qms validate --check-naming
+	aqmsvalidate --check-naming
 
 boundary: ## Validate framework/project boundaries
 	uv run python ../tools/compliance/validate_boundaries.py
@@ -283,7 +283,7 @@ track-status: ## Show tracking database status
 	@uv run python -c "import sys; sys.path.insert(0, '../..'); from AgentQMS.tools.utilities.tracking.query import get_status; print(get_status('all'))"
 
 compliance: plugins-snapshot ## Check compliance status
-	qms monitor --check
+	aqmsmonitor --check
 
 compliance-fix: ## Fix compliance issues automatically (Legacy)
 	@echo "⚠️  compliance-fix is deprecated. Use 'make fix' for standard fixes or 'make compliance-fix-ai' for AI fixes."
@@ -434,22 +434,22 @@ docs-validate-ai: ## Validate AI documentation (DEPRECATED)
 
 # Feedback and Quality
 feedback-report: ## Generate feedback report
-	qms feedback list
+	aqmsfeedback list
 
 feedback-issue: ## Report documentation issue (usage: make feedback-issue ISSUE="description" FILE="path")
-	@echo "⚠️  feedback-issue: Use 'qms feedback report' instead"
-	@echo "   Example: qms feedback report --issue-type documentation --description \"$(ISSUE)\" --file \"$(FILE)\""
+	@echo "⚠️  feedback-issue: Use 'aqmsfeedback report' instead"
+	@echo "   Example: aqmsfeedback report --issue-type documentation --description \"$(ISSUE)\" --file \"$(FILE)\""
 
 feedback-suggest: ## Suggest improvement (usage: make feedback-suggest AREA="area" CURRENT="current" CHANGE="suggested" RATIONALE="reason")
-	@echo "⚠️  feedback-suggest: Use 'qms feedback suggest' instead"
-	@echo "   Example: qms feedback suggest --area \"$(AREA)\" --current \"$(CURRENT)\" --change \"$(CHANGE)\" --rationale \"$(RATIONALE)\""
+	@echo "⚠️  feedback-suggest: Use 'aqmsfeedback suggest' instead"
+	@echo "   Example: aqmsfeedback suggest --area \"$(AREA)\" --current \"$(CURRENT)\" --change \"$(CHANGE)\" --rationale \"$(RATIONALE)\""
 
 quality-check: ## Check documentation quality
-	qms quality --check
+	aqmsquality --check
 
 quality-check-output: ## Check documentation quality and save to file
-	@echo "⚠️  quality-check-output: Use 'qms quality --check --json' instead for structured output"
-	qms quality --check
+	@echo "⚠️  quality-check-output: Use 'aqmsquality --check --json' instead for structured output"
+	aqmsquality --check
 
 ast-analyze: ## Run AST analysis on codebase (usage: make ast-analyze [TARGET=path/to/code])
 	@if [ -n "$(TARGET)" ]; then \
@@ -492,10 +492,10 @@ workflow-create: ## Complete workflow: create artifact, validate, update indexes
 		echo "❌ Missing required parameters"; \
 		exit 1; \
 	fi
-	qms artifact create --type $(TYPE) --name $(NAME) --title "$(TITLE)"
+	aqmsartifact create --type $(TYPE) --name $(NAME) --title "$(TITLE)"
 	@echo "✅ Artifact created"
 	@echo "🔍 Validating artifact..."
-	qms validate --all
+	aqmsvalidate --all
 	@echo "📊 Updating indexes..."
 	uv run python ../tools/documentation/update_artifact_indexes.py --all
 	@echo "🎉 Workflow completed successfully!"
@@ -503,9 +503,9 @@ workflow-create: ## Complete workflow: create artifact, validate, update indexes
 workflow-validate: ## Complete validation workflow: validate, fix, monitor
 	@echo "🔍 Starting validation workflow..."
 	@echo "📋 Validating all artifacts..."
-	qms validate --all
+	aqmsvalidate --all
 	@echo "📊 Checking compliance status..."
-	qms monitor --check
+	aqmsmonitor --check
 	@echo "💡 Note: Automated compliance fixes are available via maintenance scripts"
 	@echo "🎉 Validation workflow completed!"
 
@@ -566,11 +566,11 @@ dev-setup: ## Setup development environment
 dev-test: ## Test all agent tools
 	@echo "🧪 Testing agent tools..."
 	uv run python ../tools/core/discover.py
-	qms artifact --help
-	qms validate --help
-	qms monitor --help
-	qms feedback --help
-	qms quality --help
+	aqmsartifact --help
+	aqmsvalidate --help
+	aqmsmonitor --help
+	aqmsfeedback --help
+	aqmsquality --help
 	uv run python ../tools/documentation/auto_generate_index.py --help
 	@echo "✅ All tools tested successfully"
 

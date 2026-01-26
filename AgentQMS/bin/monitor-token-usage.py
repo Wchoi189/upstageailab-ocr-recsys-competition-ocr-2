@@ -109,7 +109,7 @@ def analyze_tool_consolidation():
 
     print("\n📦 Tool Reduction:")
     print(f"   Old: {len(old_tools)} separate tool entries")
-    print(f"   New: 1 unified qms CLI with {len(old_tools)} subcommands")
+    print(f"   New: 1 unified aqms CLI with {len(old_tools)} subcommands")
     print(f"   Reduction: {len(old_tools) - 1} tool entries removed from context")
 
     # Estimate token savings (each tool entry ~100 tokens in settings)

@@ -1,0 +1,31 @@
+{
+    "project": "airflow_bridge_ops",
+    "version": "1.0.0",
+    "type": "skill_config",
+    "environment": {
+        "host": "Windows",
+        "agent": "WSL",
+        "bridge_required": true
+    },
+    "bridge": {
+        "client_script": "airflow-batch-processor/windows_agent_bridge/bridge_client.py",
+        "invocation_wrapper": "uv run --no-project --with pika python {script} \"{command}\""
+    },
+    "configurations": {
+        "AIRFLOW__CORE__EXECUTION_API_SERVER_URL": {
+            "value": "http://airflow-webserver:8080/execution/",
+            "critical_suffix": "/execution/"
+        },
+        "AIRFLOW__CORE__INTERNAL_API_URL": {
+            "value": "http://airflow-webserver:8080"
+        },
+        "AIRFLOW__API_AUTH__JWT_SECRET": {
+            "requirement": "shared_static_string"
+        }
+    },
+    "known_issues": {
+        "405": "Check /execution/ suffix",
+        "403": "Check JWT Secret match",
+        "400": "Check api_clients request encoding"
+    }
+}

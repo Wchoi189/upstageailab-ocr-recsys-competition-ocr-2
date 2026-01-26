@@ -6,10 +6,10 @@ priority: critical
 name: AgentQMS Standards Registry v2.0
 description: Auto-generated unified discovery registry with dependency tracking
 metadata:
-  generated_at: '2026-01-26T17:05:18.875307Z'
+  generated_at: '2026-01-26T17:56:33.106157Z'
   generator: sync_registry.py v2.0
   schema_version: '2.0'
-  total_standards: 53
+  total_standards: 55
   pulse_delta:
     added:
     - AG-001
@@ -17,6 +17,7 @@ metadata:
     - AG-003
     - AG-004
     - AG-005
+    - AG-006
     - FW-001
     - FW-002
     - FW-003
@@ -53,6 +54,7 @@ metadata:
     - FW-034
     - FW-035
     - FW-036
+    - FW-037
     - SC-001
     - SC-002
     - SC-003
@@ -201,6 +203,30 @@ standards:
     fuzzy_threshold: 0.8
     deprecated: false
     file_path: AgentQMS/standards/tier3-agents/vlm-tools.yaml
+  AG-006:
+    ads_version: '2.0'
+    id: AG-006
+    type: tool_catalog
+    agent: qwen
+    tier: 3
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 120
+    dependencies:
+    - SC-007
+    - FW-034
+    keywords:
+    - ollama
+    - model
+    - qwen
+    - catalog
+    - inference
+    - local
+    fuzzy_threshold: 0.8
+    description: Ollama model catalog with specifications for Qwen model family
+    deprecated: false
+    file_path: AgentQMS/standards/tier3-agents/ollama-models.yaml
   FW-001:
     ads_version: '2.0'
     id: FW-001
@@ -1105,6 +1131,28 @@ standards:
     fuzzy_threshold: 0.8
     deprecated: false
     file_path: AgentQMS/standards/tier2-framework/workflow_detector_config.yaml
+  FW-037:
+    ads_version: '2.0'
+    id: FW-037
+    type: tool_catalog
+    agent: all
+    tier: 2
+    priority: high
+    validates_with: AgentQMS/standards/schemas/compliance-checker.py
+    compliance_status: pass
+    memory_footprint: 150
+    dependencies:
+    - FW-034
+    keywords:
+    - context
+    - keywords
+    - mapping
+    - bundle
+    - task
+    fuzzy_threshold: 0.8
+    description: Keyword mappings for context bundle task detection and routing
+    deprecated: false
+    file_path: AgentQMS/standards/tier2-framework/context-keywords.yaml
   SC-001:
     ads_version: '2.0'
     id: SC-001
@@ -1461,6 +1509,7 @@ tier_index:
   - FW-009
   - FW-010
   - FW-011
+  - FW-037
   - FW-012
   - FW-013
   - FW-014
@@ -1490,6 +1539,7 @@ tier_index:
   - AG-001
   - AG-002
   - AG-003
+  - AG-006
   - AG-004
   - AG-005
   tier4:
@@ -1757,6 +1807,7 @@ keyword_index:
   - FW-023
   - FW-024
   - FW-028
+  - AG-006
   engine:
   - SC-007
   config:
@@ -1782,6 +1833,7 @@ keyword_index:
   - AG-004
   task:
   - SC-009
+  - FW-037
   - FW-036
   triggers:
   - SC-009
@@ -1911,11 +1963,18 @@ keyword_index:
   - FW-011
   invalid:
   - FW-011
+  context:
+  - FW-037
+  keywords:
+  - FW-037
+  mapping:
+  - FW-037
+  - FW-012
+  bundle:
+  - FW-037
   handles:
   - FW-012
   - FW-020
-  mapping:
-  - FW-012
   between:
   - FW-012
   - FW-026
@@ -2046,6 +2105,7 @@ keyword_index:
   - FW-028
   model:
   - FW-027
+  - AG-006
   output:
   - FW-027
   into:
@@ -2145,6 +2205,14 @@ keyword_index:
   core:
   - AG-003
   - AG-005
+  ollama:
+  - AG-006
+  qwen:
+  - AG-006
+  catalog:
+  - AG-006
+  local:
+  - AG-006
   common:
   - AG-004
   analysis:
@@ -2162,6 +2230,6 @@ keyword_index:
   items:
   - WF-002
 dependency_summary:
-  total_dependencies: 44
-  standards_with_deps: 44
+  total_dependencies: 47
+  standards_with_deps: 46
   orphan_standards: []

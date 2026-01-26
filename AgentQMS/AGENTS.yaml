@@ -28,8 +28,8 @@ commands:
   artifact_create: "aqms artifact create --type <type> --name <name> --title \"<title>\""
   artifact_validate: "aqms artifact validate --all"
   generate_config: "aqms generate-config --path <current_path>"
-  qms_feedback_report: "qms feedback report --issue-type <type> --description \"<desc>\""
-  qms_quality_check: "qms quality --check"
+  qms_feedback_report: "aqms feedback report --issue-type <type> --description \"<desc>\""
+  qms_quality_check: "aqms quality --check"
   qms_token_analysis: "python AgentQMS/bin/monitor-token-usage.py"
 
 context_bundles:
@@ -43,11 +43,11 @@ context_bundles:
     path: "AgentQMS/.agentqms/plugins/context_bundles/ocr-experiment.yaml"
 
 notes:
-  - "AgentQMS v0.3.0 - Use 'qms' CLI for ALL artifact operations"
-  - "Legacy tools and Makefile commands REMOVED - only qms CLI supported"
+  - "AgentQMS v0.3.0 - Use 'aqms' CLI for ALL artifact operations"
+  - "Legacy tools and Makefile commands REMOVED - only aqms CLI supported"
   - "Standards registry: AgentQMS/standards/registry.yaml (single source of truth)"
-  - "Path-aware discovery reduces token usage by 85% (qms generate-config)"
+  - "Path-aware discovery reduces token usage by 85% (aqms generate-config)"
   - "Context Engine 2.0: Caching, parallel I/O, and strict token budgeting (default 32k) enabled."
   - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-01-10T15:20:00+0900)"
   - "Canonical artifact types: assessment, audit, bug_report, design_document, implementation_plan, vlm_report, walkthrough"
-  - "For help: qms --help or see AgentQMS/README.md"
+  - "For help: aqms --help or see AgentQMS/README.md"

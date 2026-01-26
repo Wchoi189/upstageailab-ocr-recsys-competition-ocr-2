@@ -1,0 +1,43 @@
+ads_version: '2.0'
+id: AG-006
+type: tool_catalog
+agent: qwen
+tier: 3
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 120
+dependencies:
+- SC-007
+- FW-034
+keywords:
+- ollama
+- model
+- qwen
+- catalog
+- inference
+- local
+fuzzy_threshold: 0.8
+description: "Ollama model catalog with specifications for Qwen model family"
+
+# AgentQMS Model Catalog for Ollama
+endpoint: "http://host.docker.internal:11434"
+
+inventory:
+  - name: "qwen3-coder:30b"
+    role: "Architect"
+    context_window: 1048576  # 1M tokens
+    strengths: ["Repo-scale refactoring", "Complex logic", "Multi-file impact analysis"]
+    vram_requirement: "18GB"
+
+  - name: "qwen3:1.7b"
+    role: "Utility / Janitor"
+    context_window: 32768
+    strengths: ["Log parsing", "Metadata extraction", "Schema validation"]
+    vram_requirement: "1.4GB"
+
+  - name: "qwen3:4b-instruct"
+    role: "Validator"
+    context_window: 262144
+    strengths: ["Thinking mode", "Logical verification", "Quality scoring"]
+    vram_requirement: "2.5GB"

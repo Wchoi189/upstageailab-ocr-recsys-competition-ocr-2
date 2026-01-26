@@ -6,13 +6,13 @@ Consolidated entry point for all AgentQMS tools with subcommand structure.
 Replaces 5+ separate scripts with a single unified interface.
 
 Usage:
-    qms artifact create --type implementation_plan --name "my-feature" --title "My Feature"
-    qms validate --file path/to/artifact.md
-    qms monitor --check
-    qms feedback report --issue-type "documentation" --description "Issue description"
-    qms quality check
-    qms generate-config --path ocr/inference
-    qms check-infra
+    aqms artifact create --type implementation_plan --name "my-feature" --title "My Feature"
+    aqms validate --file path/to/artifact.md
+    aqms monitor --check
+    aqms feedback report --issue-type "documentation" --description "Issue description"
+    aqms quality check
+    aqms generate-config --path ocr/inference
+    aqms check-infra
 
 Available Commands:
     artifact          Artifact workflow management (create, validate, update)

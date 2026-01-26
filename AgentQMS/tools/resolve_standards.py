@@ -163,6 +163,9 @@ def resolve_by_task(registry: Dict[str, Any], task: str) -> List[str]:
 
     for std_id, std_data in standards.items():
         triggers = std_data.get("triggers", {})
+        # Skip if triggers is not a dict (e.g., workflow-specific list format)
+        if not isinstance(triggers, dict):
+            continue
         keywords = triggers.get("keywords", [])
 
         # Check if task matches any keyword

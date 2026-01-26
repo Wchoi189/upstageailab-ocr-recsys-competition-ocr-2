@@ -17,7 +17,7 @@ class UpstageConfig:
 def _headers(api_key: str) -> dict[str, str]:
     return {
         "Authorization": f"Bearer {api_key}",
-        "Content-Type": "application/json",
+        # "Content-Type": "application/json",  <-- Do NOT set this for multipart/form-data
     }
 
 
@@ -25,7 +25,6 @@ def _headers(api_key: str) -> dict[str, str]:
 def submit_document_parse_job(image_path: str, api_key: str, cfg: UpstageConfig | None = None) -> dict[str, Any]:
     """
     Submit a document parse request to Upstage API.
-    This is a scaffold; adapt to the actual endpoint/contract.
     """
     cfg = cfg or UpstageConfig()
     url = f"{cfg.base_url}/document-digitization"
@@ -35,7 +34,17 @@ def submit_document_parse_job(image_path: str, api_key: str, cfg: UpstageConfig 
         return {"status": "simulated", "message": f"{image_path} not found; dry-run"}
 
     with open(image_path, "rb") as f:
-        files = {"file": f}
-        resp = requests.post(url, headers=_headers(api_key), files=files, timeout=cfg.timeout)
+        # Key must be 'document' based on curl --form 'document=@...'
+        files = {"document": f}
+        # Must include 'model' param based on curl --form 'model=ocr'
+        data = {"model": "ocr"}
+        
+        resp = requests.post(
+            url, 
+            headers=_headers(api_key), 
+            files=files, 
+            data=data, 
+            timeout=cfg.timeout
+        )
         resp.raise_for_status()
         return resp.json()

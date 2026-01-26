@@ -88,8 +88,8 @@ interface:
 
 tool_mappings:
   tool_mappings:
-    qms:
-      path: ../bin/qms
+    aqms:
+      path: ../bin/aqms
       description: Unified AgentQMS CLI tool - ONLY supported interface for artifact management
       agent_only: true
       subcommands:
