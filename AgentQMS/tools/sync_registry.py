@@ -404,8 +404,11 @@ def generate_registry(
 
     # Add all standards indexed by ID
     for std_id, header in sorted(standards.items()):
-        # Remove internal fields
-        clean_header = {k: v for k, v in header.items() if not k.startswith("_")}
+        # Keep all fields including file_path (rename _file_path to file_path)
+        clean_header = {
+            k if not k.startswith("_") else k[1:]: v
+            for k, v in header.items()
+        }
         registry["standards"][std_id] = clean_header
 
     # Group by tier for quick reference

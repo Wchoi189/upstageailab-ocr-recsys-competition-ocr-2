@@ -6,14 +6,14 @@ priority: critical
 name: AgentQMS Standards Registry v2.0
 description: Auto-generated unified discovery registry with dependency tracking
 metadata:
-  generated_at: '2026-01-26T16:46:19.080374Z'
+  generated_at: '2026-01-26T16:50:42.648229Z'
   generator: sync_registry.py v2.0
   schema_version: '2.0'
   total_standards: 2
   pulse_delta:
     added:
-    - SC-002
     - SC-001
+    - SC-002
     removed: []
     modified: []
     unchanged: []
@@ -52,6 +52,7 @@ standards:
       - docs/artifacts/**/*.md
     description: File and artifact naming conventions for the project
     deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/naming-conventions.yaml
   SC-002:
     ads_version: '2.0'
     id: SC-002
@@ -87,6 +88,7 @@ standards:
       - docs/artifacts/**/*.md
     description: Artifact type system with plugin-based validation and naming rules
     deprecated: false
+    file_path: AgentQMS/standards/tier1-sst/artifact-types.yaml
 tier_index:
   tier1:
   - SC-002
