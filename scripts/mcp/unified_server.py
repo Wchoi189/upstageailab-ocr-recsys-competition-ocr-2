@@ -33,8 +33,8 @@ from mcp.server.lowlevel.helper_types import ReadResourceContents
 # If AgentQMS is not found, it means the environment is invalid.
 
 # --- Imports ---
-from AgentQMS.tools.utils.config_loader import ConfigLoader
-from AgentQMS.tools.utils.paths import get_project_root
+from AgentQMS.tools.utils.config.loader import ConfigLoader
+from AgentQMS.tools.utils.system.paths import get_project_root
 from AgentQMS.middleware.telemetry import TelemetryPipeline, PolicyViolation
 from AgentQMS.middleware.policies import (
     RedundancyInterceptor,

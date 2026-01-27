@@ -1,0 +1,15 @@
+{
+  "pulse_id": "hydra-refactor-2026-01-22",
+  "objective": "Resolve all Hydra and import issues toward zero errors",
+  "milestone_id": "ocr-domain-refactor",
+  "artifacts": [
+    {
+      "path": "hydra-refactor-session-walkthrough.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-25T14:56:41.457190"
+    }
+  ],
+  "started_at": "2026-01-25 14:56:15.540622",
+  "exported_at": "2026-01-28T02:53:49.901913"
+}

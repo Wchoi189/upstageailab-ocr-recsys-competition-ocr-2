@@ -26,8 +26,8 @@ except ImportError:
     sys.exit(1)
 
 from AgentQMS.tools.utils.paths import get_project_root
-from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
-from AgentQMS.tools.utils.config_loader import ConfigLoader
+from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
+from AgentQMS.tools.utils.config.loader import ConfigLoader
 
 ensure_project_root_on_sys_path()
 PROJECT_ROOT = get_project_root()

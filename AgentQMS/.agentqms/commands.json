@@ -1,0 +1,157 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "2.0.0",
+  "description": "Machine-readable command definitions for AgentQMS. Extracted from legacy Makefile.",
+  "commands": {
+    "discover": {
+      "tier": 2,
+      "description": "Discover all available agent tools",
+      "shell_cmd": "uv run python ../tools/core/discover.py",
+      "aliases": ["tools"]
+    },
+    "status": {
+      "tier": 2,
+      "description": "Check overall system status",
+      "shell_cmd": "echo '🔍 Checking Agent Tools Status...' && echo '' && echo '📁 Tool Organization:' && ls -la ../tools/ | grep '^d' | grep -v '__pycache__' | awk '{print \"  \" $9}' && echo '' && echo '🛠️ Agent Wrapper Scripts:' && ls -la ../*.sh 2>/dev/null | awk '{print \"  \" $9}' || echo '  No wrapper scripts found' && echo '' && echo '📊 Recent Activity:' && find ../../artifacts -name '*.md' -mtime -1 2>/dev/null | head -5 | awk '{print \"  \" $0}' || echo '  No recent artifacts'"
+    },
+    "validate": {
+      "tier": 2,
+      "description": "Validate all artifacts",
+      "shell_cmd": "python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null 2>&1 || echo '⚠️  Plugin snapshot skipped (optional)' && uv run python $(CURDIR)/aqmsvalidate --all",
+      "depends_on": ["plugins-snapshot"]
+    },
+    "plugins-snapshot": {
+      "tier": 2,
+      "description": "Refresh .agentqms/state/plugins.yaml (auto)",
+      "shell_cmd": "python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null 2>&1 || echo '⚠️  Plugin snapshot skipped (optional)'"
+    },
+    "reindex": {
+      "tier": 2,
+      "description": "Reindex artifacts",
+      "shell_cmd": "uv run python ../tools/documentation/reindex_artifacts.py"
+    },
+    "check-links": {
+      "tier": 2,
+      "description": "Check Markdown links referring to artifacts",
+      "shell_cmd": "uv run python ../tools/documentation/validate_links.py"
+    },
+    "fix": {
+      "tier": 2,
+      "description": "Safe autofix pipeline",
+      "shell_cmd": "uv run python ../tools/utilities/autofix_artifacts.py"
+    },
+    "compliance": {
+      "tier": 2,
+      "description": "Check compliance status",
+      "shell_cmd": "python -m AgentQMS.tools.core.plugins --write-snapshot --json > /dev/null 2>&1 || echo '⚠️  Plugin snapshot skipped (optional)' && aqmsmonitor --check",
+      "depends_on": ["plugins-snapshot"]
+    },
+    "boundary": {
+      "tier": 2,
+      "description": "Validate framework/project boundaries",
+      "shell_cmd": "uv run python ../tools/compliance/validate_boundaries.py"
+    },
+    "track-status": {
+      "tier": 2,
+      "description": "Show tracking database status",
+      "shell_cmd": "uv run python -c \"import sys; sys.path.insert(0, '../..'); from AgentQMS.tools.utilities.tracking.query import get_status; print(get_status('all'))\""
+    },
+    "context": {
+      "tier": 2,
+      "description": "Generate context bundle for task (requires TASK parameter)",
+      "shell_cmd": "uv run python ../tools/utilities/get_context.py --task \"${TASK}\"",
+      "parameters": ["TASK"]
+    },
+    "context-status": {
+      "tier": 2,
+      "description": "Show context bundling system status",
+      "shell_cmd": "uv run python ../tools/utilities/context_control.py --status"
+    },
+    "context-list": {
+      "tier": 2,
+      "description": "List all available context bundles",
+      "shell_cmd": "uv run python ../tools/utilities/get_context.py --list-context-bundles"
+    },
+    "feedback-report": {
+      "tier": 2,
+      "description": "Generate feedback report",
+      "shell_cmd": "aqmsfeedback list"
+    },
+    "quality-check": {
+      "tier": 2,
+      "description": "Check documentation quality",
+      "shell_cmd": "aqmsquality --check"
+    },
+    "tool-catalog": {
+      "tier": 2,
+      "description": "Generate tool catalog and scripts index",
+      "shell_cmd": "uv run python ../tools/utilities/generate_tool_catalog.py"
+    },
+    "export": {
+      "tier": 2,
+      "description": "Export framework to project-agnostic package (requires OUTPUT parameter)",
+      "shell_cmd": "uv run python ../tools/utilities/export_framework.py --output \"${OUTPUT}\" --project-root ../..",
+      "parameters": ["OUTPUT"]
+    },
+    "artifacts-status": {
+      "tier": 2,
+      "description": "Show artifact status dashboard with aging and lifecycle information",
+      "shell_cmd": "uv run python ../tools/utilities/artifacts_status.py"
+    },
+    "changelog-draft": {
+      "tier": 2,
+      "description": "Generate changelog draft from tracking DB and git log",
+      "shell_cmd": "uv run python ../tools/documentation/generate_changelog_draft.py"
+    },
+    "ide-config": {
+      "tier": 2,
+      "description": "Generate/Update configuration files for all IDEs (Antigravity, Cursor, etc.)",
+      "shell_cmd": "uv run python ../tools/utilities/generate_ide_configs.py"
+    },
+    "clean": {
+      "tier": 0,
+      "description": "Clean up temporary files and caches",
+      "shell_cmd": "echo '🧹 Cleaning up temporary files...' && find .. -name '*.pyc' -delete && find .. -name '__pycache__' -type d -exec rm -rf {} + 2>/dev/null || true && find .. -name '*.log' -delete && echo '✅ Cleanup completed'"
+    },
+    "dev-setup": {
+      "tier": 0,
+      "description": "Setup development environment",
+      "shell_cmd": "echo '🛠️ Setting up development environment...' && cd ../.. && uv sync && echo '✅ Development environment ready'"
+    },
+    "dev-test": {
+      "tier": 0,
+      "description": "Test all agent tools",
+      "shell_cmd": "echo '🧪 Testing agent tools...' && uv run python ../tools/core/discover.py && aqmsartifact --help && aqmsvalidate --help && aqmsmonitor --help && aqmsfeedback --help && aqmsquality --help && uv run python ../tools/documentation/auto_generate_index.py --help && echo '✅ All tools tested successfully'"
+    }
+  },
+  "deprecated_commands": {
+    "compliance-fix": {
+      "reason": "Use 'fix' for standard fixes or 'compliance-fix-ai' for AI fixes",
+      "replacement": "fix"
+    },
+    "compliance-dashboard": {
+      "reason": "Use 'compliance' for checks",
+      "replacement": "compliance"
+    },
+    "audit-init": {
+      "reason": "Legacy audit framework - use assessments/design docs",
+      "replacement": null
+    },
+    "audit-validate": {
+      "reason": "Legacy audit framework - use 'validate'",
+      "replacement": "validate"
+    },
+    "audit-checklist-generate": {
+      "reason": "Legacy audit framework - track tasks in implementation plans",
+      "replacement": null
+    },
+    "audit-checklist-report": {
+      "reason": "Legacy audit framework - use Project Compass or plans",
+      "replacement": null
+    },
+    "docs-validate-ai": {
+      "reason": "Use other docs-validate-* commands",
+      "replacement": null
+    }
+  }
+}

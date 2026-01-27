@@ -5,7 +5,7 @@ Parses .mcp-telemetry.jsonl and generates insights on tool usage and metadata.
 """
 import json
 from collections import Counter, defaultdict
-from AgentQMS.tools.utils.paths import get_project_root
+from AgentQMS.tools.utils.system.paths import get_project_root
 
 def analyze_telemetry():
     # Find telemetry file

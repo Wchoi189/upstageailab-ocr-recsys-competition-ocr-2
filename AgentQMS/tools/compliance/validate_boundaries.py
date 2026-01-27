@@ -20,7 +20,7 @@ from AgentQMS.tools.utils.paths import (
     get_framework_root,
     get_project_root,
 )
-from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 

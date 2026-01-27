@@ -7,7 +7,7 @@ Example: uv run python scripts/utils/show_config.py train experiment=my_exp
 
 import sys
 
-from AgentQMS.tools.utils.paths import get_project_root
+from AgentQMS.tools.utils.system.paths import get_project_root
 
 # Add project root to path for resolving top-level modules like 'runners'
 PROJECT_ROOT = get_project_root()

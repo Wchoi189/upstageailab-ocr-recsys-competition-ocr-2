@@ -1,7 +1,7 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P6
-total_standards: 55
+total_standards: 47
 standards:
   AG-001:
     id: AG-001
@@ -36,95 +36,71 @@ standards:
     id: FW-001
     tier: 2
     description: Defines the architecture, communication protocols, and pa...
-    file_path: AgentQMS/standards/tier2-framework/agent-architecture.yaml
+    file_path: AgentQMS/standards/tier2-framework/core-infra/agent-architecture.yaml
   FW-002:
     id: FW-002
     tier: 2
     description: Protocol for handling runtime telemetry feedback and enfo...
-    file_path: AgentQMS/standards/tier2-framework/agent-feedback-protocol.yaml
+    file_path: AgentQMS/standards/tier2-framework/core-infra/agent-feedback-protocol.yaml
   FW-003:
     id: FW-003
     tier: 2
     description: Prohibited patterns with enforcement rules - machine-pars...
-    file_path: AgentQMS/standards/tier2-framework/anti-patterns.yaml
+    file_path: AgentQMS/standards/tier2-framework/specs/anti-patterns.yaml
   FW-004:
     id: FW-004
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/api-contracts.yaml
-  FW-005:
-    id: FW-005
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/artifact_template_config.yaml
-  FW-006:
-    id: FW-006
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/async-concurrency.yaml
+    file_path: AgentQMS/standards/tier2-framework/specs/api-contracts.yaml
   FW-007:
     id: FW-007
     tier: 2
     description: Defines the interface contracts for OCR components and th...
-    file_path: AgentQMS/standards/tier2-framework/component-interfaces.yaml
+    file_path: AgentQMS/standards/tier2-framework/specs/component-interfaces.yaml
   FW-008:
     id: FW-008
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/config-externalization-checklist.yaml
+    file_path: AgentQMS/standards/tier2-framework/configuration/config-externalization-checklist.yaml
   FW-009:
     id: FW-009
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/config-externalization-index.yaml
+    file_path: AgentQMS/standards/tier2-framework/configuration/config-externalization-index.yaml
   FW-010:
     id: FW-010
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/config-externalization-pattern.yaml
+    file_path: AgentQMS/standards/tier2-framework/configuration/config-externalization-pattern.yaml
   FW-011:
     id: FW-011
     tier: 2
     description: Standards for safely handling OmegaConf configuration obj...
-    file_path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
+    file_path: AgentQMS/standards/tier2-framework/configuration/configuration-standards.yaml
   FW-012:
     id: FW-012
     tier: 2
     description: Handles mapping between resized/padded images and origina...
-    file_path: AgentQMS/standards/tier2-framework/coordinate-transforms.yaml
-  FW-013:
-    id: FW-013
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/data-contracts.yaml
-  FW-014:
-    id: FW-014
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/dataset-catalog.yaml
+    file_path: AgentQMS/standards/tier2-framework/runtime/coordinate-transforms.yaml
   FW-015:
     id: FW-015
     tier: 2
     file_path: AgentQMS/standards/tier2-framework/debugging-sessions.yaml
-  FW-016:
-    id: FW-016
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/git-conventions.yaml
   FW-017:
     id: FW-017
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/hydra-configuration-architecture.yaml
+    file_path: AgentQMS/standards/tier2-framework/configuration/hydra-configuration-architecture.yaml
   FW-018:
     id: FW-018
     tier: 2
     description: Design patterns, anti-patterns, and debugging guide for H...
-    file_path: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
+    file_path: AgentQMS/standards/tier2-framework/specs/hydra-v5-patterns-reference.yaml
   FW-019:
     id: FW-019
     tier: 2
     description: Critical configuration rules for Hydra 1.3.2 V5.0 archite...
-    file_path: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+    file_path: AgentQMS/standards/tier2-framework/configuration/hydra-v5-rules.yaml
   FW-020:
     id: FW-020
     tier: 2
     description: Handles loading and validation of input images.
-    file_path: AgentQMS/standards/tier2-framework/image-loading.yaml
-  FW-021:
-    id: FW-021
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/inference-framework.yaml
+    file_path: AgentQMS/standards/tier2-framework/runtime/image-loading.yaml
   FW-022:
     id: FW-022
     tier: 2
@@ -133,71 +109,59 @@ standards:
     id: FW-023
     tier: 2
     description: Manages the lifecycle of models (detection, recognition, ...
-    file_path: AgentQMS/standards/tier2-framework/model-management.yaml
+    file_path: AgentQMS/standards/tier2-framework/ocr-engine/model-management.yaml
   FW-024:
     id: FW-024
     tier: 2
     description: The central controller for the OCR inference pipeline.
-    file_path: AgentQMS/standards/tier2-framework/orchestration-flow.yaml
+    file_path: AgentQMS/standards/tier2-framework/runtime/orchestration-flow.yaml
   FW-025:
     id: FW-025
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/performance-slas.yaml
+    file_path: AgentQMS/standards/tier2-framework/constraints/performance-slas.yaml
   FW-026:
     id: FW-026
     tier: 2
     description: Defines the canonical data structures and contracts used ...
-    file_path: AgentQMS/standards/tier2-framework/pipeline-contracts.yaml
+    file_path: AgentQMS/standards/tier2-framework/ocr-engine/pipeline-contracts.yaml
   FW-027:
     id: FW-027
     tier: 2
     description: Decodes raw model output into structured TextRegion objects.
-    file_path: AgentQMS/standards/tier2-framework/postprocessing-logic.yaml
+    file_path: AgentQMS/standards/tier2-framework/ocr-engine/postprocessing-logic.yaml
   FW-028:
     id: FW-028
     tier: 2
     description: Prepares raw images for inference.
-    file_path: AgentQMS/standards/tier2-framework/preprocessing-logic.yaml
+    file_path: AgentQMS/standards/tier2-framework/ocr-engine/preprocessing-logic.yaml
   FW-029:
     id: FW-029
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/pydantic-validation.yaml
+    file_path: AgentQMS/standards/tier2-framework/constraints/pydantic-validation.yaml
   FW-030:
     id: FW-030
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/python-core.yaml
-  FW-031:
-    id: FW-031
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/quickstart.yaml
-  FW-032:
-    id: FW-032
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/template_defaults.yaml
+    file_path: AgentQMS/standards/tier2-framework/core-infra/python-core.yaml
   FW-033:
     id: FW-033
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/testing.yaml
-  FW-034:
-    id: FW-034
-    tier: 2
-    file_path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+    file_path: AgentQMS/standards/tier2-framework/constraints/testing-standards.yaml
   FW-035:
     id: FW-035
     tier: 2
     description: Draws detected bounding boxes and class labels onto the i...
-    file_path: AgentQMS/standards/tier2-framework/visualization-logic.yaml
+    file_path: AgentQMS/standards/tier2-framework/runtime/viz-engine.yaml
   FW-036:
     id: FW-036
     tier: 2
-    file_path: AgentQMS/standards/tier2-framework/workflow_detector_config.yaml
+    file_path: AgentQMS/standards/tier2-framework/runtime/workflow-rules.yaml
   FW-037:
     id: FW-037
     tier: 2
     dependencies:
     - FW-034
     description: Keyword mappings for context bundle task detection and ro...
-    file_path: AgentQMS/standards/tier2-framework/context-keywords.yaml
+    file_path: AgentQMS/standards/tier1-sst/discovery-rules.yaml
   SC-001:
     id: SC-001
     tier: 1
@@ -253,3 +217,7 @@ standards:
     tier: 4
     description: Runtime middleware policies enforced by the AgentQMS server.
     file_path: AgentQMS/standards/tier4-workflows/middleware-policies.yaml
+  manifest:
+    id: manifest
+    tier: 1
+    file_path: AgentQMS/standards/tier1-sst/manifest.yaml

@@ -5,7 +5,7 @@ from pathlib import Path
 
 # Bootstrap path
 try:
-    from AgentQMS.tools.utils.paths import get_project_root
+    from AgentQMS.tools.utils.system.paths import get_project_root
     project_root = get_project_root()
 except ImportError:
     current_file = Path(__file__).resolve()

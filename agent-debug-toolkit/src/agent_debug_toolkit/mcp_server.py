@@ -16,10 +16,10 @@ from mcp.server.stdio import stdio_server
 from mcp.types import Tool, TextContent
 
 # Import from AgentQMS (installed as package in pyproject.toml)
-from AgentQMS.tools.utils.paths import get_project_root as _get_project_root
+from AgentQMS.tools.utils.system.paths import get_project_root as _get_project_root
 
 try:
-    from AgentQMS.tools.utils.config_loader import ConfigLoader
+    from AgentQMS.tools.utils.config.loader import ConfigLoader
     HAS_CONFIG_LOADER = True
 except ImportError:
     HAS_CONFIG_LOADER = False

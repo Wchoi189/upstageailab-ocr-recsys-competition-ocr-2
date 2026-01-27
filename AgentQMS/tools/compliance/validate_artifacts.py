@@ -50,7 +50,7 @@ class PreflightResult:
         return "\n".join(lines)
 
 # Add project root to sys.path using runtime utility
-from AgentQMS.tools.utils.runtime import ensure_project_root_on_sys_path
+from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
 
 ensure_project_root_on_sys_path()
 

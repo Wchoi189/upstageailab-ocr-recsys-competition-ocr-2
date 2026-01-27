@@ -7,7 +7,7 @@ import sys
 
 try:
     from scripts.mcp.unified_server import call_tool
-    from AgentQMS.tools.utils.paths import get_project_root
+    from AgentQMS.tools.utils.system.paths import get_project_root
 except ImportError as e:
     print(f"FAILED to import required modules: {e}")
     sys.exit(1)

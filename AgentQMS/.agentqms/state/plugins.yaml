@@ -1,746 +1,113 @@
 metadata:
-  generated_at: '2026-01-23T06:16:24.235870+00:00'
+  generated_at: '2026-01-27T15:31:28.379755+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
   framework: AgentQMS/.agentqms/plugins
   project: .agentqms/plugins
 plugins_loaded:
-  artifact_types:
-  - assessment
-  - audit
-  - bug_report
-  - design_document
-  - implementation_plan
-  - vlm_report
-  - walkthrough
-  validators: true
+  artifact_types: []
+  validators: false
   context_bundles: []
-plugin_metadata:
-- name: assessment
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml
-- name: audit
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
-- name: bug_report
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml
-- name: assessment
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
-- name: design_document
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/design_document.yaml
-- name: implementation_plan
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
-- name: assessment
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
-- name: vlm_report
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/vlm_report.yaml
-- name: walkthrough
-  type: artifact_type
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/artifact_types/walkthrough.yaml
-- name: validators
-  type: validator
-  version: '1.0'
-  source: framework
-  path: AgentQMS/.agentqms/plugins/validators.yaml
+plugin_metadata: []
 validation_errors:
+- path: AgentQMS/.agentqms/plugins/artifact_types/assessment.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/bug_report.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/change_request.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/design_document.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/implementation_plan.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/ocr_experiment.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/vlm_report.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/artifact_types/walkthrough.yaml
+  type: artifact_type
+  error: 'Schema not found for plugin type: artifact_type'
+  schema_path: None
+- path: AgentQMS/.agentqms/plugins/validators.yaml
+  type: validators
+  error: 'Schema not found for plugin type: validators'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/agent-configuration.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ast-debugging-tools.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''ast_vs_basic_tools'', ''auto_suggest_scenarios'',
-    ''decision_tree'', ''integration'', ''notes'', ''success_indicators'', ''tools'',
-    ''when_not_to_use'' were unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/compliance-check.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/documentation-update.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''notes'' was unexpected) (path:
-    [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ocr-debugging.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ocr-experiment.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ocr-information-extraction.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ocr-layout-analysis.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ocr-text-detection.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/ocr-text-recognition.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/pipeline-development.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/project-compass.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 - path: AgentQMS/.agentqms/plugins/context_bundles/security-review.yaml
   type: context_bundle
-  error: 'Additional properties are not allowed (''mode'' was unexpected) (path: [])'
-  schema_path: /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/schemas/plugin_context_bundle.json
+  error: 'Schema not found for plugin type: context_bundle'
+  schema_path: None
 resolved:
-  artifact_types:
-    assessment:
-      name: assessment
-      ads_version: '1.1'
-      description: 'OCR experiment workflow and analysis report with structured metadata
-
-        and artifact tracking for experiment-tracker integration.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_ocr-experiment_{name}.md'
-        directory: experiments/
-        frontmatter:
-          ads_version: '1.0'
-          type: assessment
-          category: research
-          status: draft
-          tags:
-          - ocr
-          - experiment
-          - tracking
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - status
-        - experiment_id
-        - intention
-        required_sections:
-        - '## Experiment Overview'
-        - '## Methodology'
-        - '## Results'
-        - '## Analysis'
-        filename_prefix: ocr_experiment_
-        allowed_statuses:
-        - active
-        - incomplete
-        - completed
-        - archived
-      template: '# OCR Experiment: {title}
-
-
-        ## Experiment Overview
-
-
-        **Experiment ID**: {experiment_id}
-
-        **Date**: {date}
-
-        **Status**: {status}
-
-        **Intention**: {intention}
-
-
-        ---
-
-
-        ## Methodology
-
-
-        ### Objective
-
-        [Describe the experiment objective]
-
-
-        ### Scope
-
-        [Define the scope of the experiment]
-
-
-        ### Setup
-
-        [Describe the experimental setup]
-
-
-        ---
-
-
-        ## Results
-
-
-        ### Key Findings
-
-        - Finding 1
-
-        - Finding 2
-
-        - Finding 3
-
-
-        ### Metrics
-
-        [Document relevant metrics]
-
-
-        ### Artifacts Generated
-
-        - [Artifact 1](path/to/artifact)
-
-        - [Artifact 2](path/to/artifact)
-
-
-        ---
-
-
-        ## Analysis
-
-
-        ### Observations
-
-        [Detailed analysis of observations]
-
-
-        ### Performance Impact
-
-        [Describe any performance improvements or regressions]
-
-
-        ### Recommendations
-
-        1. [Recommendation 1]
-
-        2. [Recommendation 2]
-
-
-        ### Related Assessments
-
-        - [Assessment](../assessments/YYYY-MM-DD_HHMM_assessment_name.md)
-
-
-        ---
-
-
-        ## Related Artifacts
-
-
-        **Implementation Plans**:
-
-        - [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)
-
-
-        **Incident Reports**:
-
-        - [Report](../incident_reports/YYYY-MM-DD_HHMM_incident_report_name.md)
-
-
-        ---
-
-
-        **Last Updated**: {date}
-
-        **Researcher**: AI Agent
-
-        '
-      template_variables:
-        experiment_id: EXP-001
-        date: '2025-12-06'
-        status: draft
-        intention: '[Experiment objective and goal]'
-    audit:
-      name: audit
-      ads_version: '1.0'
-      description: 'Framework audits, compliance checks, and quality evaluations with
-
-        automated implementation plan generation via GitHub Actions.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_audit-{name}.md'
-        directory: audits/
-        frontmatter:
-          ads_version: '1.0'
-          type: audit
-          category: compliance
-          status: draft
-          related_artifacts: []
-          generated_artifacts: []
-          tags:
-          - audit
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - status
-        - category
-        - related_artifacts
-        - generated_artifacts
-        required_sections:
-        - '## Executive Summary'
-        - '## Findings'
-        - '## Recommendations'
-        - '## Compliance Status'
-        - '## Related Artifacts'
-        filename_prefix: audit-
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: "# Audit: {title}\n\n**Audit Date**: {date}\n**Category**: {category}\n\
-        **Status**: {status}\n\n---\n\n## Executive Summary\n\n[Provide high-level\
-        \ overview of the audit scope, findings, and recommendations.]\n\n**Audit\
-        \ Scope**: [Describe what was audited]\n**Compliance Status**: [Overall status]\n\
-        **Critical Issues**: [Number]\n**High Priority Issues**: [Number]\n\n---\n\
-        \n## Findings\n\n### \U0001F534 CRITICAL: [Finding Title]\n\n**Severity**:\
-        \ Critical\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
-        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
-        \ recommended fix]\n\n---\n\n### \U0001F7E1 HIGH: [Finding Title]\n\n**Severity**:\
-        \ High\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
-        \n**Impact**:\n[Describe the impact]\n\n**Recommendation**:\n[Describe the\
-        \ recommended fix]\n\n---\n\n### \U0001F7E2 MEDIUM: [Finding Title]\n\n**Severity**:\
-        \ Medium\n**Location**: [Component/File]\n\n**Issue**:\n[Describe the issue]\n\
-        \n**Recommendation**:\n[Describe the recommended fix]\n\n---\n\n## Recommendations\n\
-        \n### Immediate Actions (Week 1)\n1. [Action item with priority and owner]\n\
-        2. [Action item with priority and owner]\n\n### Short-term (Weeks 2-4)\n3.\
-        \ [Action item]\n4. [Action item]\n\n### Long-term\n5. [Action item]\n\n---\n\
-        \n## Compliance Status\n\n**Overall Compliance**: [Compliant/Non-Compliant/Partially\
-        \ Compliant]\n\n**Standards Evaluated**:\n- [Standard 1]: [Status]\n- [Standard\
-        \ 2]: [Status]\n\n**Compliance Score**: [X/Y checks passed]\n\n**Next Review\
-        \ Date**: [YYYY-MM-DD]\n\n---\n\n## Related Artifacts\n\n**Source Documents**:\n\
-        - [Document](../path/to/document.md) - [Description]\n\n**Generated Implementation\
-        \ Plans**:\n- [Plan](../implementation_plans/YYYY-MM-DD_HHMM_implementation_plan_name.md)\
-        \ - [Description]\n\n**Related Audits**:\n- [Audit](./YYYY-MM-DD_HHMM_audit-name.md)\
-        \ - [Description]\n\n**References**:\n- [External reference or standard]\n\
-        \n---\n\n**Last Updated**: {date}\n**Auditor**: {auditor}\n"
-      template_variables:
-        date: '2025-11-29'
-        category: compliance
-        status: draft
-        auditor: AI Agent
-    bug_report:
-      name: bug_report
-      ads_version: '1.0'
-      description: 'Structured bug report for tracking issues with environment details,
-
-        reproduction steps, and impact assessment.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_bug_NNN_{name}.md'
-        directory: bug_reports/
-        frontmatter:
-          ads_version: '1.0'
-          type: bug_report
-          category: troubleshooting
-          status: active
-          severity: medium
-          tags:
-          - bug
-          - issue
-          - troubleshooting
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        - severity
-        required_sections:
-        - '## Summary'
-        - '## Environment'
-        - '## Reproduction'
-        - '## Comparison'
-        - '## Logs'
-        - '## Impact'
-        filename_prefix: bug_
-        allowed_statuses:
-        - draft
-        - active
-        - investigating
-        - resolved
-        - wontfix
-        - archived
-      template: '# Bug Report - {title}
-
-        Bug ID: BUG-{bug_id}
-
-
-        ## Summary
-
-        {summary}
-
-
-        ## Environment
-
-        - **OS/Env**: {os_info}
-
-        - **Dependencies**: {dependencies}
-
-
-        ## Reproduction
-
-        {reproduction_steps}
-
-
-        ## Comparison
-
-        **Expected**: {expected_behavior}
-
-        **Actual**: {actual_behavior}
-
-
-        ## Logs
-
-        ```
-
-        {error_messages}
-
-        ```
-
-
-        ## Impact
-
-        {impact}
-
-        '
-      template_variables:
-        bug_id: XXX
-        summary: '[Brief description]'
-        os_info: '[OS/Environment details]'
-        dependencies: '[Relevant dependencies]'
-        reproduction_steps: '[Steps to reproduce]'
-        expected_behavior: '[What should happen]'
-        actual_behavior: '[What actually happens]'
-        error_messages: '[Error logs]'
-        impact: '[Impact description]'
-    design_document:
-      name: design_document
-      ads_version: '1.0'
-      description: 'Architecture and design specification document with component
-
-        descriptions, design decisions, and implementation requirements.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_design_{name}.md'
-        directory: design_documents/
-        frontmatter:
-          ads_version: '1.0'
-          type: design
-          category: architecture
-          status: active
-          tags:
-          - design
-          - architecture
-          - specification
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        required_sections:
-        - '## Overview'
-        - '## Goals'
-        - '## Architecture'
-        - '## Design Decisions'
-        - '## Implementation'
-        filename_prefix: design_
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: "# Design - {title}\n\n## Overview\nDesign for {component_system}.\n\
-        \n## Goals\n- Goal 1\n- Goal 2\n\n## Architecture\n```mermaid\ngraph TD\n\
-        \    A[Component A] --> B[Component B]\n```\n\n### Components\n- **Component\
-        \ 1**: Responsibility\n- **Component 2**: Responsibility\n\n## Design Decisions\n\
-        - **Decision 1**: Rationale...\n- **Decision 2**: Rationale...\n\n## Implementation\n\
-        - [ ] Requirement 1\n- [ ] Requirement 2\n"
-      template_variables:
-        component_system: '[component/system]'
-    implementation_plan:
-      name: implementation_plan
-      ads_version: '1.0'
-      description: 'Structured implementation plan for tracking development work with
-
-        proposed changes, verification steps, and completion criteria.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_implementation_plan_{name}.md'
-        directory: implementation_plans/
-        frontmatter:
-          ads_version: '1.0'
-          type: implementation_plan
-          category: development
-          status: active
-          tags:
-          - implementation
-          - plan
-          - development
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        required_sections:
-        - '## Goal'
-        - '## Proposed Changes'
-        - '## Verification Plan'
-        filename_prefix: implementation_plan_
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: '# Implementation Plan - {title}
-
-
-        ## Goal
-
-        {description}
-
-
-        ## Proposed Changes
-
-
-        ### Configuration
-
-        - [ ] Change 1
-
-
-        ### Code
-
-        - [ ] Change 1
-
-
-        ## Verification Plan
-
-
-        ### Automated Tests
-
-        - [ ] `pytest ...`
-
-
-        ### Manual Verification
-
-        - [ ] Verify ...
-
-        '
-      template_variables:
-        description: '[Enter goal/objective here]'
-    vlm_report:
-      name: vlm_report
-      ads_version: '1.0'
-      description: 'Vision-Language Model (VLM) analysis report for documenting
-
-        visual analysis results, findings, and conclusions.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_vlm_report_{name}.md'
-        directory: ../vlm_reports/
-        frontmatter:
-          ads_version: '1.0'
-          type: vlm_report
-          category: evaluation
-          status: active
-          tags:
-          - vlm
-          - report
-          - analysis
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        required_sections:
-        - '## Overview'
-        - '## Analysis Result'
-        - '## Findings'
-        - '## Conclusion'
-        filename_prefix: vlm_report_
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: '# {title}
-
-
-        ## Overview
-
-        Brief description of the VLM analysis.
-
-
-        ## Analysis Result
-
-        <!-- Paste analysis results here -->
-
-
-        ## Findings
-
-        - Finding 1
-
-        - Finding 2
-
-
-        ## Conclusion
-
-        Summary of the analysis.
-
-
-        ---
-
-
-        *This VLM report follows the project''s standardized format for VLM analysis.*
-
-        '
-      template_variables: {}
-    walkthrough:
-      name: walkthrough
-      ads_version: '1.0'
-      description: 'Step-by-step walkthrough documentation for guiding users through
-
-        processes, workflows, or feature demonstrations.
-
-        '
-      scope: project
-      metadata:
-        filename_pattern: '{date}_walkthrough_{name}.md'
-        directory: walkthroughs/
-        frontmatter:
-          ads_version: '1.0'
-          type: walkthrough
-          category: documentation
-          status: active
-          tags:
-          - walkthrough
-          - documentation
-          - guide
-      validation:
-        required_fields:
-        - title
-        - date
-        - type
-        - category
-        - status
-        required_sections:
-        - '## Goal'
-        - '## Steps'
-        - '## Verification'
-        filename_prefix: walkthrough_
-        allowed_statuses:
-        - draft
-        - active
-        - completed
-        - archived
-      template: '# Walkthrough - {title}
-
-
-        ## Goal
-
-        {description}
-
-
-        ## Steps
-
-        1. Step 1
-
-        2. Step 2
-
-
-        ## Verification
-
-        - [ ] Verify result
-
-        '
-      template_variables:
-        description: '[Enter goal/objective here]'
-  validators:
-    prefixes:
-      CR_: change_requests/
-      DR_: decision_records/
-      SPEC_: specifications/
-      vlm_report_: vlm_reports/
-    types:
-    - change_request
-    - decision_record
-    - meeting_notes
-    - specification
-    - vlm_report
-    categories:
-    - compliance
-    - governance
-    - meeting
-    - security
-    statuses:
-    - approved
-    - deferred
-    - pending
-    - rejected
-    rules:
-      enforce_timestamp: true
-      enforce_kebab_case: true
-      enforce_lowercase: true
-      enforce_frontmatter: true
-      enforce_directory_placement: true
-    custom_validators: []
-    disabled_validators: []
+  artifact_types: {}
+  validators: {}
   context_bundles: {}

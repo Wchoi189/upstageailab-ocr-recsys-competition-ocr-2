@@ -57,7 +57,7 @@ AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
 sys.path.insert(0, str(PROJECT_ROOT))
 
 
-from AgentQMS.tools.utils.config_loader import ConfigLoader
+from AgentQMS.tools.utils.config.loader import ConfigLoader
 from AgentQMS.tools.core.context_bundle import get_context_bundle, list_available_bundles
 
 # Initialize ConfigLoader

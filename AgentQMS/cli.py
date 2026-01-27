@@ -402,7 +402,7 @@ def run_quality_command(args):
 
 def run_generate_config_command(args):
     """Execute generate-config subcommand."""
-    from AgentQMS.tools.utils.config_loader import ConfigLoader
+    from AgentQMS.tools.utils.config.loader import ConfigLoader
     import json
 
     try:

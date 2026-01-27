@@ -21,6 +21,7 @@ digraph AgentQMS_Architecture {
     "SC-008" [label="SC-008", penwidth=2, color=red];
     "SC-009" [label="SC-009", penwidth=2, color=red];
     "SC-010" [label="SC-010", penwidth=2, color=red];
+    "manifest" [label="manifest", penwidth=2, color=red];
   }
 
   subgraph cluster_tier2 {
@@ -79,7 +80,6 @@ digraph AgentQMS_Architecture {
 
       "FW-029" [label="FW-029", penwidth=1.5, color=orange];
       "FW-033" [label="FW-033", penwidth=1.5, color=orange];
-      "FW-034" [label="FW-034", penwidth=2, color=red];
       "FW-037" [label="FW-037\nKeyword mappings for context bundle t...", penwidth=1.5, color=orange];
     }
 
@@ -101,17 +101,9 @@ digraph AgentQMS_Architecture {
       color="#E6E6E6";
       fontsize=11;
 
-      "FW-005" [label="FW-005", penwidth=1.5, color=orange];
-      "FW-006" [label="FW-006", penwidth=1.5, color=orange];
-      "FW-013" [label="FW-013", penwidth=1.5, color=orange];
-      "FW-014" [label="FW-014", penwidth=1.5, color=orange];
       "FW-015" [label="FW-015", penwidth=1.5, color=orange];
-      "FW-016" [label="FW-016", penwidth=1.5, color=orange];
-      "FW-021" [label="FW-021", penwidth=1.5, color=orange];
       "FW-022" [label="FW-022", penwidth=1.5, color=orange];
       "FW-025" [label="FW-025"];
-      "FW-031" [label="FW-031", penwidth=1.5, color=orange];
-      "FW-032" [label="FW-032", penwidth=1.5, color=orange];
       "FW-036" [label="FW-036", penwidth=1.5, color=orange];
     }
 
@@ -162,16 +154,10 @@ digraph AgentQMS_Architecture {
 
   // Declared Dependencies (from registry.yaml)
   "SC-001" -> "SC-002" [color=blue, penwidth=1.5];
-  "FW-034" -> "FW-037" [color=blue, penwidth=1.5];
   "SC-007" -> "AG-006" [color=blue, penwidth=1.5];
-  "FW-034" -> "AG-006" [color=blue, penwidth=1.5];
 
   // Governance Mappings (Constitutional laws enforce lower tiers)
-  "SC-001" -> "FW-005" [style=dashed, color="#666666", penwidth=1.0];
-  "SC-001" -> "FW-016" [style=dashed, color="#666666", penwidth=1.0];
   "SC-002" -> "FW-026" [style=dashed, color="#666666", penwidth=1.0];
-  "SC-003" -> "FW-005" [style=dashed, color="#666666", penwidth=1.0];
-  "SC-003" -> "FW-032" [style=dashed, color="#666666", penwidth=1.0];
   "SC-007" -> "FW-001" [style=dashed, color="#666666", penwidth=1.0];
   "SC-008" -> "FW-029" [style=dashed, color="#666666", penwidth=1.0];
   "SC-008" -> "FW-033" [style=dashed, color="#666666", penwidth=1.0];
@@ -187,7 +173,6 @@ digraph AgentQMS_Architecture {
   "FW-019" -> "FW-017" [color="#0066CC", penwidth=1.5];
   "FW-011" -> "FW-019" [color="#0066CC", penwidth=1.5];
   "FW-030" -> "FW-029" [color="#0066CC", penwidth=1.5];
-  "FW-034" -> "AG-002" [color="#0066CC", penwidth=1.5];
   "FW-001" -> "AG-002" [color="#0066CC", penwidth=1.5];
   "FW-001" -> "AG-003" [color="#0066CC", penwidth=1.5];
   "AG-002" -> "WF-001" [color="#0066CC", penwidth=1.5];

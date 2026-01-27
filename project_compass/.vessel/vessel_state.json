@@ -1,11 +1,11 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-01-25T14:56:41.457197",
+  "last_updated": "2026-01-28T03:13:08.111117",
   "health": "healthy",
   "current_phase": "integration",
   "active_pulse": {
-    "pulse_id": "hydra-refactor-2026-01-22",
-    "objective": "Resolve all Hydra and import issues toward zero errors",
+    "pulse_id": "agentqms-functional-purity-audit-2026-01-28",
+    "objective": "Plan a multi-session audit and refactor strategy for AgentQMS standards taxonomy purity with milestones and continuation prompt.",
     "milestone_id": "ocr-domain-refactor",
     "instructions": [
       "# Directive: 00_meta_cognition\n# [Compass:Lock] Core Directive 00: Meta-Cognition Protocol\n\n## Purpose\nForce deliberate reasoning before any file creation or state change.\n\n## The [Compass:Reflection] Template\n\nBefore creating ANY artifact, output this reflection:\n\n```\n[Compass:Reflection]\n- Type: (design|research|walkthrough|implementation_plan|bug_report|audit)\n- Justification: Why is this file necessary for THIS pulse?\n- Redundancy: Does an existing artifact cover this? Why not update it?\n- Lifecycle: Transitional (delete after) or Archived (keep in history)?\n```\n\n## Behavioral Rules\n\n1. **Challenge Vague Instructions**: If a milestone task is unclear, ASK for clarification. Do not guess.\n2. **Evidence-Based Completion**: Cannot mark tasks complete without validation command output.\n3. **Proactive Pruning**: If legacy code exists that should be cleaned, add to `active_blockers`.\n\n## Anti-Patterns\n\n| \u274c Banned                       | \u2705 Required                                  |\n| ------------------------------ | ------------------------------------------- |\n| \"I think...\"                   | \"The code shows...\"                         |\n| \"Maybe we could...\"            | \"Will implement X by...\"                    |\n| Creating files outside staging | All artifacts in `pulse_staging/artifacts/` |\n| Narrative summaries            | Indicator-only notes (max 20 words)         |\n",
@@ -15,13 +15,37 @@
     ],
     "artifacts": [
       {
-        "path": "hydra-refactor-session-walkthrough.md",
+        "path": "implementation_plan.md",
+        "artifact_type": "implementation_plan",
+        "milestone_id": "ocr-domain-refactor",
+        "created_at": "2026-01-28T02:54:07.051590"
+      },
+      {
+        "path": "taxonomy-freeze-standards.md",
+        "artifact_type": "design",
+        "milestone_id": "ocr-domain-refactor",
+        "created_at": "2026-01-28T02:58:19.892242"
+      },
+      {
+        "path": "line-level-evidence-ledger-template.md",
         "artifact_type": "walkthrough",
         "milestone_id": "ocr-domain-refactor",
-        "created_at": "2026-01-25T14:56:41.457190"
+        "created_at": "2026-01-28T02:58:23.293567"
+      },
+      {
+        "path": "tier2-line-ledger.md",
+        "artifact_type": "walkthrough",
+        "milestone_id": "ocr-domain-refactor",
+        "created_at": "2026-01-28T03:00:55.693929"
+      },
+      {
+        "path": "tasks.md",
+        "artifact_type": "implementation_plan",
+        "milestone_id": "ocr-domain-refactor",
+        "created_at": "2026-01-28T03:13:08.111107"
       }
     ],
-    "started_at": "2026-01-25T14:56:15.540622",
+    "started_at": "2026-01-28T02:54:02.105525",
     "token_burden": "low"
   },
   "star_chart": [],
