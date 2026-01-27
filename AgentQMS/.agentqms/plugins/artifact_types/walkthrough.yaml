@@ -19,6 +19,7 @@ metadata:
     category: documentation
     status: active
     tags: [walkthrough, documentation, guide]
+    version: "1.0"
 
 validation:
   required_fields:

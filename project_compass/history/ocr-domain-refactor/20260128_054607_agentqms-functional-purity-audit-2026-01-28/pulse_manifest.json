@@ -1,0 +1,63 @@
+{
+  "pulse_id": "agentqms-functional-purity-audit-2026-01-28",
+  "objective": "Plan a multi-session audit and refactor strategy for AgentQMS standards taxonomy purity with milestones and continuation prompt.",
+  "milestone_id": "ocr-domain-refactor",
+  "artifacts": [
+    {
+      "path": "implementation_plan.md",
+      "artifact_type": "implementation_plan",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T02:54:07.051590"
+    },
+    {
+      "path": "taxonomy-freeze-standards.md",
+      "artifact_type": "design",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T02:58:19.892242"
+    },
+    {
+      "path": "line-level-evidence-ledger-template.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T02:58:23.293567"
+    },
+    {
+      "path": "tier2-line-ledger.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T03:00:55.693929"
+    },
+    {
+      "path": "tasks.md",
+      "artifact_type": "implementation_plan",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T03:13:08.111107"
+    },
+    {
+      "path": "tier1-3-4-line-ledger.md",
+      "artifact_type": "audit",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T05:45:53.820726"
+    },
+    {
+      "path": "refactor-map-session-d.md",
+      "artifact_type": "design",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T05:45:53.839889"
+    },
+    {
+      "path": "refactor-batch-plan-session-e.md",
+      "artifact_type": "implementation_plan",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T05:45:53.997964"
+    },
+    {
+      "path": "overlap-matrix-session-d.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-01-28T05:46:04.146814"
+    }
+  ],
+  "started_at": "2026-01-28 02:54:02.105525",
+  "exported_at": "2026-01-28T05:46:07.585067"
+}

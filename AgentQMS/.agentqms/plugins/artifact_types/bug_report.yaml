@@ -18,6 +18,7 @@ metadata:
     type: bug_report
     category: troubleshooting
     status: active
+    version: "1.0"
     severity: medium
     tags: [bug, issue, troubleshooting]
 

@@ -31,13 +31,6 @@ paths:
   module: experiment_manager/
   experiments: experiment_manager/experiments/
   agent_interface: experiment_manager/agent_interface.yaml
-triggers:
-- pattern: ocr/models/**/*.py
-  workflow: check.validate
-- pattern: configs/**/*.yaml
-  workflow: check.validate
-- pattern: experiment_manager/**/*.py
-  workflow: database.reconcile
 rules:
 - Read experiment_manager/agent_interface.yaml for exact command arguments.
 - Always run "etk reconcile --all" and "etk sync --all" after creating artifacts.

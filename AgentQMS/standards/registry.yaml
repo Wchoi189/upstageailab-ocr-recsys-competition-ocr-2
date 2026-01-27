@@ -1,29 +1,21 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P6
-total_standards: 47
+total_standards: 56
 standards:
   AG-001:
     id: AG-001
-    tier: 3
+    tier: 2
     description: Automated criteria for identifying unused, low-value, or ...
-    file_path: AgentQMS/standards/tier3-agents/bloat-detection-rules.yaml
+    file_path: AgentQMS/standards/tier2-framework/constraints/bloat-detection-rules.yaml
   AG-002:
     id: AG-002
     tier: 3
-    file_path: AgentQMS/standards/tier3-agents/config.yaml
-  AG-003:
-    id: AG-003
-    tier: 3
-    file_path: AgentQMS/standards/tier3-agents/multi-agent-system.yaml
+    file_path: AgentQMS/standards/tier3-agents/qwen-identity.yaml
   AG-004:
     id: AG-004
     tier: 3
-    file_path: AgentQMS/standards/tier3-agents/quick-reference.yaml
-  AG-005:
-    id: AG-005
-    tier: 3
-    file_path: AgentQMS/standards/tier3-agents/vlm-tools.yaml
+    file_path: AgentQMS/standards/tier3-agents/gemini-identity.yaml
   AG-006:
     id: AG-006
     tier: 3
@@ -161,7 +153,26 @@ standards:
     dependencies:
     - FW-034
     description: Keyword mappings for context bundle task detection and ro...
-    file_path: AgentQMS/standards/tier1-sst/discovery-rules.yaml
+    file_path: AgentQMS/standards/tier2-framework/discovery/discovery-rules.yaml
+  FW-038:
+    id: FW-038
+    tier: 2
+    file_path: AgentQMS/standards/tier2-framework/discovery/workflow-detector.yaml
+  FW-039:
+    id: FW-039
+    tier: 2
+    description: Discovery triggers mapping file patterns to experiment wo...
+    file_path: AgentQMS/standards/tier2-framework/discovery/experiment-workflow-triggers.yaml
+  FW-041:
+    id: FW-041
+    tier: 2
+    description: Architecture specification for multi-agent coordination
+    file_path: AgentQMS/standards/tier2-framework/agent-infra/multi-agent-architecture.yaml
+  FW-042:
+    id: FW-042
+    tier: 2
+    description: Reference specification for VLM tooling configuration and...
+    file_path: AgentQMS/standards/tier2-framework/specs/vlm-tools-reference.yaml
   SC-001:
     id: SC-001
     tier: 1
@@ -172,13 +183,13 @@ standards:
     tier: 1
     dependencies:
     - SC-001
-    description: Artifact type system with plugin-based validation and nam...
-    file_path: AgentQMS/standards/tier1-sst/artifact-types.yaml
+    description: Artifact type catalog and source-of-truth references
+    file_path: AgentQMS/standards/tier1-sst/specs/artifact-types-reference.yaml
   SC-003:
     id: SC-003
     tier: 1
     description: Unified artifact naming and placement rules for AgentQMS
-    file_path: AgentQMS/standards/tier1-sst/artifact_rules.yaml
+    file_path: AgentQMS/standards/tier1-sst/artifact-rules.yaml
   SC-004:
     id: SC-004
     tier: 1
@@ -187,7 +198,7 @@ standards:
     id: SC-005
     tier: 1
     description: Single source of truth for artifact frontmatter field def...
-    file_path: AgentQMS/standards/tier1-sst/frontmatter-master.yaml
+    file_path: AgentQMS/standards/tier1-sst/specs/frontmatter-schema.yaml
   SC-006:
     id: SC-006
     tier: 1
@@ -199,25 +210,77 @@ standards:
   SC-008:
     id: SC-008
     tier: 1
-    file_path: AgentQMS/standards/tier1-sst/validation-protocols.yaml
-  SC-009:
-    id: SC-009
-    tier: 1
-    file_path: AgentQMS/standards/tier1-sst/workflow-detector.yaml
+    dependencies:
+    - SC-010
+    description: Validation policies and enforcement triggers for AgentQMS...
+    file_path: AgentQMS/standards/tier1-sst/constraints/validation-policies.yaml
   SC-010:
     id: SC-010
     tier: 1
-    file_path: AgentQMS/standards/tier1-sst/workflow-requirements.yaml
+    dependencies:
+    - naming-conventions.yaml
+    - file-placement-rules.yaml
+    description: Required workflow policies for artifact creation and vali...
+    file_path: AgentQMS/standards/tier1-sst/constraints/workflow-requirements.yaml
+  SC-011:
+    id: SC-011
+    tier: 1
+    dependencies:
+    - SC-005
+    description: Validation rules and required fields for artifact frontma...
+    file_path: AgentQMS/standards/tier1-sst/constraints/frontmatter-validation.yaml
+  SC-012:
+    id: SC-012
+    tier: 1
+    dependencies:
+    - SC-002
+    - SC-001
+    description: Validation and enforcement rules for artifact type plugins
+    file_path: AgentQMS/standards/tier1-sst/constraints/artifact-type-validation.yaml
+  SC-013:
+    id: SC-013
+    tier: 1
+    dependencies:
+    - SC-001
+    - SC-004
+    - SC-010
+    description: Global agent operational policies (validation, naming, pl...
+    file_path: AgentQMS/standards/tier1-sst/constraints/agent-policy.yaml
   WF-001:
     id: WF-001
     tier: 4
     file_path: AgentQMS/standards/tier4-workflows/experiment-workflow.yaml
   WF-002:
     id: WF-002
-    tier: 4
+    tier: 2
     description: Runtime middleware policies enforced by the AgentQMS server.
-    file_path: AgentQMS/standards/tier4-workflows/middleware-policies.yaml
+    file_path: AgentQMS/standards/tier2-framework/constraints/middleware-policies.yaml
+  WF-040:
+    id: WF-040
+    tier: 4
+    description: Execution runbook for validation and discovery commands
+    file_path: AgentQMS/standards/tier4-workflows/validation-runbook.yaml
+  WF-041:
+    id: WF-041
+    tier: 4
+    description: Runbook for automated and manual bloat detection scans
+    file_path: AgentQMS/standards/tier4-workflows/bloat-detection-workflow.yaml
+  WF-042:
+    id: WF-042
+    tier: 4
+    description: Operational runbook for multi-agent workflows
+    file_path: AgentQMS/standards/tier4-workflows/multi-agent-runbook.yaml
+  WF-043:
+    id: WF-043
+    tier: 4
+    description: Runbook for VLM analysis commands and workflows
+    file_path: AgentQMS/standards/tier4-workflows/vlm-tools-workflow.yaml
+  WF-044:
+    id: WF-044
+    tier: 4
+    description: Runbook for generating compliance reports
+    file_path: AgentQMS/standards/tier4-workflows/compliance-reporting.yaml
   manifest:
     id: manifest
-    tier: 1
-    file_path: AgentQMS/standards/tier1-sst/manifest.yaml
+    tier: 2
+    file_path: AgentQMS/standards/tier2-framework/discovery/utility-scripts-manifest.yaml

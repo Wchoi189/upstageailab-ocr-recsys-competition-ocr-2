@@ -21,9 +21,8 @@ from typing import cast
 
 from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
 from AgentQMS.tools.compliance.validate_boundaries import BoundaryValidator
-from AgentQMS.tools.core.artifact_templates import (
+from AgentQMS.tools.core.artifacts.artifact_templates import (
     ArtifactTemplates,
-    create_artifact,
 )
 from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
 
@@ -111,7 +110,7 @@ class ArtifactWorkflow:
 
         try:
             # Create the artifact
-            file_path: str = create_artifact(artifact_type, name, title, str(self.artifacts_root), quiet=self.quiet, **kwargs)
+            file_path: str = self.templates.create_artifact(artifact_type, name, title, str(self.artifacts_root), quiet=self.quiet, **kwargs)
 
             # Write content if provided
             if content is not None:
@@ -217,7 +216,8 @@ class ArtifactWorkflow:
 
         try:
             # Run the index updater
-            reindex_script = str(Path(__file__).parent.parent.parent / "tools" / "documentation" / "reindex_artifacts.py")
+            # reindex_artifacts.py is in the same directory as this workflow script
+            reindex_script = str(Path(__file__).parent / "reindex_artifacts.py")
             result = subprocess.run(
                 [
                     sys.executable,

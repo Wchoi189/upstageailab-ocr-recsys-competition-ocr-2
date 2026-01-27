@@ -16,7 +16,7 @@
 #       - callbacks/metadata
 #
 #   Or enable via command line:
-#     python runners/train.py +callbacks/metadata=default
+#     uv run python runners/train.py +callbacks/metadata=default
 
 _target_: ocr.core.lightning.callbacks.MetadataCallback
 exp_name: ${exp_name}  # From main config

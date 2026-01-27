@@ -186,7 +186,7 @@ def setup_generate_config_parser(subparsers):
 
 def run_artifact_command(args):
     """Execute artifact subcommand."""
-    from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+    from AgentQMS.tools.core.artifacts.workflow import ArtifactWorkflow
 
     workflow = ArtifactWorkflow()
 
@@ -319,7 +319,7 @@ def run_monitor_command(args):
 
 def run_feedback_command(args):
     """Execute feedback subcommand."""
-    from AgentQMS.tools.utilities.agent_feedback import AgentFeedbackCollector
+    from AgentQMS.tools.multi_agent.agent_feedback import AgentFeedbackCollector
 
     collector = AgentFeedbackCollector()
 
@@ -543,7 +543,7 @@ def run_registry_command(args):
 
     if args.registry_command == "sync":
         # Run sync_registry.py
-        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "sync_registry.py")]
+        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "core" / "sync_registry.py")]
         if args.dry_run:
             cmd.append("--dry-run")
         if args.strict:
@@ -598,7 +598,7 @@ def run_registry_command(args):
 
     elif args.registry_command == "validate":
         # Run validation using sync_registry.py in dry-run mode
-        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "sync_registry.py"), "--dry-run"]
+        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "core" / "sync_registry.py"), "--dry-run"]
 
         if args.strict:
             cmd.append("--strict")

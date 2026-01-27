@@ -19,17 +19,17 @@ class PreflightCheck:
     """Checks availability of core infrastructure services."""
 
     def __init__(self):
-        self.redis_host = os.getenv("REDIS_HOST", "redis")
+        self.redis_host = os.getenv("REDIS_HOST", "localhost")
         self.redis_port = int(os.getenv("REDIS_PORT", 6379))
         
-        self.rabbitmq_host = os.getenv("RABBITMQ_HOST", "rabbitmq")
+        self.rabbitmq_host = os.getenv("RABBITMQ_HOST", "localhost")
         self.rabbitmq_port = int(os.getenv("RABBITMQ_PORT", 5672))
         
         # Ollama usually runs on host.docker.internal or localhost
-        self.ollama_host = os.getenv("OLLAMA_HOST", "host.docker.internal") 
+        self.ollama_host = os.getenv("OLLAMA_HOST", "localhost")  
         self.ollama_port = int(os.getenv("OLLAMA_PORT", 11434))
 
-    def _check_socket(self, host: str, port: int, timeout: float = 2.0) -> bool:
+    def _check_socket(self1, host: str, port: int, timeout: float = 2.0) -> bool:
         """Check if a TCP socket is open."""
         try:
             with socket.create_connection((host, port), timeout=timeout):

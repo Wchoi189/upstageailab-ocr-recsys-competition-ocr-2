@@ -187,7 +187,7 @@ lint-check-json:  ## Output ruff results as JSON for AI processing
 lint-fix-ai:  ## Run AI-powered linting fixes using Grok
 	@echo "🤖 Running AI-powered linting fixes..."
 	@uv run ruff check . --output-format=json > /tmp/lint_errors.json || true
-	@ERROR_COUNT=$$(cat /tmp/lint_errors.json | python3 -c "import sys, json; print(len(json.load(sys.stdin)))"); \
+	@ERROR_COUNT=$$(cat /tmp/lint_errors.json | uv run python -c "import sys, json; print(len(json.load(sys.stdin)))"); \
 	if [ "$$ERROR_COUNT" -eq "0" ]; then \
 		echo "✅ No linting errors found!"; \
 	else \

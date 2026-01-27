@@ -1,0 +1,53 @@
+ads_version: '2.0'
+id: FW-042
+type: schema_specification
+agent: all
+tier: 2
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 140
+keywords:
+- vlm
+- tools
+- configuration
+- backends
+- analysis
+fuzzy_threshold: 0.8
+description: Reference specification for VLM tooling configuration and modes
+analysis_modes:
+  general_purpose:
+    defect: Visual artifacts in output images
+    input: Source image characteristics
+    compare: Before/after comparisons
+    full: Comprehensive multi-mode analysis
+  ocr_preprocessing_experiments:
+    image_quality: Document quality for OCR (background, slant, shadows, contrast)
+    enhancement_validation: Quantify preprocessing effectiveness
+    preprocessing_diagnosis: Debug preprocessing failures
+  bug_specific:
+    bug_001: Inference overlay misalignment analysis
+backends:
+- name: openrouter
+  model: Qwen3 40b
+  note: Primary, highest quality
+- name: solar_pro2
+  note: Alternative API
+- name: cli_qwen
+  note: Local fallback
+configuration:
+  config: AgentQMS/vlm/config.yaml
+  api_keys: OPENROUTER_API_KEY, SOLAR_PRO2_API_KEY in .env
+  prompts: AgentQMS/vlm/prompts/ (markdown/jinja2 templates)
+experiment_integration:
+  output_location: '{experiment_id}/vlm_reports/'
+  intermediate_outputs: '{experiment_id}/outputs/vlm_validation/'
+  final_deliverables: '{experiment_id}/artifacts/'
+key_principle:
+  description: VLM tools generate visual evidence for EDS assessments.
+  use_cases:
+  - Image preprocessing validation
+  - Visual defect analysis
+  - OCR quality assessment
+  - Before/after comparisons
+  - Failure investigation requiring visual inspection

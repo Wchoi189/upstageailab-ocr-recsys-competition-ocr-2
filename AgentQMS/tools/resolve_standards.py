@@ -18,7 +18,7 @@ import sys
 import time
 from difflib import SequenceMatcher
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import yaml
 
@@ -43,10 +43,10 @@ class RegistryCache:
     def __init__(self, cache_path: Path, ttl: int = CACHE_TTL):
         self.cache_path = cache_path
         self.ttl = ttl
-        self._data: Optional[Dict[str, Any]] = None
+        self._data: dict[str, Any] | None = None
         self._timestamp: float = 0.0
 
-    def load(self) -> Optional[Dict[str, Any]]:
+    def load(self) -> dict[str, Any] | None:
         """Load cache if valid, otherwise return None."""
         if not self.cache_path.exists():
             return None
@@ -72,7 +72,7 @@ class RegistryCache:
         except Exception:
             return None
 
-    def save(self, data: Dict[str, Any]) -> None:
+    def save(self, data: dict[str, Any]) -> None:
         """Save data to cache with timestamp."""
         try:
             with open(self.cache_path, "wb") as f:
@@ -95,7 +95,7 @@ class RegistryCache:
         return time.time() - self._timestamp
 
 
-def load_registry(use_cache: bool = True) -> Dict[str, Any]:
+def load_registry(use_cache: bool = True) -> dict[str, Any]:
     """
     Load registry with optional caching.
 
@@ -118,7 +118,7 @@ def load_registry(use_cache: bool = True) -> Dict[str, Any]:
             if not REGISTRY_PATH.exists():
                 raise ResolverError(f"Registry not found: {REGISTRY_PATH}")
 
-            with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+            with open(REGISTRY_PATH, encoding="utf-8") as f:
                 registry = yaml.safe_load(f)
 
             # Merge search indices from cache into registry for resolver compatibility
@@ -139,7 +139,7 @@ def load_registry(use_cache: bool = True) -> Dict[str, Any]:
     if not REGISTRY_PATH.exists():
         raise ResolverError(f"Registry not found: {REGISTRY_PATH}")
 
-    with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+    with open(REGISTRY_PATH, encoding="utf-8") as f:
         registry = yaml.safe_load(f)
 
     return registry
@@ -161,7 +161,7 @@ def fuzzy_match(query: str, target: str, threshold: float = 0.8) -> float:
     return score if score >= threshold else 0.0
 
 
-def resolve_by_task(registry: Dict[str, Any], task: str) -> List[str]:
+def resolve_by_task(registry: dict[str, Any], task: str) -> list[str]:
     """
     Resolve standards by task type.
 
@@ -199,7 +199,7 @@ def resolve_by_task(registry: Dict[str, Any], task: str) -> List[str]:
     return matched_ids
 
 
-def resolve_by_path(registry: Dict[str, Any], file_path: str) -> List[str]:
+def resolve_by_path(registry: dict[str, Any], file_path: str) -> list[str]:
     """
     Resolve standards by file path pattern.
 
@@ -243,11 +243,11 @@ def resolve_by_path(registry: Dict[str, Any], file_path: str) -> List[str]:
 
 
 def resolve_by_keywords(
-    registry: Dict[str, Any],
-    keywords: List[str],
+    registry: dict[str, Any],
+    keywords: list[str],
     fuzzy: bool = False,
     threshold: float = 0.8
-) -> List[str]:
+) -> list[str]:
     """
     Resolve standards by keyword search.
 
@@ -286,10 +286,10 @@ def resolve_by_keywords(
 
 
 def expand_dependencies(
-    registry: Dict[str, Any],
-    standard_ids: List[str],
+    registry: dict[str, Any],
+    standard_ids: list[str],
     include_tier1: bool = True
-) -> List[str]:
+) -> list[str]:
     """
     Expand standard IDs to include dependencies.
 
@@ -313,7 +313,7 @@ def expand_dependencies(
     expanded.update(tier1_ids)
 
     # Recursively add dependencies
-    def add_deps(std_id: str, visited: Set[str]):
+    def add_deps(std_id: str, visited: set[str]):
         if std_id in visited or std_id not in standards:
             return
         visited.add(std_id)
@@ -329,7 +329,7 @@ def expand_dependencies(
     return sorted(expanded)
 
 
-def get_standard_paths(registry: Dict[str, Any], standard_ids: List[str]) -> List[str]:
+def get_standard_paths(registry: dict[str, Any], standard_ids: list[str]) -> list[str]:
     """
     Get file paths for standard IDs.
 
@@ -353,8 +353,8 @@ def get_standard_paths(registry: Dict[str, Any], standard_ids: List[str]) -> Lis
 
 
 def display_results(
-    registry: Dict[str, Any],
-    standard_ids: List[str],
+    registry: dict[str, Any],
+    standard_ids: list[str],
     paths_only: bool = False,
     verbose: bool = False
 ) -> None:

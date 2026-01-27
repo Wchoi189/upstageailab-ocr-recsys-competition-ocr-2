@@ -18,6 +18,7 @@ metadata:
     type: design
     category: architecture
     status: active
+    version: "1.0"
     tags: [design, architecture, specification]
 
 validation:

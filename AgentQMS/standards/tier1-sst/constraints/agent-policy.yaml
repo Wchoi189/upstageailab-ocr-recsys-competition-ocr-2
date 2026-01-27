@@ -1,0 +1,52 @@
+ads_version: '2.0'
+id: SC-013
+type: rule_set
+agent: all
+tier: 1
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 60
+dependencies:
+- SC-001
+- SC-004
+- SC-010
+keywords:
+- agent
+- policy
+- validation
+- placement
+- naming
+fuzzy_threshold: 0.8
+description: Global agent operational policies (validation, naming, placement)
+pre_operation_checks:
+- check: Tool exists in catalog
+  reference: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+  fail_action: STOP
+  severity: critical
+- check: Naming conventions
+  reference: AgentQMS/standards/tier1-sst/naming-conventions.yaml
+  fail_action: STOP
+  severity: critical
+- check: Placement rules
+  reference: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+  fail_action: STOP
+  severity: critical
+post_operation_validation:
+- command: cd AgentQMS/bin && make validate
+  required: true
+  failure_mode: BLOCK
+- command: cd AgentQMS/bin && make compliance
+  required: true
+  failure_mode: BLOCK
+prohibited_actions:
+- action: Manual artifact creation
+  instead: Use make create-* commands
+  severity: critical
+- action: ALL-CAPS filenames
+  instead: lowercase-with-hyphens
+  severity: critical
+- action: Files at docs/ root
+  instead: docs/artifacts/{TYPE}/
+  severity: critical
+runbook_reference: AgentQMS/standards/tier4-workflows/validation-runbook.yaml

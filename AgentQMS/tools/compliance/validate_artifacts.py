@@ -87,7 +87,7 @@ from AgentQMS.tools.utils.paths import ensure_within_project, get_project_root
 def load_artifact_rules() -> dict[str, Any] | None:
     """Load artifact rules from the YAML schema file."""
     try:
-        rules_path = get_project_root() / "AgentQMS" / "standards" / "tier1-sst" / "artifact_rules.yaml"
+        rules_path = get_project_root() / "AgentQMS" / "standards" / "tier1-sst" / "artifact-rules.yaml"
         if rules_path.exists():
             with open(rules_path, encoding="utf-8") as f:
                 return yaml.safe_load(f)
@@ -531,6 +531,38 @@ class ArtifactValidator:
         #     results.extend(bundle_results)
 
         return results
+
+    def check_naming_conventions(self) -> bool:
+        """Check naming conventions for all artifacts (CLI support)."""
+        from AgentQMS.tools.compliance.validators.naming import validate_naming_convention
+
+        all_valid = True
+        violations = []
+        
+        # Iterate all files similar to validate_all
+        for subdirectory in self.artifacts_root.iterdir():
+            if subdirectory.is_dir() and not subdirectory.name.startswith("_"):
+                for file_path in subdirectory.rglob("*.md"):
+                    if file_path.is_file() and not self._is_excluded_path(file_path):
+                        naming_valid, naming_msg = validate_naming_convention(
+                            file_path,
+                            self.valid_artifact_types,
+                            self.artifact_type_details,
+                            self.error_templates
+                        )
+                        if not naming_valid:
+                            all_valid = False
+                            rel_path = str(file_path.relative_to(self.artifacts_root))
+                            violations.append(f"❌ {rel_path}: {naming_msg}")
+
+        if violations:
+            print("\nNaming Convention Violations:")
+            for v in violations:
+                print(v)
+            return False
+        
+        print("✅ All artifacts follow naming conventions.")
+        return True
 
 
 

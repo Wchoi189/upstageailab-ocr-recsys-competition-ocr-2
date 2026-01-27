@@ -1,0 +1,25 @@
+#!/bin/bash
+# AgentQMS ADT (Advanced Debugging Tool) Wrapper
+#
+# Delegates to the local agent-debug-toolkit installation
+# which has been repaired and verified.
+
+# Resolve absolute path of the script
+if command -v readlink >/dev/null 2>&1; then
+    SCRIPT_PATH="$(readlink -f "${BASH_SOURCE[0]}")"
+else
+    SCRIPT_PATH="${BASH_SOURCE[0]}"
+fi
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
+
+# Path to the verified ADT executable in agent-debug-toolkit/.venv
+ADT_BIN="$PROJECT_ROOT/agent-debug-toolkit/.venv/bin/adt"
+
+if [ -f "$ADT_BIN" ]; then
+    exec "$ADT_BIN" "$@"
+else
+    echo "Error: ADT executable not found at $ADT_BIN"
+    echo "Please ensure 'agent-debug-toolkit' is properly installed."
+    exit 1
+fi

@@ -2,11 +2,11 @@
 ads_version: "1.0"
 type: entrypoint
 description: "Master entrypoint for AI Agents. Read this first."
-context_map_location: "AgentQMS/standards/INDEX.yaml"
+context_map_location: "AgentQMS/standards/registry.yaml"
 
 project_standards:
-  workflow_rules: "AgentQMS/standards/tier1-sst/workflow-requirements.yaml"
-  artifact_standards: "AgentQMS/standards/tier1-sst/artifact-types.yaml"
+  workflow_rules: "AgentQMS/standards/tier1-sst/constraints/workflow-requirements.yaml"
+  artifact_standards: "AgentQMS/standards/tier1-sst/specs/artifact-types-reference.yaml"
   system_architecture: "AgentQMS/standards/tier1-sst/system-architecture.yaml"
   tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
   naming_conventions: "AgentQMS/standards/tier1-sst/naming-conventions.yaml"
@@ -28,10 +28,11 @@ environment_tools:
     location: "AgentQMS/"
     cli_entrypoint: "bin/aqms"
     commands:
-      help: "bin/aqms help"
-      validate: "bin/aqms validate"
-      create_plan: "bin/aqms create-plan NAME=slug TITLE='Title'"
-      compliance: "bin/aqms compliance"
+      help: "bin/aqms --help"
+      registry_sync: "bin/aqms registry sync"
+      registry_resolve_task: "bin/aqms registry resolve --task <task>"
+      registry_resolve_path: "bin/aqms registry resolve --path <path>"
+      plugin_validate: "bin/aqms plugin validate"
       sync_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py"
       init_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py --init"
 
@@ -55,7 +56,7 @@ environment_tools:
 
   research:
     tool: "Perplexity Client"
-    command: "python scripts/research/perplexity_client.py --query 'Query'"
+    command: "uv run python scripts/research/perplexity_client.py --query 'Query'"
     requirements: "PERPLEXITY_API_KEY in .env.local"
 
 experiment_manager:
@@ -85,11 +86,8 @@ agent_debug_toolkit:
     - "Find symbol definitions by name or qualified path with fuzzy matching"
 
 agent_configurations:
-  gemini: "AgentQMS/standards/tier3-agents/gemini/config.yaml"
-  claude: "AgentQMS/standards/tier3-agents/claude/config.yaml"
-  cursor: "AgentQMS/standards/tier3-agents/cursor/config.yaml"
-  copilot: "AgentQMS/standards/tier3-agents/copilot/config.yaml"
-  qwen: "AgentQMS/standards/tier3-agents/qwen/config.yaml"
+  gemini: "AgentQMS/standards/tier3-agents/gemini-identity.yaml"
+  qwen: "AgentQMS/standards/tier3-agents/qwen-identity.yaml"
 
 critical_directives:
   - "Do not hallucinate project standards. Read the `INDEX.yaml` first."

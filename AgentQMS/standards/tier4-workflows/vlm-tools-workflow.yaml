@@ -1,0 +1,37 @@
+ads_version: '2.0'
+id: WF-043
+type: workflow_definition
+agent: all
+tier: 4
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 140
+keywords:
+- vlm
+- workflow
+- analysis
+- images
+fuzzy_threshold: 0.8
+description: Runbook for VLM analysis commands and workflows
+core_command: "uv run python -m AgentQMS.vlm.cli.analyze_image_defects \\\n  --image <path> \\\n  --mode <mode> \\\n  --backend openrouter \\\n  --output-format markdown \\\n  --output <output_path>\n"
+custom_prompts:
+  steps:
+  - "Check existing prompts: AgentQMS/vlm/prompts/"
+  - Create experiment-specific prompt if needed
+  - Prompts can be markdown or jinja2 templates
+  - Reference in CLI with --mode or programmatically
+via_annotations: "Include manual annotations: --via-annotations path/to/annotations.json"
+usage_pattern:
+  baseline_assessment: --mode image_quality on source images
+  validation: --mode enhancement_validation on before/after comparisons
+  debugging: --mode preprocessing_diagnosis on failures
+  evidence_collection: Generate markdown reports for .metadata/assessments/
+output_formats:
+  markdown: YAML frontmatter + structured content (for EDS artifacts)
+  json: Raw structured data
+example_workflow:
+  assess_baseline: "uv run python -m AgentQMS.vlm.cli.analyze_image_defects \\\n  --image data/worst_performers/img_001.jpg \\\n  --mode image_quality \\\n  --output vlm_reports/baseline_img_001.md\n"
+  validate_enhancement: "uv run python -m AgentQMS.vlm.cli.analyze_image_defects \\\n  --image outputs/comparison_img_001.jpg \\\n  --mode enhancement_validation \\\n  --output vlm_reports/validation_img_001.md\n"
+  diagnose_failure: "uv run python -m AgentQMS.vlm.cli.analyze_image_defects \\\n  --image outputs/failed_img_005.jpg \\\n  --mode preprocessing_diagnosis \\\n  --output vlm_reports/diagnosis_img_005.md\n"
+reference: AgentQMS/standards/tier2-framework/specs/vlm-tools-reference.yaml

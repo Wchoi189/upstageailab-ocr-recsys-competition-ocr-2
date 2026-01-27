@@ -11,13 +11,14 @@ description: |
 scope: project
 
 metadata:
-  filename_pattern: "{date}_audit-{name}.md"
+  filename_pattern: "{date}_audit_{name}.md"
   directory: audits/
   frontmatter:
     ads_version: "1.0"
     type: audit
     category: compliance
     status: draft
+    version: "1.0"
     related_artifacts: []
     generated_artifacts: []
     tags: [audit]

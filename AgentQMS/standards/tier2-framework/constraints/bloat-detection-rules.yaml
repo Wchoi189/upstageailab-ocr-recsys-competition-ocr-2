@@ -1,0 +1,218 @@
+ads_version: '2.0'
+id: AG-001
+type: rule_set
+agent: all
+tier: 2
+priority: medium
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 180
+name: Bloat Detection Rules
+description: Automated criteria for identifying unused, low-value, or archival-candidate code
+version: '1.0'
+last_updated: '2026-01-25'
+auto_load: false
+source: __DEBUG__/2026-01-25_standards-update/bloat-detection-rules.md
+detection_criteria:
+  usage_based:
+    description: Code not actively used
+    thresholds:
+      no_imports_days: 90
+      no_commits_days: 180
+      marked_experimental_days: 180
+      test_coverage_min: 0.0
+      no_experiment_refs: true
+      no_production_refs: true
+      missing_docstring: true
+      marked_deprecated: true
+    detection_script:
+      path: AgentQMS/tools/bloat_detector.py
+      function: detect_unused_code
+      cmd: "uv run python AgentQMS/tools/bloat_detector.py \\\n  --threshold-days 90 \\\n  --output analysis/bloat-candidates.json\n"
+  duplication_based:
+    description: Similar code in multiple locations
+    thresholds:
+      similarity_threshold: 0.8
+      min_lines: 10
+      min_tokens: 50
+    scope:
+      check_functions: true
+      check_classes: true
+      check_modules: false
+    exclusions:
+    - '*/tests/*'
+    - '*/migrations/*'
+    - '*/__init__.py'
+    detection_tools:
+    - name: pylint
+      cmd: pylint ocr/ --disable=all --enable=duplicate-code
+      speed: fast
+      detail: basic
+    - name: ast-grep
+      cmd: adt analyze sg-search --similarity 0.8 --min-lines 10
+      speed: medium
+      detail: advanced
+    - name: pmd-cpd
+      cmd: pmd cpd --minimum-tokens 50 --files ocr/
+      speed: medium
+      detail: moderate
+  complexity_based:
+    description: Code that's too complex
+    thresholds:
+      function:
+        cyclomatic_complexity_max: 15
+        cognitive_complexity_max: 20
+        lines_max: 100
+        params_max: 5
+      class:
+        lines_max: 500
+        methods_max: 20
+        inheritance_depth_max: 3
+      file:
+        lines_max: 1000
+        classes_max: 5
+        import_depth_max: 5
+      module:
+        dependencies_max: 20
+        circular_dependencies: false
+    detection_tools:
+    - name: radon
+      cmd: radon cc ocr/ -a -nb --total-average
+      output_format: F 28:0 MyClass.method - C (16)
+    - name: wily
+      cmd: 'wily build ocr/\n\n  wily report ocr/core/lightning/base.py\n\n  '
+    - name: adt-complexity
+      cmd: "adt analyze complexity \\\n  --target ocr/ \\\n  --threshold 10 \\\n  --output analysis/complexity-report.json\n"
+  architectural_based:
+    description: Code violating architecture
+    violations:
+      domain_separation:
+        cross_domain_imports: true
+        core_importing_domain: true
+        domain_specific_in_core: true
+      abstraction:
+        god_classes: true
+        god_functions: true
+        deep_nesting_max: 5
+      anti_patterns:
+        model_creates_optimizer: true
+        silent_fallbacks: true
+        multiple_config_paths: true
+      deprecation:
+        uses_deprecated_api: true
+        legacy_imports: true
+    detection_tools:
+    - name: anti-patterns-checker
+      cmd: uv run python AgentQMS/tools/check_anti_patterns.py
+    - name: domain-separation-checker
+      cmd: adt analyze dependency-graph --target ocr/domains/ --check-cross-domain
+    - name: v5-compliance-checker
+      cmd: uv run python AgentQMS/tools/check_v5_compliance.py
+decision_tree:
+  step_1_production_check:
+    question: Is code used in production?
+    check:
+    - Imported by runners/
+    - Used in configs/
+    - Referenced in active experiments
+    actions:
+      false: Archive immediately
+      true: Proceed to step_2
+  step_2_coverage_check:
+    question: Has test coverage > 0%?
+    actions:
+      false: Mark for testing or archive (30-day grace period)
+      true: Proceed to step_3
+  step_3_location_check:
+    question: Is it in correct location?
+    check:
+    - Domain-specific code in domains/
+    - Shared code in core/
+    actions:
+      false: Move to correct location
+      true: Proceed to step_4
+  step_4_complexity_check:
+    question: Complexity acceptable?
+    check: All thresholds in complexity_based criteria
+    actions:
+      false: Flag for refactoring
+      true: Keep
+archival_guidelines:
+  archive_these:
+  - unused_over_90_days: true
+  - experimental_abandoned_180_days: true
+  - duplicate_implementations: Keep best one only
+  - violates_v5_architecture: true
+  - deprecated_api_no_usage: true
+  - test_code_for_archived_features: true
+  do_not_archive:
+  - core_infrastructure: true
+  - active_experiment_dependencies: true
+  - shared_utils_referenced_3plus: true
+  - recent_commits_under_90_days: true
+  - coverage_over_70_percent_active: true
+  archive_structure:
+    path_pattern: archive/YYYY-MM-DD_<component-name>/
+    required_files:
+    - ARCHIVE_README.md
+    - metadata.json
+    - <archived-code>/
+  archive_readme_template:
+    sections:
+    - archive_reason: Detection category
+    - decision_rationale: Metrics and reasoning
+    - archived_components: List of files/modules
+    - restoration_instructions: How to restore if needed
+    - related_audits: Links to relevant audits
+tooling:
+  bloat_detector:
+    path: AgentQMS/tools/bloat_detector.py
+    class: BloatDetector
+    methods:
+      scan_unused_code:
+        returns: list[BloatCandidate]
+        criteria: usage_based
+      scan_duplication:
+        returns: list[BloatCandidate]
+        criteria: duplication_based
+      scan_complexity:
+        returns: list[BloatCandidate]
+        criteria: complexity_based
+      scan_architectural:
+        returns: list[BloatCandidate]
+        criteria: architectural_based
+      generate_report:
+        output_format: JSON
+        schema:
+          scan_date: ISO8601
+          config: dict
+          summary:
+            total_candidates: int
+            by_severity: dict
+            by_action: dict
+          candidates:
+          - file: str
+            reasons: list[str]
+            severity: str
+            metrics: dict
+            action: str
+  severity_levels:
+    CRITICAL: Immediate action required
+    HIGH: Should fix within sprint
+    MEDIUM: Fix within quarter
+    LOW: Fix when convenient
+  recommended_actions:
+    ARCHIVE: Move to archive/
+    REFACTOR: Reduce complexity
+    MOVE: Relocate to correct domain
+    REVIEW: Manual review needed
+related:
+- id: anti-patterns
+  path: AgentQMS/standards/tier2-framework/anti-patterns.yaml
+  usage: Anti-pattern definitions
+- id: hydra-v5-patterns-reference
+  path: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
+  usage: V5 architecture patterns
+- id: file-placement-rules
+  path: AgentQMS/standards/tier1-sst/file-placement-rules.yaml
+  usage: File organization rules

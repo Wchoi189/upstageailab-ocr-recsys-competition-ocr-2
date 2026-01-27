@@ -1,0 +1,35 @@
+ads_version: '2.0'
+id: SC-011
+type: rule_set
+agent: all
+tier: 1
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 60
+dependencies:
+- SC-005
+keywords:
+- frontmatter
+- validation
+- required_fields
+- schema
+fuzzy_threshold: 0.8
+description: Validation rules and required fields for artifact frontmatter
+validation:
+  type_matches_filename: true
+  date_in_past_or_present: true
+  strict_mode:
+    required_fields:
+    - ads_version
+    - title
+    - date
+    - type
+    - category
+    - status
+    - version
+  lenient_mode:
+    required_fields:
+    - title
+    - date
+    - type

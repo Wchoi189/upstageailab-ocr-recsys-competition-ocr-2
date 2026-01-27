@@ -63,7 +63,7 @@ class AgentBridgeClient:
 
 def main():
     if len(sys.argv) < 2:
-        print("Usage: python bridge_client.py \"<command>\"")
+        print("Usage: uv run python bridge_client.py \"<command>\"")
         sys.exit(1)
 
     cmd = sys.argv[1]

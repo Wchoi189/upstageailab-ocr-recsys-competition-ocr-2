@@ -22,7 +22,7 @@ from typing import Any
 import yaml
 
 # Project root and paths
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
 STANDARDS_DIR = PROJECT_ROOT / "AgentQMS" / "standards"
 SCHEMA_PATH = PROJECT_ROOT / "AgentQMS" / ".agentqms" / "schemas" / "artifact_type_validation.yaml"
 REGISTRY_PATH = STANDARDS_DIR / "registry.yaml"
@@ -32,7 +32,6 @@ CACHE_PATH = STANDARDS_DIR / ".ads_cache.pickle"
 
 # Tier directories to scan
 TIER_DIRS = [
-    STANDARDS_DIR / "tier0-infrastructure",
     STANDARDS_DIR / "tier1-sst",
     STANDARDS_DIR / "tier2-framework",
     STANDARDS_DIR / "tier3-agents",

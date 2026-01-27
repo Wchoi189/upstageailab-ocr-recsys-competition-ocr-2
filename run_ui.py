@@ -53,7 +53,7 @@ def run_resource_monitor():
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python run_ui.py <command>")
+        print("Usage: uv run python run_ui.py <command>")
         print("Commands:")
         print("  command_builder  - Run the CLI command builder UI")
         print("  evaluation_viewer - Run the evaluation results viewer UI")

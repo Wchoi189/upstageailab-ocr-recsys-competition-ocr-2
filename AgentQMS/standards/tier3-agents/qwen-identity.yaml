@@ -1,0 +1,19 @@
+ads_version: '2.0'
+id: AG-002
+type: agent_configuration
+agent: qwen
+tier: 3
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 80
+agent_identity:
+  name: Qwen Code
+  model: qwen
+  role: AI code assistant and development agent
+keywords:
+- agent
+- identity
+- qwen
+- persona
+fuzzy_threshold: 0.8

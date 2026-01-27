@@ -1,0 +1,56 @@
+ads_version: '2.0'
+id: WF-040
+type: workflow_definition
+agent: all
+tier: 4
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 90
+keywords:
+- validation
+- compliance
+- workflow
+- runbook
+fuzzy_threshold: 0.8
+description: Execution runbook for validation and discovery commands
+workflows:
+  validation_commands:
+    validate:
+      command: cd AgentQMS/bin && make validate
+      purpose: Validate all artifacts (naming, frontmatter, structure)
+      frequency: After EVERY artifact operation
+      failure: BLOCK - Fix before proceeding
+    compliance:
+      command: cd AgentQMS/bin && make compliance
+      purpose: Check AgentQMS framework compliance
+      frequency: Before commits
+      failure: BLOCK - Address violations
+    boundary:
+      command: cd AgentQMS/bin && make boundary
+      purpose: Verify framework boundaries
+      frequency: Weekly or after major changes
+      failure: WARN - Review boundaries
+  discovery_commands:
+    help:
+      command: cd AgentQMS/bin && make help
+      purpose: Show available make targets
+    discover:
+      command: cd AgentQMS/bin && make discover
+      purpose: List all AgentQMS tools
+    status:
+      command: cd AgentQMS/bin && make status
+      purpose: Check framework status
+  workflow_sequence:
+  - Create artifact via make create-*
+  - Automatic validation runs
+  - Review validation output
+  - Fix any violations
+  - Re-validate until pass
+  - Proceed to next operation
+  failure_handling:
+  - STOP all operations
+  - Read validation error messages
+  - Fix identified issues
+  - Re-run validation
+  - Do NOT proceed until pass

@@ -40,7 +40,7 @@ AGENTQMS_ROOT = PROJECT_ROOT / "AgentQMS"
 
 # Tool paths (Discovery vs Enforcement)
 REGISTRY_RESOLVER = AGENTQMS_ROOT / "tools" / "resolve_standards.py"
-REGISTRY_SYNC = AGENTQMS_ROOT / "tools" / "sync_registry.py"
+REGISTRY_SYNC = AGENTQMS_ROOT / "tools" / "core" / "sync_registry.py"
 PLUGIN_CLI_MODULE = "AgentQMS.tools.core.plugins"
 
 

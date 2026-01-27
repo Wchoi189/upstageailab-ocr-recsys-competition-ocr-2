@@ -25,23 +25,23 @@ help:
 	@echo "  make test"
 	@echo ""
 	@echo "Note: For client usage, set environment variable:"
-	@echo "  set RABBITMQ_HOST=localhost && python bridge_client.py \"docker ps\""
+	@echo "  set RABBITMQ_HOST=localhost && uv run python bridge_client.py \"docker ps\""
 
 install:
 	.venv\Scripts\activate && pip install -r requirements.txt
 
 run:
-	.venv\Scripts\activate && python bridge_server.py
+	.venv\Scripts\activate && uv run python bridge_server.py
 
 run-bg:
 	@echo "Starting bridge server in background..."
-	cmd /c ".venv\Scripts\activate && start /b python bridge_server.py"
+	cmd /c ".venv\Scripts\activate && start /b uv run python bridge_server.py"
 	@echo "Bridge server started in background."
 
 test:
 	@echo "Testing bridge connection..."
 	@echo "To test the bridge, run from another terminal:"
-	@echo "  set RABBITMQ_HOST=localhost && .venv\Scripts\activate && python bridge_client.py \"docker ps\""
+	@echo "  set RABBITMQ_HOST=localhost && .venv\Scripts\activate && uv run python bridge_client.py \"docker ps\""
 	@echo "Or use the test_env.bat script that was created."
 
 clean:
@@ -58,7 +58,7 @@ create-test-script:
 	@echo @echo off > test_env.bat
 	@echo call .venv\Scripts\activate.bat >> test_env.bat
 	@echo set RABBITMQ_HOST=localhost >> test_env.bat
-	@echo python bridge_client.py "docker ps" >> test_env.bat
+	@echo uv run python bridge_client.py "docker ps" >> test_env.bat
 	@echo echo Test completed. >> test_env.bat
 	@echo pause >> test_env.bat
 	@echo Created test_env.bat for easy client testing

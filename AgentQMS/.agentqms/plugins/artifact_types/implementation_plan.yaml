@@ -18,6 +18,7 @@ metadata:
     type: implementation_plan
     category: development
     status: active
+    version: "1.0"
     tags: [implementation, plan, development]
 
 validation:

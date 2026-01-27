@@ -31,7 +31,7 @@ This bridge allows the AI Agent (running in a Linux Docker container) to execute
 
 2.  Run the server:
     ```powershell
-    python bridge_server.py
+    uv run python bridge_server.py
     ```
     *   It will print: `[*] Waiting for commands...`
 
@@ -47,7 +47,7 @@ The agent can now use `bridge_client.py` to send commands.
 
 ```bash
 # Example
-python bridge_client.py "docker ps"
+uv run python bridge_client.py "docker ps"
 ```
 
 ## Security Note
@@ -93,5 +93,5 @@ Or manually:
 # Activate virtual environment and set environment variable
 call .venv\Scripts\activate.bat
 set RABBITMQ_HOST=localhost
-python bridge_client.py "docker ps"
+uv run python bridge_client.py "docker ps"
 ```

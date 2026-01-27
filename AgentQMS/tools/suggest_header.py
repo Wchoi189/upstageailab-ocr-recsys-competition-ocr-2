@@ -16,7 +16,7 @@ import re
 import sys
 from collections import Counter
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import yaml
 
@@ -72,7 +72,7 @@ def infer_tier_from_path(file_path: Path) -> int:
         return 2
 
 
-def generate_id(file_path: Path, tier: int, existing_ids: Set[str]) -> str:
+def generate_id(file_path: Path, tier: int, existing_ids: set[str]) -> str:
     """
     Generate unique ID for standard.
 
@@ -105,7 +105,7 @@ def generate_id(file_path: Path, tier: int, existing_ids: Set[str]) -> str:
     raise MigrationError(f"Could not generate unique ID for {file_path}")
 
 
-def extract_keywords(data: Dict[str, Any], max_keywords: int = 10) -> List[str]:
+def extract_keywords(data: dict[str, Any], max_keywords: int = 10) -> list[str]:
     """
     Extract keywords from YAML content using heuristics.
 
@@ -141,10 +141,10 @@ def extract_keywords(data: Dict[str, Any], max_keywords: int = 10) -> List[str]:
 
 
 def suggest_dependencies(
-    data: Dict[str, Any],
+    data: dict[str, Any],
     tier: int,
-    existing_standards: Dict[str, Dict[str, Any]]
-) -> List[str]:
+    existing_standards: dict[str, dict[str, Any]]
+) -> list[str]:
     """
     Suggest dependencies based on content analysis.
 
@@ -180,10 +180,10 @@ def suggest_dependencies(
 
 def migrate_standard(
     file_path: Path,
-    existing_ids: Set[str],
-    existing_standards: Dict[str, Dict[str, Any]],
+    existing_ids: set[str],
+    existing_standards: dict[str, dict[str, Any]],
     force: bool = False
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Migrate a v1.0 standard to v2.0 format.
 
@@ -197,7 +197,7 @@ def migrate_standard(
         Migrated header dictionary
     """
     # Load existing file
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     if not isinstance(data, dict):
@@ -247,7 +247,7 @@ def migrate_standard(
 
 def apply_migration(
     file_path: Path,
-    header: Dict[str, Any],
+    header: dict[str, Any],
     output_dir: Path
 ) -> Path:
     """
@@ -262,7 +262,7 @@ def apply_migration(
         Path to migrated file
     """
     # Load original content
-    with open(file_path, "r", encoding="utf-8") as f:
+    with open(file_path, encoding="utf-8") as f:
         data = yaml.safe_load(f)
 
     # Merge header into data
@@ -289,7 +289,7 @@ def apply_migration(
     return output_path
 
 
-def display_header(header: Dict[str, Any], file_path: Path) -> None:
+def display_header(header: dict[str, Any], file_path: Path) -> None:
     """Display suggested header in a formatted way."""
     print(f"\n{'='*60}")
     print(f"File: {file_path.name}")
@@ -326,8 +326,8 @@ Examples:
 
     try:
         # Load existing standards to avoid ID collisions
-        existing_ids: Set[str] = set()
-        existing_standards: Dict[str, Dict[str, Any]] = {}
+        existing_ids: set[str] = set()
+        existing_standards: dict[str, dict[str, Any]] = {}
 
         # TODO: Load from registry if available
         # For now, scan tier directories
@@ -337,7 +337,7 @@ Examples:
             if tier_dir.exists():
                 for yaml_file in tier_dir.rglob("*.yaml"):
                     try:
-                        with open(yaml_file, "r", encoding="utf-8") as f:
+                        with open(yaml_file, encoding="utf-8") as f:
                             data = yaml.safe_load(f)
                             if isinstance(data, dict) and "id" in data:
                                 std_id = data["id"]

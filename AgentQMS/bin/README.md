@@ -1,124 +1,26 @@
-# AgentQMS Framework
+# AgentQMS (AI-only)
 
-Last Updated: 2026-01-10 (KST)
+Concise entrypoint for AgentQMS CLI usage and discovery.
 
-AgentQMS is a reusable Quality Management Framework that standardizes
-artifact creation, documentation workflows, and automation for collaborative
-AI coding. The framework is **containerized** so it can travel between projects
-as a pair of directories: `.agentqms/` + `AgentQMS/`.
+## Read Order
+1) AgentQMS/AGENTS.yaml
+2) AgentQMS/standards/registry.yaml
+3) AgentQMS/standards/tier2-framework/tool-catalog.yaml
 
----
+## Rules
+- AI-facing only. No user docs.
+- No manual artifacts. Follow workflow requirements in tier1-sst/constraints/workflow-requirements.yaml.
+- Use AgentQMS/bin/aqms for discovery + plugin validation.
 
-## 🤖 For AI Agents: Getting Started
+## Commands (from AgentQMS/bin)
+- ./aqms registry resolve --task <task>
+- ./aqms registry resolve --path <path>
+- ./aqms registry sync
+- ./aqms plugin list
+- ./aqms plugin validate
 
-### Auto-Discovery (GitHub Copilot Spaces)
-
-**AgentQMS is automatically discoverable in GitHub Copilot Spaces!** No manual instructions needed.
-
-The framework provides auto-discovery files that Copilot automatically reads:
-- **`.github/copilot-instructions.md`** – Primary entry point directing Copilot to framework
-- **`.copilot/context/`** – Auto-scanned context files:
-  - `agentqms-overview.md` – Framework overview
-  - `tool-registry.json` – Machine-readable tool registry
-  - `tool-catalog.md` – Human-readable tool catalog
-  - `workflow-triggers.yaml` – Task → workflow mapping
-  - `context-bundles-index.md` – Available context bundles
-
-**Features**:
-- ✅ **Auto-discovery**: Tools and workflows automatically registered
-- ✅ **Context-aware suggestions**: Detects task type and suggests relevant tools/context
-- ✅ **Workflow automation**: Auto-executes validation after artifact creation
-- ✅ **Proactive guidance**: Suggests next steps based on current task
-
-### Cursor AI Instructions
-
-Cursor doesn't automatically read `.copilot/context/`, so a dedicated ultra-short instruction file is provided for Cursor agents:
-
-- File: `.cursor/instructions.md`
-- Usage: pin or paste into Cursor's Custom Instructions so every session knows to follow the AgentQMS SST, use automation, run validation, and load context via `make context`.
-
-This keeps Cursor aligned with the same rules Copilot uses while staying within Cursor's tighter instruction window.
-
-### First Contact: What to Read
-
-When an AI agent encounters a project using AgentQMS, these are the **entry points** in priority order:
-
-| Priority | File                                                   | Purpose                                                 |
-| -------- | ------------------------------------------------------ | ------------------------------------------------------- |
-| 1️⃣        | `AgentQMS/AGENTS.yaml`                                 | **Single Source of Truth** – Agent entrypoint and index |
-| 2️⃣        | `AgentQMS/.agentqms/state/plugins.yaml`                | Component map, capabilities, tool locations             |
-| 3️⃣        | `AgentQMS/standards/tier2-framework/tool-catalog.yaml` | Complete tool catalog                                   |
-| 4️⃣        | This README                                            | Framework overview and installation                     |
-
-### Quick Onboarding Prompt
-
-Copy this prompt to quickly orient an AI agent to this framework:
-
-```
-You are working in a project that uses AgentQMS for quality management.
-
-FIRST: Read these files to understand the framework:
-1. AgentQMS/AGENTS.yaml (Main Index - REQUIRED)
-2. AgentQMS/.agentqms/state/plugins.yaml (Component Map)
-
-KEY RULES:
-- Use automation tools; never create artifacts manually
-- Run `cd AgentQMS/bin && make help` to see available commands
-- Artifacts go in docs/artifacts/ with proper naming: YYYY-MM-DD_HHMM_[type]_name.md
-- Validate changes: `make validate` and `make compliance`
-
-When creating implementation plans, assessments, audits, or bug reports, use:
-  cd AgentQMS/bin && make create-plan NAME=my-plan TITLE="My Title"
-```
-
-### Encouraging Proactive Use
-
-To make the AI agent **proactively** use AgentQMS, include these instructions in your system prompt or project rules:
-
-```
-QUALITY MANAGEMENT RULES:
-1. Before starting any significant task, check if an implementation plan exists
-2. For multi-step work, create an implementation plan first:
-   cd AgentQMS/bin && make create-plan NAME=feature-name TITLE="Feature Title"
-3. After completing work, run validation:
-   cd AgentQMS/bin && make validate && make compliance
-4. Document bugs using the bug report workflow, not ad-hoc notes
-5. When stuck, run `make discover` to see available tools
-```
-
-### Agent Interface Commands
-
-All agent commands are run from `AgentQMS/bin/`:
-
-```bash
-cd AgentQMS/bin
-
-# Discovery & Status
-make help              # Show all available commands
-make discover          # List available tools
-make status            # Framework status check
-
-# Artifact Creation
-make create-plan NAME=my-plan TITLE="My Plan"
-make create-assessment NAME=my-assessment TITLE="My Assessment"
-make create-audit NAME=my-audit TITLE="My Audit"
-make create-bug-report NAME=my-bug TITLE="Bug Description"
-
-# Validation
-make validate          # Validate all artifacts
-make compliance        # Full compliance check
-make boundary          # Boundary validation
-
-# Context Loading (for focused work)
-make context TASK="task description"  # Generate context bundle for specific task
-make context-development    # Load development context bundle
-make context-docs           # Load documentation context bundle
-make context-debug          # Load debugging context bundle
-make context-plan           # Load planning context bundle
-
-# Plugin Management
-# Note: Plugin commands use Python module syntax (see Plugin System section below)
-
+## Notes
+- Artifact creation via aqms is not yet implemented; follow workflow requirements and project compass processes.
 # Registry Generation (for auto-discovery)
 make generate-registry  # Regenerate tool registries and context files
 

@@ -16,7 +16,7 @@ import pickle
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import Any, Dict, List, Set, Tuple
+from typing import Any
 
 import yaml
 
@@ -116,12 +116,12 @@ TIER2_DOMAINS = {
 }
 
 
-def load_registry() -> Dict[str, Any]:
+def load_registry() -> dict[str, Any]:
     """Load the registry.yaml file and merge with cache for full metadata."""
     if not REGISTRY_PATH.exists():
         raise FileNotFoundError(f"Registry not found: {REGISTRY_PATH}")
 
-    with open(REGISTRY_PATH, "r", encoding="utf-8") as f:
+    with open(REGISTRY_PATH, encoding="utf-8") as f:
         registry = yaml.safe_load(f)
 
     # Try to load cache for full metadata (including priority)
@@ -150,7 +150,7 @@ def find_domain_for_standard(std_id: str) -> str:
 
 
 def generate_mechanized_graph(
-    standards: Dict[str, Dict[str, Any]],
+    standards: dict[str, dict[str, Any]],
     include_legend: bool = True,
     include_domains: bool = True,
 ) -> str:
@@ -199,10 +199,10 @@ def generate_mechanized_graph(
     if 1 in tier_groups:
         lines.append('  subgraph cluster_tier1 {')
         lines.append(f'    label="{tier_names[1]}";')
-        lines.append(f'    style=filled;')
+        lines.append('    style=filled;')
         lines.append(f'    color="{tier_colors[1]}";')
-        lines.append(f'    fontsize=14;')
-        lines.append(f'    fontname="Arial Bold";')
+        lines.append('    fontsize=14;')
+        lines.append('    fontname="Arial Bold";')
         lines.append("")
 
         for std_id, header in sorted(tier_groups[1]):
@@ -232,10 +232,10 @@ def generate_mechanized_graph(
     if 2 in tier_groups and include_domains:
         lines.append('  subgraph cluster_tier2 {')
         lines.append(f'    label="{tier_names[2]}";')
-        lines.append(f'    style=filled;')
-        lines.append(f'    color="#CCCCCC";')  # Gray border for main tier
-        lines.append(f'    fontsize=14;')
-        lines.append(f'    fontname="Arial Bold";')
+        lines.append('    style=filled;')
+        lines.append('    color="#CCCCCC";')  # Gray border for main tier
+        lines.append('    fontsize=14;')
+        lines.append('    fontname="Arial Bold";')
         lines.append("")
 
         # Group standards by domain
@@ -255,9 +255,9 @@ def generate_mechanized_graph(
 
             lines.append(f'    subgraph cluster_{domain_id} {{')
             lines.append(f'      label="{domain_label}";')
-            lines.append(f'      style=filled;')
+            lines.append('      style=filled;')
             lines.append(f'      color="{domain_color}";')
-            lines.append(f'      fontsize=11;')
+            lines.append('      fontsize=11;')
             lines.append("")
 
             for std_id, header in sorted(domain_standards[domain_id]):
@@ -290,10 +290,10 @@ def generate_mechanized_graph(
         # Fallback: No domain grouping
         lines.append('  subgraph cluster_tier2 {')
         lines.append(f'    label="{tier_names[2]}";')
-        lines.append(f'    style=filled;')
+        lines.append('    style=filled;')
         lines.append(f'    color="{tier_colors[2]}";')
-        lines.append(f'    fontsize=14;')
-        lines.append(f'    fontname="Arial Bold";')
+        lines.append('    fontsize=14;')
+        lines.append('    fontname="Arial Bold";')
         lines.append("")
 
         for std_id, header in sorted(tier_groups[2]):
@@ -322,10 +322,10 @@ def generate_mechanized_graph(
     if 3 in tier_groups:
         lines.append('  subgraph cluster_tier3 {')
         lines.append(f'    label="{tier_names[3]}";')
-        lines.append(f'    style=filled;')
+        lines.append('    style=filled;')
         lines.append(f'    color="{tier_colors[3]}";')
-        lines.append(f'    fontsize=14;')
-        lines.append(f'    fontname="Arial Bold";')
+        lines.append('    fontsize=14;')
+        lines.append('    fontname="Arial Bold";')
         lines.append("")
 
         for std_id, header in sorted(tier_groups[3]):
@@ -354,10 +354,10 @@ def generate_mechanized_graph(
     if 4 in tier_groups:
         lines.append('  subgraph cluster_tier4 {')
         lines.append(f'    label="{tier_names[4]}";')
-        lines.append(f'    style=filled;')
+        lines.append('    style=filled;')
         lines.append(f'    color="{tier_colors[4]}";')
-        lines.append(f'    fontsize=14;')
-        lines.append(f'    fontname="Arial Bold";')
+        lines.append('    fontsize=14;')
+        lines.append('    fontname="Arial Bold";')
         lines.append("")
 
         for std_id, header in sorted(tier_groups[4]):
@@ -492,7 +492,7 @@ def main():
         governance_edges = sum(1 for line in dot_content.split('\n') if 'style=dashed' in line)
         dependency_edges = sum(1 for line in dot_content.split('\n') if '-> ' in line and 'style=dashed' not in line and 'style=invis' not in line)
 
-        print(f"   ✓ Generated graph:")
+        print("   ✓ Generated graph:")
         print(f"     - Governance edges: {governance_edges}")
         print(f"     - Dependency edges: {dependency_edges}")
         print(f"     - Total edges: {governance_edges + dependency_edges}")
@@ -506,7 +506,7 @@ def main():
             with open(args.output, "w", encoding="utf-8") as f:
                 f.write(dot_content)
             print(f"\n💾 Saved to: {args.output}")
-            print(f"\n💡 Render with:")
+            print("\n💡 Render with:")
             print(f"   dot -Tpng {args.output} -o {args.output.with_suffix('.png')}")
             print(f"   dot -Tsvg {args.output} -o {args.output.with_suffix('.svg')}")
 

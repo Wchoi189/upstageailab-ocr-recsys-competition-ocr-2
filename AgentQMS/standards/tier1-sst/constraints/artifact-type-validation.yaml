@@ -1,0 +1,29 @@
+ads_version: '2.0'
+id: SC-012
+type: rule_set
+agent: all
+tier: 1
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 60
+dependencies:
+- SC-002
+- SC-001
+keywords:
+- artifact
+- validation
+- enforcement
+- types
+fuzzy_threshold: 0.85
+description: Validation and enforcement rules for artifact type plugins
+validation:
+  command: cd AgentQMS/bin && make validate
+  validator_location: AgentQMS/tools/core/plugins/validation.py
+  rules_schema: .agentqms/schemas/artifact_type_validation.yaml
+  enforcement:
+    - Plugin names must match canonical types
+    - Prohibited types rejected at load time
+    - Required metadata fields validated
+    - Frontmatter schema enforced
+    - Template structure validated
