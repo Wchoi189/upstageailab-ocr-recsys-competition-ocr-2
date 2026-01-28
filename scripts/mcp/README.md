@@ -49,3 +49,36 @@ This resource mirrors the AgentQMS MCP handler and ensures consistent discovery 
 1. Add the server definition to `scripts/mcp/shared_config.json`.
 2. Run `uv run python scripts/mcp/sync_configs.py`.
 3. Clear your agent's cache or restart the agent to see the new server.
+
+---
+
+## Known Issues and Dependencies
+
+### AgentQMS Import Dependencies
+
+**Status:** Expected limitation (separate package)
+
+The `unified_server.py` imports from `AgentQMS.tools.core.context_bundle`:
+```python
+from AgentQMS.tools.core.context_bundle import (
+    auto_suggest_context,
+    list_available_bundles,
+    get_context_bundle
+)
+```
+
+**Impact:**
+- These imports will fail if AgentQMS is not installed as a separate package
+- The unified server gracefully handles missing AgentQMS features
+- Core MCP functionality works without AgentQMS
+
+**Resolution:**
+- ✅ Expected behavior - AgentQMS is a separate package/module
+- ✅ Not a blocker for core OCR functionality
+- ✅ Import errors are documented and expected
+
+**If AgentQMS features are needed:**
+1. Ensure AgentQMS is installed and importable
+2. Or modify unified_server.py to make AgentQMS features optional with try/except
+
+**Last Updated:** 2026-01-29 (Audit: import-script-audit-2026-01-29)

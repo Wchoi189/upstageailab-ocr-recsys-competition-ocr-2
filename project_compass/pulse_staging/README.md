@@ -1,8 +1,8 @@
 # Pulse Staging Index - Audit Resolution Session
 
-**Session:** audit-resolution-2026-01-29
-**Last Updated:** 2026-01-29 03:50
-**Status:** ✅ Complete - Core Functionality Restored
+**Session:** audit-resolution-2026-01-29 (Phase 1) → import-script-audit-2026-01-29 (Phase 2)
+**Last Updated:** 2026-01-29 (continuing)
+**Status:** ✅ Phase 1 Complete - Core Functionality Restored | 📋 Phase 2 Planning - Scripts Cleanup
 
 ---
 
@@ -58,6 +58,7 @@ Located in: `artifacts/`
 | **[ROOT_CAUSE_ANALYSIS.md](artifacts/ROOT_CAUSE_ANALYSIS.md)** | How we found the real problem | Understanding the diagnosis |
 | **[audit_resolution_plan.md](artifacts/audit_resolution_plan.md)** | Implementation strategy | Reference for methodology |
 | **[TOOLS_INDEX.md](artifacts/TOOLS_INDEX.md)** | Audit tools documentation | Using analysis scripts |
+| **[SCRIPTS_CLEANUP_PLAN.md](artifacts/SCRIPTS_CLEANUP_PLAN.md)** | Scripts directory cleanup plan | Phase 2 planning (NEW) |
 
 ### Archived Documents (Historical Reference) 📦
 
@@ -73,6 +74,7 @@ Located in: `archive/` and `artifacts/archive/`
 | `NEW_SESSION_HANDOVER.md` | `archive/` | ⚠️ Planning phase, superseded by FINAL_SESSION_HANDOVER.md |
 | `SESSION_COMPLETE.md` | `archive/` | ⚠️ Interim summary, superseded by final handover |
 | `FILE_ORGANIZATION.md` | `archive/` | ⚠️ File cleanup notes, superseded by this README |
+| `phase2_audit_analysis.md` | `artifacts/archive/` | ⚠️ Phase 2 planning (historical), superseded by SCRIPTS_CLEANUP_PLAN.md |
 
 ### Data Files (For Analysis) 📈
 
