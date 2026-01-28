@@ -204,7 +204,7 @@ class StandardsInterceptor:
             if missing:
                 raise PolicyViolation(
                     message=f"Standards Violation: Missing keys {missing}",
-                    feedback_to_ai=f"ADS VIOLATION: Missing required ADS v1.0 frontmatter keys: {missing}. See AgentQMS/standards/schemas/ads-v1.0-spec.yaml"
+                    feedback_to_ai=f"ADS VIOLATION: Missing required ADS v2.0 frontmatter keys: {missing}. See AgentQMS/standards/schemas/ads-v2.0-spec.yaml"
                 )
 
             if str(data.get("ads_version")) != "1.0":

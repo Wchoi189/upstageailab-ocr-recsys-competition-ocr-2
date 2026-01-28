@@ -71,6 +71,46 @@
                 }
             }
         },
+        "auto_suggest_scenarios": {
+            "type": "object",
+            "description": "Optional AI guidance scenarios for bundle usage",
+            "additionalProperties": true
+        },
+        "ast_vs_basic_tools": {
+            "type": "object",
+            "description": "Optional tool comparison guidance",
+            "additionalProperties": true
+        },
+        "tools": {
+            "type": "object",
+            "description": "Optional tool catalog for the bundle",
+            "additionalProperties": true
+        },
+        "when_not_to_use": {
+            "type": "object",
+            "description": "Optional anti-patterns guidance",
+            "additionalProperties": true
+        },
+        "decision_tree": {
+            "type": "object",
+            "description": "Optional decision tree guidance",
+            "additionalProperties": true
+        },
+        "integration": {
+            "type": "object",
+            "description": "Optional integration notes",
+            "additionalProperties": true
+        },
+        "success_indicators": {
+            "type": "object",
+            "description": "Optional success metrics for agents",
+            "additionalProperties": true
+        },
+        "notes": {
+            "type": "object",
+            "description": "Optional bundle notes and provenance",
+            "additionalProperties": true
+        },
         "tiers": {
             "type": "object",
             "description": "Tiered file organization (tier1 = most critical)",
@@ -98,6 +138,11 @@
                             "description": "Maximum files in this tier (for context budget)",
                             "default": 5
                         },
+                        "auto_load": {
+                            "type": "boolean",
+                            "description": "Whether this tier auto-loads by default",
+                            "default": true
+                        },
                         "files": {
                             "type": "array",
                             "description": "Files included in this tier",
@@ -121,6 +166,12 @@
                                                 "enum": ["critical", "high", "medium", "low"],
                                                 "description": "Loading priority within the tier",
                                                 "default": "medium"
+                                            },
+                                            "mode": {
+                                                "type": "string",
+                                                "enum": ["full", "structure", "reference"],
+                                                "description": "Content loading mode",
+                                                "default": "full"
                                             },
                                             "description": {
                                                 "type": "string",

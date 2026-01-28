@@ -427,7 +427,7 @@ migration_path:
 ## References
 
 related_standards:
-  - "ADS v1.0 (.ai-instructions/schema/ads-v1.0-spec.yaml)"
+  - "ADS v2.0 (AgentQMS/standards/schemas/ads-v2.0-spec.yaml)"
   - "AgentQMS Tier 1 SST (naming, placement, workflow rules)"
 
 enforcement_tools:

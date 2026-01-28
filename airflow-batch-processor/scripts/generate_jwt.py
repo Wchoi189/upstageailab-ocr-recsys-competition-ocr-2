@@ -23,8 +23,8 @@ def generate_jwt_token(username: str, expiration_hours: int = 24) -> str:
     """
     payload = {
         "sub": username,
-        "iat": datetime.datetime.utcnow(),
-        "exp": datetime.datetime.utcnow() + datetime.timedelta(hours=expiration_hours),
+        "iat": datetime.datetime.now(datetime.timezone.utc),
+        "exp": datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(hours=expiration_hours),
         "username": username,
     }
 

@@ -1,0 +1,49 @@
+ads_version: '2.0'
+id: FW-043
+type: reference
+agent: all
+tier: 2
+priority: high
+compliance_status: pass
+memory_footprint: 35
+dependencies: []
+keywords:
+  - context
+  - bundle
+  - schema
+  - validation
+  - suggestion
+  - registry
+fuzzy_threshold: 0.85
+description: Ultra-concise diagnostics for “only one bundle suggested”.
+
+scope:
+  purpose: Diagnose context bundle suggestion collapse to single fallback.
+  applies_to:
+    - plugin registry
+    - bundle schema validation
+    - suggestion engine
+
+signals:
+  - plugins snapshot shows context_bundles empty
+  - validation errors report unexpected fields (mode, notes, etc.)
+  - suggester returns fallback bundle only
+
+root_cause:
+  - bundle YAML rejected by schema
+  - registry loads zero context bundles
+
+fix_minimal:
+  - allow file entry mode: full|structure|reference
+  - allow guidance metadata blocks (notes/tools/etc.)
+  - rerun registry sync + plugin snapshot
+
+verify:
+  - context_bundles populated in plugins snapshot
+  - suggester returns multiple ranked bundles
+
+key_files:
+  - AgentQMS/.agentqms/state/plugins.yaml
+  - AgentQMS/standards/schemas/plugin_context_bundle.json
+  - AgentQMS/tools/core/context/suggest_context.py
+  - AgentQMS/tools/core/context/context_bundle.py

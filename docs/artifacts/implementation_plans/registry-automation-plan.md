@@ -65,7 +65,7 @@ cp AgentQMS/standards/registry.yaml AgentQMS/standards/_archive/registry.yaml.ba
 **Goal**: Create the enhanced ADS v2.0 header schema and intelligent registry compiler infrastructure
 
 #### Task 1.1: Create ADS Header JSON Schema
-**Effort**: 4 hours  
+**Effort**: 4 hours
 **Files to Create**:
 - `AgentQMS/standards/schemas/ads-header.json`
 
@@ -188,7 +188,7 @@ cp AgentQMS/standards/registry.yaml AgentQMS/standards/_archive/registry.yaml.ba
 ---
 
 #### Task 1.2: Build Intelligent Registry Compiler
-**Effort**: 18 hours (expanded for enhanced features)  
+**Effort**: 18 hours (expanded for enhanced features)
 **Files to Create**:
 - `AgentQMS/tools/sync_registry.py`
 
@@ -216,7 +216,7 @@ from datetime import datetime
 
 class RegistryCompiler:
     """Compiles registry.yaml from ADS headers in standard files"""
-    
+
     def __init__(self, root_dir: Path = Path("AgentQMS/standards"), strict_mode: bool = True):
         self.root = root_dir
         self.registry_path = self.root / "registry.yaml"
@@ -227,72 +227,72 @@ class RegistryCompiler:
         self.errors = []
         self.warnings = []
         self.standards_map: Dict[str, Dict[str, Any]] = {}  # id -> standard data
-        
+
     def _load_schema(self) -> Dict[str, Any]:
         """Load and validate ADS header schema"""
         with open(self.schema_path) as f:
             return yaml.safe_load(f)
-    
+
     def _extract_ads_header(self, file_path: Path) -> Dict[str, Any]:
         """\n        Extract ADS header with strict validation\n        In strict mode, missing headers cause compilation failure\n        """
         try:
             with open(file_path, 'r') as f:
                 content = f.read()
-                
+
             # Parse first YAML document (frontmatter)
             docs = list(yaml.safe_load_all(content))
             if not docs:
                 if self.strict_mode:
                     raise ValueError("No YAML documents found")
                 return None
-                
+
             header = docs[0]
-            
+
             # Check if it's an ADS header (has required fields)
             if not isinstance(header, dict) or 'ads_version' not in header:
                 if self.strict_mode:
                     raise ValueError("Missing or invalid ADS header - all standards must have v2.0 headers")
                 return None
-                
+
             return header
-            
+
         except Exception as e:
             error_msg = f"[STRICT:FAIL] {file_path}: {str(e)}"
             self.errors.append(error_msg)
             if self.strict_mode:
                 raise SystemExit(error_msg)
             return None
-    
+
     def _validate_header(self, header: Dict[str, Any], file_path: Path) -> bool:
         """Validate ADS header against schema"""
         try:
             jsonschema.validate(instance=header, schema=self.schema)
-            
+
             # Additional semantic validation
             tier = header.get('tier')
             tier_dir = f"tier{tier}-" if tier else None
-            
+
             if tier_dir and tier_dir not in str(file_path):
                 self.warnings.append(
                     f"{file_path}: Tier {tier} header in non-tier{tier} directory"
                 )
-            
+
             return True
-            
+
         except jsonschema.exceptions.ValidationError as e:
             self.errors.append(f"{file_path}: {e.message}")
             return False
-    
+
     def _build_task_mappings(self, headers: List[Dict[str, Any]]) -> Dict[str, Any]:
         """Build task_mappings from collected headers"""
         mappings = {}
-        
+
         for header_data in headers:
             header = header_data['header']
             file_path = header_data['path']
-            
+
             triggers = header.get('triggers', {})
-            
+
             for task_id, task_config in triggers.items():
                 if task_id not in mappings:
                     mappings[task_id] = {
@@ -304,11 +304,11 @@ class RegistryCompiler:
                             'path_patterns': []
                         }
                     }
-                
+
                 # Accumulate standards
                 if str(file_path) not in mappings[task_id]['standards']:
                     mappings[task_id]['standards'].append(str(file_path))
-                
+
                 # Merge triggers
                 if 'keywords' in task_config:
                     mappings[task_id]['triggers']['keywords'].extend(
@@ -318,7 +318,7 @@ class RegistryCompiler:
                     mappings[task_id]['triggers']['path_patterns'].extend(
                         task_config['path_patterns']
                     )
-        
+
         # Deduplicate triggers
         for task_id in mappings:
             mappings[task_id]['triggers']['keywords'] = sorted(
@@ -327,41 +327,41 @@ class RegistryCompiler:
             mappings[task_id]['triggers']['path_patterns'] = sorted(
                 set(mappings[task_id]['triggers']['path_patterns'])
             )
-        
+
         return mappings
-    
+
     def compile(self, dry_run: bool = False) -> bool:
         """
         Compile registry.yaml from all ADS headers
-        
+
         Args:
             dry_run: If True, validate but don't write registry
-            
+
         Returns:
             True if compilation successful
         """
         print("🔍 Scanning for ADS headers...")
-        
+
         valid_headers = []
         scanned = 0
         skipped = 0
-        
+
         # Scan all YAML files
         for yaml_file in self.root.rglob("*.yaml"):
             # Skip registry itself and templates
-            if (yaml_file.name == "registry.yaml" or 
+            if (yaml_file.name == "registry.yaml" or
                 "schemas/" in str(yaml_file) or
                 "templates/" in str(yaml_file)):
                 continue
-            
+
             scanned += 1
-            
+
             # Extract header
             header = self._extract_ads_header(yaml_file)
             if not header:
                 skipped += 1
                 continue
-            
+
             # Validate header
             if self._validate_header(header, yaml_file):
                 std_id = header.get('id')
@@ -373,22 +373,22 @@ class RegistryCompiler:
                     'header': header,
                     'path': yaml_file
                 })
-        
+
         print(f"✅ Scanned {scanned} files")
         print(f"✅ Found {len(valid_headers)} valid ADS headers")
         print(f"⚠️  Skipped {skipped} files (no ADS header)")
-        
+
         if self.errors:
             print(f"\n❌ {len(self.errors)} validation errors:")
             for error in self.errors:
                 print(f"   {error}")
             return False
-        
+
         if self.warnings:
             print(f"\n⚠️  {len(self.warnings)} warnings:")
             for warning in self.warnings:
                 print(f"   {warning}")
-        
+
         # Detect circular dependencies
         print("\n🔍 Checking for circular dependencies...")
         cycles = self._detect_cycles()
@@ -398,10 +398,10 @@ class RegistryCompiler:
                 print(f"   {cycle}")
             raise SystemExit("[ADS:Sync] Compilation aborted due to circular dependencies.")
         print("✅ No circular dependencies found")
-        
+
         # Build task mappings
         task_mappings = self._build_task_mappings(valid_headers)
-        
+
         # Build registry structure
         registry = {
             'ads_version': '2.0',
@@ -419,7 +419,7 @@ class RegistryCompiler:
                 'total_tasks': len(task_mappings)
             },
             'root_map': {
-                'schema': 'AgentQMS/standards/schemas/ads-v1.0-spec.yaml',
+                'schema': 'AgentQMS/standards/schemas/ads-v2.0-spec.yaml',
                 'tier1': 'AgentQMS/standards/tier1-sst/',
                 'tier2': 'AgentQMS/standards/tier2-framework/',
                 'tier3': 'AgentQMS/standards/tier3-agents/',
@@ -427,26 +427,26 @@ class RegistryCompiler:
             },
             'task_mappings': task_mappings
         }
-        
+
         # Generate visual graph
         print("\n📊 Generating architecture visualization...")
         self._generate_dot_graph()
-        
+
         # Print semantic diff
         self._print_semantic_diff(registry)
-        
+
         if dry_run:
             print("\n🔍 DRY RUN - Registry structure:")
             print(f"   Tasks: {len(task_mappings)}")
             print(f"   Standards indexed: {len(valid_headers)}")
             return True
-        
+
         # Write registry
         print(f"\n💾 Writing registry to {self.registry_path}...")
-        
+
         # Write to temp file first
         temp_path = self.registry_path.with_suffix('.yaml.tmp')
-        
+
         try:
             with open(temp_path, 'w') as f:
                 yaml.dump(
@@ -456,16 +456,16 @@ class RegistryCompiler:
                     default_flow_style=False,
                     allow_unicode=True
                 )
-            
+
             # Atomic rename
             temp_path.rename(self.registry_path)
-            
+
             print(f"✅ Registry compiled successfully!")
             print(f"   📊 {len(task_mappings)} tasks mapped")
             print(f"   📄 {len(valid_headers)} standards indexed")
-            
+
             return True
-            
+
         except Exception as e:
             self.errors.append(f"Failed to write registry: {str(e)}")
             if temp_path.exists():
@@ -475,7 +475,7 @@ class RegistryCompiler:
 
 def main():
     import argparse
-    
+
     parser = argparse.ArgumentParser(
         description="Compile registry.yaml from ADS headers"
     )
@@ -490,12 +490,12 @@ def main():
         default=Path('AgentQMS/standards'),
         help='Root directory for standards'
     )
-    
+
     args = parser.parse_args()
-    
+
     compiler = RegistryCompiler(root_dir=args.root)
     success = compiler.compile(dry_run=args.dry_run)
-    
+
     exit(0 if success else 1)
 
 
@@ -516,7 +516,7 @@ if __name__ == "__main__":
 ---
 
 #### Task 1.3: Unit Tests for Crawler
-**Effort**: 6 hours  
+**Effort**: 6 hours
 **Files to Create**:
 - `AgentQMS/tests/test_sync_registry.py`
 
@@ -537,7 +537,7 @@ if __name__ == "__main__":
 **Goal**: Build the lightweight query interface that agents use instead of loading full registry
 
 #### Task 2.1: Create Resolution Tool API
-**Effort**: 10 hours  
+**Effort**: 10 hours
 **Files to Create**:
 - `AgentQMS/tools/resolve_standards.py`
 
@@ -556,23 +556,23 @@ import fnmatch
 
 class StandardResolver:
     """Resolves applicable standards for files/tasks"""
-    
+
     def __init__(self, registry_path: Path = Path("AgentQMS/standards/registry.yaml")):
         self.registry_path = registry_path
         self.registry = self._load_registry()
-        
+
     def _load_registry(self) -> Dict[str, Any]:
         """Load compiled registry"""
         with open(self.registry_path) as f:
             return yaml.safe_load(f)
-    
+
     def _match_path_patterns(self, file_path: str, patterns: List[str]) -> bool:
         """Check if file path matches any glob pattern"""
         for pattern in patterns:
             if fnmatch.fnmatch(file_path, pattern):
                 return True
         return False
-    
+
     def _score_keyword_match(self, query: str, keywords: List[str]) -> int:
         """Score keyword relevance (simple term matching)"""
         query_lower = query.lower()
@@ -581,19 +581,19 @@ class StandardResolver:
             if keyword.lower() in query_lower:
                 score += 1
         return score
-    
+
     def resolve_by_task(self, task_id: str) -> Dict[str, Any]:
         """
         Resolve standards for a specific task type
-        
+
         Args:
             task_id: Task identifier (e.g., "config_files", "code_quality")
-            
+
         Returns:
             Dict with standards list and metadata
         """
         task_mappings = self.registry.get('task_mappings', {})
-        
+
         if task_id not in task_mappings:
             return {
                 'task_id': task_id,
@@ -601,9 +601,9 @@ class StandardResolver:
                 'standards': [],
                 'error': f'Task "{task_id}" not found in registry'
             }
-        
+
         mapping = task_mappings[task_id]
-        
+
         return {
             'task_id': task_id,
             'found': True,
@@ -612,28 +612,28 @@ class StandardResolver:
             'standards': mapping.get('standards', []),
             'triggers': mapping.get('triggers', {})
         }
-    
+
     def resolve_by_path(self, file_path: str) -> Dict[str, Any]:
         """
         Resolve standards applicable to a file path
-        
+
         Args:
             file_path: Relative file path (e.g., "ocr/models/vgg.py")
-            
+
         Returns:
             Dict with matched standards and task associations
         """
         task_mappings = self.registry.get('task_mappings', {})
         matched_tasks = []
         all_standards = set()
-        
+
         # Normalize path
         normalized_path = file_path.replace('\\', '/')
-        
+
         # Check each task's path patterns
         for task_id, mapping in task_mappings.items():
             path_patterns = mapping.get('triggers', {}).get('path_patterns', [])
-            
+
             if self._match_path_patterns(normalized_path, path_patterns):
                 matched_tasks.append({
                     'task_id': task_id,
@@ -641,35 +641,35 @@ class StandardResolver:
                     'description': mapping.get('description', '')
                 })
                 all_standards.update(mapping.get('standards', []))
-        
+
         # Sort by priority
         matched_tasks.sort(key=lambda x: x['priority'])
-        
+
         return {
             'file_path': file_path,
             'matched_tasks': matched_tasks,
             'standards': sorted(all_standards),
             'total_matches': len(matched_tasks)
         }
-    
+
     def resolve_by_keywords(self, query: str, top_n: int = 5) -> Dict[str, Any]:
         """
         Resolve standards based on keyword search
-        
+
         Args:
             query: Search query (e.g., "hydra configuration")
             top_n: Maximum number of results to return
-            
+
         Returns:
             Dict with ranked standard matches
         """
         task_mappings = self.registry.get('task_mappings', {})
         scored_tasks = []
-        
+
         for task_id, mapping in task_mappings.items():
             keywords = mapping.get('triggers', {}).get('keywords', [])
             score = self._score_keyword_match(query, keywords)
-            
+
             if score > 0:
                 scored_tasks.append({
                     'task_id': task_id,
@@ -678,16 +678,16 @@ class StandardResolver:
                     'description': mapping.get('description', ''),
                     'standards': mapping.get('standards', [])
                 })
-        
+
         # Sort by score (desc) then priority (asc)
         scored_tasks.sort(key=lambda x: (-x['score'], x['priority']))
-        
+
         return {
             'query': query,
             'results': scored_tasks[:top_n],
             'total_matches': len(scored_tasks)
         }
-    
+
     def list_all_tasks(self) -> List[str]:
         """List all available task IDs"""
         return sorted(self.registry.get('task_mappings', {}).keys())
@@ -696,7 +696,7 @@ class StandardResolver:
 def main():
     import argparse
     import json
-    
+
     parser = argparse.ArgumentParser(
         description="Resolve standards for files and tasks"
     )
@@ -723,20 +723,20 @@ def main():
         default=Path('AgentQMS/standards/registry.yaml'),
         help='Registry file path'
     )
-    
+
     args = parser.parse_args()
-    
+
     resolver = StandardResolver(registry_path=args.registry)
-    
+
     if args.list:
         tasks = resolver.list_all_tasks()
         print(f"📋 Available tasks ({len(tasks)}):")
         for task in tasks:
             print(f"   - {task}")
         return
-    
+
     result = None
-    
+
     if args.task:
         result = resolver.resolve_by_task(args.task)
     elif args.path:
@@ -746,7 +746,7 @@ def main():
     else:
         parser.print_help()
         return
-    
+
     print(json.dumps(result, indent=2))
 
 
@@ -767,7 +767,7 @@ if __name__ == "__main__":
 ---
 
 #### Task 2.2: Integrate with Agent Context Loading
-**Effort**: 8 hours  
+**Effort**: 8 hours
 **Files to Modify**:
 - `AgentQMS/tools/utilities/context_bundler.py` (or wherever context is loaded)
 
@@ -780,16 +780,16 @@ def load_context_for_task(task_type: str) -> str:
     """Load only relevant standards for task"""
     resolver = StandardResolver()
     result = resolver.resolve_by_task(task_type)
-    
+
     if not result['found']:
         return ""
-    
+
     # Load only the identified standard files
     context_parts = []
     for std_path in result['standards']:
         with open(std_path) as f:
             context_parts.append(f.read())
-    
+
     return "\n\n".join(context_parts)
 ```
 
@@ -808,7 +808,7 @@ def load_context_for_task(task_type: str) -> str:
 **Goal**: Create tools to retrofit existing 71 standards with ADS headers
 
 #### Task 3.1: Build Migration Script
-**Effort**: 14 hours  
+**Effort**: 14 hours
 **Files to Create**:
 - `AgentQMS/tools/migrate_to_ads_headers.py`
 
@@ -827,37 +827,37 @@ import re
 
 class ADSMigrationTool:
     """Migrates legacy standards to ADS header format"""
-    
+
     def __init__(self, registry_path: Path, root_dir: Path):
         self.registry_path = registry_path
         self.root_dir = root_dir
         self.registry = self._load_registry()
-        
+
     def _load_registry(self) -> Dict[str, Any]:
         """Load current registry.yaml"""
         with open(self.registry_path) as f:
             return yaml.safe_load(f)
-    
+
     def _infer_tier_from_path(self, file_path: Path) -> Optional[int]:
         """Infer tier number from directory path"""
         path_str = str(file_path)
-        
+
         for tier in range(1, 5):
             if f"tier{tier}-" in path_str:
                 return tier
-        
+
         return None
-    
+
     def _find_triggers_for_file(self, file_path: Path) -> Dict[str, Any]:
         """Find task triggers that reference this file in registry"""
         file_str = str(file_path)
         triggers = {}
-        
+
         task_mappings = self.registry.get('task_mappings', {})
-        
+
         for task_id, mapping in task_mappings.items():
             standards = mapping.get('standards', [])
-            
+
             if file_str in standards or str(file_path.resolve()) in standards:
                 # Extract trigger data for this task
                 triggers[task_id] = {
@@ -865,18 +865,18 @@ class ADSMigrationTool:
                     'keywords': mapping.get('triggers', {}).get('keywords', []),
                     'path_patterns': mapping.get('triggers', {}).get('path_patterns', [])
                 }
-        
+
         return triggers
-    
+
     def _generate_ads_header(self, file_path: Path, existing_header: Optional[Dict] = None) -> Dict[str, Any]:
         """Generate ADS header for a file"""
         tier = self._infer_tier_from_path(file_path)
         triggers = self._find_triggers_for_file(file_path)
-        
+
         # Try to extract name/description from existing content
         name = existing_header.get('name') if existing_header else file_path.stem.replace('-', ' ').title()
         description = existing_header.get('description') if existing_header else f"Standards for {name}"
-        
+
         header = {
             'ads_version': '1.0',
             'name': name,
@@ -887,31 +887,31 @@ class ADSMigrationTool:
             'status': existing_header.get('status', 'active') if existing_header else 'active',
             'triggers': triggers
         }
-        
+
         return header
-    
+
     def migrate_file(self, file_path: Path, dry_run: bool = False) -> bool:
         """
         Migrate a single file to ADS header format
-        
+
         Args:
             file_path: Path to standard file
             dry_run: If True, show what would be done without modifying
-            
+
         Returns:
             True if migration successful
         """
         print(f"📄 Processing: {file_path}")
-        
+
         # Read existing content
         with open(file_path, 'r') as f:
             content = f.read()
-        
+
         # Check if already has ADS header
         if 'ads_version:' in content[:500]:
             print("   ✅ Already has ADS header - skipping")
             return True
-        
+
         # Try to parse existing frontmatter
         existing_header = None
         if content.startswith('---'):
@@ -921,13 +921,13 @@ class ADSMigrationTool:
                     existing_header = yaml.safe_load(parts[1])
             except:
                 pass
-        
+
         # Generate ADS header
         ads_header = self._generate_ads_header(file_path, existing_header)
-        
+
         # Build new content
         header_yaml = yaml.dump(ads_header, sort_keys=False, default_flow_style=False)
-        
+
         if content.startswith('---'):
             # Replace existing frontmatter
             parts = content.split('---', 2)
@@ -935,48 +935,48 @@ class ADSMigrationTool:
         else:
             # Add frontmatter
             new_content = f"---\n{header_yaml}---\n\n{content}"
-        
+
         if dry_run:
             print(f"   🔍 Would add ADS header:")
             print(f"      Tier: {ads_header['tier']}")
             print(f"      Triggers: {len(ads_header['triggers'])} tasks")
             return True
-        
+
         # Write updated file
         with open(file_path, 'w') as f:
             f.write(new_content)
-        
+
         print(f"   ✅ Migrated successfully")
         return True
-    
+
     def migrate_all(self, dry_run: bool = False, limit: Optional[int] = None) -> Dict[str, int]:
         """
         Migrate all standard files
-        
+
         Args:
             dry_run: If True, preview without modifying
             limit: Max number of files to migrate (for testing)
-            
+
         Returns:
             Dict with migration statistics
         """
         print("🔄 Starting ADS header migration...")
-        
+
         stats = {
             'scanned': 0,
             'migrated': 0,
             'skipped': 0,
             'errors': 0
         }
-        
+
         for yaml_file in self.root_dir.rglob("*.yaml"):
             if (yaml_file.name == "registry.yaml" or
                 "schemas/" in str(yaml_file) or
                 "templates/" in str(yaml_file)):
                 continue
-            
+
             stats['scanned'] += 1
-            
+
             try:
                 if self.migrate_file(yaml_file, dry_run=dry_run):
                     stats['migrated'] += 1
@@ -985,23 +985,23 @@ class ADSMigrationTool:
             except Exception as e:
                 print(f"   ❌ Error: {str(e)}")
                 stats['errors'] += 1
-            
+
             if limit and stats['migrated'] >= limit:
                 print(f"\n⚠️  Reached limit of {limit} files")
                 break
-        
+
         print(f"\n📊 Migration {'Preview' if dry_run else 'Complete'}:")
         print(f"   Scanned: {stats['scanned']}")
         print(f"   Migrated: {stats['migrated']}")
         print(f"   Skipped: {stats['skipped']}")
         print(f"   Errors: {stats['errors']}")
-        
+
         return stats
 
 
 def main():
     import argparse
-    
+
     parser = argparse.ArgumentParser(
         description="Migrate standards to ADS header format"
     )
@@ -1026,12 +1026,12 @@ def main():
         default=Path('AgentQMS/standards'),
         help='Root directory for standards'
     )
-    
+
     args = parser.parse_args()
-    
+
     registry_path = args.root / 'registry.yaml'
     migrator = ADSMigrationTool(registry_path, args.root)
-    
+
     if args.file:
         success = migrator.migrate_file(args.file, dry_run=args.dry_run)
         exit(0 if success else 1)
@@ -1057,7 +1057,7 @@ if __name__ == "__main__":
 ---
 
 #### Task 3.2: Pilot Migration (5 Files)
-**Effort**: 4 hours  
+**Effort**: 4 hours
 **Target Files**:
 - `tier1-sst/naming-conventions.yaml`
 - `tier2-framework/coding/python-core.yaml`
@@ -1082,7 +1082,7 @@ if __name__ == "__main__":
 **Goal**: Integrate tools into CLI, add validation hooks, update agent prompts
 
 #### Task 4.1: Add CLI Commands
-**Effort**: 6 hours  
+**Effort**: 6 hours
 **Files to Modify**:
 - `AgentQMS/cli.py` or create `bin/aqms` script
 
@@ -1117,7 +1117,7 @@ aqms validate-headers [--strict]
 ---
 
 #### Task 4.2: Pre-Commit Hook Integration
-**Effort**: 4 hours  
+**Effort**: 4 hours
 **Files to Create**:
 - `.pre-commit-hooks.yaml`
 - `AgentQMS/hooks/validate-ads-headers.py`
@@ -1144,29 +1144,29 @@ from AgentQMS.tools.sync_registry import RegistryCompiler
 def main():
     """Validate changed standard files"""
     changed_files = sys.argv[1:]
-    
+
     compiler = RegistryCompiler()
     errors = []
-    
+
     for file_path in changed_files:
         path = Path(file_path)
-        
+
         # Extract and validate header
         header = compiler._extract_ads_header(path)
-        
+
         if not header:
             errors.append(f"{path}: Missing ADS header")
             continue
-        
+
         if not compiler._validate_header(header, path):
             errors.append(f"{path}: Invalid ADS header")
-    
+
     if errors:
         print("❌ ADS Header Validation Failed:")
         for error in errors:
             print(f"   {error}")
         return 1
-    
+
     print("✅ ADS headers valid")
     return 0
 
@@ -1184,7 +1184,7 @@ if __name__ == "__main__":
 ---
 
 #### Task 4.3: CI Validation Pipeline
-**Effort**: 6 hours  
+**Effort**: 6 hours
 **Files to Create/Modify**:
 - `.github/workflows/validate-standards.yml`
 
@@ -1206,20 +1206,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-      
+
       - name: Install dependencies
         run: |
           pip install pyyaml jsonschema
-      
+
       - name: Validate ADS Headers
         run: |
           python AgentQMS/tools/sync_registry.py --dry-run
-      
+
       - name: Check Registry Compilation
         run: |
           python AgentQMS/tools/sync_registry.py
@@ -1236,7 +1236,7 @@ jobs:
 ---
 
 #### Task 4.4: Update Agent System Prompts
-**Effort**: 4 hours  
+**Effort**: 4 hours
 **Files to Modify**:
 - `.github/copilot-instructions.md` or agent prompt files
 
@@ -1354,25 +1354,25 @@ def benchmark():
     compiler = RegistryCompiler()
     compiler.compile()
     compile_time = time.time() - start
-    
+
     # Resolution queries
     resolver = StandardResolver()
-    
+
     start = time.time()
     result = resolver.resolve_by_task("config_files")
     task_query_time = time.time() - start
-    
+
     start = time.time()
     result = resolver.resolve_by_path("ocr/models/vgg.py")
     path_query_time = time.time() - start
-    
+
     start = time.time()
     result = resolver.resolve_by_keywords("hydra configuration")
     keyword_query_time = time.time() - start
-    
+
     # Context token count
     # (Measure before/after agent context loading)
-    
+
     print(f"Registry compilation: {compile_time:.3f}s")
     print(f"Task query: {task_query_time*1000:.1f}ms")
     print(f"Path query: {path_query_time*1000:.1f}ms")
@@ -1484,8 +1484,8 @@ if __name__ == "__main__":
 ## Risk Assessment & Mitigation
 
 ### Risk 1: Migration Breaks Agents
-**Impact**: High  
-**Probability**: Medium  
+**Impact**: High
+**Probability**: Medium
 **Mitigation**:
 - Pilot migration with 5 files first
 - Tier-by-tier rollout with validation between tiers
@@ -1493,8 +1493,8 @@ if __name__ == "__main__":
 - Easy rollback with git tags
 
 ### Risk 2: Registry Compilation Fails
-**Impact**: Critical  
-**Probability**: Low  
+**Impact**: Critical
+**Probability**: Low
 **Mitigation**:
 - Extensive unit tests for compiler
 - Atomic write (temp file → rename)
@@ -1502,16 +1502,16 @@ if __name__ == "__main__":
 - Pre-commit hooks prevent bad inputs
 
 ### Risk 3: Context Token Reduction Insufficient
-**Impact**: Medium  
-**Probability**: Low  
+**Impact**: Medium
+**Probability**: Low
 **Mitigation**:
 - Benchmark before/after
 - Adjust resolution algorithms if needed
 - Query optimization (caching, indexing)
 
 ### Risk 4: Developer Adoption Resistance
-**Impact**: Medium  
-**Probability**: Medium  
+**Impact**: Medium
+**Probability**: Medium
 **Mitigation**:
 - Clear documentation and examples
 - Migration tool handles most work automatically
@@ -1714,7 +1714,7 @@ triggers:
 
 ---
 
-**Plan Status**: Ready for Execution  
-**Next Step**: Begin Phase 1 - Create ADS header schema  
+**Plan Status**: Ready for Execution
+**Next Step**: Begin Phase 1 - Create ADS header schema
 **Questions**: Contact AgentQMS maintainers
 

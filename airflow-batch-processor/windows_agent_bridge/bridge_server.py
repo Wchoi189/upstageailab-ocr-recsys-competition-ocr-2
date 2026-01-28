@@ -33,11 +33,11 @@ def on_request(ch, method, props, body):
         payload = json.loads(body)
         cmd = payload.get("cmd")
         req_id = payload.get("id")
-        
+
         print(f" [.] Received request {req_id}: {cmd}")
 
         response = {}
-        
+
         if not cmd:
             response = {"status": "error", "output": "No command provided"}
         elif not validate_command(cmd):
@@ -45,13 +45,13 @@ def on_request(ch, method, props, body):
         else:
             # Execute
             try:
-                # shell=True required for complex args, but dangerous. 
+                # shell=True required for complex args, but dangerous.
                 # Since we validate strictly (in theory), acceptable for dev bridge.
                 result = subprocess.run(
-                    cmd, 
-                    shell=True, 
-                    capture_output=True, 
-                    text=True, 
+                    cmd,
+                    shell=True,
+                    capture_output=True,
+                    text=True,
                     timeout=30
                 )
                 response = {
@@ -95,9 +95,9 @@ def main():
     except KeyboardInterrupt:
         print("Interrupted")
         try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
+        sys.exit(0)
+    except SystemExit:
+        os._exit(0)
     except Exception as e:
         print(f"Fatal error: {e}")
 

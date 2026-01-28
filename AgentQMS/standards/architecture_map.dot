@@ -1,98 +1,196 @@
 digraph AgentQMS_Architecture {
-  rankdir=LR;
-  node [shape=box, style=rounded];
+  rankdir=TB;
+  node [shape=box, style=rounded, fontname="Arial"];
+  edge [fontname="Arial", fontsize=10];
+  compound=true;
 
   subgraph cluster_tier1 {
     label="Constitution (Tier 1)";
     style=filled;
     color="#FFE6E6";
+    fontsize=14;
+    fontname="Arial Bold";
 
+    "SC-001" [label="SC-001\nFile and artifact naming conventions ...", penwidth=2, color=red];
+    "SC-002" [label="SC-002\nArtifact type catalog and source-of-t...", penwidth=2, color=red];
     "SC-003" [label="SC-003\nUnified artifact naming and placement...", penwidth=2, color=red];
     "SC-004" [label="SC-004", penwidth=2, color=red];
-    "SC-001" [label="SC-001\nFile and artifact naming conventions ...", penwidth=2, color=red];
+    "SC-005" [label="SC-005\nSingle source of truth for artifact f...", penwidth=2, color=red];
     "SC-006" [label="SC-006", penwidth=2, color=red];
     "SC-007" [label="SC-007", penwidth=2, color=red];
-    "SC-013" [label="SC-013\nGlobal agent operational policies (va...", penwidth=2, color=red];
-    "SC-012" [label="SC-012\nValidation and enforcement rules for ...", penwidth=2, color=red];
-    "SC-011" [label="SC-011\nValidation rules and required fields ...", penwidth=2, color=red];
     "SC-008" [label="SC-008\nValidation policies and enforcement t...", penwidth=2, color=red];
     "SC-010" [label="SC-010\nRequired workflow policies for artifa...", penwidth=2, color=red];
-    "SC-002" [label="SC-002\nArtifact type catalog and source-of-t...", penwidth=2, color=red];
-    "SC-005" [label="SC-005\nSingle source of truth for artifact f...", penwidth=2, color=red];
+    "SC-011" [label="SC-011\nValidation rules and required fields ...", penwidth=2, color=red];
+    "SC-012" [label="SC-012\nValidation and enforcement rules for ...", penwidth=2, color=red];
+    "SC-013" [label="SC-013\nGlobal agent operational policies (va...", penwidth=2, color=red];
   }
 
   subgraph cluster_tier2 {
     label="Framework (Tier 2)";
     style=filled;
-    color="#E6F3FF";
+    color="#CCCCCC";
+    fontsize=14;
+    fontname="Arial Bold";
 
-    "FW-015" [label="FW-015", penwidth=1.5, color=orange];
-    "FW-022" [label="FW-022", penwidth=1.5, color=orange];
-    "FW-041" [label="FW-041\nArchitecture specification for multi-...", penwidth=1.5, color=orange];
-    "FW-008" [label="FW-008", penwidth=1.5, color=orange];
-    "FW-009" [label="FW-009"];
-    "FW-010" [label="FW-010", penwidth=1.5, color=orange];
-    "FW-011" [label="FW-011\nStandards for safely handling OmegaCo...", penwidth=2, color=red];
-    "FW-017" [label="FW-017", penwidth=2, color=red];
-    "FW-019" [label="FW-019\nCritical configuration rules for Hydr...", penwidth=2, color=red];
-    "AG-001" [label="AG-001\nAutomated criteria for identifying un..."];
-    "WF-002" [label="WF-002\nRuntime middleware policies enforced ...", penwidth=1.5, color=orange];
-    "FW-025" [label="FW-025"];
-    "FW-029" [label="FW-029", penwidth=1.5, color=orange];
-    "FW-033" [label="FW-033", penwidth=1.5, color=orange];
-    "FW-001" [label="FW-001\nDefines the architecture, communicati...", penwidth=2, color=red];
-    "FW-002" [label="FW-002\nProtocol for handling runtime telemet...", penwidth=2, color=red];
-    "FW-030" [label="FW-030", penwidth=1.5, color=orange];
-    "FW-037" [label="FW-037\nKeyword mappings for context bundle t...", penwidth=1.5, color=orange];
-    "FW-039" [label="FW-039\nDiscovery triggers mapping file patte...", penwidth=1.5, color=orange];
-    "manifest" [label="manifest", penwidth=2, color=red];
-    "FW-038" [label="FW-038", penwidth=2, color=red];
-    "FW-023" [label="FW-023\nManages the lifecycle of models (dete...", penwidth=1.5, color=orange];
-    "FW-026" [label="FW-026\nDefines the canonical data structures...", penwidth=1.5, color=orange];
-    "FW-027" [label="FW-027\nDecodes raw model output into structu...", penwidth=1.5, color=orange];
-    "FW-028" [label="FW-028\nPrepares raw images for inference.", penwidth=1.5, color=orange];
-    "FW-012" [label="FW-012\nHandles mapping between resized/padde...", penwidth=1.5, color=orange];
-    "FW-020" [label="FW-020\nHandles loading and validation of inp...", penwidth=1.5, color=orange];
-    "FW-024" [label="FW-024\nThe central controller for the OCR in...", penwidth=1.5, color=orange];
-    "FW-035" [label="FW-035\nDraws detected bounding boxes and cla...", penwidth=1.5, color=orange];
-    "FW-036" [label="FW-036", penwidth=1.5, color=orange];
-    "FW-003" [label="FW-003\nProhibited patterns with enforcement ...", penwidth=1.5, color=orange];
-    "FW-004" [label="FW-004", penwidth=2, color=red];
-    "FW-007" [label="FW-007\nDefines the interface contracts for O...", penwidth=1.5, color=orange];
-    "FW-018" [label="FW-018\nDesign patterns, anti-patterns, and d...", penwidth=1.5, color=orange];
-    "FW-042" [label="FW-042\nReference specification for VLM tooli...", penwidth=1.5, color=orange];
+    subgraph cluster_core_infra {
+      label="Core Infrastructure";
+      style=filled;
+      color="#E6F0FF";
+      fontsize=11;
+
+      "FW-001" [label="FW-001\nDefines the architecture, communicati...", penwidth=2, color=red];
+      "FW-002" [label="FW-002\nProtocol for handling runtime telemet...", penwidth=2, color=red];
+      "FW-004" [label="FW-004", penwidth=2, color=red];
+      "FW-030" [label="FW-030", penwidth=1.5, color=orange];
+    }
+
+    subgraph cluster_ocr_engine {
+      label="OCR Data Pipeline";
+      style=filled;
+      color="#E6FFF0";
+      fontsize=11;
+
+      "FW-012" [label="FW-012\nHandles mapping between resized/padde...", penwidth=1.5, color=orange];
+      "FW-020" [label="FW-020\nHandles loading and validation of inp...", penwidth=1.5, color=orange];
+      "FW-023" [label="FW-023\nManages the lifecycle of models (dete...", penwidth=1.5, color=orange];
+      "FW-024" [label="FW-024\nThe central controller for the OCR in...", penwidth=1.5, color=orange];
+      "FW-026" [label="FW-026\nDefines the canonical data structures...", penwidth=1.5, color=orange];
+      "FW-027" [label="FW-027\nDecodes raw model output into structu...", penwidth=1.5, color=orange];
+      "FW-028" [label="FW-028\nPrepares raw images for inference.", penwidth=1.5, color=orange];
+    }
+
+    subgraph cluster_configuration {
+      label="Configuration & Hydra";
+      style=filled;
+      color="#FFF4E6";
+      fontsize=11;
+
+      "FW-008" [label="FW-008", penwidth=1.5, color=orange];
+      "FW-009" [label="FW-009"];
+      "FW-010" [label="FW-010", penwidth=1.5, color=orange];
+      "FW-011" [label="FW-011\nStandards for safely handling OmegaCo...", penwidth=2, color=red];
+      "FW-017" [label="FW-017", penwidth=2, color=red];
+      "FW-019" [label="FW-019\nCritical configuration rules for Hydr...", penwidth=2, color=red];
+    }
+
+    subgraph cluster_validation {
+      label="Safety & Validation";
+      style=filled;
+      color="#FFE6F0";
+      fontsize=11;
+
+      "FW-029" [label="FW-029", penwidth=1.5, color=orange];
+      "FW-033" [label="FW-033", penwidth=1.5, color=orange];
+      "FW-037" [label="FW-037\nKeyword mappings for context bundle t...", penwidth=1.5, color=orange];
+    }
+
+    subgraph cluster_patterns {
+      label="Patterns & Design";
+      style=filled;
+      color="#F0E6FF";
+      fontsize=11;
+
+      "FW-003" [label="FW-003\nProhibited patterns with enforcement ...", penwidth=1.5, color=orange];
+      "FW-007" [label="FW-007\nDefines the interface contracts for O...", penwidth=1.5, color=orange];
+      "FW-018" [label="FW-018\nDesign patterns, anti-patterns, and d...", penwidth=1.5, color=orange];
+      "FW-035" [label="FW-035\nDraws detected bounding boxes and cla...", penwidth=1.5, color=orange];
+    }
+
+    subgraph cluster_tooling {
+      label="Tooling & DevEx";
+      style=filled;
+      color="#E6E6E6";
+      fontsize=11;
+
+      "FW-015" [label="FW-015", penwidth=1.5, color=orange];
+      "FW-022" [label="FW-022", penwidth=1.5, color=orange];
+      "FW-025" [label="FW-025"];
+      "FW-036" [label="FW-036", penwidth=1.5, color=orange];
+    }
+
   }
 
   subgraph cluster_tier3 {
     label="Agents (Tier 3)";
     style=filled;
     color="#E6FFE6";
+    fontsize=14;
+    fontname="Arial Bold";
 
-    "AG-006" [label="AG-006\nOllama model catalog with specificati...", penwidth=1.5, color=orange];
-    "AG-004" [label="AG-004", penwidth=2, color=red];
     "AG-002" [label="AG-002", penwidth=2, color=red];
+    "AG-004" [label="AG-004", penwidth=2, color=red];
+    "AG-006" [label="AG-006\nOllama model catalog with specificati...", penwidth=1.5, color=orange];
   }
 
   subgraph cluster_tier4 {
     label="Workflows (Tier 4)";
     style=filled;
     color="#FFF9E6";
+    fontsize=14;
+    fontname="Arial Bold";
 
-    "WF-041" [label="WF-041\nRunbook for automated and manual bloa...", penwidth=1.5, color=orange];
-    "WF-044" [label="WF-044\nRunbook for generating compliance rep...", penwidth=1.5, color=orange];
     "WF-001" [label="WF-001", penwidth=1.5, color=orange];
-    "WF-042" [label="WF-042\nOperational runbook for multi-agent w...", penwidth=1.5, color=orange];
     "WF-040" [label="WF-040\nExecution runbook for validation and ...", penwidth=1.5, color=orange];
+    "WF-041" [label="WF-041\nRunbook for automated and manual bloa...", penwidth=1.5, color=orange];
+    "WF-042" [label="WF-042\nOperational runbook for multi-agent w...", penwidth=1.5, color=orange];
     "WF-043" [label="WF-043\nRunbook for VLM analysis commands and...", penwidth=1.5, color=orange];
+    "WF-044" [label="WF-044\nRunbook for generating compliance rep...", penwidth=1.5, color=orange];
   }
 
-  "SC-001" -> "SC-013";
-  "SC-004" -> "SC-013";
-  "SC-010" -> "SC-013";
-  "SC-002" -> "SC-012";
-  "SC-001" -> "SC-012";
-  "SC-005" -> "SC-011";
-  "SC-010" -> "SC-008";
-  "SC-001" -> "SC-002";
-  "SC-007" -> "AG-006";
+  subgraph cluster_legend {
+    label="Legend";
+    style=filled;
+    color="#F5F5F5";
+    fontsize=12;
+    fontname="Arial Bold";
+
+    legend_critical [label="Critical (Red)", penwidth=2, color=red, shape=box, style=rounded];
+    legend_high [label="High Priority (Orange)", penwidth=1.5, color=orange, shape=box, style=rounded];
+    legend_dep [label="Dependency\n(Solid Arrow)", shape=plaintext];
+    legend_gov [label="Governance\n(Dashed Arrow)", shape=plaintext];
+
+    legend_critical -> legend_high [style=invis];
+    legend_high -> legend_dep [style=invis];
+    legend_dep -> legend_gov [style=invis];
+  }
+
+  // Declared Dependencies (from registry.yaml)
+  "SC-007" -> "AG-006" [color=blue, penwidth=1.5];
+  "SC-001" -> "SC-002" [color=blue, penwidth=1.5];
+  "SC-010" -> "SC-008" [color=blue, penwidth=1.5];
+  "SC-005" -> "SC-011" [color=blue, penwidth=1.5];
+  "SC-002" -> "SC-012" [color=blue, penwidth=1.5];
+  "SC-001" -> "SC-012" [color=blue, penwidth=1.5];
+  "SC-001" -> "SC-013" [color=blue, penwidth=1.5];
+  "SC-004" -> "SC-013" [color=blue, penwidth=1.5];
+  "SC-010" -> "SC-013" [color=blue, penwidth=1.5];
+
+  // Governance Mappings (Constitutional laws enforce lower tiers)
+  "SC-002" -> "FW-026" [style=dashed, color="#666666", penwidth=1.0];
+  "SC-007" -> "FW-001" [style=dashed, color="#666666", penwidth=1.0];
+  "SC-008" -> "FW-029" [style=dashed, color="#666666", penwidth=1.0];
+  "SC-008" -> "FW-033" [style=dashed, color="#666666", penwidth=1.0];
+  "SC-001" -> "AG-002" [style=dashed, color="#666666", penwidth=1.0];
+  "SC-007" -> "AG-006" [style=dashed, color="#666666", penwidth=1.0];
+  "FW-007" -> "AG-002" [style=dashed, color="#666666", penwidth=1.0];
+
+  // Architectural Dependencies (Framework consumed by Agents/Workflows)
+  "FW-026" -> "FW-027" [color="#0066CC", penwidth=1.5];
+  "FW-026" -> "FW-028" [color="#0066CC", penwidth=1.5];
+  "FW-026" -> "FW-012" [color="#0066CC", penwidth=1.5];
+  "FW-001" -> "FW-002" [color="#0066CC", penwidth=1.5];
+  "FW-019" -> "FW-017" [color="#0066CC", penwidth=1.5];
+  "FW-011" -> "FW-019" [color="#0066CC", penwidth=1.5];
+  "FW-030" -> "FW-029" [color="#0066CC", penwidth=1.5];
+  "FW-001" -> "AG-002" [color="#0066CC", penwidth=1.5];
+  "AG-002" -> "WF-001" [color="#0066CC", penwidth=1.5];
+  "AG-004" -> "WF-001" [color="#0066CC", penwidth=1.5];
+  "FW-002" -> "WF-002" [color="#0066CC", penwidth=1.5];
+
+  // Critical Path Chain
+  "SC-002" -> "FW-026" [color=red, penwidth=2.5, label="CRITICAL"];
+  "FW-026" -> "FW-001" [color=red, penwidth=2.5, label="CRITICAL"];
+  "FW-001" -> "FW-011" [color=red, penwidth=2.5, label="CRITICAL"];
+  "FW-011" -> "AG-002" [color=red, penwidth=2.5, label="CRITICAL"];
+  "AG-002" -> "WF-001" [color=red, penwidth=2.5, label="CRITICAL"];
 }

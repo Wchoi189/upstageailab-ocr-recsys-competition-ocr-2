@@ -1,7 +1,7 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P6
-total_standards: 56
+total_standards: 57
 standards:
   AG-001:
     id: AG-001
@@ -173,6 +173,11 @@ standards:
     tier: 2
     description: Reference specification for VLM tooling configuration and...
     file_path: AgentQMS/standards/tier2-framework/specs/vlm-tools-reference.yaml
+  FW-043:
+    id: FW-043
+    tier: 2
+    description: Ultra-concise diagnostics for “only one bundle suggested”.
+    file_path: AgentQMS/standards/tier2-framework/discovery/context-bundler-troubleshooting.yaml
   SC-001:
     id: SC-001
     tier: 1

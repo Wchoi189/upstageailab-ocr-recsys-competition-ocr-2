@@ -132,33 +132,39 @@ class ArtifactValidator:
 
 
     def __init__(self, artifacts_root: str | Path | None = None, strict_mode: bool = True):
-        # Default to the configured artifacts directory if none is provided
+        self._init_paths(artifacts_root)
+        self.violations: list[dict[str, Any]] = []
+        self._init_rules()
+        self.strict_mode = strict_mode
+        self.excluded_directories = self._load_excluded_directories()
+        self._init_type_mappings()
+        self._init_frontmatter_rules()
+        self._init_error_templates()
+        self._load_plugin_extensions()
+
+    def _init_paths(self, artifacts_root: str | Path | None) -> None:
+        """Initialize artifact root paths."""
         if artifacts_root is None:
             from AgentQMS.tools.utils.paths import get_artifacts_dir
-
             self.artifacts_root = get_artifacts_dir().resolve()
         else:
             artifacts_root_path = Path(artifacts_root)
             if not artifacts_root_path.is_absolute():
+                from AgentQMS.tools.utils.paths import get_project_root
                 artifacts_root_path = get_project_root() / artifacts_root_path
-
             self.artifacts_root = ensure_within_project(artifacts_root_path.resolve())
 
-        self.violations: list[dict[str, Any]] = []
-
-        # Load rules from YAML schema if available
+    def _init_rules(self) -> None:
+        """Load rules from YAML."""
         self.rules = ARTIFACT_RULES
         self.rules_loaded = self.rules is not None
 
-        # Strict mode controls validation strictness (default: True for strict validation)
-        self.strict_mode = strict_mode
-
-        # Load excluded directories from settings
-        self.excluded_directories = self._load_excluded_directories()
-
-        # Build artifact type mappings from rules
+    def _init_type_mappings(self) -> None:
+        """Initialize artifact type mappings from rules."""
         self.valid_artifact_types = {}
         self.artifact_type_details = {}
+        self.valid_types = []
+
         if self.rules and "artifact_types" in self.rules:
             for type_name, type_def in self.rules["artifact_types"].items():
                 prefix = type_def.get("prefix", "")
@@ -173,8 +179,11 @@ class ArtifactValidator:
                         "example": type_def.get("example", ""),
                         "description": type_def.get("description", ""),
                     }
+            # Build valid types list
+            self.valid_types = [type_def.get("frontmatter_type", type_name) for type_name, type_def in self.rules["artifact_types"].items()]
 
-        # Load frontmatter validation values from rules
+    def _init_frontmatter_rules(self) -> None:
+        """Initialize frontmatter validation rules."""
         self.valid_statuses = []
         self.valid_categories = []
         self.required_frontmatter = ["title", "date", "type", "category", "status", "version"]
@@ -185,18 +194,11 @@ class ArtifactValidator:
             self.valid_categories = fm_rules.get("valid_categories", [])
             self.required_frontmatter = fm_rules.get("required_fields", self.required_frontmatter)
 
-        # Build valid types list from rules
-        self.valid_types = []
-        if self.rules and "artifact_types" in self.rules:
-            self.valid_types = [type_def.get("frontmatter_type", type_name) for type_name, type_def in self.rules["artifact_types"].items()]
-
-        # Load error templates from rules
+    def _init_error_templates(self) -> None:
+        """Initialize error templates."""
         self.error_templates = {}
         if self.rules and "error_templates" in self.rules:
             self.error_templates = self.rules["error_templates"]
-
-        # Extend with plugin-registered values
-        self._load_plugin_extensions()
 
     def _load_excluded_directories(self) -> list[str]:
         """Load excluded directories from settings.yaml."""
@@ -243,7 +245,16 @@ class ArtifactValidator:
         """
         errors: list[dict[str, str]] = []
 
-        # Validate artifact type
+        self._validate_artifact_type_param(artifact_type, errors)
+        self._validate_name_param(name, errors)
+        self._validate_title_param(title, errors)
+        if frontmatter:
+            self._validate_frontmatter_param(frontmatter, errors)
+
+        return PreflightResult(valid=len(errors) == 0, errors=errors)
+
+    def _validate_artifact_type_param(self, artifact_type: str, errors: list[dict[str, str]]) -> None:
+        """Validate artifact_type parameter."""
         if artifact_type not in self.valid_types:
             similar = [t for t in self.valid_types if artifact_type[:3] in t][:3]
             errors.append({
@@ -254,7 +265,8 @@ class ArtifactValidator:
                 "reference": "AgentQMS/standards/tier1-sst/artifact-types.yaml",
             })
 
-        # Validate name format (must be lowercase kebab-case)
+    def _validate_name_param(self, name: str, errors: list[dict[str, str]]) -> None:
+        """Validate name parameter."""
         if not name:
             errors.append({
                 "field": "name",
@@ -262,21 +274,28 @@ class ArtifactValidator:
                 "fix": "Provide a descriptive name in kebab-case",
                 "example": "api-improvements",
             })
-        elif not re.match(r'^[a-z][a-z0-9-]*$', name):
-            actual_issue = "starts with number" if name[0].isdigit() else (
-                "contains uppercase" if any(c.isupper() for c in name) else
-                "contains invalid characters"
-            )
-            suggested_name = re.sub(r'[^a-z0-9-]', '-', name.lower()).strip('-')
-            errors.append({
-                "field": "name",
-                "error": f"Name '{name}' {actual_issue}",
-                "fix": "Use lowercase letters, numbers, and hyphens only. Start with a letter.",
-                "example": suggested_name or "config-loader-improvements",
-                "reference": "AgentQMS/standards/tier1-sst/naming-conventions.yaml",
-            })
+            return
 
-        # Validate title
+        if not re.match(r'^[a-z][a-z0-9-]*$', name):
+            self._handle_invalid_name(name, errors)
+
+    def _handle_invalid_name(self, name: str, errors: list[dict[str, str]]) -> None:
+        """Handle breakdown of invalid name errors."""
+        actual_issue = "starts with number" if name[0].isdigit() else (
+            "contains uppercase" if any(c.isupper() for c in name) else
+            "contains invalid characters"
+        )
+        suggested_name = re.sub(r'[^a-z0-9-]', '-', name.lower()).strip('-')
+        errors.append({
+            "field": "name",
+            "error": f"Name '{name}' {actual_issue}",
+            "fix": "Use lowercase letters, numbers, and hyphens only. Start with a letter.",
+            "example": suggested_name or "config-loader-improvements",
+            "reference": "AgentQMS/standards/tier1-sst/naming-conventions.yaml",
+        })
+
+    def _validate_title_param(self, title: str, errors: list[dict[str, str]]) -> None:
+        """Validate title parameter."""
         if not title:
             errors.append({
                 "field": "title",
@@ -299,24 +318,22 @@ class ArtifactValidator:
                 "example": title.title(),
             })
 
-        # Validate optional frontmatter if provided
-        if frontmatter:
-            if "status" in frontmatter and frontmatter["status"] not in self.valid_statuses:
-                errors.append({
-                    "field": "status",
-                    "error": f"Invalid status '{frontmatter['status']}'",
-                    "fix": f"Use one of: {', '.join(self.valid_statuses)}",
-                    "example": "draft",
-                })
-            if "category" in frontmatter and frontmatter["category"] not in self.valid_categories:
-                errors.append({
-                    "field": "category",
-                    "error": f"Invalid category '{frontmatter['category']}'",
-                    "fix": f"Use one of: {', '.join(self.valid_categories)}",
-                    "example": "development",
-                })
-
-        return PreflightResult(valid=len(errors) == 0, errors=errors)
+    def _validate_frontmatter_param(self, frontmatter: dict[str, Any], errors: list[dict[str, str]]) -> None:
+        """Validate frontmatter parameter."""
+        if "status" in frontmatter and frontmatter["status"] not in self.valid_statuses:
+            errors.append({
+                "field": "status",
+                "error": f"Invalid status '{frontmatter['status']}'",
+                "fix": f"Use one of: {', '.join(self.valid_statuses)}",
+                "example": "draft",
+            })
+        if "category" in frontmatter and frontmatter["category"] not in self.valid_categories:
+            errors.append({
+                "field": "category",
+                "error": f"Invalid category '{frontmatter['category']}'",
+                "fix": f"Use one of: {', '.join(self.valid_categories)}",
+                "example": "development",
+            })
 
     def _load_plugin_extensions(self) -> None:
         """Load additional validation rules from plugin registry."""
@@ -330,45 +347,51 @@ class ArtifactValidator:
             if not validators:
                 return
 
-            # Merge artifact types (plugin values override/extend builtin)
-            if "prefixes" in validators:
-                self.valid_artifact_types.update(validators["prefixes"])
-
-            # Merge types (unique values)
-            if "types" in validators:
-                for t in validators["types"]:
-                    if t not in self.valid_types:
-                        self.valid_types.append(t)
-
-            # Merge categories (unique values)
-            if "categories" in validators:
-                for c in validators["categories"]:
-                    if c not in self.valid_categories:
-                        self.valid_categories.append(c)
-
-            # Merge statuses (unique values)
-            if "statuses" in validators:
-                for s in validators["statuses"]:
-                    if s not in self.valid_statuses:
-                        self.valid_statuses.append(s)
-
-            # Also load prefixes from artifact type plugins
-            artifact_types = registry.get_artifact_types()
-            for name, type_def in artifact_types.items():
-                validation = type_def.get("validation", {})
-                prefix = validation.get("filename_prefix")
-                directory = type_def.get("metadata", {}).get("directory")
-
-                if prefix and directory:
-                    self.valid_artifact_types[prefix] = directory
-
-                # Add artifact type name to valid types
-                if name not in self.valid_types:
-                    self.valid_types.append(name)
+            self._merge_validator_config(validators)
+            self._merge_artifact_type_plugins(registry)
 
         except Exception:
             # Plugin loading is non-critical - continue with builtins
             pass
+
+    def _merge_validator_config(self, validators: dict[str, Any]) -> None:
+        """Merge configuration from validators plugin."""
+        # Merge artifact types (plugin values override/extend builtin)
+        if "prefixes" in validators:
+            self.valid_artifact_types.update(validators["prefixes"])
+
+        # Merge types (unique values)
+        if "types" in validators:
+            for t in validators["types"]:
+                if t not in self.valid_types:
+                    self.valid_types.append(t)
+
+        # Merge categories (unique values)
+        if "categories" in validators:
+            for c in validators["categories"]:
+                if c not in self.valid_categories:
+                    self.valid_categories.append(c)
+
+        # Merge statuses (unique values)
+        if "statuses" in validators:
+            for s in validators["statuses"]:
+                if s not in self.valid_statuses:
+                    self.valid_statuses.append(s)
+
+    def _merge_artifact_type_plugins(self, registry: Any) -> None:
+        """Merge definitions from artifact type plugins."""
+        artifact_types = registry.get_artifact_types()
+        for name, type_def in artifact_types.items():
+            validation = type_def.get("validation", {})
+            prefix = validation.get("filename_prefix")
+            directory = type_def.get("metadata", {}).get("directory")
+
+            if prefix and directory:
+                self.valid_artifact_types[prefix] = directory
+
+            # Add artifact type name to valid types
+            if name not in self.valid_types:
+                self.valid_types.append(name)
 
 
 
@@ -383,12 +406,8 @@ class ArtifactValidator:
         file_path = Path(file_path).resolve()
 
         # Mandatory scope check: ONLY validate files under the artifacts_root
-        try:
-            file_path.relative_to(self.artifacts_root)
-        except ValueError:
-            # File is outside the artifacts root - skip it silently or with info
-            # Returning a special "skipped" result
-            return {
+        if not self._is_within_artifacts_root(file_path):
+             return {
                 "file": str(file_path),
                 "valid": True,  # Technically not invalid if it's out of scope
                 "skipped": True,
@@ -399,31 +418,47 @@ class ArtifactValidator:
         if strict_mode is None:
             strict_mode = self.strict_mode
 
-            file_path = file_path.resolve()
-
-        # Try to make path relative to project root for portability in reports
-        try:
-            from AgentQMS.tools.utils.paths import get_project_root
-
-            project_root = get_project_root()
-            report_path = str(file_path.relative_to(project_root))
-        except (ValueError, ImportError):
-            # Fallback to absolute path if relative calculation fails
-            report_path = str(file_path)
-
+        report_path = self._get_report_path(file_path)
         result: dict[str, Any] = {"file": report_path, "valid": True, "errors": []}
 
         # Skip INDEX.md files
         if file_path.name == "INDEX.md":
             return result
 
-        # Validate artifacts root location (must be in docs/artifacts/)
+        if not self._validate_root_location(file_path, result):
+            return result
+
+        self._validate_naming(file_path, strict_mode, result)
+        self._validate_directory_location(file_path, strict_mode, result)
+        self._validate_file_frontmatter(file_path, strict_mode, result)
+        self._validate_type_consistency(file_path, strict_mode, result)
+
+        return result
+
+    def _is_within_artifacts_root(self, file_path: Path) -> bool:
+        try:
+            file_path.relative_to(self.artifacts_root)
+            return True
+        except ValueError:
+            return False
+
+    def _get_report_path(self, file_path: Path) -> str:
+        try:
+            from AgentQMS.tools.utils.paths import get_project_root
+            project_root = get_project_root()
+            return str(file_path.relative_to(project_root))
+        except (ValueError, ImportError):
+            return str(file_path)
+
+    def _validate_root_location(self, file_path: Path, result: dict[str, Any]) -> bool:
         root_valid, root_msg = validate_artifacts_root(file_path)
         if not root_valid:
             result["valid"] = False
             result["errors"] += [f"Location: {root_msg}"]
+            return False
+        return True
 
-        # Validate naming convention
+    def _validate_naming(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
         naming_valid, naming_msg = validate_naming_convention(
             file_path,
             self.valid_artifact_types,
@@ -431,13 +466,12 @@ class ArtifactValidator:
             self.error_templates
         )
         if not naming_valid:
+            prefix = "Naming" if strict_mode else "Naming (lenient)"
             if strict_mode:
                 result["valid"] = False
-                result["errors"] += [f"Naming: {naming_msg}"]
-            else:
-                result["errors"] += [f"Naming (lenient): {naming_msg}"]
+            result["errors"] += [f"{prefix}: {naming_msg}"]
 
-        # Validate directory placement
+    def _validate_directory_location(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
         dir_valid, dir_msg = validate_directory_placement(
             file_path,
             self.artifacts_root,
@@ -446,13 +480,12 @@ class ArtifactValidator:
             self.error_templates
         )
         if not dir_valid:
+            prefix = "Directory" if strict_mode else "Directory (lenient)"
             if strict_mode:
                 result["valid"] = False
-                result["errors"] += [f"Directory: {dir_msg}"]
-            else:
-                result["errors"] += [f"Directory (lenient): {dir_msg}"]
+            result["errors"] += [f"{prefix}: {dir_msg}"]
 
-        # Validate frontmatter
+    def _validate_file_frontmatter(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
         frontmatter_valid, frontmatter_msg = validate_frontmatter(
             file_path,
             self.valid_statuses,
@@ -461,13 +494,12 @@ class ArtifactValidator:
             self.required_frontmatter
         )
         if not frontmatter_valid:
+            prefix = "Frontmatter" if strict_mode else "Frontmatter (lenient)"
             if strict_mode:
                 result["valid"] = False
-                result["errors"] += [f"Frontmatter: {frontmatter_msg}"]
-            else:
-                result["errors"] += [f"Frontmatter (lenient): {frontmatter_msg}"]
+            result["errors"] += [f"{prefix}: {frontmatter_msg}"]
 
-        # Phase 2: Cross-validate frontmatter type with filename and directory
+    def _validate_type_consistency(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
         type_valid, type_msg = validate_type_consistency(
             file_path,
             self.valid_artifact_types,
@@ -475,13 +507,10 @@ class ArtifactValidator:
             self.error_templates
         )
         if not type_valid:
+            prefix = "TypeConsistency" if strict_mode else "TypeConsistency (lenient)"
             if strict_mode:
                 result["valid"] = False
-                result["errors"] += [f"TypeConsistency: {type_msg}"]
-            else:
-                result["errors"] += [f"TypeConsistency (lenient): {type_msg}"]
-
-        return result
+            result["errors"] += [f"{prefix}: {type_msg}"]
 
     def validate_directory(self, directory: Path, strict_mode: bool | None = None) -> list[dict]:
         """Validate all markdown files in a directory.
@@ -529,48 +558,72 @@ class ArtifactValidator:
         # if CONTEXT_BUNDLES_AVAILABLE:
         #     bundle_results = validate_bundles()
         #     results.extend(bundle_results)
-
-        return results
-
     def check_naming_conventions(self) -> bool:
         """Check naming conventions for all artifacts (CLI support)."""
-        from AgentQMS.tools.compliance.validators.naming import validate_naming_convention
-
         all_valid = True
         violations = []
-        
+
         # Iterate all files similar to validate_all
         for subdirectory in self.artifacts_root.iterdir():
             if subdirectory.is_dir() and not subdirectory.name.startswith("_"):
-                for file_path in subdirectory.rglob("*.md"):
-                    if file_path.is_file() and not self._is_excluded_path(file_path):
-                        naming_valid, naming_msg = validate_naming_convention(
-                            file_path,
-                            self.valid_artifact_types,
-                            self.artifact_type_details,
-                            self.error_templates
-                        )
-                        if not naming_valid:
-                            all_valid = False
-                            rel_path = str(file_path.relative_to(self.artifacts_root))
-                            violations.append(f"❌ {rel_path}: {naming_msg}")
+                subdir_violations = self._check_subdir_naming(subdirectory)
+                if subdir_violations:
+                    all_valid = False
+                    violations.extend(subdir_violations)
 
         if violations:
             print("\nNaming Convention Violations:")
             for v in violations:
                 print(v)
             return False
-        
+
         print("✅ All artifacts follow naming conventions.")
         return True
 
+    def _check_subdir_naming(self, subdirectory: Path) -> list[str]:
+        """Check naming conventions for files in a subdirectory."""
+        from AgentQMS.tools.compliance.validators.naming import validate_naming_convention
+        violations = []
+        for file_path in subdirectory.rglob("*.md"):
+            if file_path.is_file() and not self._is_excluded_path(file_path):
+                naming_valid, naming_msg = validate_naming_convention(
+                    file_path,
+                    self.valid_artifact_types,
+                    self.artifact_type_details,
+                    self.error_templates
+                )
+                if not naming_valid:
+                    rel_path = str(file_path.relative_to(self.artifacts_root))
+                    violations.append(f"❌ {rel_path}: {naming_msg}")
+        return violations
+
+    def validate_all(self, strict_mode: bool | None = None) -> list[dict]:
+        """Validate all artifacts in the artifacts directory.
+
+        Args:
+            strict_mode: Override instance strict_mode setting. If None, uses self.strict_mode
+        """
+        results = []
+
+        # Validate all artifacts in subdirectories
+        for subdirectory in self.artifacts_root.iterdir():
+            if subdirectory.is_dir() and not subdirectory.name.startswith("_"):
+                results.extend(self.validate_directory(subdirectory, strict_mode))
+
+        # # Add bundle validation results if available
+        # from AgentQMS.tools.compliance.validators.bundles import validate_bundles
+        # if CONTEXT_BUNDLES_AVAILABLE:
+        #     bundle_results = validate_bundles()
+        #     results.extend(bundle_results)
+
+        return results
 
 
 
 
 
-def main():
-    """Main entry point for the validation script."""
+
+def _parse_cli_args():
     parser = argparse.ArgumentParser(description="Validate artifact naming conventions and structure")
     parser.add_argument("--file", help="Validate a specific file")
     parser.add_argument("--directory", help="Validate all files in a directory")
@@ -603,8 +656,11 @@ def main():
         action="store_true",
         help="Skip plugin snapshot refresh (useful for pre-commit hooks)",
     )
+    return parser.parse_args()
 
-    args = parser.parse_args()
+def main():
+    """Main entry point for the validation script."""
+    args = _parse_cli_args()
 
     if not args.no_refresh:
         _refresh_plugin_snapshot_best_effort()
@@ -639,7 +695,7 @@ def main():
             )
             for line in (completed.stdout or "").splitlines():
                 path = Path(line.strip())
-                if not path.suffix.lower() == ".md":
+                if path.suffix.lower() != ".md":
                     continue
                 # Only validate files within the artifacts tree
                 try:

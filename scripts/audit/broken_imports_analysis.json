@@ -1,0 +1,58 @@
+{
+  "total": 4,
+  "categories": {
+    "ui_modules": 2,
+    "other": 2
+  },
+  "details": {
+    "ui_modules": [
+      {
+        "file": "scripts/checkpoints/convert_legacy_checkpoints.py",
+        "line": 95,
+        "module": "ui.apps.inference.services.checkpoint.types",
+        "symbols": [
+          "CheckpointingConfig",
+          "CheckpointMetadataV1",
+          "DecoderInfo",
+          "EncoderInfo",
+          "HeadInfo",
+          "LossInfo",
+          "MetricsInfo",
+          "ModelInfo",
+          "TrainingInfo"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/validation/checkpoints/validate_coordinate_consistency.py",
+        "line": 143,
+        "module": "ui.utils.inference.engine",
+        "symbols": [
+          "run_inference_on_image"
+        ],
+        "error": "Module or attribute not found"
+      }
+    ],
+    "other": [
+      {
+        "file": "scripts/mcp/unified_server.py",
+        "line": 354,
+        "module": "AgentQMS.tools.core.context_bundle",
+        "symbols": [
+          "auto_suggest_context"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/mcp/unified_server.py",
+        "line": 201,
+        "module": "AgentQMS.tools.core.context_bundle",
+        "symbols": [
+          "list_available_bundles",
+          "get_context_bundle"
+        ],
+        "error": "Module or attribute not found"
+      }
+    ]
+  }
+}

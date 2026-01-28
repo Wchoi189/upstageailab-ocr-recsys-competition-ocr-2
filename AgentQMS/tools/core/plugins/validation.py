@@ -248,7 +248,15 @@ class PluginValidator:
         canonical_types = self._validation_rules.get("canonical_types", {})
         prohibited = self._validation_rules.get("prohibited_types", [])
 
-        # Phase 6.6: Prohibited type check (data-driven from YAML)
+        self._check_prohibited_types(plugin_name, prohibited, errors)
+        self._check_canonical_types(plugin_name, canonical_types, prohibited, errors)
+        self._validate_plugin_metadata(plugin_data, errors)
+        self._validate_plugin_template(plugin_data, errors)
+
+        return errors
+
+    def _check_prohibited_types(self, plugin_name: str, prohibited: list[dict[str, Any]], errors: list[str]) -> None:
+        """Check if type is prohibited."""
         prohibited_names = [p.get("name") for p in prohibited]
         if plugin_name in prohibited_names:
             matching = next((p for p in prohibited if p.get("name") == plugin_name), None)
@@ -260,7 +268,15 @@ class PluginValidator:
                     f"Use '{use_instead}' instead. Reason: {reason}"
                 )
 
-        # Phase 6.6: Canonical type and alias check (data-driven from YAML)
+    def _check_canonical_types(
+        self,
+        plugin_name: str,
+        canonical_types: dict[str, Any],
+        prohibited: list[dict[str, Any]],
+        errors: list[str]
+    ) -> None:
+        """Check if type is canonical or alias."""
+        prohibited_names = [p.get("name") for p in prohibited]
         if plugin_name not in canonical_types:
             # Check aliases
             found_alias = False
@@ -282,37 +298,38 @@ class PluginValidator:
                     f"Valid types: {valid_types}"
                 )
 
-        # Phase 6.6: Metadata validation (data-driven from YAML)
+    def _validate_plugin_metadata(self, plugin_data: dict[str, Any], errors: list[str]) -> None:
+        """Validate metadata section."""
         metadata = plugin_data.get("metadata", {})
         if not metadata:
             errors.append("Missing 'metadata' section")
-        else:
-            # Get required metadata fields from validation rules (not hard-coded)
-            required_metadata_fields = self._validation_rules.get(
-                "required_plugin_metadata_fields",
-                ["filename_pattern", "directory", "frontmatter"]  # Fallback if not in YAML
+            return
+
+        # Get required metadata fields from validation rules (not hard-coded)
+        required_metadata_fields = self._validation_rules.get(
+            "required_plugin_metadata_fields",
+            ["filename_pattern", "directory", "frontmatter"]  # Fallback if not in YAML
+        )
+        for field in required_metadata_fields:
+            if field not in metadata:
+                errors.append(f"Missing required metadata field: {field}")
+
+        # Phase 6.6: Frontmatter validation (data-driven from YAML)
+        frontmatter = metadata.get("frontmatter", {})
+        if frontmatter:
+            required_frontmatter_fields = self._validation_rules.get(
+                "required_frontmatter_fields",
+                ["ads_version", "type", "category", "status", "version", "tags"]  # Fallback
             )
-            for field in required_metadata_fields:
-                if field not in metadata:
-                    errors.append(f"Missing required metadata field: {field}")
+            for field in required_frontmatter_fields:
+                if field not in frontmatter:
+                    errors.append(f"Missing required frontmatter field: {field}")
 
-            # Phase 6.6: Frontmatter validation (data-driven from YAML)
-            frontmatter = metadata.get("frontmatter", {})
-            if frontmatter:
-                required_frontmatter_fields = self._validation_rules.get(
-                    "required_frontmatter_fields",
-                    ["ads_version", "type", "category", "status", "version", "tags"]  # Fallback
-                )
-                for field in required_frontmatter_fields:
-                    if field not in frontmatter:
-                        errors.append(f"Missing required frontmatter field: {field}")
-
-        # Phase 6.6: Template validation (data-driven from YAML enforcement rules)
+    def _validate_plugin_template(self, plugin_data: dict[str, Any], errors: list[str]) -> None:
+        """Validate template section."""
         template = plugin_data.get("template", "")
         if not template or not isinstance(template, str):
             errors.append("Missing or invalid 'template' field")
-
-        return errors
 
     def get_canonical_types(self) -> dict[str, Any]:
         """Get canonical artifact types from validation rules."""

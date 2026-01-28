@@ -13,7 +13,7 @@ if [ -n "$YAML_FILES" ]; then
             if ! uv run python AgentQMS/standards/schemas/compliance-checker.py "$file"; then
                 echo ""
                 echo "❌ ADS v1.0 compliance validation failed"
-                echo "See: AgentQMS/standards/schemas/ads-v1.0-spec.yaml"
+                echo "See: AgentQMS/standards/schemas/ads-v2.0-spec.yaml"
                 exit 1
             fi
         fi
