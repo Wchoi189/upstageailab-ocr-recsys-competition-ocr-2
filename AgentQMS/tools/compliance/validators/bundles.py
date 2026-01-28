@@ -3,7 +3,7 @@ from typing import Any
 from AgentQMS.tools.utils.paths import get_project_root
 
 try:
-    from AgentQMS.tools.core.context_bundle import (
+    from AgentQMS.tools.core.context.context_bundle import (
         is_fresh,
         list_available_bundles,
         load_bundle_definition,

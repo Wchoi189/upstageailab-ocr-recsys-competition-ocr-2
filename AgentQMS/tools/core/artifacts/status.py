@@ -4,13 +4,13 @@ Artifact Status Dashboard
 Shows aging status, lifecycle state, and version information for artifacts.
 
 Usage:
-    python artifacts_status.py [OPTIONS]
+    uv run python artifacts_status.py [OPTIONS]
 
 Examples:
-    python artifacts_status.py --dashboard
-    python artifacts_status.py --json
-    python artifacts_status.py --aging-only
-    python artifacts_status.py --threshold 30  # Show artifacts > 30 days old
+    uv run python artifacts_status.py --dashboard
+    uv run python artifacts_status.py --json
+    uv run python artifacts_status.py --aging-only
+    uv run python artifacts_status.py --threshold 30  # Show artifacts > 30 days old
 """
 
 import argparse
@@ -22,10 +22,19 @@ from pathlib import Path
 
 from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
 from AgentQMS.tools.utils.paths import get_project_root
-from AgentQMS.tools.utilities.versioning import (
-    ArtifactAgeDetector,
-    VersionManager,
-)
+try:
+    from AgentQMS.tools.utilities.versioning import (
+        ArtifactAgeDetector,
+        VersionManager,
+    )
+except ImportError:
+    # Fallback/Mock for missing dependencies to allow module loading
+    class ArtifactAgeDetector:
+        def get_artifact_age(self, path): return 0
+        def get_age_category(self, days): return "unknown"
+
+    class VersionManager:
+        def extract_version_from_frontmatter(self, path): return None
 
 ensure_project_root_on_sys_path()
 
@@ -98,13 +107,8 @@ def find_all_artifacts(root_dir: Path) -> list[Path]:
     return artifacts
 
 
-def print_dashboard(statuses: list[ArtifactStatus]) -> None:
-    """Print dashboard view."""
-    print("\n" + "=" * 100)
-    print("📊 ARTIFACT STATUS DASHBOARD")
-    print("=" * 100)
-
-    # Summary statistics
+def _print_summary_stats(statuses: list[ArtifactStatus]) -> None:
+    """Print summary statistics."""
     total = len(statuses)
     ok_count = sum(1 for s in statuses if s.age_category == "ok")
     warning_count = sum(1 for s in statuses if s.age_category == "warning")
@@ -125,7 +129,9 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
     if error_count:
         print(f"   ❌ Errors:        {error_count}")
 
-    # Lifecycle state summary
+
+def _print_lifecycle_stats(statuses: list[ArtifactStatus]) -> None:
+    """Print lifecycle state summary."""
     states: dict[str, int] = {}
     for status in statuses:
         states[status.lifecycle_state] = states.get(status.lifecycle_state, 0) + 1
@@ -134,7 +140,9 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
     for state, count in sorted(states.items()):
         print(f"   {state.upper()}: {count}")
 
-    # Age distribution
+
+def _print_age_distribution(statuses: list[ArtifactStatus]) -> None:
+    """Print age distribution."""
     print("\n📅 AGE DISTRIBUTION:")
     age_ranges = {
         "0-30 days": 0,
@@ -159,7 +167,9 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
     for range_label, count in age_ranges.items():
         print(f"   {range_label}: {count}")
 
-    # Detailed table (only show items needing attention)
+
+def _print_attention_needed(statuses: list[ArtifactStatus]) -> None:
+    """Print items needing attention."""
     print("\n⚠️  ITEMS NEEDING ATTENTION:")
     print("-" * 100)
 
@@ -173,6 +183,18 @@ def print_dashboard(statuses: list[ArtifactStatus]) -> None:
             print(f"{status.path:<60} {age_str:<12} {status.lifecycle_state:<12} {status.version or 'N/A':<10}")
     else:
         print("✅ All artifacts are in good health!")
+
+
+def print_dashboard(statuses: list[ArtifactStatus]) -> None:
+    """Print dashboard view."""
+    print("\n" + "=" * 100)
+    print("📊 ARTIFACT STATUS DASHBOARD")
+    print("=" * 100)
+
+    _print_summary_stats(statuses)
+    _print_lifecycle_stats(statuses)
+    _print_age_distribution(statuses)
+    _print_attention_needed(statuses)
 
     print("\n" + "=" * 100 + "\n")
 

@@ -58,7 +58,7 @@ sys.path.insert(0, str(PROJECT_ROOT))
 
 
 from AgentQMS.tools.utils.config.loader import ConfigLoader
-from AgentQMS.tools.core.context_bundle import get_context_bundle, list_available_bundles
+from AgentQMS.tools.core.context.context_bundle import get_context_bundle, list_available_bundles
 
 # Initialize ConfigLoader
 CONFIG_LOADER = ConfigLoader()

@@ -106,36 +106,40 @@ class DocumentationQualityMonitor:
         """Check if tools are discoverable."""
         issues = []
 
-        # Check if discovery script exists
-        discovery_script = Path("scripts/agent_tools/discover.py")
+        # Check canonical discovery entrypoint
+        discovery_script = Path("AgentQMS/tools/core/plugins/discovery.py")
         if not discovery_script.exists():
             issues.append(
                 {
                     "type": "missing_discovery",
-                    "file": "scripts/agent_tools/discover.py",
-                    "issue": "Tool discovery script missing",
+                    "file": str(discovery_script),
+                    "issue": "Tool discovery entrypoint missing",
                     "severity": "high",
-                    "suggested_fix": "Create discovery script to help agents find tools",
+                    "suggested_fix": "Restore AgentQMS/tools/core/plugins/discovery.py",
                 }
             )
 
-        # Check if wrapper scripts exist
+        # Flag legacy discovery shims and wrapper scripts
+        shim_scripts = [
+            Path("scripts/agent_tools/discover.py"),
+            Path("AgentQMS/tools/core/plugins/list_tools.py"),
+        ]
         wrapper_scripts = [
-            "create-artifact",
-            "validate-artifacts",
-            "monitor-compliance",
-            "agent-help",
+            Path("create-artifact"),
+            Path("validate-artifacts"),
+            Path("monitor-compliance"),
+            Path("agent-help"),
         ]
 
-        for script in wrapper_scripts:
-            if not Path(script).exists():
+        for script in shim_scripts + wrapper_scripts:
+            if script.exists():
                 issues.append(
                     {
-                        "type": "missing_wrapper",
-                        "file": script,
-                        "issue": f"Wrapper script {script} missing",
-                        "severity": "medium",
-                        "suggested_fix": f"Create wrapper script {script} for easier tool access",
+                        "type": "shim_prohibited",
+                        "file": str(script),
+                        "issue": "Shim/wrapper scripts are prohibited",
+                        "severity": "high",
+                        "suggested_fix": "Delete the shim and update references to canonical tools",
                     }
                 )
 

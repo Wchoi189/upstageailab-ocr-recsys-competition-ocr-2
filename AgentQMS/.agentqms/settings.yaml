@@ -1,6 +1,6 @@
 framework:
   name: AgentQMS Local
-  version: 0.2.0
+  ads_version: "2.0.0" # Matches AgentQMS/__init__.py
   container_name: AgentQMS
   timezone: "Asia/Seoul"
   validation:
@@ -63,7 +63,7 @@ automation:
 interface:
   agent:
     name: AI Agent
-    version: "1.0"
+    ads_version: "2.0.0"
     environment: project
     access_level: restricted
   tools:
@@ -104,7 +104,7 @@ tool_mappings:
     validate: ../bin/workflows/validate.sh
     compliance: ../bin/workflows/compliance.sh
   agent_tools:
-    discover: ../tools/core/discover.py
+    discover: ../tools/core/plugins/discovery.py
     feedback: ../bin/cli_tools/feedback.py
     quality: ../bin/cli_tools/quality.py
 

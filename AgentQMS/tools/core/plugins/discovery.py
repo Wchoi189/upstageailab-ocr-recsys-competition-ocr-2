@@ -11,6 +11,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
+from typing import Iterable
+
+from AgentQMS.tools.utils.paths import get_agent_tools_dir, get_project_root
 
 
 @dataclass
@@ -171,3 +174,81 @@ class PluginDiscovery:
             "framework": str(framework_rel),
             "project": str(project_rel),
         }
+
+    def discover_tools(self) -> dict[str, list[Path]]:
+        """Discover executable tools from the AgentQMS/tools directory."""
+        return discover_tools(get_agent_tools_dir())
+
+
+def discover_tools(tools_root: Path) -> dict[str, list[Path]]:
+    """Discover executable tools from the AgentQMS/tools directory."""
+    if not tools_root.exists():
+        return {}
+
+    categories: dict[str, list[Path]] = {}
+    for category_dir in sorted(tools_root.iterdir()):
+        if not category_dir.is_dir() or category_dir.name == "__pycache__":
+            continue
+
+        scripts = sorted(
+            script
+            for script in category_dir.glob("*.py")
+            if script.name != "__init__.py"
+        )
+        if scripts:
+            categories[category_dir.name] = scripts
+
+    return categories
+
+
+def _print_tool_catalog(tools_map: dict[str, list[Path]], project_root: Path) -> None:
+    print("🔍 Available Agent Tools:")
+    print()
+    print("📁 Architecture:")
+    print("   Implementation Layer: AgentQMS/tools/ (canonical)")
+    print("   Agent Interface: AgentQMS/bin/")
+    print()
+
+    category_descriptions = {
+        "core": "Essential automation tools (artifact creation, context bundles)",
+        "compliance": "Compliance and validation tools",
+        "documentation": "Documentation management tools",
+        "utils": "Helper functions and utilities",
+        "audit": "Audit framework tools",
+        "maintenance": "System maintenance and cleanup tasks",
+        "multi_agent": "Multi-agent coordination and sub-agent management",
+    }
+
+    if not tools_map:
+        print("   (no tools found in AgentQMS/tools/)")
+        return
+
+    for category, tools in tools_map.items():
+        desc = category_descriptions.get(category, "")
+        print(f"📁 {category.upper()}: {desc}")
+
+        for tool in tools:
+            try:
+                rel_path = tool.relative_to(project_root)
+                print(f"   uv run python {rel_path.as_posix()}")
+            except ValueError:
+                print(f"   uv run python {tool.as_posix()}")
+        print()
+
+    print("💡 Usage:")
+    print("   For agents: cd AgentQMS/bin/ && make help")
+    print("   Direct CLI: uv run python AgentQMS/tools/<category>/<tool>.py")
+    print("   See README.md for detailed usage information")
+    print()
+
+
+def main() -> None:
+    tools_root = get_agent_tools_dir()
+    project_root = get_project_root()
+    tools_map = discover_tools(tools_root)
+    _print_tool_catalog(tools_map, project_root)
+
+
+if __name__ == "__main__":
+    main()
+

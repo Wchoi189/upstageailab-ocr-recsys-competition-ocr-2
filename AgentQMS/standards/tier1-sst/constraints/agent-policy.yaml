@@ -49,4 +49,7 @@ prohibited_actions:
 - action: Files at docs/ root
   instead: docs/artifacts/{TYPE}/
   severity: critical
+- action: Shim or wrapper scripts
+  instead: Use canonical implementations and update references
+  severity: critical
 runbook_reference: AgentQMS/standards/tier4-workflows/validation-runbook.yaml

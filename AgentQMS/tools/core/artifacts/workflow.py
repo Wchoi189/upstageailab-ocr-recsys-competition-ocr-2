@@ -41,7 +41,7 @@ _assert_clean_boundaries()
 
 # Try to import context bundle functions for hooks
 try:
-    from AgentQMS.tools.core.context_bundle import (
+    from AgentQMS.tools.core.context.context_bundle import (
         list_available_bundles,
         load_bundle_definition,
         validate_bundle_files,
@@ -220,7 +220,9 @@ class ArtifactWorkflow:
             reindex_script = str(Path(__file__).parent / "reindex_artifacts.py")
             result = subprocess.run(
                 [
-                    sys.executable,
+                    "uv",
+                    "run",
+                    "python",
                     reindex_script,
                 ],
                 capture_output=True,
@@ -461,8 +463,8 @@ class ArtifactWorkflow:
             return ""
 
 
-def main():
-    """Main entry point for the artifact workflow."""
+def _setup_parser() -> argparse.ArgumentParser:
+    """Set up the argument parser."""
     parser = argparse.ArgumentParser(description="AI Agent Artifact Workflow")
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
@@ -475,9 +477,12 @@ def main():
     create_parser.add_argument("--tags", help="Comma-separated tags")
     create_parser.add_argument("--branch", help="Git branch name (auto-detected if not provided, defaults to main)")
     create_parser.add_argument("--interactive", action="store_true", help="Interactive mode")
+
+    # Validate command
     validate_parser = subparsers.add_parser("validate", help="Validate artifacts")
     validate_parser.add_argument("--file", help="Validate specific file")
     validate_parser.add_argument("--all", action="store_true", help="Validate all artifacts")
+
     # Update indexes command
     subparsers.add_parser("update-indexes", help="Update artifact indexes")
 
@@ -491,6 +496,70 @@ def main():
     template_info_parser = subparsers.add_parser("template-info", help="Show template information")
     template_info_parser.add_argument("--type", required=True, help="Template type")
 
+    return parser
+
+
+def _handle_create(workflow: ArtifactWorkflow, args: argparse.Namespace) -> int:
+    """Handle the create command."""
+    if args.interactive:
+        file_path = workflow.interactive_create()
+        return 0 if file_path else 1
+
+    kwargs = {}
+    if args.description:
+        kwargs["description"] = args.description
+    if args.tags:
+        kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
+    if args.branch:
+        kwargs["branch"] = args.branch
+
+    file_path = workflow.create_artifact(args.type, args.name, args.title, **kwargs)
+    return 0 if file_path else 1
+
+
+def _handle_validate(workflow: ArtifactWorkflow, args: argparse.Namespace) -> int:
+    """Handle the validate command."""
+    if args.file:
+        success = workflow.validate_artifact(args.file)
+        return 0 if success else 1
+    elif args.all:
+        success = workflow.validate_all()
+        return 0 if success else 1
+    else:
+        print("❌ Please specify --file or --all")
+        return 1
+
+
+def _handle_update_indexes(workflow: ArtifactWorkflow, args: argparse.Namespace) -> int:
+    """Handle the update-indexes command."""
+    success = workflow.update_indexes()
+    return 0 if success else 1
+
+
+def _handle_check_compliance(workflow: ArtifactWorkflow, args: argparse.Namespace) -> int:
+    """Handle the check-compliance command."""
+    compliance_report = workflow.check_compliance()
+    return 0 if compliance_report["invalid_files"] == 0 else 1
+
+
+def _handle_list_templates(workflow: ArtifactWorkflow, args: argparse.Namespace) -> int:
+    """Handle the list-templates command."""
+    templates = workflow.get_available_templates()
+    print("Available artifact templates:")
+    for template in templates:
+        print(f"  - {template}")
+    return 0
+
+
+def _handle_template_info(workflow: ArtifactWorkflow, args: argparse.Namespace) -> int:
+    """Handle the template-info command."""
+    workflow.show_template_info(args.type)
+    return 0
+
+
+def main():
+    """Main entry point for the artifact workflow."""
+    parser = _setup_parser()
     args = parser.parse_args()
 
     if not args.command:
@@ -499,59 +568,25 @@ def main():
 
     workflow = ArtifactWorkflow()
 
+    handlers = {
+        "create": _handle_create,
+        "validate": _handle_validate,
+        "update-indexes": _handle_update_indexes,
+        "check-compliance": _handle_check_compliance,
+        "list-templates": _handle_list_templates,
+        "template-info": _handle_template_info,
+    }
+
     try:
-        if args.command == "create":
-            if args.interactive:
-                file_path = workflow.interactive_create()
-                return 0 if file_path else 1
-            else:
-                kwargs = {}
-                if args.description:
-                    kwargs["description"] = args.description
-                if args.tags:
-                    kwargs["tags"] = [tag.strip() for tag in args.tags.split(",")]
-                if args.branch:
-                    kwargs["branch"] = args.branch
-
-                file_path = workflow.create_artifact(args.type, args.name, args.title, **kwargs)
-                return 0 if file_path else 1
-
-        elif args.command == "validate":
-            if args.file:
-                success = workflow.validate_artifact(args.file)
-                return 0 if success else 1
-            elif args.all:
-                success = workflow.validate_all()
-                return 0 if success else 1
-            else:
-                print("❌ Please specify --file or --all")
-                return 1
-
-        elif args.command == "update-indexes":
-            success = workflow.update_indexes()
-            return 0 if success else 1
-
-        elif args.command == "check-compliance":
-            compliance_report = workflow.check_compliance()
-            return 0 if compliance_report["invalid_files"] == 0 else 1
-
-        elif args.command == "list-templates":
-            templates = workflow.get_available_templates()
-            print("Available artifact templates:")
-            for template in templates:
-                print(f"  - {template}")
-            return 0
-
-        elif args.command == "template-info":
-            workflow.show_template_info(args.type)
-            return 0
-
+        handler = handlers.get(args.command)
+        if handler:
+            return handler(workflow, args)
         else:
             print(f"❌ Unknown command: {args.command}")
             return 1
 
     except KeyboardInterrupt:
-        print("\n❌ Cancelled by user")
+        print("\\n❌ Cancelled by user")
         return 1
     except Exception as e:
         print(f"❌ Error: {e}")

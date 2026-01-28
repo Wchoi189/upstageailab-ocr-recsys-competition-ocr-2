@@ -1,4 +1,3 @@
-# #!/usr/bin/env python3
 # Utility Scripts Discovery Manifest
 # Machine-parseable registry for AI agent consumption
 # Format: YAML (easily parsed by LLMs and scripts)
@@ -33,16 +32,13 @@ metadata:
   audience: "AI agents, LLMs, automated systems"
   optimization: "Machine-parseable, LLM-friendly"
   tier: "1-critical"
-
-# ============================================================================
-# QUICK DISCOVERY PATHS
-# ============================================================================
-
-paths:
-  index: "AgentQMS/standards/utility-scripts/utility-scripts-index.yaml"
-  quick_reference: "AgentQMS/standards/utility-scripts/quick-reference.md"
-  ai_integration: "AgentQMS/standards/utility-scripts/ai-integration-guide.md"
-  by_category: "AgentQMS/standards/utility-scripts/by-category/"
+  ai_instructions:
+    - "Use this manifest for quick utility discovery"
+    - "Parse decision_tree for automatic recommendation"
+    - "Copy patterns section for ready-to-use code"
+    - "Check keywords to suggest utilities in conversations"
+    - "Reference full documentation for detailed usage"
+    - "Always prefer utilities over custom implementations"
 
 # ============================================================================
 # UTILITY REGISTRY (AI-FACING)
@@ -52,7 +48,7 @@ utilities:
   config_loader:
     tier: "1-critical"
     name: "ConfigLoader"
-    module: "AgentQMS.tools.utils.config_loader"
+    module: "AgentQMS.tools.utils.config.loader"
     purpose: "Load YAML configs with automatic LRU caching"
     key_benefit: "~2000x speedup for repeated loads"
 
@@ -64,14 +60,6 @@ utilities:
     when_not_to_use:
       - "NOT for direct yaml.safe_load()"
       - "NOT for one-time loads if speed unimportant"
-
-    import_statement: "from AgentQMS.tools.utils.config_loader import ConfigLoader"
-
-    usage_snippet: |
-      loader = ConfigLoader()
-      config = loader.load('configs/train.yaml')
-
-    documentation: "AgentQMS/standards/utility-scripts/by-category/config-loading/config_loader.md"
 
     keywords:
       - "load yaml"
@@ -93,7 +81,7 @@ utilities:
   paths:
     tier: "1-critical"
     name: "Standard Paths Utility"
-    module: "AGentQMS.tools.utils.paths"
+    module: "AgentQMS.tools.utils.paths"
     purpose: "Resolve standard project directories"
     key_benefit: "No hardcoded paths = maintainable code"
 
@@ -102,8 +90,6 @@ utilities:
       - "Constructing file paths"
       - "Avoiding hardcoded paths"
 
-    import_statement: "from AGentQMS.tools.utils.paths import get_project_root, get_data_dir, ..."
-
     available_functions:
       - "get_project_root() -> str"
       - "get_data_dir() -> str"
@@ -111,13 +97,6 @@ utilities:
       - "get_outputs_dir() -> str"
       - "get_models_dir() -> str"
       - "get_artifacts_dir() -> str"
-
-    usage_snippet: |
-      from AGentQMS.tools.utils.paths import get_data_dir
-      import os
-      data_path = os.path.join(get_data_dir(), 'dataset.csv')
-
-    documentation: "AgentQMS/standards/utility-scripts/by-category/path-resolution/paths.md"
 
     keywords:
       - "project root"
@@ -137,7 +116,7 @@ utilities:
   timestamps:
     tier: "1-critical"
     name: "KST Timestamp Utility"
-    module: "AGentQMS.tools.utils.timestamps"
+    module: "AgentQMS.tools.utils.system.timestamps"
     purpose: "Handle timestamps in KST (Korea Standard Time)"
     key_benefit: "Consistent timezone handling for metadata"
 
@@ -147,19 +126,10 @@ utilities:
       - "Automation workflows"
       - "Checking data freshness"
 
-    import_statement: "from AGentQMS.tools.utils.timestamps import get_kst_timestamp, format_kst, ..."
-
     available_functions:
       - "get_kst_timestamp() -> datetime"
       - "format_kst(timestamp: datetime, format_str: str) -> str"
       - "get_timestamp_age(timestamp: datetime) -> float"
-
-    usage_snippet: |
-      from AGentQMS.tools.utils.timestamps import get_kst_timestamp, format_kst
-      now = get_kst_timestamp()
-      formatted = format_kst(now, "%Y-%m-%d %H:%M:%S")
-
-    documentation: "AgentQMS/standards/utility-scripts/by-category/timestamps/timestamps.md"
 
     keywords:
       - "timestamp"
@@ -180,7 +150,7 @@ utilities:
   git:
     tier: "1-critical"
     name: "Git Information Utility"
-    module: "AGentQMS.tools.utils.git"
+    module: "AgentQMS.tools.utils.system.git"
     purpose: "Detect git branch and commit hash"
     key_benefit: "Graceful fallbacks, no subprocess overhead"
 
@@ -190,18 +160,9 @@ utilities:
       - "Artifact metadata"
       - "Build identification"
 
-    import_statement: "from AGentQMS.tools.utils.git import get_current_branch, get_commit_hash"
-
     available_functions:
       - "get_current_branch() -> str"
       - "get_commit_hash() -> str"
-
-    usage_snippet: |
-      from AGentQMS.tools.utils.git import get_current_branch, get_commit_hash
-      branch = get_current_branch()
-      commit = get_commit_hash()
-
-    documentation: "AgentQMS/standards/utility-scripts/by-category/git/git.md"
 
     keywords:
       - "current branch"
@@ -249,26 +210,26 @@ patterns:
   load_config:
     description: "Load YAML configuration file"
     code: |
-      from AgentQMS.tools.utils.config_loader import ConfigLoader
+      from AgentQMS.tools.utils.config.loader import ConfigLoader
       loader = ConfigLoader()
       config = loader.load('configs/train.yaml')
 
   get_standard_path:
     description: "Get standard project directory"
     code: |
-      from AGentQMS.tools.utils.paths import get_data_dir
+      from AgentQMS.tools.utils.paths import get_data_dir
       data_dir = get_data_dir()
 
   create_timestamp:
     description: "Create KST timestamp"
     code: |
-      from AGentQMS.tools.utils.timestamps import get_kst_timestamp, format_kst
+      from AgentQMS.tools.utils.system.timestamps import get_kst_timestamp, format_kst
       timestamp = format_kst(get_kst_timestamp(), "%Y-%m-%d %H:%M:%S")
 
   get_git_info:
     description: "Get current branch and commit"
     code: |
-      from AGentQMS.tools.utils.git import get_current_branch, get_commit_hash
+      from AgentQMS.tools.utils.system.git import get_current_branch, get_commit_hash
       branch = get_current_branch()
       commit = get_commit_hash()
 
@@ -276,8 +237,8 @@ patterns:
     description: "Create artifact with full metadata"
     code: |
       from AgentQMS.tools.utils.paths import get_artifacts_dir
-      from AGentQMS.tools.utils.git import get_current_branch, get_commit_hash
-      from AGentQMS.tools.utils.timestamps import get_kst_timestamp, format_kst
+      from AgentQMS.tools.utils.system.git import get_current_branch, get_commit_hash
+      from AgentQMS.tools.utils.system.timestamps import get_kst_timestamp, format_kst
       import os
 
       metadata = {
@@ -290,75 +251,6 @@ patterns:
       filepath = os.path.join(get_artifacts_dir(), filename)
 
 # ============================================================================
-# CONTEXT BUNDLING INTEGRATION
-# ============================================================================
-
-context_bundling:
-  bundle_name: "utility-scripts"
-  bundle_file: ".agentqms/plugins/context_bundles/utility-scripts.yaml"
-
-  auto_triggers:
-    keywords:
-      - "load yaml"
-      - "load config"
-      - "project root"
-      - "timestamp"
-      - "current branch"
-      - "git commit"
-      - "cache"
-
-    patterns:
-      - "\\b(yaml|config)\\b.*\\b(load|import)\\b"
-      - "\\b(path|directory)\\b.*\\b(find|get)\\b"
-      - "\\b(timestamp|date|time)\\b.*\\b(format|current)\\b"
-      - "\\b(branch|commit|git)\\b.*\\b(current|detect)\\b"
-
-  manual_trigger: "python AGentQMS/tools/utilities/suggest_context.py \"<task description>\""
-
-# ============================================================================
-# FILE STRUCTURE
-# ============================================================================
-
-file_structure:
-  root_dir: "AgentQMS/standards/utility-scripts/"
-  files:
-    - "utility-scripts-index.yaml"
-    - "quick-reference.md"
-    - "ai-integration-guide.md"
-    - "manifest.yaml (this file)"
-
-  directories:
-    by_category:
-      - "config-loading/"
-      - "path-resolution/"
-      - "timestamps/"
-      - "git/"
-
-# ============================================================================
-# METRICS
-# ============================================================================
-
-metrics:
-  documentation:
-    total_lines: 1962
-    files_created: 7
-    markdown_files: 5
-    yaml_files: 2
-
-  content:
-    utilities_tier1: 4
-    utilities_tier2: 3
-    total_utilities: 7
-    code_snippets: 15
-    api_methods: 12
-
-  coverage:
-    api_documentation: "100%"
-    usage_examples: "100%"
-    integration_guides: "100%"
-    test_references: "100%"
-
-# ============================================================================
 # STATUS & HANDOFF
 # ============================================================================
 
@@ -368,6 +260,9 @@ status:
   documentation_ready: true
   ai_optimized: true
   machine_parseable: true
+  pruned: "2026-01-29"
+  pruned_for: "maintainability"
+  removed_dead_code: "context_bundling section (unimplemented integration)"
 
   next_steps:
     phase_2: "Context bundling integration (create bundle YAML)"
@@ -375,22 +270,5 @@ status:
     blockers: "none"
 
 # ============================================================================
-# AI AGENT INSTRUCTIONS
-# ============================================================================
-
-ai_instructions:
-  - "Use this manifest for quick utility discovery"
-  - "Parse decision_tree for automatic recommendation"
-  - "Copy patterns section for ready-to-use code"
-  - "Check keywords to suggest utilities in conversations"
-  - "Reference full documentation for detailed usage"
-  - "Always prefer utilities over custom implementations"
-
-# ============================================================================
 # END MANIFEST
 # ============================================================================
-
-footer: |
-  Phase 1: Documentation setup COMPLETE ✓
-  Phase 2: Context bundling integration PENDING
-  Full system ready for Phase 2 implementation

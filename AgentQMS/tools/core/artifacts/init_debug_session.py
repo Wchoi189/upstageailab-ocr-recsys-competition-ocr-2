@@ -4,8 +4,8 @@ Debugging Session Initializer
 Creates standardized folder structure for bug investigation sessions.
 
 Usage:
-    python init_debug_session.py --id 001 --title "overlay-misalignment"
-    python init_debug_session.py --id 002 --title "preprocessing-failure" --severity high
+    uv run python init_debug_session.py --id 001 --title "overlay-misalignment"
+    uv run python init_debug_session.py --id 002 --title "preprocessing-failure" --severity high
 
 Makefile:
     make debug-session BUG_ID=001 TITLE="description"

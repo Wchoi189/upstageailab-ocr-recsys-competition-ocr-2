@@ -95,12 +95,21 @@ class ContextEngine:
         if self.keyword_cache is not None:
              return self.keyword_cache
 
-        config_path = PROJECT_ROOT / "AgentQMS/standards/tier2-framework/context-keywords.yaml"
+        config_path = PROJECT_ROOT / "AgentQMS/standards/tier2-framework/discovery/discovery-rules.yaml"
         if not config_path.exists():
             return {}
 
         # relying on ConfigLoader for parsing
-        self.keyword_cache = CONFIG_LOADER.get_config(config_path, defaults={})
+        raw_config = CONFIG_LOADER.get_config(config_path, defaults={})
+        
+        # Filter metadata keys from discovery-rules which contains other fields
+        # valid task types should have a list of strings as values
+        self.keyword_cache = {}
+        excluded_keys = {"keywords", "dependencies"}
+        for k, v in raw_config.items():
+            if k not in excluded_keys and isinstance(v, list):
+                self.keyword_cache[k] = v
+                
         return self.keyword_cache
 
     def analyze_task_type(self, description: str) -> str:

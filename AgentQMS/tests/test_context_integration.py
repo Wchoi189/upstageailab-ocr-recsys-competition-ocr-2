@@ -1,6 +1,6 @@
 import pytest
 from unittest.mock import patch
-from AgentQMS.tools.core.context_loader import ContextLoader, SessionState
+from AgentQMS.tools.core.context.context_loader import ContextLoader, SessionState
 
 class TestContextIntegration:
 
@@ -22,9 +22,9 @@ class TestContextIntegration:
         assert loader.enabled is True
         assert loader.threshold == 5
 
-    @patch("AgentQMS.tools.core.context_loader.ContextSuggester")
-    @patch("AgentQMS.tools.core.context_loader.get_context_bundle")
-    def test_process_message_loads_buundle(self, mock_get_bundle, mock_suggester_class, settings, session):
+    @patch("AgentQMS.tools.core.context.context_loader.ContextSuggester")
+    @patch("AgentQMS.tools.core.context.context_loader.get_context_bundle")
+    def test_process_message_loads_bundle(self, mock_get_bundle, mock_suggester_class, settings, session):
         # Setup mocks
         mock_suggester = mock_suggester_class.return_value
         mock_suggester.suggest.return_value = {
@@ -45,7 +45,7 @@ class TestContextIntegration:
         assert session.memory_footprint_mb > 0
         mock_get_bundle.assert_called_with(task_description="test message", task_type="test-bundle")
 
-    @patch("AgentQMS.tools.core.context_loader.ContextSuggester")
+    @patch("AgentQMS.tools.core.context.context_loader.ContextSuggester")
     def test_process_message_ignores_low_score(self, mock_suggester_class, settings, session):
         # Setup mocks
         mock_suggester = mock_suggester_class.return_value
@@ -64,7 +64,7 @@ class TestContextIntegration:
         assert "weak-bundle" not in newly_loaded
         assert "weak-bundle" not in session.loaded_bundles
 
-    @patch("AgentQMS.tools.core.context_loader.ContextSuggester")
+    @patch("AgentQMS.tools.core.context.context_loader.ContextSuggester")
     def test_bundle_unloading(self, mock_suggester_class, settings, session):
         settings["context_integration"]["persistence_turns"] = 1
         settings["context_integration"]["enabled"] = True
@@ -76,7 +76,7 @@ class TestContextIntegration:
         mock_suggester.suggest.return_value = {
             "suggestions": [{"context_bundle": "test-bundle", "score": 10}]
         }
-        with patch("AgentQMS.tools.core.context_loader.get_context_bundle") as mock_get_bundle:
+        with patch("AgentQMS.tools.core.context.context_loader.get_context_bundle") as mock_get_bundle:
             mock_get_bundle.return_value = []
             loader.process_message("relevance high", session)
             assert "test-bundle" in session.loaded_bundles
@@ -97,7 +97,7 @@ class TestContextIntegration:
         assert "test-bundle" not in session.loaded_bundles
         assert session.memory_footprint_mb == 0.0
 
-    @patch("AgentQMS.tools.core.context_loader.get_context_bundle")
+    @patch("AgentQMS.tools.core.context.context_loader.get_context_bundle")
     def test_manual_overrides(self, mock_get_bundle, settings, session):
         mock_get_bundle.return_value = ["file.py"]
         loader = ContextLoader(settings)
@@ -114,7 +114,7 @@ class TestContextIntegration:
         assert success
         assert "force-bundle" not in session.loaded_bundles
 
-    @patch("AgentQMS.tools.core.context_loader.ContextSuggester")
+    @patch("AgentQMS.tools.core.context.context_loader.ContextSuggester")
     def test_process_message_disabled(self, mock_suggester_class, session):
 
         settings = {"context_integration": {"enabled": False}}

@@ -58,7 +58,7 @@ def run_command(cmd: list[str], description: str = "") -> int:
 
 def registry_resolve(args: argparse.Namespace) -> int:
     """Discovery: Resolve standards by task, path, or keywords."""
-    cmd = [sys.executable, str(REGISTRY_RESOLVER)]
+    cmd = ["uv", "run", "python", str(REGISTRY_RESOLVER)]
 
     if args.task:
         cmd.extend(["--task", args.task])
@@ -80,7 +80,7 @@ def registry_resolve(args: argparse.Namespace) -> int:
 
 def registry_sync(args: argparse.Namespace) -> int:
     """Discovery: Rebuild registry cache and indices."""
-    cmd = [sys.executable, str(REGISTRY_SYNC)]
+    cmd = ["uv", "run", "python", str(REGISTRY_SYNC)]
 
     if args.force:
         cmd.append("--force")
@@ -90,7 +90,7 @@ def registry_sync(args: argparse.Namespace) -> int:
 
 def plugin_list(args: argparse.Namespace) -> int:
     """Enforcement: List available plugins."""
-    cmd = [sys.executable, "-m", PLUGIN_CLI_MODULE, "--list"]
+    cmd = ["uv", "run", "python", "-m", PLUGIN_CLI_MODULE, "--list"]
 
     if args.artifact_types:
         cmd.append("--artifact-types")
@@ -106,7 +106,7 @@ def plugin_list(args: argparse.Namespace) -> int:
 
 def plugin_validate(args: argparse.Namespace) -> int:
     """Enforcement: Validate plugins against schemas."""
-    cmd = [sys.executable, "-m", PLUGIN_CLI_MODULE, "--validate"]
+    cmd = ["uv", "run", "python", "-m", PLUGIN_CLI_MODULE, "--validate"]
 
     if args.json:
         cmd.append("--json")
@@ -116,7 +116,7 @@ def plugin_validate(args: argparse.Namespace) -> int:
 
 def plugin_show(args: argparse.Namespace) -> int:
     """Enforcement: Show plugin details."""
-    cmd = [sys.executable, "-m", PLUGIN_CLI_MODULE, "--show", args.name]
+    cmd = ["uv", "run", "python", "-m", PLUGIN_CLI_MODULE, "--show", args.name]
 
     if args.json:
         cmd.append("--json")

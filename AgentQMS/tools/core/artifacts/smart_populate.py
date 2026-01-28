@@ -6,9 +6,9 @@ Analyzes project context (git, codebase, related files) to intelligently
 pre-populate artifact fields like author, branch, tags, and related files.
 
 Usage:
-    python smart_populate.py analyze --type implementation_plan
-    python smart_populate.py suggest-tags --type assessment
-    python smart_populate.py suggest-files --type bug_report
+    uv run python smart_populate.py analyze --type implementation_plan
+    uv run python smart_populate.py suggest-tags --type assessment
+    uv run python smart_populate.py suggest-files --type bug_report
 """
 
 from __future__ import annotations

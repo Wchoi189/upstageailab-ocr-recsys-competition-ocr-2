@@ -11,7 +11,7 @@ from dataclasses import dataclass, field
 from AgentQMS.tools.utilities.suggest_context import ContextSuggester
 
 # Import from core (Context Bundle Loader)
-from AgentQMS.tools.core.context_bundle import get_context_bundle
+from AgentQMS.tools.core.context.context_bundle import get_context_bundle
 
 logger = logging.getLogger(__name__)
 

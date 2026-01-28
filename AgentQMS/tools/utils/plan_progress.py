@@ -12,10 +12,10 @@ Supports updating:
 - Checklist items (- [ ] / - [x])
 
 Usage:
-    python plan_progress.py update-status --file plan.md --status "In Progress"
-    python plan_progress.py update-step --file plan.md --step "Phase 2, Task 2.3"
-    python plan_progress.py mark-complete --file plan.md --task "Task 2.2"
-    python plan_progress.py show --file plan.md
+    uv run python plan_progress.py update-status --file plan.md --status "In Progress"
+    uv run python plan_progress.py update-step --file plan.md --step "Phase 2, Task 2.3"
+    uv run python plan_progress.py mark-complete --file plan.md --task "Task 2.2"
+    uv run python plan_progress.py show --file plan.md
 """
 
 from __future__ import annotations
