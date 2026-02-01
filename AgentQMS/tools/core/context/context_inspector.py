@@ -74,6 +74,7 @@ class BundleMetrics:
 
     @property
     def total_size_mb(self) -> float:
+        """Return total size in megabytes."""
         return self.total_size_kb / 1024
 
     @property
@@ -444,7 +445,15 @@ class ContextInspector:
         return summaries
 
     def _expand_glob(self, pattern: str) -> list[Path]:
-        """Expand glob pattern to actual files."""
+        """
+        Expand a glob pattern into a list of matching file paths.
+
+        Args:
+            pattern: Glob pattern relative to project root.
+
+        Returns:
+            List of Path objects matching the pattern.
+        """
         pattern_path = self.project_root / pattern
         try:
             if "*" in pattern:

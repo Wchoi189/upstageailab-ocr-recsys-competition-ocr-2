@@ -8,7 +8,7 @@ import logging
 from dataclasses import dataclass, field
 
 # Import from utilities (ContextSuggester)
-from AgentQMS.tools.utilities.suggest_context import ContextSuggester
+from AgentQMS.tools.core.context.suggest_context import ContextSuggester
 
 # Import from core (Context Bundle Loader)
 from AgentQMS.tools.core.context.context_bundle import get_context_bundle
@@ -40,8 +40,14 @@ class ContextLoader:
 
     def process_message(self, message: str, session: SessionState) -> list[str]:
         """
-        Process a user message, suggest context, and load if above threshold.
-        Returns list of newly loaded bundles.
+        Process a user message to suggest and potentially load relevant context bundles.
+
+        Args:
+            message: The user's input message.
+            session: Current session state tracking loaded bundles and history.
+
+        Returns:
+            A list of bundle names that were newly loaded this turn.
         """
         if not self.enabled:
             return []
@@ -88,7 +94,14 @@ class ContextLoader:
         return newly_loaded
 
     def _load_bundle(self, bundle_name: str, session: SessionState, task_description: str):
-        """Load a specific bundle and update session state."""
+        """
+        Load a specific context bundle and update the session state.
+
+        Args:
+            bundle_name: Name of the bundle to load.
+            session: Current session state.
+            task_description: Description of the task for token estimation.
+        """
         try:
             # We use get_context_bundle to resolve files
             # We pass bundle_name as task_type to force loading that specific bundle
@@ -110,7 +123,12 @@ class ContextLoader:
             logger.error(f"Failed to load bundle {bundle_name}: {e}")
 
     def _unload_stale_bundles(self, session: SessionState):
-        """Unload bundles that haven't been relevant for persistence_turns."""
+        """
+        Identify and unload bundles that have exceeded their persistence turn limit.
+
+        Args:
+            session: Current session state.
+        """
         to_unload = []
         for bundle in session.loaded_bundles:
             last_used = session.bundle_last_used.get(bundle, 0)
@@ -125,7 +143,16 @@ class ContextLoader:
                 self._log_analytics("unload", bundle)
 
     def force_load_bundle(self, bundle_name: str, session: SessionState):
-        """Manually force load a context bundle."""
+        """
+        Manually trigger the loading of a context bundle, bypassing auto-detection.
+
+        Args:
+            bundle_name: Name of the bundle to load.
+            session: Current session state.
+
+        Returns:
+            True if the bundle was loaded, False if it was already present.
+        """
         if bundle_name not in session.loaded_bundles:
             self._load_bundle(bundle_name, session, task_description=f"Manual load: {bundle_name}")
             # Mark as recently used so it doesn't immediately unload
@@ -134,7 +161,16 @@ class ContextLoader:
         return False
 
     def force_unload_bundle(self, bundle_name: str, session: SessionState):
-        """Manually force unload a context bundle."""
+        """
+        Manually trigger the unloading of a context bundle.
+
+        Args:
+            bundle_name: Name of the bundle to unload.
+            session: Current session state.
+
+        Returns:
+            True if the bundle was unloaded, False if it was not present.
+        """
         if bundle_name in session.loaded_bundles:
             session.loaded_bundles.remove(bundle_name)
             session.memory_footprint_mb = max(0.0, session.memory_footprint_mb - 0.5)

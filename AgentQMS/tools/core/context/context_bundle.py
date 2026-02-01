@@ -101,7 +101,7 @@ class ContextEngine:
 
         # relying on ConfigLoader for parsing
         raw_config = CONFIG_LOADER.get_config(config_path, defaults={})
-        
+
         # Filter metadata keys from discovery-rules which contains other fields
         # valid task types should have a list of strings as values
         self.keyword_cache = {}
@@ -109,13 +109,31 @@ class ContextEngine:
         for k, v in raw_config.items():
             if k not in excluded_keys and isinstance(v, list):
                 self.keyword_cache[k] = v
-                
+
         return self.keyword_cache
 
     def analyze_task_type(self, description: str) -> str:
         """
-        Analyze task description task type based on keywords.
+        Analyze task description to detect the best context bundle.
+
+        Args:
+            description: Task description to analyze.
+
+        Returns:
+            Best matching bundle name, or 'compliance-check' as fallback.
         """
+        # 1. Try advanced detection from suggest_context
+        try:
+            from AgentQMS.tools.core.context.suggest_context import ContextSuggester
+            suggester = ContextSuggester(PROJECT_ROOT)
+            result = suggester.suggest(description)
+            if result.get("primary_bundle"):
+                return result["primary_bundle"]
+        except (ImportError, Exception):
+             # Fallback to local basic detection if suggest_context is broken or unavailable
+             pass
+
+        # 2. Basic keyword detection (Fallback)
         description_lower = description.lower()
         scores = {}
         keywords_map = self.load_task_keywords()
@@ -523,7 +541,7 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
 
     # Workflow detection
     try:
-        from AgentQMS.tools.core.workflow_detector import suggest_workflows
+        from AgentQMS.tools.core.plugins.workflow_detector import suggest_workflows
         workflow_suggestions = suggest_workflows(task_description)
         suggestions["suggested_workflows"] = workflow_suggestions.get("workflows", [])
         suggestions["suggested_tools"] = workflow_suggestions.get("tools", [])

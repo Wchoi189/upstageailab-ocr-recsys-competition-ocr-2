@@ -186,13 +186,24 @@ class ArtifactValidator:
         """Initialize frontmatter validation rules."""
         self.valid_statuses = []
         self.valid_categories = []
-        self.required_frontmatter = ["title", "date", "type", "category", "status", "version"]
+
+        # V2 Defaults (ADS 2.0)
+        self.required_frontmatter = ["title", "date", "type", "category", "status", "version", "ads_version"]
+
+        # V1 Defaults (Legacy - no ads_version)
+        self.legacy_required_frontmatter = ["title", "date", "type", "category", "status", "version"]
 
         if self.rules and "frontmatter" in self.rules:
             fm_rules = self.rules["frontmatter"]
             self.valid_statuses = fm_rules.get("valid_statuses", [])
             self.valid_categories = fm_rules.get("valid_categories", [])
-            self.required_frontmatter = fm_rules.get("required_fields", self.required_frontmatter)
+
+            # If rules define specific fields, use them for V2
+            if "required_fields" in fm_rules:
+                self.required_frontmatter = fm_rules["required_fields"]
+
+                # Derive legacy fields by removing ads_version if present
+                self.legacy_required_frontmatter = [f for f in self.required_frontmatter if f != "ads_version"]
 
     def _init_error_templates(self) -> None:
         """Initialize error templates."""
@@ -281,10 +292,12 @@ class ArtifactValidator:
 
     def _handle_invalid_name(self, name: str, errors: list[dict[str, str]]) -> None:
         """Handle breakdown of invalid name errors."""
-        actual_issue = "starts with number" if name[0].isdigit() else (
-            "contains uppercase" if any(c.isupper() for c in name) else
-            "contains invalid characters"
-        )
+        if name[0].isdigit():
+            actual_issue = "starts with number"
+        elif any(c.isupper() for c in name):
+            actual_issue = "contains uppercase"
+        else:
+            actual_issue = "contains invalid characters"
         suggested_name = re.sub(r'[^a-z0-9-]', '-', name.lower()).strip('-')
         errors.append({
             "field": "name",
@@ -486,12 +499,36 @@ class ArtifactValidator:
             result["errors"] += [f"{prefix}: {dir_msg}"]
 
     def _validate_file_frontmatter(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
+        # Determine strictness based on version presence
+        required_fields = self.required_frontmatter # Default to V2
+
+        try:
+            # Peek for ads_version
+            has_ads_version = False
+            with open(file_path, encoding="utf-8") as f:
+                line = f.readline().strip()
+                if line == "---":
+                    for line in f:
+                        line = line.strip()
+                        if line == "---":
+                            break
+                        if line.startswith("ads_version:") or line.startswith("'ads_version':") or line.startswith('"ads_version":'):
+                            has_ads_version = True
+                            break
+
+            if not has_ads_version:
+                required_fields = self.legacy_required_frontmatter
+
+        except Exception:
+            # Fallback to default (V2) on read error
+            pass
+
         frontmatter_valid, frontmatter_msg = validate_frontmatter(
             file_path,
             self.valid_statuses,
             self.valid_categories,
             self.valid_types,
-            self.required_frontmatter
+            required_fields
         )
         if not frontmatter_valid:
             prefix = "Frontmatter" if strict_mode else "Frontmatter (lenient)"
@@ -540,24 +577,15 @@ class ArtifactValidator:
 
         return results
 
+    # Combined validate_all that correctly discovers all files recursively from root
     def validate_all(self, strict_mode: bool | None = None) -> list[dict]:
-        """Validate all artifacts in the artifacts directory.
+        """Validate all artifacts in the artifacts directory recursively.
 
         Args:
             strict_mode: Override instance strict_mode setting. If None, uses self.strict_mode
         """
-        results = []
+        return self.validate_directory(self.artifacts_root, strict_mode)
 
-        # Validate all artifacts in subdirectories
-        for subdirectory in self.artifacts_root.iterdir():
-            if subdirectory.is_dir() and not subdirectory.name.startswith("_"):
-                results.extend(self.validate_directory(subdirectory, strict_mode))
-
-        # # Add bundle validation results if available
-        # from AgentQMS.tools.compliance.validators.bundles import validate_bundles
-        # if CONTEXT_BUNDLES_AVAILABLE:
-        #     bundle_results = validate_bundles()
-        #     results.extend(bundle_results)
     def check_naming_conventions(self) -> bool:
         """Check naming conventions for all artifacts (CLI support)."""
         all_valid = True
@@ -597,26 +625,6 @@ class ArtifactValidator:
                     violations.append(f"❌ {rel_path}: {naming_msg}")
         return violations
 
-    def validate_all(self, strict_mode: bool | None = None) -> list[dict]:
-        """Validate all artifacts in the artifacts directory.
-
-        Args:
-            strict_mode: Override instance strict_mode setting. If None, uses self.strict_mode
-        """
-        results = []
-
-        # Validate all artifacts in subdirectories
-        for subdirectory in self.artifacts_root.iterdir():
-            if subdirectory.is_dir() and not subdirectory.name.startswith("_"):
-                results.extend(self.validate_directory(subdirectory, strict_mode))
-
-        # # Add bundle validation results if available
-        # from AgentQMS.tools.compliance.validators.bundles import validate_bundles
-        # if CONTEXT_BUNDLES_AVAILABLE:
-        #     bundle_results = validate_bundles()
-        #     results.extend(bundle_results)
-
-        return results
 
 
 
@@ -658,21 +666,41 @@ def _parse_cli_args():
     )
     return parser.parse_args()
 
-def main():
-    """Main entry point for the validation script."""
-    args = _parse_cli_args()
 
-    if not args.no_refresh:
-        _refresh_plugin_snapshot_best_effort()
+def _get_staged_files(artifacts_root: Path) -> list[Path]:
+    """Discover staged markdown files under the artifacts root."""
+    import subprocess
 
-    # Determine strict mode (inverse of lenient)
-    strict_mode = not args.lenient_plugins
-    validator = ArtifactValidator(args.artifacts_root, strict_mode=strict_mode)
-    artifacts_root = validator.artifacts_root
+    results = []
+    try:
+        completed = subprocess.run(
+            ["git", "diff", "--cached", "--name-only"],
+            check=False,
+            capture_output=True,
+            text=True,
+        )
+        for line in (completed.stdout or "").splitlines():
+            path = Path(line.strip())
+            if path.suffix.lower() != ".md":
+                continue
+            # Only validate files within the artifacts tree
+            try:
+                path.relative_to(artifacts_root)
+            except ValueError:
+                continue
+            if path.exists():
+                results.append(path)
+    except Exception as exc:  # pragma: no cover - defensive fallback
+        print(f"⚠️  Failed to determine staged files; falling back to --all: {exc}")
+        return []
 
+    return results
+
+
+def _run_validations(validator: ArtifactValidator, args: argparse.Namespace) -> list[dict]:
+    """Dispatch validations based on CLI arguments."""
+    results = []
     if args.files:
-        # Handle positional arguments (from pre-commit hooks passing explicit files)
-        results = []
         for file_path_str in args.files:
             file_path = Path(file_path_str)
             if file_path.is_file():
@@ -680,44 +708,30 @@ def main():
             elif file_path.is_dir():
                 results.extend(validator.validate_directory(file_path))
     elif args.staged:
-        # Validate only staged files under the artifacts root (git required)
-        import subprocess
-
-        rel_artifacts_root = Path(artifacts_root)
-        results = []
-
-        try:
-            completed = subprocess.run(
-                ["git", "diff", "--cached", "--name-only"],
-                check=False,
-                capture_output=True,
-                text=True,
-            )
-            for line in (completed.stdout or "").splitlines():
-                path = Path(line.strip())
-                if path.suffix.lower() != ".md":
-                    continue
-                # Only validate files within the artifacts tree
-                try:
-                    path.relative_to(rel_artifacts_root)
-                except ValueError:
-                    continue
-                if path.exists():
-                    results.append(validator.validate_single_file(path))
-        except Exception as exc:  # pragma: no cover - defensive fallback
-            print(f"⚠️  Failed to determine staged files; falling back to --all: {exc}")
+        staged_files = _get_staged_files(validator.artifacts_root)
+        if not staged_files:
             results = validator.validate_all()
+        else:
+            for path in staged_files:
+                results.append(validator.validate_single_file(path))
     elif args.file:
-        file_path = Path(args.file)
-        results = [validator.validate_single_file(file_path)]
+        results = [validator.validate_single_file(Path(args.file))]
     elif args.directory:
-        dir_path = Path(args.directory)
-        results = validator.validate_directory(dir_path)
-    elif args.all:
-        results = validator.validate_all()
+        results = validator.validate_directory(Path(args.directory))
     else:
-        # Default: validate all
+        # Default, --all or no args
         results = validator.validate_all()
+    return results
+
+
+def _process_results(results: list[dict], args: argparse.Namespace) -> None:
+    """Format and output validation results."""
+    import json
+    if not results:
+        artifacts_root = getattr(args, 'artifacts_root', None) or "default artifacts directory"
+        print(f"⚠️  No markdown files found for validation in {artifacts_root}")
+        print("💡 Ensure you are pointing to the correct --artifacts-root or that your files have .md extension.")
+        return
 
     if args.json:
         output = json.dumps(results, indent=2)
@@ -735,11 +749,27 @@ def main():
         print(output)
 
     # Flush stdout to ensure redirection captures all output
+    import sys
     sys.stdout.flush()
 
     # Exit with error code if violations found
     if any(not r["valid"] for r in results):
         sys.exit(1)
+
+
+def main():
+    """Main entry point for the validation script."""
+    args = _parse_cli_args()
+
+    if not args.no_refresh:
+        _refresh_plugin_snapshot_best_effort()
+
+    # Determine strict mode (inverse of lenient)
+    strict_mode = not args.lenient_plugins
+    validator = ArtifactValidator(args.artifacts_root, strict_mode=strict_mode)
+
+    results = _run_validations(validator, args)
+    _process_results(results, args)
 
 
 if __name__ == "__main__":

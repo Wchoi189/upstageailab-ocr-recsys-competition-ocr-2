@@ -70,6 +70,7 @@ def setup_artifact_parser(subparsers):
     validate_parser = artifact_subparsers.add_parser("validate", help="Validate artifact(s)")
     validate_parser.add_argument("--file", help="Validate specific file")
     validate_parser.add_argument("--all", action="store_true", help="Validate all artifacts")
+    validate_parser.add_argument("--artifacts-root", help="Override default artifacts root directory")
 
     # artifact update-indexes
     artifact_subparsers.add_parser("update-indexes", help="Update artifact indexes")
@@ -91,6 +92,7 @@ def setup_validate_parser(subparsers):
     parser.add_argument("--file", help="Validate specific file")
     parser.add_argument("--directory", help="Validate directory")
     parser.add_argument("--all", action="store_true", help="Validate all artifacts")
+    parser.add_argument("--artifacts-root", help="Root directory for artifacts")
     parser.add_argument("--check-naming", action="store_true", help="Check naming conventions only")
     parser.add_argument("--json", action="store_true", help="Output in JSON format")
     parser.add_argument("--quiet", action="store_true", help="Suppress output except errors")
@@ -204,8 +206,10 @@ def run_artifact_command(args):
         return 0
 
     elif args.artifact_command == "validate":
+        from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
+        validator = ArtifactValidator(artifacts_root=getattr(args, 'artifacts_root', None))
         if args.file:
-            success = workflow.validator.validate_file(Path(args.file))
+            success = validator.validate_single_file(Path(args.file))
             return 0 if success else 1
         elif args.all:
             success = workflow.validator.validate_all()
@@ -232,7 +236,7 @@ def run_validate_command(args):
     """Execute validate subcommand."""
     from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
 
-    validator = ArtifactValidator()
+    validator = ArtifactValidator(artifacts_root=getattr(args, 'artifacts_root', None))
 
     if args.file:
         results = validator.validate_single_file(Path(args.file))
@@ -431,7 +435,7 @@ def run_generate_config_command(args):
         # Direct output for AI ingestion (No file created)
         print(json.dumps(effective))
         return 0
-    
+
     # For YAML output (legacy or explicit file generation)
     if "yaml" in vars() or "yaml" in globals():
         yaml_output = yaml.dump(effective, sort_keys=False, default_flow_style=False)
@@ -452,12 +456,12 @@ def run_generate_config_command(args):
             print(f"  - {std}")
     else:
         # Only write if output path is explicitly provided or we are in legacy mode
-        # For now, we preserve writing to the default path if not --json, 
-        # but the plan says "Stop physically writing...". 
-        # However, the args.output has a default value in usage. 
+        # For now, we preserve writing to the default path if not --json,
+        # but the plan says "Stop physically writing...".
+        # However, the args.output has a default value in usage.
         # We will respect that for now to avoid breaking existing workflows completely,
         # but --json is the preferred AI way.
-        
+
         output_path = Path(args.output)
         output_path.parent.mkdir(parents=True, exist_ok=True)
 

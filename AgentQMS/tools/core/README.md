@@ -16,21 +16,21 @@ The Context Engine provides high-performance, token-budget-aware context bundlin
 **CLI**:
 ```bash
 # Auto-detect task type and suggest context
-python AgentQMS/tools/core/context_bundle.py --task "debug ocr" --auto
+python AgentQMS/tools/core/context/context_bundle.py --task "debug ocr" --auto
 
 # Load specific bundle type
-python AgentQMS/tools/core/context_bundle.py --task "..." --type debugging
+python AgentQMS/tools/core/context/context_bundle.py --task "..." --type debugging
 
 # List available bundles
-python AgentQMS/tools/core/context_bundle.py --list
+python AgentQMS/tools/core/context/context_bundle.py --list
 
 # Set custom token budget
-python AgentQMS/tools/core/context_bundle.py --task "..." --budget 16000
+python AgentQMS/tools/core/context/context_bundle.py --task "..." --budget 16000
 ```
 
 **Python API**:
 ```python
-from AgentQMS.tools.core.context_bundle import get_context_bundle
+from AgentQMS.tools.core.context.context_bundle import get_context_bundle
 
 # Get context files (respects budget)
 files = get_context_bundle("Fix bug in OCR pipeline")

@@ -131,7 +131,12 @@ class ContextControl:
         )
 
     def _write_state(self, control: SystemControl) -> None:
-        """Write system state to file."""
+        """
+        Write system state to the persistent storage file.
+
+        Args:
+            control: The SystemControl object to persist.
+        """
         self._state_file.write_text(json.dumps(control.to_dict(), indent=2))
 
     def disable_context_bundling(self, reason: str = "",
@@ -251,7 +256,12 @@ class ContextControl:
         return None
 
     def _load_bundle_configs(self) -> dict[str, dict]:
-        """Load all bundle configurations."""
+        """
+        Load all bundle configurations from the persistent storage file.
+
+        Returns:
+            A dictionary mapping bundle names to their configuration data.
+        """
         if self._bundle_configs.exists():
             return json.loads(self._bundle_configs.read_text())
         return {}

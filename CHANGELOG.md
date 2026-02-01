@@ -1,5 +1,11 @@
 # Changelog
 
+## [2026-02-01] - Makefile & Root Cleanup
+- **Modular Build System**: Partitioned `Makefile` into `scripts/make/*.mk` fragments.
+- **MkDocs Purge**: Removed MkDocs dependencies, configuration, and targets.
+- **Root Cleanup**: Relocated `handshake.py`, `run_spa.py`, and `run_ui.py` to `scripts/`.
+- **Repaired Targets**: Fixed broken paths for `AgentQMS` and documentation utilities.
+
 ## [2026-01-24] - DevContainer Environment Enhancement
 
 ### Added

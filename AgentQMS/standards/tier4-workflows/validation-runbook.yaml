@@ -17,29 +17,38 @@ description: Execution runbook for validation and discovery commands
 workflows:
   validation_commands:
     validate:
-      command: cd AgentQMS/bin && make validate
-      purpose: Validate all artifacts (naming, frontmatter, structure)
+      command: make qms-validate ARGS="--all"
+      alternative: aqms validate --all
+      purpose: Validate all artifacts starting from configured root
       frequency: After EVERY artifact operation
+      usage_notes: |
+        If artifacts are outside docs/artifacts/, use:
+        make qms-validate ARGS="--artifacts-root <path> --all"
+        OR
+        aqms validate --artifacts-root <path> --all
       failure: BLOCK - Fix before proceeding
     compliance:
-      command: cd AgentQMS/bin && make compliance
+      command: make qms-compliance
+      alternative: aqms artifact check-compliance
       purpose: Check AgentQMS framework compliance
       frequency: Before commits
       failure: BLOCK - Address violations
     boundary:
-      command: cd AgentQMS/bin && make boundary
+      command: make qms-boundary
       purpose: Verify framework boundaries
       frequency: Weekly or after major changes
       failure: WARN - Review boundaries
   discovery_commands:
     help:
-      command: cd AgentQMS/bin && make help
-      purpose: Show available make targets
+      command: make help
+      purpose: Show available make targets including QMS commands
     discover:
-      command: cd AgentQMS/bin && make discover
+      command: make qms-discover
+      alternative: uv run python AgentQMS/tools/core/plugins/discovery.py
       purpose: List all AgentQMS tools
     status:
-      command: cd AgentQMS/bin && make status
+      command: make qms-status
+      alternative: aqms monitor --report
       purpose: Check framework status
   workflow_sequence:
   - Create artifact via make create-*

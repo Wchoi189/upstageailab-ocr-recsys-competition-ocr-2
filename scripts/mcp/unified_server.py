@@ -198,7 +198,7 @@ async def _read_resource_impl(uri: str) -> list[ReadResourceContents]:
             return await mod.read_resource(uri)
         elif scheme == "bundle":
              # Handle context bundles
-            from AgentQMS.tools.core.context_bundle import list_available_bundles, get_context_bundle
+            from AgentQMS.tools.core.context.context_bundle import list_available_bundles, get_context_bundle
             try:
                 if uri == "bundle://list":
                     bundles = list_available_bundles()
@@ -351,7 +351,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         # 4. Context Auto-Suggestion (Fix #5)
         if "context" not in name and "bundle" not in name:
             try:
-                from AgentQMS.tools.core.context_bundle import auto_suggest_context
+                from AgentQMS.tools.core.context.context_bundle import auto_suggest_context
                 # Use tool name + args as task desc
                 task_desc = f"{name}: {str(arguments)[:200]}"
                 suggestions = auto_suggest_context(task_desc)
