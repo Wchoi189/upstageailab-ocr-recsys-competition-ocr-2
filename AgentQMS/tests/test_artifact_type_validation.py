@@ -28,7 +28,7 @@ def validation_rules_path() -> Path:
 @pytest.fixture
 def validator(validation_rules_path: Path) -> PluginValidator:
     """Create validator with artifact type rules loaded"""
-    schemas_dir = Path("AgentQMS/standards/schemas")
+    schemas_dir = Path("AgentQMS/.agentqms/schemas")
     return PluginValidator(schemas_dir=schemas_dir, validation_rules_path=validation_rules_path)
 
 

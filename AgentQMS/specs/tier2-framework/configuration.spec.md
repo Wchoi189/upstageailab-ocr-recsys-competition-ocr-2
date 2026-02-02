@@ -1,0 +1,34 @@
+# Configuration Specification
+
+**Tier**: 2 (Framework)
+**Scope**: Configuration Management, Hydra, and Externalization.
+
+## 1. Configuration Standards
+
+**Core Principle**: Domain-First Architecture.
+*   **Root**: `configs/`
+*   **Structure**: `domain/`, `model/`, `data/`, `training/`.
+*   **Constraint**: All configurations must be externalized (YAML/JSON), never hardcoded.
+
+### Externalization Checklist
+1.  Is the value likely to change experiments? -> **Yes**: Config.
+2.  Is it a secret? -> **Yes**: Env Var (via `omega_conf`).
+3.  Is it structural? -> **No**: Constant.
+
+## 2. Hydra v5 Rules
+
+**Strict Enforcement**:
+*   Use `hydra.main` for entry points.
+*   Use `instantiate` for object creation.
+*   **Prohibited**: `sys.argv` parsing (Use Hydra CLI).
+
+### Key Patterns
+| Pattern | Usage | Example |
+| :--- | :--- | :--- |
+| **Domain Switch** | `python runners/train.py domain=ocr` | Switch entire behavior set. |
+| **Model Override** | `python runners/train.py model=vlm_v2` | Swap model architecture. |
+| **Debug Mode** | `python runners/train.py debug=true` | Activate verbose logging. |
+
+## 3. Config Bloat Policy
+*   Limit nesting depth to 4 levels.
+*   Split files > 200 lines.

@@ -284,7 +284,7 @@ class ConfigLoader:
     def resolve_active_standards(
         self,
         current_path: Path | str | None = None,
-        registry_path: Path | str = "AgentQMS/standards/registry.yaml",
+        registry_path: Path | str = "AgentQMS/.agentqms/registry.yaml",
     ) -> list[str]:
         """
         Resolve active standards based on current working directory.
@@ -340,7 +340,7 @@ class ConfigLoader:
     def generate_virtual_config(
         self,
         current_path: Path | str | None = None,
-        registry_path: Path | str = "AgentQMS/standards/registry.yaml",
+        registry_path: Path | str = "AgentQMS/.agentqms/registry.yaml",
         settings_path: Path | str = "AgentQMS/.agentqms/settings.yaml",
     ) -> dict[str, Any]:
         """
@@ -386,7 +386,7 @@ class ConfigLoader:
     def generate_effective_config(
         self,
         settings_path: Path | str = "AgentQMS/.agentqms/settings.yaml",
-        registry_path: Path | str = "AgentQMS/standards/registry.yaml",
+        registry_path: Path | str = "AgentQMS/.agentqms/registry.yaml",
         current_path: Path | str | None = None,
     ) -> dict[str, Any]:
         """

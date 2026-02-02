@@ -132,7 +132,7 @@ class StandardsSuggester:
 
     def _load_router(self) -> None:
         """Load standards router configuration."""
-        router_path = self.project_root / "AgentQMS/standards/standards-router.yaml"
+        router_path = self.project_root / "AgentQMS/specs/router.yaml"
         if router_path.exists():
             import yaml
             with open(router_path, encoding="utf-8") as f:

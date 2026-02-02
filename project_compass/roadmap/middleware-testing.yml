@@ -1,0 +1,81 @@
+version: 1.0
+project: Middleware Observability Testing
+status: planning
+architecture: Test-Driven Enhancement
+
+objectives:
+  - name: Comprehensive Test Coverage
+    description: Achieve 90%+ coverage for middleware package
+    success_criteria:
+      - "All middleware components tested (logging, policies, telemetry, health)"
+      - "Integration tests cover end-to-end scenarios"
+      - "Dashboard CLI fully tested"
+
+tooling:
+  pytest: "Available (test framework)"
+  pytest_cov: "Available (coverage reporting)"
+  makefile: "qms-middleware-* targets available"
+
+phases:
+  - name: 'Phase 1: Unit Tests'
+    status: completed
+    completed_date: 2026-02-02
+    components:
+      - name: Logging Infrastructure
+        file: "AgentQMS/tests/test_middleware_logging.py"
+        tests: 12
+        status: complete
+      - name: Exception Handling
+        file: "AgentQMS/tests/test_middleware_exceptions.py"
+        tests: 9
+        status: complete
+      - name: Metrics Collection
+        file: "AgentQMS/tests/test_middleware_metrics.py"
+        tests: 12
+        status: complete
+      - name: Health Checks
+        file: "AgentQMS/tests/test_middleware_health.py"
+        tests: 8
+        status: complete
+
+  - name: 'Phase 2: CLI Tests'
+    status: completed
+    completed_date: 2026-02-02
+    file: "AgentQMS/tests/test_middleware_dashboard.py"
+    tests: 7
+    targets:
+      - Dashboard argument parsing
+      - Output formatting
+      - Error handling
+
+  - name: 'Phase 3: Verification'
+    status: completed
+    completed_date: 2026-02-02
+    coverage:
+      achieved: "~85%"
+      target: "90%"
+    notes:
+      - "48 total test cases created"
+      - "Core functionality covered"
+      - "Some edge cases may need refinement"
+
+test_structure:
+  location: "AgentQMS/tests/"
+  files:
+    - "test_middleware_logging.py"
+    - "test_middleware_exceptions.py"
+    - "test_middleware_metrics.py"
+    - "test_middleware_health.py"
+    - "test_middleware_dashboard.py"
+    - "test_middleware_integration.py"
+
+verification:
+  command: "pytest AgentQMS/tests/test_middleware_*.py --cov=AgentQMS/middleware --cov-report=term"
+  target_coverage: "90%"
+  duration: "< 10 seconds"
+
+notes:
+  - "Phase C core implementation complete (7/7 health checks passing)"
+  - "Tests follow existing patterns in AgentQMS/tests/"
+  - "Use tmp_path fixtures for file operations"
+  - "Mock external dependencies (filesystem, time)"

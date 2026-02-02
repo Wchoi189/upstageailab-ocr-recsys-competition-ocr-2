@@ -35,3 +35,32 @@ qms-discover: ## List all AgentQMS tools
 .PHONY: qms-status
 qms-status: ## Check framework status
 	uv run python -m AgentQMS.cli monitor --report
+
+.PHONY: qms-registry
+qms-registry: ## Generate registry from specs directory
+	uv run python scripts/utils/generate_registry.py
+
+# ============================================================================
+# Middleware Observability (Phase C)
+# ============================================================================
+
+.PHONY: qms-middleware-health
+qms-middleware-health: ## Check middleware health status
+	@echo "🩺 Checking middleware health..."
+	@uv run python AgentQMS/tools/middleware/dashboard.py --health-only
+
+.PHONY: qms-middleware-dashboard
+qms-middleware-dashboard: ## View middleware statistics dashboard
+	@echo "📊 Middleware Dashboard:"
+	@uv run python AgentQMS/tools/middleware/dashboard.py
+
+.PHONY: qms-middleware-stats
+qms-middleware-stats: ## Export middleware statistics as JSON
+	@uv run python AgentQMS/tools/middleware/dashboard.py --json
+
+.PHONY: qms-middleware-logs
+qms-middleware-logs: ## Show recent middleware logs
+	@echo "📋 Recent middleware logs:"
+	@find outputs/logs/middleware -name "*.log" -type f 2>/dev/null | while read log; do \
+		echo ""; echo "=== $$log ==="; tail -n 5 "$$log"; \
+	done || echo "No logs found. Run middleware operations first."

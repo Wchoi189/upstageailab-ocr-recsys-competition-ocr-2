@@ -550,30 +550,47 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         elif name == "get_standard":
             query = arguments["name"].lower()
-            standards_dir = AGENTQMS_DIR / "standards"
+            # Phase 7.2: Search in specs/ directory (not standards/)
+            specs_dir = AGENTQMS_DIR / "specs"
             matches = []
 
-            # Recursive search for .yaml and .md files
-            if standards_dir.exists():
-                for path in standards_dir.rglob("*"):
-                    if path.is_file() and path.suffix in [".yaml", ".md", ".json"]:
+            # Recursive search for .spec.md, .yaml, and .json files
+            if specs_dir.exists():
+                for path in specs_dir.rglob("*"):
+                    if path.is_file() and path.suffix in [".md", ".yaml", ".json"]:
+                        # Match against stem (filename without extension)
                         if query in path.stem.lower():
                             matches.append(path)
 
+            # Fallback: Also check legacy standards/ for backwards compatibility
+            standards_dir = AGENTQMS_DIR / "standards"
+            if standards_dir.exists():
+                for path in standards_dir.rglob("*"):
+                    if path.is_file() and path.suffix in [".yaml", ".md", ".json"]:
+                        if query in path.stem.lower() and path not in matches:
+                            matches.append(path)
+
             if not matches:
-                return [TextContent(type="text", text=json.dumps({"error": f"No standards found matching '{query}'"}, indent=2))]
+                return [TextContent(type="text", text=json.dumps({"error": f"No standards/specs found matching '{query}'"}, indent=2))]
 
             if len(matches) == 1:
                 content = matches[0].read_text(encoding="utf-8")
                 return [TextContent(type="text", text=f"Standard: {matches[0].name}\nLocation: {matches[0]}\n\n{content}")]
 
-            # Multiple matches
-            names = [str(p.relative_to(standards_dir)) for p in matches]
+            # Multiple matches - prioritize specs/ over standards/
+            specs_matches = [m for m in matches if "specs/" in str(m)]
+            if len(specs_matches) == 1:
+                content = specs_matches[0].read_text(encoding="utf-8")
+                return [TextContent(type="text", text=f"Standard: {specs_matches[0].name}\nLocation: {specs_matches[0]}\n\n{content}")]
+
+            # Multiple matches from different locations
+            names = [f"{str(p.relative_to(AGENTQMS_DIR))} ({'spec' if 'specs/' in str(p) else 'legacy'})" for p in matches]
             return [
                 TextContent(
                     type="text", text=json.dumps({"message": "Multiple matches found. Please specify:", "matches": names}, indent=2)
                 )
             ]
+
 
         elif name == "get_context_bundle":
             task_description = arguments["task_description"]

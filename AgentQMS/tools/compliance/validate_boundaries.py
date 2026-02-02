@@ -54,7 +54,6 @@ class BoundaryValidator:
         forbidden = [
             "artifacts",
             "docs",
-            "ai_handbook",
             "README.md",
             ".git",
         ]

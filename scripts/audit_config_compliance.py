@@ -21,6 +21,7 @@ from collections import defaultdict
 PROJECT_ROOT = Path(__file__).parent.parent
 OCR_MODULE = PROJECT_ROOT / "ocr"
 CONFIG_ACCESS_FILE = PROJECT_ROOT / "project_compass" / "config_access.txt"
+CONFIG_STANDARD_FILE = PROJECT_ROOT / "AgentQMS" / "specs" / "tier2-framework" / "configuration.spec.md"
 
 
 class ConfigComplianceAuditor:
@@ -161,7 +162,7 @@ class ConfigComplianceAuditor:
         report.append("=" * 80)
         report.append("Configuration Standards Compliance Audit")
         report.append("Module: ocr/")
-        report.append("Standard: AgentQMS/standards/tier2-framework/configuration-standards.yaml")
+        report.append(f"Standard: {CONFIG_STANDARD_FILE.relative_to(PROJECT_ROOT)}")
         report.append("=" * 80)
         report.append("")
 

@@ -42,7 +42,7 @@ class PluginValidator:
     """
     Validates plugin data against JSON schemas and artifact type rules.
 
-    Schemas are loaded from the AgentQMS/standards/schemas directory.
+    Schemas are loaded from the AgentQMS/.agentqms/schemas directory.
     Artifact type validation rules are loaded from .agentqms/schemas/artifact_type_validation.yaml
 
     If jsonschema is not installed, schema validation is skipped.

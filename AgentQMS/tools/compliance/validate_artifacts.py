@@ -84,20 +84,9 @@ from AgentQMS.tools.compliance.validate_boundaries import BoundaryValidator  # n
 from AgentQMS.tools.utils.paths import ensure_within_project, get_project_root
 
 
-def load_artifact_rules() -> dict[str, Any] | None:
-    """Load artifact rules from the YAML schema file."""
-    try:
-        rules_path = get_project_root() / "AgentQMS" / "standards" / "tier1-sst" / "artifact-rules.yaml"
-        if rules_path.exists():
-            with open(rules_path, encoding="utf-8") as f:
-                return yaml.safe_load(f)
-    except Exception:
-        pass
-    return None
-
-
-# Load rules at module level (optional - fallback to builtins if not available)
-ARTIFACT_RULES = load_artifact_rules()
+# Artifact rules loading removed - validation now uses SpecParser (Phase 7.3)
+# Legacy load_artifact_rules() function deleted - always returned None (path deleted in migration)
+ARTIFACT_RULES = None  # Deprecated - kept for backward compatibility, always None
 
 
 def _assert_boundaries() -> None:
@@ -134,9 +123,28 @@ class ArtifactValidator:
     def __init__(self, artifacts_root: str | Path | None = None, strict_mode: bool = True):
         self._init_paths(artifacts_root)
         self.violations: list[dict[str, Any]] = []
-        self._init_rules()
+
+        # Initialize Spec Parser (Assuming running from project root context)
+        # We try to find project root:
+        try:
+            from AgentQMS.tools.utils.system.paths import get_project_root
+            project_root = get_project_root()
+        except ImportError:
+            project_root = Path.cwd()
+
+        from AgentQMS.tools.compliance.spec_parser import SpecParser
+        self.spec_parser = SpecParser(project_root)
+
+        # Phase 7.3: Initialize strict constraint validator (Deep Validation Bridge)
+        from AgentQMS.tools.compliance.validators.strict_constraints import StrictConstraintValidator
+        self.strict_validator = StrictConstraintValidator(project_root)
+
         self.strict_mode = strict_mode
         self.excluded_directories = self._load_excluded_directories()
+
+        # Initialize rules dict before _init_type_mappings (fixes AttributeError)
+        self.rules = {}
+
         self._init_type_mappings()
         self._init_frontmatter_rules()
         self._init_error_templates()
@@ -154,62 +162,82 @@ class ArtifactValidator:
                 artifacts_root_path = get_project_root() / artifacts_root_path
             self.artifacts_root = ensure_within_project(artifacts_root_path.resolve())
 
-    def _init_rules(self) -> None:
-        """Load rules from YAML."""
-        self.rules = ARTIFACT_RULES
-        self.rules_loaded = self.rules is not None
-
-    def _init_type_mappings(self) -> None:
-        """Initialize artifact type mappings from rules."""
-        self.valid_artifact_types = {}
-        self.artifact_type_details = {}
-        self.valid_types = []
-
-        if self.rules and "artifact_types" in self.rules:
-            for type_name, type_def in self.rules["artifact_types"].items():
-                prefix = type_def.get("prefix", "")
-                directory = type_def.get("directory", "")
-                if prefix and directory:
-                    self.valid_artifact_types[prefix] = directory
-                    self.artifact_type_details[prefix] = {
-                        "name": type_name,
-                        "separator": type_def.get("separator", "-"),
-                        "case": type_def.get("case", "lowercase"),
-                        "frontmatter_type": type_def.get("frontmatter_type", type_name),
-                        "example": type_def.get("example", ""),
-                        "description": type_def.get("description", ""),
-                    }
-            # Build valid types list
-            self.valid_types = [type_def.get("frontmatter_type", type_name) for type_name, type_def in self.rules["artifact_types"].items()]
 
     def _init_frontmatter_rules(self) -> None:
-        """Initialize frontmatter validation rules."""
-        self.valid_statuses = []
-        self.valid_categories = []
+        """Initialize frontmatter validation rules from Spec-Kit."""
+        self.valid_statuses = ["active", "draft", "completed", "archived", "deprecated"]
+        self.valid_categories = ["development", "architecture", "evaluation", "compliance", "code_quality", "reference", "planning", "research", "troubleshooting"]
 
-        # V2 Defaults (ADS 2.0)
-        self.required_frontmatter = ["title", "date", "type", "category", "status", "version", "ads_version"]
+        # V2 Defaults (ADS 2.0) - Load from validation.spec.md
+        parsed_fields = self.spec_parser.parse_required_fields()
+        if parsed_fields:
+            self.required_frontmatter = parsed_fields
+        else:
+            # Fallback if spec parsing fails
+            self.required_frontmatter = ["title", "date", "type", "category", "status", "version", "ads_version"]
 
         # V1 Defaults (Legacy - no ads_version)
-        self.legacy_required_frontmatter = ["title", "date", "type", "category", "status", "version"]
+        self.legacy_required_frontmatter = [f for f in self.required_frontmatter if f != "ads_version"]
 
-        if self.rules and "frontmatter" in self.rules:
-            fm_rules = self.rules["frontmatter"]
-            self.valid_statuses = fm_rules.get("valid_statuses", [])
-            self.valid_categories = fm_rules.get("valid_categories", [])
+    def _init_type_mappings(self) -> None:
+        """Initialize artifact type mappings from Spec-Kit."""
+        # Load from compliance.spec.md table
+        parsed_types = self.spec_parser.parse_artifact_types()
 
-            # If rules define specific fields, use them for V2
-            if "required_fields" in fm_rules:
-                self.required_frontmatter = fm_rules["required_fields"]
+        if parsed_types:
+            self.artifact_types = parsed_types
+        else:
+            # Fallback defaults if parsing fails
+            self.artifact_types = {
+                "implementation_plan": {"prefix": "implementation_plan_", "directory": "implementation_plans/"},
+                "assessment": {"prefix": "assessment_", "directory": "assessments/"},
+                "audit": {"prefix": "audit_", "directory": "audits/"},
+                # ... add minimal fallbacks if needed
+            }
 
-                # Derive legacy fields by removing ads_version if present
-                self.legacy_required_frontmatter = [f for f in self.required_frontmatter if f != "ads_version"]
+        # Initialize valid_types list for validation checks (keys used as type)
+        self.valid_types = list(self.artifact_types.keys())
+
+        # Initialize artifact_type_details for naming validation
+        # This is used by validate_naming_convention() function
+        self.artifact_type_details = {}
+        for type_name, type_info in self.artifact_types.items():
+            prefix = type_info.get("prefix", "")
+            if prefix:
+                self.artifact_type_details[prefix] = {
+                    "name": type_name,
+                    "separator": type_info.get("separator", "-"),
+                    "case": type_info.get("case", "lowercase"),
+                    "frontmatter_type": type_info.get("frontmatter_type", type_name),
+                    "example": type_info.get("example", ""),
+                    "description": type_info.get("description", ""),
+                }
+
 
     def _init_error_templates(self) -> None:
         """Initialize error templates."""
-        self.error_templates = {}
-        if self.rules and "error_templates" in self.rules:
-            self.error_templates = self.rules["error_templates"]
+        # Default error templates
+        self.error_templates = {
+            "missing_timestamp": {
+                "message": "Missing or invalid timestamp format",
+                "expected": "Expected: YYYY-MM-DD_HHMM_ (e.g., 2025-11-29_1800_)",
+                "hint": "Filename must start with date and time in format: YYYY-MM-DD_HHMM_"
+            },
+            "missing_type": {
+                "message": "Missing artifact type prefix",
+                "expected": "Expected recognized type prefix (e.g. implementation_plan_)",
+                "hint": "Add the appropriate artifact type prefix after the timestamp"
+            },
+            "frontmatter_missing_field": {
+                "message": "Missing required frontmatter field",
+                "expected": "Required fields: title, date, type, category, status, version, ads_version",
+                "hint": "Add missing field to frontmatter"
+            },
+            "frontmatter_type_mismatch": {
+                "message": "Frontmatter type does not match filename",
+                "hint": "Update frontmatter type to match filename prefix"
+            }
+        }
 
     def _load_excluded_directories(self) -> list[str]:
         """Load excluded directories from settings.yaml."""
@@ -273,7 +301,7 @@ class ArtifactValidator:
                 "error": f"Unknown type '{artifact_type}'",
                 "fix": f"Use one of: {', '.join(self.valid_types[:6])}",
                 "example": similar[0] if similar else "assessment",
-                "reference": "AgentQMS/standards/tier1-sst/artifact-types.yaml",
+                "reference": "AgentQMS/specs/tier1-contracts/compliance.spec.md",
             })
 
     def _validate_name_param(self, name: str, errors: list[dict[str, str]]) -> None:
@@ -304,7 +332,7 @@ class ArtifactValidator:
             "error": f"Name '{name}' {actual_issue}",
             "fix": "Use lowercase letters, numbers, and hyphens only. Start with a letter.",
             "example": suggested_name or "config-loader-improvements",
-            "reference": "AgentQMS/standards/tier1-sst/naming-conventions.yaml",
+            "reference": "AgentQMS/specs/tier1-contracts/compliance.spec.md",
         })
 
     def _validate_title_param(self, title: str, errors: list[dict[str, str]]) -> None:
@@ -371,7 +399,7 @@ class ArtifactValidator:
         """Merge configuration from validators plugin."""
         # Merge artifact types (plugin values override/extend builtin)
         if "prefixes" in validators:
-            self.valid_artifact_types.update(validators["prefixes"])
+            self.artifact_types.update(validators["prefixes"])
 
         # Merge types (unique values)
         if "types" in validators:
@@ -400,7 +428,7 @@ class ArtifactValidator:
             directory = type_def.get("metadata", {}).get("directory")
 
             if prefix and directory:
-                self.valid_artifact_types[prefix] = directory
+                self.artifact_types[prefix] = directory
 
             # Add artifact type name to valid types
             if name not in self.valid_types:
@@ -474,7 +502,7 @@ class ArtifactValidator:
     def _validate_naming(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
         naming_valid, naming_msg = validate_naming_convention(
             file_path,
-            self.valid_artifact_types,
+            self.artifact_types,
             self.artifact_type_details,
             self.error_templates
         )
@@ -488,7 +516,7 @@ class ArtifactValidator:
         dir_valid, dir_msg = validate_directory_placement(
             file_path,
             self.artifacts_root,
-            self.valid_artifact_types,
+            self.artifact_types,
             self.artifact_type_details,
             self.error_templates
         )
@@ -536,10 +564,31 @@ class ArtifactValidator:
                 result["valid"] = False
             result["errors"] += [f"{prefix}: {frontmatter_msg}"]
 
+        # Phase 7.3: Deep Validation Bridge - Apply strict constraints if available
+        if strict_mode and self.strict_validator.is_available():
+            try:
+                import yaml
+                with open(file_path, encoding="utf-8") as f:
+                    content = f.read()
+                    # Extract frontmatter
+                    if content.startswith("---"):
+                        parts = content.split("---", 2)
+                        if len(parts) >= 3:
+                            frontmatter = yaml.safe_load(parts[1])
+                            if frontmatter:
+                                constraint_errors = self.strict_validator.validate_frontmatter(frontmatter)
+                                if constraint_errors:
+                                    result["valid"] = False
+                                    for err in constraint_errors:
+                                        result["errors"] += [f"StrictConstraint: {err}"]
+            except Exception:
+                # Graceful degradation - continue with spec-only validation
+                pass
+
     def _validate_type_consistency(self, file_path: Path, strict_mode: bool, result: dict[str, Any]) -> None:
         type_valid, type_msg = validate_type_consistency(
             file_path,
-            self.valid_artifact_types,
+            self.artifact_types,
             self.artifact_type_details,
             self.error_templates
         )
@@ -616,7 +665,7 @@ class ArtifactValidator:
             if file_path.is_file() and not self._is_excluded_path(file_path):
                 naming_valid, naming_msg = validate_naming_convention(
                     file_path,
-                    self.valid_artifact_types,
+                    self.artifact_types,
                     self.artifact_type_details,
                     self.error_templates
                 )

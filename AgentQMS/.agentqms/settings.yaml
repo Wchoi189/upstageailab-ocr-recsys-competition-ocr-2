@@ -86,6 +86,23 @@ interface:
     require_agent_directory: true
     validate_context: true
 
+middleware:
+  logging:
+    enabled: true
+    level: INFO  # DEBUG, INFO, WARNING, ERROR
+    output_dir: outputs/logs/middleware
+    rotation:
+      when: midnight
+      interval: 1
+      backup_count: 30
+  telemetry:
+    enabled: true
+    metrics_dir: outputs/metrics
+    collect_interval: 300  # seconds
+  health:
+    enabled: true
+    check_interval: 60  # seconds
+
 tool_mappings:
   tool_mappings:
     aqms:

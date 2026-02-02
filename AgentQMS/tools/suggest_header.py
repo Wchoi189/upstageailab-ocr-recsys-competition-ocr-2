@@ -22,7 +22,7 @@ import yaml
 
 # Project root and paths
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-STANDARDS_DIR = PROJECT_ROOT / "AgentQMS" / "standards"
+STANDARDS_DIR = PROJECT_ROOT / "AgentQMS" / "specs"
 ARCHIVE_DIR = STANDARDS_DIR / "_archive"
 
 # ID prefix mapping by tier
@@ -227,7 +227,7 @@ def migrate_standard(
         "agent": data.get("agent", "all"),
         "tier": tier,
         "priority": data.get("priority", "medium"),
-        "validates_with": data.get("validates_with", "AgentQMS/standards/schemas/compliance-checker.py"),
+        "validates_with": data.get("validates_with", "AgentQMS/.agentqms/schemas/compliance-checker.py"),
         "compliance_status": data.get("compliance_status", "unknown"),
         "memory_footprint": data.get("memory_footprint", 100),
         "dependencies": dependencies if isinstance(dependencies, list) else [],

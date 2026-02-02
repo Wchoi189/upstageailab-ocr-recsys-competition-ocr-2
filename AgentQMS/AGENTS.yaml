@@ -2,21 +2,24 @@
 # AgentQMS Agents Entrypoint Index
 # Low-footprint, machine-parseable index for AI agents
 # Standardized frontmatter for quick ingestion
-ads_version: "1.0"
-schema_reference: "AgentQMS/.agentqms/schemas/artifact_type_validation.yaml"
-generated_at: "2026-01-10T15:20:00+0900"
+ads_version: "2.0"
+schema_reference: "AgentQMS/specs/schemas/ads_schemas.spec.md"
+generated_at: "2026-02-02T05:00:00+0900"
 title: "AgentQMS Agents Entrypoint"
 description: "Compact index of key AgentQMS resources and commands for AI agents"
 
 resources:
   readme: "AgentQMS/README.md"
-  standards_registry: "AgentQMS/standards/registry.yaml"
-  tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
-  quickstart: "AgentQMS/standards/tier2-framework/quickstart.yaml"
+  standards_registry: "AgentQMS/.agentqms/registry.yaml"  # Auto-generated from specs
+  standards_specs: "AgentQMS/specs/"  # Source of truth
+  quickstart: "AgentQMS/specs/tier2-framework/quickstart.spec.md"
   compass_entrypoint: "project_compass/AGENTS.md"
   mcp_server: "AgentQMS/mcp_server.py"
   plugin_snapshot: "AgentQMS/.agentqms/state/plugins.yaml"
   cli: "bin/aqms"
+  middleware_dashboard: "AgentQMS/tools/middleware/dashboard.py"
+  middleware_logs: "outputs/logs/middleware/"
+  middleware_metrics: "outputs/metrics/"
 
 commands:
   # Unified CLI - Use 'aqms' (single interface)
@@ -32,6 +35,16 @@ commands:
   qms_quality_check: "aqms quality --check"
   qms_token_analysis: "python AgentQMS/bin/monitor-token-usage.py"
 
+  # Registry Management (Phase 7.2)
+  registry_sync: "aqms registry sync"  # Generates from specs
+  registry_resolve: "aqms registry resolve --task <task>"
+
+  # Middleware Observability (Phase C)
+  middleware_health: "make qms-middleware-health"
+  middleware_dashboard: "make qms-middleware-dashboard"
+  middleware_stats: "uv run python AgentQMS/tools/middleware/dashboard.py --json"
+  middleware_logs: "make qms-middleware-logs"
+
 context_bundles:
   - name: "compliance-check"
     path: "AgentQMS/.agentqms/plugins/context_bundles/compliance-check.yaml"
@@ -43,11 +56,14 @@ context_bundles:
     path: "AgentQMS/.agentqms/plugins/context_bundles/ocr-experiment.yaml"
 
 notes:
-  - "AgentQMS v0.3.0 - Use 'aqms' CLI for ALL artifact operations"
-  - "Legacy tools and Makefile commands REMOVED - only aqms CLI supported"
-  - "Standards registry: AgentQMS/standards/registry.yaml (single source of truth)"
+  - "AgentQMS v0.4.0 - Phase 7+ complete: Plugin schemas fixed, registry auto-generated, deep validation operational"
+  - "Registry: AgentQMS/.agentqms/registry.yaml (auto-generated from AgentQMS/specs/)"
+  - "Standards source of truth: AgentQMS/specs/ (Markdown specifications)"
+  - "Use 'aqms' CLI for ALL operations - legacy tools removed"
   - "Path-aware discovery reduces token usage by 85% (aqms generate-config)"
-  - "Context Engine 2.0: Caching, parallel I/O, and strict token budgeting (default 32k) enabled."
-  - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-01-10T15:20:00+0900)"
+  - "Context Engine 2.0: Caching, parallel I/O, and strict token budgeting (default 32k) enabled"
+  - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-02-02T05:00:00+0900)"
   - "Canonical artifact types: assessment, audit, bug_report, design_document, implementation_plan, vlm_report, walkthrough"
+  - "Middleware observability (Phase C): Structured logging to outputs/logs/middleware/, policy enforcement metrics"
+  - "Health checks: 'make qms-middleware-health' for policy validation status"
   - "For help: aqms --help or see AgentQMS/README.md"

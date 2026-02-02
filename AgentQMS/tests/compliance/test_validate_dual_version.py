@@ -39,12 +39,12 @@ class TestDualVersionValidation(unittest.TestCase):
 
     def test_legacy_artifact(self):
         # V1 artifact (no ads_version) - should NOT require ads_version
-        path = self.root / "legacy_test.md"
+        path = self.root / "implementation_plan_legacy_test.md"
         with open(path, "w") as f:
             f.write("---\n")
             f.write("title: Test\n")
             f.write("date: 2023-01-01 00:00 (KST)\n")
-            f.write("type: test\n")
+            f.write("type: implementation_plan\n")
             f.write("category: development\n")
             f.write("status: active\n")
             f.write("version: '1.0'\n")
@@ -58,13 +58,13 @@ class TestDualVersionValidation(unittest.TestCase):
 
     def test_modern_artifact(self):
         # V2 artifact (has ads_version) - SHOULD require ads_version (which it has)
-        path = self.root / "modern_test.md"
+        path = self.root / "implementation_plan_modern_test.md"
         with open(path, "w") as f:
             f.write("---\n")
             f.write("ads_version: '2.0'\n")
             f.write("title: Test\n")
             f.write("date: 2023-01-01 00:00 (KST)\n")
-            f.write("type: test\n")
+            f.write("type: implementation_plan\n")
             f.write("category: development\n")
             f.write("status: active\n")
             f.write("version: '1.0'\n")
@@ -77,17 +77,18 @@ class TestDualVersionValidation(unittest.TestCase):
 
     def test_modern_artifact_missing_field(self):
         # V2 artifact missing required field
-        path = self.root / "broken_modern.md"
+        path = self.root / "implementation_plan_broken_modern.md"
         with open(path, "w") as f:
             f.write("---\n")
             f.write("ads_version: '2.0'\n")
             # Missing 'status'
             f.write("title: Test\n")
             f.write("date: 2023-01-01 00:00 (KST)\n")
-            f.write("type: test\n")
+            f.write("type: implementation_plan\n")
             f.write("category: development\n")
             f.write("version: '1.0'\n")
             f.write("---\nContent")
+
 
         result = {"errors": []}
         self.validator._validate_file_frontmatter(path, strict_mode=True, result=result)

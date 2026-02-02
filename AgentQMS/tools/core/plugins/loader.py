@@ -58,7 +58,9 @@ class PluginLoader:
             project_root=project_root,
             framework_root=self.framework_root,
         )
-        self.validator = PluginValidator(schemas_dir=self.framework_root / "standards" / "schemas")
+        # Phase 7.1: Disable JSON schema validation (schemas deleted in Spec-Kit migration)
+        # Artifact type validation still works via .agentqms/schemas/artifact_type_validation.yaml
+        self.validator = PluginValidator(schemas_dir=None)
 
         # Cached registry
         self._registry: PluginRegistry | None = None

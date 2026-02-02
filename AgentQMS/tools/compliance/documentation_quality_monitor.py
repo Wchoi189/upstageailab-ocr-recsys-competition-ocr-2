@@ -81,7 +81,6 @@ class DocumentationQualityMonitor:
         deprecated_files = [
             "docs/AI_AGENT_GUIDE.md",
             "docs/AI_AGENT_GUIDELINES.md",
-            "docs/ai_handbook/ai-agent-entry-point.md",
             ".ai_instructions",
         ]
 

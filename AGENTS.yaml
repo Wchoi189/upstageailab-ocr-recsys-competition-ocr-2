@@ -1,15 +1,15 @@
 ---
-ads_version: "1.0"
+ads_version: "2.0"
 type: entrypoint
 description: "Master entrypoint for AI Agents. Read this first."
-context_map_location: "AgentQMS/standards/registry.yaml"
+context_map_location: "AgentQMS/.agentqms/registry.yaml"  # Auto-generated from specs
 
 project_standards:
-  workflow_rules: "AgentQMS/standards/tier1-sst/constraints/workflow-requirements.yaml"
-  artifact_standards: "AgentQMS/standards/tier1-sst/specs/artifact-types-reference.yaml"
-  system_architecture: "AgentQMS/standards/tier1-sst/system-architecture.yaml"
-  tool_catalog: "AgentQMS/standards/tier2-framework/tool-catalog.yaml"
-  naming_conventions: "AgentQMS/standards/tier1-sst/naming-conventions.yaml"
+  specs_directory: "AgentQMS/specs/"  # Source of truth (Markdown specs)
+  registry: "AgentQMS/.agentqms/registry.yaml"  # Auto-generated
+  compliance_spec: "AgentQMS/specs/tier1-contracts/compliance.spec.md"
+  system_architecture: "AgentQMS/specs/tier1-contracts/system-architecture.spec.md"
+  naming_conventions: "AgentQMS/specs/tier1-contracts/compliance.spec.md"
 
 package_management:
   tool: "uv"
@@ -29,12 +29,15 @@ environment_tools:
     cli_entrypoint: "bin/aqms"
     commands:
       help: "bin/aqms --help"
-      registry_sync: "bin/aqms registry sync"
+      registry_sync: "bin/aqms registry sync"  # Generates from specs
       registry_resolve_task: "bin/aqms registry resolve --task <task>"
       registry_resolve_path: "bin/aqms registry resolve --path <path>"
       plugin_validate: "bin/aqms plugin validate"
       sync_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py"
       init_github: "uv run python AgentQMS/tools/utils/sync_github_projects.py --init"
+      middleware_health: "make qms-middleware-health"
+      middleware_dashboard: "make qms-middleware-dashboard"
+      middleware_logs: "make qms-middleware-logs"
 
   # V2 Vessel Architecture (replaces legacy session management)
   project_compass:

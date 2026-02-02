@@ -1,0 +1,75 @@
+ads_version: '2.0'
+type: unified_registry
+name: AgentQMS Registry v2.0 P7
+generated_at: '2026-02-01T18:33:16.526228+00:00'
+total_specs: 14
+specs:
+  ADS_SCHEMAS:
+    id: ADS_SCHEMAS
+    file_path: AgentQMS/specs/schemas/ads_schemas.spec.md
+    description: '**Tier**: Schemas'
+  VALIDATION:
+    id: VALIDATION
+    file_path: AgentQMS/specs/tier4-workflows/validation.spec.md
+    tier: 4
+    description: '**Tier**: 4 (Workflows)'
+  ARCHITECTURE:
+    id: ARCHITECTURE
+    file_path: AgentQMS/specs/tier1-contracts/architecture.spec.md
+    tier: 1
+    description: '**Tier**: 1 (Contracts)'
+  COMPLIANCE:
+    id: COMPLIANCE
+    file_path: AgentQMS/specs/tier1-contracts/compliance.spec.md
+    tier: 1
+    description: '**Tier**: 1 (Contracts)'
+  CONFIGURATION:
+    id: CONFIGURATION
+    file_path: AgentQMS/specs/tier2-framework/configuration.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  CONSTRAINTS:
+    id: CONSTRAINTS
+    file_path: AgentQMS/specs/tier2-framework/constraints.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  CORE_INFRA:
+    id: CORE_INFRA
+    file_path: AgentQMS/specs/tier2-framework/core_infra.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  DISCOVERY:
+    id: DISCOVERY
+    file_path: AgentQMS/specs/tier2-framework/discovery.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  FRAMEWORK_SPECS:
+    id: FRAMEWORK_SPECS
+    file_path: AgentQMS/specs/tier2-framework/framework_specs.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  MISC:
+    id: MISC
+    file_path: AgentQMS/specs/tier2-framework/misc.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  OCR_ENGINE:
+    id: OCR_ENGINE
+    file_path: AgentQMS/specs/tier2-framework/ocr_engine.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  RUNTIME:
+    id: RUNTIME
+    file_path: AgentQMS/specs/tier2-framework/runtime.spec.md
+    tier: 2
+    description: '**Tier**: 2 (Framework)'
+  AGENT_IDENTITIES:
+    id: AGENT_IDENTITIES
+    file_path: AgentQMS/specs/tier3-agents/agent_identities.spec.md
+    tier: 3
+    description: '**Tier**: 3 (Agents)'
+  WORKFLOWS:
+    id: WORKFLOWS
+    file_path: AgentQMS/specs/tier4-workflows/workflows.spec.md
+    tier: 4
+    description: '**Tier**: 4 (Workflows)'

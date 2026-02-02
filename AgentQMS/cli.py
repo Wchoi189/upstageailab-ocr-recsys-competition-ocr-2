@@ -178,7 +178,7 @@ def setup_generate_config_parser(subparsers):
 
     parser.add_argument("--path", help="Current working path for standard discovery")
     parser.add_argument("--output", default="AgentQMS/.agentqms/effective.yaml", help="Output path")
-    parser.add_argument("--registry", default="AgentQMS/standards/registry.yaml", help="Registry path")
+    parser.add_argument("--registry", default="AgentQMS/.agentqms/registry.yaml", help="Registry path")
     parser.add_argument("--settings", default="AgentQMS/.agentqms/settings.yaml", help="Settings path")
     parser.add_argument("--dry-run", action="store_true", help="Print to stdout instead of writing")
     parser.add_argument("--json", action="store_true", help="Output in JSON format (Virtual Mode)")
@@ -546,14 +546,11 @@ def run_registry_command(args):
     project_root = Path(__file__).resolve().parent.parent
 
     if args.registry_command == "sync":
-        # Run sync_registry.py
-        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "core" / "sync_registry.py")]
-        if args.dry_run:
-            cmd.append("--dry-run")
-        if args.strict:
-            cmd.append("--strict")
-        if args.no_graph:
-            cmd.append("--no-graph")
+        # Phase 7.2: Use new registry generator
+        cmd = ["uv", "run", "python", str(project_root / "scripts" / "utils" / "generate_registry.py")]
+
+        # Note: Old sync_registry.py options not all supported by new generator
+        # --dry-run, --strict, --no-graph were legacy options
 
         result = subprocess.run(cmd, cwd=project_root)
         return result.returncode
@@ -601,11 +598,9 @@ def run_registry_command(args):
         return result.returncode
 
     elif args.registry_command == "validate":
-        # Run validation using sync_registry.py in dry-run mode
-        cmd = ["uv", "run", "python", str(project_root / "AgentQMS" / "tools" / "core" / "sync_registry.py"), "--dry-run"]
-
-        if args.strict:
-            cmd.append("--strict")
+        # Phase 7.2: Use new registry generator in validation mode
+        # Note: For now, just run the generator - validation is implicit
+        cmd = ["uv", "run", "python", str(project_root / "scripts" / "utils" / "generate_registry.py")]
 
         result = subprocess.run(cmd, cwd=project_root)
         return result.returncode

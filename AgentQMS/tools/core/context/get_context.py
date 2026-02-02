@@ -43,19 +43,15 @@ except ImportError:
 
 
 def _get_doc_index_path() -> Path:
-    """Get the documentation index path, handling deprecated docs location."""
+    """Get the documentation context bundle index path."""
     docs_dir = get_docs_dir()
-    # Try new location first
-    new_path = docs_dir / "ai_handbook" / "index.json"
-    if new_path.exists():
-        return new_path
-    # Fall back to deprecated location
-    from AgentQMS.tools.utils.system.paths import get_project_root
-
-    deprecated_path = get_project_root() / "docs_deprecated" / "ai_handbook" / "index.json"
-    if deprecated_path.exists():
-        return deprecated_path
-    return new_path  # Return expected path for error messages
+    path = docs_dir / "context_bundles" / "index.json"
+    if not path.exists():
+        raise FileNotFoundError(
+            f"Context bundle index not found: {path}\n"
+            f"Expected location: docs/context_bundles/index.json"
+        )
+    return path
 
 
 def load_index() -> dict[str, Any]:
