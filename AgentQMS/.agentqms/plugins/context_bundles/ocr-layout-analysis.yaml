@@ -1,96 +1,53 @@
-# OCR Layout Analysis Context Bundle Plugin
-
 name: ocr-layout-analysis
 title: OCR Layout Analysis
-ads_version: "1.0"
+ads_version: '1.0'
 scope: project
-description: |
-  Context for layout analysis and structure extraction including page structure
+description: 'Context for layout analysis and structure extraction including page
+  structure
+
   detection, reading order analysis, and layout-related inference.
 
+  '
 tags:
+- layout
+- structure
+- reading-order
+- page-segmentation
+- document-structure
+triggers:
+  keywords:
   - layout
   - structure
   - reading-order
   - page-segmentation
   - document-structure
-
-triggers:
-  keywords:
-    - layout
-    - structure
-    - reading-order
-    - page-segmentation
-    - document-structure
-    - segmentation
-
+  - segmentation
 tiers:
   tier1:
     name: Layout Code
     description: Core layout feature implementation
     max_files: 5
     files:
-  tier1:
-    name: Layout Code
-    description: Core layout feature implementation
-    max_files: 5
-    files:
-      - path: ocr/features/layout/*.py
-        priority: critical
-        mode: structure
-        description: Layout analysis feature implementation
-      - path: configs/domain/layout.yaml
-        priority: critical
-        mode: full
-        description: Layout-specific configuration
-      - path: configs/layout/
-        priority: high
-        mode: reference
-        description: Layout configuration parameters
-      - path: ocr/core/inference/pipeline.py
-        priority: high
-        mode: structure
-        description: Inference pipeline orchestration
-
+    - path: configs/domain/layout.yaml
+      priority: critical
+      mode: full
+      description: Layout-specific configuration
   tier2:
     name: Analysis & Utilities
     description: Analysis tools, visualization, and utilities
     max_files: 6
     files:
-      - path: ocr/core/analysis/*.py
-        priority: high
-        mode: structure
-        description: Layout analysis utilities and helpers
-      - path: ocr/core/utils/*.py
-        priority: high
-        mode: structure
-        description: Shared utility functions
-      - path: ocr/core/models/__init__.py
-        priority: medium
-        mode: structure
-        description: Model loading and management
-      - path: configs/base.yaml
-        priority: medium
-        mode: reference
-        description: Base configuration template
-      - path: ocr/core/visualization/
-        priority: low
-        mode: reference
-        description: Visualization components for layout
-        optional: true
-
+    - path: ocr/core/models/__init__.py
+      priority: medium
+      mode: structure
+      description: Model loading and management
   tier3:
     name: Examples & Tests
     description: Examples, tests, and visualization outputs
     max_files: 3
     files:
-      - path: tests/test_layout.py
-        priority: low
-        mode: structure
-        description: Layout analysis tests
-        optional: true
-      - path: data/debug_samples/
-        priority: low
-        mode: reference
-        description: Sample images for debugging layout analysis
-        optional: true
+    - path: data/debug_samples/
+      priority: low
+      mode: reference
+      description: Sample images for debugging layout analysis
+      optional: true

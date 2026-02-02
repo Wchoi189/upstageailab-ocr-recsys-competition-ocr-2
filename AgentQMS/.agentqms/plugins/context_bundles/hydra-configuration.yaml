@@ -1,119 +1,103 @@
-# Hydra Configuration Context Bundle Plugin
-
 name: hydra-configuration
 title: Hydra V5.0 Configuration Framework
-ads_version: "1.0"
+ads_version: '1.0'
 scope: project
-description: |
-  Context for understanding and working with Hydra V5.0 configuration system.
+description: 'Context for understanding and working with Hydra V5.0 configuration
+  system.
+
   AI-optimized documentation split into critical rules (always load) and
+
   patterns reference (debugging only). 57-76% token reduction from consolidation.
 
+  '
 tags:
-  - hydra
-  - hydra v5
-  - configuration
-  - config
-  - experiment
-  - yaml
-  - domains first
-
+- hydra
+- hydra v5
+- configuration
+- config
+- experiment
+- yaml
+- domains first
 triggers:
   keywords:
-    - hydra
-    - configuration
-    - config
-    - configs
-    - settings
-    - parameters
-    - experiment
-    - yaml
-    - compose
-    - omegaconf
-    - merge
-    - override
-    - domain
-    - flattening
-    - interpolation
-    - atomic architecture
-    - yq
-    - batch edit
-    - bulk update
+  - hydra
+  - configuration
+  - config
+  - configs
+  - settings
+  - parameters
+  - experiment
+  - yaml
+  - compose
+  - omegaconf
+  - merge
+  - override
+  - domain
+  - flattening
+  - interpolation
+  - atomic architecture
+  - yq
+  - batch edit
+  - bulk update
   patterns:
-    - "hydra.*config"
-    - "config.*hydra"
-    - "yaml.*config"
-    - "experiment.*config"
-    - "domain.*switching"
-
+  - hydra.*config
+  - config.*hydra
+  - yaml.*config
+  - experiment.*config
+  - domain.*switching
 tiers:
   tier1:
     name: Critical Hydra Rules
     description: Mandatory rules for config changes (ALWAYS LOAD)
     max_files: 2
     files:
-      - path: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
-        priority: critical
-        mode: reference
-        description: Critical rules, directory responsibilities, validation commands (350 tokens)
-      - path: AgentQMS/standards/tier2-framework/configuration-standards.yaml
-        priority: high
-        mode: reference
-        description: General configuration standards and best practices
-
+    - path: AgentQMS/specs/tier2-framework/runtime.spec.md
+      priority: critical
+      mode: reference
+      description: Critical rules, directory responsibilities, validation commands
+        (350 tokens)
+    - path: AgentQMS/specs/tier2-framework/configuration/configuration-standards.spec.md
+      priority: high
+      mode: reference
+      description: General configuration standards and best practices
   tier2:
     name: Hydra Patterns Reference (DEBUG ONLY)
     description: Load only when debugging errors or learning patterns
     max_files: 1
-    auto_load: false  # Explicit opt-in
+    auto_load: false
     files:
-      - path: AgentQMS/standards/tier2-framework/hydra-v5-patterns-reference.yaml
-        priority: high
-        mode: reference
-        description: Design patterns, failure modes, debugging guide (280 tokens)
-
+    - path: AgentQMS/specs/tier2-framework/patterns/hydra-v5-patterns.spec.md
+      priority: high
+      mode: reference
+      description: Design patterns, failure modes, debugging guide (280 tokens)
   tier3:
     name: Configuration Examples
     description: Live config files and examples
     max_files: 4
     files:
-      - path: configs/
-        priority: high
-        mode: reference
-        description: All configuration files (domain, train, eval, etc.)
-      - path: configs/domain/
-        priority: high
-        mode: reference
-        description: Domain controllers (detection, recognition, kie, layout)
-        optional: true
-      - path: configs/model/architectures/
-        priority: medium
-        mode: reference
-        description: Atomic architecture definitions
-        optional: true
-      - path: pyproject.toml
-        priority: low
-        mode: structure
-        description: Project dependencies and Hydra setup
-
-  tier4:
-    name: Historical Reference
-    description: Archived documentation (rarely needed)
-    max_files: 1
-    auto_load: false
-    files:
-      - path: archive/__EXTENDED__/config-history/README.md
-        priority: low
-        mode: reference
-        description: Migration history and consolidation notes
-        optional: true
-
+    - path: configs/
+      priority: high
+      mode: reference
+      description: All configuration files (domain, train, eval, etc.)
+    - path: configs/domain/
+      priority: high
+      mode: reference
+      description: Domain controllers (detection, recognition, kie, layout)
+      optional: true
+    - path: configs/model/architectures/
+      priority: medium
+      mode: reference
+      description: Atomic architecture definitions
+      optional: true
+    - path: pyproject.toml
+      priority: low
+      mode: structure
+      description: Project dependencies and Hydra setup
 notes:
-  consolidation_date: "2026-01-20"
+  consolidation_date: '2026-01-20'
   replaced_files:
-    - hydra-configuration-architecture.yaml (archived)
-    - hydra-v5-core-rules.yaml (merged into hydra-v5-rules.yaml)
-    - hydra-v5-patterns.yaml (merged into hydra-v5-patterns-reference.yaml)
-  token_savings: "57-76% reduction (1,460 → 350-630 tokens)"
-  ai_optimization: "Clear entry point, failure index, no stale content"
-
+  - hydra-configuration-architecture.yaml (archived)
+  - hydra-v5-core-rules.yaml (merged into hydra-v5-rules.yaml)
+  - hydra-v5-patterns.yaml (merged into hydra-v5-patterns-reference.yaml)
+  token_savings: "57-76% reduction (1,460 \u2192 350-630 tokens)"
+  ai_optimization: Clear entry point, failure index, no stale content

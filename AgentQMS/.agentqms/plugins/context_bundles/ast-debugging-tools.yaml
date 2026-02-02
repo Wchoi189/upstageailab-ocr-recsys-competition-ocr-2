@@ -186,7 +186,7 @@ tiers:
         priority: critical
         mode: reference
         description: Complete tool reference with examples (209 lines)
-      - path: AgentQMS/standards/tier2-framework/tool-catalog.yaml
+      - path: AgentQMS/specs/tier2-framework/discovery.spec.md
         priority: high
         mode: reference
         description: All available tools including AST commands
@@ -333,7 +333,7 @@ integration:
     commands: "See tools section for full list"
 
   companion_standards:
-    - AgentQMS/standards/tier2-framework/tool-catalog.yaml
+    - AgentQMS/specs/tier2-framework/discovery.spec.md
     - AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
     - agent-debug-toolkit/AI_USAGE.yaml
 

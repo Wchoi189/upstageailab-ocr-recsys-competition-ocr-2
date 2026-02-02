@@ -1,0 +1,9 @@
+description: "V5 Architecture Standards & Domain Separation"
+tiers:
+  tier1:
+    files:
+      - configs/domain/detection.yaml # Gold Standard
+      - ocr/domains/detection/module.py # Reference Implementation
+  tier2:
+    files:
+      - project_compass/AGENTS.md

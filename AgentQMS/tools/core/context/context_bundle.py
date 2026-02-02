@@ -196,6 +196,48 @@ class ContextEngine:
         available_str = ", ".join(available) if available else "none"
         raise FileNotFoundError(f"Bundle '{bundle_name}' not found. Available bundles: {available_str}")
 
+    def _merge_dirs(self, target: dict, source: dict) -> None:
+        """Merge source tier dict into target tier dict."""
+        for tier_name, tier_data in source.items():
+            if tier_name not in target:
+                target[tier_name] = {"files": [], "max_files": tier_data.get("max_files")}
+
+            # Merge files
+            if "files" in tier_data:
+                target[tier_name]["files"].extend(tier_data["files"])
+
+            # Update max_files if source is strictly more restrictive (optional choice)
+            # or just take the one that exists.
+            if "max_files" in tier_data:
+                target[tier_name]["max_files"] = tier_data["max_files"]
+
+    def expand_bundle_inheritance(self, bundle_def: dict[str, Any]) -> dict[str, Any]:
+        """Recursively expand sub_bundles."""
+        if "sub_bundles" not in bundle_def:
+            return bundle_def
+
+        final_tiers = {}
+        # 1. Process local tiers first (or last? usually local overrides)
+        # Let's say sub-bundles contribute to tiers.
+
+        # Merge local tiers
+        if "tiers" in bundle_def:
+            self._merge_dirs(final_tiers, bundle_def["tiers"])
+
+        # 2. Process sub-bundles
+        for sub_name in bundle_def.get("sub_bundles", []):
+            try:
+                sub_def = self.load_bundle_definition(sub_name)
+                # Recurse
+                sub_def = self.expand_bundle_inheritance(sub_def)
+                if "tiers" in sub_def:
+                    self._merge_dirs(final_tiers, sub_def["tiers"])
+            except FileNotFoundError:
+                print(f"Warning: Sub-bundle '{sub_name}' not found, skipping.", file=sys.stderr)
+
+        bundle_def["tiers"] = final_tiers
+        return bundle_def
+
     def list_available_bundles(self) -> list[str]:
         bundles = set()
         if BUNDLES_DIR.exists():
@@ -280,15 +322,12 @@ class ContextEngine:
         if not st:
             return 0
 
-        try:
-             # Just read the file - I/O bound
-             content = path.read_text(encoding="utf-8")
-             raw_count = len(content) // 4
-             if mode == "structure":
-                 return int(raw_count * 0.2)
-             return raw_count
-        except Exception:
-            return 0
+        # Heuristic: Use file size / 4 for fast estimation
+        # This implementation avoids reading the file content (Lazy Loading)
+        raw_count = st.st_size // 4
+        if mode == "structure":
+            return int(raw_count * 0.2)
+        return raw_count
 
     def validate_bundle_files(self, bundle_def: dict[str, Any]) -> list[dict[str, Any]]:
         """Validate and resolve file paths from bundle definition."""
@@ -467,6 +506,9 @@ class ContextEngine:
 
             try:
                 bundle_def = self.load_bundle_definition(task_type)
+                # Expand sub-bundles
+                bundle_def = self.expand_bundle_inheritance(bundle_def)
+
                 bundle_files = self.validate_bundle_files(bundle_def)
                 files.extend(bundle_files)
             except FileNotFoundError:

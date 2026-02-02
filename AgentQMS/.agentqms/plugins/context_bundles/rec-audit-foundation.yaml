@@ -1,0 +1,11 @@
+description: "Core context for Recognition Audit (Post-Hydra Refactor)"
+tiers:
+  tier1: # Critical
+    files:
+      - configs/domain/recognition.yaml
+      - configs/domain/detection.yaml
+      - scripts/audit/hydra_target_linter.py
+  tier2: # Reference
+    files:
+      - configs/model/architectures/parseq.yaml
+      - __DEBUG__/2026-01-22_hydra_configs_legacy_imports/03_findings.md

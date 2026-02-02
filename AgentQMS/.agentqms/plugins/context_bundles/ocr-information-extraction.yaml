@@ -1,96 +1,43 @@
-# OCR Information Extraction Context Bundle Plugin
-
 name: ocr-information-extraction
 title: OCR Information Extraction (KIE)
-ads_version: "1.0"
+ads_version: '1.0'
 scope: project
-description: |
-  Context for key-value information extraction (KIE) tasks including entity
+description: 'Context for key-value information extraction (KIE) tasks including entity
+
   detection, relationship modeling, and value extraction from documents.
 
+  '
 tags:
+- kie
+- extraction
+- key-value
+- entity
+- information
+triggers:
+  keywords:
   - kie
   - extraction
   - key-value
   - entity
   - information
-
-triggers:
-  keywords:
-    - kie
-    - extraction
-    - key-value
-    - entity
-    - information
-    - entities
-
+  - entities
 tiers:
-  tier1:
-    name: KIE Code
-    description: Core key-value extraction feature implementation
-    max_files: 5
-    files:
-  tier1:
-    name: KIE Code
-    description: Core key-value extraction feature implementation
-    max_files: 5
-    files:
-      - path: ocr/features/kie/*.py
-        priority: critical
-        mode: structure
-        description: Key-value extraction feature implementation
-      - path: configs/domain/kie.yaml
-        priority: critical
-        mode: full
-        description: KIE-specific configuration
-        optional: true
-      - path: ocr/core/inference/pipeline.py
-        priority: high
-        mode: structure
-        description: Inference pipeline orchestration
-      - path: AgentQMS/standards/tier2-framework/inference-framework.yaml
-        priority: high
-        mode: reference
-        description: Inference framework design patterns
-
   tier2:
     name: Models & Analysis
     description: Extraction models, analysis, and evaluation
     max_files: 6
     files:
-      - path: ocr/core/models/__init__.py
-        priority: high
-        mode: structure
-        description: Model loading and management
-      - path: ocr/core/analysis/*.py
-        priority: high
-        mode: structure
-        description: Analysis utilities for extraction
-      - path: ocr/core/evaluation/*.py
-        priority: medium
-        mode: structure
-        description: Evaluation metrics for KIE
-      - path: ocr/core/metrics/*.py
-        priority: medium
-        mode: structure
-        description: Entity-level metrics
-      - path: configs/base.yaml
-        priority: low
-        mode: reference
-        description: Base configuration
-
+    - path: ocr/core/models/__init__.py
+      priority: high
+      mode: structure
+      description: Model loading and management
   tier3:
     name: Examples & Validation
     description: Examples and validation tools
     max_files: 3
     files:
-      - path: tests/test_kie.py
-        priority: low
-        mode: structure
-        description: KIE tests
-        optional: true
-      - path: data/debug_samples/
-        priority: low
-        mode: reference
-        description: Sample documents for debugging
-        optional: true
+    - path: data/debug_samples/
+      priority: low
+      mode: reference
+      description: Sample documents for debugging
+      optional: true

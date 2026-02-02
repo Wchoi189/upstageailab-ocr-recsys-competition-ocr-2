@@ -1,0 +1,12 @@
+description: "Historical context for Recognition domain issues"
+tiers:
+  tier1:
+    files:
+      - __DEBUG__/2026-01-16_recognition_prediction_failure/README.md
+      - __DEBUG__/2026-01-16_recognition_prediction_failure/03_findings.md
+  tier2:
+    files:
+      - ocr/domains/recognition/models/architecture.py
+      - ocr/domains/recognition/module.py
+      - configs/experiment/rec_baseline_v1.yaml
+      - ocr/domains/recognition/data/tokenizer.py

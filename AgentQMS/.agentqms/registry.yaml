@@ -1,7 +1,7 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P7
-generated_at: '2026-02-01T18:33:16.526228+00:00'
+generated_at: '2026-02-02T11:50:53.568121+00:00'
 total_specs: 14
 specs:
   ADS_SCHEMAS:
