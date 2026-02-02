@@ -65,7 +65,7 @@ tiers:
       mode: reference
       description: Agent interface for experiment tools
       optional: true
-    - path: AgentQMS/specs/tier2-framework/agent-infra/ollama-models.spec.md
+    - path: AgentQMS/specs/tier2-framework/agent-infra.spec.md
       priority: high
       mode: full
       description: Ollama model catalog for multi-agent systems

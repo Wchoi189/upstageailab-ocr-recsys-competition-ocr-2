@@ -83,7 +83,7 @@ tiers:
       priority: medium
       mode: reference
       description: Workflow requirements
-    - path: AgentQMS/specs/tier2-framework/configuration/configuration-standards.spec.md
+    - path: AgentQMS/specs/tier2-framework/configuration.spec.md
       priority: low
       mode: reference
       description: Configuration standards

@@ -55,7 +55,7 @@ tiers:
     description: Configuration management and OCR pipeline components
     max_files: 10
     files:
-    - path: AgentQMS/specs/tier2-framework/configuration/hydra-architecture.spec.md
+    - path: AgentQMS/specs/tier2-framework/configuration.spec.md
       priority: medium
       mode: reference
       description: Hydra configuration architecture guide

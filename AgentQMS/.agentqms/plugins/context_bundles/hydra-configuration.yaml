@@ -56,7 +56,7 @@ tiers:
       mode: reference
       description: Critical rules, directory responsibilities, validation commands
         (350 tokens)
-    - path: AgentQMS/specs/tier2-framework/configuration/configuration-standards.spec.md
+    - path: AgentQMS/specs/tier2-framework/configuration.spec.md
       priority: high
       mode: reference
       description: General configuration standards and best practices
@@ -66,7 +66,7 @@ tiers:
     max_files: 1
     auto_load: false
     files:
-    - path: AgentQMS/specs/tier2-framework/patterns/hydra-v5-patterns.spec.md
+    - path: AgentQMS/specs/tier2-framework/patterns.spec.md
       priority: high
       mode: reference
       description: Design patterns, failure modes, debugging guide (280 tokens)

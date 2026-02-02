@@ -30,14 +30,10 @@ tiers:
     description: Core OCR pipeline architecture and contracts
     max_files: 8
     files:
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/orchestration-flow.spec.md
+    - path: AgentQMS/specs/tier2-framework/ocr-engine.spec.md
       priority: critical
       mode: reference
       description: OCR orchestration flow patterns
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/pipeline-contracts.spec.md
-      priority: high
-      mode: reference
-      description: Pipeline component contracts
     - path: ocr/__init__.py
       priority: high
       mode: structure
@@ -47,26 +43,10 @@ tiers:
     description: OCR pipeline components and utilities
     max_files: 12
     files:
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/preprocessing-logic.spec.md
+    - path: AgentQMS/specs/tier2-framework/ocr-engine.spec.md
       priority: high
       mode: reference
       description: Preprocessing patterns
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/postprocessing-logic.spec.md
-      priority: high
-      mode: reference
-      description: Postprocessing patterns
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/model-management.spec.md
-      priority: medium
-      mode: reference
-      description: Model loading and management
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/coordinate-transforms.spec.md
-      priority: medium
-      mode: reference
-      description: Coordinate transformation utilities
-    - path: AgentQMS/specs/tier2-framework/ocr-engine/image-loading.spec.md
-      priority: medium
-      mode: reference
-      description: Image loading patterns
     - path: AgentQMS/tools/utils/paths.py
       priority: high
       mode: structure
@@ -84,7 +64,7 @@ tiers:
       priority: medium
       mode: reference
       description: Data configurations
-    - path: AgentQMS/specs/tier2-framework/configuration/configuration-standards.spec.md
+    - path: AgentQMS/specs/tier2-framework/configuration.spec.md
       priority: medium
       mode: reference
       description: Configuration standards

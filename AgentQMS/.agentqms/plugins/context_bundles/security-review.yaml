@@ -40,7 +40,7 @@ tiers:
     description: Security review process documentation
     max_files: 5
     files:
-    - path: AgentQMS/specs/tier2-framework/api/contracts.spec.md
+    - path: AgentQMS/specs/tier2-framework/api.spec.md
       priority: medium
       mode: reference
       description: API contracts for secure interfaces
