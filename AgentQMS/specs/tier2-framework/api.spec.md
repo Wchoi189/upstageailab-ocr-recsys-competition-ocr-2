@@ -5,6 +5,7 @@ type: 'quick_reference'
 tier: 2
 priority: 'critical'
 updated: '2026-02-03'
+spec_version: '1.0.0'
 ---
 
 # API Contracts

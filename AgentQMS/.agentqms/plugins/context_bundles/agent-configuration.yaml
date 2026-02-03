@@ -2,88 +2,54 @@ name: agent-configuration
 title: Agent Configuration & Settings
 ads_version: '1.0'
 scope: project
-description: 'Context files for configuring AI agents including Claude, Copilot, Cursor,
-
-  Gemini, Ollama models, and custom agent settings for multi-agent systems.
-
-  '
+description: AI agent configs (Claude, Copilot, Cursor, Gemini, Ollama)
 tags:
 - agent
 - configuration
-- settings
-- copilot
-- claude
-- ollama
-- models
 - multi-agent
 triggers:
   keywords:
-  - agent
-  - config
-  - configuration
-  - claude
+  - agent config
   - copilot
-  - cursor
-  - gemini
-  - qwen
-  - settings
-  - ai
+  - claude
   - ollama
-  - model
   - multi-agent
-  - sub-agent
 tiers:
   tier1:
-    name: Agent Configuration Essentials
-    description: Core agent configuration and standards
-    max_files: 8
+    name: Core Config
+    max_files: 4
     files:
     - path: AGENTS.yaml
       priority: critical
       mode: full
-      description: Agent definitions and configurations
+      description: Agent definitions
     - path: .github/copilot-instructions.md
       priority: high
       mode: reference
-      description: Copilot instructions for this project
+      description: Copilot instructions
   tier2:
-    name: Agent Framework
-    description: Agent framework and tool integration
-    max_files: 8
+    name: Framework
+    max_files: 4
     files:
     - path: AgentQMS/specs/tier2-framework/discovery.spec.md
       priority: high
       mode: reference
-      description: Available tools for agents
-    - path: AgentQMS/mcp_schema.yaml
-      priority: medium
-      mode: reference
-      description: MCP schema definition
-      optional: true
-    - path: experiment_manager/agent_interface.yaml
-      priority: medium
-      mode: reference
-      description: Agent interface for experiment tools
-      optional: true
+      description: Tool catalog
     - path: AgentQMS/specs/tier2-framework/agent-infra.spec.md
       priority: high
       mode: full
-      description: Ollama model catalog for multi-agent systems
+      description: Ollama model catalog
   tier3:
-    name: Extended Configuration
-    description: Additional agent resources and documentation
-    max_files: 6
+    name: Extended
+    max_files: 4
     files:
-    - path: README.md
-      priority: medium
-      mode: reference
-      description: Project overview
-    - path: AgentQMS/specs/tier1-contracts/workflow-requirements.spec.md
+    - path: AgentQMS/mcp_schema.yaml
       priority: low
       mode: reference
-      description: Workflow requirements
-    - path: .qwen/settings.json
+      description: MCP schema
+      optional: true
+    - path: experiment_manager/agent_interface.yaml
       priority: low
-      mode: structure
-      description: Qwen VLM settings
+      mode: reference
+      description: Experiment agent interface
       optional: true

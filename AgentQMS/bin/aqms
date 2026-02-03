@@ -40,7 +40,6 @@ AGENTQMS_ROOT = PROJECT_ROOT / "AgentQMS"
 
 # Tool paths (Discovery vs Enforcement)
 REGISTRY_RESOLVER = AGENTQMS_ROOT / "tools" / "resolve_standards.py"
-REGISTRY_SYNC = AGENTQMS_ROOT / "tools" / "core" / "sync_registry.py"
 PLUGIN_CLI_MODULE = "AgentQMS.tools.core.plugins"
 
 
@@ -80,7 +79,8 @@ def registry_resolve(args: argparse.Namespace) -> int:
 
 def registry_sync(args: argparse.Namespace) -> int:
     """Discovery: Rebuild registry cache and indices."""
-    cmd = ["uv", "run", "python", str(REGISTRY_SYNC)]
+    # Note: Uses generate_registry.py (migrated from sync_registry.py in Phase 7.2)
+    cmd = ["uv", "run", "python", str(PROJECT_ROOT / "scripts" / "utils" / "generate_registry.py")]
 
     if args.force:
         cmd.append("--force")

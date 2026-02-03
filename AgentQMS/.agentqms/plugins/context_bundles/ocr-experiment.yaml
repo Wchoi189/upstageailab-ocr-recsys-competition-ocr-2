@@ -2,78 +2,56 @@ name: ocr-experiment
 title: OCR Experiment Management
 ads_version: '1.0'
 scope: project
-description: 'Context files for running, tracking, and analyzing OCR experiments.
-
-  Includes experiment tracking tools, configuration, and OCR components.
-
-  '
+description: Experiment tracking and configuration for OCR pipelines
 tags:
 - experiment
 - ocr
-- tracker
-- run
-- trial
 - etk
 triggers:
   keywords:
   - experiment
   - etk
-  - tracker
-  - run
-  - trial
   - wandb
   - training
-  - evaluation
 tiers:
   tier1:
     name: Experiment Essentials
-    description: Core experiment tracking and management tools
-    max_files: 8
+    max_files: 6
     files:
     - path: experiment_manager/etk.py
       priority: critical
       mode: structure
-      description: Experiment Tracker Kernel - main experiment management
+      description: Experiment Tracker Kernel
     - path: experiment_manager/agent_interface.yaml
       priority: critical
       mode: reference
-      description: Agent interface configuration for experiment tools
-    - path: experiment_manager/AGENTS.yaml
-      priority: high
-      mode: reference
-      description: Agent configurations for experiment workflows
-    - path: pyproject.toml
-      priority: high
-      mode: structure
-      description: Project dependencies including experiment tools
+      description: Agent interface config
     - path: AgentQMS/specs/tier2-framework/discovery.spec.md
-      priority: medium
+      priority: high
       mode: reference
-      description: Available tools including experiment commands
+      description: Tool catalog
   tier2:
-    name: Configuration & OCR
-    description: Configuration management and OCR pipeline components
-    max_files: 10
+    name: Configuration
+    max_files: 6
     files:
     - path: AgentQMS/specs/tier2-framework/configuration.spec.md
       priority: medium
       mode: reference
-      description: Hydra configuration architecture guide
+      description: Hydra config guide
   tier3:
     name: Extended Context
-    description: Additional resources for comprehensive experiment context
-    max_files: 8
+    max_files: 6
     files:
-    - path: README.md
-      priority: medium
+    - path: experiment_manager/AGENTS.yaml
+      priority: low
       mode: reference
-      description: Project overview and setup
+      description: Agent configurations
+    - path: pyproject.toml
+      priority: low
+      mode: structure
+      description: Project dependencies
     - path: experiment_manager/docs/README.md
-      priority: medium
+      priority: low
       mode: reference
-      description: Experiment manager documentation
+      description: Experiment docs
       optional: true
-    - path: data/data_catalog.yaml
-      priority: medium
-      mode: reference
-      description: Data catalog for experiments

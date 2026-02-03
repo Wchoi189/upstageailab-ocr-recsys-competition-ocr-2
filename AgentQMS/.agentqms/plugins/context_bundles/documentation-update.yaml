@@ -52,14 +52,6 @@ tiers:
     description: Documentation structure and validation tools
     max_files: 10
     files:
-    - path: README.md
-      priority: high
-      mode: reference
-      description: Project README
-    - path: CHANGELOG.md
-      priority: high
-      mode: reference
-      description: Project changelog
     - path: CONTRIBUTING.md
       priority: medium
       mode: reference
@@ -73,6 +65,14 @@ tiers:
     description: Additional documentation resources and templates
     max_files: 8
     files:
+    - path: README.md
+      priority: low
+      mode: reference
+      description: Project README (comprehensive user manual)
+    - path: CHANGELOG.md
+      priority: low
+      mode: reference
+      description: Project changelog (historical reference)
     - path: AgentQMS/specs/tier1-contracts/workflow-requirements.spec.md
       priority: low
       mode: reference

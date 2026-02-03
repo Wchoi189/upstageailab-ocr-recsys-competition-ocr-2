@@ -235,14 +235,14 @@ def get_tool_context():
     """Import and return necessary context objects/functions lazily."""
     try:
         from project_compass.src.core import PulseManager, VesselPaths
-        from project_compass.src.pulse_exporter import export_pulse, register_artifact
+        from project_compass.src.pulse_exporter import export_pulse, register_artifact, create_snapshot
     except ImportError:
         from src.core import PulseManager, VesselPaths
-        from src.pulse_exporter import export_pulse, register_artifact
+        from src.pulse_exporter import export_pulse, register_artifact, create_snapshot
 
     paths = VesselPaths()
     manager = PulseManager(paths)
-    return manager, paths, export_pulse, register_artifact
+    return manager, paths, export_pulse, register_artifact, create_snapshot
 
 
 async def handle_pulse_init(arguments: Dict[str, Any], manager: Any, **kwargs) -> List[TextContent]:
@@ -284,7 +284,7 @@ async def handle_pulse_status(manager: Any, **kwargs) -> List[TextContent]:
     return [TextContent(type="text", text=json.dumps(status, indent=2))]
 
 
-async def handle_pulse_checkpoint(arguments: Dict[str, Any], manager: Any, **kwargs) -> List[TextContent]:
+async def handle_pulse_checkpoint(arguments: Dict[str, Any], manager: Any, paths: Any, create_snapshot: Any, **kwargs) -> List[TextContent]:
     state = await asyncio.to_thread(manager.load_state)
     if not state.active_pulse:
         return [TextContent(type="text", text=json.dumps({"error": "No active pulse"}))]
@@ -293,11 +293,25 @@ async def handle_pulse_checkpoint(arguments: Dict[str, Any], manager: Any, **kwa
         state.active_pulse.token_burden = arguments["token_burden"]
         await asyncio.to_thread(manager.save_state, state)
 
+    # If objective/message is provided, create a snapshot
+    snapshot_msg = ""
+    if arguments.get("objective"):
+        success, msg = await asyncio.to_thread(
+            create_snapshot,
+            state_path=paths.vessel_state,
+            staging_path=paths.staging_dir,
+            history_path=paths.history_dir,
+            label=arguments["objective"]
+        )
+        snapshot_msg = f" | {msg}"
+
     assessment = {
         "pulse_id": state.active_pulse.pulse_id,
         "artifact_count": len(state.active_pulse.artifacts),
         "token_burden": state.active_pulse.token_burden,
         "recommendation": "export" if state.active_pulse.token_burden == "high" else "continue",
+        "action": "snapshot_created" if arguments.get("objective") else "status_check",
+        "message": snapshot_msg.strip(" | ")
     }
     return [TextContent(type="text", text=json.dumps(assessment, indent=2))]
 
@@ -312,7 +326,7 @@ async def handle_spec_constitution(arguments: Dict[str, Any], paths: Any, regist
 
             constitution_file.parent.mkdir(parents=True, exist_ok=True)
             constitution_file.write_text(constitution_content)
-            
+
             success, message = register_artifact(
                 state_path=paths.vessel_state,
                 artifact_path="constitution.md",
@@ -320,9 +334,9 @@ async def handle_spec_constitution(arguments: Dict[str, Any], paths: Any, regist
                 milestone_id=None,
             )
             return {
-                "success": True, 
-                "message": "Project constitution established and registered", 
-                "file": str(constitution_file), 
+                "success": True,
+                "message": f"Constitution established. {message}" if success else f"Constitution established but registration failed: {message}",
+                "file": str(constitution_file),
                 "artifact_registered": success
             }
         except Exception as e:
@@ -337,15 +351,15 @@ async def handle_spec_specify(arguments: Dict[str, Any], paths: Any, register_ar
         try:
             staging_dir = STAGING_DIR / "artifacts"
             spec_file = staging_dir / "specification.md"
-            
+
             scope_text = arguments.get("scope", "General project scope")
             requirements_text = arguments.get("requirements", "TBD")
-            
+
             spec_content = f"# Project Specification\n\n## Scope\n{scope_text}\n\n## Requirements\n{requirements_text}\n\n## Status\n- Created: {datetime.now().isoformat()}\n- Tool: Project Compass v2\n- Status: Draft\n"
 
             spec_file.parent.mkdir(parents=True, exist_ok=True)
             spec_file.write_text(spec_content)
-            
+
             success, message = register_artifact(
                 state_path=paths.vessel_state,
                 artifact_path="specification.md",
@@ -353,9 +367,9 @@ async def handle_spec_specify(arguments: Dict[str, Any], paths: Any, register_ar
                 milestone_id=None,
             )
             return {
-                "success": True, 
-                "message": "Specification created and registered", 
-                "file": str(spec_file), 
+                "success": True,
+                "message": f"Specification created. {message}" if success else f"Specification created but registration failed: {message}",
+                "file": str(spec_file),
                 "artifact_registered": success
             }
         except Exception as e:
@@ -370,14 +384,14 @@ async def handle_spec_plan(arguments: Dict[str, Any], paths: Any, register_artif
         try:
             staging_dir = STAGING_DIR / "artifacts"
             plan_file = staging_dir / "implementation_plan.md"
-            
+
             approach_text = arguments.get("approach", "Standard implementation approach")
-            
+
             plan_content = f"# Implementation Plan\n\n## Approach\n{approach_text}\n\n## High-Level Steps\n1. **Analysis Phase**\n   - Requirements review\n   - Architecture design\n   - Risk assessment\n\n2. **Development Phase**\n   - Core implementation\n   - Testing strategy\n   - Integration planning\n\n3. **Validation Phase**\n   - Quality assurance\n   - Performance testing\n   - Deployment preparation\n\n## Success Criteria\n- All requirements met\n- Code quality standards maintained\n- Performance benchmarks achieved\n\n## Timeline\nTBD - To be determined based on scope and resources\n\n## Status\n- Created: {datetime.now().isoformat()}\n- Tool: Project Compass v2\n- Status: Draft\n"
 
             plan_file.parent.mkdir(parents=True, exist_ok=True)
             plan_file.write_text(plan_content)
-            
+
             success, message = register_artifact(
                 state_path=paths.vessel_state,
                 artifact_path="implementation_plan.md",
@@ -385,9 +399,9 @@ async def handle_spec_plan(arguments: Dict[str, Any], paths: Any, register_artif
                 milestone_id=None,
             )
             return {
-                "success": True, 
-                "message": "Implementation plan created and registered", 
-                "file": str(plan_file), 
+                "success": True,
+                "message": f"Implementation plan created. {message}" if success else f"Implementation plan created but registration failed: {message}",
+                "file": str(plan_file),
                 "artifact_registered": success
             }
         except Exception as e:
@@ -402,14 +416,14 @@ async def handle_spec_tasks(arguments: Dict[str, Any], paths: Any, register_arti
         try:
             staging_dir = STAGING_DIR / "artifacts"
             tasks_file = staging_dir / "tasks.md"
-            
+
             focus_text = arguments.get("focus_area", "General development tasks")
-            
+
             tasks_content = f"# Actionable Tasks\n\n## Focus Area: {focus_text}\n\n## Task Breakdown\n\n### Phase 1: Foundation\n- [ ] Set up development environment\n- [ ] Initialize project structure\n- [ ] Configure CI/CD pipeline\n- [ ] Establish coding standards\n\n### Phase 2: Core Development\n- [ ] Implement core functionality\n- [ ] Write unit tests\n- [ ] Integration testing\n- [ ] Documentation\n\n### Phase 3: Validation & Deployment\n- [ ] Performance testing\n- [ ] Security review\n- [ ] User acceptance testing\n- [ ] Production deployment\n\n## Priority Matrix\n- **High Priority**: Environment setup, core functionality\n- **Medium Priority**: Testing, documentation\n- **Low Priority**: Optimization, advanced features\n\n## Status\n- Created: {datetime.now().isoformat()}\n- Tool: Project Compass v2\n- Status: Draft\n"
 
             tasks_file.parent.mkdir(parents=True, exist_ok=True)
             tasks_file.write_text(tasks_content)
-            
+
             success, message = register_artifact(
                 state_path=paths.vessel_state,
                 artifact_path="tasks.md",
@@ -417,9 +431,9 @@ async def handle_spec_tasks(arguments: Dict[str, Any], paths: Any, register_arti
                 milestone_id=None,
             )
             return {
-                "success": True, 
-                "message": "Tasks generated and registered", 
-                "file": str(tasks_file), 
+                "success": True,
+                "message": f"Tasks generated. {message}" if success else f"Tasks generated but registration failed: {message}",
+                "file": str(tasks_file),
                 "artifact_registered": success
             }
         except Exception as e:
@@ -445,12 +459,12 @@ TOOL_HANDLERS = {
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute a pulse tool."""
-    
+
     # --- Meta-Tool Handlers (Router Pattern) ---
     if name in ["compass_meta_pulse", "compass_meta_spec"]:
         args = arguments.copy()  # Safe copy
         kind = args.pop("kind", "")
-        
+
         try:
             if name == "compass_meta_pulse":
                  from project_compass.src.router import route_pulse
@@ -458,25 +472,26 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             else:
                  from project_compass.src.router import route_spec
                  routing = route_spec(kind, args)
-                 
+
             return await call_tool(routing["tool_name"], routing["arguments"])
         except ValueError as e:
             return [TextContent(type="text", text=f"Error: {str(e)}")]
 
     # --- Individual Tool Handlers ---
-    
+
     handler = TOOL_HANDLERS.get(name)
     if not handler:
         raise ValueError(f"Unknown tool: {name}")
-    
+
     manager, paths, export_pulse, register_artifact = get_tool_context()
-    
+
     return await handler(
         arguments=arguments,
         manager=manager,
         paths=paths,
         export_pulse=export_pulse,
-        register_artifact=register_artifact
+        register_artifact=register_artifact,
+        create_snapshot=create_snapshot
     )
 
 

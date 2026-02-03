@@ -1,3 +1,14 @@
+---
+ads_version: '2.0'
+id: 'FW-FRAMEWORK_SPECS.SPEC'
+type: 'rule_set'
+tier: 2
+priority: 'high'
+spec_version: '1.0.0'
+updated: '2026-02-03'
+description: 'Framework Specifications for framework tier'
+---
+
 # Framework Specifications
 
 **Tier**: 2 (Framework)

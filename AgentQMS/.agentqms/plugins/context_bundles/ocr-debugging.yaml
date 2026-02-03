@@ -2,108 +2,70 @@ name: ocr-debugging
 title: OCR Debugging & AST Analysis
 ads_version: '1.0'
 scope: project
-description: 'AST-based debugging context bundle integrating agent-debug-toolkit analyzers.
-
-
-  Provides deep code analysis capabilities for debugging configuration issues,
-
-  tracing component instantiation, and understanding data flow through complex systems.
-
-  Reduces debugging time by 60-80% compared to text-based grep approaches.
-
-  '
+description: AST-based debugging tools for Hydra config and component analysis
 tags:
 - debugging
-- ast-analysis
-- configuration
-- refactoring
-- code-analysis
+- ast
 - hydra
-- component-tracking
-- data-flow
-- troubleshooting
+- config
 triggers:
   keywords:
   - debug
   - troubleshoot
-  - refactor
-  - audit
-  - analyze
   - trace
-  - merge
-  - config issue
-  - component
-  - instantiation
   - merge order
-  - hydra
   - config access
-  - data flow
   - ast
 tiers:
   tier1:
-    name: AST Analyzers & Tools
-    description: Essential AST-based debugging tools
-    max_files: 8
+    name: Core Analyzers
+    max_files: 4
     files:
     - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
       priority: critical
       mode: structure
-      description: Config access pattern analyzer
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
-      priority: critical
-      mode: structure
-      description: OmegaConf merge order tracer
+      description: Config access patterns
     - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
       priority: critical
       mode: structure
-      description: Hydra pattern detector
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
-      priority: critical
-      mode: structure
-      description: Component instantiation tracker
-    - path: agent-debug-toolkit/README.md
-      priority: high
-      mode: reference
-      description: Debugging toolkit documentation
+      description: Hydra pattern detection
     - path: AgentQMS/specs/tier2-framework/discovery.spec.md
       priority: high
       mode: reference
-      description: Tool catalog and usage patterns
+      description: Tool catalog
   tier2:
-    name: Extended Debugging Context
-    description: Configuration files and component mappings
-    max_files: 10
+    name: Advanced Analysis
+    max_files: 6
     files:
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/__init__.py
+    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
       priority: high
       mode: structure
-      description: Analyzer module initialization
-    - path: ocr/__init__.py
-      priority: medium
+      description: OmegaConf merge tracer
+    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
+      priority: high
       mode: structure
-      description: OCR module structure
-    - path: ocr/core/__init__.py
+      description: Component instantiation tracker
+    - path: AgentQMS/specs/tier2-framework/constraints.spec.md
       priority: medium
-      mode: structure
-      description: Core module organization
+      mode: reference
+      description: Validation constraints
   tier3:
-    name: Reference Implementations
-    description: Test cases and usage examples
-    max_files: 7
+    name: Framework Specs
+    max_files: 6
     files:
-    - path: agent-debug-toolkit/tests/test_config_access.py
+    - path: agent-debug-toolkit/README.md
       priority: low
       mode: reference
-      description: Config access analyzer tests
-    - path: agent-debug-toolkit/tests/test_merge_order.py
+      description: Toolkit documentation
+    - path: AgentQMS/specs/tier2-framework/ocr-engine.spec.md
       priority: low
       mode: reference
-      description: Merge order tracer tests
-    - path: agent-debug-toolkit/tests/test_hydra_usage.py
+      description: OCR engine standards
+    - path: AgentQMS/specs/tier2-framework/configuration.spec.md
       priority: low
       mode: reference
-      description: Hydra usage analyzer tests
-    - path: ocr/core/models/__init__.py
+      description: Config management
+    - path: AgentQMS/specs/tier2-framework/patterns.spec.md
       priority: low
-      mode: structure
-      description: Model management examples
+      mode: reference
+      description: Design patterns

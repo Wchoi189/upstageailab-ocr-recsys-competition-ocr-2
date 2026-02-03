@@ -1,9 +1,80 @@
-description: "V5 Architecture Standards & Domain Separation"
+name: v5-domains-standard
+title: V5 Architecture Standards & Domain Separation
+ads_version: '1.0'
+scope: project
+description: |
+  V5 domain-first architecture reference bundle. Provides gold standard domain
+  controllers (detection, recognition, layout) and their corresponding module
+  implementations. Essential for understanding V5 domain separation principles.
+
+tags:
+  - v5
+  - domains
+  - architecture
+  - domain controllers
+  - detection
+  - recognition
+  - layout
+  - hydra
+
+triggers:
+  keywords:
+    - v5 architecture
+    - domain
+    - domain separation
+    - domain controller
+    - detection
+    - recognition
+    - layout
+    - domain-first
+  patterns:
+    - v5.*architecture
+    - domain.*separation
+    - domain.*controller
+
 tiers:
   tier1:
+    name: Core Domain Standards
+    description: Gold standard domain controllers and implementations
+    max_files: 6
     files:
-      - configs/domain/detection.yaml # Gold Standard
-      - ocr/domains/detection/module.py # Reference Implementation
+      - path: configs/domain/detection.yaml
+        priority: critical
+        mode: full
+        description: Detection domain controller (gold standard)
+      - path: configs/domain/recognition.yaml
+        priority: critical
+        mode: full
+        description: Recognition domain controller (gold standard)
+      - path: configs/domain/layout.yaml
+        priority: high
+        mode: full
+        description: Layout analysis domain controller
+      - path: ocr/domains/detection/module.py
+        priority: high
+        mode: reference
+        description: Detection domain module implementation
+      - path: ocr/domains/recognition/module.py
+        priority: high
+        mode: reference
+        description: Recognition domain module implementation
+
   tier2:
+    name: Architecture Documentation
+    description: V5 architecture patterns and constraints
+    max_files: 3
     files:
-      - project_compass/AGENTS.md
+      - path: AgentQMS/specs/tier2-framework/configuration.spec.md
+        priority: high
+        mode: reference
+        description: V5 configuration standards
+      - path: AgentQMS/specs/tier2-framework/patterns.spec.md
+        priority: medium
+        mode: reference
+        description: V5 domain patterns and best practices
+
+notes:
+  created: "2026-02-03"
+  motivation: "Provide clear reference for V5 domain-first architecture"
+  domains_included: "detection, recognition, layout"
+  missing_domains: "kie (not yet implemented)"

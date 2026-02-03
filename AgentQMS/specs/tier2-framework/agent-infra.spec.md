@@ -5,6 +5,7 @@ type: 'tool_catalog'
 tier: 3
 priority: 'high'
 updated: '2026-02-03'
+spec_version: '1.0.0'
 description: 'Ollama model catalog with specifications for Qwen model family'
 dependencies:
   - SC-007

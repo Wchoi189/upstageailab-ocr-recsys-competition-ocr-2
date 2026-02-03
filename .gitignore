@@ -193,7 +193,7 @@ project_compass/dependency_graph.txt
 project_compass/config_access.txt
 project_compass/context_tree.txt
 project_compass/config_deps.txt
-
+!project_compass/pulse_staging/archive
 # External Artifacts (Moved out of root)
 wandb/
 lightning_logs/

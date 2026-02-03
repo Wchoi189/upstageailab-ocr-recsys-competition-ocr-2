@@ -1,0 +1,11 @@
+{
+  "timestamp": "20260202_201246",
+  "label": "test_script_snapshot",
+  "pulse_id": "recognition-audit-post-refactor",
+  "milestone_id": "ocr-domain-refactor",
+  "files": [
+    "specification.md",
+    "implementation_plan.md",
+    "constitution.md"
+  ]
+}

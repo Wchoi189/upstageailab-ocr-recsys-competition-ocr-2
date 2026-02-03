@@ -41,10 +41,6 @@ tiers:
       priority: high
       mode: reference
       description: File placement rules
-    - path: AgentQMS/specs/tier1-contracts/prohibited-actions.spec.md
-      priority: high
-      mode: reference
-      description: Prohibited actions list
   tier2:
     name: Validation Tools
     description: Compliance checking and validation tools
@@ -58,10 +54,6 @@ tiers:
       priority: high
       mode: structure
       description: Framework boundary validation
-    - path: AgentQMS/tools/compliance/monitor_artifacts.py
-      priority: high
-      mode: structure
-      description: Artifact monitoring tool
     - path: AgentQMS/.agentqms/plugins/validators.yaml
       priority: high
       mode: reference
@@ -75,6 +67,14 @@ tiers:
     description: Framework standards and configuration
     max_files: 10
     files:
+    - path: AgentQMS/tools/compliance/monitor_artifacts.py
+      priority: medium
+      mode: structure
+      description: Artifact monitoring tool (optional)
+    - path: AgentQMS/specs/tier1-contracts/prohibited-actions.spec.md
+      priority: medium
+      mode: reference
+      description: Prohibited actions list (reference)
     - path: AgentQMS/specs/tier1-contracts/architecture.spec.md
       priority: medium
       mode: reference

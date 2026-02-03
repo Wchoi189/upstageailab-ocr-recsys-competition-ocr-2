@@ -1,6 +1,6 @@
 {
   "version": "2.0.0",
-  "last_updated": "2026-02-02T20:13:43.604566",
+  "last_updated": "2026-02-02T20:12:07.121783",
   "health": "healthy",
   "current_phase": "detection",
   "active_pulse": {
@@ -31,12 +31,6 @@
         "artifact_type": "design",
         "milestone_id": "ocr-domain-refactor",
         "created_at": "2026-02-02T19:53:36.741037"
-      },
-      {
-        "path": "compass-v2-walkthrough.md",
-        "artifact_type": "walkthrough",
-        "milestone_id": "ocr-domain-refactor",
-        "created_at": "2026-02-02T20:13:43.604549"
       }
     ],
     "started_at": "2026-02-02T19:53:22.015463",

@@ -5,6 +5,7 @@ type: 'quick_reference'
 tier: 2
 priority: 'high'
 updated: '2026-02-03'
+spec_version: '1.0.0'
 description: 'Design patterns, anti-patterns, and debugging guide for Hydra 1.3.2 V5.0 - load when debugging'
 ---
 
@@ -20,6 +21,7 @@ name: Hydra V5.0 Patterns & Failure Modes Reference
 version: 5.0
 hydra_version: 1.3.2
 last_updated: '2026-01-20'
+spec_version: '1.0.0'
 replaces:
 - hydra-v5-patterns.yaml (consolidated)
 - hydra-v5-core-rules.yaml (patterns section only)

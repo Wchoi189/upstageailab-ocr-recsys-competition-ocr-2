@@ -5,6 +5,7 @@ type: 'tool_catalog'
 tier: 2
 priority: 'high'
 updated: '2026-02-03'
+spec_version: '1.0.0'
 description: 'Keyword mappings for context bundle task detection and routing'
 dependencies:
   - FW-034
@@ -13,6 +14,12 @@ dependencies:
 # Context Bundle Discovery Rules
 
 > Keyword mappings for context bundle task detection and routing
+
+## References
+
+- [`ARCHITECTURE.md`](../../ARCHITECTURE.md) - Bundle constraints and tiering rules
+- [`context-bundles.yaml`](../../../.ai-instructions/tier2-framework/context-bundles.yaml) - Bundle system spec
+- Bundles: `AgentQMS/.agentqms/plugins/context_bundles/*.yaml`
 
 ## Specification
 

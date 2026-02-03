@@ -157,7 +157,24 @@ class PulseManager:
                 "message": "No active pulse. Run pulse-init to start.",
             }
 
-        return {
+        # Auto-reconciliation: Check for orphaned artifacts
+        orphaned = []
+        if state.active_pulse and state.active_pulse.artifacts:
+            artifacts_dir = self.paths.staging_dir / "artifacts"
+            valid_artifacts = []
+
+            for artifact in state.active_pulse.artifacts:
+                full_path = artifacts_dir / artifact.path
+                if full_path.exists():
+                    valid_artifacts.append(artifact)
+                else:
+                    orphaned.append(artifact.path)
+
+            if orphaned:
+                state.active_pulse.artifacts = valid_artifacts
+                self.save_state(state)
+
+        status_msg = {
             "active": True,
             "pulse_id": state.active_pulse.pulse_id,
             "objective": state.active_pulse.objective,
@@ -166,6 +183,11 @@ class PulseManager:
             "instructions_count": len(state.active_pulse.instructions),
             "token_burden": state.active_pulse.token_burden,
         }
+
+        if orphaned:
+             status_msg["reconciled"] = f"Removed {len(orphaned)} orphaned artifacts: {', '.join(orphaned)}"
+
+        return status_msg
 
     def update_health(self, health: ProjectHealth | str) -> bool:
         """Update project health status."""

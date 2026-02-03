@@ -40,6 +40,11 @@ qms-status: ## Check framework status
 qms-registry: ## Generate registry from specs directory
 	uv run python scripts/utils/generate_registry.py
 
+.PHONY: qms-bundle-tokens
+qms-bundle-tokens: ## Measure token usage for all context bundles
+	@echo "📊 Measuring context bundle token usage..."
+	@uv run python archive/migration-scripts/2026-02-03-spec-kit-migration/measure_bundle_tokens.py
+
 # ============================================================================
 # Middleware Observability (Phase C)
 # ============================================================================

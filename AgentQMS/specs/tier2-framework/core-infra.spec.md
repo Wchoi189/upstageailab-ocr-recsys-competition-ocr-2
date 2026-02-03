@@ -5,6 +5,7 @@ type: 'rule_set'
 tier: 2
 priority: 'high'
 updated: '2026-02-03'
+spec_version: '1.0.0'
 ---
 
 # Python Core Standards
