@@ -2,7 +2,6 @@
 
 import torch
 from pydantic import ValidationError
-from torchmetrics.text import CharErrorRate
 
 from ocr.core.lightning.base import OCRPLModule
 from ocr.core.validation import ValidatedTensorData
@@ -25,6 +24,8 @@ class RecognitionPLModule(OCRPLModule):
         super().__init__(model, dataset, config, metric_cfg)
 
         # Recognition-specific initialization
+        # Lazy import - defers ~25s torchmetrics loading until training starts
+        from torchmetrics.text import CharErrorRate
         self.rec_cer = CharErrorRate()
 
     def training_step(self, batch, batch_idx):

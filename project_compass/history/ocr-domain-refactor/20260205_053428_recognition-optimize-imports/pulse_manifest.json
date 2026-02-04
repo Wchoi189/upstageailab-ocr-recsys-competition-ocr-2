@@ -1,0 +1,39 @@
+{
+  "pulse_id": "recognition-optimize-imports",
+  "objective": "Reduce import latency from >60s to <15s by implementing lazy loading for torchmetrics, lightning, scipy/sklearn, and auditing wildcard imports to enable fast_dev_run verification",
+  "milestone_id": "ocr-domain-refactor",
+  "artifacts": [
+    {
+      "path": "implementation_plan.md",
+      "artifact_type": "implementation_plan",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-02-05T04:48:43.842879"
+    },
+    {
+      "path": "walkthrough.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-02-05T04:55:18.658971"
+    },
+    {
+      "path": "import_baseline.log",
+      "artifact_type": "audit",
+      "milestone_id": "M3-ImportOpt",
+      "created_at": "2026-02-05T05:34:22.356891"
+    },
+    {
+      "path": "import_phase1_complete.log",
+      "artifact_type": "audit",
+      "milestone_id": "M3-ImportOpt",
+      "created_at": "2026-02-05T05:34:24.129171"
+    },
+    {
+      "path": "import_optimized.log",
+      "artifact_type": "audit",
+      "milestone_id": "M3-ImportOpt",
+      "created_at": "2026-02-05T05:34:26.226911"
+    }
+  ],
+  "started_at": "2026-02-05 04:23:26.148900",
+  "exported_at": "2026-02-05T05:34:28.174709"
+}

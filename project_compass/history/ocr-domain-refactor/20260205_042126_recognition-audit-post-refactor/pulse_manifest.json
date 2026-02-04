@@ -1,0 +1,27 @@
+{
+  "pulse_id": "recognition-audit-post-refactor",
+  "objective": "Audit recognition pipeline post-Hydra refactor to determine component status, identify missing configurations (head/loss), and create V5 Domains First compliance plan",
+  "milestone_id": "ocr-domain-refactor",
+  "artifacts": [
+    {
+      "path": "specification.md",
+      "artifact_type": "design",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-02-02T19:53:28.855739"
+    },
+    {
+      "path": "implementation_plan.md",
+      "artifact_type": "implementation_plan",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-02-02T19:53:29.175153"
+    },
+    {
+      "path": "constitution.md",
+      "artifact_type": "design",
+      "milestone_id": "ocr-domain-refactor",
+      "created_at": "2026-02-02T19:53:36.741037"
+    }
+  ],
+  "started_at": "2026-02-02 19:53:22.015463",
+  "exported_at": "2026-02-05T04:21:26.771311"
+}

@@ -2,14 +2,9 @@ import logging
 import warnings
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from ocr.pipelines.orchestrator import OCRProjectOrchestrator
 
 # Suppress known wandb warning
 warnings.filterwarnings("ignore", message=r"The '(repr|frozen)' attribute.*Field.*function.*no effect", category=UserWarning)
-
-from ocr.core.lightning.base import OCRPLModule
-import inspect
-print(f"DEBUG: OCRPLModule loaded from: {inspect.getfile(OCRPLModule)}")
 
 log = logging.getLogger(__name__)
 
@@ -19,6 +14,9 @@ def train(config: DictConfig):
     Entry point for OCR Training/Evaluation.
     Delegates entirely to the OCRProjectOrchestrator.
     """
+
+    # Lazy import - defers torch/Lightning loading until function execution
+    from ocr.pipelines.orchestrator import OCRProjectOrchestrator
 
     # 1. Disable struct mode to allow runtime injection
     OmegaConf.set_struct(config, False)

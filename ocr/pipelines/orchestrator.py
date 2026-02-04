@@ -9,7 +9,6 @@ This orchestrator implements the "Domains First" architecture by:
 
 import hydra
 from omegaconf import DictConfig, OmegaConf
-from lightning.pytorch import Trainer
 import logging
 
 from ocr.core.models import get_model_by_cfg
@@ -152,6 +151,9 @@ class OCRProjectOrchestrator:
         Returns:
             Configured Trainer instance
         """
+        # Lazy import - defers Lightning strategies loading until trainer setup
+        from lightning.pytorch import Trainer
+
         logger.info("⚡ Configuring Lightning Trainer...")
 
         # Merge configs from multiple tiers
