@@ -5,6 +5,11 @@
 
 ---
 
+## [2026-02-04] - Root Directory Consolidation
+- **Eliminated .ai-instructions/ clutter**: Moved `context-bundles.yaml` to `AgentQMS/specs/tier2-framework/context-bundles.spec.md`
+- **References updated**: Fixed 3 references (discovery.spec.md, AgentQMS/README.md, root README.md)
+- **Result**: Cleaner root, all AI-optimized specs consolidated in AgentQMS/specs/
+
 ## [2026-02-03] - Phase 3 Context Bundle Optimization
 - **Bundle Consolidation**: Reduced `ast-debugging-tools.yaml` from 361 to 121 lines (66% reduction) by removing embedded tutorials and referencing `AI_USAGE.yaml`.
 - **v5-domains Enhancement**: Expanded `v5-domains-standard.yaml` from 10 to 77 lines with all domain controllers (detection, recognition, layout) and module implementations.

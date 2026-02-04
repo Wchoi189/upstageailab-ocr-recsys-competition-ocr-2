@@ -409,7 +409,6 @@ Frontend proof-of-concept inspired by the Upstage Document OCR Console.
 
 - [`AgentQMS/ARCHITECTURE.md`](AgentQMS/ARCHITECTURE.md) - Design constraints, bundle rules
 - [`AgentQMS/specs/`](AgentQMS/specs/) - Framework specifications (tier1-3)
-- [`.ai-instructions/`](.ai-instructions/) - AI-optimized documentation (ADS v2.0)
 
 **Context Bundle System**: Discoverable bundles for auto-loading task-relevant files. Run `make qms-bundle-tokens` to measure token usage.
 

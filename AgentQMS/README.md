@@ -110,7 +110,6 @@ From [`ARCHITECTURE.md`](ARCHITECTURE.md):
 ## References
 
 - [`ARCHITECTURE.md`](ARCHITECTURE.md) - Design principles
-- [`.ai-instructions/`](../.ai-instructions/) - AI-optimized docs
 - Tier1 specs - Artifact standards (naming, placement, workflow)
 
 ---

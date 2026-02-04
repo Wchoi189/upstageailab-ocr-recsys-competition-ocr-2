@@ -33,7 +33,26 @@ class OCRProjectOrchestrator:
             cfg: Resolved Hydra configuration
         """
         self.cfg = cfg
-        self.domain = cfg.get("domain", cfg.get("task", "detection"))
+        # Fix for V5 Structs: If domain is a config/dict, extract 'task'
+        domain_cfg = cfg.get("domain", cfg.get("task", "detection"))
+
+        if isinstance(domain_cfg, (dict, DictConfig)):
+            self.domain = domain_cfg.get("task", "detection")
+        else:
+            self.domain = domain_cfg
+
+        # Fallback: Check model target if domain seems wrong (e.g. detection with PARSeq)
+        try:
+            model_target = str(cfg.model.get("_target_", ""))
+            arch_target = str(cfg.model.get("architectures", {}).get("_target_", ""))
+            if "PARSeq" in model_target or "PARSeq" in arch_target:
+                if self.domain != "recognition":
+                    logger.warning(f"⚠️ Mismatch detected! Domain={self.domain} but Model=PARSeq.")
+                    logger.warning("⚠️ Forcing domain='recognition' to prevent runtime errors.")
+                    self.domain = "recognition"
+        except Exception:
+            pass # Be safe
+
         self.mode = cfg.get("mode", "train")
 
         logger.info("🎯 OCRProjectOrchestrator initialized")

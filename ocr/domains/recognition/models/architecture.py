@@ -110,7 +110,9 @@ class PARSeq(OCRModel):
             # If decoder inputs included [BOS, t1, ... tn], output corresponds to [t1, ... tn, EOS]
 
             # Let's assume prediction aligns with targets for now
-            loss_val, loss_dict = self.loss(logits, tgt_out)
+            # PyTorch CrossEntropyLoss expects (N, C, ...) so we need (B, V, T)
+            loss_val = self.loss(logits.permute(0, 2, 1), tgt_out)
+            loss_dict = {"loss": loss_val}
 
             return {
                 "logits": logits,

@@ -18,7 +18,7 @@ tokenizer:
 # Dataset Template
 _dataset_template: &dataset_template
   _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
-  lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+  lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation_32x128
   tokenizer: ${data.tokenizer}
   max_len: ${data.tokenizer.max_len}
   transform: ${data.transforms}

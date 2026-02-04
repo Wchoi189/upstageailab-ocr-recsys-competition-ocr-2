@@ -5,7 +5,7 @@ defaults:
   - override /hardware: rtx3060
   - _self_
 
-domain: recognition
+
 
 # Experiment-specific logic overrides
 trainer:

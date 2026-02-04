@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-02-03T11:45:19.676746+00:00'
+  generated_at: '2026-02-03T15:26:35.564309+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -710,91 +710,56 @@ resolved:
       title: Agent Configuration & Settings
       ads_version: '1.0'
       scope: project
-      description: 'Context files for configuring AI agents including Claude, Copilot,
-        Cursor,
-
-        Gemini, Ollama models, and custom agent settings for multi-agent systems.
-
-        '
+      description: AI agent configs (Claude, Copilot, Cursor, Gemini, Ollama)
       tags:
       - agent
       - configuration
-      - settings
-      - copilot
-      - claude
-      - ollama
-      - models
       - multi-agent
       triggers:
         keywords:
-        - agent
-        - config
-        - configuration
-        - claude
+        - agent config
         - copilot
-        - cursor
-        - gemini
-        - qwen
-        - settings
-        - ai
+        - claude
         - ollama
-        - model
         - multi-agent
-        - sub-agent
       tiers:
         tier1:
-          name: Agent Configuration Essentials
-          description: Core agent configuration and standards
-          max_files: 8
+          name: Core Config
+          max_files: 4
           files:
           - path: AGENTS.yaml
             priority: critical
             mode: full
-            description: Agent definitions and configurations
+            description: Agent definitions
           - path: .github/copilot-instructions.md
             priority: high
             mode: reference
-            description: Copilot instructions for this project
+            description: Copilot instructions
         tier2:
-          name: Agent Framework
-          description: Agent framework and tool integration
-          max_files: 8
+          name: Framework
+          max_files: 4
           files:
           - path: AgentQMS/specs/tier2-framework/discovery.spec.md
             priority: high
             mode: reference
-            description: Available tools for agents
-          - path: AgentQMS/mcp_schema.yaml
-            priority: medium
-            mode: reference
-            description: MCP schema definition
-            optional: true
-          - path: experiment_manager/agent_interface.yaml
-            priority: medium
-            mode: reference
-            description: Agent interface for experiment tools
-            optional: true
+            description: Tool catalog
           - path: AgentQMS/specs/tier2-framework/agent-infra.spec.md
             priority: high
             mode: full
-            description: Ollama model catalog for multi-agent systems
+            description: Ollama model catalog
         tier3:
-          name: Extended Configuration
-          description: Additional agent resources and documentation
-          max_files: 6
+          name: Extended
+          max_files: 4
           files:
-          - path: README.md
-            priority: medium
-            mode: reference
-            description: Project overview
-          - path: AgentQMS/specs/tier1-contracts/workflow-requirements.spec.md
+          - path: AgentQMS/mcp_schema.yaml
             priority: low
             mode: reference
-            description: Workflow requirements
-          - path: .qwen/settings.json
+            description: MCP schema
+            optional: true
+          - path: experiment_manager/agent_interface.yaml
             priority: low
-            mode: structure
-            description: Qwen VLM settings
+            mode: reference
+            description: Experiment agent interface
             optional: true
     ast-debugging-tools:
       name: ast-debugging-tools
@@ -829,7 +794,6 @@ resolved:
         - config access
         - config patterns
         - where is config used
-        - tool
         - batch edit
         - bulk update
         - yaml refactor
@@ -875,75 +839,6 @@ resolved:
         - analyze.*imports
         - search.*symbol
         - module.*structure
-      auto_suggest_scenarios:
-        config_usage_analysis:
-          trigger: User asks 'where is X config used' or 'find cfg.model'
-          tool: config_access
-          why: Grep can't distinguish cfg.model.encoder from cfg.model - AST parsing
-            gives precise matches
-          example: mcp_unified_proje_adt_meta_query kind=config_access target=ocr/
-        hydra_pattern_discovery:
-          trigger: User asks 'find all @hydra.main' or 'where is instantiate used'
-          tool: hydra_usage
-          why: AST finds decorators and function calls that regex would miss
-          example: mcp_unified_proje_adt_meta_query kind=hydra_usage target=ocr/
-        merge_debugging:
-          trigger: User debugging config merge issues or asks 'what order do configs
-            merge'
-          tool: merge_order
-          why: Traces OmegaConf.merge() calls to understand precedence
-          example: mcp_unified_proje_adt_meta_query kind=merge_order target=ocr/core/lightning/lightning_module.py
-        symbol_location:
-          trigger: User asks 'where is TimmBackbone defined' or 'find PARSeq class'
-          tool: symbol_search
-          why: Handles fuzzy matching, qualified paths, and reverse lookups
-          example: mcp_unified_proje_adt_meta_query kind=symbol_search target=TimmBackbone
-        dependency_understanding:
-          trigger: User asks 'what imports X' or 'dependency graph for module'
-          tool: dependency_graph
-          why: Builds call/import graph that grep can't construct
-          example: mcp_unified_proje_adt_meta_query kind=dependency_graph target=ocr/domains/detection
-        code_navigation:
-          trigger: User exploring unfamiliar directory or asks 'what's in ocr/domains'
-          tool: context_tree
-          why: Semantic tree with docstrings > plain ls/tree
-          example: mcp_unified_proje_adt_meta_query kind=context_tree target=ocr/domains
-            options={depth:2}
-        component_discovery:
-          trigger: User asks 'how are encoders instantiated' or 'find factory patterns'
-          tool: component_instantiations
-          why: Finds get_X_by_cfg patterns that grep would miss
-          example: mcp_unified_proje_adt_meta_query kind=component_instantiations
-            target=ocr/ options={component:encoder}
-        batch_config_refactoring:
-          trigger: User asks to 'update all configs', 'change target X to Y', or 'bulk
-            fix yaml'
-          tool: yq_batch_edit
-          why: Fastest way to modify multiple YAML files without opening editors
-          example: find configs/ -name '*.yaml' | xargs -I {} yq -i '...' {}
-      ast_vs_basic_tools:
-        finding_config_usage:
-          basic_tool: grep -r 'cfg\.' ocr/
-          problem: False positives (comments, strings), can't distinguish cfg.model
-            vs cfg.model.encoder
-          ast_tool: config_access
-          advantage: Parse actual code, understand structure, give exact line numbers
-            with context
-        finding_hydra_decorators:
-          basic_tool: grep '@hydra' ocr/
-          problem: Misses imports, can't find instantiate() calls, no context
-          ast_tool: hydra_usage
-          advantage: Finds decorators, instantiate(), compose(), with full context
-        locating_symbols:
-          basic_tool: grep -r 'class TimmBackbone' ocr/
-          problem: Typos fail, can't resolve qualified paths, no reverse lookup
-          ast_tool: symbol_search
-          advantage: Fuzzy matching, qualified path resolution, finds all import paths
-        understanding_dependencies:
-          basic_tool: grep 'import' file.py
-          problem: Just shows imports, can't build graph, no call analysis
-          ast_tool: dependency_graph
-          advantage: Builds visual graph, shows who imports what, call chains
       tiers:
         tier1:
           name: Core AST Tools & Quick Reference
@@ -953,7 +848,7 @@ resolved:
           - path: agent-debug-toolkit/AI_USAGE.yaml
             priority: critical
             mode: reference
-            description: Complete tool reference with examples (209 lines)
+            description: Complete tool reference with examples and best practices
           - path: AgentQMS/specs/tier2-framework/discovery.spec.md
             priority: high
             mode: reference
@@ -962,162 +857,9 @@ resolved:
             priority: medium
             mode: reference
             description: Installation and architecture overview
-      tools:
-        config_access:
-          cli: uv run adt analyze-config <path>
-          mcp: mcp_unified_proje_adt_meta_query kind=config_access target=<path>
-          purpose: Find all cfg.X, config['X'] patterns
-          use_when:
-          - debugging config usage
-          - finding where config keys are accessed
-          - config refactoring
-          output: List of files with line numbers and context
-        hydra_usage:
-          cli: uv run adt find-hydra <path>
-          mcp: mcp_unified_proje_adt_meta_query kind=hydra_usage target=<path>
-          purpose: Find @hydra.main, instantiate(), compose()
-          use_when:
-          - finding hydra patterns
-          - understanding hydra architecture
-          - migration planning
-          output: All Hydra usage locations with context
-        merge_order:
-          cli: uv run adt trace-merges <file>
-          mcp: mcp_unified_proje_adt_meta_query kind=merge_order target=<file>
-          purpose: Debug OmegaConf.merge() precedence
-          use_when:
-          - config override not working
-          - understanding merge order
-          - debugging config conflicts
-          output: Merge call chain with precedence order
-        component_instantiations:
-          cli: uv run adt find-instantiations <path> --component <name>
-          mcp: mcp_unified_proje_adt_meta_query kind=component_instantiations target=<path>
-            options={component:<name>}
-          purpose: Track factory patterns (get_X_by_cfg)
-          use_when:
-          - finding how components are created
-          - factory pattern analysis
-          - dependency injection patterns
-          output: All factory calls with component types
-        dependency_graph:
-          cli: uv run adt analyze-dependencies <path>
-          mcp: mcp_unified_proje_adt_meta_query kind=dependency_graph target=<path>
-          purpose: Build import/call dependency graph
-          use_when:
-          - understanding module relationships
-          - refactoring planning
-          - circular dependency detection
-          output: Visual dependency graph (GraphViz format)
-        context_tree:
-          cli: uv run adt context-tree <path> --depth <n>
-          mcp: mcp_unified_proje_adt_meta_query kind=context_tree target=<path> options={depth:<n>}
-          purpose: Semantic directory tree with docstrings
-          use_when:
-          - exploring unfamiliar code
-          - understanding module structure
-          - onboarding to codebase
-          output: Annotated tree with classes/functions/docstrings
-        symbol_search:
-          cli: uv run adt intelligent-search <query> --fuzzy --threshold 0.7
-          mcp: mcp_unified_proje_adt_meta_query kind=symbol_search target=<query>
-            options={fuzzy:true,threshold:0.7}
-          purpose: Find symbols with fuzzy matching
-          use_when:
-          - finding class/function definitions
-          - resolving qualified paths
-          - typo-tolerant search
-          output: Symbol locations with all import paths
-        complexity:
-          cli: uv run adt analyze-complexity <path> -t <threshold>
-          mcp: mcp_unified_proje_adt_meta_query kind=complexity target=<path> options={threshold:<n>}
-          purpose: Cyclomatic complexity analysis
-          use_when:
-          - code quality review
-          - finding complex functions
-          - refactoring candidates
-          output: Functions exceeding complexity threshold
-        yq_batch_edit:
-          cli: yq -i '<expression>' <files>
-          purpose: Batch update, delete, or modify keys in YAML files
-          use_when:
-          - refactoring class paths
-          - updating parameter values globally
-          - fixing broken configs
-          output: Modified YAML files
-      when_not_to_use:
-        simple_file_search:
-          scenario: Find all Python files
-          use: file_search or find
-          not: AST tools
-        text_search:
-          scenario: Search for string in comments/docs
-          use: grep_search
-          not: AST tools (they parse code, not text)
-        file_content_reading:
-          scenario: Read entire file
-          use: read_file
-          not: AST tools (overkill for simple reads)
-        simple_symbol_grep:
-          scenario: Quick check if symbol appears
-          use: grep_search
-          not: AST tools (use for precise analysis only)
-      decision_tree:
-        user_asks_about_config:
-          question: Is it about WHERE config is USED?
-          true: Use config_access AST tool
-          false: Is it about config FILE structure?
-          yes_nested: Use read_file or hydra-v5-rules.yaml
-          no_nested: Use grep_search for text search
-        user_asks_about_hydra:
-          question: Is it about Hydra PATTERNS in code?
-          true: Use hydra_usage AST tool
-          false: Is it about Hydra CONFIGURATION?
-          yes_nested: Use hydra-v5-rules.yaml context
-        user_asks_where_is_X:
-          question: Is X a class/function/symbol?
-          true: Use symbol_search AST tool (handles typos)
-          false: Is X a file?
-          yes_nested: Use file_search
-        user_exploring_code:
-          question: First time in this directory?
-          true: Use context_tree AST tool (semantic overview)
-          false: Looking for specific pattern?
-          yes_nested: Use appropriate AST tool from catalog
-      integration:
-        mcp_server:
-          tool_name: mcp_unified_proje_adt_meta_query
-          available_kinds:
-          - config_access
-          - merge_order
-          - hydra_usage
-          - component_instantiations
-          - dependency_graph
-          - context_tree
-          - symbol_search
-          - complexity
-          syntax: kind=<tool> target=<path> options={key:value,...}
-        cli_fallback:
-          when: MCP not available or direct CLI needed
-          prefix: uv run adt
-          commands: See tools section for full list
-        companion_standards:
-        - AgentQMS/specs/tier2-framework/discovery.spec.md
-        - AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
-        - agent-debug-toolkit/AI_USAGE.yaml
-      success_indicators:
-        agent_should:
-        - Suggest AST tools when user asks about config/hydra patterns
-        - Use context_tree before exploring unfamiliar directories
-        - Prefer symbol_search over grep for finding definitions
-        - Use config_access instead of grep for cfg. patterns
-        - Mention AST tools exist when grep gives poor results
-        agent_should_not:
-        - Use AST tools for simple text search
-        - Use AST tools for reading file content
-        - Overcomplicate simple grep tasks
       notes:
         created: '2026-01-20'
+        updated: '2026-02-03'
         motivation: AI agents underutilize powerful AST tools due to unfamiliarity
           with CLI commands and use cases
         goal: Auto-suggest AST tools in appropriate scenarios without explicit user
@@ -1167,10 +909,6 @@ resolved:
             priority: high
             mode: reference
             description: File placement rules
-          - path: AgentQMS/specs/tier1-contracts/prohibited-actions.spec.md
-            priority: high
-            mode: reference
-            description: Prohibited actions list
         tier2:
           name: Validation Tools
           description: Compliance checking and validation tools
@@ -1184,10 +922,6 @@ resolved:
             priority: high
             mode: structure
             description: Framework boundary validation
-          - path: AgentQMS/tools/compliance/monitor_artifacts.py
-            priority: high
-            mode: structure
-            description: Artifact monitoring tool
           - path: AgentQMS/.agentqms/plugins/validators.yaml
             priority: high
             mode: reference
@@ -1201,6 +935,14 @@ resolved:
           description: Framework standards and configuration
           max_files: 10
           files:
+          - path: AgentQMS/tools/compliance/monitor_artifacts.py
+            priority: medium
+            mode: structure
+            description: Artifact monitoring tool (optional)
+          - path: AgentQMS/specs/tier1-contracts/prohibited-actions.spec.md
+            priority: medium
+            mode: reference
+            description: Prohibited actions list (reference)
           - path: AgentQMS/specs/tier1-contracts/architecture.spec.md
             priority: medium
             mode: reference
@@ -1268,14 +1010,6 @@ resolved:
           description: Documentation structure and validation tools
           max_files: 10
           files:
-          - path: README.md
-            priority: high
-            mode: reference
-            description: Project README
-          - path: CHANGELOG.md
-            priority: high
-            mode: reference
-            description: Project changelog
           - path: CONTRIBUTING.md
             priority: medium
             mode: reference
@@ -1289,6 +1023,14 @@ resolved:
           description: Additional documentation resources and templates
           max_files: 8
           files:
+          - path: README.md
+            priority: low
+            mode: reference
+            description: Project README (comprehensive user manual)
+          - path: CHANGELOG.md
+            priority: low
+            mode: reference
+            description: Project changelog (historical reference)
           - path: AgentQMS/specs/tier1-contracts/workflow-requirements.spec.md
             priority: low
             mode: reference
@@ -1402,193 +1144,131 @@ resolved:
       title: OCR Debugging & AST Analysis
       ads_version: '1.0'
       scope: project
-      description: 'AST-based debugging context bundle integrating agent-debug-toolkit
-        analyzers.
-
-
-        Provides deep code analysis capabilities for debugging configuration issues,
-
-        tracing component instantiation, and understanding data flow through complex
-        systems.
-
-        Reduces debugging time by 60-80% compared to text-based grep approaches.
-
-        '
+      description: AST-based debugging tools for Hydra config and component analysis
       tags:
       - debugging
-      - ast-analysis
-      - configuration
-      - refactoring
-      - code-analysis
+      - ast
       - hydra
-      - component-tracking
-      - data-flow
-      - troubleshooting
+      - config
       triggers:
         keywords:
         - debug
         - troubleshoot
-        - refactor
-        - audit
-        - analyze
         - trace
-        - merge
-        - config issue
-        - component
-        - instantiation
         - merge order
-        - hydra
         - config access
-        - data flow
         - ast
       tiers:
         tier1:
-          name: AST Analyzers & Tools
-          description: Essential AST-based debugging tools
-          max_files: 8
+          name: Core Analyzers
+          max_files: 4
           files:
           - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
             priority: critical
             mode: structure
-            description: Config access pattern analyzer
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
-            priority: critical
-            mode: structure
-            description: OmegaConf merge order tracer
+            description: Config access patterns
           - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
             priority: critical
             mode: structure
-            description: Hydra pattern detector
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
-            priority: critical
-            mode: structure
-            description: Component instantiation tracker
-          - path: agent-debug-toolkit/README.md
-            priority: high
-            mode: reference
-            description: Debugging toolkit documentation
+            description: Hydra pattern detection
           - path: AgentQMS/specs/tier2-framework/discovery.spec.md
             priority: high
             mode: reference
-            description: Tool catalog and usage patterns
+            description: Tool catalog
         tier2:
-          name: Extended Debugging Context
-          description: Configuration files and component mappings
-          max_files: 10
+          name: Advanced Analysis
+          max_files: 6
           files:
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/__init__.py
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
             priority: high
             mode: structure
-            description: Analyzer module initialization
-          - path: ocr/__init__.py
-            priority: medium
+            description: OmegaConf merge tracer
+          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
+            priority: high
             mode: structure
-            description: OCR module structure
-          - path: ocr/core/__init__.py
+            description: Component instantiation tracker
+          - path: AgentQMS/specs/tier2-framework/constraints.spec.md
             priority: medium
-            mode: structure
-            description: Core module organization
+            mode: reference
+            description: Validation constraints
         tier3:
-          name: Reference Implementations
-          description: Test cases and usage examples
-          max_files: 7
+          name: Framework Specs
+          max_files: 6
           files:
-          - path: agent-debug-toolkit/tests/test_config_access.py
+          - path: agent-debug-toolkit/README.md
             priority: low
             mode: reference
-            description: Config access analyzer tests
-          - path: agent-debug-toolkit/tests/test_merge_order.py
+            description: Toolkit documentation
+          - path: AgentQMS/specs/tier2-framework/ocr-engine.spec.md
             priority: low
             mode: reference
-            description: Merge order tracer tests
-          - path: agent-debug-toolkit/tests/test_hydra_usage.py
+            description: OCR engine standards
+          - path: AgentQMS/specs/tier2-framework/configuration.spec.md
             priority: low
             mode: reference
-            description: Hydra usage analyzer tests
-          - path: ocr/core/models/__init__.py
+            description: Config management
+          - path: AgentQMS/specs/tier2-framework/patterns.spec.md
             priority: low
-            mode: structure
-            description: Model management examples
+            mode: reference
+            description: Design patterns
     ocr-experiment:
       name: ocr-experiment
       title: OCR Experiment Management
       ads_version: '1.0'
       scope: project
-      description: 'Context files for running, tracking, and analyzing OCR experiments.
-
-        Includes experiment tracking tools, configuration, and OCR components.
-
-        '
+      description: Experiment tracking and configuration for OCR pipelines
       tags:
       - experiment
       - ocr
-      - tracker
-      - run
-      - trial
       - etk
       triggers:
         keywords:
         - experiment
         - etk
-        - tracker
-        - run
-        - trial
         - wandb
         - training
-        - evaluation
       tiers:
         tier1:
           name: Experiment Essentials
-          description: Core experiment tracking and management tools
-          max_files: 8
+          max_files: 6
           files:
           - path: experiment_manager/etk.py
             priority: critical
             mode: structure
-            description: Experiment Tracker Kernel - main experiment management
+            description: Experiment Tracker Kernel
           - path: experiment_manager/agent_interface.yaml
             priority: critical
             mode: reference
-            description: Agent interface configuration for experiment tools
-          - path: experiment_manager/AGENTS.yaml
-            priority: high
-            mode: reference
-            description: Agent configurations for experiment workflows
-          - path: pyproject.toml
-            priority: high
-            mode: structure
-            description: Project dependencies including experiment tools
+            description: Agent interface config
           - path: AgentQMS/specs/tier2-framework/discovery.spec.md
-            priority: medium
+            priority: high
             mode: reference
-            description: Available tools including experiment commands
+            description: Tool catalog
         tier2:
-          name: Configuration & OCR
-          description: Configuration management and OCR pipeline components
-          max_files: 10
+          name: Configuration
+          max_files: 6
           files:
           - path: AgentQMS/specs/tier2-framework/configuration.spec.md
             priority: medium
             mode: reference
-            description: Hydra configuration architecture guide
+            description: Hydra config guide
         tier3:
           name: Extended Context
-          description: Additional resources for comprehensive experiment context
-          max_files: 8
+          max_files: 6
           files:
-          - path: README.md
-            priority: medium
+          - path: experiment_manager/AGENTS.yaml
+            priority: low
             mode: reference
-            description: Project overview and setup
+            description: Agent configurations
+          - path: pyproject.toml
+            priority: low
+            mode: structure
+            description: Project dependencies
           - path: experiment_manager/docs/README.md
-            priority: medium
+            priority: low
             mode: reference
-            description: Experiment manager documentation
+            description: Experiment docs
             optional: true
-          - path: data/data_catalog.yaml
-            priority: medium
-            mode: reference
-            description: Data catalog for experiments
     ocr-information-extraction:
       name: ocr-information-extraction
       title: OCR Information Extraction (KIE)
@@ -2026,12 +1706,82 @@ resolved:
             mode: reference
             description: System architecture for threat surface analysis
     v5-domains-standard:
-      description: V5 Architecture Standards & Domain Separation
+      name: v5-domains-standard
+      title: V5 Architecture Standards & Domain Separation
+      ads_version: '1.0'
+      scope: project
+      description: 'V5 domain-first architecture reference bundle. Provides gold standard
+        domain
+
+        controllers (detection, recognition, layout) and their corresponding module
+
+        implementations. Essential for understanding V5 domain separation principles.
+
+        '
+      tags:
+      - v5
+      - domains
+      - architecture
+      - domain controllers
+      - detection
+      - recognition
+      - layout
+      - hydra
+      triggers:
+        keywords:
+        - v5 architecture
+        - domain
+        - domain separation
+        - domain controller
+        - detection
+        - recognition
+        - layout
+        - domain-first
+        patterns:
+        - v5.*architecture
+        - domain.*separation
+        - domain.*controller
       tiers:
         tier1:
+          name: Core Domain Standards
+          description: Gold standard domain controllers and implementations
+          max_files: 6
           files:
-          - configs/domain/detection.yaml
-          - ocr/domains/detection/module.py
+          - path: configs/domain/detection.yaml
+            priority: critical
+            mode: full
+            description: Detection domain controller (gold standard)
+          - path: configs/domain/recognition.yaml
+            priority: critical
+            mode: full
+            description: Recognition domain controller (gold standard)
+          - path: configs/domain/layout.yaml
+            priority: high
+            mode: full
+            description: Layout analysis domain controller
+          - path: ocr/domains/detection/module.py
+            priority: high
+            mode: reference
+            description: Detection domain module implementation
+          - path: ocr/domains/recognition/module.py
+            priority: high
+            mode: reference
+            description: Recognition domain module implementation
         tier2:
+          name: Architecture Documentation
+          description: V5 architecture patterns and constraints
+          max_files: 3
           files:
-          - project_compass/AGENTS.md
+          - path: AgentQMS/specs/tier2-framework/configuration.spec.md
+            priority: high
+            mode: reference
+            description: V5 configuration standards
+          - path: AgentQMS/specs/tier2-framework/patterns.spec.md
+            priority: medium
+            mode: reference
+            description: V5 domain patterns and best practices
+      notes:
+        created: '2026-02-03'
+        motivation: Provide clear reference for V5 domain-first architecture
+        domains_included: detection, recognition, layout
+        missing_domains: kie (not yet implemented)

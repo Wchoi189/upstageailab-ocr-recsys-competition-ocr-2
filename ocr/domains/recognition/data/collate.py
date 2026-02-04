@@ -19,7 +19,14 @@ def recognition_collate_fn(batch: list[dict[str, Any]]) -> dict[str, Any]:
             - labels: list[str]
     """
     images = torch.stack([sample["image"] for sample in batch], dim=0)
-    text_tokens = torch.stack([sample["text_tokens"] for sample in batch], dim=0)
+
+    # Handle both Tensor and List[int] inputs
+    token_list = [sample["text_tokens"] for sample in batch]
+    if isinstance(token_list[0], torch.Tensor):
+        text_tokens = torch.stack(token_list, dim=0)
+    else:
+        text_tokens = torch.tensor(token_list, dtype=torch.long)
+
     labels = [sample["label"] for sample in batch]
 
     return {

@@ -8,16 +8,6 @@ def get_model_by_cfg(config):
     architectures = getattr(config, "architectures", None)
     if architectures and "_target_" in architectures:
         import hydra
-        # Disable recursive instantiation to prevent Hydra from trying to instantiate
-        # the 'optimizer' inside cfg (which fails due to missing params)
-        if hasattr(architectures, "_recursive_"):
-             architectures._recursive_ = False
-        else:
-             from omegaconf import OmegaConf
-             OmegaConf.set_struct(architectures, False) 
-             architectures["_recursive_"] = False
-             OmegaConf.set_struct(architectures, True)
-
         return hydra.utils.instantiate(architectures, cfg=config)
 
     # Legacy: Check for singular architecture with _target_
@@ -28,7 +18,10 @@ def get_model_by_cfg(config):
     # Legacy: Check for string name
     arch_name = getattr(config, "architecture_name", None) or getattr(config, "architectures", None)
     if arch_name == "parseq":
-        from ocr.domains.recognition.models import PARSeq
+        import importlib
+        # Lazy load to avoid circular import/layering violation
+        module = importlib.import_module("ocr.domains.recognition.models")
+        PARSeq = getattr(module, "PARSeq")
         return PARSeq(config)
 
     return OCRModel(config)

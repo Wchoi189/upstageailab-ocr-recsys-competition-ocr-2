@@ -92,7 +92,7 @@ def extract_metadata_from_checkpoint(
     """
     try:
         # Import after checking checkpoint exists
-        from ui.apps.inference.services.checkpoint.types import (
+        from ocr.core.utils.checkpoints.types import (
             CheckpointingConfig,
             CheckpointMetadataV1,
             DecoderInfo,
@@ -299,11 +299,16 @@ def extract_metadata_from_checkpoint(
 
         # Get relative checkpoint path
         checkpoint_path_str = str(checkpoint_path)
+
         try:
-            outputs_dir = checkpoint_path.parent.parent.parent
-            if outputs_dir.name == "outputs":
+            # Use robust project root detection
+            from ocr.core.utils.path_utils import get_project_root
+            project_root = get_project_root()
+            outputs_dir = project_root / "outputs"
+
+            if checkpoint_path.is_relative_to(outputs_dir):
                 checkpoint_path_str = str(checkpoint_path.relative_to(outputs_dir))
-        except (ValueError, AttributeError):
+        except (ValueError, AttributeError, ImportError):
             pass
 
         # Build metadata

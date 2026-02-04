@@ -5,4 +5,6 @@
 # from ocr.core.interfaces.losses import BaseLoss
 # from ocr.core.utils.registry import registry
 
-__all__ = []
+from ocr.core.utils.registry import registry
+
+__all__ = ["registry"]

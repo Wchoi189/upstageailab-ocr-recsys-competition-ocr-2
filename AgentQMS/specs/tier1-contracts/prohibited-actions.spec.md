@@ -43,6 +43,11 @@ prohibited_actions:
     instead: Specific exceptions + logging
     severity: high
     detection: Code review
+  - action: Direct python execution (python script.py)
+    reason: Ignores project dependencies and lockfile
+    instead: Use `uv run python script.py` or `make <target>`
+    severity: high
+    detection: Code review
   documentation:
   - action: Verbose tutorials in AI instructions
     reason: Wastes context, reduces effectiveness
