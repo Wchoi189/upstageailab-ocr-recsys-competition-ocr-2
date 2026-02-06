@@ -25,18 +25,18 @@ The AI Agent operates inside WSL (Linux) but needs to control Docker containers 
 ### 1. Check Container Status
 Use the bridge to run `docker ps`:
 ```bash
-uv run --no-project --with pika python airflow-batch-processor/windows_agent_bridge/bridge_client.py "docker ps"
+uv run --no-project --with pika python airflow_batch_processor/windows_agent_bridge/bridge_client.py "docker ps"
 ```
 
 ### 2. Fetch Logs
 ```bash
-uv run --no-project --with pika python airflow-batch-processor/windows_agent_bridge/bridge_client.py "docker logs --tail 100 airflow-scheduler"
+uv run --no-project --with pika python airflow_batch_processor/windows_agent_bridge/bridge_client.py "docker logs --tail 100 airflow-scheduler"
 ```
 
 ### 3. Restart Stack
 When configuration changes (e.g. `docker-compose.yml`):
 ```bash
-uv run --no-project --with pika python airflow-batch-processor/windows_agent_bridge/bridge_client.py "docker compose -f ../docker/docker-compose.yml up -d --force-recreate"
+uv run --no-project --with pika python airflow_batch_processor/windows_agent_bridge/bridge_client.py "docker compose -f ../docker/docker-compose.yml up -d --force-recreate"
 ```
 
 ## Critical Configurations (Airflow 3 Specifics)

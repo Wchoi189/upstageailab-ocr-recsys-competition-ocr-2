@@ -7,7 +7,7 @@ Airflow 3.1.5 (Python 3.11) project scaffold to batch process data via Upstage D
 1. Build the image (single CUDA + Airflow)
 
 ```bash
-docker build -t airflow-cuda:3.1.5 -f docker/Dockerfile airflow-batch-processor
+docker build -t airflow-cuda:3.1.5 -f docker/Dockerfile airflow_batch_processor
 ```
 
 2. Initialize metadata DB and admin user
@@ -46,8 +46,8 @@ docker compose -f docker-compose.yml -f docker-compose.gpu.yml --compatibility u
 Create the shared folders if needed:
 
 ```bash
-mkdir -p airflow-batch-processor/{config,data}
-cp airflow-batch-processor/.env.example airflow-batch-processor/.env
+mkdir -p airflow_batch_processor/{config,data}
+cp airflow_batch_processor/.env.example airflow_batch_processor/.env
 ```
 
 Optional (DockerOperator use): mount Docker socket to the scheduler for launching sibling containers:

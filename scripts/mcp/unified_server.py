@@ -45,6 +45,9 @@ from AgentQMS.middleware.policies import (
 )
 
 PROJECT_ROOT = get_project_root()
+# Add dev_tools to path to support non-installed tools (project_compass, experiment_manager)
+sys.path.append(str(PROJECT_ROOT / "dev_tools"))  # noqa: path-hack
+
 EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
 
 # Initialize Middleware

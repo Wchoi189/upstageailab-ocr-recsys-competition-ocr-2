@@ -100,6 +100,8 @@ packages = ["ocr", "AgentQMS"]
 compass = "project_compass.cli:main"
 qms = "AgentQMS.cli:main"
 aqms = "AgentQMS.cli:main"
+adt = "agent_debug_toolkit.cli:main"
+etk = "etk.cli:main"
 
 [tool.uv]
 extra-index-url = ["https://download.pytorch.org/whl/cu124"]
@@ -107,15 +109,17 @@ index-strategy = "unsafe-best-match"
 
 [tool.uv.workspace]
 members = [
-    "ocr",
-    "AgentQMS",
-    "dev_tools/agent-debug-toolkit",
+    "dev_tools/agent_debug_toolkit",
     "dev_tools/experiment_manager",
     "dev_tools/project_compass",
-    "dev_tools/airflow-batch-processor"
+    "dev_tools/airflow_batch_processor",
 ]
 
 [tool.uv.sources]
+agent-debug-toolkit = { workspace = true }
+experiment-manager = { workspace = true }
+project-compass = { workspace = true }
+airflow-batch-processor = { workspace = true }
 
 [tool.mypy]
 # General settings - Balanced for ML/Research projects
@@ -257,6 +261,10 @@ line-ending = "auto"
 [dependency-groups]
 dev = [
     "pytest-profiling>=1.8.1",
+    "agent-debug-toolkit",
+    "experiment-manager",
+    "project-compass",
+    "airflow-batch-processor",
 ]
 
 [project.optional-dependencies]

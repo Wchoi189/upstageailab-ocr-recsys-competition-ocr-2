@@ -42,15 +42,15 @@ environment_tools:
   # V2 Vessel Architecture (replaces legacy session management)
   project_compass:
     location: "dev_tools/project_compass/"
-    cli_entrypoint: "uv run python -m dev_tools.project_compass.cli"
+    cli_entrypoint: "compass"
     state_file: "dev_tools/project_compass/.vessel/vessel_state.json"
     commands:
-      check_env: "uv run python -m dev_tools.project_compass.cli check-env"
-      pulse_init: "uv run python -m dev_tools.project_compass.cli pulse-init --id <domain-action-target> --obj <objective> --milestone <id>"
-      pulse_status: "uv run python -m dev_tools.project_compass.cli pulse-status"
-      pulse_sync: "uv run python -m dev_tools.project_compass.cli pulse-sync --path <file> --type <type>"
-      pulse_export: "uv run python -m dev_tools.project_compass.cli pulse-export"
-      pulse_checkpoint: "uv run python -m dev_tools.project_compass.cli pulse-checkpoint --burden <low|medium|high>"
+      check_env: "compass check-env"
+      pulse_init: "compass pulse-init --id <domain-action-target> --obj <objective> --milestone <id>"
+      pulse_status: "compass pulse-status"
+      pulse_sync: "compass pulse-sync --path <file> --type <type>"
+      pulse_export: "compass pulse-export"
+      pulse_checkpoint: "compass pulse-checkpoint --burden <low|medium|high>"
     terminology:
       vessel: "Project container (replaces 'project')"
       pulse: "Work cycle (replaces 'session')"
@@ -63,15 +63,15 @@ environment_tools:
     requirements: "PERPLEXITY_API_KEY in .env.local"
 
 experiment_manager:
-  entrypoint: "dev_tools/experiment_manager/etk.py"
+  entrypoint: "etk"
   guides_dir: "dev_tools/experiment_manager/.ai-instructions/"
   key_commands: ["init", "reconcile", "validate"]
 
 agent_debug_toolkit:
   description: "AST-based debugging toolkit for AI agents to analyze Hydra/OmegaConf configuration issues"
-  location: "dev_tools/agent-debug-toolkit/"
+  location: "dev_tools/agent_debug_toolkit/"
   cli_entrypoint: "adt"
-  mcp_server: "dev_tools/agent-debug-toolkit/run_mcp.sh"
+  mcp_server: "dev_tools/agent_debug_toolkit/run_mcp.sh"
   commands:
     analyze_config: "uv run adt analyze-config <path> [--component <name>]"
     trace_merges: "uv run adt trace-merges <file> --output markdown"

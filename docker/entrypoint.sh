@@ -60,19 +60,6 @@ if [ -d "$SOURCE_ROOT" ]; then
         fi
     done
 
-    # 2. Extensions -> apps/
-    if [ -d "$SOURCE_ROOT/extensions/mcp-visibility-extension" ]; then
-        echo "  � Migrating mcp-visibility-extension to apps/..."
-        # ensure apps dir exists
-        mkdir -p "$SOURCE_ROOT/apps"
-        if [ ! -d "$SOURCE_ROOT/apps/mcp-visibility-extension" ]; then
-            mv "$SOURCE_ROOT/extensions/mcp-visibility-extension" "$SOURCE_ROOT/apps/"
-            # Remove empty extensions folder if safe
-            rmdir "$SOURCE_ROOT/extensions" 2>/dev/null || true
-        else
-             echo "    ⚠️ Destination $SOURCE_ROOT/apps/mcp-visibility-extension already exists."
-        fi
-    fi
 
     # --- END MIGRATION ---
 

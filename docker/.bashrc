@@ -107,6 +107,6 @@ if [ -f /usr/share/bash-completion/bash_completion ]; then
 fi
 
 # === End of .bashrc ===
-export PATH="$PWD/AgentQMS/bin:$PATH"
+export PATH="/workspaces/bin:$PATH"
 alias python="uv run python"
 alias pytest="uv run pytest"

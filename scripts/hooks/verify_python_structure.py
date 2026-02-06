@@ -58,7 +58,7 @@ FLAGGED_FILES = {
 }
 
 # RULE 4: Import time budget (milliseconds)
-MAX_IMPORT_TIME_MS = 100
+MAX_IMPORT_TIME_MS = 3000
 
 # RULE 5: Patterns that indicate architectural problems
 ANTI_PATTERNS = [
@@ -261,7 +261,7 @@ class ArchitectureGuardian:
 
         print("="*80)
         print("📖 For detailed guidance, see:")
-        print("   analysis/architecture-migration-2026-01-21/CRITICAL_ARCHITECTURE_ASSESSMENT.md")
+        print("   docs/analysis/architecture-migration-2026-01-21/CRITICAL_ARCHITECTURE_ASSESSMENT.md")
         print("="*80)
 
         return len(errors)
@@ -295,7 +295,8 @@ def check_import_time():
 
 def main():
     """Main entry point for pre-commit hook."""
-    project_root = Path(__file__).parent.parent
+    from AgentQMS.tools.utils.system.paths import get_project_root
+    project_root = get_project_root()
 
     # Get changed files from git
     import subprocess

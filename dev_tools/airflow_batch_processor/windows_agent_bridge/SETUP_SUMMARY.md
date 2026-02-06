@@ -17,7 +17,7 @@ Run these commands in PowerShell from the project root:
 
 1.  **Navigate to Bridge Directory**:
     ```powershell
-    cd airflow-batch-processor/windows_agent_bridge
+    cd airflow_batch_processor/windows_agent_bridge
     ```
 
 2.  **Install Dependencies**:
@@ -36,12 +36,12 @@ The Agent can now use the client script to run commands on your behalf.
 
 **Test Command**:
 ```bash
-uv run python airflow-batch-processor/windows_agent_bridge/bridge_client.py "docker ps"
+uv run python airflow_batch_processor/windows_agent_bridge/bridge_client.py "docker ps"
 ```
 
 **Debug Airflow Task**:
 ```bash
-uv run python airflow-batch-processor/windows_agent_bridge/bridge_client.py "docker exec airflow-scheduler airflow tasks test batch_processor_dag preprocess 2024-01-25T13:00:00Z"
+uv run python airflow_batch_processor/windows_agent_bridge/bridge_client.py "docker exec airflow-scheduler airflow tasks test batch_processor_dag preprocess 2024-01-25T13:00:00Z"
 ```
 
 ## 5. Troubleshooting

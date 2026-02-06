@@ -11,7 +11,7 @@ The configuration change requires a restart of the Airflow stack.
 1.  **Restart Containers**:
     Run this in your terminal (not via bridge):
     ```bash
-    cd airflow-batch-processor/docker
+    cd airflow_batch_processor/docker
     docker compose up -d --force-recreate
     ```
 
@@ -19,8 +19,8 @@ The configuration change requires a restart of the Airflow stack.
     Once restarted, trigger the DAG again via the API or UI.
     ```bash
     # Get Token
-    export AIRFLOW_TOKEN=$(./airflow-batch-processor/scripts/get_airflow_token.sh | grep -A 1 "Token:" | tail -n 1)
-    
+    export AIRFLOW_TOKEN=$(./airflow_batch_processor/scripts/get_airflow_token.sh | grep -A 1 "Token:" | tail -n 1)
+
     # Trigger
     curl -X POST "http://172.17.0.1:8080/api/v2/dags/batch_processor_dag/dagRuns" \
       -H "Authorization: Bearer $AIRFLOW_TOKEN" \
@@ -37,5 +37,5 @@ The configuration change requires a restart of the Airflow stack.
 ## Troubleshooting
 If it fails again, use the Bridge to fetch logs:
 ```bash
-python airflow-batch-processor/windows_agent_bridge/bridge_client.py "docker logs --tail 100 airflow-scheduler"
+python airflow_batch_processor/windows_agent_bridge/bridge_client.py "docker logs --tail 100 airflow-scheduler"
 ```

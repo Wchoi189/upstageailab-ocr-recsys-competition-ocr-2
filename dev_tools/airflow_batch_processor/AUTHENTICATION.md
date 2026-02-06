@@ -75,7 +75,7 @@ If you need custom JWT for non-standard authentication (usually not needed with 
 ### Install dependencies from WSL2
 
 ```bash
-cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2/airflow-batch-processor/scripts
+cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2/dev_tools/airflow_batch_processor/scripts
 pip install -r requirements.txt
 ```
 
@@ -106,7 +106,7 @@ curl -X GET "http://localhost:8080/api/v2/dags" \
 Save credentials in a `.env` file for scripts:
 
 ```bash
-# In airflow-batch-processor/.env
+# In airflow_batch_processor/.env
 AIRFLOW_API_URL=http://localhost:8080/api/v2
 AIRFLOW_USERNAME=admin
 AIRFLOW_PASSWORD=admin

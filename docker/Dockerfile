@@ -6,7 +6,10 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PYTHONUNBUFFERED=1 \
     UV_LINK_MODE=copy \
     LANG=en_US.UTF-8 \
-    LC_ALL=en_US.UTF-8
+    LC_ALL=en_US.UTF-8 \
+    PNPM_HOME="/usr/local/share/pnpm"
+
+ENV PATH="$PNPM_HOME:$PATH"
 
 # Install ALL system dependencies in one layer to reduce image size and build time
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -17,7 +20,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     libbz2-dev libreadline-dev libsqlite3-dev libncurses5-dev \
     libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev \
     locales htop tmux jq lsof bash-completion libcudnn9-cuda-12 tree \
-    nodejs npm \
+    && curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install -y nodejs \
     && npm install -g pnpm \
     && rm -rf /var/lib/apt/lists/*
 

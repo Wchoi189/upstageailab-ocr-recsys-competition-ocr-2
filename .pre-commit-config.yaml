@@ -9,8 +9,8 @@ repos:
   - repo: local
     hooks:
       - id: architecture-guardian
-        name: 🏛️  Architecture Guardian
-        entry: python3 .pre-commit-hooks/architecture_guardian.py
+        name: 🏛️  Python Architecture Guardian (Content)
+        entry: uv run python scripts/hooks/verify_python_structure.py
         language: system
         types: [python]
         pass_filenames: false
@@ -92,15 +92,15 @@ repos:
         files: ^(scripts/.*\.(sh|py)|AgentQMS/bin/Makefile)$
 
       - id: arch-guard
-        name: Architecture Guard
-        entry: uv run python scripts/audit/arch_guard.py
+        name: 🔍 Hydra Config Audit
+        entry: uv run python scripts/audit/audit_hydra_configs.py
         language: system
         files: ^configs/.*\.yaml$
         pass_filenames: false
 
       - id: validate-feature-first-architecture
-        name: Validate Feature-First Architecture
-        entry: uv run python scripts/hooks/validate_architecture.py
+        name: 📂 Feature-First Path Validator
+        entry: uv run python scripts/hooks/verify_file_layout.py
         language: system
         files: ^ocr/.*\.py$
         pass_filenames: true

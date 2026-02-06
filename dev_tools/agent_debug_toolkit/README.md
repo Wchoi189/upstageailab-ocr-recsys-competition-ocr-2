@@ -15,13 +15,13 @@ This toolkit helps AI agents understand and debug complex configuration systems 
 
 ```bash
 # Install with CLI support
-uv pip install -e agent-debug-toolkit[cli]
+uv pip install -e agent_debug_toolkit[cli]
 
 # Install with MCP server support
-uv pip install -e agent-debug-toolkit[mcp]
+uv pip install -e agent_debug_toolkit[mcp]
 
 # Install all extras (CLI + MCP + dev)
-uv pip install -e agent-debug-toolkit[all]
+uv pip install -e agent_debug_toolkit[all]
 ```
 
 ## CLI Usage
