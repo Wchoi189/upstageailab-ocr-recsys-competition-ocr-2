@@ -31,28 +31,18 @@ from mcp.types import Resource, TextContent, Tool
 
 
 # Auto-discover project root
-def find_project_root() -> Path:
-    """Find project root by locating experiment_manager/ directory."""
-    current = Path(__file__).resolve().parent
-
-    # We're already in experiment_manager/
-    if current.name == "experiment_manager":
-        return current.parent
-
-    # Search upward
+def find_exp_manager_dir() -> Path:
+    """Find experiment_manager directory by walking up from this file."""
+    current = Path(__file__).resolve()
     for parent in current.parents:
-        if (parent / "experiment_manager").exists():
+        if parent.name == "experiment_manager":
             return parent
+    raise RuntimeError("Cannot find experiment_manager directory")
 
-    raise RuntimeError("Cannot find project root with experiment_manager/")
 
-
-PROJECT_ROOT = find_project_root()
-EXPERIMENT_MANAGER_DIR = PROJECT_ROOT / "experiment_manager"
-EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
-
-# Add to Python path
-sys.path.insert(0, str(EXPERIMENT_MANAGER_DIR / "src"))
+EXPERIMENT_MANAGER_DIR = find_exp_manager_dir()
+PROJECT_ROOT = EXPERIMENT_MANAGER_DIR.parent
+EXPERIMENTS_DIR = EXPERIMENT_MANAGER_DIR / "experiments"
 
 
 # Define available resources

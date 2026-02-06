@@ -16,7 +16,7 @@ class TestCLIArguments:
             ["uv", "run", "python", "AgentQMS/tools/middleware/dashboard.py", "--health-only"],
             capture_output=True,
             text=True,
-            cwd="/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+            cwd="/workspaces",
         )
 
         assert "Health Status" in result.stdout
@@ -42,7 +42,7 @@ class TestCLIArguments:
             ],
             capture_output=True,
             text=True,
-            cwd="/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+            cwd="/workspaces",
         )
 
         # Output should be valid JSON
@@ -64,7 +64,7 @@ class TestHealthDisplay:
             ["uv", "run", "python", "AgentQMS/tools/middleware/dashboard.py", "--health-only"],
             capture_output=True,
             text=True,
-            cwd="/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+            cwd="/workspaces",
         )
 
         # Should show some health information
@@ -85,7 +85,7 @@ class TestErrorHandling:
             ],
             capture_output=True,
             text=True,
-            cwd="/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+            cwd="/workspaces",
         )
 
         # Should not crash, should show helpful message

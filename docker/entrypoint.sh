@@ -69,16 +69,17 @@ if [ -d "$SOURCE_ROOT" ]; then
 
         if [ -d "$SRC" ]; then
             # If the destination exists (folder or broken link), move it aside
-            if [ -e "$DEST" ] || [ -L "$DEST" ]; then
-                # Only backup if it's a real directory, not just a link
-                if [ -d "$DEST" ] && [ ! -L "$DEST" ]; then
-                    echo "  📦 Backing up existing directory: $folder"
-                    mv "$DEST" "${DEST}_backup_$(date +%s)"
-                else
-                    # It's a link or file, just remove it to make way for the fresh link
-                    # echo "  🧹 Removing existing symlink/file: $folder"
-                    rm -rf "$DEST"
-                fi
+            # Prepare destination
+            if [ -L "$DEST" ]; then
+                # Only remove if it's a symlink
+                rm "$DEST"
+            elif [ -d "$DEST" ]; then
+                # Backup real directories
+                echo "  📦 Backing up existing directory: $folder"
+                mv "$DEST" "${DEST}_backup_$(date +%s)"
+            elif [ -e "$DEST" ]; then
+                # Remove files
+                rm "$DEST"
             fi
 
             # Create the fresh, clean symlink

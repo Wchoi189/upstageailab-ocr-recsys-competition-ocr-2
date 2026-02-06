@@ -29,7 +29,7 @@ from mcp.types import Resource, Tool, TextContent, ImageContent, EmbeddedResourc
 from mcp.server.lowlevel.helper_types import ReadResourceContents
 
 # Add project root to path
-# NOTE: We assume the environment is set up correctly (uv pip install -e .).
+# NOTE: We assume the environment is set up correctly (uv sync).
 # If AgentQMS is not found, it means the environment is invalid.
 
 # --- Imports ---
@@ -80,6 +80,7 @@ TOOLS_DEFINITIONS: list[dict] = []
 RESOURCES_CONFIG: list[dict] = []
 
 
+
 # --- Resource Handling ---
 
 async def load_resources_from_servers() -> list[dict]:
@@ -91,8 +92,9 @@ async def load_resources_from_servers() -> list[dict]:
     server_modules = [
         ("AgentQMS.mcp_server", "agentqms"),
         ("project_compass.mcp_server", "compass"),
-        ("experiment_manager.mcp_server", "experiments"),
+        ("etk.mcp_server", "experiments"),
     ]
+
 
     for mod_name, scheme in server_modules:
         try:
@@ -109,6 +111,9 @@ async def load_resources_from_servers() -> list[dict]:
                     })
         except ImportError:
             pass # Skip missing modules
+        except Exception as e:
+            # Print error to stderr so it's visible in MCP logs but doesn't crash
+            print(f"Failed to load resources from {mod_name}: {e}", file=sys.stderr)
 
     # Unified config resources
     # Use PROJECT_ROOT based path for robustness
@@ -197,7 +202,7 @@ async def _read_resource_impl(uri: str) -> list[ReadResourceContents]:
             mod = importlib.import_module("project_compass.mcp_server")
             return await mod.read_resource(uri)
         elif scheme == "experiments":
-            mod = importlib.import_module("experiment_manager.mcp_server")
+            mod = importlib.import_module("etk.mcp_server")
             return await mod.read_resource(uri)
         elif scheme == "bundle":
              # Handle context bundles
@@ -261,7 +266,7 @@ async def load_tools_from_servers() -> list[dict]:
     servers = [
         ("AgentQMS.mcp_server", "agentqms"),
         ("project_compass.mcp_server", "compass"),
-        ("experiment_manager.mcp_server", "experiments"),
+        ("etk.mcp_server", "experiments"),
         ("agent_debug_toolkit.mcp_server", "adt"),
     ]
 
@@ -279,6 +284,8 @@ async def load_tools_from_servers() -> list[dict]:
                     })
         except ImportError:
             pass
+        except Exception as e:
+            print(f"Error loading tools from {module_name}: {e}", file=sys.stderr)
     return tools
 
 @app.list_tools()

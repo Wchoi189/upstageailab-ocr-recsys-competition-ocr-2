@@ -456,7 +456,7 @@ async def list_tools() -> list[Tool]:
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute an AgentQMS tool."""
     try:
-        from AgentQMS.tools.core.artifact_workflow import ArtifactWorkflow
+        from AgentQMS.tools.core.artifacts.workflow import ArtifactWorkflow
 
         workflow = ArtifactWorkflow(quiet=True)
 
@@ -601,7 +601,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             # or we can call low-level if strictness is needed.
             # Given the user wants visibility, let's use the rich suggester.
 
-            from AgentQMS.tools.core.context_bundle import auto_suggest_context
+            from AgentQMS.tools.core.context.context_bundle import auto_suggest_context
 
             # If task_type is provided, effectively we might want to force it,
             # but auto_suggest_context calculates tokens which we want.
@@ -614,7 +614,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             if "budget" in arguments:
                 # We need to set the global budget on the engine or pass it down
                 # Since _ENGINE is a singleton in context_bundle.py, we can strictly set it
-                from AgentQMS.tools.core.context_bundle import _ENGINE
+                from AgentQMS.tools.core.context.context_bundle import _ENGINE
                 _ENGINE.max_tokens = int(arguments["budget"])
 
             suggestion = auto_suggest_context(task_description)
