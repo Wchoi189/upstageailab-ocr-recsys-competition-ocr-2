@@ -1,150 +1,89 @@
-# === OCR Development Environment .bashrc ===
-# A rich shell experience with a modern prompt, robust environment management, and utility functions.
-# Updated: 2025-12-29
-
-# If not running interactively, don't do anything
+# === OCR Dev Environment ===
+# Clean, fast, and minimal.
 [ -z "$PS1" ] && return
 
-# Clear any problematic PYENV_VERSION before initialization
-if [ "$PYENV_VERSION" = "doc-pyenv" ]; then
-    unset PYENV_VERSION
-fi
+# 1. Environment & Path
+export LANG=en_US.UTF-8 LC_ALL=en_US.UTF-8 EDITOR=vim
+export HISTCONTROL=ignoreboth:ignoredups:ignorespace HISTSIZE=10000
 
-# Correctly unset stale VIRTUAL_ENV if directory doesn't exist
-if [ -n "$VIRTUAL_ENV" ] && [ ! -d "$VIRTUAL_ENV" ]; then
-    unset VIRTUAL_ENV
-fi
+# Path Helper Function
+add_path() { [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:$PATH"; }
 
-# === History Configuration ===
-HISTCONTROL=ignoreboth:ignoredups:ignorespace
-HISTSIZE=10000
-HISTFILESIZE=20000
-shopt -s histappend
-set +H
+# Add Paths (Priority Order)
+add_path "$HOME/bin"
+add_path "$HOME/.local/bin"
+add_path "$HOME/.cargo/bin"
+add_path "/opt/uv"
+add_path "$PWD/AgentQMS/bin"
+add_path "/workspaces/node_modules_global/bin"
+add_path "/workspaces/repomix/bin"
+export PATH
 
-# === Locale Configuration ===
-export LANG=en_US.UTF-8
-export LC_ALL=en_US.UTF-8
-export LC_CTYPE=en_US.UTF-8
-if locale -a | grep -q "ko_KR.utf8"; then
-    export LC_MESSAGES=ko_KR.UTF-8
-    export LC_TIME=ko_KR.UTF-8
-    export LANGUAGE=en_US:ko_KR
-fi
-
-# === Python Environment Management (PyEnv) ===
+# 2. Python Setup (PyEnv & UV)
 export PYENV_ROOT="$HOME/.pyenv"
-if [ -d "$PYENV_ROOT" ]; then
-    export PATH="$PYENV_ROOT/bin:$PATH"
-    eval "$(pyenv init --path)"
+export UV_LINK_MODE=copy
+
+[ -d "$PYENV_ROOT" ] && add_path "$PYENV_ROOT/bin"
+if command -v pyenv >/dev/null; then
     eval "$(pyenv init -)"
     eval "$(pyenv virtualenv-init -)"
 fi
 
-# === Color Prompt Configuration ===
-# A modern, concise prompt showing venv, current directory, and git branch.
-if [ "$TERM" != "dumb" ]; then
-    # Define colors
-    CYAN='\[\033[0;36m\]'
-    YELLOW='\[\033[0;33m\]'
-    GREEN='\[\033[0;32m\]'
-    BLUE='\[\033[0;34m\]'
-    RESET='\[\033[0m\]'
-
-    # Function to get the active virtual environment name
-    parse_venv_name() {
-        if [ -n "$VIRTUAL_ENV" ]; then
-            printf "(%s)" "${VIRTUAL_ENV##*/}"
-        fi
-    }
-
-    # Function to get the current git branch
-    parse_git_branch() {
-        git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/(\1)/'
-    }
-
-    # Set the final prompt string (PS1)
-    PS1="${CYAN}\$(parse_venv_name)${BLUE} \W ${YELLOW}\$(parse_git_branch)${RESET}${GREEN} ❯ ${RESET}"
-fi
-
-# === UV Environment Management ===
-# UV is the primary package manager for this project
-export UV_LINK_MODE=copy
-
-# Auto-activate UV environment if .venv exists in current directory
+# Auto-activate .venv when entering directory
 uv_auto_activate() {
     if [ -f ".venv/bin/activate" ] && [ -z "$VIRTUAL_ENV" ]; then
         source .venv/bin/activate
-        export UV_ACTIVE=1
     fi
 }
+PROMPT_COMMAND="uv_auto_activate"
 
-# Check for UV environment on directory change
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND$'\n'}uv_auto_activate"
+# 3. The Ultra-Concise Prompt
+# Logic: Shows ONLY current dir and an arrow.
+# Arrow turns PURPLE if venv is active, GREEN if not.
+# No text labels. No git branch clutter.
+set_prompt() {
+    local BLUE='\[\033[0;34m\]'
+    local GREEN='\[\033[0;32m\]'
+    local PURPLE='\[\033[0;35m\]'
+    local RESET='\[\033[0m\]'
 
-# UV aliases for common commands
-alias uv-run='uv run'
-alias uv-add='uv add'
+    # Choose color based on Venv status
+    if [ -n "$VIRTUAL_ENV" ] || [ -n "$CONDA_DEFAULT_ENV" ]; then
+        local ARROW_COLOR="$PURPLE"
+    else
+        local ARROW_COLOR="$GREEN"
+    fi
+
+    # PS1: [BlueDir] [ColorArrow]
+    PS1="${BLUE}\W ${ARROW_COLOR}❯${RESET} "
+}
+PROMPT_COMMAND="${PROMPT_COMMAND};set_prompt"
+
+# 4. Aliases
+# Core
+alias ls='ls --color=auto' ll='ls -alF' la='ls -A' l='ls -CF'
+alias ..='cd ..' ...='cd ../..'
+alias grep='grep --color=auto'
+
+# Git (Minimal)
+alias gs='git status' ga='git add' gc='git commit' gp='git push'
+alias gd='git diff' gl='git log --oneline' gco='git checkout'
+
+# Docker
+alias dc='docker-compose' dcu='dc up -d' dcd='dc down' dcl='dc logs' dce='dc exec'
+
+# Python / UV / Project
+alias python='uv run python'
+alias pytest='uv run pytest'
 alias uv-sync='uv sync --group dev'
-alias uv-test='uv run pytest tests/ -v --tb=short'
-alias uv-lint='uv run flake8 .'
-alias uv-format='uv run black . && uv run isort .'
-
-# === Conda Environment Management ===
-# # Properly initialize Conda to override any external activation scripts.
-# if [ -f "/opt/conda/etc/profile.d/conda.sh" ]; then
-#     . "/opt/conda/etc/profile.d/conda.sh"
-# elif [ -f "$HOME/miniconda3/etc/profile.d/conda.sh" ]; then
-#     . "$HOME/miniconda3/etc/profile.d/conda.sh"
-# fi
-
-# # After initializing, ensure unwanted features are turned off.
-# if command -v conda >/dev/null 2>&1; then
-#     conda config --set auto_activate_base false
-#     conda config --set changeps1 false
-# fi
-
-# === Aliases ===
-# Enable color support for common commands
-if [ -x /usr/bin/dircolors ]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
-
-# Common navigation and file aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
-alias ..='cd ..'
-alias ...='cd ../..'
-
-# Git aliases
-alias gs='git status'
-alias ga='git add'
-alias gc='git commit'
-alias gp='git push'
-alias gl='git log --oneline'
-alias gd='git diff'
-alias gco='git checkout'
-
-# Docker aliases
-alias dc='docker-compose'
-alias dcu='docker-compose up -d'
-alias dcd='docker-compose down'
-alias dcl='docker-compose logs'
-alias dce='docker-compose exec'
-alias dhelper="./docker/docker-helper.sh"
-
-# OCR Project aliases (using the robust python -m pytest pattern)
+alias run-tests='uv run python -m pytest tests/'
 alias train='uv run python runners/train.py'
 alias predict='uv run python runners/predict.py'
-alias run-tests='uv run python -m pytest tests/'
 
-# === Utility Functions ===
-# Extract various archive formats
+# 5. Utilities
+mkcd() { mkdir -p "$1" && cd "$1"; }
+
+# Compact Extract
 extract() {
     if [ -f "$1" ]; then
         case $1 in
@@ -153,60 +92,21 @@ extract() {
             *.gz)        gunzip "$1"      ;; *.tar)       tar xf "$1"      ;;
             *.tbz2)      tar xjf "$1"     ;; *.tgz)       tar xzf "$1"     ;;
             *.zip)       unzip "$1"       ;; *.Z)         uncompress "$1"  ;;
-            *.7z)        7z x "$1"        ;; *)           echo "'$1' cannot be extracted via extract()" ;;
+            *.7z)        7z x "$1"        ;; *)           echo "Unknown format" ;;
         esac
-    else
-        echo "'$1' is not a valid file"
-    fi
+    else echo "File not found"; fi
 }
 
-# Create and enter directory
-mkcd() {
-    mkdir -p "$1" && cd "$1"
-}
+# Cleanup stale vars
+[ "$PYENV_VERSION" = "doc-pyenv" ] && unset PYENV_VERSION
+[ -n "$VIRTUAL_ENV" ] && [ ! -d "$VIRTUAL_ENV" ] && unset VIRTUAL_ENV
 
-# === PATH Management ===
-# Function to add directory to PATH only if it exists and isn't already there
-add_to_path() {
-    if [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]]; then
-        PATH="$1:$PATH"
-    fi
-}
-
-# Add paths in order of priority
-add_to_path "/opt/uv"
-add_to_path "$HOME/.local/bin"
-add_to_path "$HOME/.cargo/bin"
-add_to_path "$HOME/bin"
-add_to_path "/workspaces/node_modules_global/bin"
-add_to_path "/workspaces/repomix/bin"
-# add_to_path "/home/vscode/google-cloud-sdk/bin"
-
-export PATH
-
-# === Development Environment Variables ===
-export EDITOR=vim
-
-# Enable programmable completion features
-if ! shopt -oq posix; then
-  if [ -f /usr/share/bash-completion/bash_completion ]; then
+# Enable Completion
+if [ -f /usr/share/bash-completion/bash_completion ]; then
     . /usr/share/bash-completion/bash_completion
-  elif [ -f /etc/bash_completion ]; then
-    . /etc/bash_completion
-  fi
 fi
-
-# === Optional: External Prompt Functions (commented out to avoid conflicts) ===
-# Uncomment this section if you prefer to use external prompt functions instead of the built-in prompt
-# if [ -f ~/.bash_prompt_functions ]; then
-#     source ~/.bash_prompt_functions
-#     export PROMPT_STYLE="ultra-concise"
-#     export SHOW_GIT_INFO="true"
-#     export SHOW_CONDA_ENV="true"
-#     export SHOW_PYTHON_VERSION="false"
-#     export SHOW_NODE_VERSION="false"
-#     __init_prompt
-# fi
 
 # === End of .bashrc ===
 export PATH="$PWD/AgentQMS/bin:$PATH"
+alias python="uv run python"
+alias pytest="uv run pytest"

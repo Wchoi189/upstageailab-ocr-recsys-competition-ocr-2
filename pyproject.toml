@@ -85,7 +85,6 @@ dependencies = [
     "tree-sitter==0.21.3",
     "tree-sitter-languages==1.10.2",
     "typer==0.21.0",
-    "agent-debug-toolkit",
     "aiofiles>=25.1.0",
 ]
 
@@ -106,8 +105,17 @@ aqms = "AgentQMS.cli:main"
 extra-index-url = ["https://download.pytorch.org/whl/cu124"]
 index-strategy = "unsafe-best-match"
 
+[tool.uv.workspace]
+members = [
+    "ocr",
+    "AgentQMS",
+    "dev_tools/agent-debug-toolkit",
+    "dev_tools/experiment_manager",
+    "dev_tools/project_compass",
+    "dev_tools/airflow-batch-processor"
+]
+
 [tool.uv.sources]
-agent-debug-toolkit = { path = "agent-debug-toolkit" }
 
 [tool.mypy]
 # General settings - Balanced for ML/Research projects

@@ -200,6 +200,7 @@ lightning_logs/
 outputs/
 hydra_outputs/
 data/
+project-artifacts/
 .uptraint_cache/
 __pycache__/
 *.pyc

@@ -9,9 +9,19 @@ services:
     container_name: ocr-recsys-dev
     hostname: ocr-dev
     volumes:
-      - ../..:/workspaces:cached
+      - ..:/workspaces:cached
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
-      - ~/.ssh:/home/vscode/.ssh
+      - ~/.ssh:/home/vscode/.ssh-mount
+      - ../..:/parent:cached
+      # THE ONE BRIDGE: Mount the entire artifacts folder once
+      # The entrypoint script will create symlinks from here to /workspaces
+      - ../../project-artifacts/ocr-external-storage:/mnt/external_artifacts:cached
+
+      # Anonymous volumes for node_modules to avoid performance issues and host syncing
+      - /workspaces/node_modules
+      - /workspaces/apps/ocr_inference_console/node_modules
+      - /workspaces/apps/playground-console/node_modules
+      - /workspaces/apps/agentqms-dashboard/frontend/node_modules
     working_dir: /workspaces
     environment:
       - DISPLAY=${DISPLAY}
@@ -21,7 +31,7 @@ services:
       - "8000:8000" # Web interface/API
       - "8501:8501" # Streamlit (if used)
       - "6006:6006" # TensorBoard
-      - "2223:22" # SSH access
+      - "2223:22" # SSH
       - "5173:5173" # Vite dev server
     # Uncomment for GPU support
     deploy:
@@ -32,8 +42,6 @@ services:
               count: 1
               capabilities: [ gpu ]
     shm_size: '8gb' # Set shared memory size for DataLoader workers
-    profiles:
-      - dev
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
@@ -56,26 +64,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-    profiles:
-      - dev
 
-  # docker compose --profile dev up codescene -d
-  # codescene:
-    # image: codescene/codescene:latest
-    # container_name: ocr-codescene
-    # hostname: codescene
-    # ports:
-    #   - "3003:3003"
-    # volumes:
-    #   - codescene:/codescene
-    #   - ../..:/workspaces:cached
-    #   # - ../..:/repos/upstageailab-ocr-recsys-competition-ocr-2:cached
-    # env_file:
-    #   - ../.env.local
-    # environment:
-    #   - CS_ACCESS_TOKEN=${CS_ACCESS_TOKEN}
-    # profiles:
-    #   - dev
 
   # docker compose --profile dev up redis -d
   redis:
@@ -95,59 +84,8 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
-    profiles:
-      - dev
-  #   build:
-  #     context: ..
-  #     dockerfile: docker/Dockerfile
-  #   image: ocr-dev
-  #   container_name: docker-dev
-  #   hostname: docker-dev
-  #   volumes:
-  #     - .:/workspaces:cached
-  #     - /tmp/.X11-unix:/tmp/.X11-unix:rw
-  #     - ~/.ssh:/home/vscode/.ssh
-  #   working_dir: /workspaces
-  #   environment:
-  #     - DISPLAY=${DISPLAY}
-  #     - UV_LINK_MODE=copy
-  #   ports:
-  #     - "8002:8000"   # Web interface/API
-  #     - "8503:8501"   # Streamlit (if used)
-  #     - "6008:6006"   # TensorBoard
-  #     - "2225:22"     # SSH access
-  #     - "5175:5173"   # Vite dev server
-  #   # Uncomment for GPU support
-  #   deploy:
-  #     resources:
-  #       reservations:
-  #         devices:
-  #           - driver: nvidia
-  #             count: 1
-  #             capabilities: [gpu]
-  #   shm_size: '8gb'  # Set shared memory size for DataLoader workers
-  #   profiles:
-  #     - dev
 
-  # Lightweight version without CUDA (for systems without NVIDIA GPU)
-  # dev-cpu:
-  #   build:
-  #     context: ..
-  #     dockerfile: docker/Dockerfile.cpu
-  #   container_name: ocr-dev-cpu
-  #   volumes:
-  #     - .:/workspaces:cached
-  #     - ~/.ssh:/home/vscode/.ssh:ro
-  #   working_dir: /workspaces
-  #   environment:
-  #     - UV_LINK_MODE=copy
-  #   ports:
-  #     - "8000:8000"
-  #     - "8501:8501"
-  #     - "2222:22"     # SSH access
-  #   command: sleep infinity
-  #   profiles:
-  #     - cpu
+
 volumes:
   codescene:
   redis_data:

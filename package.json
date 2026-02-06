@@ -8,8 +8,8 @@
     "apps/ocr_inference_console"
   ],
   "scripts": {
-    "dev:console": "npm run dev --workspace apps/playground-console",
-    "build:console": "npm run build --workspace apps/playground-console",
-    "lint:console": "npm run lint --workspace apps/playground-console"
+    "dev:console": "pnpm run dev --filter apps/playground-console",
+    "build:console": "pnpm run build --filter apps/playground-console",
+    "lint:console": "pnpm run lint --filter apps/playground-console"
   }
 }

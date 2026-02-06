@@ -13,7 +13,7 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
 
 # Add bin to PATH
-export PATH="$SCRIPT_DIR/bin:$PATH"
+export PATH="$SCRIPT_DIR/bin:$SCRIPT_DIR/dev_tools/bin:$PATH"
 
 # Set PYTHONPATH
 export PYTHONPATH="$SCRIPT_DIR:$PYTHONPATH"

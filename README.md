@@ -132,7 +132,7 @@ graph TD
 **Key Features:**
 - **Vessel Architecture:** State stored in `.vessel/` with strict rule injection from `vault/`.
 - **Pulse Lifecycle:** Explicit work units (`pulse-init`, `pulse-sync`, `pulse-export`) replacing vague sessions.
-- **Project Documentation:** [Project Compass V2 Documentation](project_compass/AGENTS.md)
+- **Project Documentation:** [Project Compass V2 Documentation](dev_tools/project_compass/AGENTS.md)
 
 **Impact:**
 - **Zero-Context Start:** Agents read `AGENTS.md` and `vessel_state.json` to immediately understand the project state.
@@ -236,8 +236,8 @@ adt trace-merges ocr/models/architecture.py --output markdown
 **Solution:** Schema-driven experiment manager with standardized artifact templates.
 
 **Key Artifacts:**
-- [Baseline Metrics Report](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1415_report_baseline-metrics-summary.md)
-- [Perspective Correction Data Loss Incident](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251220_0130_incident_report_perspective_correction_data_loss.md)
+- [Baseline Metrics Report](dev_tools/experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1415_report_baseline-metrics-summary.md)
+- [Perspective Correction Data Loss Incident](dev_tools/experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251220_0130_incident_report_perspective_correction_data_loss.md)
 
 **Impact:** Enables AI agents to autonomously locate and analyze historical experiments without human intervention.
 
@@ -308,7 +308,7 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 ## Experimental Findings
 
-The following discoveries emerged from systematic ablation studies documented in `experiment_manager/experiments/*/`. These findings demonstrate the evolution from brittle heuristic approaches to production-ready deep learning pipelines.
+The following discoveries emerged from systematic ablation studies documented in `dev_tools/experiment_manager/experiments/*/`. These findings demonstrate the evolution from brittle heuristic approaches to production-ready deep learning pipelines.
 
 ### Finding 1: The Brittleness of Heuristic-Based Preprocessing
 
@@ -321,7 +321,7 @@ The following discoveries emerged from systematic ablation studies documented in
 
 **Insight:** Traditional computer vision techniques struggle with real-world ambiguity. Even a 27% failure rate in corner detection cascaded into complete OCR pipeline failures, proving that robust abstraction-based approaches were necessary.
 
-**Reference:** [200-Image Test Results](experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.md)
+**Reference:** [200-Image Test Results](dev_tools/experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.md)
 
 ### Finding 2: The Sepia Discovery – Empirical Optimization
 
@@ -334,7 +334,7 @@ The following discoveries emerged from systematic ablation studies documented in
 
 **Technical Insight:** This was an empirical discovery. While most literature focuses on binary or grayscale thresholding, the specific contrast ratios provided by sepia filters acted as superior noise-reducers for the model's feature extractor, outperforming standard normalization techniques.
 
-**Reference:** [Sepia Enhancement Study](experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.md)
+**Reference:** [Sepia Enhancement Study](dev_tools/experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.md)
 
 ### Finding 3: Hybrid DL-Geometric Approach – Production-Ready Pipeline
 
@@ -352,7 +352,7 @@ The following discoveries emerged from systematic ablation studies documented in
 
 **Impact:** By using DL-based binary masking to abstract away background noise, the pipeline achieved perfect reliability on the test set, ensuring correctly rectified images for the OCR engine every time.
 
-**Reference:** [Worst Performers Test](experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.md)
+**Reference:** [Worst Performers Test](dev_tools/experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.md)
 
 ### Ablation Study Summary
 
@@ -383,7 +383,7 @@ Frontend proof-of-concept inspired by the Upstage Document OCR Console.
 
 |                               Fitted Corners (CV Math)                                |                                                                                          Corrected Output                                                                                           |
 | :-----------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="400px" /> | <img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="180px" /> |
+| <img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="400px" /> | <img src="dev_tools/experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="180px" /> |
 |                               *Identifying boundaries*                                |                                                                                     *Final normalized geometry*                                                                                     |
 
 </div>
@@ -433,7 +433,7 @@ For AI agents working with this codebase, please refer to the following context 
 - **`.qwen/QWEN.md`**: Essential project context and navigation guide for AI agents
 - **`AGENTS.md`**: Human and AI entrypoint documentation
 - **`AGENTS.yaml`**: Machine-readable project configuration
-- **`project_compass/`**: Vessel-based project navigation system
+- **`dev_tools/project_compass/`**: Vessel-based project navigation system
 
 ---
 

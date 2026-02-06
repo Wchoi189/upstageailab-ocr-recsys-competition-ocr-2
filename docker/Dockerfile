@@ -1,163 +1,95 @@
-# Multi-stage Dockerfile for development and production
+# === STAGE 1: BASE SYSTEM ===
 FROM nvidia/cuda:12.4.1-devel-ubuntu22.04 AS base
 
-# Set environment variables
-ENV DEBIAN_FRONTEND=noninteractive
-ENV TZ=Asia/Seoul
-ENV PYTHONUNBUFFERED=1
-ENV UV_LINK_MODE=copy
+ENV DEBIAN_FRONTEND=noninteractive \
+    TZ=Asia/Seoul \
+    PYTHONUNBUFFERED=1 \
+    UV_LINK_MODE=copy \
+    LANG=en_US.UTF-8 \
+    LC_ALL=en_US.UTF-8
 
-# Install system dependencies and cuDNN for GPU acceleration
-RUN apt-get update && apt-get install -y \
-    sudo \
-    curl \
-    wget \
-    vim \
-    git \
-    git-lfs \
-    openssh-server \
-    build-essential \
-    python3-dev \
-    libpython3-dev \
-    cmake \
-    pkg-config \
-    libjpeg-dev \
-    libpng-dev \
-    libsndfile1-dev \
-    ffmpeg \
-    libsm6 \
-    libxext6 \
-    libgl1-mesa-glx \
-    libssl-dev \
-    zlib1g-dev \
-    libbz2-dev \
-    libreadline-dev \
-    libsqlite3-dev \
-    libncurses5-dev \
-    libncursesw5-dev \
-    xz-utils \
-    tk-dev \
-    libffi-dev \
-    liblzma-dev \
-    locales \
-    htop \
-    tmux \
-    jq \
-    lsof \
-    bash-completion \
-    libcudnn9-cuda-12 \
+# Install ALL system dependencies in one layer to reduce image size and build time
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    sudo curl wget vim git git-lfs openssh-server build-essential \
+    python3-dev libpython3-dev cmake pkg-config \
+    libjpeg-dev libpng-dev libsndfile1-dev ffmpeg \
+    libsm6 libxext6 libgl1-mesa-glx libssl-dev zlib1g-dev \
+    libbz2-dev libreadline-dev libsqlite3-dev libncurses5-dev \
+    libncursesw5-dev xz-utils tk-dev libffi-dev liblzma-dev \
+    locales htop tmux jq lsof bash-completion libcudnn9-cuda-12 tree \
+    nodejs npm \
+    && npm install -g pnpm \
     && rm -rf /var/lib/apt/lists/*
 
-# Install GitHub CLI
+# Setup Locales
+RUN locale-gen en_US.UTF-8 ko_KR.UTF-8
+
+# Install GitHub CLI & YQ & UV
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg \
     && chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg \
     && echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
-    && apt-get update \
-    && apt-get install -y gh
+    && apt-get update && apt-get install -y gh \
+    && wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq && chmod +x /usr/local/bin/yq \
+    && curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
 
-# Install Node.js LTS
-RUN curl -fsSL https://deb.nodesource.com/setup_lts.x | bash -
-RUN apt-get install -y nodejs
-
-# Install yq
-RUN wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq && chmod +x /usr/local/bin/yq
-
-# Set locale to UTF-8 with Korean support
-RUN locale-gen en_US.UTF-8 ko_KR.UTF-8
-ENV LANG=en_US.UTF-8
-ENV LC_ALL=en_US.UTF-8
-ENV LC_CTYPE=en_US.UTF-8
-
-# Install uv system-wide
-RUN curl -LsSf https://astral.sh/uv/install.sh | UV_INSTALL_DIR=/opt/uv sh
 ENV PATH="/opt/uv:$PATH"
 
-# Create vscode user
+# Setup 'vscode' user and SSH config
 RUN groupadd -g 1000 vscode && \
     useradd -u 1000 -g vscode -m -s /bin/bash vscode && \
-    echo "vscode ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers
+    echo "vscode ALL=(ALL) NOPASSWD: ALL" >> /etc/sudoers && \
+    mkdir -p /run/sshd && \
+    # Configure SSH Daemon
+    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
+    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
+    sed -i 's/#StrictModes yes/StrictModes no/' /etc/ssh/sshd_config && \
+    # sed -i 's/#LogLevel INFO/LogLevel DEBUG3/' /etc/ssh/sshd_config && \
+    sed -i 's/session\s*required\s*pam_loginuid.so/session optional pam_loginuid.so/g' /etc/pam.d/sshd && \
+    sed -i 's/#UsePAM yes/UsePAM yes/' /etc/ssh/sshd_config && \
+    ssh-keygen -A
 
-# Set up SSH for vscode user
-RUN sudo mkdir -p /run/sshd && \
-    sudo mkdir -p /home/vscode/.ssh && \
-    sudo chmod 700 /home/vscode/.ssh && \
-    sudo chown vscode:vscode /home/vscode/.ssh
-
-# Configure SSH to allow password authentication and key-based authentication
-RUN sudo sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config && \
-    sudo sed -i 's/#PubkeyAuthentication yes/PubkeyAuthentication yes/' /etc/ssh/sshd_config && \
-    sudo sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
-    sudo sed -i 's/#UsePAM yes/UsePAM yes/' /etc/ssh/sshd_config && \
-    sudo sed -i 's/#HostKey /HostKey /' /etc/ssh/sshd_config && \
-    echo "StrictModes no" | sudo tee -a /etc/ssh/sshd_config
-
-# Generate SSH host keys
-RUN sudo ssh-keygen -A
-
-# Create authorized_keys file
-RUN touch /home/vscode/.ssh/authorized_keys && \
-    sudo chmod 600 /home/vscode/.ssh/authorized_keys && \
-    sudo chown vscode:vscode /home/vscode/.ssh/authorized_keys
-
-# Set up project directory
-RUN mkdir -p /workspaces && chown vscode:vscode /workspaces
-
-# === DEPENDENCY LAYER (CACHED) ===
+# === STAGE 2: DEPENDENCIES ===
 FROM base AS dependencies
-
 USER vscode
 WORKDIR /workspaces
 
-# Copy dependency files first for better caching
-# copying to a temp location or root workspace to run sync
-COPY --chown=vscode:vscode pyproject.toml uv.lock* ./
+# Copy project definition files
+COPY --chown=vscode:vscode pyproject.toml uv.lock* README.md ./
 
-# Copy README.md before package installation (required by pyproject.toml)
-COPY --chown=vscode:vscode README.md ./
+# Install dependencies into the user's cache
+# We use --no-dev because we are in the dependencies stage,
+# but you can toggle this if you need dev tools in the base image.
+RUN --mount=type=cache,target=/home/vscode/.cache/uv,uid=1000,gid=1000 \
+    uv sync --no-dev || uv sync
 
-# Install dependencies into the user's cache or a dummy venv
-# This populates the uv cache at /home/vscode/.cache/uv
-RUN uv sync --frozen --no-dev || uv sync --frozen \
-    && rm -rf /home/vscode/.cache/uv /root/.cache/uv
-
-# === DEVELOPMENT IMAGE ===
+# === STAGE 3: DEVELOPMENT ===
 FROM dependencies AS development
 
-# Note: We do NOT copy the source code here (COPY . .) because
-# devcontainer mounts the workspace volume at runtime.
-# However, we can copy the .bashrc and other configs.
+# Switch back to root to install global dev tools
+USER root
 
-# Copy .bashrc for enhanced shell experience
+# Install development tools
+RUN pnpm add -g repomix
+
+# Copy Entrypoint Script
+COPY --chmod=755 docker/entrypoint.sh /usr/local/bin/entrypoint.sh
 COPY --chown=vscode:vscode docker/.bashrc /home/vscode/.bashrc
 
-# Fix Windows line endings in .bashrc
-RUN sed -i 's/\r$//' /home/vscode/.bashrc
+# Fix Windows line endings just in case
+RUN sed -i 's/\r$//' /home/vscode/.bashrc && \
+    sed -i 's/\r$//' /usr/local/bin/entrypoint.sh
 
-# Install repomix globally
-RUN npm install -g repomix
-
-# Install pyenv
+# Switch to user to install pyenv
+USER vscode
 RUN curl https://pyenv.run | bash
 
-# Set up development environment aliases
-RUN echo 'export PATH="$HOME/.pyenv/bin:$PATH"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv init -)"' >> ~/.bashrc && \
-    echo 'eval "$(pyenv virtualenv-init -)"' >> ~/.bashrc && \
-    echo 'alias python="uv run python"' >> ~/.bashrc && \
-    echo 'alias python3="uv run python3"' >> ~/.bashrc && \
-    echo 'alias etk="uv run python experiment_manager/etk.py"' >> ~/.bashrc && \
-    echo 'alias pytest="uv run pytest"' >> ~/.bashrc && \
-    echo 'alias make="uv run make"' >> ~/.bashrc && \
-    echo 'export PATH="/workspaces/node_modules_global/bin:/workspaces/repomix/bin:$PATH"' >> ~/.bashrc
+ENV PATH="/home/vscode/.pyenv/bin:$PATH"
 
-# Create startup script that starts SSH as root and keeps container running
-RUN sudo sh -c 'echo "#!/bin/bash\n\
-    sudo /usr/sbin/sshd -D & \n\
-    sleep infinity" > /usr/local/bin/start.sh' && \
-    sudo chmod +x /usr/local/bin/start.sh
+# Configure User Environment (Aliases)
+RUN echo 'alias python="uv run python"' >> ~/.bashrc && \
+    echo 'alias pytest="uv run pytest"' >> ~/.bashrc
 
-# Expose ports for development services
+# Final Setup
 EXPOSE 8000 8501 6006 22
-
-# Default command - start SSH daemon
-CMD ["/usr/local/bin/start.sh"]
+CMD ["/usr/local/bin/entrypoint.sh"]

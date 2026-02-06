@@ -1,24 +1,24 @@
 {
 	"servers": {
-	"perplexity": {
-		"command": "npx",
-		"args": [
-			"-y",
-			"perplexity-mcp"
-		],
-		"env": {
-			"PERPLEXITY_API_KEY": "${env:PERPLEXITY_API_KEY}"
+		"perplexity": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"perplexity-mcp"
+			],
+			"env": {
+				"PERPLEXITY_API_KEY": "${env:PERPLEXITY_API_KEY}"
+			}
+		},
+		"unified_project": {
+			"command": "uv",
+			"args": [
+				"run",
+				"--directory",
+				"/workspaces",
+				"python",
+				"scripts/mcp/unified_server.py"
+			]
 		}
-	},
-	"unified_project": {
-		"command": "uv",
-		"args": [
-			"run",
-			"--directory",
-			"/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
-			"python",
-			"scripts/mcp/unified_server.py"
-		]
-	}
 	}
 }

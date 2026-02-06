@@ -132,7 +132,7 @@ graph TD
 **주요 기능:**
 - **Vessel 아키텍처:** `.vessel/`에 저장된 상태, `vault/`에서 엄격한 규칙 주입
 - **펄스 라이프사이클:** 모호한 세션을 대체하는 명시적 작업 단위 (`pulse-init`, `pulse-sync`, `pulse-export`)
-- **프로젝트 문서:** [Project Compass V2 문서](project_compass/AGENTS.ko.md)
+- **프로젝트 문서:** [Project Compass V2 문서](dev_tools/project_compass/AGENTS.md)
 
 **영향:**
 - **제로 컨텍스트 시작:** 에이전트는 `AGENTS.md`와 `vessel_state.json`을 읽어 즉시 프로젝트 상태를 이해합니다.
@@ -236,8 +236,8 @@ adt trace-merges ocr/models/architecture.py --output markdown
 **해결책:** 표준화된 아티팩트 템플릿과 함께 스키마 기반 실험 관리자.
 
 **주요 아티팩트:**
-- [기준 메트릭 보고서](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1415_report_baseline-metrics-summary.ko.md)
-- [투영 보정 데이터 손실 사고](experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251220_0130_incident_report_perspective_correction_data_loss.ko.md)
+- [기준 메트릭 보고서](dev_tools/experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251218_1415_report_baseline-metrics-summary.ko.md)
+- [투영 보정 데이터 손실 사고](dev_tools/experiment_manager/experiments/20251217_024343_image_enhancements_implementation/.metadata/reports/20251220_0130_incident_report_perspective_correction_data_loss.ko.md)
 
 **영향:** AI 에이전트가 인간 개입 없이 과거 실험을 자율적으로 찾고 분석할 수 있습니다.
 
@@ -308,7 +308,7 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 ## 실험적 발견
 
-다음 발견들은 `experiment_manager/experiments/*/`에 문서화된 체계적인 제거 연구에서 나타났습니다. 이 발견들은 취약한 휴리스틱 접근법에서 프로덕션 준비 완료 딥러닝 파이프라인으로의 진화를 보여줍니다.
+다음 발견들은 `dev_tools/experiment_manager/experiments/*/`에 문서화된 체계적인 제거 연구에서 나타났습니다. 이 발견들은 취약한 휴리스틱 접근법에서 프로덕션 준비 완료 딥러닝 파이프라인으로의 진화를 보여줍니다.
 
 ### 발견 1: 휴리스틱 기반 전처리의 취약성
 
@@ -321,7 +321,7 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 **통찰:** 전통적인 컴퓨터 비전 기법은 실제 모호성에 어려움을 겪습니다. 코너 감지에서 27% 실패율이 전체 OCR 파이프라인 실패로 이어져 견고한 추상화 기반 접근법이 필요함을 입증했습니다.
 
-**참조:** [200개 이미지 테스트 결과](experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.ko.md)
+**참조:** [200개 이미지 테스트 결과](dev_tools/experiment_manager/experiments/20251122_172313_perspective_correction/artifacts/20251122_1723_assessment_200-image-test-results.ko.md)
 
 ### 발견 2: 세피아 발견 – 경험적 최적화
 
@@ -334,7 +334,7 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 **기술적 통찰:** 이는 경험적 발견이었습니다. 대부분의 문헌이 이진 또는 그레이스케일 임계값 조정에 초점을 맞추는 반면, 세피아 필터가 제공하는 특정 대비 비율은 모델의 특징 추출기에 우수한 노이즈 감소제로 작용하여 표준 정규화 기법을 능가했습니다.
 
-**참조:** [세피아 향상 연구](experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.ko.md)
+**참조:** [세피아 향상 연구](dev_tools/experiment_manager/experiments/20251220_154834_zero_prediction_images_debug/README.ko.md)
 
 ### 발견 3: 하이브리드 DL-기하학적 접근법 – 프로덕션 준비 완료 파이프라인
 
@@ -352,7 +352,7 @@ adt trace-merges ocr/models/architecture.py --output markdown
 
 **영향:** DL 기반 이진 마스킹을 사용하여 배경 노이즈를 추상화함으로써 파이프라인은 테스트 세트에서 완벽한 신뢰성을 달성하여 OCR 엔진에 항상 올바르게 보정된 이미지를 보장합니다.
 
-**참조:** [최악의 성능자 테스트](experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.ko.md)
+**참조:** [최악의 성능자 테스트](dev_tools/experiment_manager/experiments/20251129_173500_perspective_correction_implementation/.metadata/assessments/20251129_1735_assessment_test-results-analysis.ko.md)
 
 ### 제거 연구 요약
 
@@ -383,7 +383,7 @@ Upstage Document OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명
 
 |                               피팅된 코너 (CV 수학)                                |                                                                                          보정된 출력                                                                                           |
 | :-----------------------------------------------------------------------------------: | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------: |
-| <img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="400px" /> | <img src="experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="180px" /> |
+| <img src="docs/assets/images/demo/original-with-fitted-corners.webp" width="400px" /> | <img src="dev_tools/experiment_manager/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/drp.en_ko.in_house.selectstar_000712_step2_corrected.jpg" width="180px" /> |
 |                               *경계 식별*                                |                                                                                     *최종 정규화된 기하학*                                                                                     |
 
 </div>
@@ -422,7 +422,7 @@ Upstage Document OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명
 - **`.qwen/QWEN.md`**: AI 에이전트를 위한 필수 프로젝트 컨텍스트 및 탐색 가이드
 - **`AGENTS.md`**: 인간 및 AI 진입점 문서
 - **`AGENTS.yaml`**: 기계 판독 가능 프로젝트 구성
-- **`project_compass/`**: Vessel 기반 프로젝트 탐색 시스템
+- **`dev_tools/project_compass/`**: Vessel 기반 프로젝트 탐색 시스템
 
 ---
 
