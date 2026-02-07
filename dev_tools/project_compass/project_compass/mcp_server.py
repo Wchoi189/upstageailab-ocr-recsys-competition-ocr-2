@@ -240,7 +240,7 @@ def get_tool_context():
         from src.core import PulseManager, VesselPaths
         from src.pulse_exporter import export_pulse, register_artifact, create_snapshot
 
-    paths = VesselPaths()
+    paths = VesselPaths(compass_dir=PROJECT_ROOT)
     manager = PulseManager(paths)
     return manager, paths, export_pulse, register_artifact, create_snapshot
 
@@ -483,7 +483,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     if not handler:
         raise ValueError(f"Unknown tool: {name}")
 
-    manager, paths, export_pulse, register_artifact = get_tool_context()
+    manager, paths, export_pulse, register_artifact, create_snapshot = get_tool_context()
 
     return await handler(
         arguments=arguments,

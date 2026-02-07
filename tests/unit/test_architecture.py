@@ -18,7 +18,7 @@ class TestOCRModel:
                 "encoder": {},
                 "decoder": {},
                 "head": {},
-                "loss": {},
+                "loss": {"_target_": "some.loss"},
                 "optimizer": {},
             }
         )
@@ -31,14 +31,14 @@ class TestOCRModel:
     @patch("ocr.core.models.encoder.get_encoder_by_cfg")
     @patch("ocr.core.models.decoder.get_decoder_by_cfg")
     @patch("ocr.core.models.head.get_head_by_cfg")
-    @patch("ocr.core.models.loss.get_loss_by_cfg")
-    def test_model_initialization(self, mock_loss, mock_head, mock_decoder, mock_encoder, mock_config):
+    @patch("ocr.core.models.architecture.instantiate")
+    def test_model_initialization(self, mock_instantiate, mock_head, mock_decoder, mock_encoder, mock_config):
         """Test that OCRModel initializes correctly with mocked components."""
         # Setup mocks
         mock_encoder.return_value = Mock()
         mock_decoder.return_value = Mock()
         mock_head.return_value = Mock()
-        mock_loss.return_value = Mock()
+        mock_instantiate.return_value = Mock()
 
         # Initialize model
         model = OCRModel(mock_config)
@@ -54,7 +54,8 @@ class TestOCRModel:
         mock_encoder.assert_called_once_with(mock_config.encoder)
         mock_decoder.assert_called_once_with(mock_config.decoder)
         mock_head.assert_called_once_with(mock_config.head)
-        mock_loss.assert_called_once_with(mock_config.loss)
+        # Loss is instantiated directly
+        mock_instantiate.assert_called_once_with(mock_config.loss)
 
     def test_forward_pass_with_loss(self, mock_config, sample_input):
         """Test forward pass that includes loss calculation."""
@@ -62,7 +63,7 @@ class TestOCRModel:
             patch("ocr.core.models.encoder.get_encoder_by_cfg") as mock_enc,
             patch("ocr.core.models.decoder.get_decoder_by_cfg") as mock_dec,
             patch("ocr.core.models.head.get_head_by_cfg") as mock_head,
-            patch("ocr.core.models.loss.get_loss_by_cfg") as mock_loss_func,
+            patch("ocr.core.models.architecture.instantiate") as mock_instantiate,
         ):
             # Setup component mocks
             mock_encoder = Mock()
@@ -73,7 +74,7 @@ class TestOCRModel:
             mock_enc.return_value = mock_encoder
             mock_dec.return_value = mock_decoder
             mock_head.return_value = mock_head_comp
-            mock_loss_func.return_value = mock_loss_comp
+            mock_instantiate.return_value = mock_loss_comp
 
             # Setup return values
             encoded_features = torch.randn(2, 64, 56, 56)
@@ -104,17 +105,20 @@ class TestOCRModel:
             patch("ocr.core.models.encoder.get_encoder_by_cfg") as mock_enc,
             patch("ocr.core.models.decoder.get_decoder_by_cfg") as mock_dec,
             patch("ocr.core.models.head.get_head_by_cfg") as mock_head,
-            patch("ocr.core.models.loss.get_loss_by_cfg") as mock_loss_func,
+            patch("ocr.core.models.architecture.instantiate") as mock_instantiate,
         ):
             # Setup component mocks
             mock_encoder = Mock()
             mock_decoder = Mock()
+            del mock_decoder.bos_token_id # Fix: valid non-AR model should not have this
+            # mock_decoder.bos_token_id = 1
+            # mock_decoder.max_len = 10
             mock_head_comp = Mock()
 
             mock_enc.return_value = mock_encoder
             mock_dec.return_value = mock_decoder
             mock_head.return_value = mock_head_comp
-            mock_loss_func.return_value = Mock()
+            mock_instantiate.return_value = Mock()
 
             # Setup return values
             encoded_features = torch.randn(2, 64, 56, 56)
@@ -141,13 +145,12 @@ class TestOCRModel:
             patch("ocr.core.models.encoder.get_encoder_by_cfg"),
             patch("ocr.core.models.decoder.get_decoder_by_cfg"),
             patch("ocr.core.models.head.get_head_by_cfg"),
-            patch("ocr.core.models.loss.get_loss_by_cfg"),
         ):
             # Legacy test - get_optimizers() no longer exists in V5
             # Optimizer configuration is now handled by Lightning module only
             # See ocr.core.lightning.base.OCRPLModule.configure_optimizers()
             model = OCRModel(mock_config)
-            
+
             # Verify model is optimizer-agnostic
             assert not hasattr(model, "get_optimizers")
             assert not hasattr(model, "_get_optimizers_impl")
@@ -159,12 +162,11 @@ class TestOCRModel:
             patch("ocr.core.models.encoder.get_encoder_by_cfg"),
             patch("ocr.core.models.decoder.get_decoder_by_cfg"),
             patch("ocr.core.models.head.get_head_by_cfg"),
-            patch("ocr.core.models.loss.get_loss_by_cfg"),
         ):
             # V5 Standard: Models are optimizer-agnostic
             # Optimizer configuration moved to Lightning modules
             model = OCRModel(mock_config)
-            
+
             # Verify methods don't exist
             assert not hasattr(model, "get_optimizers")
             assert not hasattr(model, "_get_optimizers_impl")
@@ -175,7 +177,7 @@ class TestOCRModel:
             patch("ocr.core.models.encoder.get_encoder_by_cfg"),
             patch("ocr.core.models.decoder.get_decoder_by_cfg"),
             patch("ocr.core.models.head.get_head_by_cfg") as mock_head,
-            patch("ocr.core.models.loss.get_loss_by_cfg"),
+            patch("ocr.core.models.architecture.instantiate"),
         ):
             mock_head_comp = Mock()
             mock_head.return_value = mock_head_comp
@@ -198,7 +200,7 @@ class TestOCRModel:
             patch("ocr.core.models.decoder.get_decoder_by_cfg"),
             patch("ocr.core.models.encoder.get_encoder_by_cfg"),
             patch("ocr.core.models.head.get_head_by_cfg"),
-            patch("ocr.core.models.loss.get_loss_by_cfg"),
+            patch("ocr.core.models.architecture.instantiate"),
         ):
             encoder = Mock()
             decoder = Mock()
@@ -359,7 +361,7 @@ class TestOCRModel:
              with patch("ocr.core.models.encoder.get_encoder_by_cfg"), \
                   patch("ocr.core.models.decoder.get_decoder_by_cfg"), \
                   patch("ocr.core.models.head.get_head_by_cfg"), \
-                  patch("ocr.core.models.loss.get_loss_by_cfg"):
+                  patch("ocr.core.models.architecture.instantiate"):
 
                   model = OCRModel(mock_config)
 
@@ -402,7 +404,7 @@ class TestOCRModel:
              with patch("ocr.core.models.encoder.get_encoder_by_cfg"), \
                   patch("ocr.core.models.decoder.get_decoder_by_cfg"), \
                   patch("ocr.core.models.head.get_head_by_cfg"), \
-                  patch("ocr.core.models.loss.get_loss_by_cfg"):
+                  patch("ocr.core.models.architecture.instantiate"):
 
                   OCRModel(mock_config)
 

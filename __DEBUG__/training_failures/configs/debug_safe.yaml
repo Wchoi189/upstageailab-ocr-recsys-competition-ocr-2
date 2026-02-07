@@ -1,0 +1,48 @@
+# @package _global_
+# Safe Configuration Override for Training Stability
+# Based on Bug Reports: BUG-20260114-001 (Segfault Resolution)
+#
+# This configuration resolves DataLoader worker segfaults by:
+# 1. Disabling multiprocessing (num_workers=0)
+# 2. Disabling pinned memory (pin_memory=false)
+# 3. Disabling persistent workers
+#
+# Use this for stable training when encountering:
+# - "RuntimeError: DataLoader worker (pid) exited unexpectedly"
+# - "Segmentation fault" during validation
+# - CUDA multiprocessing crashes
+
+# Override global defaults
+data:
+  num_workers: 0
+  batch_size: 64  # Can adjust based on available memory
+
+# DataLoader configurations
+dataloaders:
+  train_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+
+  val_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+
+  test_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+
+  predict_dataloader:
+    num_workers: 0
+    pin_memory: false
+    persistent_workers: false
+
+# Trainer limits for micro-training verification
+trainer:
+  limit_train_batches: 10
+  limit_val_batches: 2
+  max_epochs: 5
+  log_every_n_steps: 1
+  num_sanity_val_steps: 0

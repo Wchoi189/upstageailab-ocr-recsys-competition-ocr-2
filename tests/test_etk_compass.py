@@ -18,8 +18,8 @@ from unittest.mock import MagicMock, patch
 import pytest
 import yaml
 
-sys.path.insert(0, str(Path(__file__).parent.parent / "experiment_manager" / "src"))
-sys.path.insert(0, str(Path(__file__).parent.parent / "project_compass" / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "dev_tools" / "experiment_manager" / "src"))
+sys.path.insert(0, str(Path(__file__).parent.parent / "dev_tools" / "project_compass" / "src"))
 
 from core import (
     CompassPaths,

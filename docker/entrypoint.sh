@@ -99,6 +99,9 @@ if [ -d "$SOURCE_ROOT" ]; then
         fi
     done
 
+    # Add project bin directories to PATH for services
+    export PATH="/home/vscode/.local/share/pnpm:/workspaces/bin:/workspaces/AgentQMS/bin:/workspaces/repomix/bin:$PATH"
+
     # Nested Symlinks for convenience (optional, but requested by user config implied?)
     # paths.yaml now uses ${output_dir}/wandb, so /workspaces/outputs/wandb is valid.
     # No extra symlinks needed if the migration worked and 'outputs' is linked.
@@ -107,6 +110,40 @@ if [ -d "$SOURCE_ROOT" ]; then
 else
     echo "⚠️  External artifacts directory not found at $SOURCE_ROOT"
     echo "   Skipping symlink creation."
+fi
+
+# 3.5. Install Global Tools from /parent (if available)
+PARENT_DIR="/parent"
+if [ -d "$PARENT_DIR" ]; then
+    echo "🛠️  Checking for local tools in $PARENT_DIR..."
+
+    # Repomix
+    if [ -d "$PARENT_DIR/repomix" ]; then
+        echo "  📦 Installing repomix from local source..."
+        # We need to serve this, but pnpm link -g inside container might need root or specific setup.
+        # simpler to just install dependencies and link
+        (cd "$PARENT_DIR/repomix" && pnpm install && pnpm run build && pnpm link --global) || echo "  ❌ Failed to install repomix"
+    fi
+
+    # Spec-kit
+    if [ -d "$PARENT_DIR/spec-kit" ]; then
+        echo "  📦 Installing spec-kit..."
+        # Install as editable in the user environment
+        uv pip install -e "$PARENT_DIR/spec-kit" || echo "  ❌ Failed to install spec-kit"
+    fi
+
+    # Qwen Code CLI (API Version)
+    # Ensure qwen-code is installed globally for the user
+    # We use sudo -u vscode to ensure it installs in user's home
+    if ! sudo -u vscode pnpm list -g @qwen-code/qwen-code > /dev/null 2>&1; then
+        echo "  📦 Installing qwen-code CLI..."
+        # Ensure local bin dir exists
+        sudo -u vscode mkdir -p /home/vscode/.local/share/pnpm
+        sudo -u vscode pnpm config set global-bin-dir /home/vscode/.local/share/pnpm
+        sudo -u vscode pnpm add -g @qwen-code/qwen-code
+    else
+        echo "  ✅ qwen-code CLI already installed."
+    fi
 fi
 
 # 4. Fix workspace permissions if mounted by Docker

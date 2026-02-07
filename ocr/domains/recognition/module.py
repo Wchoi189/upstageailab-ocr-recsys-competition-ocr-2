@@ -34,7 +34,7 @@ class RecognitionPLModule(OCRPLModule):
 
         # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
         # NOTE: Pydantic validation causes GPU sync - disabled by default for performance
-        if getattr(getattr(self.config, "global", None), "debug", False):
+        if self.config.get("global", {}).get("debug", False):
             try:
                 ValidatedTensorData(tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False)
             except ValidationError as exc:
@@ -45,6 +45,22 @@ class RecognitionPLModule(OCRPLModule):
             self.log(f"train/{key}", value, batch_size=batch["images"].shape[0])
         return pred["loss"]
 
+    def on_after_backward(self):
+        """Log gradient norms for debugging."""
+        if self.global_step % 10 == 0:
+            if hasattr(self.model, "decoder") and hasattr(self.model.decoder, "pos_encoder"):
+                grad = self.model.decoder.pos_encoder.grad
+                if grad is not None:
+                    print(f"\n[Grad Debug] Step {self.global_step} - Pos Encoder Grad Norm: {grad.norm():.4f}")
+                else:
+                    print(f"\n[Grad Debug] Step {self.global_step} - Pos Encoder Grad is None!")
+
+            if hasattr(self.model, "decoder") and hasattr(self.model.decoder, "embed_tokens"):
+                grad = self.model.decoder.embed_tokens.weight.grad
+                if grad is not None:
+                     print(f"[Grad Debug] Step {self.global_step} - Embed Tokens Grad Norm: {grad.norm():.4f}")
+
+
     def validation_step(self, batch, batch_idx):
         """Recognition-specific validation step.
 
@@ -53,7 +69,7 @@ class RecognitionPLModule(OCRPLModule):
         pred = self.model(**batch)
 
         # Validate model outputs only in debug mode
-        if getattr(getattr(self.config, "global", None), "debug", False):
+        if self.config.get("global", {}).get("debug", False):
             try:
                 ValidatedTensorData(
                     tensor=pred["loss"], expected_device=batch["images"].device, allow_nan=False, allow_inf=False
@@ -78,6 +94,24 @@ class RecognitionPLModule(OCRPLModule):
                 if gt_texts:
                     self._compute_metrics(pred_texts, gt_texts)
                     self._log_validation_images(batch, pred_texts, gt_texts, batch_idx)
+
+                    # DEBUG: Print first few samples
+                    if batch_idx == 0:
+                        print(f"\n[Validation Debug] Samples:")
+                        print(f"  Pred Type: {type(inference_out)}")
+                        if isinstance(inference_out, dict):
+                             print(f"  Pred Keys: {list(inference_out.keys())}")
+                             if "tokens" in inference_out:
+                                 for i in range(min(5, len(inference_out['tokens']))):
+                                     print(f"  Pred IDs: {inference_out['tokens'][i].tolist()}")
+                             else:
+                                 print("  WARNING: 'tokens' key missing in inference_out dict!")
+                        else:
+                             print(f"  WARNING: inference_out is not a dict!")
+
+                        for i in range(min(5, len(pred_texts))):
+                             print(f"  Pred: '{pred_texts[i]}' | GT: '{gt_texts[i]}'")
+                        print(f"  Match Count: {sum([1 for p, g in zip(pred_texts, gt_texts) if p == g])}/{len(pred_texts)}")
 
         return pred["loss"]
 
@@ -119,17 +153,6 @@ class RecognitionPLModule(OCRPLModule):
 
         self.log("val/acc", batch_acc, batch_size=len(pred_texts), prog_bar=True)
         self.log("val/cer", self.rec_cer, batch_size=len(pred_texts), prog_bar=True)
-
-        # Debug logging
-        if self.trainer.is_global_zero:
-             print(f"\\n[DEBUG] Step {self.trainer.global_step} Predictions:")
-             for i in range(min(3, len(pred_texts))):
-                 tokenizer = self._get_tokenizer()
-                 if tokenizer:
-                     gt_tokens = tokenizer.encode(gt_texts[i])
-                     print(f"  GT Text:   '{gt_texts[i]}'")
-                     print(f"  GT Tokens: {gt_tokens}")
-                 print(f"  Pred Text: '{pred_texts[i]}'")
 
     def _log_validation_images(self, batch, pred_texts, gt_texts, batch_idx):
         """Log validation images to WandB if enabled."""

@@ -1,3 +1,3 @@
 #!/bin/bash
-cd /workspaces/upstageailab-ocr-recsys-competition-ocr-2
+cd /workspaces
 exec uv run python AgentQMS/mcp_server.py

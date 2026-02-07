@@ -1,0 +1,44 @@
+# @package _global_
+defaults:
+  - /data/runtime/performance/balanced@runtime
+  - override /domain: recognition
+  - override /hardware: rtx3060
+  - _self_
+
+# Experiment metadata
+experiment_name: rec_baseline_official
+run_name: official_parseq_${now:%Y%m%d_%H%M%S}
+
+# Training configuration
+trainer:
+  max_epochs: 100
+  precision: "16-mixed"
+  gradient_clip_val: 5.0
+  log_every_n_steps: 10
+
+# Data
+data:
+  batch_size: 256  # Official recommends 256-512
+  num_workers: 4
+
+# Override model architecture to use official PARSeq
+model:
+  architectures:
+    _target_: ocr.domains.recognition.models.parseq_official_adapter.PARSeqOfficial
+    num_tokens: ${model.vocab_size}
+    max_label_length: 25
+    img_size: [32, 128]
+    patch_size: [4, 8]
+    embed_dim: 384
+    enc_num_heads: 6
+    enc_mlp_ratio: 4
+    enc_depth: 12
+    dec_num_heads: 12
+    dec_mlp_ratio: 4
+    dec_depth: 1
+    perm_num: 6
+    perm_forward: true
+    perm_mirrored: true
+    decode_ar: true
+    refine_iters: 1
+    dropout: 0.1

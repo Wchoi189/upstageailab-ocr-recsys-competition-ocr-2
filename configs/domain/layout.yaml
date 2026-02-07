@@ -1,4 +1,4 @@
-# @package _group_
+
 
 # Layout Analysis Domain Configuration
 # Use with: uv run python runners/train.py +domain=layout

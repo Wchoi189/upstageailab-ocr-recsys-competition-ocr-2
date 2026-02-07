@@ -132,7 +132,7 @@ exclude = [
     "docs/",
     "ablation_study/",
     "archive/",
-    "experiment_manager/etk.py",
+    "dev_tools/experiment_manager/etk.py",
     "apps/agentqms-dashboard/",
     "tests/",  # Don't strictly type-check tests
     "runners/",  # ML runners often have dynamic types

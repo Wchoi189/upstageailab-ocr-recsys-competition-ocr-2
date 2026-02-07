@@ -2,12 +2,12 @@
 
 Active design documents and development roadmaps.
 
-**Last Updated**: 2026-02-02 18:20:06
+**Last Updated**: 2026-02-07 15:41:03
 **Total Artifacts**: 1
 
 ## Active (1)
 
-- [Automated MCP Test V2](2026-02-02_1820_design_mcp-test-auto-v2.md) (📅 2026-02-02 18:20 (KST), 📄 design) - Design for [component/system].
+- [Global Stateless AgentQMS Design](2026-02-07_1541_design_global-agentqms.md) (📅 2026-02-07 15:41 (KST), 📄 design) - Design for [component/system].
 
 ## Summary
 

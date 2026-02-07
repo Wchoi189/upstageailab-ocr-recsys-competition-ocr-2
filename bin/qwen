@@ -1,0 +1,5 @@
+#!/bin/bash
+# Wrapper for Qwen Code CLI (installed via pnpm)
+# Ensure the binary is found by adding local pnpm path
+export PATH="$HOME/.local/share/pnpm:$PATH"
+exec "$HOME/.local/share/pnpm/qwen" "$@"

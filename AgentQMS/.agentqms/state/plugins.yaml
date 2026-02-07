@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-02-03T15:26:35.564309+00:00'
+  generated_at: '2026-02-06T19:29:54.641254+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -337,6 +337,7 @@ resolved:
           status: active
           version: '1.0'
           severity: medium
+          description: ''
           tags:
           - bug
           - issue

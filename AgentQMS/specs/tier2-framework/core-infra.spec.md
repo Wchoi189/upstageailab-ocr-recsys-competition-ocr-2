@@ -128,5 +128,21 @@ deprecation_rules:
         \   \"old_function is deprecated and will be removed in v2.0. Use new_function\
         \ instead.\",\n        DeprecationWarning,\n        stacklevel=2\n    )\n\
         \    return new_function()\n"
-
-```
+multiprocessing_rules:
+  objective: Ensure stability and CUDA compatibility across process boundaries
+  critical:
+    start_method:
+      value: spawn
+      reason: fork is incompatible with initialized CUDA contexts, causing SegFaults
+  constraints:
+    picklability:
+      rule: All objects passed to workers (Configs, Datasets) must be picklable
+      action: Convert Hydra DictConfig to primitive dicts before passing to DataLoader
+    lazy_loading:
+      rule: File handles and Database connections (LMDB) must be initialized lazily in the worker
+      reason: Open file handles/transactions cannot be pickled
+  patterns:
+    required:
+      example: "class Dataset:\n    def __init__(self):\n        self.env = None\n\
+        \    def __getitem__(self, idx):\n        if self.env is None:\n            self.env\
+        \ = lmdb.open(...)\n"

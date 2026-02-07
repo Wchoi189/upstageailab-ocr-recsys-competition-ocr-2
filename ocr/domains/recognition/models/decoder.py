@@ -45,6 +45,10 @@ class PARSeqDecoder(BaseDecoder):
         # Token Embeddings
         self.embed_tokens = nn.Embedding(vocab_size, d_model)
 
+        # Input projection: project encoder features (in_channels) to decoder dimension (d_model)
+        # This is necessary when encoder output != d_model
+        self.input_proj = nn.Linear(in_channels, d_model) if in_channels != d_model else nn.Identity()
+
         # Normalization
         self.norm = nn.LayerNorm(d_model)
 
@@ -53,19 +57,35 @@ class PARSeqDecoder(BaseDecoder):
     def _init_weights(self):
         # FIX: standard transformer initialization (Xavier) works better for Post-Norm
         # trunc_normal(std=0.02) is too small and causes vanishing gradients without warmup
-        nn.init.xavier_uniform_(self.pos_encoder)
         nn.init.xavier_uniform_(self.embed_tokens.weight)
+
+        # Init Pos Encoder with Sinusoidal
+        # self.pos_encoder: [1, max_len, d_model]
+        max_len = self.max_len + 1 # Account for the +1 in pos_encoder definition
+        d_model = self.d_model
+
+        pe = torch.zeros(max_len, d_model)
+        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
+        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
+
+        pe[:, 0::2] = torch.sin(position * div_term)
+        pe[:, 1::2] = torch.cos(position * div_term)
+
+        with torch.no_grad():
+            self.pos_encoder.copy_(pe.unsqueeze(0))
 
     @property
     def out_channels(self) -> int:
         return self.d_model
 
-    def forward(self, features, targets=None, **kwargs):
+    def forward(self, features, targets=None, memory_key_padding_mask=None, **kwargs):
         """
         Args:
             features: List of feature tensors from encoder OR pre-flattened memory [B, S, D].
                       If list, we assume it's from TimmBackbone and process it.
             targets: [B, T] Token indices
+            memory_key_padding_mask: [B, S] Boolean mask (True = ignore, False = attend).
+                                      If None, assumes all visual tokens are valid.
         """
         # Handle BaseDecoder contract: features is list[torch.Tensor]
         if isinstance(features, list):
@@ -78,6 +98,15 @@ class PARSeqDecoder(BaseDecoder):
             memory = features
 
         device = memory.device
+        B, S, C = memory.shape
+
+        # Project encoder features to decoder dimension
+        memory = self.input_proj(memory)  # [B, S, in_channels] -> [B, S, d_model]
+
+        # Generate default memory mask if not provided
+        # Default: all visual tokens are valid (no padding)
+        if memory_key_padding_mask is None:
+            memory_key_padding_mask = torch.zeros(B, S, dtype=torch.bool, device=device)
 
         if targets is None:
              # If targets are not provided, we cannot perform AR decoding in this module alone.
@@ -100,18 +129,23 @@ class PARSeqDecoder(BaseDecoder):
 
         # Add positional encoding
         # Use T positions
-        # FIX: Scale pos_emb to match tgt_emb magnitude (sqrt(d_model)) so position isn't drowned out
+        # FIX: Scale pos_emb too, or use Sinusoidal.
+        # If we use Learned with Xavier, it must be scaled to match tgt_emb.
         pos_emb = self.pos_encoder[:, :T, :] * math.sqrt(self.d_model)
         tgt = tgt_emb + pos_emb
 
         # Causal Mask (Upper triangular)
         tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
 
-        # Padding Mask (Float: 0.0 = Keep, -inf = Ignore)
-        # Required to match tgt_mask dtype (Float) and avoid "mismatched types" warning
-        tgt_key_padding_mask = torch.zeros_like(targets, dtype=tgt_mask.dtype)
-        tgt_key_padding_mask.masked_fill_(targets == self.pad_token_id, float("-inf"))
+        # Padding Mask (Boolean: True = Ignore, False = Keep)
+        # Using boolean mask is often more stable with Flash Attention backends
+        tgt_key_padding_mask = (targets == self.pad_token_id)
 
-        output = self.decoder(tgt, memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask)
+        output = self.decoder(
+            tgt, memory,
+            tgt_mask=tgt_mask,
+            tgt_key_padding_mask=tgt_key_padding_mask,
+            memory_key_padding_mask=memory_key_padding_mask  # FIX: Prevent attention to padded visual features
+        )
 
         return self.norm(output)

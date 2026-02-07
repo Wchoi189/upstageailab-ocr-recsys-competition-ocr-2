@@ -43,3 +43,6 @@ description: 'Configuration Specification for framework tier'
 ## 3. Config Bloat Policy
 *   Limit nesting depth to 4 levels.
 *   Split files > 200 lines.
+4. Hydra Merging Pitfalls
+*   **Avoid**: `@package _group_` in domain configs (e.g., `domain/recognition.yaml`).
+*   **Reason**: It forces content into a literal `_group_` key instead of merging into the parent node, breaking domain detection logic.

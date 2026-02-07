@@ -5,7 +5,7 @@
             "args": [
                 "run",
                 "--directory",
-                "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+                "/workspaces",
                 "python",
                 "scripts/mcp/unified_server.py"
             ]

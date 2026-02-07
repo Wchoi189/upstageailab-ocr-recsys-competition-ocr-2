@@ -13,4 +13,4 @@ trainer:
   precision: "16-mixed"
 
 data:
-  batch_size: 64
+  batch_size: 384

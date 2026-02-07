@@ -304,7 +304,8 @@ async def main():
     parser.add_argument("--name", type=str, default="baseline", help="Dataset name")
     parser.add_argument("--batch-size", type=int, default=DEFAULT_BATCH_SIZE, help="Checkpoint batch size")
     parser.add_argument("--concurrency", type=int, default=DEFAULT_CONCURRENCY, help="Concurrent requests")
-    parser.add_argument("--checkpoint-dir", type=Path, default=Path("data/checkpoints/pseudo_labels"), help="Checkpoint directory")
+    from ocr.core.utils.path_utils import PROJECT_ROOT
+    parser.add_argument("--checkpoint-dir", type=Path, default=PROJECT_ROOT / "data/checkpoints/pseudo_labels", help="Checkpoint directory")
     parser.add_argument("--resume", action="store_true", help="Resume from checkpoint")
 
     args = parser.parse_args()

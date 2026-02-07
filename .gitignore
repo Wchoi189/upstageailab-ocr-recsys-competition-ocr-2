@@ -219,4 +219,4 @@ mcp-visibility-extension/
 packages/
 
 # Debug
-__DEBUG__/
+# __DEBUG__/

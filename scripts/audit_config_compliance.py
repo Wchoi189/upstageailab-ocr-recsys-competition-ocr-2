@@ -20,7 +20,7 @@ from collections import defaultdict
 # Project root
 PROJECT_ROOT = Path(__file__).parent.parent
 OCR_MODULE = PROJECT_ROOT / "ocr"
-CONFIG_ACCESS_FILE = PROJECT_ROOT / "project_compass" / "config_access.txt"
+CONFIG_ACCESS_FILE = PROJECT_ROOT / "dev_tools" / "project_compass" / "config_access.txt"
 CONFIG_STANDARD_FILE = PROJECT_ROOT / "AgentQMS" / "specs" / "tier2-framework" / "configuration.spec.md"
 
 

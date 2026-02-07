@@ -1,0 +1,740 @@
+================================================
+Quick Training Test (GPU, Limited Batches)
+================================================
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] - \n============================================================
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] - ============================================================\n
+[2026-02-07 22:15:15,906][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-02-07 22:15:15,906][ocr.pipelines.strategies.recognition_config][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-02-07 22:15:15,908][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:15:15,909][ocr.pipelines.strategies.recognition_config][INFO] -    ✓ Vocab size 1027 injected into model config
+[2026-02-07 22:15:17,364][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-07 22:15:17,626][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-07 22:15:17,786][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-07 22:15:17,997][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-07 22:15:18,066][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: PARSeq
+[2026-02-07 22:15:18,070][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:15:18,075][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:15:18,080][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:15:18,083][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:15:18,085][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+[2026-02-07 22:15:18,113][ocr.pipelines.orchestrator][INFO] -    ✓ RecognitionPLModule created
+[2026-02-07 22:15:18,123][ocr.pipelines.orchestrator][INFO] -    ✓ DataModule created
+[2026-02-07 22:15:18,124][ocr.pipelines.orchestrator][INFO] - ⚡ Configuring Lightning Trainer...
+INFO: GPU available: True (cuda), used: True
+[2026-02-07 22:15:18,160][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-02-07 22:15:18,161][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+INFO: 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-07 22:15:18,161][lightning.pytorch.utilities.rank_zero][INFO] - 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+INFO: `Trainer(overfit_batches=1)` was configured so 1 batch will be used.
+[2026-02-07 22:15:18,161][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer(overfit_batches=1)` was configured so 1 batch will be used.
+[2026-02-07 22:15:18,161][ocr.pipelines.orchestrator][INFO] -    ✓ Trainer ready
+[2026-02-07 22:15:18,161][ocr.pipelines.orchestrator][INFO] - 🏋️ Starting training...\n
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-02-07 22:15:18,340][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+┏━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name    ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model   │ PARSeq        │ 40.5 M │ train │     0 │
+│ 1 │ rec_cer │ CharErrorRate │      0 │ train │     0 │
+└───┴─────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 40.5 M                                                                                                  
+Non-trainable params: 0                                                                                                   
+Total params: 40.5 M                                                                                                      
+Total estimated model params size (MB): 161                                                                               
+Modules in train mode: 269                                                                                                
+Modules in eval mode: 0                                                                                                   
+Total FLOPs: 0                                                                                                            
+/workspaces/.venv/lib/python3.11/site-packages/torch/nn/functional.py:5962: UserWarning: Support for mismatched key_padding_mask and attn_mask is deprecated. Use same type for both instead.
+  warnings.warn(
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9974, Std: 1.4795
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1962
+
+[Grad Debug] Step 0 - Pos Encoder Grad Norm: 0.2924
+[Grad Debug] Step 0 - Embed Tokens Grad Norm: 0.2924
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0096, Std: 1.5194
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1959
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0019, Std: 1.4801
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1955
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0029, Std: 1.4578
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1951
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9966, Std: 1.4444
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1946
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9938, Std: 1.4421
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1941
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9927, Std: 1.4551
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1936
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9957, Std: 1.4681
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1931
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9978, Std: 1.4724
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1925
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0028, Std: 1.4833
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0043, Std: 0.1920
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0956, Std: 1.6008
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1915
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0956, Std: 1.6008
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1915
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 2]
+  Pred: '' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0083, Std: 1.4937
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1915
+
+[Grad Debug] Step 10 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 10 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0094, Std: 1.4996
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1910
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0094, Std: 1.5024
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1905
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0129, Std: 1.5016
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1900
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0150, Std: 1.5028
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1895
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0143, Std: 1.4967
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1889
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0132, Std: 1.4977
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1884
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0121, Std: 1.5007
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1879
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0113, Std: 1.5009
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1874
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0074, Std: 1.4872
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1869
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0863, Std: 1.6119
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1864
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0863, Std: 1.6119
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1864
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539]
+  Pred: '변변변변변변변변변변변변변변변변변변변변변변변변변' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0102, Std: 1.4914
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1864
+
+[Grad Debug] Step 20 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 20 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0137, Std: 1.5016
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1859
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0174, Std: 1.5053
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1854
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0196, Std: 1.5058
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1848
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0182, Std: 1.5026
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1843
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0153, Std: 1.5010
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1838
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0136, Std: 1.5040
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1833
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0142, Std: 1.5108
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1829
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0176, Std: 1.5198
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1824
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0196, Std: 1.5286
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1819
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0003, Std: 1.5353
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1814
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0003, Std: 1.5353
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1814
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0205, Std: 1.5341
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0042, Std: 0.1814
+
+[Grad Debug] Step 30 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 30 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0197, Std: 1.5358
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1809
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0172, Std: 1.5359
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1804
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0165, Std: 1.5347
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1799
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0168, Std: 1.5331
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1794
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0165, Std: 1.5320
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1789
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0158, Std: 1.5338
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1784
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0153, Std: 1.5338
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1778
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0154, Std: 1.5304
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1773
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0159, Std: 1.5263
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1768
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0078, Std: 1.5009
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1763
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0078, Std: 1.5009
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1763
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988]
+  Pred: '화화화화화화화화화화화화화화화화화화화화화화화화화' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0158, Std: 1.5220
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1763
+
+[Grad Debug] Step 40 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 40 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0157, Std: 1.5179
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1758
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0158, Std: 1.5147
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1753
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0156, Std: 1.5138
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1748
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0154, Std: 1.5124
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1743
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0153, Std: 1.5150
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1738
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0153, Std: 1.5148
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1733
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0156, Std: 1.5131
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1727
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0159, Std: 1.5109
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1722
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0162, Std: 1.5098
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1717
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9897, Std: 1.4490
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1712
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9897, Std: 1.4490
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1712
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988]
+  Pred: '화화화화화화화화화화화화화화화화화화화화화화화화화' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0162, Std: 1.5079
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1712
+
+[Grad Debug] Step 50 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 50 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0162, Std: 1.5076
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1707
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0153, Std: 1.5088
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1702
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0143, Std: 1.5098
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0041, Std: 0.1697
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0133, Std: 1.5107
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1692
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0123, Std: 1.5119
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1687
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0114, Std: 1.5129
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1681
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0103, Std: 1.5132
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1676
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0095, Std: 1.5139
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1671
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0090, Std: 1.5142
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1666
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9355, Std: 1.4205
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1661
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9355, Std: 1.4205
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1661
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0083, Std: 1.5147
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1661
+
+[Grad Debug] Step 60 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 60 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0073, Std: 1.5150
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1656
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0063, Std: 1.5149
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1651
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0054, Std: 1.5144
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1646
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0053, Std: 1.5143
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1641
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0053, Std: 1.5145
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1636
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0049, Std: 1.5145
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0040, Std: 0.1631
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0046, Std: 1.5144
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1626
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0042, Std: 1.5141
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1621
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0029, Std: 1.5132
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1616
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9438, Std: 1.4000
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1611
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9438, Std: 1.4000
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1611
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0017, Std: 1.5117
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1611
+
+[Grad Debug] Step 70 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 70 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0004, Std: 1.5099
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1605
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9996, Std: 1.5081
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1600
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9990, Std: 1.5067
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1595
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9985, Std: 1.5058
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1590
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9981, Std: 1.5052
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1585
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9978, Std: 1.5048
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1580
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9974, Std: 1.5041
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1575
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9969, Std: 1.5034
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1570
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9963, Std: 1.5028
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1565
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9623, Std: 1.3969
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1560
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9623, Std: 1.3969
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1560
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9958, Std: 1.5019
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0039, Std: 0.1560
+
+[Grad Debug] Step 80 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 80 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9952, Std: 1.5006
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1555
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9942, Std: 1.4984
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1550
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9933, Std: 1.4963
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1545
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9927, Std: 1.4947
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1540
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9917, Std: 1.4940
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1535
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9906, Std: 1.4936
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1531
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9897, Std: 1.4928
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1526
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9891, Std: 1.4923
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1521
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9880, Std: 1.4914
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1516
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9745, Std: 1.3884
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1511
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9745, Std: 1.3884
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1511
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9871, Std: 1.4895
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1511
+
+[Grad Debug] Step 90 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 90 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9860, Std: 1.4866
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0038, Std: 0.1506
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9847, Std: 1.4841
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1501
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9837, Std: 1.4816
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1496
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9830, Std: 1.4808
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1491
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9824, Std: 1.4794
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1486
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9822, Std: 1.4774
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1481
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9820, Std: 1.4760
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1477
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9825, Std: 1.4758
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1472
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9827, Std: 1.4763
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1467
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9727, Std: 1.3637
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1462
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9727, Std: 1.3637
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1462
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+  Pred: '"""""""""""""""""""""""""' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9825, Std: 1.4768
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1462
+
+[Grad Debug] Step 100 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 100 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9821, Std: 1.4775
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1457
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9823, Std: 1.4773
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1452
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9821, Std: 1.4761
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1448
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9819, Std: 1.4743
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1443
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9816, Std: 1.4718
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1438
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9818, Std: 1.4703
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0037, Std: 0.1433
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9813, Std: 1.4709
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1429
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9808, Std: 1.4711
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1424
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9809, Std: 1.4710
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1419
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9903, Std: 1.3590
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1414
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9903, Std: 1.3590
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1414
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 2]
+  Pred: '' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9812, Std: 1.4705
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1414
+
+[Grad Debug] Step 110 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 110 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9813, Std: 1.4689
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1410
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9813, Std: 1.4669
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1405
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9817, Std: 1.4640
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1400
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9817, Std: 1.4613
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1396
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9820, Std: 1.4601
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1391
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9819, Std: 1.4592
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1386
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9819, Std: 1.4585
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1382
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9818, Std: 1.4575
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1377
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9819, Std: 1.4560
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1372
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9937, Std: 1.3531
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1368
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9937, Std: 1.3531
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1368
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+  Pred: '"""""""""""""""""""""""""' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9816, Std: 1.4549
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1368
+
+[Grad Debug] Step 120 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 120 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9814, Std: 1.4535
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1363
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9813, Std: 1.4540
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1359
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9811, Std: 1.4534
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1354
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9803, Std: 1.4507
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1349
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9789, Std: 1.4470
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1345
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9778, Std: 1.4448
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1340
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9768, Std: 1.4428
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0036, Std: 0.1336
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9753, Std: 1.4405
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1331
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9735, Std: 1.4395
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1327
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9930, Std: 1.3536
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1322
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9930, Std: 1.3536
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1322
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988]
+  Pred: '화화화화화화화화화화화화화화화화화화화화화화화화화' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9717, Std: 1.4393
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1322
+
+[Grad Debug] Step 130 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 130 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9705, Std: 1.4424
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1318
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9695, Std: 1.4464
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1313
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9692, Std: 1.4517
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1309
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9688, Std: 1.4576
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1304
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9684, Std: 1.4630
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1300
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9678, Std: 1.4655
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1296
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9669, Std: 1.4669
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1291
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9657, Std: 1.4693
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1287
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9657, Std: 1.4763
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0035, Std: 0.1282
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9531, Std: 1.3642
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1278
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9531, Std: 1.3642
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1278
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988]
+  Pred: '화화화화화화화화화화화화화화화화화화화화화화화화화' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9683, Std: 1.4807
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1278
+
+[Grad Debug] Step 140 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 140 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9713, Std: 1.4828
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1274
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9722, Std: 1.4807
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1269
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9713, Std: 1.4766
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1265
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9700, Std: 1.4750
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1261
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9691, Std: 1.4731
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1256
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9677, Std: 1.4712
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1252
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9669, Std: 1.4708
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1248
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9682, Std: 1.4687
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1244
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9663, Std: 1.4597
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1240
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9330, Std: 1.3705
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1235
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9330, Std: 1.3705
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1235
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9627, Std: 1.4499
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1235
+
+[Grad Debug] Step 150 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 150 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9602, Std: 1.4443
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1231
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9594, Std: 1.4416
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1227
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9595, Std: 1.4402
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1223
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9578, Std: 1.4408
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1219
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9537, Std: 1.4440
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1215
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9506, Std: 1.4468
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1210
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9475, Std: 1.4459
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1206
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9426, Std: 1.4406
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1202
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9436, Std: 1.4431
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1198
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.8940, Std: 1.4023
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1194
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.8940, Std: 1.4023
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1194
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697, 697]
+  Pred: '와와와와와와와와와와와와와와와와와와와와와와와와와' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9445, Std: 1.4468
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1194
+
+[Grad Debug] Step 160 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 160 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9451, Std: 1.4493
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1190
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9460, Std: 1.4529
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1186
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9473, Std: 1.4554
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1182
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9479, Std: 1.4560
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1178
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9483, Std: 1.4549
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0034, Std: 0.1174
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9489, Std: 1.4537
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1170
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9490, Std: 1.4514
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1166
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9487, Std: 1.4478
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1162
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9481, Std: 1.4465
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1158
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9088, Std: 1.3504
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1154
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9088, Std: 1.3504
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1154
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988, 988]
+  Pred: '화화화화화화화화화화화화화화화화화화화화화화화화화' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9487, Std: 1.4466
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1154
+
+[Grad Debug] Step 170 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 170 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9490, Std: 1.4470
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1150
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9504, Std: 1.4485
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1146
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9516, Std: 1.4520
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1142
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9530, Std: 1.4525
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1138
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9534, Std: 1.4512
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1135
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9538, Std: 1.4512
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1131
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9538, Std: 1.4497
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1127
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9538, Std: 1.4516
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1123
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9544, Std: 1.4586
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1119
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9379, Std: 1.3553
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1115
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9379, Std: 1.3553
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1115
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+  Pred: '"""""""""""""""""""""""""' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9549, Std: 1.4572
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1115
+
+[Grad Debug] Step 180 - Pos Encoder Grad Norm: 0.0001
+[Grad Debug] Step 180 - Embed Tokens Grad Norm: 0.0001
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9553, Std: 1.4551
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1111
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9554, Std: 1.4512
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1108
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9557, Std: 1.4456
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1104
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9559, Std: 1.4406
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1100
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9552, Std: 1.4358
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1096
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9548, Std: 1.4317
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1092
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9546, Std: 1.4290
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1089
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9545, Std: 1.4264
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1085
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9545, Std: 1.4256
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1081
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0080, Std: 1.3748
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1077
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 1.0080, Std: 1.3748
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1077
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6]
+  Pred: '"""""""""""""""""""""""""' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9553, Std: 1.4266
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1077
+
+[Grad Debug] Step 190 - Pos Encoder Grad Norm: 0.0002
+[Grad Debug] Step 190 - Embed Tokens Grad Norm: 0.0002
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9554, Std: 1.4267
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1074
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9555, Std: 1.4270
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1070
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9545, Std: 1.4274
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1066
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9533, Std: 1.4281
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1063
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9519, Std: 1.4285
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0033, Std: 0.1059
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9513, Std: 1.4302
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0032, Std: 0.1055
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9510, Std: 1.4336
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0032, Std: 0.1052
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9501, Std: 1.4372INFO: `Trainer.fit` stopped: `max_epochs=200` reached.
+
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0032, Std: 0.1048
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9489, Std: 1.4407
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0032, Std: 0.1044
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9677, Std: 1.3553
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0031, Std: 0.1041
+DEBUG: Visual Feat: torch.Size([1, 256, 2, 8]), Mean: 0.9677, Std: 1.3553
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 0.0031, Std: 0.1041
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539, 539]
+  Pred: '변변변변변변변변변변변변변변변변변변변변변변변변변' | GT: '"변화와'
+  Match Count: 0/1
+[2026-02-07 22:15:48,052][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer.fit` stopped: `max_epochs=200` reached.
+Epoch 199/199 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 1/1 0:00:00 • 0:00:00 0.00it/s v_num: 57.000 val/acc: 0.000 val/cer: 
+                                                                                    6.000                                 
+[2026-02-07 22:15:48,461][ocr.pipelines.orchestrator][INFO] - \n✅ Training complete!
+
+✅ Training test completed successfully!

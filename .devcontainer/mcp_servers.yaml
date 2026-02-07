@@ -5,7 +5,7 @@ servers:
   - name: unified_project
     path: scripts/mcp/unified_server.py
     description: Unified MCP server aggregating all tools/resources from individual servers
-    note: Runtime aggregation - imports from AgentQMS, project_compass, experiment_manager, agent-debug-toolkit
+    note: Runtime aggregation - imports from AgentQMS, dev_tools/project_compass, dev_tools/experiment_manager, dev_tools/agent_debug_toolkit
     resources:
       - agentqms://standards/index
       - agentqms://standards/artifact_types
@@ -69,7 +69,7 @@ servers:
       - get_standard
 
   - name: project_compass
-    path: project_compass/mcp_server.py
+    path: dev_tools/project_compass/project_compass/mcp_server.py
     description: Project state, Sprint Context management, navigation (Vessel AI Protocols)
     resources:
       - vessel://state
@@ -80,7 +80,7 @@ servers:
       - compass_meta_spec
 
   - name: experiment_manager
-    path: experiment_manager/mcp_server.py
+    path: dev_tools/experiment_manager/src/etk/mcp_server.py
     description: Experiment tracking, insights, task management
     resources:
       - experiments://agent_interface
@@ -95,7 +95,7 @@ servers:
       - sync_experiment
 
   - name: agent_debug_toolkit
-    path: agent-debug-toolkit/src/agent_debug_toolkit/mcp_server.py
+    path: dev_tools/agent_debug_toolkit/agent_debug_toolkit/mcp_server.py
     description: AST-based analysis and code editing (meta-tools and individual tools)
     tools:
       - adt_meta_query

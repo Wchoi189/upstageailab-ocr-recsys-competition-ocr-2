@@ -11,19 +11,19 @@ encoder:
   model_name: resnet18
   pretrained: true
   features_only: true
-  output_indices: [4]
+  output_indices: [3]  # Layer 3 outputs 256 channels (was [4])
 
 decoder:
   _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
-  in_channels: 512  # From ResNet18 last layer
-  d_model: 512
-  nhead: 8
+  in_channels: 256  # Match encoder output (was 512)
+  d_model: 256      # Simplified to match encoder (was 384)
+  nhead: 8          # Divisible by 256 (was 12)
   num_layers: 12
   vocab_size: ${model.vocab_size}
 
 head:
   _target_: torch.nn.Linear
-  in_features: 512
+  in_features: 256  # Match decoder d_model (was 384)
   out_features: ${model.vocab_size}
 
 loss:

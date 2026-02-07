@@ -31,7 +31,7 @@ async def verify():
     # Check file content
     # Use standard path resolution from AgentQMS
     project_root = get_project_root()
-    feedback_file = project_root / "project_compass/feedback_log.md"
+    feedback_file = project_root / "dev_tools/project_compass/feedback_log.md"
     if feedback_file.exists():
         content = feedback_file.read_text()
         if "Test observation" in content:

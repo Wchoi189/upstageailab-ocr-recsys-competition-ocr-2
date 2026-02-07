@@ -19,7 +19,7 @@ Address severe startup timeouts (>60s) and import hangs encountered during Phase
 ### Phase 1: Diagnostic Profiling
 
 #### [NEW] [import_profile.log](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/import_profile.log)
-- Run `uv run python -X importtime runners/train.py experiment=rec_baseline_v1 +trainer.fast_dev_run=True 2> import_profile.log`
+- Run `uv run python -X importtime scripts/runners/train.py experiment=rec_baseline_v1 +trainer.fast_dev_run=True 2> import_profile.log`
 - Capture raw importtime data for baseline analysis
 
 #### Tuna Visualization

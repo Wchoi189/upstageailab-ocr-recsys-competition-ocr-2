@@ -6,10 +6,10 @@ This is an OCR (Optical Character Recognition) and layout analysis system develo
 ## Key Components
 - **OCR Module**: Core text recognition functionality located in `/ocr/`
 - **Configurations**: Hydra-based configuration system in `/configs/`
-- **Project Compass**: Agentic navigation system in `/project_compass/`
+- **Project Compass**: Agentic navigation system in `/dev_tools/project_compass/`
 - **AgentQMS**: Quality management system for standards and artifacts in `/AgentQMS/`
-- **Experiment Manager**: System for managing experiments in `/experiment_manager/`
-- **Agent Debug Toolkit**: AST-based debugging tools in `/agent-debug-toolkit/`
+- **Experiment Manager**: System for managing experiments in `/dev_tools/experiment_manager/`
+- **Agent Debug Toolkit**: AST-based debugging tools in `/dev_tools/agent_debug_toolkit/`
 
 ## Architecture
 - **Text Recognition**: PARSeq and CRNN architectures
@@ -21,10 +21,10 @@ This is an OCR (Optical Character Recognition) and layout analysis system develo
 ## Important Directories
 - `/ocr/` - Main OCR implementation
 - `/configs/` - Hydra configuration files
-- `/project_compass/` - Agentic navigation system
+- `/dev_tools/project_compass/` - Agentic navigation system
 - `/AgentQMS/` - Quality management and standards
-- `/experiment_manager/` - Experiment tracking and management
-- `/agent-debug-toolkit/` - AST debugging tools
+- `/dev_tools/experiment_manager/` - Experiment tracking and management
+- `/dev_tools/agent_debug_toolkit/` - AST debugging tools
 - `/scripts/` - Utility scripts
 - `/docs/` - Documentation
 - `/tests/` - Test suite

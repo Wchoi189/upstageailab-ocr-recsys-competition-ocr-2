@@ -5,7 +5,7 @@ import re
 from pathlib import Path
 
 # Paths
-WORKSPACE_ROOT = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
+WORKSPACE_ROOT = Path("/workspaces")
 SHARED_CONFIG_PATH = WORKSPACE_ROOT / "scripts/mcp/shared_config.json"
 GEMINI_CONFIG_PATH = Path("/home/vscode/.gemini/antigravity/mcp_config.json")
 CLAUDE_CONFIG_DIR = Path("/home/vscode/.claude")

@@ -29,21 +29,26 @@ class VesselPaths:
     REPLACES: CompassPaths (legacy)
     """
 
-    def __init__(self, project_root: Path | None = None):
-        if project_root:
-            self.project_root = project_root
+    def __init__(self, project_root: Path | None = None, compass_dir: Path | None = None):
+        if compass_dir:
+             self.compass_dir = compass_dir
+             # If compass_dir is provided, assume project_root is its parent unless specified
+             self.project_root = project_root if project_root else compass_dir.parent
         else:
-            # Auto-detect project root by finding project_compass/
-            current = Path.cwd()
-            while current != current.parent:
-                if (current / "project_compass").exists():
-                    self.project_root = current
-                    break
-                current = current.parent
+            if project_root:
+                self.project_root = project_root
             else:
-                self.project_root = Path.cwd()
+                # Auto-detect project root by finding project_compass/
+                current = Path.cwd()
+                while current != current.parent:
+                    if (current / "project_compass").exists():
+                        self.project_root = current
+                        break
+                    current = current.parent
+                else:
+                    self.project_root = Path.cwd()
 
-        self.compass_dir = self.project_root / "project_compass"
+            self.compass_dir = self.project_root / "project_compass"
 
         # V2 Directories
         self.vessel_dir = self.compass_dir / ".vessel"

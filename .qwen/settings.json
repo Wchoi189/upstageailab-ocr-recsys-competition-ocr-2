@@ -27,16 +27,16 @@
         "**/AgentQMS/**/*",
         "**/ocr/**/*",
         "**/configs/**/*",
-        "**/project_compass/**/*",
+        "**/dev_tools/project_compass/**/*",
         "**/scripts/**/*",
         "**/runners/**/*",
         "**/bin/**/*",
         "**/Makefile",
         "**/package.json",
         "**/pyproject.toml",
-        "**/experiment_manager/**/*",
-        "**/agent-debug-toolkit/**/*",
-        "**/airflow-batch-processor/**/*",
+        "**/dev_tools/experiment_manager/**/*",
+        "**/dev_tools/agent_debug_toolkit/**/*",
+        "**/dev_tools/airflow_batch_processor/**/*",
         "**/analysis/**/*",
         "**/apps/**/*",
         "**/packages/**/*",
@@ -59,14 +59,14 @@
         "**/_*/**",
         "**/docs/assets/**",
         "**/docs/generated/**",
-        "**/experiment_manager/experiments/**/outputs/**",
-        "**/experiment_manager/experiments/**/checkpoints/**",
-        "**/experiment_manager/experiments/**/__pycache__/**",
+        "**/dev_tools/experiment_manager/experiments/**/outputs/**",
+        "**/dev_tools/experiment_manager/experiments/**/checkpoints/**",
+        "**/dev_tools/experiment_manager/experiments/**/__pycache__/**",
         "**/AgentQMS/standards/tier3-agents/claude/**/*"
       ]
     },
     "includeDirectories": [
-      "airflow-batch-processor"
+      "dev_tools/airflow_batch_processor"
     ],
     "loadMemoryFromIncludeDirectories": false,
     "discoveryMaxDirs": 15,
@@ -79,7 +79,7 @@
       "args": [
         "run",
         "--directory",
-        "/workspaces/upstageailab-ocr-recsys-competition-ocr-2",
+        "/workspaces",
         "python",
         "scripts/mcp/unified_server.py"
       ]

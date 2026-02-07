@@ -9,14 +9,19 @@ export HISTCONTROL=ignoreboth:ignoredups:ignorespace HISTSIZE=10000
 # Path Helper Function
 add_path() { [ -d "$1" ] && [[ ":$PATH:" != *":$1:"* ]] && PATH="$1:$PATH"; }
 
-# Add Paths (Priority Order)
+# Add Paths (Priority Order - Reverse of addition)
+# Bottom is added first, Top is added last (highest priority)
 add_path "$HOME/bin"
 add_path "$HOME/.local/bin"
 add_path "$HOME/.cargo/bin"
 add_path "/opt/uv"
-add_path "$PWD/AgentQMS/bin"
-add_path "/workspaces/node_modules_global/bin"
-add_path "/workspaces/repomix/bin"
+
+# Project Binaries
+add_path "/workspaces/bin"
+add_path "/workspaces/AgentQMS/bin"
+add_path "/workspaces/.venv/bin"    # Critical for etk, adt, compass, specify
+add_path "/usr/local/share/pnpm"    # Global pnpm fallback
+
 export PATH
 
 # 2. Python Setup (PyEnv & UV)
@@ -29,38 +34,46 @@ if command -v pyenv >/dev/null; then
     eval "$(pyenv virtualenv-init -)"
 fi
 
+# Override pyenv's VIRTUAL_ENV - let UV manage it instead
+unset VIRTUAL_ENV
+
 # Auto-activate .venv when entering directory
 uv_auto_activate() {
     if [ -f ".venv/bin/activate" ] && [ -z "$VIRTUAL_ENV" ]; then
         source .venv/bin/activate
     fi
 }
-PROMPT_COMMAND="uv_auto_activate"
+
+append_prompt_command() {
+    local new_cmd="$1"
+    if [[ -z "${PROMPT_COMMAND:-}" ]]; then
+        PROMPT_COMMAND="$new_cmd"
+        return
+    fi
+    while [[ "$PROMPT_COMMAND" == *";" ]]; do
+        PROMPT_COMMAND="${PROMPT_COMMAND%;}"
+    done
+    PROMPT_COMMAND="${PROMPT_COMMAND};${new_cmd}"
+}
 
 # 3. The Ultra-Concise Prompt
-# Logic: Shows ONLY current dir and an arrow.
-# Arrow turns PURPLE if venv is active, GREEN if not.
-# No text labels. No git branch clutter.
 set_prompt() {
     local BLUE='\[\033[0;34m\]'
     local GREEN='\[\033[0;32m\]'
     local PURPLE='\[\033[0;35m\]'
     local RESET='\[\033[0m\]'
 
-    # Choose color based on Venv status
     if [ -n "$VIRTUAL_ENV" ] || [ -n "$CONDA_DEFAULT_ENV" ]; then
         local ARROW_COLOR="$PURPLE"
     else
         local ARROW_COLOR="$GREEN"
     fi
-
-    # PS1: [BlueDir] [ColorArrow]
     PS1="${BLUE}\W ${ARROW_COLOR}❯${RESET} "
 }
-PROMPT_COMMAND="${PROMPT_COMMAND};set_prompt"
+append_prompt_command "uv_auto_activate"
+append_prompt_command "set_prompt"
 
 # 4. Aliases
-# Core
 alias ls='ls --color=auto' ll='ls -alF' la='ls -A' l='ls -CF'
 alias ..='cd ..' ...='cd ../..'
 alias grep='grep --color=auto'
@@ -83,7 +96,6 @@ alias predict='uv run python runners/predict.py'
 # 5. Utilities
 mkcd() { mkdir -p "$1" && cd "$1"; }
 
-# Compact Extract
 extract() {
     if [ -f "$1" ]; then
         case $1 in
@@ -97,9 +109,7 @@ extract() {
     else echo "File not found"; fi
 }
 
-# Cleanup stale vars
 [ "$PYENV_VERSION" = "doc-pyenv" ] && unset PYENV_VERSION
-[ -n "$VIRTUAL_ENV" ] && [ ! -d "$VIRTUAL_ENV" ] && unset VIRTUAL_ENV
 
 # Enable Completion
 if [ -f /usr/share/bash-completion/bash_completion ]; then
@@ -107,6 +117,5 @@ if [ -f /usr/share/bash-completion/bash_completion ]; then
 fi
 
 # === End of .bashrc ===
-export PATH="/workspaces/bin:$PATH"
-alias python="uv run python"
-alias pytest="uv run pytest"
+export OLLAMA_BASE_URL=http://host.docker.internal:11434
+export HF_HOME="/mnt/external_artifacts/huggingface"

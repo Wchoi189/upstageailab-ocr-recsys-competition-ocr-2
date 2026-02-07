@@ -1,6 +1,6 @@
 import typer
 from pathlib import Path
-# # from etl.core import  # TODO: ETL module not in main package  # TODO: ETL module not in main package LMDBConverter
+from scripts.data.etl.core import LMDBConverter
 import lmdb
 import cv2
 import numpy as np

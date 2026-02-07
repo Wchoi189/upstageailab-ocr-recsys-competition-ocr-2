@@ -1,0 +1,35 @@
+# Official PARSeq Architecture Configuration
+# Uses the battle-tested implementation from baudm/parseq
+
+_target_: ocr.domains.recognition.models.parseq_official_adapter.PARSeqOfficial
+
+# Architecture parameters
+num_tokens: ${model.vocab_size}  # Will be injected by recognition config strategy
+max_label_length: 25
+
+# Input/Patch configuration
+img_size: [32, 128]  # H, W
+patch_size: [4, 8]   # Patch height, width
+
+# Encoder (Vision Transformer)
+embed_dim: 384
+enc_num_heads: 6
+enc_mlp_ratio: 4
+enc_depth: 12
+
+# Decoder (Permutation Language Model)
+dec_num_heads: 12
+dec_mlp_ratio: 4
+dec_depth: 1
+
+# Permutation Language Modeling
+perm_num: 6          # Number of permutations to sample during training
+perm_forward: true   # Always include forward permutation
+perm_mirrored: true  # Include reverse permutations
+
+# Decoding strategy
+decode_ar: true      # Autoregressive decoding during inference
+refine_iters: 1      # Number of refinement iterations
+
+# Regularization
+dropout: 0.1

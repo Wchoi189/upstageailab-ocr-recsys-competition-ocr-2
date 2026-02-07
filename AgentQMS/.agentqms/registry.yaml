@@ -1,68 +1,9 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P7
-generated_at: '2026-02-02T11:50:53.568121+00:00'
-total_specs: 14
+generated_at: '2026-02-06T19:31:27.609180+00:00'
+total_specs: 22
 specs:
-  ADS_SCHEMAS:
-    id: ADS_SCHEMAS
-    file_path: AgentQMS/specs/schemas/ads_schemas.spec.md
-    description: '**Tier**: Schemas'
-  VALIDATION:
-    id: VALIDATION
-    file_path: AgentQMS/specs/tier4-workflows/validation.spec.md
-    tier: 4
-    description: '**Tier**: 4 (Workflows)'
-  ARCHITECTURE:
-    id: ARCHITECTURE
-    file_path: AgentQMS/specs/tier1-contracts/architecture.spec.md
-    tier: 1
-    description: '**Tier**: 1 (Contracts)'
-  COMPLIANCE:
-    id: COMPLIANCE
-    file_path: AgentQMS/specs/tier1-contracts/compliance.spec.md
-    tier: 1
-    description: '**Tier**: 1 (Contracts)'
-  CONFIGURATION:
-    id: CONFIGURATION
-    file_path: AgentQMS/specs/tier2-framework/configuration.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  CONSTRAINTS:
-    id: CONSTRAINTS
-    file_path: AgentQMS/specs/tier2-framework/constraints.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  CORE_INFRA:
-    id: CORE_INFRA
-    file_path: AgentQMS/specs/tier2-framework/core_infra.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  DISCOVERY:
-    id: DISCOVERY
-    file_path: AgentQMS/specs/tier2-framework/discovery.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  FRAMEWORK_SPECS:
-    id: FRAMEWORK_SPECS
-    file_path: AgentQMS/specs/tier2-framework/framework_specs.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  MISC:
-    id: MISC
-    file_path: AgentQMS/specs/tier2-framework/misc.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  OCR_ENGINE:
-    id: OCR_ENGINE
-    file_path: AgentQMS/specs/tier2-framework/ocr_engine.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
-  RUNTIME:
-    id: RUNTIME
-    file_path: AgentQMS/specs/tier2-framework/runtime.spec.md
-    tier: 2
-    description: '**Tier**: 2 (Framework)'
   AGENT_IDENTITIES:
     id: AGENT_IDENTITIES
     file_path: AgentQMS/specs/tier3-agents/agent_identities.spec.md
@@ -73,3 +14,128 @@ specs:
     file_path: AgentQMS/specs/tier4-workflows/workflows.spec.md
     tier: 4
     description: '**Tier**: 4 (Workflows)'
+  VALIDATION:
+    id: VALIDATION
+    file_path: AgentQMS/specs/schemas/validation.spec.md
+    description: '**Tier**: Schemas'
+  SC-006:
+    id: SC-006
+    file_path: AgentQMS/specs/tier1-contracts/prohibited-actions.spec.md
+    tier: 1
+    description: '```yaml'
+    priority: critical
+  ARCHITECTURE:
+    id: ARCHITECTURE
+    file_path: AgentQMS/specs/tier1-contracts/architecture.spec.md
+    tier: 1
+    description: '**Tier**: 1 (Contracts)'
+  COMPLIANCE:
+    id: COMPLIANCE
+    file_path: AgentQMS/specs/tier1-contracts/compliance.spec.md
+    tier: 1
+    description: '**Tier**: 1 (Contracts)'
+  SC-002:
+    id: SC-002
+    file_path: AgentQMS/specs/tier1-contracts/artifact-types.spec.md
+    tier: 1
+    description: Artifact type catalog and source-of-truth references
+    dependencies:
+    - SC-001
+    priority: critical
+  SC-010:
+    id: SC-010
+    file_path: AgentQMS/specs/tier1-contracts/workflow-requirements.spec.md
+    tier: 1
+    description: Required workflow policies for artifact creation and validation
+    dependencies:
+    - naming-conventions.yaml
+    - file-placement-rules.yaml
+    priority: critical
+  SC-004:
+    id: SC-004
+    file_path: AgentQMS/specs/tier1-contracts/file-placement-rules.spec.md
+    tier: 1
+    description: '```yaml'
+    priority: critical
+  ADS_SCHEMAS:
+    id: ADS_SCHEMAS
+    file_path: AgentQMS/specs/schemas/ads_schemas.spec.md
+    description: '**Tier**: Schemas'
+  FW-OCR-ENGINE:
+    id: FW-OCR-ENGINE
+    file_path: AgentQMS/specs/tier2-framework/ocr-engine.spec.md
+    tier: 2
+    description: OCR Engine standards consolidated from pipeline contracts, preprocessing, postprocessing,
+      model management, orchestration, coordinates, and image loading.
+    priority: high
+  FW-CONFIGURATION.SPEC:
+    id: FW-CONFIGURATION.SPEC
+    file_path: AgentQMS/specs/tier2-framework/configuration.spec.md
+    tier: 2
+    description: Configuration Specification for framework tier
+    priority: high
+  FW-018:
+    id: FW-018
+    file_path: AgentQMS/specs/tier2-framework/patterns.spec.md
+    tier: 2
+    description: Design patterns, anti-patterns, and debugging guide for Hydra 1.3.2 V5.0 - load when
+      debugging
+    priority: high
+  FW-RUNTIME.SPEC:
+    id: FW-RUNTIME.SPEC
+    file_path: AgentQMS/specs/tier2-framework/runtime.spec.md
+    tier: 2
+    description: Runtime Specification for framework tier
+    priority: high
+  CONTEXT-BUNDLES:
+    id: CONTEXT-BUNDLES
+    file_path: AgentQMS/specs/tier2-framework/context-bundles.spec.md
+    tier: 2
+    description: Discovery indexes for auto-loading task-relevant files to AI agents.
+  FW-030:
+    id: FW-030
+    file_path: AgentQMS/specs/tier2-framework/core-infra.spec.md
+    tier: 2
+    description: '```yaml'
+    priority: high
+  AG-006:
+    id: AG-006
+    file_path: AgentQMS/specs/tier2-framework/agent-infra.spec.md
+    tier: 3
+    description: Ollama model catalog with specifications for Qwen model family
+    dependencies:
+    - SC-007
+    - FW-034
+    priority: high
+  FW-004:
+    id: FW-004
+    file_path: AgentQMS/specs/tier2-framework/api.spec.md
+    tier: 2
+    description: '```yaml'
+    priority: critical
+  FW-MISC.SPEC:
+    id: FW-MISC.SPEC
+    file_path: AgentQMS/specs/tier2-framework/misc.spec.md
+    tier: 2
+    description: Miscellaneous Specification for framework tier
+    priority: high
+  FW-037:
+    id: FW-037
+    file_path: AgentQMS/specs/tier2-framework/discovery.spec.md
+    tier: 2
+    description: Keyword mappings for context bundle task detection and routing
+    dependencies:
+    - FW-034
+    priority: high
+  FW-FRAMEWORK_SPECS.SPEC:
+    id: FW-FRAMEWORK_SPECS.SPEC
+    file_path: AgentQMS/specs/tier2-framework/framework_specs.spec.md
+    tier: 2
+    description: Framework Specifications for framework tier
+    priority: high
+  FW-CONSTRAINTS.SPEC:
+    id: FW-CONSTRAINTS.SPEC
+    file_path: AgentQMS/specs/tier2-framework/constraints.spec.md
+    tier: 2
+    description: Constraints Specification for framework tier
+    priority: high

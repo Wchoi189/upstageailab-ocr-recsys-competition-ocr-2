@@ -20,17 +20,22 @@ class OCRDataPLModule(pl.LightningDataModule):
     def __init__(self, dataset, config):
         super().__init__()
         self.dataset = dataset
-        self.config = config
-        self.dataloaders_cfg = self.config.dataloaders
+        # Sanitize config to primitive dicts to ensure picklability for 'spawn' multiprocessing
+        from omegaconf import OmegaConf, DictConfig
+        if isinstance(config, DictConfig):
+            self.config = OmegaConf.to_container(config, resolve=True)
+        else:
+            self.config = config
+
+        self.dataloaders_cfg = self.config['dataloaders'] # Access as dict
         # Try to find collate_fn in root or data namespace
-        if hasattr(self.config, "collate_fn"):
-            self.collate_cfg = self.config.collate_fn
-        elif hasattr(self.config, "data") and hasattr(self.config.data, "collate_fn"):
-            self.collate_cfg = self.config.data.collate_fn
+        if "collate_fn" in self.config:
+            self.collate_cfg = self.config["collate_fn"]
+        elif "data" in self.config and "collate_fn" in self.config["data"]:
+            self.collate_cfg = self.config["data"]["collate_fn"]
         else:
              # Last resort: try dictionary key access if it's a config
-             if is_config(self.config):
-                 self.collate_cfg = self.config.get("collate_fn") or self.config.get("data", {}).get("collate_fn")
+             self.collate_cfg = self.config.get("collate_fn") or self.config.get("data", {}).get("collate_fn")
 
              if not self.collate_cfg:
                 raise AttributeError("Missing 'collate_fn' in config (checked root and 'data.collate_fn')")
@@ -43,7 +48,7 @@ class OCRDataPLModule(pl.LightningDataModule):
         return collate_fn
 
     def train_dataloader(self):
-        train_loader_config = self.dataloaders_cfg.train_dataloader
+        train_loader_config = self.dataloaders_cfg['train_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if train_loader_config.get("num_workers", 0) == 0:
             train_loader_config = {k: v for k, v in train_loader_config.items() if k not in ["prefetch_factor", "persistent_workers"]}
@@ -51,7 +56,7 @@ class OCRDataPLModule(pl.LightningDataModule):
         return DataLoader(self.dataset["train"], collate_fn=collate_fn, **train_loader_config)
 
     def val_dataloader(self):
-        val_loader_config = self.dataloaders_cfg.val_dataloader
+        val_loader_config = self.dataloaders_cfg['val_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if val_loader_config.get("num_workers", 0) == 0:
             val_loader_config = {k: v for k, v in val_loader_config.items() if k not in ["prefetch_factor", "persistent_workers"]}
@@ -59,7 +64,7 @@ class OCRDataPLModule(pl.LightningDataModule):
         return DataLoader(self.dataset["val"], collate_fn=collate_fn, **val_loader_config)
 
     def test_dataloader(self):
-        test_loader_config = self.dataloaders_cfg.test_dataloader
+        test_loader_config = self.dataloaders_cfg['test_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if test_loader_config.get("num_workers", 0) == 0:
             test_loader_config = {k: v for k, v in test_loader_config.items() if k not in ["prefetch_factor", "persistent_workers"]}
@@ -67,7 +72,7 @@ class OCRDataPLModule(pl.LightningDataModule):
         return DataLoader(self.dataset["test"], collate_fn=collate_fn, **test_loader_config)
 
     def predict_dataloader(self):
-        predict_loader_config = self.dataloaders_cfg.predict_dataloader
+        predict_loader_config = self.dataloaders_cfg['predict_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if predict_loader_config.get("num_workers", 0) == 0:
             predict_loader_config = {k: v for k, v in predict_loader_config.items() if k not in ["prefetch_factor", "persistent_workers"]}

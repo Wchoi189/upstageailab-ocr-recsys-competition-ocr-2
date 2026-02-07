@@ -33,22 +33,22 @@ trainer:
 # Global Dataloader Defaults (Fallback)
 dataloaders:
   train_dataloader:
-    num_workers: 4
-    pin_memory: true
+    num_workers: 2  # Reduced from 4 - baudm/parseq proven value for Docker CUDA
+    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
     persistent_workers: true
     prefetch_factor: 2
   val_dataloader:
-    num_workers: 4
-    pin_memory: true
+    num_workers: 2  # Reduced from 4 - baudm/parseq proven value for Docker CUDA
+    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
     persistent_workers: true
     prefetch_factor: 2
   test_dataloader:
     num_workers: 2
-    pin_memory: true
+    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
     persistent_workers: true
     prefetch_factor: 1
   predict_dataloader:
     num_workers: 2
-    pin_memory: true
+    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
     persistent_workers: true
     prefetch_factor: 1

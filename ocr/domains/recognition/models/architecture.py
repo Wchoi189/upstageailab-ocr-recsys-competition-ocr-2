@@ -1,4 +1,5 @@
 import torch
+import math
 from omegaconf import DictConfig
 from ocr.core.models.architecture import OCRModel
 
@@ -21,16 +22,14 @@ class PARSeq(OCRModel):
         loss=None,
         **kwargs
     ):
-        # Handle Atomic Instantiation where 'cfg' might be missing or minimal
+        # Handle Atomic Instantiation where 'cfg' might be passed as kwargs or object
         if cfg is None:
-            # Create a DictConfig from kwargs if needed, or empty
-            # We ensure "architectures" key exists to avoid OCRModel registry lookup if components are passed
-            cfg_dict = kwargs.copy()
             if encoder is not None:
-                # Mark as 'atomic' in a way OCRModel respects?
-                # Actually, OCRModel checks self.architecture_name.
-                pass
-            cfg = DictConfig(cfg_dict)
+                # Atomic Instantiation via Hydra: create minimal config from kwargs
+                # This supports instantiation where components are passed directly
+                cfg = DictConfig(kwargs)
+            else:
+                raise ValueError("PARSeq requires a valid 'cfg' argument. Defaults are no longer supported.")
 
         if encoder:
             # Atomic Mode: Bypass OCRModel.__init__ component loading
@@ -41,6 +40,14 @@ class PARSeq(OCRModel):
             self.decoder = decoder
             self.head = head
             self.loss = loss
+
+            # Encoder Positional Embedding (Atomic)
+            self.encoder_pos_embed = torch.nn.Parameter(torch.zeros(1, 256, 2, 8))
+            torch.nn.init.trunc_normal_(self.encoder_pos_embed, std=0.2)
+
+            # Visual Feature Normalization (FIX: Balance visual/positional scales)
+            self.visual_norm = torch.nn.LayerNorm(256)  # Normalize channel dimension
+
             return
 
         # Legacy Mode: Rely on OCRModel to load from config
@@ -48,9 +55,20 @@ class PARSeq(OCRModel):
 
         self.image_size = cfg.get("image_size", [32, 128]) # H, W
 
+        # Encoder Positional Embedding (Legacy)
+        self.encoder_pos_embed = torch.nn.Parameter(torch.zeros(1, 256, 2, 8))
+        torch.nn.init.trunc_normal_(self.encoder_pos_embed, std=0.2)
+
+        # Visual Feature Normalization (FIX: Balance visual/positional scales)
+        self.visual_norm = torch.nn.LayerNorm(256)  # Normalize channel dimension
+
     def forward(self, images, return_loss=True, **kwargs):
         # 1. Encoder
         # images: [B, C, H, W]
+        # DEBUG: Check Input Images
+        if True:
+             print(f"DEBUG: Input Images: {images.shape}, Mean: {images.mean():.4f}, Std: {images.std():.4f}, Min: {images.min():.4f}, Max: {images.max():.4f}")
+
         features = self.encoder(images)
 
         # Handle features structure
@@ -62,27 +80,51 @@ class PARSeq(OCRModel):
 
         # Flatten visual features for Transformer
         if visual_feat.ndim == 4:
-            # CNN output: [B, C, H, W] -> [B, H*W, C] -> [B, S, C]
+            # CNN output: [B, C, H, W]
+            # Add 2D Positional Embeddings
+            if not hasattr(self, "encoder_pos_embed"):
+                 # Lazy init if not in __init__ (safety fallback)
+                 # Ideally should be in __init__ but we need to know C, H, W.
+                 # Since C is known (256) and H, W are roughly fixed (2, 8), we can verify.
+                 pass
+
+            # [B, C, H, W] -> Extract dimensions for PE generation
             b, c, h, w = visual_feat.shape
+
+            # Use Fixed Sinusoidal 2D PE instead of Learned
+            pos_embed = self._generate_2d_sincos_pos_embed(
+                h, w, c, device=visual_feat.device
+            )
+
+            # FIX: Normalize visual features BEFORE adding positional encoding
+            # This balances the signal magnitudes (visual ~1.0 vs pos ~8.0 before)
+            # LayerNorm operates on channel dimension [B, C, H, W] -> normalize C
+            visual_feat_normalized = visual_feat.permute(0, 2, 3, 1)  # [B, H, W, C]
+            visual_feat_normalized = self.visual_norm(visual_feat_normalized)  # Normalize C
+            visual_feat = visual_feat_normalized.permute(0, 3, 1, 2)  # Back to [B, C, H, W]
+
+            # Scale Sinusoidal PE to comparable magnitude as normalized visual features
+            # visual_feat (normalized) ~ 0.0 mean, 1.0 std
+            # pos_embed (raw) * sqrt(256) = ~8.0 mean (TOO LARGE)
+            # FIX: Scale down by 0.1 to get ~0.8 mean, comparable to visual
+            pos_embed = pos_embed * math.sqrt(c) * 0.1  # Balanced visual/positional signals
+
+            # DEBUG
+            if True:
+                 print(f"DEBUG: Visual Feat (normalized): {visual_feat.shape}, Mean: {visual_feat.mean():.4f}, Std: {visual_feat.std():.4f}")
+                 print(f"DEBUG: Pos Embed (scaled 0.1×): {pos_embed.shape}, Mean: {pos_embed.mean():.4f}, Std: {pos_embed.std():.4f}")
+
+            # Standard Addition
+            visual_feat = visual_feat + pos_embed
+
+            # [B, C, H, W] -> [B, H*W, C] -> [B, S, C]
             visual_memory = visual_feat.permute(0, 2, 3, 1).flatten(1, 2) # [B, S, C]
         elif visual_feat.ndim == 3:
             # ViT output: [B, S, C]
             # TIMM ViT includes [CLS] token at index 0. We must remove it for PARSeq.
             visual_memory = visual_feat[:, 1:, :]
-            # DEBUG: Confirm shape
-            if torch.rand(1).item() < 0.001:
-                print(f"[DEBUG] Visual Memory Shape (After CLS Removal): {visual_memory.shape}")
         else:
             raise ValueError(f"Unexpected visual features shape: {visual_feat.shape}")
-
-        # DEBUG: Check if features are dead
-        if torch.rand(1).item() < 0.01: # 1% chance to print (or first batch if we could track it)
-             pass
-             # We rely on the lightning module loop for printing mainly,
-             # preventing spam here. BUT, let's print once if mean is suspicious.
-
-        if visual_memory.abs().mean() < 1e-6:
-             print(f"[WARNING] Visual Memory seems dead! Mean: {visual_memory.abs().mean().item()}")
 
         # 2. Decoder
         # Prepare targets
@@ -102,15 +144,6 @@ class PARSeq(OCRModel):
             logits = self.head(decoded_output) # [B, T, V]
 
             # 4. Loss
-            # Target for loss usually excludes BOS (if input included it) or depends on shift
-            # Providing loss calculation here or determining it via self.loss
-
-            # Often, we pass logits and targets to self.loss
-            # Typically targets need simple alignment.
-            # If decoder inputs included [BOS, t1, ... tn], output corresponds to [t1, ... tn, EOS]
-
-            # Let's assume prediction aligns with targets for now
-            # PyTorch CrossEntropyLoss expects (N, C, ...) so we need (B, V, T)
             loss_val = self.loss(logits.permute(0, 2, 1), tgt_out)
             loss_dict = {"loss": loss_val}
 
@@ -143,21 +176,16 @@ class PARSeq(OCRModel):
             max_len = self.decoder.max_len
 
             for i in range(max_len):
-                # Decoder Forward
-                # tgt_tokens: [B, current_len]
-                # visual_memory: [B, S, C]
-                # Output: [B, current_len, C]
-                decoded_output = self.decoder(visual_memory, targets=tgt_tokens)
-
-                # We only care about the last token's output for prediction
-                last_step_output = decoded_output[:, -1:, :] # [B, 1, C]
-
-                # Head: Project to logits
-                step_logits = self.head(last_step_output) # [B, 1, V]
+                # Wrapped step
+                step_logits = self._decode_step(visual_memory, tgt_tokens) # [B, 1, V]
                 logits_list.append(step_logits)
 
                 # Greedy selection
                 next_token = step_logits.argmax(dim=-1) # [B, 1]
+
+                # SAFETY: Clamp tokens to valid range [0, vocab_size-1]
+                vocab_size = step_logits.size(-1)
+                next_token = torch.clamp(next_token, 0, vocab_size - 1)
 
                 # Update finished status
                 finished |= (next_token.squeeze(1) == eos_token)
@@ -173,6 +201,43 @@ class PARSeq(OCRModel):
             logits = torch.cat(logits_list, dim=1) # [B, T, V]
 
             return {"logits": logits, "tokens": tgt_tokens}
+
+    def _generate_2d_sincos_pos_embed(self, h, w, embed_dim, device, temperature=10000.0):
+        """Generate 2D sin-cos positional embedding."""
+        grid_w = torch.arange(w, dtype=torch.float32, device=device)
+        grid_h = torch.arange(h, dtype=torch.float32, device=device)
+        grid_w, grid_h = torch.meshgrid(grid_w, grid_h, indexing='xy')
+
+        assert embed_dim % 2 == 0, 'Embed dimension must be divisible by 2 for 2D sin-cos position embedding'
+        pos_dim = embed_dim // 2
+
+        omega = torch.arange(pos_dim // 2, dtype=torch.float32, device=device) / (pos_dim // 2)
+        omega = 1. / (temperature**omega)
+
+        out_w = torch.einsum('m,d->md', [grid_w.flatten(), omega])
+        out_h = torch.einsum('m,d->md', [grid_h.flatten(), omega])
+
+        pos_emb = torch.cat([torch.sin(out_w), torch.cos(out_w), torch.sin(out_h), torch.cos(out_h)], dim=1)[None, :, :]
+
+        # [1, H*W, C] -> [1, C, H, W]
+        return pos_emb.permute(0, 2, 1).reshape(1, embed_dim, h, w)
+
+    def _decode_step(self, visual_memory, tokens):
+        """
+        Helper to perform a single decode step.
+        Wraps decoder forward + head projection used in both greedy and beam search.
+
+        Args:
+            visual_memory: [B, S, C]
+            tokens: [B, T]
+
+        Returns:
+            step_logits: [B, 1, V] (Last step logits)
+        """
+        decoded_output = self.decoder(visual_memory, targets=tokens)
+        last_step_output = decoded_output[:, -1:, :] # [B, 1, C]
+        step_logits = self.head(last_step_output) # [B, 1, V]
+        return step_logits
 
     @torch.no_grad()
     def beam_search_inference(self, visual_memory, beam_width=3):
@@ -199,15 +264,17 @@ class PARSeq(OCRModel):
         tgt_tokens = torch.full((B * beam_width, 1), bos_token, dtype=torch.long, device=device)
         beam_scores = torch.zeros(B * beam_width, device=device)
         # Mask out all beams except the first one for each batch item at step 0
-        # to avoid starting with 3 identical beams.
         beam_scores.view(B, beam_width)[:, 1:] = -1e9
 
-        # finished_beams = [[] for _ in range(B)] # TODO: Handle finished beams more strictly if needed
-
         for i in range(max_len):
-            # Decoder forward pass
-            decoded_output = self.decoder(visual_memory_expanded, targets=tgt_tokens)
-            logits = self.head(decoded_output[:, -1:, :]) # [B*K, 1, V]
+            # Decoder forward pass using unified step
+            # Note: _decode_step wraps head() too.
+            # Output: [B*K, 1, V]
+            # Since _decode_step does the head projection, we just take it.
+            # But wait, our _decode_step expects (visual_memory, tokens)
+
+            # Using unified helper
+            logits = self._decode_step(visual_memory_expanded, tgt_tokens) # [B*K, 1, V]
             log_probs = torch.log_softmax(logits.squeeze(1), dim=-1) # [B*K, V]
 
             # Calculate scores for all possible next tokens
@@ -222,10 +289,6 @@ class PARSeq(OCRModel):
             # Map indices back to beam index and token index
             beam_indices = topk_indices // vocab_size  # Which beam did it come from?
             token_indices = topk_indices % vocab_size  # Which character is it?
-
-            # Re-arrange tgt_tokens and beam_scores based on topk
-            # new_tokens = []
-            # new_scores = []
 
             # We need to reconstruct the sequence for each batch item
             # Vectorized implementation of re-arranging
@@ -247,9 +310,6 @@ class PARSeq(OCRModel):
 
             # Update scores
             beam_scores = topk_scores.flatten()
-
-            # (Optional: Add EOS check here to stop finished beams and move to finished_beams list)
-            # For simplicity, we run for max_len or could optimize similar to greedy
 
         # At the end, just pick the top beam for each batch
         # buffer is [B*K, T]. view as [B, K, T]

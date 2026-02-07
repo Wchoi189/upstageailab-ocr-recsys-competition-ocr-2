@@ -19,6 +19,27 @@ class LMDBRecognitionDataset(Dataset):
         self.tokenizer = tokenizer
         self.max_len = max_len
         self.transform = transform
+        self.env = None
+
+        # Open temporarily to read dataset length
+        env = lmdb.open(
+            self.lmdb_path,
+            max_readers=1,
+            readonly=True,
+            lock=False,
+            readahead=False,
+            meminit=False,
+        )
+        if not env:
+            print(f"cannot open lmdb from {self.lmdb_path}")
+            sys.exit(0)
+
+        with env.begin(write=False) as txn:
+            self.nSamples = int(txn.get(b"num-samples"))
+
+        env.close()
+
+    def _open_env(self):
         self.env = lmdb.open(
             self.lmdb_path,
             max_readers=32,
@@ -27,12 +48,6 @@ class LMDBRecognitionDataset(Dataset):
             readahead=False,
             meminit=False,
         )
-        if not self.env:
-            print(f"cannot open lmdb from {self.lmdb_path}")
-            sys.exit(0)
-
-        with self.env.begin(write=False) as txn:
-            self.nSamples = int(txn.get(b"num-samples"))
 
     def __len__(self):
         return self.nSamples
@@ -40,6 +55,10 @@ class LMDBRecognitionDataset(Dataset):
     def __getitem__(self, index):
         assert index <= len(self), "index range error"
         index += 1
+
+        if self.env is None:
+            self._open_env()
+
         with self.env.begin(write=False) as txn:
             label_key = f"label-{index:09d}".encode()
             label = txn.get(label_key).decode("utf-8")

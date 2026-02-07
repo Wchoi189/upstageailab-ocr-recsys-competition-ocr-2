@@ -74,7 +74,7 @@ FROM dependencies AS development
 USER root
 
 # Install development tools
-RUN pnpm add -g repomix
+# repomix removed (installed via entrypoint from /parent)
 
 # Copy Entrypoint Script
 COPY --chmod=755 docker/entrypoint.sh /usr/local/bin/entrypoint.sh

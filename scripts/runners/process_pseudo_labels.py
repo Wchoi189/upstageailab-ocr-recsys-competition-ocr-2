@@ -278,6 +278,9 @@ def main():
 
     args = parser.parse_args()
 
+    from ocr.core.utils.path_utils import PROJECT_ROOT, get_path_resolver
+    resolver = get_path_resolver()
+
     # Load configuration
     upstage_key = os.getenv("UPSTAGE_API_KEY")
     if not upstage_key:
@@ -286,8 +289,8 @@ def main():
 
     config = ProcessingConfig(
         upstage_api_key=upstage_key,
-        input_base_dir="/home/vscode/workspace/upstageailab-ocr-recsys-competition-ocr-2/data/pseudo_label",
-        output_base_dir=args.output_dir,
+        input_base_dir=str(resolver.config.pseudo_labels_dir),
+        output_base_dir=str(PROJECT_ROOT / args.output_dir) if not Path(args.output_dir).is_absolute() else args.output_dir,
         max_workers=args.max_workers,
     )
 
