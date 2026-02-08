@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 
 def run_verification():
-    project_root = Path(__file__).resolve().parent.parent.parent
+    project_root = Path(__file__).resolve().parents[2]
     scripts_dir = project_root / "scripts" / "mcp"
 
     scripts = [

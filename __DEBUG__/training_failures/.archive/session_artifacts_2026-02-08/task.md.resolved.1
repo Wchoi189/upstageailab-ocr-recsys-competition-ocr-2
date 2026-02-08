@@ -1,0 +1,35 @@
+# Debug ParSeq Multi-Worker DataLoader CUDA Failure
+
+## Status
+- [x] Phase 1: Verify Configuration and Baseline ✅
+- [x] Phase 2: Isolate Multi-Worker Failure Mechanism ✅
+- [ ] Phase 3: Test Solutions for Multi-Worker Support
+- [ ] Phase 4: Implement and Validate Fix
+
+---
+
+## Phase 1: Verify Configuration and Baseline ✅
+- [x] Check current global configuration (num_workers=2, pin_memory=false, persistent=true)
+- [x] Capture environment details (PyTorch 2.6.0+cu124, CUDA 12.4, RTX 3090)
+- [x] Test basic CUDA operations (ALL PASS ✅)
+- [x] Test simplified DataLoader with workers (ALL CONFIGS PASS ✅)
+
+## Phase 2: Isolate Multi-Worker Failure Mechanism ✅
+- [x] Confirmed simplified tests work - issue is pipeline-specific
+- [x] Inspected LMDB dataset - has lazy init (good) but opens in __init__ (minor concern)  
+- [x] Identified missing components: no worker_init_fn, no spawn start method
+- [x] Root cause: Likely fork mode inheriting CUDA context from main process
+
+### Key Finding
+**Issue is NOT general CUDA+DataLoader** - isolated tests all pass. Problem is multiprocessing fork + CUDA context inheritance in recognition pipeline.
+
+## Phase 3: Test Solutions
+- [ ] Test spawn start method (highest priority - quick win)
+- [ ] Test with worker_init_fn
+- [ ] Verify fix with num_workers=1, then num_workers=2
+
+## Phase 4: Implementation  
+- [ ] Apply validated solution
+- [ ] Update configuration documentation
+- [ ] Update global config if needed
+

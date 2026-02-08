@@ -14,6 +14,7 @@ import json
 
 from ocr.core.infrastructure.agents.base_agent import LLMAgent, AgentCapability
 from ocr.core.infrastructure.communication.iacp_schemas import IACPEnvelope
+from ocr.core.utils.config_utils import is_config
 
 logger = logging.getLogger(__name__)
 
@@ -119,7 +120,7 @@ class ValidationAgent(LLMAgent):
             quality_score = 1.0
 
             # Basic validation
-            if not isinstance(ocr_result, dict):
+            if not is_config(ocr_result):
                 return {"status": "error", "message": "ocr_result must be a dictionary"}
 
             results = ocr_result.get("results", [])

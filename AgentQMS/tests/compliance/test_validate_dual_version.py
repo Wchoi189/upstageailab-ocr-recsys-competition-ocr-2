@@ -6,7 +6,8 @@ import sys
 import os
 
 # Add project root to sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../")))
+# Add project root to sys.path
+sys.path.append(str(Path(__file__).resolve().parents[3]))  # noqa: path-hack
 
 from AgentQMS.tools.compliance.validate_artifacts import ArtifactValidator
 

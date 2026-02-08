@@ -1,0 +1,46 @@
+ads_version: '2.0'
+id: WF-041
+type: workflow_definition
+agent: all
+tier: 4
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 120
+keywords:
+- bloat
+- detection
+- workflow
+- automation
+fuzzy_threshold: 0.8
+description: Runbook for automated and manual bloat detection scans
+automated_scanning:
+  weekly_scan:
+    schedule: 0 0 * * 0
+    workflow_file: .github/workflows/bloat-detection.yml
+    steps:
+    - name: Run bloat detection
+      cmd: "uv run python AgentQMS/tools/bloat_detector.py \\\n  --threshold-days 90 \\\n  --output bloat-report.json\n"
+    - name: Check anti-patterns
+      cmd: uv run python AgentQMS/tools/check_anti_patterns.py
+    - name: Complexity analysis
+      cmd: radon cc ocr/ -a -nb --total-average > complexity.txt
+    - name: Create issue if bloat found
+      action: github.rest.issues.create
+      labels:
+      - bloat
+      - automated
+      - maintenance
+manual_review:
+  step_1_generate_report:
+    cmd: "uv run python AgentQMS/tools/bloat_detector.py \\\n  --threshold-days 90 \\\n  --include-complexity \\\n  --include-duplication \\\n  --output analysis/bloat-report-$(date +%Y-%m-%d).json\n"
+  step_2_review_candidates:
+    cmd: "uv run python AgentQMS/tools/bloat_report_viewer.py \\\n  --input analysis/bloat-report-2026-01-25.json \\\n  --sort-by severity \\\n  --filter \"severity >= HIGH\"\n"
+  step_3_create_archive_plan:
+    cmd: "uv run python AgentQMS/tools/generate_archive_plan.py \\\n  --bloat-report analysis/bloat-report-2026-01-25.json \\\n  --output docs/artifacts/audits/bloat-archive-plan-2026-01-25.md\n"
+  step_4_execute_archive:
+    dry_run:
+      cmd: "uv run python AgentQMS/tools/execute_archive.py \\\n  --plan docs/artifacts/audits/bloat-archive-plan-2026-01-25.md \\\n  --dry-run\n"
+    execute:
+      cmd: "uv run python AgentQMS/tools/execute_archive.py \\\n  --plan docs/artifacts/audits/bloat-archive-plan-2026-01-25.md \\\n  --execute\n"
+constraints_reference: AgentQMS/standards/tier2-framework/constraints/bloat-detection-rules.yaml

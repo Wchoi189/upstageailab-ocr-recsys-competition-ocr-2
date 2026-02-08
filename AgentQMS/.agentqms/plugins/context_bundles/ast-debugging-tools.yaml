@@ -95,7 +95,7 @@ tiers:
     description: Essential tools and usage guide (ALWAYS LOAD for debugging)
     max_files: 3
     files:
-      - path: agent-debug-toolkit/AI_USAGE.yaml
+      - path: dev_tools/agent_debug_toolkit/AI_USAGE.yaml
         priority: critical
         mode: reference
         description: Complete tool reference with examples and best practices
@@ -103,7 +103,7 @@ tiers:
         priority: high
         mode: reference
         description: All available tools including AST commands
-      - path: agent-debug-toolkit/README.md
+      - path: dev_tools/agent_debug_toolkit/README.md
         priority: medium
         mode: reference
         description: Installation and architecture overview
@@ -113,4 +113,4 @@ notes:
   updated: "2026-02-03"
   motivation: "AI agents underutilize powerful AST tools due to unfamiliarity with CLI commands and use cases"
   goal: "Auto-suggest AST tools in appropriate scenarios without explicit user instruction"
-  documentation_source: "agent-debug-toolkit/AI_USAGE.yaml"
+  documentation_source: "dev_tools/agent_debug_toolkit/AI_USAGE.yaml"

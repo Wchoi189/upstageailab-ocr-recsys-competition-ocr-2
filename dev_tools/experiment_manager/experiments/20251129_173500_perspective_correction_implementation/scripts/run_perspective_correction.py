@@ -7,15 +7,18 @@ from pathlib import Path
 import cv2
 
 # Setup experiment paths - auto-detect tracker root and experiment context
+# Setup experiment paths using strict project root utils
+from pathlib import Path
+from ocr.core.utils.path_utils import PROJECT_ROOT, get_path_resolver
+
 script_path = Path(__file__).resolve()
+
 # Point to experiment_manager/src
-tracker_root = script_path.parents[3] / "src"
+tracker_root = PROJECT_ROOT / "dev_tools" / "experiment_manager" / "src"
 sys.path.insert(0, str(tracker_root))
 from experiment_manager.utils.path_utils import setup_script_paths
 
-# Setup OCR project paths
-workspace_root = tracker_root.parent.parent
-sys.path.insert(0, str(workspace_root))
+# OCR Paths are already importable if ocr is installed
 from ocr.core.utils.path_utils import get_path_resolver
 
 # Auto-detect experiment context

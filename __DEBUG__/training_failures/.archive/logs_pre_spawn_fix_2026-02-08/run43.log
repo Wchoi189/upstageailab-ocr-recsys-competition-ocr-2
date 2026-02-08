@@ -1,0 +1,382 @@
+[2026-02-08 00:29:19,331][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-02-08 00:29:19,332][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-02-08 00:29:19,332][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-02-08 00:29:19,332][ocr.pipelines.orchestrator][INFO] - \n============================================================
+[2026-02-08 00:29:19,332][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-02-08 00:29:19,332][ocr.pipelines.orchestrator][INFO] - ============================================================\n
+[2026-02-08 00:29:19,332][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-02-08 00:29:19,332][ocr.pipelines.strategies.recognition_config][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-02-08 00:29:19,336][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 00:29:19,337][ocr.pipelines.strategies.recognition_config][INFO] -    ✓ Vocab size 1027 injected into model config
+[2026-02-08 00:29:20,908][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-08 00:29:21,153][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-08 00:29:21,343][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-08 00:29:21,546][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-08 00:29:21,599][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: PARSeq
+[2026-02-08 00:29:21,606][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 00:29:21,612][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 00:29:21,615][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 00:29:21,619][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 00:29:21,621][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+[2026-02-08 00:29:21,647][ocr.pipelines.orchestrator][INFO] -    ✓ RecognitionPLModule created
+[2026-02-08 00:29:21,658][ocr.pipelines.orchestrator][INFO] -    ✓ DataModule created
+[2026-02-08 00:29:21,658][ocr.pipelines.orchestrator][INFO] - ⚡ Configuring Lightning Trainer...
+INFO: Using 16bit Automatic Mixed Precision (AMP)
+[2026-02-08 00:29:21,722][lightning.pytorch.utilities.rank_zero][INFO] - Using 16bit Automatic Mixed Precision (AMP)
+INFO: GPU available: True (cuda), used: True
+[2026-02-08 00:29:21,729][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-02-08 00:29:21,730][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+INFO: 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-08 00:29:21,731][lightning.pytorch.utilities.rank_zero][INFO] - 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-08 00:29:21,731][ocr.pipelines.orchestrator][INFO] -    ✓ Trainer ready
+[2026-02-08 00:29:21,731][ocr.pipelines.orchestrator][INFO] - 🏋️ Starting training...\n
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-02-08 00:29:21,957][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/utilities/model_summary/model_summary.py:242: Precision 16-mixed is not supported by the model summary.  Estimated model size in MB will not be accurate. Using 32 bits instead.
+┏━━━┳━━━━━━━━━┳━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name    ┃ Type     ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━╇━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model   │ PARSeq   │ 27.5 M │ train │     0 │
+│ 1 │ rec_cer │ CharErr… │      0 │ train │     0 │
+└───┴─────────┴──────────┴────────┴───────┴───────┘
+Trainable params: 27.5 M                           
+Non-trainable params: 0                            
+Total params: 27.5 M                               
+Total estimated model params size (MB): 110        
+Modules in train mode: 270                         
+Modules in eval mode: 0                            
+Total FLOPs: 0                                     
+/workspaces/.venv/lib/python3.11/site-packages/torch/nn/functional.py:5962: UserWarning: Support for mismatched key_padding_mask and attn_mask is deprecated. Use same type for both instead.
+  warnings.warn(
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: -0.0000, Std: 1.0001
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: -0.0000, Std: 1.0001
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309, 309]
+  Pred: '녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕녕' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: -0.0000, Std: 1.0001
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Grad Debug] Step 0 - Pos Encoder Grad Norm: 0.0057
+[Grad Debug] Step 0 - Embed Tokens Grad Norm: 0.0057
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0000, Std: 1.0001
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Grad Debug] Step 0 - Pos Encoder Grad Norm: 0.0082
+[Grad Debug] Step 0 - Embed Tokens Grad Norm: 0.0076
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0000, Std: 0.9998
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0000, Std: 0.9998
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0000, Std: 0.9995
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 0.9317, Std: 1.5756, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0000, Std: 0.9995
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.5846, Std: 1.0247, Min: -1.9980, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0001, Std: 0.9994
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.5029, Std: 1.1811, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0001, Std: 0.9993
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 2.0024, Std: 0.9373, Min: -2.1008, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0002, Std: 0.9991
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8272, Std: 1.0909, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0001, Std: 0.9990
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8296, Std: 1.0994, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0002, Std: 0.9988
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9491, Std: 0.9821, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0002, Std: 0.9990
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8821, Std: 1.0378, Min: -2.0152, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0002, Std: 0.9985
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9315, Std: 0.9871, Min: -1.9295, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0002, Std: 0.9986
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6384, Std: 1.2405, Min: -2.1008, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9981
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 2.0981, Std: 0.8775, Min: -1.9467, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9982
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7771, Std: 1.0178, Min: -2.0152, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9981
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8269, Std: 1.1036, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9981
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7589, Std: 1.1341, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9976
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7999, Std: 1.1085, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9978
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9974
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9974
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 2]
+  Pred: '' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9974
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9974
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9971
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9971
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9973
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0003, Std: 0.9973
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9977
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9977
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9974
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Grad Debug] Step 10 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 10 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9975
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Grad Debug] Step 10 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 10 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9970
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9973
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9968
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 0.9317, Std: 1.5756, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9968
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.5846, Std: 1.0247, Min: -1.9980, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9965
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.5029, Std: 1.1811, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9967
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 2.0024, Std: 0.9373, Min: -2.1008, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9963
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8272, Std: 1.0909, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9960
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8296, Std: 1.0994, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9958
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9491, Std: 0.9821, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9959
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8821, Std: 1.0378, Min: -2.0152, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9956
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9315, Std: 0.9871, Min: -1.9295, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9956
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6384, Std: 1.2405, Min: -2.1008, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9948
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 2.0981, Std: 0.8775, Min: -1.9467, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9950
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7771, Std: 1.0178, Min: -2.0152, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9948
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8269, Std: 1.1036, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9950
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7589, Std: 1.1341, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9943
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7999, Std: 1.1085, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9944
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9937
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0005, Std: 0.9937
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 2]
+  Pred: '' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9938
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9938
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9932
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9932
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9937
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9937
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9942
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9942
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9940
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Grad Debug] Step 20 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 20 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9943
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Grad Debug] Step 20 - Pos Encoder Grad Norm: 0.0000
+[Grad Debug] Step 20 - Embed Tokens Grad Norm: 0.0000
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9937
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9939
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9935
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 0.9317, Std: 1.5756, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9935
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.5846, Std: 1.0247, Min: -1.9980, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9932
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.5029, Std: 1.1811, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9932
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 2.0024, Std: 0.9373, Min: -2.1008, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9929
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8272, Std: 1.0909, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9928
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8296, Std: 1.0994, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9925
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9491, Std: 0.9821, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9926
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8821, Std: 1.0378, Min: -2.0152, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9921
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9315, Std: 0.9871, Min: -1.9295, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9923
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6384, Std: 1.2405, Min: -2.1008, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9914
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 2.0981, Std: 0.8775, Min: -1.9467, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9915
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7771, Std: 1.0178, Min: -2.0152, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9915
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.8269, Std: 1.1036, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9913
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7589, Std: 1.1341, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0009, Std: 0.9912
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7999, Std: 1.1085, Min: -2.0837, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9910
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9903
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6363, Std: 1.1930, Min: -2.0665, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9903
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [1, 2]
+  Pred: '' | GT: '"변화와'
+  Match Count: 0/1
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9912
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7590, Std: 1.0933, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0007, Std: 0.9912
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9897
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.6523, Std: 1.2201, Min: -2.0494, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0004, Std: 0.9897
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9902
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.7051, Std: 1.1486, Min: -2.0323, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0006, Std: 0.9902
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9911
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414
+DEBUG: Input Images: torch.Size([1, 3, 32, 128]), Mean: 1.9463, Std: 1.1645, Min: -2.1179, Max: 2.6400
+DEBUG: Visual Feat (normalized): torch.Size([1, 256, 2, 8]), Mean: 0.0008, Std: 0.9911
+DEBUG: Pos Embed: torch.Size([1, 256, 2, 8]), Mean: 8.0625, Std: 7.9414INFO: `Trainer.fit` stopped: `max_epochs=3` reached.
+
+[2026-02-08 00:29:30,137][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer.fit` stopped: `max_epochs=3` reached.
+Epoch 2/2  ━━━━━━━ 20/20 0:00:01  12.56i… v_num:   
+                         •                65.000   
+                         0:00:00          val/acc: 
+                                          0.000    
+                                          val/cer: 
+                                          1.000    
+[2026-02-08 00:29:30,467][ocr.pipelines.orchestrator][INFO] - \n✅ Training complete!

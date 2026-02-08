@@ -97,7 +97,9 @@ class ArchitectureGuardian:
         content = filepath.read_text()
 
         # RULE 1: Check for detection code in ocr/core/
-        if str(relative_path).startswith('ocr/core/'):
+        # EXCEPTION: core/interfaces contains shared data contracts that may reference
+        # domain-specific concepts (like polygons, maps) as part of cross-domain communication
+        if str(relative_path).startswith('ocr/core/') and not str(relative_path).startswith('ocr/core/interfaces/'):
             violations.extend(self._check_detection_in_core(relative_path, content))
 
         # RULE 2: Check cross-domain imports

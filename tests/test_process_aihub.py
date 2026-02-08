@@ -9,7 +9,7 @@ from pathlib import Path
 import pandas as pd
 
 # Add scripts directory to path to import the module
-sys.path.append(os.path.abspath("scripts/data"))
+sys.path.append(str(Path.cwd() / "scripts" / "data"))  # noqa: path-hack
 # We might need to adjust import if the file is not a module
 # For now, let's assume we can import it or subprocess it.
 # Importing relative path 'scripts.data.process_aihub_validation' might be tricky if no __init__.py

@@ -1,0 +1,1485 @@
+{
+  "total": 164,
+  "categories": {
+    "hydra_missing": 12,
+    "internal_ocr": 81,
+    "tiktoken_optional": 2,
+    "torch_missing": 21,
+    "lightning_missing": 12,
+    "other": 34,
+    "ui_modules": 2
+  },
+  "details": {
+    "hydra_missing": [
+      {
+        "file": "ocr/core/analysis/data/calculate_normalization.py",
+        "line": 14,
+        "module": "hydra",
+        "symbols": [
+          "compose",
+          "initialize"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/base.py",
+        "line": 12,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/architecture.py",
+        "line": 7,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/decoder/__init__.py",
+        "line": 1,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/encoder/__init__.py",
+        "line": 1,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/head/__init__.py",
+        "line": 1,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/data/lightning_data.py",
+        "line": 8,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/data/datasets/__init__.py",
+        "line": 39,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/audit/hydra_sanity_check.py",
+        "line": 3,
+        "module": "hydra",
+        "symbols": [
+          "compose",
+          "initialize"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/performance/benchmark_optimizations.py",
+        "line": 13,
+        "module": "hydra.utils",
+        "symbols": [
+          "instantiate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/utils/show_config.py",
+        "line": 22,
+        "module": "hydra",
+        "symbols": [
+          "compose",
+          "initialize_config_dir"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/utils/verify_hydra_flattening.py",
+        "line": 20,
+        "module": "hydra",
+        "symbols": [
+          "compose",
+          "initialize_config_dir"
+        ],
+        "error": "Module or attribute not found"
+      }
+    ],
+    "internal_ocr": [
+      {
+        "file": "ocr/core/evaluation/__init__.py",
+        "line": 4,
+        "module": "ocr.domains.detection.evaluation",
+        "symbols": [
+          "CLEvalEvaluator"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/base.py",
+        "line": 15,
+        "module": "ocr.core.lightning.utils",
+        "symbols": [
+          "CheckpointHandler",
+          "extract_metric_kwargs",
+          "extract_normalize_stats"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/__init__.py",
+        "line": 1,
+        "module": "ocr.core.lightning.callbacks.metadata_callback",
+        "symbols": [
+          "MetadataCallback"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/__init__.py",
+        "line": 2,
+        "module": "ocr.core.lightning.callbacks.performance_profiler",
+        "symbols": [
+          "PerformanceProfilerCallback"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/loggers/wandb_loggers.py",
+        "line": 13,
+        "module": "ocr.domains.detection.metrics.cleval_metric",
+        "symbols": [
+          "CLEvalMetric"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/utils/config_utils.py",
+        "line": 8,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "MetricConfig"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/architecture.py",
+        "line": 11,
+        "module": "ocr.core.utils.registry",
+        "symbols": [
+          "get_registry"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/architecture.py",
+        "line": 176,
+        "module": "ocr.core.models.encoder",
+        "symbols": [
+          "get_encoder_by_cfg"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/architecture.py",
+        "line": 177,
+        "module": "ocr.core.models.decoder",
+        "symbols": [
+          "get_decoder_by_cfg"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/architecture.py",
+        "line": 178,
+        "module": "ocr.core.models.head",
+        "symbols": [
+          "get_head_by_cfg"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/__init__.py",
+        "line": 5,
+        "module": "ocr.core.models.architecture",
+        "symbols": [
+          "OCRModel"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/__init__.py",
+        "line": 31,
+        "module": "ocr.domains.recognition.models",
+        "symbols": [
+          "PARSeq"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/models/encoder/timm_backbone.py",
+        "line": 8,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseEncoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/cache_manager.py",
+        "line": 59,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "CacheConfig",
+          "DataItem",
+          "ImageData",
+          "MapData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/config.py",
+        "line": 125,
+        "module": "ocr.core.utils.registry",
+        "symbols": [
+          "registry"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/config.py",
+        "line": 83,
+        "module": "ocr.core.utils.registry",
+        "symbols": [
+          "registry"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/config_utils.py",
+        "line": 252,
+        "module": "ocr.core.utils.registry",
+        "symbols": [
+          "registry"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/image_utils.py",
+        "line": 60,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "ImageLoadingConfig"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/wandb_base.py",
+        "line": 253,
+        "module": "ocr.core.utils.registry",
+        "symbols": [
+          "registry"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/data/datasets/schemas.py",
+        "line": 12,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "CacheConfig",
+          "DataItem",
+          "DatasetConfig",
+          "ImageData",
+          "ImageLoadingConfig",
+          "ImageMetadata",
+          "MapData",
+          "PolygonData",
+          "TransformConfig",
+          "TransformInput",
+          "TransformOutput",
+          "ValidatedPolygonData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/evaluation.py",
+        "line": 15,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "LightningStepPrediction",
+          "validate_predictions"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/evaluation.py",
+        "line": 16,
+        "module": "ocr.domains.detection.metrics.cleval_metric",
+        "symbols": [
+          "CLEvalMetric"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/interfaces.py",
+        "line": 8,
+        "module": "ocr.core.interfaces.losses",
+        "symbols": [
+          "BaseLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/interfaces.py",
+        "line": 9,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseHead"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/module.py",
+        "line": 10,
+        "module": "ocr.core.lightning.base",
+        "symbols": [
+          "OCRPLModule"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/module.py",
+        "line": 11,
+        "module": "ocr.core.lightning.loggers",
+        "symbols": [
+          "WandbProblemLogger"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/module.py",
+        "line": 12,
+        "module": "ocr.core.lightning.utils",
+        "symbols": [
+          "format_predictions"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/module.py",
+        "line": 13,
+        "module": "ocr.domains.detection.evaluation",
+        "symbols": [
+          "CLEvalEvaluator"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/module.py",
+        "line": 15,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "CollateOutput",
+          "ValidatedTensorData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 66,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "DatasetConfig",
+          "ImageData",
+          "ImageMetadata",
+          "PolygonData",
+          "TransformInput",
+          "ValidatedPolygonData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 137,
+        "module": "ocr.core.utils.cache_manager",
+        "symbols": [
+          "CacheManager"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 445,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "DataItem"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 510,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "TransformInput"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 700,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "ImageData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 701,
+        "module": "ocr.core.utils.image_utils",
+        "symbols": [
+          "ensure_rgb",
+          "load_pil_image",
+          "pil_to_numpy",
+          "safe_get_image_size"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 719,
+        "module": "ocr.core.utils.image_utils",
+        "symbols": [
+          "prenormalize_imagenet"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 806,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "MapData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 612,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "MapData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/transforms/db_transforms.py",
+        "line": 67,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "ImageMetadata",
+          "PolygonData",
+          "TransformInput",
+          "TransformOutput"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/__init__.py",
+        "line": 15,
+        "module": "ocr.domains.detection.models.heads.craft_head",
+        "symbols": [
+          "CraftHead"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/__init__.py",
+        "line": 18,
+        "module": "ocr.domains.detection.models.heads.db_head",
+        "symbols": [
+          "DBHead"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/__init__.py",
+        "line": 29,
+        "module": "ocr.domains.detection.models.decoders.craft_decoder",
+        "symbols": [
+          "CraftDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/__init__.py",
+        "line": 32,
+        "module": "ocr.domains.detection.models.decoders.dbpp_decoder",
+        "symbols": [
+          "DBPPDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/__init__.py",
+        "line": 35,
+        "module": "ocr.domains.detection.models.decoders.fpn_decoder",
+        "symbols": [
+          "FPNDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/__init__.py",
+        "line": 39,
+        "module": "ocr.domains.detection.models.encoders.craft_vgg",
+        "symbols": [
+          "CraftVGGEncoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/craft_decoder.py",
+        "line": 11,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/dbpp_decoder.py",
+        "line": 11,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/fpn_decoder.py",
+        "line": 11,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/pan_decoder.py",
+        "line": 11,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/unet.py",
+        "line": 8,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/encoders/craft_vgg.py",
+        "line": 11,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseEncoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/heads/craft_head.py",
+        "line": 10,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseHead"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/heads/db_head.py",
+        "line": 20,
+        "module": "ocr.domains.detection.interfaces",
+        "symbols": [
+          "DetectionHead"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/bce_loss.py",
+        "line": 18,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "ValidatedTensorData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/craft_loss.py",
+        "line": 8,
+        "module": "ocr.core.interfaces.losses",
+        "symbols": [
+          "BaseLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/db_loss.py",
+        "line": 16,
+        "module": "ocr.core.interfaces.losses",
+        "symbols": [
+          "BaseLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/db_loss.py",
+        "line": 17,
+        "module": "ocr.domains.detection.models.loss.bce_loss",
+        "symbols": [
+          "BCELoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/db_loss.py",
+        "line": 18,
+        "module": "ocr.domains.detection.models.loss.dice_loss",
+        "symbols": [
+          "DiceLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/db_loss.py",
+        "line": 19,
+        "module": "ocr.domains.detection.models.loss.l1_loss",
+        "symbols": [
+          "MaskL1Loss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/dice_loss.py",
+        "line": 18,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "ValidatedTensorData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/__init__.py",
+        "line": 3,
+        "module": "ocr.domains.detection.models.loss.db_loss",
+        "symbols": [
+          "DBLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/__init__.py",
+        "line": 4,
+        "module": "ocr.domains.detection.models.loss.craft_loss",
+        "symbols": [
+          "CraftLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/module.py",
+        "line": 7,
+        "module": "ocr.core.lightning.base",
+        "symbols": [
+          "OCRPLModule"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/module.py",
+        "line": 8,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "ValidatedTensorData"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/architecture.py",
+        "line": 3,
+        "module": "ocr.core.models.architecture",
+        "symbols": [
+          "OCRModel"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/decoder.py",
+        "line": 4,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/head.py",
+        "line": 2,
+        "module": "ocr.core.interfaces.models",
+        "symbols": [
+          "BaseHead"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/loss/cross_entropy_loss.py",
+        "line": 9,
+        "module": "ocr.core.interfaces.losses",
+        "symbols": [
+          "BaseLoss"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/pipelines/orchestrator.py",
+        "line": 17,
+        "module": "ocr.data.lightning_data",
+        "symbols": [
+          "OCRDataPLModule"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/pipelines/orchestrator.py",
+        "line": 101,
+        "module": "ocr.domains.detection.module",
+        "symbols": [
+          "DetectionPLModule"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/pipelines/orchestrator.py",
+        "line": 110,
+        "module": "ocr.domains.recognition.module",
+        "symbols": [
+          "RecognitionPLModule"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/validation/models.py",
+        "line": 12,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "VALID_EXIF_ORIENTATIONS",
+          "BatchSample",
+          "CollateOutput",
+          "DatasetSample",
+          "LightningStepPrediction",
+          "MetricConfig",
+          "ModelOutput",
+          "PolygonArray",
+          "ValidatedTensorData",
+          "validate_predictions",
+          "validator"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/validation/models.py",
+        "line": 25,
+        "module": "ocr.core.validation",
+        "symbols": [
+          "LoaderTransformOutput"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "runners/train.py",
+        "line": 5,
+        "module": "ocr.pipelines.orchestrator",
+        "symbols": [
+          "OCRProjectOrchestrator"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "runners/train.py",
+        "line": 10,
+        "module": "ocr.core.lightning.base",
+        "symbols": [
+          "OCRPLModule"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/data/preprocess.py",
+        "line": 26,
+        "module": "ocr.data.datasets",
+        "symbols": [
+          "ValidatedOCRDataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/data/preprocess_maps.py",
+        "line": 36,
+        "module": "ocr.data.datasets",
+        "symbols": [
+          "ValidatedOCRDataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/performance/benchmark_optimizations.py",
+        "line": 17,
+        "module": "ocr.data.datasets",
+        "symbols": [
+          "ValidatedOCRDataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/troubleshooting/test_model_forward_backward.py",
+        "line": 15,
+        "module": "ocr.domains.detection.models.decoders.fpn_decoder",
+        "symbols": [
+          "FPNDecoder"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/troubleshooting/test_model_forward_backward.py",
+        "line": 16,
+        "module": "ocr.core.models.encoder.timm_backbone",
+        "symbols": [
+          "TimmBackbone"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/troubleshooting/test_model_forward_backward.py",
+        "line": 17,
+        "module": "ocr.domains.detection.models.heads.db_head",
+        "symbols": [
+          "DBHead"
+        ],
+        "error": "Module or attribute not found"
+      }
+    ],
+    "tiktoken_optional": [
+      {
+        "file": "ocr/core/infrastructure/agents/llm/grok_client.py",
+        "line": 156,
+        "module": "tiktoken",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/infrastructure/agents/llm/openai_client.py",
+        "line": 142,
+        "module": "tiktoken",
+        "symbols": [],
+        "error": "Module not found"
+      }
+    ],
+    "torch_missing": [
+      {
+        "file": "ocr/core/interfaces/losses.py",
+        "line": 6,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/interfaces/metrics.py",
+        "line": 6,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/interfaces/models.py",
+        "line": 7,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/lightning/base.py",
+        "line": 49,
+        "module": "torch._dynamo",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/models/architecture.py",
+        "line": 5,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/models/layers/common.py",
+        "line": 3,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/craft_decoder.py",
+        "line": 8,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/dbpp_decoder.py",
+        "line": 8,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/fpn_decoder.py",
+        "line": 8,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/pan_decoder.py",
+        "line": 8,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/unet.py",
+        "line": 6,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/encoders/craft_vgg.py",
+        "line": 9,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/heads/craft_head.py",
+        "line": 8,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/heads/db_head.py",
+        "line": 18,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/bce_loss.py",
+        "line": 15,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/dice_loss.py",
+        "line": 15,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/l1_loss.py",
+        "line": 15,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/decoder.py",
+        "line": 3,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/head.py",
+        "line": 1,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/merging.py",
+        "line": 1,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "scripts/troubleshooting/test_basic_cuda.py",
+        "line": 8,
+        "module": "torch.nn",
+        "symbols": [],
+        "error": "Module not found"
+      }
+    ],
+    "lightning_missing": [
+      {
+        "file": "ocr/core/lightning/base.py",
+        "line": 11,
+        "module": "lightning.pytorch",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/metadata_callback.py",
+        "line": 21,
+        "module": "lightning.pytorch.callbacks",
+        "symbols": [
+          "Callback"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/multi_line_progress_bar.py",
+        "line": 2,
+        "module": "lightning.pytorch.callbacks",
+        "symbols": [
+          "RichProgressBar"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/performance_profiler.py",
+        "line": 8,
+        "module": "lightning.pytorch",
+        "symbols": [
+          "LightningModule",
+          "Trainer"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/performance_profiler.py",
+        "line": 9,
+        "module": "lightning.pytorch.callbacks",
+        "symbols": [
+          "Callback"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/unique_checkpoint.py",
+        "line": 8,
+        "module": "lightning.pytorch.callbacks",
+        "symbols": [
+          "ModelCheckpoint"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/wandb_completion.py",
+        "line": 5,
+        "module": "lightning.pytorch",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/lightning/callbacks/wandb_completion.py",
+        "line": 6,
+        "module": "lightning.pytorch.callbacks",
+        "symbols": [
+          "Callback"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/data/lightning_data.py",
+        "line": 7,
+        "module": "lightning.pytorch",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/callbacks/wandb_image_logging.py",
+        "line": 7,
+        "module": "lightning.pytorch",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/recognition/callbacks/wandb.py",
+        "line": 7,
+        "module": "lightning.pytorch",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/pipelines/orchestrator.py",
+        "line": 12,
+        "module": "lightning.pytorch",
+        "symbols": [
+          "Trainer"
+        ],
+        "error": "Module or attribute not found"
+      }
+    ],
+    "other": [
+      {
+        "file": "ocr/core/models/encoder/timm_backbone.py",
+        "line": 5,
+        "module": "timm",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/core/utils/logger_factory.py",
+        "line": 7,
+        "module": "lightning.pytorch.loggers",
+        "symbols": [
+          "Logger",
+          "TensorBoardLogger",
+          "WandbLogger"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/logging.py",
+        "line": 23,
+        "module": "rich.logging",
+        "symbols": [
+          "RichHandler"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/core/utils/logging.py",
+        "line": 35,
+        "module": "icecream",
+        "symbols": [
+          "ic",
+          "install"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/data/lightning_data.py",
+        "line": 9,
+        "module": "torch.utils.data",
+        "symbols": [
+          "DataLoader"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/data/datasets/__init__.py",
+        "line": 41,
+        "module": "torch.utils.data",
+        "symbols": [
+          "Subset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/dataset.py",
+        "line": 60,
+        "module": "torch.utils.data",
+        "symbols": [
+          "Dataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/preprocessing/background_removal.py",
+        "line": 13,
+        "module": "rembg",
+        "symbols": [
+          "remove"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/preprocessing/detector.py",
+        "line": 109,
+        "module": "doctr.models",
+        "symbols": [
+          "zoo"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/data/transforms/db_transforms.py",
+        "line": 64,
+        "module": "albumentations.pytorch",
+        "symbols": [
+          "ToTensorV2"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/inference/model_loader.py",
+        "line": 121,
+        "module": "torch.serialization",
+        "symbols": [
+          "add_safe_globals"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/inference/preprocessing_pipeline.py",
+        "line": 159,
+        "module": "rembg",
+        "symbols": [
+          "remove"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/inference/perspective/core.py",
+        "line": 15,
+        "module": "rembg",
+        "symbols": [
+          "remove"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/metrics/cleval_metric.py",
+        "line": 13,
+        "module": "torchmetrics",
+        "symbols": [
+          "Metric"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/craft_decoder.py",
+        "line": 9,
+        "module": "torch.nn.functional",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/dbpp_decoder.py",
+        "line": 9,
+        "module": "torch.nn.functional",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/fpn_decoder.py",
+        "line": 9,
+        "module": "torch.nn.functional",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/decoders/pan_decoder.py",
+        "line": 9,
+        "module": "torch.nn.functional",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/encoders/craft_vgg.py",
+        "line": 7,
+        "module": "timm",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/detection/models/loss/craft_loss.py",
+        "line": 6,
+        "module": "torch.nn.functional",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "ocr/domains/recognition/module.py",
+        "line": 5,
+        "module": "torchmetrics.text",
+        "symbols": [
+          "CharErrorRate"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/data/lmdb_dataset.py",
+        "line": 5,
+        "module": "torch.utils.data",
+        "symbols": [
+          "Dataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "ocr/domains/recognition/models/loss/cross_entropy_loss.py",
+        "line": 7,
+        "module": "torch.nn.functional",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "runners/batch_pseudo_labels.py",
+        "line": 32,
+        "module": "aiohttp",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "scripts/finetune_ppocr.py",
+        "line": 41,
+        "module": "datasets",
+        "symbols": [
+          "load_dataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/data/download_hf_datasets.py",
+        "line": 8,
+        "module": "datasets",
+        "symbols": [
+          "load_dataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/data/generate_pseudo_labels.py",
+        "line": 16,
+        "module": "aiohttp",
+        "symbols": [],
+        "error": "Module not found"
+      },
+      {
+        "file": "scripts/data/generate_pseudo_labels.py",
+        "line": 21,
+        "module": "rembg",
+        "symbols": [
+          "remove"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/data/preprocess_data.py",
+        "line": 18,
+        "module": "scripts.data.preprocess",
+        "symbols": [
+          "main"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/data/process_kie_to_rec.py",
+        "line": 11,
+        "module": "datasets",
+        "symbols": [
+          "load_dataset"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/huggingface/hf_inference_simple.py",
+        "line": 13,
+        "module": "transformers",
+        "symbols": [
+          "AutoModel",
+          "AutoProcessor"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/mcp/unified_server.py",
+        "line": 354,
+        "module": "AgentQMS.tools.core.context_bundle",
+        "symbols": [
+          "auto_suggest_context"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/mcp/unified_server.py",
+        "line": 201,
+        "module": "AgentQMS.tools.core.context_bundle",
+        "symbols": [
+          "list_available_bundles",
+          "get_context_bundle"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/utils/show_config.py",
+        "line": 23,
+        "module": "hydra.core.hydra_config",
+        "symbols": [
+          "HydraConfig"
+        ],
+        "error": "Module or attribute not found"
+      }
+    ],
+    "ui_modules": [
+      {
+        "file": "scripts/checkpoints/convert_legacy_checkpoints.py",
+        "line": 95,
+        "module": "ui.apps.inference.services.checkpoint.types",
+        "symbols": [
+          "CheckpointingConfig",
+          "CheckpointMetadataV1",
+          "DecoderInfo",
+          "EncoderInfo",
+          "HeadInfo",
+          "LossInfo",
+          "MetricsInfo",
+          "ModelInfo",
+          "TrainingInfo"
+        ],
+        "error": "Module or attribute not found"
+      },
+      {
+        "file": "scripts/validation/checkpoints/validate_coordinate_consistency.py",
+        "line": 143,
+        "module": "ui.utils.inference.engine",
+        "symbols": [
+          "run_inference_on_image"
+        ],
+        "error": "Module 'torch.optim.lr_scheduler' not found"
+      }
+    ]
+  }
+}

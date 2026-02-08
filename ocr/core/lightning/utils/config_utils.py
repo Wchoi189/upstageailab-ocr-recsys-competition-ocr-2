@@ -5,8 +5,8 @@ from __future__ import annotations
 import numpy as np
 from omegaconf import DictConfig, ListConfig
 
-from ocr.core.validation import MetricConfig
-from ocr.core.utils.config_utils import ensure_dict
+from ocr.core.interfaces.validation_models import MetricConfig
+from ocr.core.utils.config_utils import ensure_dict, is_config
 
 
 def extract_metric_kwargs(metric_cfg: DictConfig | None) -> dict:
@@ -25,7 +25,7 @@ def extract_metric_kwargs(metric_cfg: DictConfig | None) -> dict:
         return {}
 
     cfg_dict = ensure_dict(metric_cfg, resolve=True)
-    if not isinstance(cfg_dict, dict):
+    if not is_config(cfg_dict):
         return {}
 
     cfg_dict.pop("_target_", None)
@@ -62,7 +62,7 @@ def extract_normalize_stats(config) -> tuple[np.ndarray | None, np.ndarray | Non
     for transforms in sections:
         for transform in transforms:
             transform_dict = ensure_dict(transform, resolve=True)
-            if not isinstance(transform_dict, dict):
+            if not is_config(transform_dict):
                 continue
             target = transform_dict.get("_target_")
             if target != "albumentations.Normalize":

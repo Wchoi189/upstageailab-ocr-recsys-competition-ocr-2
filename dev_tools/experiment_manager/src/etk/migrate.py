@@ -26,7 +26,8 @@ LEGACY_SCRIPTS = [
 
 
 def migrate():
-    base_dir = Path(__file__).resolve().parent.parent.parent
+    from ocr.core.utils.path_utils import PROJECT_ROOT
+    base_dir = PROJECT_ROOT / "dev_tools" / "experiment_manager"
     scripts_dir = base_dir / "scripts"
 
     print(f"Checking for legacy scripts in: {scripts_dir}")

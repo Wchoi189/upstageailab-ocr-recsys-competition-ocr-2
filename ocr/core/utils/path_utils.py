@@ -161,7 +161,7 @@ def _detect_project_root() -> Path:
     # Strategy 2: From __file__ location (works in packages)
     # This file is at ocr.core.utils/path_utils.py, so go up 2 levels to get project root
     try:
-        file_based = Path(__file__).resolve().parent.parent.parent
+        file_based = Path(__file__).resolve().parent.parent.parent  # noqa: path-hack
         # Validate with project markers
         markers = ["pyproject.toml", ".git"]
         if any((file_based / marker).exists() for marker in markers):

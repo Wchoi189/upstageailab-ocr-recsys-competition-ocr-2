@@ -6,7 +6,7 @@ class ExperimentPaths:
         if tracker_root is None:
             # Assuming this file is in src/experiment_tracker/utils/path_utils.py
             # Root is ../../../
-            tracker_root = Path(__file__).parent.parent.parent.parent.resolve()
+            tracker_root = Path(__file__).resolve().parents[3]
         self.tracker_root = tracker_root
         self.experiment_id = experiment_id
         self.base_path = tracker_root / "experiments" / experiment_id
@@ -156,7 +156,7 @@ class ExperimentPaths:
 
 
 def get_tracker_root() -> Path:
-    return Path(__file__).parent.parent.parent.parent.resolve()
+    return Path(__file__).resolve().parents[3]
 
 
 def setup_script_paths(script_path: Path | None = None) -> tuple[Path, str | None, ExperimentPaths | None]:

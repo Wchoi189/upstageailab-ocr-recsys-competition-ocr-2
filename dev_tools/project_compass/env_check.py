@@ -7,8 +7,9 @@ import sys
 from pathlib import Path
 
 # Add project root to sys.path
-project_root = Path(__file__).resolve().parent.parent
-sys.path.insert(0, str(project_root))
+from ocr.core.utils.path_utils import PROJECT_ROOT
+# Add dev_tools to sys.path to allow project_compass import
+sys.path.insert(0, str(PROJECT_ROOT / "dev_tools"))
 
 from project_compass.src.core import EnvironmentChecker
 

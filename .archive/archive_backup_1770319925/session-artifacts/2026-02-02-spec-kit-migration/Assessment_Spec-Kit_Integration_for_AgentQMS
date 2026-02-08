@@ -1,0 +1,61 @@
+# Assessment: Spec-Kit Integration for AgentQMS
+
+This document assesses the integration of utilizing the Spec-Kit (via `project_compass` and GitHub Spec Kit) to manage the AgentQMS system itself.
+
+## 1. Problem Statement
+
+**Current State**: AgentQMS rules are scattered across 100+ YAML files in `standards/`. Communication to agents is done via "reference" (retrieving files) or "validation" (running scripts).
+**Challenge**: "Maintenance overhead" and "challenging to communicate rules."
+**Proposed Solution**: Use Spec-Kit to define the *intent* and *rules* of AgentQMS in a structured, actionable format.
+
+## 2. Spec-Kit Overview
+
+Spec-Kit introduces a hierarchical planning flow:
+1.  **Constitution**: High-level principles (e.g., "AgentQMS prioritizes compliance over speed").
+2.  **Specification**: Scoped requirements (e.g., "Artifacts must use 2.0 frontmatter schema").
+3.  **Plan**: Implementation strategy.
+4.  **Tasks**: Actionable steps.
+
+## 3. Integration Evaluation
+
+### Benefits (Why this reduces overhead)
+*   **Centralized Intent**: Instead of inferring rules from 50 YAML files, an agent reads the `Constitution` and active `Specification`.
+*   **Self-Documentation**: Specs *are* the documentation. When you change a Spec, you change the rule. The "maintenance" becomes "updating the spec," which is natural.
+*   **Token Efficiency**: Specs are concise. Instead of dumping 30 separate standard files into context, we inject the relevant `Specification`.
+
+### Risks
+*   **Redundancy**: AgentQMS already has "Standards" (`tier1-sst`). If we add "Specs," we have two sources of truth.
+*   **Migration**: Converting 100+ YAML standards into Specs is a large upfront effort.
+
+## 4. Integration Strategy: The "Living Standard"
+
+We recommend **Replacing** (or wrapping) the top-level retrieval of AgentQMS standards with Spec-Kit.
+
+### A. The AgentQMS Constitution
+Create a single constitution for AgentQMS maintenance.
+*   **Principle 1**: "All artifacts must be validated against [validate_artifacts.py](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/tools/compliance/validate_artifacts.py)."
+*   **Principle 2**: "Code placement follows [tier1-sst/file-placement-rules.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/tier1-sst/file-placement-rules.yaml)."
+
+### B. "Standards" as "Specifications"
+Treat the existing `standards/` directory not as static files, but as **Specifications** that define the system.
+*   Instead of maintaining [standards/tier1-sst/artifact-rules.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/tier1-sst/artifact-rules.yaml) manually, use the `spec-specify` tool to describe changes to it.
+*   **Workflow**:
+    1.  User: "Update artifact rules to support V2."
+    2.  Agent: Runs `spec-specify` -> Generates spec -> Updates [artifact-rules.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/tier1-sst/artifact-rules.yaml).
+
+### C. Checkpoints as Spec Validation
+Use the validation scripts ([validate_artifacts.py](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/tools/compliance/validate_artifacts.py)) as the enforcement mechanism for the Specs.
+*   **Spec**: "All files must have `ads_version`."
+*   **Validation**: [validate_artifacts.py](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/tools/compliance/validate_artifacts.py) returns fail if missing.
+*   **Loop**: The validation script *enforces* the Spec.
+
+## 5. Implementation Roadmap
+
+1.  **Define Constitution**: Create `AgentQMS/CONSTITUTION.md` using `mcp_unified_project_compass_meta_spec`.
+2.  **Map Standards**: Create a mapping of `standard -> specification`.
+    *   [artifact-rules.yaml](file:///workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS/standards/tier1-sst/artifact-rules.yaml) -> `spec: Artifact Compliance`
+3.  **Automate Updates**: Use `spec-plan` to drive updates to the AgentQMS system itself (dogfooding).
+
+## Conclusion
+
+Spec-Kit Integration is **Highly Recommended**. It shifts AgentQMS from a "static file repository" to a "managed intent system." By defining a Constitution and Specifications for the framework itself, we reduce the cognitive load on agents maintaining it.

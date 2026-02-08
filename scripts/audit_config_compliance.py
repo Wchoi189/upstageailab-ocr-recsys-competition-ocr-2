@@ -11,14 +11,17 @@ It uses:
 3. Direct grep patterns for common violations
 """
 
+import ast
 import json
 import re
 import subprocess
 from pathlib import Path
 from collections import defaultdict
 
+from AgentQMS.tools.utils.paths import get_project_root
+
 # Project root
-PROJECT_ROOT = Path(__file__).parent.parent
+PROJECT_ROOT = get_project_root()
 OCR_MODULE = PROJECT_ROOT / "ocr"
 CONFIG_ACCESS_FILE = PROJECT_ROOT / "dev_tools" / "project_compass" / "config_access.txt"
 CONFIG_STANDARD_FILE = PROJECT_ROOT / "AgentQMS" / "specs" / "tier2-framework" / "configuration.spec.md"
@@ -36,17 +39,81 @@ class ConfigComplianceAuditor:
         }
 
     def load_existing_scan(self) -> dict:
-        """Load existing config_access.txt analysis."""
-        if not CONFIG_ACCESS_FILE.exists():
-            print(f"⚠️  {CONFIG_ACCESS_FILE} not found. Run AST scan first.")
-            return {}
+        """Load existing config_access.txt analysis or run native scan."""
+        if CONFIG_ACCESS_FILE.exists():
+            try:
+                with open(CONFIG_ACCESS_FILE) as f:
+                    print(f"  ✅ Loaded existing scan data from {CONFIG_ACCESS_FILE}")
+                    return json.load(f)
+            except json.JSONDecodeError as e:
+                print(f"❌ Failed to parse {CONFIG_ACCESS_FILE}: {e}")
 
-        try:
-            with open(CONFIG_ACCESS_FILE) as f:
-                return json.load(f)
-        except json.JSONDecodeError as e:
-            print(f"❌ Failed to parse {CONFIG_ACCESS_FILE}: {e}")
-            return {}
+        print(f"⚠️  {CONFIG_ACCESS_FILE} not found or invalid. Running native AST scan...")
+        return self.run_native_ast_scan()
+
+    def run_native_ast_scan(self) -> dict:
+        """Run AST scan using Python's built-in ast module."""
+        print("  🚀 Running internal Python AST scan...")
+        results = []
+
+        for py_file in OCR_MODULE.rglob("*.py"):
+            # Exclude the utility definition file itself from audit
+            if py_file.name == "config_utils.py":
+                continue
+
+            try:
+                with open(py_file, "r") as f:
+                    content = f.read()
+                    # Parse AST
+                    tree = ast.parse(content, filename=str(py_file))
+
+                for node in ast.walk(tree):
+                    # Check for isinstance(..., dict)
+                    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'isinstance':
+                        if len(node.args) >= 2:
+                            cls_arg = node.args[1]
+                            is_violation = False
+                            if isinstance(cls_arg, ast.Name) and cls_arg.id == 'dict':
+                                is_violation = True
+                            elif isinstance(cls_arg, ast.Tuple):
+                                for elt in cls_arg.elts:
+                                    if isinstance(elt, ast.Name) and elt.id == 'dict':
+                                        is_violation = True
+                                        break
+
+                            if is_violation:
+                                results.append({
+                                    "file": str(py_file),
+                                    "line": node.lineno,
+                                    "code_snippet": "isinstance(..., dict)",
+                                    "type": "isinstance_dict"
+                                })
+
+                    # Check for dict(...) conversion
+                    if isinstance(node, ast.Call) and isinstance(node.func, ast.Name) and node.func.id == 'dict':
+                         results.append({
+                            "file": str(py_file),
+                            "line": node.lineno,
+                            "code_snippet": "dict(...)",
+                            "type": "dict_conversion"
+                        })
+
+                    # Check for OmegaConf.to_container(...)
+                    if isinstance(node, ast.Call) and isinstance(node.func, ast.Attribute):
+                        if isinstance(node.func.value, ast.Name) and node.func.value.id == 'OmegaConf':
+                            if node.func.attr == 'to_container':
+                                results.append({
+                                    "file": str(py_file),
+                                    "line": node.lineno,
+                                    "code_snippet": "OmegaConf.to_container(...)",
+                                    "type": "dict_conversion"
+                                })
+
+            except Exception:
+                # Syntax errors or read errors
+                continue
+
+        return {"results": results}
 
     def check_isinstance_dict_violations(self, scan_data: dict) -> None:
         """

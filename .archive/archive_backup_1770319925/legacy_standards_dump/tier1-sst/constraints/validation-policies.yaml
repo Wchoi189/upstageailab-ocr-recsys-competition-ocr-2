@@ -1,0 +1,31 @@
+ads_version: '2.0'
+id: SC-008
+type: rule_set
+agent: all
+tier: 1
+priority: critical
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 60
+dependencies:
+- SC-010
+keywords:
+- validation
+- compliance
+- enforcement
+- mandatory
+- triggers
+fuzzy_threshold: 0.8
+description: Validation policies and enforcement triggers for AgentQMS artifacts
+mandatory_validation_triggers:
+- After artifact creation
+- After artifact modification
+- Before git commit
+- Before pull request
+- After bulk operations
+validation_outputs:
+  success: "All validations pass - Proceed"
+  failure: "Violations detected - BLOCK"
+  warning: "Non-critical issues - Review"
+enforcement: Validation failures MUST be resolved before proceeding
+runbook_reference: AgentQMS/standards/tier4-workflows/validation-runbook.yaml

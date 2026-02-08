@@ -51,13 +51,13 @@
     ],
     // Data mount (for local development)
     "mounts": [
-        "source=${localWorkspaceFolder}/data,target=/workspaces/upstageailab-ocr-recsys-competition-ocr-2/data,type=bind"
+        "source=${localWorkspaceFolder}/data,target=/workspaces/data,type=bind"
     ],
     // Lifecycle commands
     "onCreateCommand": "echo '✅ Container created'",
     "updateContentCommand": "uv sync --frozen",
-    "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validate_environment.py",
-    "postStartCommand": "python scripts/validate_environment.py",
+    "postCreateCommand": "uv sync --frozen && uv pip install -e . && python scripts/validation/validate_environment.py",
+    "postStartCommand": "python scripts/validation/validate_environment.py",
     // Port forwarding
     "forwardPorts": [
         8000,

@@ -1,0 +1,22 @@
+ads_version: '2.0'
+id: WF-042
+type: workflow_definition
+agent: all
+tier: 4
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 120
+keywords:
+- multi-agent
+- runbook
+- rabbitmq
+- orchestration
+fuzzy_threshold: 0.8
+description: Operational runbook for multi-agent workflows
+usage_pattern:
+  start_coordinator: uv run python -m ocr.agents.coordinator_agent
+  start_validation: uv run python -m ocr.agents.validation_agent
+  dispatch_task: uv run python -m ocr.tools.dispatch_task --target agent.coordinator --cmd execute_ocr_workflow ...
+  monitoring: RabbitMQ Management UI or log analysis
+architecture_reference: AgentQMS/standards/tier2-framework/agent-infra/multi-agent-architecture.yaml

@@ -5,13 +5,13 @@ from pathlib import Path
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-sys.path.append(str(PROJECT_ROOT))
+# ocr package should be installed in environment
 
 from ocr.core.infrastructure.agents.validation_agent import ValidationAgent
 
 # Configure logging to stdout explicitly
 logging.basicConfig(
-    level=logging.INFO, 
+    level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
     handlers=[logging.StreamHandler(sys.stdout)]
 )

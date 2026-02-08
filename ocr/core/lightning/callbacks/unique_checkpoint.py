@@ -218,7 +218,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
 
                 if omegaconf_types and isinstance(value, omegaconf_types):
                     try:
-                        return _json_ready(OmegaConf.to_container(value, resolve=True))  # type: ignore[arg-type,union-attr]
+                        return _json_ready(ensure_dict(value, resolve=True))  # type: ignore[arg-type,union-attr]
                     except Exception:
                         return None
 

@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-02-06T19:29:54.641254+00:00'
+  generated_at: '2026-02-08T16:59:31.984702+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -846,7 +846,7 @@ resolved:
           description: Essential tools and usage guide (ALWAYS LOAD for debugging)
           max_files: 3
           files:
-          - path: agent-debug-toolkit/AI_USAGE.yaml
+          - path: dev_tools/agent_debug_toolkit/AI_USAGE.yaml
             priority: critical
             mode: reference
             description: Complete tool reference with examples and best practices
@@ -854,7 +854,7 @@ resolved:
             priority: high
             mode: reference
             description: All available tools including AST commands
-          - path: agent-debug-toolkit/README.md
+          - path: dev_tools/agent_debug_toolkit/README.md
             priority: medium
             mode: reference
             description: Installation and architecture overview
@@ -865,7 +865,7 @@ resolved:
           with CLI commands and use cases
         goal: Auto-suggest AST tools in appropriate scenarios without explicit user
           instruction
-        documentation_source: agent-debug-toolkit/AI_USAGE.yaml
+        documentation_source: dev_tools/agent_debug_toolkit/AI_USAGE.yaml
     compliance-check:
       name: compliance-check
       title: Compliance & Validation Check
@@ -1164,11 +1164,11 @@ resolved:
           name: Core Analyzers
           max_files: 4
           files:
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
+          - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/config_access.py
             priority: critical
             mode: structure
             description: Config access patterns
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
+          - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
             priority: critical
             mode: structure
             description: Hydra pattern detection
@@ -1180,11 +1180,11 @@ resolved:
           name: Advanced Analysis
           max_files: 6
           files:
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
+          - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
             priority: high
             mode: structure
             description: OmegaConf merge tracer
-          - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
+          - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
             priority: high
             mode: structure
             description: Component instantiation tracker
@@ -1196,7 +1196,7 @@ resolved:
           name: Framework Specs
           max_files: 6
           files:
-          - path: agent-debug-toolkit/README.md
+          - path: dev_tools/agent_debug_toolkit/README.md
             priority: low
             mode: reference
             description: Toolkit documentation

@@ -1,0 +1,15 @@
+================================================================================
+Configuration Standards Compliance Audit
+Module: ocr/
+Standard: AgentQMS/specs/tier2-framework/configuration.spec.md
+================================================================================
+
+📊 Summary:
+  Total Violations: 0
+  Critical Rules Violated: 2
+
+🚨 Rule: no-isinstance-dict (0 violations)
+
+
+🚨 Rule: use-ensure-dict (0 violations)
+

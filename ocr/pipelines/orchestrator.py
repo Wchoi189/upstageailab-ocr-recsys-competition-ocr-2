@@ -14,6 +14,7 @@ import logging
 from ocr.core.models import get_model_by_cfg
 from ocr.data.datasets import get_datasets_by_cfg
 from ocr.data.lightning_data import OCRDataPLModule
+from ocr.core.utils.config_utils import is_config
 
 logger = logging.getLogger(__name__)
 
@@ -35,7 +36,7 @@ class OCRProjectOrchestrator:
         # Fix for V5 Structs: If domain is a config/dict, extract 'task'
         domain_cfg = cfg.get("domain", cfg.get("task", "detection"))
 
-        if isinstance(domain_cfg, (dict, DictConfig)):
+        if is_config(domain_cfg):
             self.domain = domain_cfg.get("task", "detection")
         else:
             self.domain = domain_cfg

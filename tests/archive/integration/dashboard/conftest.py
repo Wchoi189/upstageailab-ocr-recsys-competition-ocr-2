@@ -5,7 +5,8 @@ import pytest
 from fastapi.testclient import TestClient
 
 # Add backend to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../../apps/agentqms-dashboard/backend")))
+from ocr.core.utils.path_utils import PROJECT_ROOT
+sys.path.append(str(PROJECT_ROOT / "apps" / "agentqms-dashboard" / "backend"))  # noqa: path-hack
 
 from server import app
 

@@ -1,0 +1,107 @@
+[2026-02-07 01:37:57,556][ocr.pipelines.orchestrator][WARNING] - ⚠️ Mismatch detected! Domain=detection but Model=PARSeq.
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][WARNING] - ⚠️ Forcing domain='recognition' to prevent runtime errors.
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] - 
+============================================================
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] - ============================================================
+
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-02-07 01:37:57,557][ocr.pipelines.orchestrator][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-02-07 01:37:57,559][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 01:37:59,171][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-07 01:37:59,411][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-07 01:37:59,636][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-07 01:37:59,834][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-07 01:37:59,932][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: PARSeq
+[2026-02-07 01:37:59,936][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 01:37:59,940][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 01:37:59,944][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 01:37:59,947][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 01:37:59,949][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+[2026-02-07 01:37:59,973][ocr.pipelines.orchestrator][INFO] -    ✓ RecognitionPLModule created
+[2026-02-07 01:37:59,973][ocr.pipelines.orchestrator][INFO] -    ✓ DataModule created
+[2026-02-07 01:37:59,973][ocr.pipelines.orchestrator][INFO] - ⚡ Configuring Lightning Trainer...
+INFO: Using 16bit Automatic Mixed Precision (AMP)
+[2026-02-07 01:38:00,009][lightning.pytorch.utilities.rank_zero][INFO] - Using 16bit Automatic Mixed Precision (AMP)
+INFO: GPU available: True (cuda), used: True
+[2026-02-07 01:38:00,015][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-02-07 01:38:00,015][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+INFO: 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-07 01:38:00,017][lightning.pytorch.utilities.rank_zero][INFO] - 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-07 01:38:00,017][ocr.pipelines.orchestrator][INFO] -    ✓ Trainer ready
+[2026-02-07 01:38:00,017][ocr.pipelines.orchestrator][INFO] - 🏋️ Starting training...
+
+INFO: You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+[2026-02-07 01:38:00,047][lightning.pytorch.utilities.rank_zero][INFO] - You are using a CUDA device ('NVIDIA GeForce RTX 3090') that has Tensor Cores. To properly utilize them, you should set `torch.set_float32_matmul_precision('medium' | 'high')` which will trade-off precision for performance. For more details, read https://pytorch.org/docs/stable/generated/torch.set_float32_matmul_precision.html#torch.set_float32_matmul_precision
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-02-07 01:38:00,210][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/utilities/model_summary/model_summary.py:242: Precision 16-mixed is not supported by the model summary.  Estimated model size in MB will not be accurate. Using 32 bits instead.
+┏━━━┳━━━━━━━━━┳━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name    ┃ Type       ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━╇━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model   │ PARSeq     │ 56.4 M │ train │     0 │
+│ 1 │ rec_cer │ CharError… │      0 │ train │     0 │
+└───┴─────────┴────────────┴────────┴───────┴───────┘
+Trainable params: 56.4 M                             
+Non-trainable params: 0                              
+Total params: 56.4 M                                 
+Total estimated model params size (MB): 225          
+Modules in train mode: 268                           
+Modules in eval mode: 0                              
+Total FLOPs: 0                                       
+/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:434: The 'train_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=15` in the `DataLoader` to improve performance.
+/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/connectors/data_connector.py:434: The 'val_dataloader' does not have many workers which may be a bottleneck. Consider increasing the value of the `num_workers` argument` to `num_workers=15` in the `DataLoader` to improve performance.
+INFO: `Trainer.fit` stopped: `max_epochs=5` reached.
+\n[DEBUG] Step 5 Predictions:
+  GT Text:   '"변화와'
+  GT Tokens: [1, 6, 539, 988, 697, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+\n[DEBUG] Step 5 Predictions:
+  GT Text:   '창조,'
+  GT Tokens: [1, 811, 769, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+\n[DEBUG] Step 10 Predictions:
+  GT Text:   '"변화와'
+  GT Tokens: [1, 6, 539, 988, 697, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: '수수수수수수수수수수수수수수수수수수수수수수수수수'
+\n[DEBUG] Step 10 Predictions:
+  GT Text:   '창조,'
+  GT Tokens: [1, 811, 769, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: 'ooooooooooooooooooooooooo'
+\n[DEBUG] Step 15 Predictions:
+  GT Text:   '"변화와'
+  GT Tokens: [1, 6, 539, 988, 697, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: 'ooooooooooooooooooooooooo'
+\n[DEBUG] Step 15 Predictions:
+  GT Text:   '창조,'
+  GT Tokens: [1, 811, 769, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+\n[DEBUG] Step 20 Predictions:
+  GT Text:   '"변화와'
+  GT Tokens: [1, 6, 539, 988, 697, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+\n[DEBUG] Step 20 Predictions:
+  GT Text:   '창조,'
+  GT Tokens: [1, 811, 769, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+\n[DEBUG] Step 25 Predictions:
+  GT Text:   '"변화와'
+  GT Tokens: [1, 6, 539, 988, 697, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+\n[DEBUG] Step 25 Predictions:
+  GT Text:   '창조,'
+  GT Tokens: [1, 811, 769, 16, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  Pred Text: ''
+[2026-02-07 01:38:07,528][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer.fit` stopped: `max_epochs=5` reached.
+Epoch 4/4  ━━━━━━━━ 10/10 0:00:00  12.96it… v_num:   
+                          •                 6.000    
+                          0:00:00           val/acc: 
+                                            0.000    
+                                            val/cer: 
+                                            1.000    
+[2026-02-07 01:38:08,120][ocr.pipelines.orchestrator][INFO] - 
+✅ Training complete!

@@ -1,0 +1,20 @@
+ads_version: '2.0'
+id: WF-044
+type: workflow_definition
+agent: all
+tier: 4
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: unknown
+memory_footprint: 80
+keywords:
+- compliance
+- reporting
+- workflow
+- dashboard
+fuzzy_threshold: 0.8
+description: Runbook for generating compliance reports
+workflow:
+  generate_report:
+    command: uv run python AgentQMS/tools/compliance/generate_report.py
+    output: docs/artifacts/compliance_reports/latest-report.txt

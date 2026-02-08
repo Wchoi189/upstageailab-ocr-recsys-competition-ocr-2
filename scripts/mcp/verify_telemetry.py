@@ -8,8 +8,13 @@ import shutil
 from pathlib import Path
 
 # Ensure project root is in path
-project_root = Path(__file__).resolve().parent.parent.parent
-sys.path.insert(0, str(project_root))
+try:
+    from ocr.core.utils.path_utils import PROJECT_ROOT
+    project_root = PROJECT_ROOT
+except ImportError:
+    # Fallback if ocr package not installed (e.g. CI without install)
+    project_root = Path(__file__).resolve().parent.parent.parent  # noqa: path-hack
+    sys.path.insert(0, str(project_root))
 
 from AgentQMS.middleware.telemetry import PolicyViolation
 from AgentQMS.middleware.policies import RedundancyInterceptor, ComplianceInterceptor
@@ -37,8 +42,8 @@ def test_compliance_policy():
 
     # 3. Test sys.path violation
     try:
-        interceptor.validate("write_to_file", {"CodeContent": "import sys; sys.path.append('..')"})
-        print("❌ Failed to detect sys.path.append")
+        interceptor.validate("write_to_file", {"CodeContent": "import sys; sys.path.append('..')"})  # noqa: path-hack
+        print("❌ Failed to detect sys.path.append")  # noqa: path-hack
         sys.exit(1)
     except PolicyViolation as e:
         print(f"✅ Detected sys.path violation: {e.feedback_to_ai}")

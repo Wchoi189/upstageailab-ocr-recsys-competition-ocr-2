@@ -1,0 +1,48 @@
+ocr/core/models/architectures/__init__.py:from ocr.features.detection.models.architectures import craft, dbnet, dbnetpp  # noqa: F401
+ocr/core/models/architectures/__init__.py:from ocr.features.recognition.models import architecture as recognition_arch  # noqa: F401
+ocr/core/models/architectures/shared_decoders.py:from ocr.features.detection.models.decoders.fpn_decoder import FPNDecoder
+ocr/domains/detection/models/architectures/craft.py:from ocr.features.detection.models.decoders.craft_decoder import CraftDecoder
+ocr/domains/detection/models/architectures/craft.py:from ocr.features.detection.models.encoders.craft_vgg import CraftVGGEncoder
+ocr/domains/detection/models/architectures/craft.py:from ocr.features.detection.models.heads.craft_head import CraftHead
+ocr/domains/detection/models/architectures/dbnetpp.py:from ocr.features.detection.models.decoders.dbpp_decoder import DBPPDecoder
+ocr/domains/detection/models/architectures/dbnetpp.py:from ocr.features.detection.models.heads.db_head import DBHead
+ocr/domains/detection/models/architectures/dbnet.py:from ocr.features.detection.models.heads.db_head import DBHead
+ocr/domains/detection/models/heads/craft_head.py:from ocr.features.detection.models.postprocess.craft_postprocess import CraftPostProcessor
+ocr/domains/detection/models/heads/db_head.py:from ocr.features.detection.interfaces import DetectionHead
+ocr/domains/detection/models/heads/db_head.py:from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.architectures.craft import CRAFT
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.architectures.dbnet import DBNet
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.architectures.dbnetpp import DBNetPP
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.decoders.craft_decoder import CRAFTDecoder
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.decoders.dbpp_decoder import DBPPDecoder
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.decoders.fpn_decoder import FPNDecoder
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.encoders.craft_vgg import CRAFTVGG
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.heads.craft_head import CRAFTHead
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.heads.db_head import DBHead
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.postprocess.craft_postprocess import CRAFTPostProcessor
+ocr/domains/detection/models/__init__.py:        from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
+ocr/domains/kie/data/dataset.py:from ocr.features.kie.validation import KIEDataItem
+ocr/domains/kie/data/__init__.py:        from ocr.features.kie.data.dataset import KIEDataset
+ocr/domains/kie/models/__init__.py:        from ocr.features.kie.models.model import LayoutLMv3Wrapper
+ocr/domains/kie/models/__init__.py:        from ocr.features.kie.models.model import LiLTWrapper
+ocr/domains/layout/__init__.py:from ocr.features.layout.inference.contracts import (
+ocr/domains/layout/__init__.py:from ocr.features.layout.inference.grouper import (
+scripts/performance/benchmark_recognition.py:from ocr.features.recognition.inference.recognizer import RecognitionInput, RecognizerBackend, RecognizerConfig, TextRecognizer
+tests/integration/test_collate_integration.py:from ocr.features.detection.models.heads.db_head import DBHead
+tests/ocr/models/test_model_postprocessing_integration.py:from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
+tests/ocr/models/test_postprocessing_shapes.py:from ocr.features.detection.models.postprocess.db_postprocess import DBPostProcessor
+tests/unit/models/test_db_head_init.py:from ocr.features.detection.models.heads.db_head import DBHead
+tests/unit/test_craft_components.py:from ocr.features.detection.models.decoders.craft_decoder import CraftDecoder
+tests/unit/test_craft_components.py:from ocr.features.detection.models.encoders.craft_vgg import CraftVGGEncoder
+tests/unit/test_craft_components.py:from ocr.features.detection.models.heads.craft_head import CraftHead
+tests/unit/test_craft_components.py:from ocr.features.detection.models.postprocess.craft_postprocess import CraftPostProcessor
+tests/unit/test_dbnetpp_components.py:from ocr.features.detection.models.decoders.dbpp_decoder import DBPPDecoder
+tests/unit/test_head.py:from ocr.features.detection.models.heads.db_head import DBHead
+tests/unit/test_layout_contracts.py:from ocr.features.layout.inference.contracts import (
+tests/unit/test_line_grouper.py:from ocr.features.layout.inference.grouper import (
+tests/unit/test_paddleocr_recognizer.py:from ocr.features.recognition.inference.backends.paddleocr_recognizer import PaddleOCRRecognizer
+tests/unit/test_paddleocr_recognizer.py:from ocr.features.recognition.inference.recognizer import RecognitionInput, RecognitionOutput, RecognizerBackend, RecognizerConfig
+tests/unit/test_receipt_extraction.py:from ocr.features.kie.inference.extraction.field_extractor import (
+tests/unit/test_receipt_extraction.py:from ocr.features.kie.inference.extraction.normalizers import (
+tests/unit/test_receipt_extraction.py:from ocr.features.kie.inference.extraction.receipt_schema import (
+tests/unit/test_recognizer_contract.py:from ocr.features.recognition.inference.recognizer import (

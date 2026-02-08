@@ -10,14 +10,18 @@ from pathlib import Path
 from typing import Set, Dict, List, Tuple
 import yaml
 from omegaconf import OmegaConf
+from dotenv import load_dotenv
+from AgentQMS.tools.utils import paths
+
+# Load environment variables
+load_dotenv()
 
 # Setup logging
 logging.basicConfig(level=logging.INFO, format='%(levelname)s: %(message)s')
 logger = logging.getLogger("MasterAudit")
 
-# Add workspace root to sys.path
-WORKSPACE_ROOT = Path("/workspaces/upstageailab-ocr-recsys-competition-ocr-2")
-sys.path.append(str(WORKSPACE_ROOT))
+# Get workspace root from standard utils
+WORKSPACE_ROOT = paths.get_project_root()
 
 class AuditResult:
     def __init__(self):
@@ -52,7 +56,7 @@ def check_python_imports(result: AuditResult):
     logger.info("Scanning Python files for broken imports...")
 
     # Directories to scan
-    dirs_to_scan = [WORKSPACE_ROOT / "ocr", WORKSPACE_ROOT / "runners", WORKSPACE_ROOT / "scripts"]
+    dirs_to_scan = [WORKSPACE_ROOT / "ocr", WORKSPACE_ROOT / "scripts" / "runners", WORKSPACE_ROOT / "scripts"]
 
     for root_dir in dirs_to_scan:
         if not root_dir.exists(): continue

@@ -123,9 +123,6 @@ def main():
 
 if __name__ == "__main__":
     if "ocr" not in sys.modules:
-        # Add project root to sys.path if not running as package
-        project_root = "/workspaces"
-        if project_root not in sys.path:
-            sys.path.append(project_root)
+        pass
 
     sys.exit(main())

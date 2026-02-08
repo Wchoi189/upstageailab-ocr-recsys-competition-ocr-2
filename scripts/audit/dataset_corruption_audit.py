@@ -16,8 +16,14 @@ from typing import Any
 import pandas as pd
 
 # Add project root to path
-project_root = Path(__file__).parent.parent.parent
-sys.path.insert(0, str(project_root))
+# Add project root to path
+try:
+    from ocr.core.utils.path_utils import PROJECT_ROOT
+    project_root = PROJECT_ROOT
+except ImportError:
+    project_root = Path(__file__).resolve().parents[2]  # noqa: path-hack
+    if str(project_root) not in sys.path:
+        sys.path.insert(0, str(project_root))
 
 
 def check_file_exists(filepath: Path) -> dict[str, Any]:

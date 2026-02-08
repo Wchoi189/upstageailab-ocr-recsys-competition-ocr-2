@@ -12,6 +12,8 @@ from collections.abc import Mapping, Sequence
 from pathlib import Path
 from typing import TYPE_CHECKING, Any
 
+from ocr.core.utils.config_utils import is_config
+
 if TYPE_CHECKING:
     import numpy as np
     from omegaconf import DictConfig
@@ -70,21 +72,25 @@ def _select(config: Any, path: Sequence[str], default: Any | None = None) -> Any
     from omegaconf import DictConfig
 
     current = config
+    current = config
     for key in path:
         if current is None:
             return default
-        if isinstance(current, DictConfig):
-            if key in current:
-                current = current.get(key)
-            elif hasattr(current, key):
-                current = getattr(current, key)
-            else:
-                return default
-        elif isinstance(current, dict):
-            if key in current:
+
+        if is_config(current):
+            # Try dictionary access first
+            try:
                 current = current[key]
-            else:
-                return default
+                continue
+            except (KeyError, TypeError):
+                pass
+
+            # Try attribute access
+            if hasattr(current, key):
+                current = getattr(current, key)
+                continue
+
+            return default
         else:
             current = getattr(current, key, default)
     return current if current is not None else default

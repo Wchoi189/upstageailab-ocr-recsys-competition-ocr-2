@@ -206,9 +206,9 @@ __pycache__/
 *.pyc
 
 # Archives
-archive/
-_archive/
-.archive/
+# archive/
+# _archive/
+# .archive/
 apps/
 
 # Dependencies & Venvs (External)

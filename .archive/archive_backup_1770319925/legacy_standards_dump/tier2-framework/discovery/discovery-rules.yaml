@@ -1,0 +1,118 @@
+ads_version: '2.0'
+id: FW-037
+type: tool_catalog
+agent: all
+tier: 2
+priority: high
+validates_with: AgentQMS/standards/schemas/compliance-checker.py
+compliance_status: pass
+memory_footprint: 150
+dependencies:
+- FW-034
+keywords:
+- context
+- keywords
+- mapping
+- bundle
+- task
+fuzzy_threshold: 0.8
+description: "Keyword mappings for context bundle task detection and routing"
+
+development:
+  - implement
+  - code
+  - develop
+  - feature
+  - function
+  - class
+  - module
+  - refactor
+  - rewrite
+  - build
+  - create
+  - add
+  - fix bug
+  - bug fix
+
+documentation:
+  - document
+  - doc
+  - write docs
+  - readme
+  - guide
+  - manual
+  - tutorial
+  - update docs
+  - documentation
+
+debugging:
+  - debug
+  - troubleshoot
+  - error
+  - fix
+  - broken
+  - issue
+  - problem
+  - crash
+  - exception
+  - traceback
+  - log
+  - investigate
+
+planning:
+  - plan
+  - design
+  - architecture
+  - blueprint
+  - strategy
+  - assess
+  - evaluate
+  - analysis
+  - proposal
+  - roadmap
+
+hydra-configuration:
+  - hydra
+  - omega
+  - conf
+  - config.yaml
+  - configuration
+  - hydra v5
+  - domains first
+  - package directive
+  - interpolation
+
+hydra-v5-patterns:
+  - atomic architecture
+  - domain isolation
+  - flattening rule
+  - absolute interpolation
+  - self-mounting
+  - aliasing pattern
+  - namespace collision
+  - double wrap
+  - passive refactor cycle
+
+ocr-architecture:
+  - OCRProjectOrchestrator
+  - domain separation
+  - ocr/pipelines
+  - ocr/domains
+  - detection domain
+  - recognition domain
+  - orchestration flow
+  - component interfaces
+
+agent-configuration:
+  - agent
+  - multi-agent
+  - sub-agent
+  - ollama
+  - model
+  - ai assistant
+  - copilot
+  - claude
+  - gemini
+  - qwen
+  - side load
+  - agent system

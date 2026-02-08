@@ -134,22 +134,21 @@ if [ -d "$PARENT_DIR" ]; then
         (cd "$PARENT_DIR/repomix" && pnpm install && pnpm run build && pnpm link --global) || echo "  ❌ Failed to install repomix"
     fi
 
-    # Spec-kit
-    if [ -d "$PARENT_DIR/spec-kit" ]; then
-        echo "  📦 Installing spec-kit..."
-        # Install as editable in the user environment
-        uv pip install -e "$PARENT_DIR/spec-kit" || echo "  ❌ Failed to install spec-kit"
+    # Spec-kit (requires Python 3.11+, use project venv)
+    if [ -d "$PARENT_DIR/spec-kit" ] && [ -f "/workspaces/.venv/bin/python" ]; then
+        echo "  📦 Installing spec-kit in project venv..."
+        uv pip install -e "$PARENT_DIR/spec-kit" --python /workspaces/.venv/bin/python || echo "  ❌ Failed to install spec-kit"
     fi
 
     # Qwen Code CLI (API Version)
     # Ensure qwen-code is installed globally for the user
-    # We use sudo -u vscode to ensure it installs in user's home
-    if ! sudo -u vscode pnpm list -g @qwen-code/qwen-code > /dev/null 2>&1; then
+    if ! pnpm list -g @qwen-code/qwen-code > /dev/null 2>&1; then
         echo "  📦 Installing qwen-code CLI..."
-        # Ensure local bin dir exists
+        # Ensure local bin dir exists and is in PATH
         sudo -u vscode mkdir -p /home/vscode/.local/share/pnpm
         sudo -u vscode pnpm config set global-bin-dir /home/vscode/.local/share/pnpm
-        sudo -u vscode pnpm add -g @qwen-code/qwen-code
+        # Install with PATH set
+        sudo -u vscode bash -c 'export PATH="/home/vscode/.local/share/pnpm:$PATH" && pnpm add -g @qwen-code/qwen-code'
     else
         echo "  ✅ qwen-code CLI already installed."
     fi

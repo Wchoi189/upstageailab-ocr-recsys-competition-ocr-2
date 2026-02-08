@@ -1,0 +1,1408 @@
+{
+  "audit_date": "2026-01-29T02:39:42.291942",
+  "total_scripts": 128,
+  "categorization": {
+    "review": [
+      {
+        "file": "scripts/audit_config_compliance.py",
+        "complexity": {
+          "functions": 9,
+          "classes": 1,
+          "imports": 5,
+          "has_main": true,
+          "lines": 257
+        },
+        "size_bytes": 9459
+      },
+      {
+        "file": "scripts/finetune_ppocr.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 190
+        },
+        "size_bytes": 5913
+      },
+      {
+        "file": "scripts/_bootstrap.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 1,
+          "imports": 3,
+          "has_main": false,
+          "lines": 58
+        },
+        "size_bytes": 1703
+      },
+      {
+        "file": "scripts/bug_tools/next_bug_id.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 69
+        },
+        "size_bytes": 1855
+      },
+      {
+        "file": "scripts/ci/analyze_mypy_errors.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 40
+        },
+        "size_bytes": 1315
+      },
+      {
+        "file": "scripts/ci/check_test_isolation.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 89
+        },
+        "size_bytes": 2889
+      },
+      {
+        "file": "scripts/ci/forbid_pip_install.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 69
+        },
+        "size_bytes": 1841
+      },
+      {
+        "file": "scripts/data/check_training_data.py",
+        "complexity": {
+          "functions": 0,
+          "classes": 0,
+          "imports": 4,
+          "has_main": false,
+          "lines": 138
+        },
+        "size_bytes": 4508
+      },
+      {
+        "file": "scripts/data/download_hf_sample.py",
+        "complexity": {
+          "functions": 0,
+          "classes": 0,
+          "imports": 3,
+          "has_main": false,
+          "lines": 37
+        },
+        "size_bytes": 1135
+      },
+      {
+        "file": "scripts/data/etl/core.py",
+        "complexity": {
+          "functions": 8,
+          "classes": 2,
+          "imports": 7,
+          "has_main": false,
+          "lines": 268
+        },
+        "size_bytes": 9703
+      },
+      {
+        "file": "scripts/datasets/sample_images.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 74
+        },
+        "size_bytes": 2514
+      },
+      {
+        "file": "scripts/debug/view_api_usage.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 35
+        },
+        "size_bytes": 875
+      },
+      {
+        "file": "scripts/debug/view_parquet.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 79
+        },
+        "size_bytes": 2541
+      },
+      {
+        "file": "scripts/demos/analyze_preprocessing_results.py",
+        "complexity": {
+          "functions": 10,
+          "classes": 1,
+          "imports": 6,
+          "has_main": true,
+          "lines": 279
+        },
+        "size_bytes": 11307
+      },
+      {
+        "file": "scripts/demos/demo_preprocessing_samples.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 229
+        },
+        "size_bytes": 7545
+      },
+      {
+        "file": "scripts/demos/test_perspective_inference.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 176
+        },
+        "size_bytes": 5509
+      },
+      {
+        "file": "scripts/documentation/generate_diagrams.py",
+        "complexity": {
+          "functions": 15,
+          "classes": 2,
+          "imports": 8,
+          "has_main": true,
+          "lines": 614
+        },
+        "size_bytes": 20523
+      },
+      {
+        "file": "scripts/documentation/standardize_content.py",
+        "complexity": {
+          "functions": 17,
+          "classes": 1,
+          "imports": 5,
+          "has_main": true,
+          "lines": 587
+        },
+        "size_bytes": 25037
+      },
+      {
+        "file": "scripts/documentation/translate_readme.py",
+        "complexity": {
+          "error": "expected an indented block after 'try' statement on line 148 (<unknown>, line 150)"
+        },
+        "size_bytes": 8107
+      },
+      {
+        "file": "scripts/hooks/validate_architecture.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 180
+        },
+        "size_bytes": 5663
+      },
+      {
+        "file": "scripts/hooks/validate_path_usage.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 70
+        },
+        "size_bytes": 2029
+      },
+      {
+        "file": "scripts/huggingface/hf_inference.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 10,
+          "has_main": true,
+          "lines": 173
+        },
+        "size_bytes": 5992
+      },
+      {
+        "file": "scripts/huggingface/hf_inference_simple.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 59
+        },
+        "size_bytes": 1791
+      },
+      {
+        "file": "scripts/mcp/analyze_telemetry.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 87
+        },
+        "size_bytes": 2609
+      },
+      {
+        "file": "scripts/mcp/sync_configs.py",
+        "complexity": {
+          "functions": 6,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 129
+        },
+        "size_bytes": 4267
+      },
+      {
+        "file": "scripts/mcp/test_telemetry.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 1,
+          "imports": 3,
+          "has_main": true,
+          "lines": 76
+        },
+        "size_bytes": 3108
+      },
+      {
+        "file": "scripts/mcp/unified_server.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 30,
+          "has_main": true,
+          "lines": 441
+        },
+        "size_bytes": 17167
+      },
+      {
+        "file": "scripts/mcp/verify_ads_compliance.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 58
+        },
+        "size_bytes": 1634
+      },
+      {
+        "file": "scripts/mcp/verify_all.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 36
+        },
+        "size_bytes": 998
+      },
+      {
+        "file": "scripts/mcp/verify_feedback.py",
+        "complexity": {
+          "functions": 0,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 46
+        },
+        "size_bytes": 1310
+      },
+      {
+        "file": "scripts/mcp/verify_force.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 28
+        },
+        "size_bytes": 837
+      },
+      {
+        "file": "scripts/mcp/verify_server.py",
+        "complexity": {
+          "error": "expected an indented block after 'try' statement on line 9 (<unknown>, line 11)"
+        },
+        "size_bytes": 2051
+      },
+      {
+        "file": "scripts/mcp/verify_strict_compliance.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 24
+        },
+        "size_bytes": 772
+      },
+      {
+        "file": "scripts/mcp/verify_telemetry.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 89
+        },
+        "size_bytes": 3066
+      },
+      {
+        "file": "scripts/migration_refactoring/fix_export_paths.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 98
+        },
+        "size_bytes": 3189
+      },
+      {
+        "file": "scripts/migration_refactoring/migrate_checkpoint_names.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 150
+        },
+        "size_bytes": 4754
+      },
+      {
+        "file": "scripts/migration_refactoring/migrate_to_underscore_naming.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 186
+        },
+        "size_bytes": 6059
+      },
+      {
+        "file": "scripts/monitoring/process_monitor.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 268
+        },
+        "size_bytes": 8656
+      },
+      {
+        "file": "scripts/prototypes/test_middleware.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 1,
+          "has_main": true,
+          "lines": 28
+        },
+        "size_bytes": 955
+      },
+      {
+        "file": "scripts/prototypes/multi_agent/rabbitmq_producer.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 75
+        },
+        "size_bytes": 2344
+      },
+      {
+        "file": "scripts/prototypes/multi_agent/rabbitmq_worker.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 79
+        },
+        "size_bytes": 2706
+      },
+      {
+        "file": "scripts/prototypes/multi_agent/test_linting_loop.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 8,
+          "has_main": true,
+          "lines": 60
+        },
+        "size_bytes": 1890
+      },
+      {
+        "file": "scripts/prototypes/multi_agent/test_ocr_loop.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 83
+        },
+        "size_bytes": 2699
+      },
+      {
+        "file": "scripts/prototypes/multi_agent/test_slack.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 36
+        },
+        "size_bytes": 1265
+      },
+      {
+        "file": "scripts/research/perplexity_client.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 7,
+          "has_main": true,
+          "lines": 117
+        },
+        "size_bytes": 3895
+      },
+      {
+        "file": "scripts/troubleshooting/test_basic_cuda.py",
+        "complexity": {
+          "functions": 0,
+          "classes": 0,
+          "imports": 2,
+          "has_main": false,
+          "lines": 82
+        },
+        "size_bytes": 2396
+      },
+      {
+        "file": "scripts/troubleshooting/test_model_forward_backward.py",
+        "complexity": {
+          "functions": 0,
+          "classes": 0,
+          "imports": 10,
+          "has_main": false,
+          "lines": 141
+        },
+        "size_bytes": 4285
+      },
+      {
+        "file": "scripts/utilities/cache_manager.py",
+        "complexity": {
+          "functions": 8,
+          "classes": 0,
+          "imports": 10,
+          "has_main": true,
+          "lines": 321
+        },
+        "size_bytes": 10482
+      }
+    ],
+    "keep": [
+      {
+        "file": "scripts/audit/analyze_broken_imports_adt.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 7,
+          "has_main": true,
+          "lines": 224
+        },
+        "size_bytes": 7790
+      },
+      {
+        "file": "scripts/audit/arch_guard.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 51
+        },
+        "size_bytes": 2086
+      },
+      {
+        "file": "scripts/audit/audit_scripts_directory.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 7,
+          "has_main": true,
+          "lines": 210
+        },
+        "size_bytes": 6691
+      },
+      {
+        "file": "scripts/audit/auto_align_hydra.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 48
+        },
+        "size_bytes": 1823
+      },
+      {
+        "file": "scripts/audit/batch_fix_imports.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 111
+        },
+        "size_bytes": 4290
+      },
+      {
+        "file": "scripts/audit/catalog_merger.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 265
+        },
+        "size_bytes": 9277
+      },
+      {
+        "file": "scripts/audit/categorize_internal_ocr_imports.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 162
+        },
+        "size_bytes": 5855
+      },
+      {
+        "file": "scripts/audit/check_targets.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 85
+        },
+        "size_bytes": 2867
+      },
+      {
+        "file": "scripts/audit/comment_out_broken_scripts.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 165
+        },
+        "size_bytes": 7602
+      },
+      {
+        "file": "scripts/audit/core_autopsy.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 111
+        },
+        "size_bytes": 4054
+      },
+      {
+        "file": "scripts/audit/dataset_corruption_audit.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 353
+        },
+        "size_bytes": 13635
+      },
+      {
+        "file": "scripts/audit/debug_paths.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": false,
+          "lines": 36
+        },
+        "size_bytes": 1545
+      },
+      {
+        "file": "scripts/audit/fix_hydra_targets.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 155
+        },
+        "size_bytes": 5961
+      },
+      {
+        "file": "scripts/audit/generate_fix_manifest.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 51
+        },
+        "size_bytes": 1710
+      },
+      {
+        "file": "scripts/audit/hydra_config_audit.py",
+        "complexity": {
+          "functions": 6,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 220
+        },
+        "size_bytes": 6984
+      },
+      {
+        "file": "scripts/audit/hydra_sanity_check.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 74
+        },
+        "size_bytes": 3747
+      },
+      {
+        "file": "scripts/audit/hydra_target_linter.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 127
+        },
+        "size_bytes": 5217
+      },
+      {
+        "file": "scripts/audit/master_audit.py",
+        "complexity": {
+          "functions": 8,
+          "classes": 1,
+          "imports": 11,
+          "has_main": true,
+          "lines": 206
+        },
+        "size_bytes": 8417
+      },
+      {
+        "file": "scripts/audit/validate_symlinks.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 267
+        },
+        "size_bytes": 8606
+      },
+      {
+        "file": "scripts/data/align_kie_dp.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 194
+        },
+        "size_bytes": 7515
+      },
+      {
+        "file": "scripts/data/clean_dataset.py",
+        "complexity": {
+          "functions": 11,
+          "classes": 1,
+          "imports": 12,
+          "has_main": true,
+          "lines": 588
+        },
+        "size_bytes": 24786
+      },
+      {
+        "file": "scripts/data/contrast_datasets.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 73
+        },
+        "size_bytes": 2520
+      },
+      {
+        "file": "scripts/data/convert_images_to_webp.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 23
+        },
+        "size_bytes": 808
+      },
+      {
+        "file": "scripts/data/count_splits.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 28
+        },
+        "size_bytes": 724
+      },
+      {
+        "file": "scripts/data/download_hf_datasets.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 36
+        },
+        "size_bytes": 969
+      },
+      {
+        "file": "scripts/data/extract_charset.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 114
+        },
+        "size_bytes": 3833
+      },
+      {
+        "file": "scripts/data/fix_canonical_orientation_images.py",
+        "complexity": {
+          "functions": 7,
+          "classes": 0,
+          "imports": 8,
+          "has_main": true,
+          "lines": 228
+        },
+        "size_bytes": 7286
+      },
+      {
+        "file": "scripts/data/fix_polygon_coordinates.py",
+        "complexity": {
+          "functions": 8,
+          "classes": 1,
+          "imports": 11,
+          "has_main": true,
+          "lines": 387
+        },
+        "size_bytes": 14817
+      },
+      {
+        "file": "scripts/data/generate_pseudo_labels.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 1,
+          "imports": 14,
+          "has_main": true,
+          "lines": 247
+        },
+        "size_bytes": 9160
+      },
+      {
+        "file": "scripts/data/inspect_content.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 1,
+          "has_main": true,
+          "lines": 31
+        },
+        "size_bytes": 883
+      },
+      {
+        "file": "scripts/data/inspect_datasets.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 51
+        },
+        "size_bytes": 1678
+      },
+      {
+        "file": "scripts/data/inspect_ids.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 1,
+          "has_main": true,
+          "lines": 24
+        },
+        "size_bytes": 669
+      },
+      {
+        "file": "scripts/data/investigate_polygon_bounds.py",
+        "complexity": {
+          "functions": 9,
+          "classes": 1,
+          "imports": 10,
+          "has_main": true,
+          "lines": 381
+        },
+        "size_bytes": 15524
+      },
+      {
+        "file": "scripts/data/link_optimized_datasets.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 60
+        },
+        "size_bytes": 2105
+      },
+      {
+        "file": "scripts/data/optimize_images_v2.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 9,
+          "has_main": true,
+          "lines": 182
+        },
+        "size_bytes": 6972
+      },
+      {
+        "file": "scripts/data/preprocess.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 85
+        },
+        "size_bytes": 3000
+      },
+      {
+        "file": "scripts/data/preprocess_data.py",
+        "complexity": {
+          "functions": 0,
+          "classes": 0,
+          "imports": 1,
+          "has_main": true,
+          "lines": 21
+        },
+        "size_bytes": 867
+      },
+      {
+        "file": "scripts/data/preprocess_maps.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 8,
+          "has_main": true,
+          "lines": 315
+        },
+        "size_bytes": 13946
+      },
+      {
+        "file": "scripts/data/process_aihub_validation.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 183
+        },
+        "size_bytes": 7150
+      },
+      {
+        "file": "scripts/data/process_kie_to_rec.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 90
+        },
+        "size_bytes": 3067
+      },
+      {
+        "file": "scripts/data/recover_splits.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 53
+        },
+        "size_bytes": 1825
+      },
+      {
+        "file": "scripts/data/report_orientation_mismatches.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 8,
+          "has_main": true,
+          "lines": 95
+        },
+        "size_bytes": 2985
+      },
+      {
+        "file": "scripts/data/standardize_datasets.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 1,
+          "imports": 7,
+          "has_main": true,
+          "lines": 152
+        },
+        "size_bytes": 6022
+      },
+      {
+        "file": "scripts/data/translate_document.py",
+        "complexity": {
+          "functions": 7,
+          "classes": 1,
+          "imports": 8,
+          "has_main": true,
+          "lines": 242
+        },
+        "size_bytes": 9499
+      },
+      {
+        "file": "scripts/data/unpack_aihub_validation.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 93
+        },
+        "size_bytes": 3223
+      },
+      {
+        "file": "scripts/data/validate_dataset.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 8,
+          "has_main": true,
+          "lines": 180
+        },
+        "size_bytes": 7085
+      },
+      {
+        "file": "scripts/data/validate_pseudo_labels.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 7,
+          "has_main": true,
+          "lines": 167
+        },
+        "size_bytes": 6204
+      },
+      {
+        "file": "scripts/data/verify_aihub_parquet.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 63
+        },
+        "size_bytes": 2119
+      },
+      {
+        "file": "scripts/data/etl/cli.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 76
+        },
+        "size_bytes": 2676
+      },
+      {
+        "file": "scripts/demos/update_demo_data.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 49
+        },
+        "size_bytes": 1388
+      },
+      {
+        "file": "scripts/demos/type_checking_demo/bug_demo.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 45
+        },
+        "size_bytes": 1765
+      },
+      {
+        "file": "scripts/demos/type_checking_demo/type_checking_demo.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 75
+        },
+        "size_bytes": 2752
+      },
+      {
+        "file": "scripts/troubleshooting/debug_wandb_import.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 6,
+          "has_main": false,
+          "lines": 60
+        },
+        "size_bytes": 1569
+      },
+      {
+        "file": "scripts/utils/show_config.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 62
+        },
+        "size_bytes": 2169
+      },
+      {
+        "file": "scripts/utils/verify_hydra_flattening.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 236
+        },
+        "size_bytes": 7658
+      }
+    ],
+    "refactor": [
+      {
+        "file": "scripts/checkpoints/convert_legacy_checkpoints.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 10,
+          "has_main": true,
+          "lines": 592
+        },
+        "size_bytes": 19393
+      },
+      {
+        "file": "scripts/checkpoints/generate_metadata.py",
+        "complexity": {
+          "functions": 9,
+          "classes": 0,
+          "imports": 8,
+          "has_main": true,
+          "lines": 537
+        },
+        "size_bytes": 17428
+      },
+      {
+        "file": "scripts/checkpoints/migrate.py",
+        "complexity": {
+          "functions": 6,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 303
+        },
+        "size_bytes": 9206
+      },
+      {
+        "file": "scripts/performance/analyze_imports.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 115
+        },
+        "size_bytes": 3751
+      },
+      {
+        "file": "scripts/performance/benchmark.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 192
+        },
+        "size_bytes": 5822
+      },
+      {
+        "file": "scripts/performance/benchmark_api.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 132
+        },
+        "size_bytes": 3905
+      },
+      {
+        "file": "scripts/performance/benchmark_optimizations.py",
+        "complexity": {
+          "functions": 9,
+          "classes": 0,
+          "imports": 13,
+          "has_main": true,
+          "lines": 224
+        },
+        "size_bytes": 8338
+      },
+      {
+        "file": "scripts/performance/benchmark_pipeline.py",
+        "complexity": {
+          "functions": 3,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 251
+        },
+        "size_bytes": 7852
+      },
+      {
+        "file": "scripts/performance/benchmark_recognition.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 5,
+          "has_main": true,
+          "lines": 297
+        },
+        "size_bytes": 8707
+      },
+      {
+        "file": "scripts/performance/benchmark_validation.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 2,
+          "has_main": true,
+          "lines": 72
+        },
+        "size_bytes": 2110
+      },
+      {
+        "file": "scripts/performance/compare_baseline_vs_optimized.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 509
+        },
+        "size_bytes": 19721
+      },
+      {
+        "file": "scripts/performance/compare_three_runs.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 418
+        },
+        "size_bytes": 18299
+      },
+      {
+        "file": "scripts/performance/decoder_benchmark.py",
+        "complexity": {
+          "error": "unindent does not match any outer indentation level (<unknown>, line 295)"
+        },
+        "size_bytes": 16870
+      },
+      {
+        "file": "scripts/performance/generate_baseline_report.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 479
+        },
+        "size_bytes": 17222
+      },
+      {
+        "file": "scripts/performance/performance_measurement.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 137
+        },
+        "size_bytes": 5153
+      },
+      {
+        "file": "scripts/performance/performance_test.py",
+        "complexity": {
+          "functions": 10,
+          "classes": 2,
+          "imports": 8,
+          "has_main": true,
+          "lines": 288
+        },
+        "size_bytes": 9264
+      },
+      {
+        "file": "scripts/performance/profile_checks.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 4,
+          "has_main": false,
+          "lines": 39
+        },
+        "size_bytes": 1008
+      },
+      {
+        "file": "scripts/performance/profile_imports.py",
+        "complexity": {
+          "functions": 5,
+          "classes": 1,
+          "imports": 5,
+          "has_main": true,
+          "lines": 118
+        },
+        "size_bytes": 4125
+      },
+      {
+        "file": "scripts/performance/quick_performance_validation.py",
+        "complexity": {
+          "functions": 7,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 207
+        },
+        "size_bytes": 5705
+      },
+      {
+        "file": "scripts/validation/validate_config.py",
+        "complexity": {
+          "functions": 4,
+          "classes": 0,
+          "imports": 4,
+          "has_main": true,
+          "lines": 87
+        },
+        "size_bytes": 2233
+      },
+      {
+        "file": "scripts/validation/validate_environment.py",
+        "complexity": {
+          "functions": 1,
+          "classes": 0,
+          "imports": 6,
+          "has_main": true,
+          "lines": 97
+        },
+        "size_bytes": 2810
+      },
+      {
+        "file": "scripts/validation/checkpoints/validate_coordinate_consistency.py",
+        "complexity": {
+          "functions": 6,
+          "classes": 0,
+          "imports": 9,
+          "has_main": true,
+          "lines": 357
+        },
+        "size_bytes": 11681
+      },
+      {
+        "file": "scripts/validation/docs/validate_links.py",
+        "complexity": {
+          "functions": 9,
+          "classes": 1,
+          "imports": 5,
+          "has_main": true,
+          "lines": 168
+        },
+        "size_bytes": 5854
+      },
+      {
+        "file": "scripts/validation/schemas/validate_ui_schema.py",
+        "complexity": {
+          "functions": 2,
+          "classes": 0,
+          "imports": 3,
+          "has_main": true,
+          "lines": 120
+        },
+        "size_bytes": 3845
+      },
+      {
+        "file": "scripts/validation/templates/validate_templates.py",
+        "complexity": {
+          "functions": 9,
+          "classes": 1,
+          "imports": 4,
+          "has_main": true,
+          "lines": 232
+        },
+        "size_bytes": 8323
+      }
+    ]
+  }
+}

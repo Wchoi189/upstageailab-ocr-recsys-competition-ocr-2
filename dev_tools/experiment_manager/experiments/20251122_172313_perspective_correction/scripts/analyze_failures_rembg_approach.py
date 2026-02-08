@@ -44,28 +44,25 @@ except ImportError as e:
 # Setup path utils for proper path resolution
 script_path = Path(__file__).resolve()
 try:
+    from ocr.core.utils.path_utils import PROJECT_ROOT, get_path_resolver
+
     # Add tracker src to path
-    tracker_root = script_path.parent.parent.parent.parent
-    sys.path.insert(0, str(tracker_root / "src"))
-    from experiment_manager.utils.path_utils import setup_script_paths
+    tracker_root = PROJECT_ROOT / "dev_tools" / "experiment_manager" / "src"
+    if str(tracker_root) not in sys.path:
+        sys.path.insert(0, str(tracker_root))
+    from etk.utils.path_utils import setup_script_paths
 
     TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
 except ImportError:
     # Fallback if path_utils not available
-    TRACKER_ROOT = script_path.parent.parent.parent.parent
+    # Assuming standard structure: experiments/<date>/scripts
+    TRACKER_ROOT = script_path.parents[4]
     EXPERIMENT_ID = None
     EXPERIMENT_PATHS = None
 
 # Setup OCR project paths
-workspace_root = tracker_root.parent
-sys.path.insert(0, str(workspace_root))
-try:
-    from ocr.core.utils.path_utils import get_path_resolver
-
-    OCR_RESOLVER = get_path_resolver()
-except ImportError:
-    OCR_RESOLVER = None
-    PROJECT_ROOT = None
+# Already imported above
+OCR_RESOLVER = get_path_resolver() if 'get_path_resolver' in locals() else None
 
 # Import perspective correction
 try:

@@ -99,7 +99,7 @@ def _load_config_candidates(checkpoint_path: Path) -> list[dict[str, Any]]:
     parents = list(checkpoint_path.parents)
     hydra_roots = [
         checkpoint_path.parent.parent,
-        checkpoint_path.parent.parent.parent if len(parents) > 2 else None,
+        checkpoint_path.parents[2] if len(parents) > 2 else None,
     ]
     for root in hydra_roots:
         if root is None:

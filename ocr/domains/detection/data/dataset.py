@@ -63,7 +63,23 @@ from torch.utils.data import Dataset
 # This prevents repetitive logging when multiple datasets are created with the same config
 _logged_warnings: set[str] = set()
 
-from ocr.core.validation import DatasetConfig, ImageData, ImageMetadata, PolygonData, TransformInput, ValidatedPolygonData
+from ocr.core.data.schemas import (
+    CacheConfig,
+    DatasetConfig,
+    ImageData,
+    ImageLoadingConfig,
+    ImageMetadata,
+)
+from ocr.domains.detection.validation import (
+    BatchSample,
+    DataItem,
+    MapData,
+    PolygonArray,
+    PolygonData,
+    TransformInput,
+    TransformOutput,
+    ValidatedPolygonData,
+)
 from ocr.core.utils.background_normalization import normalize_gray_world
 from ocr.core.utils.orientation import (
     EXIF_ORIENTATION_TAG,

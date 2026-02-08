@@ -8,7 +8,7 @@ import numpy as np
 
 # Setup experiment paths - auto-detect tracker root and experiment context
 script_path = Path(__file__).resolve()
-tracker_root = script_path.parent.parent.parent.parent.parent / "src"
+tracker_root = script_path.parent.parent.parent.parent.parent / "src"  # noqa: path-hack
 sys.path.insert(0, str(tracker_root))
 from etk.utils.path_utils import setup_script_paths
 

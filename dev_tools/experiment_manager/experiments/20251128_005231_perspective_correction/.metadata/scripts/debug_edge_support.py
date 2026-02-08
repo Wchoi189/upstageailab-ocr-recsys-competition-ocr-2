@@ -7,15 +7,15 @@ import cv2
 import numpy as np
 
 # Setup experiment paths - auto-detect tracker root and experiment context
-script_path = Path(__file__).resolve()
-tracker_root = script_path.parent.parent.parent.parent.parent / "src"
+# Setup experiment paths - auto-detect tracker root and experiment context
+from ocr.core.utils.path_utils import PROJECT_ROOT, get_path_resolver
+
+tracker_root = PROJECT_ROOT / "src"
 sys.path.insert(0, str(tracker_root))
 from etk.utils.path_utils import setup_script_paths
 
 # Setup OCR project paths
-workspace_root = tracker_root.parent.parent
-sys.path.insert(0, str(workspace_root))
-from ocr.core.utils.path_utils import get_path_resolver
+# workspace_root is PROJECT_ROOT, already imported
 
 # Auto-detect experiment context
 TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)

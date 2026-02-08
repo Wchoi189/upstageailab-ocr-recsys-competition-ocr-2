@@ -8,6 +8,8 @@ import lightning.pytorch as pl
 import numpy as np
 import torch
 
+from ocr.core.utils.config_utils import is_config
+
 if TYPE_CHECKING:
     pass
 
@@ -75,7 +77,7 @@ class RecognitionWandbImageLogger(pl.Callback):
         images_to_log = []
 
         # STRICT DATA CONTRACT: Expecting a dictionary with 'images' key
-        if not isinstance(batch, dict):
+        if not is_config(batch):
             logger.warning(
                 f"Skipping image logging: Expected batch to be 'dict', got '{type(batch).__name__}'. "
                 "Check data loader contract."
@@ -96,7 +98,7 @@ class RecognitionWandbImageLogger(pl.Callback):
 
         # Get Predictions
         preds = None
-        if isinstance(outputs, dict):
+        if is_config(outputs):
             if "preds" in outputs:
                 preds = outputs["preds"]
             elif "logits" in outputs:

@@ -5,7 +5,8 @@ from unittest.mock import patch
 import numpy as np
 import pytest
 
-from ocr.core.validation import CacheConfig, DatasetConfig
+from ocr.core.data.schemas import CacheConfig
+from ocr.domains.detection.validation import DatasetConfig
 from ocr.data.datasets.base import ValidatedOCRDataset
 
 

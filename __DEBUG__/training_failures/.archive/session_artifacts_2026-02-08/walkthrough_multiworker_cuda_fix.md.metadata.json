@@ -1,0 +1,5 @@
+{
+  "artifactType": "ARTIFACT_TYPE_WALKTHROUGH",
+  "summary": "Walkthrough documenting the successful resolution of ParSeq multi-worker CUDA training failure. Root cause was fork-based multiprocessing inheriting CUDA context. Solution: switched to spawn start method in train.py, enabling safe use of num_workers>0 with CUDA. Verified with tests showing training completes successfully with 1 and 2 workers. Updated global config to enable pin_memory and proper worker counts.",
+  "updatedAt": "2026-02-08T14:09:50.329652449Z"
+}

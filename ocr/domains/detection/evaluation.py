@@ -12,7 +12,7 @@ import numpy as np
 from PIL import Image
 from tqdm import tqdm
 
-from ocr.core.validation import LightningStepPrediction, validate_predictions
+from ocr.domains.detection.validation import LightningStepPrediction, validate_predictions
 from ocr.domains.detection.metrics.cleval_metric import CLEvalMetric
 from ocr.core.utils.logging import get_rich_console
 from ocr.core.utils.orientation import remap_polygons

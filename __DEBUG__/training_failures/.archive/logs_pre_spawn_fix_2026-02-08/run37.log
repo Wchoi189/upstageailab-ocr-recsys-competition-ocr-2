@@ -1,0 +1,142 @@
+================================================
+Quick Training Test (GPU, Limited Batches)
+================================================
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] - \n============================================================
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] - ============================================================\n
+[2026-02-07 22:17:39,115][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-02-07 22:17:39,116][ocr.pipelines.strategies.recognition_config][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-02-07 22:17:39,117][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:17:39,118][ocr.pipelines.strategies.recognition_config][INFO] -    ✓ Vocab size 1027 injected into model config
+[2026-02-07 22:17:40,700][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-07 22:17:40,953][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-07 22:17:41,128][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-07 22:17:41,337][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-07 22:17:41,407][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: PARSeq
+[2026-02-07 22:17:41,411][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:17:41,416][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:17:41,420][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:17:41,423][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-07 22:17:41,425][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+[2026-02-07 22:17:41,448][ocr.pipelines.orchestrator][INFO] -    ✓ RecognitionPLModule created
+[2026-02-07 22:17:41,458][ocr.pipelines.orchestrator][INFO] -    ✓ DataModule created
+[2026-02-07 22:17:41,459][ocr.pipelines.orchestrator][INFO] - ⚡ Configuring Lightning Trainer...
+INFO: GPU available: True (cuda), used: True
+[2026-02-07 22:17:41,495][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-02-07 22:17:41,496][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+INFO: 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-07 22:17:41,497][lightning.pytorch.utilities.rank_zero][INFO] - 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+INFO: `Trainer(overfit_batches=1)` was configured so 1 batch will be used.
+[2026-02-07 22:17:41,497][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer(overfit_batches=1)` was configured so 1 batch will be used.
+[2026-02-07 22:17:41,497][ocr.pipelines.orchestrator][INFO] -    ✓ Trainer ready
+[2026-02-07 22:17:41,497][ocr.pipelines.orchestrator][INFO] - 🏋️ Starting training...\n
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-02-07 22:17:41,688][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+┏━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name    ┃ Type          ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model   │ PARSeq        │ 40.5 M │ train │     0 │
+│ 1 │ rec_cer │ CharErrorRate │      0 │ train │     0 │
+└───┴─────────┴───────────────┴────────┴───────┴───────┘
+Trainable params: 40.5 M                                                                                                  
+Non-trainable params: 0                                                                                                   
+Total params: 40.5 M                                                                                                      
+Total estimated model params size (MB): 161                                                                               
+Modules in train mode: 269                                                                                                
+Modules in eval mode: 0                                                                                                   
+Total FLOPs: 0                                                                                                            
+Epoch 0/199                                          0/1 0:00:00 • -:--:-- 0.00it/s  
+Error executing job with overrides: ['experiment=rec_baseline_v1', 'hardware=rtx3090', 'trainer.limit_train_batches=50', 'trainer.max_epochs=200', '+trainer.overfit_batches=1', 'trainer.check_val_every_n_epoch=10', 'trainer.log_every_n_steps=1', 'trainer.accelerator=gpu', 'trainer.devices=[0]', 'trainer.precision=32', 'train.optimizer.lr=1e-3', 'data.num_workers=4', 'trainer.num_sanity_val_steps=0', 'trainer.gradient_clip_val=1.0']
+Traceback (most recent call last):
+  File "/workspaces/scripts/runners/train.py", line 64, in train
+    orchestrator.run()
+  File "/workspaces/ocr/pipelines/orchestrator.py", line 185, in run
+    trainer.fit(pl_module, data_module, ckpt_path=checkpoint_path)
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 584, in fit
+    call._call_and_handle_interrupt(
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/call.py", line 49, in _call_and_handle_interrupt
+    return trainer_fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 630, in _fit_impl
+    self._run(model, ckpt_path=ckpt_path, weights_only=weights_only)
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 1079, in _run
+    results = self._run_stage()
+              ^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/trainer.py", line 1123, in _run_stage
+    self.fit_loop.run()
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fit_loop.py", line 217, in run
+    self.advance()
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fit_loop.py", line 465, in advance
+    self.epoch_loop.run(self._data_fetcher)
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/training_epoch_loop.py", line 153, in run
+    self.advance(data_fetcher)
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/training_epoch_loop.py", line 352, in advance
+    batch_output = self.automatic_optimization.run(trainer.optimizers[0], batch_idx, kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/optimization/automatic.py", line 192, in run
+    self._optimizer_step(batch_idx, closure)
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/optimization/automatic.py", line 270, in _optimizer_step
+    call._call_lightning_module_hook(
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/call.py", line 177, in _call_lightning_module_hook
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/core/module.py", line 1368, in optimizer_step
+    optimizer.step(closure=optimizer_closure)
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/core/optimizer.py", line 154, in step
+    step_output = self._strategy.optimizer_step(self._optimizer, closure, **kwargs)
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/strategies/strategy.py", line 239, in optimizer_step
+    return self.precision_plugin.optimizer_step(optimizer, model=model, closure=closure, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/plugins/precision/precision.py", line 123, in optimizer_step
+    return optimizer.step(closure=closure, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/optim/optimizer.py", line 493, in wrapper
+    out = func(*args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/optim/optimizer.py", line 91, in _use_grad
+    ret = func(self, *args, **kwargs)
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/optim/adam.py", line 223, in step
+    loss = closure()
+           ^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/plugins/precision/precision.py", line 109, in _wrap_closure
+    closure_result = closure()
+                     ^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/optimization/automatic.py", line 146, in __call__
+    self._result = self.closure(*args, **kwargs)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
+    return func(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/optimization/automatic.py", line 131, in closure
+    step_output = self._step_fn()
+                  ^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/optimization/automatic.py", line 319, in _training_step
+    training_step_output = call._call_strategy_hook(trainer, "training_step", *kwargs.values())
+                           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/trainer/call.py", line 329, in _call_strategy_hook
+    output = fn(*args, **kwargs)
+             ^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/strategies/strategy.py", line 391, in training_step
+    return self.lightning_module.training_step(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ocr/domains/recognition/module.py", line 33, in training_step
+    pred = self.model(**batch)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ocr/domains/recognition/models/architecture.py", line 94, in forward
+    pos_embed = pos_embed * math.sqrt(c)
+                            ^^^^
+NameError: name 'math' is not defined
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

@@ -1,0 +1,7 @@
+Could not override 'dataloaders.train.pin_memory'.
+To append to your config use +dataloaders.train.pin_memory=false
+Key 'train' is not in struct
+    full_key: dataloaders.train
+    object_type=dict
+
+Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

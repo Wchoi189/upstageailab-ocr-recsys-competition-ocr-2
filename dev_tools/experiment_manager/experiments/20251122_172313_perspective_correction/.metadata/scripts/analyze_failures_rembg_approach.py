@@ -28,49 +28,28 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# Use strict path utilities without fallbacks
+from ocr.core.utils.path_utils import get_path_resolver, setup_project_paths
+
+# Initialize project paths
+setup_project_paths()
+OCR_RESOLVER = get_path_resolver()
+PROJECT_ROOT = OCR_RESOLVER.config.project_root
+
+# Setup tracker paths using project root
+TRACKER_ROOT = PROJECT_ROOT / "dev_tools" / "experiment_manager"
+
 # Import rembg
 try:
-    import sys
-
-    script_dir = Path(__file__).parent
-    if str(script_dir) not in sys.path:
-        sys.path.insert(0, str(script_dir))
     from optimized_rembg import GPU_AVAILABLE, REMBG_AVAILABLE, OptimizedBackgroundRemover
 except ImportError as e:
     logger.error(f"Failed to import optimized_rembg: {e}")
     REMBG_AVAILABLE = False
     GPU_AVAILABLE = False
 
-# Setup path utils for proper path resolution
-script_path = Path(__file__).resolve()
-try:
-    # Add tracker src to path
-    tracker_root = script_path.parent.parent.parent.parent
-    sys.path.insert(0, str(tracker_root / "src"))
-    from etk.utils.path_utils import setup_script_paths
-
-    TRACKER_ROOT, EXPERIMENT_ID, EXPERIMENT_PATHS = setup_script_paths(script_path)
-except ImportError:
-    # Fallback if path_utils not available
-    TRACKER_ROOT = script_path.parent.parent.parent.parent
-    EXPERIMENT_ID = None
-    EXPERIMENT_PATHS = None
-
-# Setup OCR project paths
-workspace_root = tracker_root.parent
-sys.path.insert(0, str(workspace_root))
-try:
-    from ocr.core.utils.path_utils import get_path_resolver
-
-    OCR_RESOLVER = get_path_resolver()
-except ImportError:
-    OCR_RESOLVER = None
-    PROJECT_ROOT = None
-
 # Import perspective correction
 try:
     from ocr.data.datasets.preprocessing.perspective import PerspectiveCorrector
-
     PERSPECTIVE_AVAILABLE = True
 except ImportError:
     PERSPECTIVE_AVAILABLE = False

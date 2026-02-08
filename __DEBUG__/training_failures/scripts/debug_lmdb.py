@@ -7,7 +7,8 @@ from torch.utils.data import DataLoader
 from torchvision import transforms
 
 # sys.path hack removed - run with 'uv run python script.py'
-# sys.path.append(str(PROJECT_ROOT))
+# sys.path hack removed - use imported PROJECT_ROOT
+from ocr.core.utils.path_utils import PROJECT_ROOT
 
 from ocr.domains.recognition.data.lmdb_dataset import LMDBRecognitionDataset
 

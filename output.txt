@@ -1,0 +1,39 @@
+🏛️  Python Architecture Guardian (Content)...............................Failed
+- hook id: architecture-guardian
+- duration: 1.66s
+- exit code: 1
+
+🔍 Checking 91 files for architectural violations...
+
+
+================================================================================
+🚨 ARCHITECTURE GUARDIAN REPORT
+================================================================================
+
+❌ 1 ERRORS (must fix before commit):
+
+  ocr/core/validation.py:1
+    Rule: CORE_PURITY
+    ❌ File contains 6 detection-specific keywords
+    💡 Move to ocr/domains/detection/ - core/ should only contain truly shared code
+
+
+⚠️  1 WARNINGS (should fix soon):
+
+  ocr/core/validation.py:1
+    Rule: MIGRATION_PENDING
+    ⚠️  This file is marked for migration
+    💡 Move to ocr/domains/detection/validation.py
+
+================================================================================
+📖 For detailed guidance, see:
+   docs/analysis/architecture-migration-2026-01-21/CRITICAL_ARCHITECTURE_ASSESSMENT.md
+================================================================================
+
+⏱️  Checking import time budget...
+  ✅ FAST: from ocr.domains.detection.models.heads.db_head import DBHead took 1217ms
+  ✅ FAST: from ocr.domains.detection.models.architectures import craft took 0ms
+  ✅ FAST: from ocr.core import registry took 0ms
+
+❌ COMMIT BLOCKED: Fix errors above before committing
+

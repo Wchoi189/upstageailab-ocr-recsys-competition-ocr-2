@@ -34,7 +34,7 @@ class CommandExecutor:
         if cwd is None:
             from pathlib import Path
 
-            cwd = str(Path(__file__).resolve().parent.parent.parent.parent)  # Project root
+            cwd = str(Path(__file__).resolve().parents[3])  # Project root
 
         try:
             # Use Popen with process group for better cleanup control

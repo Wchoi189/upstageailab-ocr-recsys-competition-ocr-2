@@ -4,7 +4,8 @@ import torch
 from pydantic import ValidationError
 
 from ocr.core.lightning.base import OCRPLModule
-from ocr.core.validation import ValidatedTensorData
+from ocr.core.data.schemas import CacheConfig, ImageLoadingConfig
+from ocr.core.utils.config_utils import is_config
 
 
 class RecognitionPLModule(OCRPLModule):
@@ -99,7 +100,7 @@ class RecognitionPLModule(OCRPLModule):
                     if batch_idx == 0:
                         print(f"\n[Validation Debug] Samples:")
                         print(f"  Pred Type: {type(inference_out)}")
-                        if isinstance(inference_out, dict):
+                        if is_config(inference_out):
                              print(f"  Pred Keys: {list(inference_out.keys())}")
                              if "tokens" in inference_out:
                                  for i in range(min(5, len(inference_out['tokens']))):

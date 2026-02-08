@@ -1,0 +1,33 @@
+# Debug ParSeq Multi-Worker DataLoader CUDA Failure
+
+## Status
+- [/] Phase 1: Verify Configuration and Baseline
+- [ ] Phase 2: Isolate Multi-Worker Failure Mechanism  
+- [ ] Phase 3: Test Solutions for Multi-Worker Support
+- [ ] Phase 4: Implement and Validate Fix
+
+---
+
+## Phase 1: Verify Configuration and Baseline
+- [/] Check current global configuration (num_workers setting)
+- [ ] Confirm num_workers=0 works (baseline test)
+- [ ] Confirm num_workers>0 fails (reproduce issue)
+- [ ] Capture environment details (PyTorch, CUDA, driver versions)
+
+## Phase 2: Isolate Multi-Worker Failure Mechanism
+- [ ] Test with CUDA_LAUNCH_BLOCKING=1 + multiprocessing
+- [ ] Test different multiprocessing start methods (spawn, fork, forkserver)
+- [ ] Test persistent_workers configuration
+- [ ] Identify exact point of failure in multi-worker flow
+
+## Phase 3: Test Solutions
+- [ ] Research Docker + CUDA + multiprocessing best practices
+- [ ] Test forking strategy modifications
+- [ ] Test CUDA initialization timing changes
+- [ ] Test worker initialization hooks
+
+## Phase 4: Implementation
+- [ ] Apply validated solution
+- [ ] Update configuration documentation
+- [ ] Add safeguards/warnings for multi-worker usage
+- [ ] Document workaround and root cause

@@ -43,7 +43,7 @@ from pathlib import Path
 import cv2
 import numpy as np
 
-sys.path.append(str(Path(__file__).parent))
+
 from sepia_enhancement import SepiaEnhancer
 
 

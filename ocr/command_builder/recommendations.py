@@ -5,6 +5,7 @@ from dataclasses import dataclass
 from typing import Any
 
 from ocr.core.utils.config import ConfigParser
+from ocr.core.utils.config_utils import is_config
 
 from .models import UseCaseRecommendation
 
@@ -55,10 +56,10 @@ class UseCaseRecommendationService:
     ) -> list[UseCaseRecommendation]:
         materialised: list[UseCaseRecommendation] = []
         for case in cases:
-            if not isinstance(case, dict):
+            if not is_config(case):
                 continue
             recommendations = case.get("recommendations") or {}
-            if not isinstance(recommendations, dict):
+            if not is_config(recommendations):
                 recommendations = {}
             assignments = {
                 key: value for key, value in recommendations.items() if key in SUPPORTED_ASSIGNMENT_KEYS and value not in (None, "")

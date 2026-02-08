@@ -14,12 +14,12 @@ test_num_samples: null
 train_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
   config:
-    _target_: ocr.core.validation.DatasetConfig
+    _target_: ocr.domains.detection.validation.DatasetConfig
     image_path: ${global.paths.datasets_root}/images/train
     annotation_path: ${global.paths.datasets_root}/jsons/train.json
     # Explicitly disable caching to prevent default override
     cache_config:
-      _target_: ocr.core.validation.CacheConfig
+      _target_: ocr.core.data.schemas.CacheConfig
       cache_transformed_tensors: false
       cache_images: false
       cache_maps: false
@@ -29,7 +29,7 @@ train_dataset:
 val_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
   config:
-    _target_: ocr.core.validation.DatasetConfig
+    _target_: ocr.domains.detection.validation.DatasetConfig
     image_path: ${global.paths.datasets_root}/images_val_canonical  # Using canonical (rotation-corrected) data
     annotation_path: ${global.paths.datasets_root}/jsons/val.json
   transform: ${data.transforms.val_transform}
@@ -37,7 +37,7 @@ val_dataset:
 test_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
   config:
-    _target_: ocr.core.validation.DatasetConfig
+    _target_: ocr.domains.detection.validation.DatasetConfig
     image_path: ${global.paths.datasets_root}/images_val_canonical  # Using canonical (rotation-corrected) data
     annotation_path: ${global.paths.datasets_root}/jsons/val.json
   transform: ${data.transforms.test_transform}
@@ -45,7 +45,7 @@ test_dataset:
 predict_dataset:
   _target_: ocr.data.datasets.ValidatedOCRDataset
   config:
-    _target_: ocr.core.validation.DatasetConfig
+    _target_: ocr.domains.detection.validation.DatasetConfig
     image_path: ${global.paths.datasets_root}/images/test
     annotation_path: null
   transform: ${data.transforms.test_transform}

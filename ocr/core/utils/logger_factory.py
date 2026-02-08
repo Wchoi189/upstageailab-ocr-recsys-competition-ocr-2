@@ -7,7 +7,7 @@ Provides a centralized factory function for creating Lightning loggers
 from lightning.pytorch.loggers import Logger, TensorBoardLogger, WandbLogger
 from omegaconf import DictConfig, OmegaConf
 
-from ocr.core.utils.config_utils import is_config
+from ocr.core.utils.config_utils import is_config, ensure_dict
 
 
 def create_logger(config: DictConfig) -> Logger:
@@ -69,7 +69,7 @@ def _create_wandb_logger(config: DictConfig, wandb_cfg: dict) -> WandbLogger:
 
     # Serialize config for W&B, handling Hydra interpolations
     # If resolution fails, it's a config problem - let it propagate
-    wandb_config = OmegaConf.to_container(config, resolve=True)
+    wandb_config = ensure_dict(config, resolve=True)
 
     project_name = wandb_cfg.get("project_name", "ocr-training") if is_config(wandb_cfg) else "ocr-training"
 

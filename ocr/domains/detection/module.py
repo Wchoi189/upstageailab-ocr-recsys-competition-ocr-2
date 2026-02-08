@@ -12,8 +12,13 @@ from ocr.core.lightning.loggers import WandbProblemLogger
 from ocr.core.lightning.utils import format_predictions
 from ocr.domains.detection.evaluation import CLEvalEvaluator
 from ocr.core.utils.submission import SubmissionWriter
-from ocr.core.validation import CollateOutput, ValidatedTensorData
-
+from ocr.core.data.schemas import CacheConfig, DatasetConfig, ImageLoadingConfig
+from ocr.domains.detection.validation import (
+    MetricConfig,
+    ModelOutput,
+    TransformConfig,
+    validate_predictions,
+)
 
 
 class DetectionPLModule(OCRPLModule):

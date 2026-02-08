@@ -62,7 +62,7 @@ tools:
        output: Format - markdown (default), json, tree
     example: |
        adt context-tree ocr/recognition --depth 2
-       adt context-tree agent-debug-toolkit/src --output json
+       adt context-tree dev_tools/agent_debug_toolkit/src --output json
     features:
        - Extracts module docstrings and __all__ exports
        - Detects special directories (tests, configs, models, data)

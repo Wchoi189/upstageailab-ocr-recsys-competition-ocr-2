@@ -1,0 +1,76 @@
+============================================================
+GRADIENT & OPTIMIZER DIAGNOSTIC
+============================================================
+
+[1/5] Loading tokenizer...
+✓ Vocab size: 1027
+
+[2/5] Building model...
+✓ Model built
+  Total params: 14,343,619
+  Trainable: 14,343,619 (100.0%)
+
+[3/5] Creating optimizer...
+✓ Optimizer: Adam (lr=0.001)
+  Param groups: 1
+
+[4/5] Testing gradient flow...
+Traceback (most recent call last):
+  File "/workspaces/__DEBUG__/training_failures/scripts/test_gradients.py", line 84, in <module>
+    output = model(images=dummy_images, text_tokens=dummy_targets, return_loss=True)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ocr/domains/recognition/models/architecture.py", line 99, in forward
+    decoded_output = self.decoder(visual_memory, targets=tgt_in)
+                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/ocr/domains/recognition/models/decoder.py", line 115, in forward
+    output = self.decoder(tgt, memory, tgt_mask=tgt_mask, tgt_key_padding_mask=tgt_key_padding_mask)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/transformer.py", line 613, in forward
+    output = mod(
+             ^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/transformer.py", line 1112, in forward
+    + self._mha_block(
+      ^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/transformer.py", line 1148, in _mha_block
+    x = self.multihead_attn(
+        ^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1739, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1750, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/modules/activation.py", line 1373, in forward
+    attn_output, attn_output_weights = F.multi_head_attention_forward(
+                                       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/functional.py", line 6230, in multi_head_attention_forward
+    q, k, v = _in_projection_packed(query, key, value, in_proj_weight, in_proj_bias)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspaces/.venv/lib/python3.11/site-packages/torch/nn/functional.py", line 5632, in _in_projection_packed
+    kv_proj = linear(k, w_kv, b_kv)
+              ^^^^^^^^^^^^^^^^^^^^^
+RuntimeError: mat1 and mat2 shapes cannot be multiplied (64x256 and 384x768)

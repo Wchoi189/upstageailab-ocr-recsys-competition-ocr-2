@@ -21,11 +21,11 @@ tiers:
     name: Core Analyzers
     max_files: 4
     files:
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/config_access.py
+    - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/config_access.py
       priority: critical
       mode: structure
       description: Config access patterns
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
+    - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/hydra_usage.py
       priority: critical
       mode: structure
       description: Hydra pattern detection
@@ -37,11 +37,11 @@ tiers:
     name: Advanced Analysis
     max_files: 6
     files:
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
+    - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/merge_order.py
       priority: high
       mode: structure
       description: OmegaConf merge tracer
-    - path: agent-debug-toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
+    - path: dev_tools/agent_debug_toolkit/src/agent_debug_toolkit/analyzers/instantiation.py
       priority: high
       mode: structure
       description: Component instantiation tracker
@@ -53,7 +53,7 @@ tiers:
     name: Framework Specs
     max_files: 6
     files:
-    - path: agent-debug-toolkit/README.md
+    - path: dev_tools/agent_debug_toolkit/README.md
       priority: low
       mode: reference
       description: Toolkit documentation

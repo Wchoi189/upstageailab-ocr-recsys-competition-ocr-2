@@ -8,7 +8,7 @@ import lightning.pytorch as pl
 from hydra.utils import instantiate
 from torch.utils.data import DataLoader
 
-from ocr.core.utils.config_utils import is_config
+from ocr.core.utils.config_utils import is_config, ensure_dict
 
 
 class OCRDataPLModule(pl.LightningDataModule):
@@ -23,7 +23,7 @@ class OCRDataPLModule(pl.LightningDataModule):
         # Sanitize config to primitive dicts to ensure picklability for 'spawn' multiprocessing
         from omegaconf import OmegaConf, DictConfig
         if isinstance(config, DictConfig):
-            self.config = OmegaConf.to_container(config, resolve=True)
+            self.config = ensure_dict(config, resolve=True)
         else:
             self.config = config
 

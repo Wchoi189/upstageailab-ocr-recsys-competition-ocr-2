@@ -10,9 +10,7 @@ from ocr.core.utils.path_utils import PROJECT_ROOT
 
 LOGGER = logging.getLogger(__name__)
 
-# Ensure project root is in sys.path (for imports)
-if str(PROJECT_ROOT) not in sys.path:
-    sys.path.append(str(PROJECT_ROOT))
+
 
 # Lazy check for availability
 import importlib.util
