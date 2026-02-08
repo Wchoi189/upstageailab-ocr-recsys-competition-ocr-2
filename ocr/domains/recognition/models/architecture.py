@@ -66,8 +66,8 @@ class PARSeq(OCRModel):
         # 1. Encoder
         # images: [B, C, H, W]
         # DEBUG: Check Input Images
-        if True:
-             print(f"DEBUG: Input Images: {images.shape}, Mean: {images.mean():.4f}, Std: {images.std():.4f}, Min: {images.min():.4f}, Max: {images.max():.4f}")
+        # if True:
+        #      print(f"DEBUG: Input Images: {images.shape}, Mean: {images.mean():.4f}, Std: {images.std():.4f}, Min: {images.min():.4f}, Max: {images.max():.4f}")
 
         features = self.encoder(images)
 
@@ -110,9 +110,9 @@ class PARSeq(OCRModel):
             pos_embed = pos_embed * math.sqrt(c) * 0.1  # Balanced visual/positional signals
 
             # DEBUG
-            if True:
-                 print(f"DEBUG: Visual Feat (normalized): {visual_feat.shape}, Mean: {visual_feat.mean():.4f}, Std: {visual_feat.std():.4f}")
-                 print(f"DEBUG: Pos Embed (scaled 0.1×): {pos_embed.shape}, Mean: {pos_embed.mean():.4f}, Std: {pos_embed.std():.4f}")
+            # if True:
+            #      print(f"DEBUG: Visual Feat (normalized): {visual_feat.shape}, Mean: {visual_feat.mean():.4f}, Std: {visual_feat.std():.4f}")
+            #      print(f"DEBUG: Pos Embed (scaled 0.1×): {pos_embed.shape}, Mean: {pos_embed.mean():.4f}, Std: {pos_embed.std():.4f}")
 
             # Standard Addition
             visual_feat = visual_feat + pos_embed

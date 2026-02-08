@@ -48,18 +48,19 @@ class RecognitionPLModule(OCRPLModule):
 
     def on_after_backward(self):
         """Log gradient norms for debugging."""
-        if self.global_step % 10 == 0:
-            if hasattr(self.model, "decoder") and hasattr(self.model.decoder, "pos_encoder"):
-                grad = self.model.decoder.pos_encoder.grad
-                if grad is not None:
-                    print(f"\n[Grad Debug] Step {self.global_step} - Pos Encoder Grad Norm: {grad.norm():.4f}")
-                else:
-                    print(f"\n[Grad Debug] Step {self.global_step} - Pos Encoder Grad is None!")
-
-            if hasattr(self.model, "decoder") and hasattr(self.model.decoder, "embed_tokens"):
-                grad = self.model.decoder.embed_tokens.weight.grad
-                if grad is not None:
-                     print(f"[Grad Debug] Step {self.global_step} - Embed Tokens Grad Norm: {grad.norm():.4f}")
+        pass
+        # if self.global_step % 10 == 0:
+        #     if hasattr(self.model, "decoder") and hasattr(self.model.decoder, "pos_encoder"):
+        #         grad = self.model.decoder.pos_encoder.grad
+        #         if grad is not None:
+        #             print(f"\n[Grad Debug] Step {self.global_step} - Pos Encoder Grad Norm: {grad.norm():.4f}")
+        #         else:
+        #             print(f"\n[Grad Debug] Step {self.global_step} - Pos Encoder Grad is None!")
+        #
+        #     if hasattr(self.model, "decoder") and hasattr(self.model.decoder, "embed_tokens"):
+        #         grad = self.model.decoder.embed_tokens.weight.grad
+        #         if grad is not None:
+        #              print(f"[Grad Debug] Step {self.global_step} - Embed Tokens Grad Norm: {grad.norm():.4f}")
 
 
     def validation_step(self, batch, batch_idx):
