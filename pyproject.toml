@@ -115,11 +115,9 @@ members = [
     "dev_tools/airflow_batch_processor",
 ]
 
-[tool.uv.sources]
-agent-debug-toolkit = { workspace = true }
-experiment-manager = { workspace = true }
-project-compass = { workspace = true }
-airflow-batch-processor = { workspace = true }
+# Note: No [tool.uv.sources] needed - UV auto-discovers workspace members
+# from [tool.uv.workspace]. Explicit sources would force resolution even
+# with --no-dev, causing Docker builds to fail.
 
 [tool.mypy]
 # General settings - Balanced for ML/Research projects
@@ -261,16 +259,20 @@ line-ending = "auto"
 [dependency-groups]
 dev = [
     "pytest-profiling>=1.8.1",
-    "agent-debug-toolkit",
-    "experiment-manager",
-    "project-compass",
-    "airflow-batch-processor",
 ]
 
 [project.optional-dependencies]
 dev = [
     "uvicorn[standard]>=0.38.0",
 ]
+# Workspace dev tools - installed separately with `uv pip install -e dev_tools/*`
+# or via manual editable installs. Not included in sync to avoid Docker build issues.
+# workspace-tools = [
+#     "agent-debug-toolkit",
+#     "experiment-manager",
+#     "project-compass",
+#     "airflow-batch-processor",
+# ]
 recognition = [
     "paddlepaddle-gpu>=2.6.2,<3.0.0; sys_platform == 'linux'",
     "paddleocr>=2.10.0; sys_platform == 'linux'",

@@ -1,0 +1,89 @@
+
+============================================================
+  CUDA Environment Diagnostic
+============================================================
+
+Python: 3.11.14 (main, Feb  3 2026, 22:51:56) [Clang 21.1.4 ]
+Executable: /workspaces/.venv/bin/python3
+
+
+============================================================
+  PyTorch Information
+============================================================
+
+PyTorch Version: 2.6.0+cu124
+CUDA Available: True
+CUDA Version (PyTorch): 12.4
+cuDNN Version: 90100
+Device Count: 1
+  Device 0: NVIDIA GeForce RTX 3090
+    Capability: (8, 6)
+    Total Memory: 24.00 GB
+
+============================================================
+  NVIDIA Driver Information
+============================================================
+
+Sun Feb  8 23:01:10 2026       
++-----------------------------------------------------------------------------------------+
+| NVIDIA-SMI 580.105.07             Driver Version: 581.80         CUDA Version: 13.0     |
++-----------------------------------------+------------------------+----------------------+
+| GPU  Name                 Persistence-M | Bus-Id          Disp.A | Volatile Uncorr. ECC |
+| Fan  Temp   Perf          Pwr:Usage/Cap |           Memory-Usage | GPU-Util  Compute M. |
+|                                         |                        |               MIG M. |
+|=========================================+========================+======================|
+|   0  NVIDIA GeForce RTX 3090        On  |   00000000:01:00.0  On |                  N/A |
+|  0%   34C    P8             24W /  370W |    1686MiB /  24576MiB |      0%      Default |
+|                                         |                        |                  N/A |
++-----------------------------------------+------------------------+----------------------+
+
++-----------------------------------------------------------------------------------------+
+| Processes:                                                                              |
+|  GPU   GI   CI              PID   Type   Process name                        GPU Memory |
+|        ID   ID                                                               Usage      |
+|=========================================================================================|
+|    0   N/A  N/A              27      G   /Xwayland                             N/A      |
++-----------------------------------------------------------------------------------------+
+
+
+============================================================
+  CUDA Runtime (nvcc)
+============================================================
+
+nvcc not found in PATH
+
+============================================================
+  Docker GPU Configuration
+============================================================
+
+Running in Docker container
+CUDA-related environment variables:
+  CUDA_MODULE_LOADING=LAZY
+
+============================================================
+  CUDA Operation Tests
+============================================================
+
+Test 1: Create CUDA tensor
+  ✓ Created tensor shape torch.Size([10]) on cuda:0
+
+Test 2: Simple computation
+  ✓ Computation successful
+
+Test 3: Cleanup
+  ✓ Cleanup successful
+
+Test 4: Multiple allocations
+  ✓ Created 10 tensors
+  ✓ Cleanup successful
+
+✅ All basic CUDA tests passed!
+
+============================================================
+  Summary
+============================================================
+
+✅ CUDA Environment: READY
+   PyTorch: 2.6.0+cu124
+   CUDA: 12.4
+   Devices: 1

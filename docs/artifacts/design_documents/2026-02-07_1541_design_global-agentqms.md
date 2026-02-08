@@ -1,3 +1,12 @@
+---
+type: design_document
+title: Global Stateless AgentQMS
+date: 2026-02-07 15:41 (KST)
+category: architecture
+status: draft
+version: 1.0
+---
+
 # Design: Global Stateless AgentQMS
 
 ## 1. Problem Statement

@@ -31,24 +31,26 @@ trainer:
   limit_test_batches: null
 
 # Global Dataloader Defaults (Fallback)
+# NOTE: Spawn multiprocessing start method is set in scripts/runners/train.py
+# This enables safe use of num_workers > 0 with CUDA in Docker
 dataloaders:
   train_dataloader:
-    num_workers: 2  # Reduced from 4 - baudm/parseq proven value for Docker CUDA
-    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
+    num_workers: 2  # ✅ Works with spawn method
+    pin_memory: true  # ✅ Safe with spawn (fresh processes)
     persistent_workers: true
     prefetch_factor: 2
   val_dataloader:
-    num_workers: 2  # Reduced from 4 - baudm/parseq proven value for Docker CUDA
-    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
+    num_workers: 2  # ✅ Works with spawn method
+    pin_memory: true  # ✅ Safe with spawn
     persistent_workers: true
     prefetch_factor: 2
   test_dataloader:
     num_workers: 2
-    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
+    pin_memory: true
     persistent_workers: true
     prefetch_factor: 1
   predict_dataloader:
     num_workers: 2
-    pin_memory: false  # CRITICAL: Causes DataLoader crashes in Docker (2026-01-14 finding)
+    pin_memory: true
     persistent_workers: true
     prefetch_factor: 1

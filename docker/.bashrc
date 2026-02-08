@@ -31,11 +31,27 @@ export UV_LINK_MODE=copy
 [ -d "$PYENV_ROOT" ] && add_path "$PYENV_ROOT/bin"
 if command -v pyenv >/dev/null; then
     eval "$(pyenv init -)"
-    eval "$(pyenv virtualenv-init -)"
+    # Disable pyenv-virtualenv auto-activation - UV manages virtualenvs
+    # eval "$(pyenv virtualenv-init -)"
 fi
 
-# Override pyenv's VIRTUAL_ENV - let UV manage it instead
+# Ensure VIRTUAL_ENV is unset so UV can manage it
 unset VIRTUAL_ENV
+export PYENV_VIRTUALENV_DISABLE_PROMPT=1
+
+# Load .env files for API keys and secrets (if in /workspaces)
+if [ "$PWD" = "/workspaces" ] || [[ "$PWD" == /workspaces/* ]]; then
+    if [ -f "/workspaces/.env" ]; then
+        set -a  # Auto-export variables
+        source /workspaces/.env 2>/dev/null
+        set +a
+    fi
+    if [ -f "/workspaces/.env.local" ]; then
+        set -a  # Auto-export variables (overrides .env)
+        source /workspaces/.env.local 2>/dev/null
+        set +a
+    fi
+fi
 
 # Auto-activate .venv when entering directory
 uv_auto_activate() {

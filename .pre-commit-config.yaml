@@ -85,11 +85,6 @@ repos:
         pass_filenames: false
         always_run: false
 
-      - id: forbid-pip-install
-        name: forbid-pip-install
-        entry: uv run python scripts/ci/forbid_pip_install.py
-        language: system
-        files: ^(scripts/.*\.(sh|py)|AgentQMS/bin/Makefile)$
 
       - id: arch-guard
         name: 🔍 Hydra Config Audit

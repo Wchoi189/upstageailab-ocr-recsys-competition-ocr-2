@@ -17,6 +17,10 @@ services:
       # The entrypoint script will create symlinks from here to /workspaces
       - ../../project-artifacts/ocr-external-storage:/mnt/external_artifacts:cached
 
+      # Persist /home/vscode for IDE state (Antigravity, Copilot, shell history, etc.)
+      # This includes: .vscode-server, .cache, .local, .config, .pyenv, .npm, etc.
+      - vscode_home:/home/vscode
+
       # Anonymous volumes for node_modules to avoid performance issues and host syncing
       - /workspaces/node_modules
       - /workspaces/apps/ocr_inference_console/node_modules
@@ -90,3 +94,4 @@ services:
 volumes:
   codescene:
   redis_data:
+  vscode_home:  # Persists /home/vscode across container resets

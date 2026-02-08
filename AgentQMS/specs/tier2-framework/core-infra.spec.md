@@ -134,6 +134,7 @@ multiprocessing_rules:
     start_method:
       value: spawn
       reason: fork is incompatible with initialized CUDA contexts, causing SegFaults
+      implementation: Set at script entry point before any imports that may initialize CUDA
   constraints:
     picklability:
       rule: All objects passed to workers (Configs, Datasets) must be picklable
@@ -142,7 +143,17 @@ multiprocessing_rules:
       rule: File handles and Database connections (LMDB) must be initialized lazily in the worker
       reason: Open file handles/transactions cannot be pickled
   patterns:
-    required:
+    required_training_script:
+      description: Set spawn method at entry point
+      example: "import torch.multiprocessing as mp\ntry:\n    mp.set_start_method('spawn',\
+        \ force=True)\nexcept RuntimeError:\n    pass  # Already set\n\nimport\
+        \ torch\nfrom ocr.pipelines.orchestrator import OCRProjectOrchestrator\n"
+    required_dataset:
+      description: Lazy initialization of file handles
       example: "class Dataset:\n    def __init__(self):\n        self.env = None\n\
         \    def __getitem__(self, idx):\n        if self.env is None:\n            self.env\
         \ = lmdb.open(...)\n"
+    dataloader_config:
+      description: DataLoader settings compatible with spawn
+      example: "DataLoader(\n    dataset,\n    num_workers=2,  # Safe with spawn\n\
+        \    pin_memory=True,  # Safe with spawn\n    persistent_workers=True\n)\n"

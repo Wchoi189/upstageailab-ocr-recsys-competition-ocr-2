@@ -1,6 +1,11 @@
 #!/bin/bash
 set -e
 
+# Container Paths Overview:
+# - /workspaces → Project root (/data/upstageailab-ocr-recsys-competition-ocr-2)
+# - /parent → Data drive root (/data) - provides access to sibling projects
+# - /mnt/external_artifacts → External storage (/data/project-artifacts/ocr-external-storage)
+
 # 1. Ensure the user has a password (vital for SSH)
 echo "Setting vscode password..."
 echo "vscode:vscode" | sudo chpasswd
@@ -35,10 +40,13 @@ fi
 
 # 3. ROBUST SYMLINKING
 # Source: Where the heavy data lives (The Bridge)
+# Note: SOURCE_ROOT is mounted from host /data/project-artifacts/ocr-external-storage
+# /parent directory gives access to entire /data drive (/parent = /data on host)
 # Destination: Your workspace
 SOURCE_ROOT="/mnt/external_artifacts"
 DEST_ROOT="/workspaces"
-FOLDERS=("apps" "archive" "data" "outputs" "packages")
+# Note: "apps" removed from FOLDERS - keep source code in project for git tracking
+FOLDERS=("archive" "data" "outputs" "packages")
 
 if [ -d "$SOURCE_ROOT" ]; then
     echo "🔗 Linking external artifacts..."
@@ -91,7 +99,7 @@ if [ -d "$SOURCE_ROOT" ]; then
     done
 
     # Cleanup old symlinks that are no longer in FOLDERS (extensions, hydra_outputs, etc)
-    # We do this carefully.
+    # We do this carefully. Note: apps is kept as a real directory for git tracking
     for old in "extensions" "hydra_outputs" "lightning_logs" "wandb"; do
         if [ -L "$DEST_ROOT/$old" ]; then
              echo "  🧹 Cleaning up deprecated symlink: $old"
@@ -100,7 +108,8 @@ if [ -d "$SOURCE_ROOT" ]; then
     done
 
     # Add project bin directories to PATH for services
-    export PATH="/home/vscode/.local/share/pnpm:/workspaces/bin:/workspaces/AgentQMS/bin:/workspaces/repomix/bin:$PATH"
+    # Note: /parent maps to /data on host, giving access to sibling projects
+    export PATH="/home/vscode/.local/share/pnpm:/workspaces/bin:/workspaces/AgentQMS/bin:/parent/repomix/bin:$PATH"
 
     # Nested Symlinks for convenience (optional, but requested by user config implied?)
     # paths.yaml now uses ${output_dir}/wandb, so /workspaces/outputs/wandb is valid.

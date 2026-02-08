@@ -1,26 +1,28 @@
 # MULTIPROCESSING METHOD CONFIGURATION
 # ============================================================================
-# ISSUE: Spawn method (required for CUDA + multiprocessing) fails with:
-#   "TypeError: cannot pickle 'Environment' object"
+# SOLUTION (2026-02-08): Use 'spawn' method for CUDA + multiprocessing in Docker
 #
-# ROOT CAUSE: Hydra Environment objects are stored somewhere in the dataset/dataloader chain.
-# With spawn method, all objects must be picklable to send to worker processes.
+# ISSUE: Default 'fork' method causes CUDA initialization errors with num_workers > 0
+#   - Fork inherits CUDA context from main process
+#   - Workers cannot properly initialize their own CUDA contexts
+#   - Results in: "CUDA error: initialization error" during tensor cleanup
 #
-# TEMPORARY WORKAROUND: Use fork method (default) with num_workers=0
-# - Fork works with num_workers=0 (no child processes)
-# - Fork + num_workers>0 causes SIGABRT/CUDA crashes
+# FIX: Spawn creates fresh Python processes (no state inheritance)
+#   - Each worker initializes its own clean CUDA context
+#   - Compatible with pin_memory=true and persistent_workers=true
+#   - Enables safe multi-worker data loading with CUDA
 #
-# TODO: Fix pickle issue by:
-#   1. Remove Hydra Environment references from dataset/dataloader
-#   2. Use OmegaConf.to_container() to convert configs to plain dicts
-#   3. Then re-enable spawn method for proper CUDA multiprocessing
+# VERIFIED: num_workers=0,1,2 all work with spawn method (2026-02-08)
 # ============================================================================
 import torch
 import torch.multiprocessing as mp
-# try:
-#     mp.set_start_method('spawn', force=True)
-# except RuntimeError:
-#     pass
+# ATTEMPT 1: Use spawn method (best for CUDA + multiprocessing)
+try:
+    mp.set_start_method('spawn', force=True)
+    print("[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility")
+except RuntimeError as e:
+    # Start method already set
+    print(f"[MULTIPROCESSING] Start method already set: {mp.get_start_method()}")
 
 # Enable Tensor Cores for RTX 3090
 torch.set_float32_matmul_precision('medium')

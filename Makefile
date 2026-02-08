@@ -12,11 +12,16 @@ include scripts/make/*.mk
 
 .PHONY: install
 install: ## Install production dependencies
-	uv sync
+	uv sync --no-dev
 
 .PHONY: dev-install
 dev-install: ## Install development dependencies
-	uv sync --extra dev
+	uv sync --group dev
+	@echo "Installing workspace dev tools..."
+	uv pip install -e dev_tools/agent_debug_toolkit \
+	                -e dev_tools/experiment_manager \
+	                -e dev_tools/project_compass \
+	                -e dev_tools/airflow_batch_processor
 
 .PHONY: setup-dev
 setup-dev: dev-install pre-commit-install ## Full development environment setup

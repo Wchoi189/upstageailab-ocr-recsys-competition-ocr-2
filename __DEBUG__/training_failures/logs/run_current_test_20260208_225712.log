@@ -1,0 +1,270 @@
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] - \n============================================================
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] - ============================================================\n
+[2026-02-08 22:57:15,730][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-02-08 22:57:15,730][ocr.pipelines.strategies.recognition_config][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-02-08 22:57:15,732][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 22:57:15,733][ocr.pipelines.strategies.recognition_config][INFO] -    ✓ Vocab size 1027 injected into model config
+[2026-02-08 22:57:16,901][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-08 22:57:17,145][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-08 22:57:17,296][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-08 22:57:17,502][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-08 22:57:17,990][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: PARSeqOfficial
+[2026-02-08 22:57:17,994][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 22:57:17,998][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 22:57:18,002][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 22:57:18,008][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-08 22:57:18,009][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+[2026-02-08 22:57:18,143][ocr.pipelines.orchestrator][INFO] -    ✓ RecognitionPLModule created
+[2026-02-08 22:57:18,154][ocr.pipelines.orchestrator][INFO] -    ✓ DataModule created
+[2026-02-08 22:57:18,154][ocr.pipelines.orchestrator][INFO] - ⚡ Configuring Lightning Trainer...
+INFO: Using 16bit Automatic Mixed Precision (AMP)
+[2026-02-08 22:57:18,183][lightning.pytorch.utilities.rank_zero][INFO] - Using 16bit Automatic Mixed Precision (AMP)
+INFO: GPU available: True (cuda), used: True
+[2026-02-08 22:57:18,188][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+[2026-02-08 22:57:18,189][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+INFO: 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-08 22:57:18,190][lightning.pytorch.utilities.rank_zero][INFO] - 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-08 22:57:18,190][ocr.pipelines.orchestrator][INFO] -    ✓ Trainer ready
+[2026-02-08 22:57:18,190][ocr.pipelines.orchestrator][INFO] - 🏋️ Starting training...\n
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+[2026-02-08 22:57:18,250][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/utilities/model_summary/model_summary.py:242: Precision 16-mixed is not supported by the model summary.  Estimated model size in MB will not be accurate. Using 32 bits instead.
+┏━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name    ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model   │ PARSeqOfficial │ 24.5 M │ train │     0 │
+│ 1 │ rec_cer │ CharErrorRate  │      0 │ train │     0 │
+└───┴─────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.5 M                                               
+Non-trainable params: 0                                                
+Total params: 24.5 M                                                   
+Total estimated model params size (MB): 98                             
+Modules in train mode: 289                                             
+Modules in eval mode: 0                                                
+Total FLOPs: 0                                                         
+
+[Validation Debug] Samples:
+  Pred Type: <class 'dict'>
+  Pred Keys: ['logits', 'tokens']
+  Pred IDs: [708, 670, 670, 670, 670, 670, 670, 708, 670, 197, 708, 708, 197, 670, 670, 670, 670, 670, 670, 708, 197, 670, 197, 670, 708, 708]
+  Pred: '우엌엌엌엌엌엌우엌강우우강엌엌엌엌엌엌우강엌강엌우우' | GT: '"변화와'
+  Match Count: 0/1
+terminate called after throwing an instance of 'c10::Error'
+  what():  CUDA error: initialization error
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at /pytorch/c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x703ebc96c1b6 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x703ebc915a76 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x703ebcd7d918 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10::cuda::ExchangeDevice(signed char) + 0x92 (0x703ebcd7e002 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10_cuda.so)
+frame #4: <unknown function> + 0x103ad3a (0x703e6ac3ad3a in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x10433c5 (0x703e6ac433c5 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0x643582 (0x703eb4643582 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #7: <unknown function> + 0x6f30f (0x703ebc94d30f in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #8: c10::TensorImpl::~TensorImpl() + 0x21b (0x703ebc94633b in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #9: c10::TensorImpl::~TensorImpl() + 0x9 (0x703ebc9464e9 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #10: <unknown function> + 0x904458 (0x703eb4904458 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #11: THPVariable_subclass_dealloc(_object*) + 0x2f6 (0x703eb49047a6 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #12: <unknown function> + 0x33484e (0x5f241443484e in /workspaces/.venv/bin/python3)
+frame #13: <unknown function> + 0x31ec3e (0x5f241441ec3e in /workspaces/.venv/bin/python3)
+frame #14: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #15: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #16: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #17: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #18: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #19: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #20: <unknown function> + 0x3d2c34 (0x5f24144d2c34 in /workspaces/.venv/bin/python3)
+frame #21: <unknown function> + 0x1fd241 (0x5f24142fd241 in /workspaces/.venv/bin/python3)
+frame #22: <unknown function> + 0x3dac87 (0x5f24144dac87 in /workspaces/.venv/bin/python3)
+frame #23: <unknown function> + 0x31f3db (0x5f241441f3db in /workspaces/.venv/bin/python3)
+frame #24: _PyObject_LookupAttr + 0x10c3 (0x5f241430f743 in /workspaces/.venv/bin/python3)
+frame #25: <unknown function> + 0x370df0 (0x5f2414470df0 in /workspaces/.venv/bin/python3)
+frame #26: _PyEval_EvalFrameDefault + 0x3876f (0x5f24144aac7f in /workspaces/.venv/bin/python3)
+frame #27: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #28: _PyEval_EvalFrameDefault + 0x39877 (0x5f24144abd87 in /workspaces/.venv/bin/python3)
+frame #29: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #30: _PyEval_EvalFrameDefault + 0x39877 (0x5f24144abd87 in /workspaces/.venv/bin/python3)
+frame #31: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #32: _PyEval_EvalFrameDefault + 0x39877 (0x5f24144abd87 in /workspaces/.venv/bin/python3)
+frame #33: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #34: <unknown function> + 0x3479d9 (0x5f24144479d9 in /workspaces/.venv/bin/python3)
+frame #35: <unknown function> + 0x34ae05 (0x5f241444ae05 in /workspaces/.venv/bin/python3)
+frame #36: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #37: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #38: <unknown function> + 0x3479d9 (0x5f24144479d9 in /workspaces/.venv/bin/python3)
+frame #39: <unknown function> + 0x34ae05 (0x5f241444ae05 in /workspaces/.venv/bin/python3)
+frame #40: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #41: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #42: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #43: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #44: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #45: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #46: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #47: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #48: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #49: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #50: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #51: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #52: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #53: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #54: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #55: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #56: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #57: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #58: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #59: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #60: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #61: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #62: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+
+terminate called after throwing an instance of 'c10::Error'
+  what():  CUDA error: initialization error
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at /pytorch/c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x703ebc96c1b6 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x703ebc915a76 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x703ebcd7d918 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10::cuda::ExchangeDevice(signed char) + 0x92 (0x703ebcd7e002 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10_cuda.so)
+frame #4: <unknown function> + 0x103ad3a (0x703e6ac3ad3a in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x10433c5 (0x703e6ac433c5 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0x643582 (0x703eb4643582 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #7: <unknown function> + 0x6f30f (0x703ebc94d30f in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #8: c10::TensorImpl::~TensorImpl() + 0x21b (0x703ebc94633b in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #9: c10::TensorImpl::~TensorImpl() + 0x9 (0x703ebc9464e9 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #10: <unknown function> + 0x904458 (0x703eb4904458 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #11: THPVariable_subclass_dealloc(_object*) + 0x2f6 (0x703eb49047a6 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #12: <unknown function> + 0x33484e (0x5f241443484e in /workspaces/.venv/bin/python3)
+frame #13: <unknown function> + 0x31ec3e (0x5f241441ec3e in /workspaces/.venv/bin/python3)
+frame #14: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #15: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #16: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #17: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #18: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #19: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #20: <unknown function> + 0x3d2c34 (0x5f24144d2c34 in /workspaces/.venv/bin/python3)
+frame #21: <unknown function> + 0x1fd241 (0x5f24142fd241 in /workspaces/.venv/bin/python3)
+frame #22: <unknown function> + 0x3dac87 (0x5f24144dac87 in /workspaces/.venv/bin/python3)
+frame #23: PyType_GenericAlloc + 0x1ef (0x5f241444f46f in /workspaces/.venv/bin/python3)
+frame #24: <unknown function> + 0x350a29 (0x5f2414450a29 in /workspaces/.venv/bin/python3)
+frame #25: <unknown function> + 0x34add0 (0x5f241444add0 in /workspaces/.venv/bin/python3)
+frame #26: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #27: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #28: _PyEval_EvalFrameDefault + 0x39877 (0x5f24144abd87 in /workspaces/.venv/bin/python3)
+frame #29: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #30: _PyEval_EvalFrameDefault + 0x39877 (0x5f24144abd87 in /workspaces/.venv/bin/python3)
+frame #31: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #32: _PyEval_EvalFrameDefault + 0x39877 (0x5f24144abd87 in /workspaces/.venv/bin/python3)
+frame #33: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #34: <unknown function> + 0x3479d9 (0x5f24144479d9 in /workspaces/.venv/bin/python3)
+frame #35: <unknown function> + 0x34ae05 (0x5f241444ae05 in /workspaces/.venv/bin/python3)
+frame #36: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #37: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #38: <unknown function> + 0x3479d9 (0x5f24144479d9 in /workspaces/.venv/bin/python3)
+frame #39: <unknown function> + 0x34ae05 (0x5f241444ae05 in /workspaces/.venv/bin/python3)
+frame #40: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #41: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #42: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #43: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #44: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #45: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #46: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #47: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #48: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #49: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #50: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #51: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #52: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #53: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #54: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #55: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #56: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #57: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #58: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #59: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #60: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #61: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #62: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+
+terminate called after throwing an instance of 'c10::Error'
+  what():  CUDA error: initialization error
+CUDA kernel errors might be asynchronously reported at some other API call, so the stacktrace below might be incorrect.
+For debugging consider passing CUDA_LAUNCH_BLOCKING=1
+Compile with `TORCH_USE_CUDA_DSA` to enable device-side assertions.
+
+Exception raised from c10_cuda_check_implementation at /pytorch/c10/cuda/CUDAException.cpp:43 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x703ebc96c1b6 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #1: c10::detail::torchCheckFail(char const*, char const*, unsigned int, std::string const&) + 0x64 (0x703ebc915a76 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #2: c10::cuda::c10_cuda_check_implementation(int, char const*, char const*, int, bool) + 0x118 (0x703ebcd7d918 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10_cuda.so)
+frame #3: c10::cuda::ExchangeDevice(signed char) + 0x92 (0x703ebcd7e002 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10_cuda.so)
+frame #4: <unknown function> + 0x103ad3a (0x703e6ac3ad3a in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #5: <unknown function> + 0x10433c5 (0x703e6ac433c5 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #6: <unknown function> + 0x643582 (0x703eb4643582 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #7: <unknown function> + 0x6f30f (0x703ebc94d30f in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #8: c10::TensorImpl::~TensorImpl() + 0x21b (0x703ebc94633b in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #9: c10::TensorImpl::~TensorImpl() + 0x9 (0x703ebc9464e9 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #10: <unknown function> + 0x904458 (0x703eb4904458 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #11: THPVariable_subclass_dealloc(_object*) + 0x2f6 (0x703eb49047a6 in /workspaces/.venv/lib/python3.11/site-packages/torch/lib/libtorch_python.so)
+frame #12: <unknown function> + 0x33484e (0x5f241443484e in /workspaces/.venv/bin/python3)
+frame #13: <unknown function> + 0x31ec3e (0x5f241441ec3e in /workspaces/.venv/bin/python3)
+frame #14: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #15: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #16: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #17: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #18: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #19: <unknown function> + 0x31ec73 (0x5f241441ec73 in /workspaces/.venv/bin/python3)
+frame #20: <unknown function> + 0x3d2c34 (0x5f24144d2c34 in /workspaces/.venv/bin/python3)
+frame #21: <unknown function> + 0x1fd241 (0x5f24142fd241 in /workspaces/.venv/bin/python3)
+frame #22: <unknown function> + 0x3dac87 (0x5f24144dac87 in /workspaces/.venv/bin/python3)
+frame #23: PyType_GenericAlloc + 0x1ef (0x5f241444f46f in /workspaces/.venv/bin/python3)
+frame #24: <unknown function> + 0x31c802 (0x5f241441c802 in /workspaces/.venv/bin/python3)
+frame #25: <unknown function> + 0x34add0 (0x5f241444add0 in /workspaces/.venv/bin/python3)
+frame #26: _PyErr_NormalizeException + 0x1e4 (0x5f2414343774 in /workspaces/.venv/bin/python3)
+frame #27: _PyEval_EvalFrameDefault + 0xc651 (0x5f241447eb61 in /workspaces/.venv/bin/python3)
+frame #28: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #29: <unknown function> + 0x318226 (0x5f2414418226 in /workspaces/.venv/bin/python3)
+frame #30: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #31: <unknown function> + 0x31cf70 (0x5f241441cf70 in /workspaces/.venv/bin/python3)
+frame #32: <unknown function> + 0x2135c8 (0x5f24143135c8 in /workspaces/.venv/bin/python3)
+frame #33: <unknown function> + 0x45d687 (0x5f241455d687 in /workspaces/.venv/bin/python3)
+frame #34: <unknown function> + 0x31a769 (0x5f241441a769 in /workspaces/.venv/bin/python3)
+frame #35: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #36: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #37: <unknown function> + 0x543863 (0x5f2414643863 in /workspaces/.venv/bin/python3)
+frame #38: <unknown function> + 0x2cf0da (0x5f24143cf0da in /workspaces/.venv/bin/python3)
+frame #39: <unknown function> + 0x2d8124 (0x5f24143d8124 in /workspaces/.venv/bin/python3)
+frame #40: <unknown function> + 0x338ef0 (0x5f2414438ef0 in /workspaces/.venv/bin/python3)
+frame #41: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #42: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #43: <unknown function> + 0x3479d9 (0x5f24144479d9 in /workspaces/.venv/bin/python3)
+frame #44: <unknown function> + 0x34ae05 (0x5f241444ae05 in /workspaces/.venv/bin/python3)
+frame #45: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #46: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #47: <unknown function> + 0x3479d9 (0x5f24144479d9 in /workspaces/.venv/bin/python3)
+frame #48: <unknown function> + 0x34ae05 (0x5f241444ae05 in /workspaces/.venv/bin/python3)
+frame #49: _PyEval_EvalFrameDefault + 0x3558d (0x5f24144a7a9d in /workspaces/.venv/bin/python3)
+frame #50: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #51: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #52: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #53: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #54: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #55: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #56: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+frame #57: PyObject_CallOneArg + 0x52 (0x5f24142f5f42 in /workspaces/.venv/bin/python3)
+frame #58: <unknown function> + 0x4630b2 (0x5f24145630b2 in /workspaces/.venv/bin/python3)
+frame #59: PyObject_GetIter + 0x13 (0x5f24142f00f3 in /workspaces/.venv/bin/python3)
+frame #60: <unknown function> + 0x338d8b (0x5f2414438d8b in /workspaces/.venv/bin/python3)
+frame #61: _PyEval_EvalFrameDefault + 0x35127 (0x5f24144a7637 in /workspaces/.venv/bin/python3)
+frame #62: _PyFunction_Vectorcall + 0x535 (0x5f2414415815 in /workspaces/.venv/bin/python3)
+
+/workspaces/.venv/lib/python3.11/site-packages/lightning/pytorch/loops/fit_loop.py:317: The number of training batches (5) is smaller than the logging interval Trainer(log_every_n_steps=10). Set a lower value for log_every_n_steps if you want to see logs for the training epoch.
