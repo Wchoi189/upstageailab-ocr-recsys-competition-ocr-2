@@ -1,0 +1,224 @@
+mode: train
+global:
+  paths:
+    root_dir: .
+    data_dir: ${global.paths.root_dir}/data
+    output_dir: ${global.paths.root_dir}/outputs
+    datasets_root: ${global.paths.data_dir}/datasets
+    artifacts:
+      detection: ${global.paths.output_dir}/detection
+      recognition: ${global.paths.output_dir}/recognition
+      kie: ${global.paths.output_dir}/kie
+    checkpoints: ${global.paths.output_dir}/checkpoints
+    logs: ${global.paths.output_dir}/lightning_logs
+    wandb: ${global.paths.output_dir}/wandb
+    datasets:
+      train: ${global.paths.data_dir}/train
+      val: ${global.paths.data_dir}/val
+      test: ${global.paths.data_dir}/test
+    cache: ${global.paths.output_dir}/cache
+    temp: ${global.paths.output_dir}/temp
+  default_interpolation: 1
+  debug: false
+trainer:
+  max_steps: -1
+  max_epochs: 1
+  num_sanity_val_steps: 1
+  log_every_n_steps: 10
+  val_check_interval: null
+  check_val_every_n_epoch: 1
+  deterministic: false
+  accumulate_grad_batches: 2
+  precision: 16-mixed
+  benchmark: true
+  gradient_clip_val: 5.0
+  accelerator: gpu
+  devices: 1
+  strategy: auto
+  enable_checkpointing: false
+  limit_train_batches: 15
+  limit_val_batches: 5
+  limit_test_batches: null
+dataloaders:
+  train_dataloader:
+    num_workers: 4
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 3
+  val_dataloader:
+    num_workers: 4
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
+  test_dataloader:
+    num_workers: 2
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 1
+  predict_dataloader:
+    num_workers: 2
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 1
+hardware:
+  gpu: rtx3060
+  vram: 12gb
+  cpu: i5_16core
+data:
+  batch_size: 16
+  transforms:
+    _target_: torchvision.transforms.Compose
+    transforms:
+    - _target_: torchvision.transforms.Resize
+      size:
+      - 32
+      - 128
+    - _target_: torchvision.transforms.ToTensor
+    - _target_: torchvision.transforms.Normalize
+      mean:
+      - 0.485
+      - 0.456
+      - 0.406
+      std:
+      - 0.229
+      - 0.224
+      - 0.225
+  num_workers: 4
+  tokenizer:
+    _target_: ocr.domains.recognition.data.tokenizer.KoreanOCRTokenizer
+    charset_path: ${global.paths.root_dir}/ocr/data/charset.json
+    max_len: 25
+  _dataset_template:
+    _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+    tokenizer: ${data.tokenizer}
+    max_len: ${data.tokenizer.max_len}
+    transform: ${data.transforms}
+    config: null
+  train_dataset:
+    _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+    tokenizer: ${data.tokenizer}
+    max_len: ${data.tokenizer.max_len}
+    transform: ${data.transforms}
+    config: null
+  val_dataset:
+    _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+    tokenizer: ${data.tokenizer}
+    max_len: ${data.tokenizer.max_len}
+    transform: ${data.transforms}
+    config: null
+  test_dataset:
+    _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+    tokenizer: ${data.tokenizer}
+    max_len: ${data.tokenizer.max_len}
+    transform: ${data.transforms}
+    config: null
+  predict_dataset:
+    _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
+    lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+    tokenizer: ${data.tokenizer}
+    max_len: ${data.tokenizer.max_len}
+    transform: ${data.transforms}
+    config: null
+  collate_fn:
+    _target_: ocr.domains.recognition.data.collate.recognition_collate_fn
+    _partial_: true
+model:
+  architectures:
+    _target_: ocr.domains.recognition.models.parseq_official_adapter.PARSeqOfficial
+    name: parseq
+    encoder:
+      _target_: ocr.core.models.encoder.timm_backbone.TimmBackbone
+      model_name: resnet18
+      pretrained: true
+      features_only: true
+      output_indices:
+      - 3
+    decoder:
+      _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+      in_channels: 256
+      d_model: 256
+      nhead: 8
+      num_layers: 12
+      vocab_size: ${model.vocab_size}
+    head:
+      _target_: torch.nn.Linear
+      in_features: 256
+      out_features: ${model.vocab_size}
+    loss:
+      _target_: torch.nn.CrossEntropyLoss
+      ignore_index: 0
+    max_len: 25
+    num_tokens: ${model.vocab_size}
+    max_label_length: 25
+    img_size:
+    - 32
+    - 128
+    patch_size:
+    - 4
+    - 8
+    embed_dim: 384
+    enc_num_heads: 6
+    enc_mlp_ratio: 4
+    enc_depth: 12
+    dec_num_heads: 12
+    dec_mlp_ratio: 4
+    dec_depth: 1
+    perm_num: 6
+    perm_forward: true
+    perm_mirrored: true
+    decode_ar: true
+    refine_iters: 1
+    dropout: 0.1
+  vocab_size: 1000
+train:
+  optimizer:
+    _target_: torch.optim.Adam
+    lr: 0.001
+    betas:
+    - 0.9
+    - 0.999
+    eps: 1.0e-08
+    weight_decay: 0.0001
+domain:
+  task: recognition
+  recognition:
+    max_label_length: 25
+    charset: korean
+    case_sensitive: false
+    decode_mode: greedy
+    beam_width: 5
+    use_eos_token: true
+    use_pad_token: true
+  detection: null
+  max_polygons: null
+  shrink_ratio: null
+  thresh_min: null
+  thresh_max: null
+  box_thresh: null
+  unclip_ratio: null
+  kie: null
+  max_entities: null
+  relation_types: null
+  entity_categories: null
+  linking_mode: null
+runtime:
+  caching: false
+  prefetch: false
+  preload_images: false
+  preload_maps: false
+  prenormalize_images: false
+  load_maps: false
+  cache_config:
+    cache_images: true
+    cache_maps: false
+    cache_transformed_tensors: false
+    log_statistics_every_n: 100
+  image_loading_config:
+    use_turbojpeg: true
+    turbojpeg_fallback: true
+experiment_name: rec_baseline_official
+run_name: official_parseq_${now:%Y%m%d_%H%M%S}

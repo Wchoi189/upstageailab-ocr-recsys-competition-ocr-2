@@ -35,3 +35,28 @@ repomix --style markdown \
 ```
 
 
+### Quick GPU Test (Recommended)
+```bash
+uv run python scripts/runners/train.py \
+  domain=recognition \
+  experiment=rec_baseline_official \
+  trainer.max_epochs=100 \
+  data.batch_size=64 \
+  dataloaders.train_dataloader.num_workers=4 \
+  dataloaders.val_dataloader.num_workers=4 \
+  dataloaders.train_dataloader.pin_memory=true \
+  dataloaders.val_dataloader.pin_memory=true \
+  +dataloaders.train_dataloader.batch_size=64 \
+  +dataloaders.val_dataloader.batch_size=64 \
+  +train/logger=wandb
+```
+
+
+```bash
+uv run python scripts/runners/train.py \
+  domain=recognition \
+  experiment=rec_baseline_official \
+  trainer.max_epochs=100 \
+  +train/logger=wandb
+  # data.batch_size=64  <-- Optional, defaults to 64 in rtx3090 config now
+```

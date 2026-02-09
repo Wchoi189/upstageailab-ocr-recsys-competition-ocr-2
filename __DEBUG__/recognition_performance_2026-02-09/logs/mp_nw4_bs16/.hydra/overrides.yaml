@@ -1,0 +1,12 @@
+- domain=recognition
+- experiment=rec_baseline_official
+- trainer.max_epochs=1
+- trainer.limit_train_batches=30
+- trainer.limit_val_batches=0
+- dataloaders.train_dataloader.num_workers=4
+- dataloaders.val_dataloader.num_workers=4
+- dataloaders.train_dataloader.pin_memory=true
+- dataloaders.val_dataloader.pin_memory=true
+- +dataloaders.train_dataloader.batch_size=16
+- +dataloaders.val_dataloader.batch_size=16
+- data.batch_size=16

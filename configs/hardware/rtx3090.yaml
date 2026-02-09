@@ -8,10 +8,10 @@ hardware:
 
 # Trainer optimization
 trainer:
-  accumulate_grad_batches: 1        # 3090 has enough VRAM for large batches, less need for accomulation
-  precision: "32-true"             # Use AMP/Telemtry
+  accumulate_grad_batches: 1
+  precision: "16-mixed"             # standard for RTX 30 series
   gradient_clip_val: 5.0
-  max_epochs: 200
+  max_epochs: 100
   benchmark: true
   accelerator: gpu
   devices: 1
@@ -20,22 +20,26 @@ trainer:
 # Dataloader optimization
 dataloaders:
   train_dataloader:
-    num_workers: 8                 # Spawn config allows safe scaling
+    num_workers: 4                 # Safe spawn config per benchmark
     pin_memory: true
     persistent_workers: true
-    prefetch_factor: 4             # Aggressive prefetching
+    prefetch_factor: 2
+    batch_size: 128                # Optimized for 24GB VRAM (Research based)
   val_dataloader:
     num_workers: 4
     pin_memory: true
     persistent_workers: true
     prefetch_factor: 2
+    batch_size: 128                # Optimized for 24GB VRAM (Research based)
   test_dataloader:
     num_workers: 4
     pin_memory: true
+    batch_size: 128
   predict_dataloader:
     num_workers: 4
     pin_memory: true
+    batch_size: 128
 
 # Data Overrides
 data:
-  batch_size: 38644                  # Optimized for 24GB VRAM
+  batch_size: 128

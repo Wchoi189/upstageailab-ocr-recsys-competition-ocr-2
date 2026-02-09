@@ -1,0 +1,59 @@
+[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] - 🎯 OCRProjectOrchestrator initialized
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] -    Domain: recognition
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] -    Mode: train
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] - \n============================================================
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] - 🚀 Starting TRAIN for recognition domain
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] - ============================================================\n
+[2026-02-09 16:07:13,816][ocr.pipelines.orchestrator][INFO] - 🏗️ Building model and datasets...
+[2026-02-09 16:07:13,816][ocr.pipelines.strategies.recognition_config][INFO] - 💉 Injecting vocab_size for recognition model...
+[2026-02-09 16:07:13,818][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-09 16:07:13,819][ocr.pipelines.strategies.recognition_config][INFO] -    ✓ Vocab size 1027 injected into model config
+[2026-02-09 16:07:15,147][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-09 16:07:15,426][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-09 16:07:15,594][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-09 16:07:15,813][timm.models._hub][INFO] - [timm/resnet18.a1_in1k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+[2026-02-09 16:07:16,359][ocr.pipelines.orchestrator][INFO] -    ✓ Model created: PARSeqOfficial
+[2026-02-09 16:07:16,365][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-09 16:07:16,369][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-09 16:07:16,373][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-09 16:07:16,377][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-09 16:07:16,378][ocr.pipelines.orchestrator][INFO] -    ✓ Datasets created
+[2026-02-09 16:07:16,387][ocr.pipelines.orchestrator][INFO] -    ✓ RecognitionPLModule created
+[2026-02-09 16:07:16,400][ocr.pipelines.orchestrator][INFO] -    ✓ DataModule created
+[2026-02-09 16:07:16,400][ocr.pipelines.orchestrator][INFO] - ⚡ Configuring Lightning Trainer...
+[2026-02-09 16:07:16,432][lightning.pytorch.utilities.rank_zero][INFO] - Using 16bit Automatic Mixed Precision (AMP)
+[2026-02-09 16:07:16,439][lightning.pytorch.utilities.rank_zero][INFO] - GPU available: True (cuda), used: True
+[2026-02-09 16:07:16,439][lightning.pytorch.utilities.rank_zero][INFO] - TPU available: False, using: 0 TPU cores
+[2026-02-09 16:07:16,440][lightning.pytorch.utilities.rank_zero][INFO] - 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+[2026-02-09 16:07:16,440][ocr.pipelines.orchestrator][INFO] -    ✓ Trainer ready
+[2026-02-09 16:07:16,440][ocr.pipelines.orchestrator][INFO] - 🏋️ Starting training...\n
+[2026-02-09 16:07:16,612][lightning.pytorch.accelerators.cuda][INFO] - LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+┏━━━┳━━━━━━━━━┳━━━━━━━━━━━━━━━━┳━━━━━━━━┳━━━━━━━┳━━━━━━━┓
+┃   ┃ Name    ┃ Type           ┃ Params ┃ Mode  ┃ FLOPs ┃
+┡━━━╇━━━━━━━━━╇━━━━━━━━━━━━━━━━╇━━━━━━━━╇━━━━━━━╇━━━━━━━┩
+│ 0 │ model   │ PARSeqOfficial │ 24.5 M │ train │     0 │
+│ 1 │ rec_cer │ CharErrorRate  │      0 │ train │     0 │
+└───┴─────────┴────────────────┴────────┴───────┴───────┘
+Trainable params: 24.5 M                                                 
+Non-trainable params: 0                                                  
+Total params: 24.5 M                                                     
+Total estimated model params size (MB): 98                               
+Modules in train mode: 289                                               
+Modules in eval mode: 0                                                  
+Total FLOPs: 0                                                           
+[2026-02-09 16:07:23,591][lightning.pytorch.utilities.rank_zero][INFO] - `Trainer.fit` stopped: `max_epochs=1` reached.
+[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility
+[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility
+[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility
+[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility
+Epoch 0/0  ━━━━━━━━━━━━━━━━━ 30/30 0:00:06 •        8.41it/s v_num: 5.000
+                                   0:00:00                               
+[2026-02-09 16:07:24,630][ocr.pipelines.orchestrator][INFO] - \n✅ Training complete!
+INFO: Using 16bit Automatic Mixed Precision (AMP)
+INFO: GPU available: True (cuda), used: True
+INFO: TPU available: False, using: 0 TPU cores
+INFO: 💡 Tip: For seamless cloud logging and experiment tracking, try installing [litlogger](https://pypi.org/project/litlogger/) to enable LitLogger, which logs metrics and artifacts automatically to the Lightning Experiments platform.
+INFO: LOCAL_RANK: 0 - CUDA_VISIBLE_DEVICES: [0]
+/parent/upstageailab-ocr-recsys-competition-ocr-2/.venv/lib/python3.11/site-packages/lightning/pytorch/utilities/model_summary/model_summary.py:242: Precision 16-mixed is not supported by the model summary.  Estimated model size in MB will not be accurate. Using 32 bits instead.
+INFO: `Trainer.fit` stopped: `max_epochs=1` reached.

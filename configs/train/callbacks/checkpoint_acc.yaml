@@ -1,0 +1,24 @@
+# @package _group_
+# Custom checkpoint configuration for Recognition (Accuracy)
+
+_target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
+dirpath: ${global.paths.checkpoint_dir}
+
+# Experiment identification
+experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}}
+training_phase: "training"
+add_timestamp: true
+
+# Checkpoint naming
+filename: "best-acc-{val/acc:.4f}"
+auto_insert_metric_name: false
+
+# Monitoring
+monitor: "val/acc"
+mode: "max"
+save_top_k: 3
+save_last: true
+verbose: false
+
+every_n_epochs: 1
+save_on_train_epoch_end: false

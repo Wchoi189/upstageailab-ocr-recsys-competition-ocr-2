@@ -129,36 +129,42 @@ if [ -d "$PARENT_DIR" ]; then
     # Repomix
     if [ -d "$PARENT_DIR/repomix" ]; then
         echo "  📦 Installing repomix from local source..."
-        # We need to serve this, but pnpm link -g inside container might need root or specific setup.
-        # simpler to just install dependencies and link
-        (cd "$PARENT_DIR/repomix" && pnpm install && pnpm run build && pnpm link --global) || echo "  ❌ Failed to install repomix"
+        # Install as vscode user, skip global link (bin is already in PATH)
+        # We use explicit install/build steps and swallow errors solely for preventing crash
+        sudo -u vscode bash -c "cd '$PARENT_DIR/repomix' && pnpm install && pnpm run build" || echo "  ❌ Failed to install repomix (non-fatal)"
     fi
 
     # Spec-kit (requires Python 3.11+, use project venv)
     if [ -d "$PARENT_DIR/spec-kit" ] && [ -f "/workspaces/.venv/bin/python" ]; then
         echo "  📦 Installing spec-kit in project venv..."
-        uv pip install -e "$PARENT_DIR/spec-kit" --python /workspaces/.venv/bin/python || echo "  ❌ Failed to install spec-kit"
+        uv pip install -e "$PARENT_DIR/spec-kit" --python /workspaces/.venv/bin/python || echo "  ❌ Failed to install spec-kit (non-fatal)"
     fi
 
     # Qwen Code CLI (API Version)
-    # Ensure qwen-code is installed globally for the user
-    if ! pnpm list -g @qwen-code/qwen-code > /dev/null 2>&1; then
-        echo "  📦 Installing qwen-code CLI..."
-        # Ensure local bin dir exists and is in PATH
-        sudo -u vscode mkdir -p /home/vscode/.local/share/pnpm
-        sudo -u vscode pnpm config set global-bin-dir /home/vscode/.local/share/pnpm
-        # Install with PATH set
-        sudo -u vscode bash -c 'export PATH="/home/vscode/.local/share/pnpm:$PATH" && pnpm add -g @qwen-code/qwen-code'
-    else
-        echo "  ✅ qwen-code CLI already installed."
-    fi
+    # Ensure qwen-code is installed/updated globally for the user
+    echo "  📦 Checking/Updating qwen-code CLI..."
+
+    # Ensure local bin dir exists
+    sudo -u vscode mkdir -p /home/vscode/.local/share/pnpm
+
+    # Configure pnpm (ignore if this fails)
+    sudo -u vscode pnpm config set global-bin-dir /home/vscode/.local/share/pnpm || true
+
+    # Install with explicit PATH, allowing failure. Using @latest to ensure updates.
+    set +e
+    sudo -u vscode bash -c 'export PATH="/home/vscode/.local/share/pnpm:$PATH" && pnpm add -g @qwen-code/qwen-code@latest --config.global-bin-dir=/home/vscode/.local/share/pnpm' || echo "  ⚠️ pnpm install/update failed, continuing..."
+    set -e
 fi
 
 # 4. Fix workspace permissions if mounted by Docker
 # (Often owned by root initially in binds)
-if [ -d "/workspaces" ]; then
-    sudo chown -R vscode:vscode /workspaces
+# WARNING: Recursive chown on /workspaces (the entire repo) causes massive I/O spikes and can crash WSL
+if [ -d "/workspaces" ] && [ ! -w "/workspaces" ]; then
+    echo "🔧 Fixing permissions on /workspaces (non-recursive)..."
+    sudo chown vscode:vscode /workspaces
 fi
+
+echo "✅ Entrypoint setup complete. Starting services..."
 
 # 5. Start SSH Daemon
 echo "Starting SSH Daemon..."

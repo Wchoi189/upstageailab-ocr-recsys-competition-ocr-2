@@ -2,19 +2,38 @@
 defaults:
   - /data/runtime/performance/balanced@runtime
   - override /domain: recognition
-  - override /hardware: rtx3060
+
   - _self_
 
 # Experiment metadata
 experiment_name: rec_baseline_official
+exp_name: ${experiment_name}
 run_name: official_parseq_${now:%Y%m%d_%H%M%S}
 
 # Training configuration
 trainer:
-  max_epochs: 100
+  max_epochs: 50
   precision: "16-mixed"
   gradient_clip_val: 5.0
   log_every_n_steps: 10
+  enable_checkpointing: true
+
+# Callbacks
+train:
+  callbacks:
+    checkpoint:
+      _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
+      dirpath: ${global.paths.checkpoint_dir}
+      experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}}
+      training_phase: "training"
+      add_timestamp: true
+      filename: "best-acc-{val/acc:.4f}"
+      monitor: "val/acc"
+      mode: "max"
+      save_top_k: 3
+      save_last: true
+      every_n_epochs: 1
+
 
 # Data
 data:

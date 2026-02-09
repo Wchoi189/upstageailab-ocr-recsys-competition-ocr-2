@@ -4,7 +4,7 @@
 defaults:
   - _self_
   - global: default
-  - hardware: rtx3060
+  - hardware: rtx3090
   - domain: ???          # Must be provided (detection, recognition, kie)
   - /data/runtime/performance/none@runtime
   - experiment: null

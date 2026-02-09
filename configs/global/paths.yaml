@@ -3,95 +3,62 @@
 # GLOBAL PATHS CONFIGURATION - The Single Source of Truth
 # ============================================================================
 # Purpose: Centralize ALL path interpolations to eliminate "hidden path" problems
-# Usage:   This file is automatically included via defaults in config.yaml
-#
-# CRITICAL: This is the ONLY file that should define path variables.
-#           All other configs MUST reference these paths, never redefine them.
+# Usage:   This file is included via defaults in config.yaml
+# structure:
+#   1. Foundation (Roots)
+#   2. Input Data Resources
+#   3. Training Outputs & Artifacts
+#   4. Domain Workspaces
 # ============================================================================
 
 global:
   paths:
-    # ========================================================================
-    # Base Directories
-    # ========================================================================
-    # ========================================================================
-    # Base Directories
-    # ========================================================================
-    root_dir: .
-    # data_dir: ${global.paths.root_dir}/data  <-- OLD (In-project)
-    # output_dir: ${global.paths.root_dir}/outputs <-- OLD (In-project)
-
-    # NEW: External Storage (Anti-Bloat)
+    # 1. Foundation (Roots)
     # ------------------------------------------------------------------------
+    root_dir: .
     data_dir: ${global.paths.root_dir}/data
     output_dir: ${global.paths.root_dir}/outputs
-
-    # Dataset Root (Added for V5 Refactor)
     datasets_root: ${global.paths.data_dir}/datasets
 
-    # ========================================================================
-    # Domain-Specific Output Paths
-    # ========================================================================
-    # Each domain gets its own isolated output directory
-    artifacts:
-      detection: ${global.paths.output_dir}/detection
-      recognition: ${global.paths.output_dir}/recognition
-      kie: ${global.paths.output_dir}/kie
-
-    # ========================================================================
-    # Training Artifacts
-    # ========================================================================
-    # Pointing to External Storage Siblings (Phase 1 Structure)
-    checkpoints: ${global.paths.output_dir}/checkpoints
-    logs: ${global.paths.output_dir}/lightning_logs
-    wandb: ${global.paths.output_dir}/wandb
-
-    # ========================================================================
-    # Data Subdirectories
-    # ========================================================================
+    # 2. Input Data Resources
+    # ------------------------------------------------------------------------
     datasets:
       train: ${global.paths.data_dir}/train
       val: ${global.paths.data_dir}/val
       test: ${global.paths.data_dir}/test
 
-    # ========================================================================
-    # Cache and Temporary Storage
-    # ========================================================================
+    # Shared Resources (e.g., Charsets, Fonts)
+    resources:
+      charset: ${global.paths.root_dir}/ocr/data/charset.json
+
+    # 3. Training Outputs & Artifacts
+    # ------------------------------------------------------------------------
+    # Checkpoints
+    checkpoints: ${global.paths.output_dir}/checkpoints
+    checkpoint_dir: ${global.paths.checkpoints}  # Alias required by Lightning callbacks
+
+    # Logging
+    logs: ${global.paths.output_dir}/lightning_logs
+    wandb: ${global.paths.output_dir}/wandb
+    wandb_sync_root: ${global.paths.output_dir}/wandb/sync
+
+    # Transient
     cache: ${global.paths.output_dir}/cache
     temp: ${global.paths.output_dir}/temp
+
+    # 4. Domain Workspaces
+    # ------------------------------------------------------------------------
+    artifacts:
+      detection: ${global.paths.output_dir}/detection
+      recognition: ${global.paths.output_dir}/recognition
+      kie: ${global.paths.output_dir}/kie
 
 # ============================================================================
 # Hydra Runtime Configuration
 # ============================================================================
-# Override Hydra's default output directories to use our centralized paths
 hydra:
   run:
-    # Organize runs by date and time
     dir: ${global.paths.output_dir}/runs/${now:%Y-%m-%d}/${now:%H-%M-%S}
-
   sweep:
-    # Organize sweeps by date and time
     dir: ${global.paths.output_dir}/sweeps/${now:%Y-%m-%d}/${now:%H-%M-%S}
     subdir: ${hydra.job.num}
-
-# ============================================================================
-# Usage Examples
-# ============================================================================
-#
-# In other config files, reference paths like this:
-#
-# # configs/data/recognition/lmdb.yaml
-# data:
-#   train_path: ${global.paths.datasets.train}/recognition_lmdb
-#   val_path: ${global.paths.datasets.val}/recognition_lmdb
-#
-# # configs/model/recognition/parseq.yaml
-# model:
-#   checkpoint_dir: ${global.paths.checkpoints}/parseq
-#
-# NEVER do this:
-# ❌ data_dir: ./data  # Hardcoded path
-# ❌ output_dir: /tmp/outputs  # Absolute path
-# ❌ train_path: ${data_dir}/train  # Undefined variable
-#
-# ============================================================================

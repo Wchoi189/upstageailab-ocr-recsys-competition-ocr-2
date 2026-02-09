@@ -61,8 +61,11 @@ class PARSeqOfficial(nn.Module):
         self.perm_mirrored = perm_mirrored
 
         # Create the official PARSeq model
+        # NOTE: PARSeq logic subtracts 2 from num_tokens (assuming no logits for BOS/PAD)
+        # But our tokenizer has BOS/PAD at indices 0/1. Removing the last 2 logits
+        # truncates legitimate characters from the vocab. We add +2 here to safe-guard.
         self.model = OfficialPARSeqModel(
-            num_tokens=num_tokens,
+            num_tokens=num_tokens + 2,
             max_label_length=max_label_length,
             img_size=img_size,
             patch_size=patch_size,

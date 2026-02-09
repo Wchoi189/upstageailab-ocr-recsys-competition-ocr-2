@@ -1,0 +1,38 @@
+[
+  {
+    "name": "baseline_nw0_bs16",
+    "workers": 0,
+    "pin_memory": false,
+    "batch_size": 16,
+    "speed": 7.46,
+    "status": "SUCCESS",
+    "duration": 0
+  },
+  {
+    "name": "mp_nw4_bs16",
+    "workers": 4,
+    "pin_memory": "true",
+    "batch_size": 16,
+    "speed": 8.41,
+    "status": "SUCCESS",
+    "duration": 15.583965539932251
+  },
+  {
+    "name": "mp_nw8_bs16",
+    "workers": 8,
+    "pin_memory": "true",
+    "batch_size": 16,
+    "speed": 8.61,
+    "status": "SUCCESS",
+    "duration": 16.057477951049805
+  },
+  {
+    "name": "mp_nw4_bs64",
+    "workers": 4,
+    "pin_memory": "true",
+    "batch_size": 64,
+    "speed": 8.39,
+    "status": "SUCCESS",
+    "duration": 17.327990293502808
+  }
+]
