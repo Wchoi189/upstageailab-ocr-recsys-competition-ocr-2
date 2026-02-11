@@ -52,7 +52,7 @@ template: |
   Bug ID: BUG-{bug_id}
 
   ## Summary
-  {summary}
+  {description}
 
   ## Environment
   - **OS/Env**: {os_info}
@@ -75,7 +75,7 @@ template: |
 
 template_variables:
   bug_id: "XXX"
-  summary: "[Brief description]"
+  description: "[Brief description]"
   os_info: "[OS/Environment details]"
   dependencies: "[Relevant dependencies]"
   reproduction_steps: "[Steps to reproduce]"

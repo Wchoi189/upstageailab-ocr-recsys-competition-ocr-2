@@ -20,26 +20,27 @@ trainer:
 # Dataloader optimization
 dataloaders:
   train_dataloader:
-    num_workers: 4                 # Safe spawn config per benchmark
+    num_workers: 12                # Optimized for 16-core CPU (75% usage)
     pin_memory: true
     persistent_workers: true
-    prefetch_factor: 2
-    batch_size: 128                # Optimized for 24GB VRAM (Research based)
+    prefetch_factor: 4             # Optimized for high throughput
+    batch_size: 160                # Optimized for 24GB VRAM
   val_dataloader:
-    num_workers: 4
+    num_workers: 8
     pin_memory: true
     persistent_workers: true
     prefetch_factor: 2
-    batch_size: 128                # Optimized for 24GB VRAM (Research based)
+    batch_size: 160
   test_dataloader:
-    num_workers: 4
+    num_workers: 8
     pin_memory: true
-    batch_size: 128
+    batch_size: 160
   predict_dataloader:
-    num_workers: 4
+    num_workers: 8
     pin_memory: true
-    batch_size: 128
+    batch_size: 160
 
 # Data Overrides
 data:
-  batch_size: 128
+  batch_size: 160
+

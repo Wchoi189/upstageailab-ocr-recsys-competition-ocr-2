@@ -1,5 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_OTHER",
-  "summary": "Workspace cleanup and maintenance recommendations for the debugging workspace. Lists diagnostic scripts to keep, test logs to archive, redundant archive directories to consolidate, and documentation to update. Provides specific commands for cleanup operations and suggestions for future improvements to prevent workspace clutter.",
-  "updatedAt": "2026-02-08T14:10:55.778905967Z"
-}

@@ -1,0 +1,32 @@
+{
+	"servers": {
+		"perplexity": {
+			"command": "npx",
+			"args": [
+				"-y",
+				"perplexity-mcp",
+				"--cwd",
+				"${workspaceFolder}"
+			],
+			"env": {
+				"PERPLEXITY_API_KEY": "${env:PERPLEXITY_API_KEY}"
+			}
+		},
+		"unified_project": {
+			"command": "uv",
+			"args": [
+				"run",
+				"--directory",
+				"${workspaceFolder}",
+				"python",
+				"scripts/mcp/unified_server.py"
+			]
+		},
+		"agentqms": {
+			"command": "python",
+			"args": [
+				"AgentQMS/mcp_server.py"
+			]
+		}
+	}
+}

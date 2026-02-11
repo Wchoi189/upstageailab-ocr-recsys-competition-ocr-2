@@ -152,17 +152,24 @@ test_*/
 # !.agentqms/*.md
 # .agentqms/state/agent_state.json
 # .agentqms/state/*.sqlite
+AgentQMS/.agentqms/registry.yaml
+AgentQMS/.agentqms/state/plugins.yaml
+AgentQMS/.mcp-telemetry.jsonl
 AgentQMS/vlm/cache/
 !outputs/README_outputs_structure.md
+.archive/
+.env copy
+__DEBUG__/training_failures_2026-02-07/implementations/baudm_parseq
 # Project-specific files (review and remove if no longer needed)
 # notepad.md
 # root-cause.md
 data_gen_exp/
 repomix-output.xml
 run.log
+brain/
 # aws-batch-processor/
 # data/metadata/dataset_catalog.yml
-
+*.log
 # data
 data/datasets/
 /data/

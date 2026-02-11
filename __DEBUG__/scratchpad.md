@@ -40,7 +40,7 @@ repomix --style markdown \
 uv run python scripts/runners/train.py \
   domain=recognition \
   experiment=rec_baseline_official \
-  trainer.max_epochs=100 \
+  trainer.max_epochs=10 \
   data.batch_size=64 \
   dataloaders.train_dataloader.num_workers=4 \
   dataloaders.val_dataloader.num_workers=4 \
@@ -55,8 +55,8 @@ uv run python scripts/runners/train.py \
 ```bash
 uv run python scripts/runners/train.py \
   domain=recognition \
+  ckpt_path="outputs/checkpoints/last.ckpt" \
   experiment=rec_baseline_official \
-  trainer.max_epochs=100 \
+  trainer.max_epochs=10 \
   +train/logger=wandb
-  # data.batch_size=64  <-- Optional, defaults to 64 in rtx3090 config now
 ```

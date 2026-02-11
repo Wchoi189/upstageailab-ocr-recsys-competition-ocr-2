@@ -3,5 +3,6 @@
     "allow": [
       "Bash(uv run python:*)"
     ]
-  }
+  },
+  "enableAllProjectMcpServers": false
 }

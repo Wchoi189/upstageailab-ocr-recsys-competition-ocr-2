@@ -1,8 +1,0 @@
-usage: train.py [--help] [--hydra-help] [--version] [--cfg {job,hydra,all}]
-                [--resolve] [--package PACKAGE] [--run] [--multirun]
-                [--shell-completion] [--config-path CONFIG_PATH]
-                [--config-name CONFIG_NAME] [--config-dir CONFIG_DIR]
-                [--experimental-rerun EXPERIMENTAL_RERUN]
-                [--info [{all,config,defaults,defaults-tree,plugins,searchpath}]]
-                [overrides ...]
-train.py: error: unrecognized arguments: trainer.limit_train_batches=20 trainer.limit_val_batches=3 trainer.max_epochs=1 ++trainer.log_every_n_steps=5

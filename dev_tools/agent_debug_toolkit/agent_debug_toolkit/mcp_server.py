@@ -78,6 +78,11 @@ def run_analyzer(analyzer_class, path: Path, recursive: bool = True):
         raise FileNotFoundError(f"Path not found: {path}")
 
 
+async def run_analyzer_async(analyzer_class, path: Path, recursive: bool = True):
+    """Run analyzer in a background thread."""
+    return await asyncio.to_thread(run_analyzer, analyzer_class, path, recursive)
+
+
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute a tool."""
@@ -121,7 +126,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         component = arguments.get("component")
         output_format = arguments.get("output", "json")
 
-        report = run_analyzer(ConfigAccessAnalyzer, path)
+        report = await run_analyzer_async(ConfigAccessAnalyzer, path)
 
         # Filter by component if specified
         if component:
@@ -143,7 +148,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             raise FileNotFoundError(f"File not found: {path}")
 
         analyzer = MergeOrderTracker()
-        report = analyzer.analyze_file(path)
+        report = await asyncio.to_thread(analyzer.analyze_file, path)
 
         if output_format == "markdown" and explain:
             explanation = analyzer.explain_precedence()
@@ -162,7 +167,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         path = resolve_path(arguments.get("path", ""))
         output_format = arguments.get("output", "json")
 
-        report = run_analyzer(HydraUsageAnalyzer, path)
+        report = await run_analyzer_async(HydraUsageAnalyzer, path)
         content = report.to_json() if output_format == "json" else report.to_markdown()
 
         return [TextContent(type="text", text=content)]
@@ -174,7 +179,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         component = arguments.get("component")
         output_format = arguments.get("output", "json")
 
-        report = run_analyzer(ComponentInstantiationTracker, path)
+        report = await run_analyzer_async(ComponentInstantiationTracker, path)
 
         # Filter by component if specified
         if component:
@@ -202,11 +207,11 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             raise FileNotFoundError(f"File not found: {path}")
 
         # Run all analyzers
-        config_report = ConfigAccessAnalyzer().analyze_file(path)
+        config_report = await asyncio.to_thread(ConfigAccessAnalyzer().analyze_file, path)
         merge_tracker = MergeOrderTracker()
-        merge_report = merge_tracker.analyze_file(path)
-        hydra_report = HydraUsageAnalyzer().analyze_file(path)
-        inst_report = ComponentInstantiationTracker().analyze_file(path)
+        merge_report = await asyncio.to_thread(merge_tracker.analyze_file, path)
+        hydra_report = await asyncio.to_thread(HydraUsageAnalyzer().analyze_file, path)
+        inst_report = await asyncio.to_thread(ComponentInstantiationTracker().analyze_file, path)
 
         # Build summary
         summary_parts = [
@@ -268,9 +273,9 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         analyzer = DependencyGraphAnalyzer(include_stdlib=include_stdlib)
         if path.is_file():
-            report = analyzer.analyze_file(path)
+            report = await asyncio.to_thread(analyzer.analyze_file, path)
         elif path.is_dir():
-            report = analyzer.analyze_directory(path)
+            report = await asyncio.to_thread(analyzer.analyze_directory, path)
         else:
             raise FileNotFoundError(f"Path not found: {path}")
 
@@ -290,7 +295,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         show_unused = arguments.get("show_unused", True)
         output_format = arguments.get("output", "json")
 
-        report = run_analyzer(ImportTracker, path)
+        report = await run_analyzer_async(ImportTracker, path)
 
         if not show_unused and "unused_imports" in report.summary:
             del report.summary["unused_imports"]
@@ -308,9 +313,9 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         analyzer = ComplexityMetricsAnalyzer(complexity_threshold=threshold)
         if path.is_file():
-            report = analyzer.analyze_file(path)
+            report = await asyncio.to_thread(analyzer.analyze_file, path)
         elif path.is_dir():
-            report = analyzer.analyze_directory(path)
+            report = await asyncio.to_thread(analyzer.analyze_directory, path)
         else:
             raise FileNotFoundError(f"Path not found: {path}")
 
@@ -329,7 +334,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
             raise ValueError(f"Path must be a directory: {path}")
 
         analyzer = ContextTreeAnalyzer(max_depth=depth)
-        report = analyzer.analyze_directory(str(path))
+        report = await asyncio.to_thread(analyzer.analyze_directory, str(path))
 
         if "error" in report.summary:
             raise RuntimeError(f"Analysis error: {report.summary['error']}")
@@ -354,7 +359,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         output_format = arguments.get("output", "markdown")
 
         searcher = IntelligentSearcher(str(root), str(PROJECT_ROOT))
-        results = searcher.search(query, fuzzy=fuzzy, threshold=threshold)
+        results = await asyncio.to_thread(searcher.search, query, fuzzy, threshold)
 
         if output_format == "json":
             import json
@@ -375,7 +380,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         max_results = arguments.get("max_results")
         output_format = arguments.get("output", "json")
 
-        report = sg_search(
+        report = await asyncio.to_thread(
+            sg_search,
             pattern=pattern,
             path=path,
             lang=lang,
@@ -400,7 +406,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         if rule_file:
             rule_file = resolve_path(rule_file)
 
-        report = sg_lint(
+        report = await asyncio.to_thread(
+            sg_lint,
             path=path,
             rule=rule,
             rule_file=rule_file,
@@ -414,7 +421,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         code = arguments.get("code", "")
         lang = arguments.get("lang", "python")
 
-        result = dump_syntax_tree(code=code, lang=lang)
+        result = await asyncio.to_thread(dump_syntax_tree, code=code, lang=lang)
 
         return [TextContent(type="text", text=result)]
 
@@ -427,7 +434,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         lang = arguments.get("lang", "python")
         max_depth = arguments.get("max_depth", 5)
 
-        report = parse_code(code=code, lang=lang, max_depth=max_depth)
+        report = await asyncio.to_thread(parse_code, code=code, lang=lang, max_depth=max_depth)
 
         return [TextContent(type="text", text=report.to_json())]
 
@@ -439,7 +446,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         lang = arguments.get("lang", "python")
         max_results = arguments.get("max_results", 50)
 
-        report = run_query(
+        report = await asyncio.to_thread(
+            run_query,
             code=code,
             query=query,
             lang=lang,
@@ -457,7 +465,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         strategy = arguments.get("strategy", "fuzzy")
         dry_run = arguments.get("dry_run", False)
 
-        report = apply_unified_diff(
+        report = await asyncio.to_thread(
+            apply_unified_diff,
             diff=diff,
             strategy=strategy,
             project_root=PROJECT_ROOT,
@@ -476,7 +485,8 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         all_occurrences = arguments.get("all_occurrences", False)
         dry_run = arguments.get("dry_run", False)
 
-        report = smart_edit(
+        report = await asyncio.to_thread(
+            smart_edit,
             file=path,
             search=search,
             replace=replace,
@@ -495,7 +505,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         end_line = int(arguments.get("end_line", start_line + 50))
         context_lines = int(arguments.get("context_lines", 0))
 
-        content = read_file_slice(path, start_line, end_line, context_lines)
+        content = await asyncio.to_thread(read_file_slice, path, start_line, end_line, context_lines)
 
         return [TextContent(type="text", text=content)]
 
@@ -506,7 +516,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
         style = arguments.get("style", "black")
         check_only = arguments.get("check_only", False)
 
-        report = format_code(path, style=style, check_only=check_only)
+        report = await asyncio.to_thread(format_code, path, style=style, check_only=check_only)
 
         return [TextContent(type="text", text=report.to_json())]
 

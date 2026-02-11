@@ -32,6 +32,7 @@ services:
       - DISPLAY=${DISPLAY}
       - UV_LINK_MODE=copy
       - SLACK_WEBHOOK_URL=${SLACK_WEBHOOK_URL}
+      - OCR_PROJECT_ROOT=/workspaces
     ports:
       - "8000:8000" # Web interface/API
       - "8501:8501" # Streamlit (if used)

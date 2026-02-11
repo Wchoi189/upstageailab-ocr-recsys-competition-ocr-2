@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-02-08T16:59:31.984702+00:00'
+  generated_at: '2026-02-10T09:07:46.349311+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -372,7 +372,7 @@ resolved:
 
         ## Summary
 
-        {summary}
+        {description}
 
 
         ## Environment
@@ -410,7 +410,7 @@ resolved:
         '
       template_variables:
         bug_id: XXX
-        summary: '[Brief description]'
+        description: '[Brief description]'
         os_info: '[OS/Environment details]'
         dependencies: '[Relevant dependencies]'
         reproduction_steps: '[Steps to reproduce]'

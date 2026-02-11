@@ -1,7 +1,0 @@
-Could not override 'trainer.num_workers'.
-To append to your config use +trainer.num_workers=0
-Key 'num_workers' is not in struct
-    full_key: trainer.num_workers
-    object_type=dict
-
-Set the environment variable HYDRA_FULL_ERROR=1 for a complete stack trace.

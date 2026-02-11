@@ -52,6 +52,7 @@ STAGING_DIR = COMPASS_DIR / "pulse_staging"
 
 # Create MCP server
 app = Server("vessel")
+COMPASS_WRITE_LOCK = asyncio.Lock()
 
 
 # ============ Resources ============
@@ -246,36 +247,39 @@ def get_tool_context():
 
 
 async def handle_pulse_init(arguments: Dict[str, Any], manager: Any, **kwargs) -> List[TextContent]:
-    success, message = await asyncio.to_thread(
-        manager.init_pulse,
-        pulse_id=arguments["pulse_id"],
-        objective=arguments["objective"],
-        milestone_id=arguments["milestone_id"],
-        phase=arguments.get("phase", "kie"),
-    )
+    async with COMPASS_WRITE_LOCK:
+        success, message = await asyncio.to_thread(
+            manager.init_pulse,
+            pulse_id=arguments["pulse_id"],
+            objective=arguments["objective"],
+            milestone_id=arguments["milestone_id"],
+            phase=arguments.get("phase", "kie"),
+        )
     result = {"success": success, "message": message}
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
 
 async def handle_pulse_sync(arguments: Dict[str, Any], paths: Any, register_artifact: Any, **kwargs) -> List[TextContent]:
-    success, message = await asyncio.to_thread(
-        register_artifact,
-        state_path=paths.vessel_state,
-        artifact_path=arguments["path"],
-        artifact_type=arguments["artifact_type"],
-        milestone_id=arguments.get("milestone_id"),
-    )
+    async with COMPASS_WRITE_LOCK:
+        success, message = await asyncio.to_thread(
+            register_artifact,
+            state_path=paths.vessel_state,
+            artifact_path=arguments["path"],
+            artifact_type=arguments["artifact_type"],
+            milestone_id=arguments.get("milestone_id"),
+        )
     result = {"success": success, "message": message}
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
 
 async def handle_pulse_export(paths: Any, export_pulse: Any, **kwargs) -> List[TextContent]:
-    result = await asyncio.to_thread(
-        export_pulse,
-        state_path=paths.vessel_state,
-        staging_path=paths.staging_dir,
-        history_path=paths.history_dir,
-    )
+    async with COMPASS_WRITE_LOCK:
+        result = await asyncio.to_thread(
+            export_pulse,
+            state_path=paths.vessel_state,
+            staging_path=paths.staging_dir,
+            history_path=paths.history_dir,
+        )
     return [TextContent(type="text", text=json.dumps(result, indent=2))]
 
 
@@ -285,25 +289,26 @@ async def handle_pulse_status(manager: Any, **kwargs) -> List[TextContent]:
 
 
 async def handle_pulse_checkpoint(arguments: Dict[str, Any], manager: Any, paths: Any, create_snapshot: Any, **kwargs) -> List[TextContent]:
-    state = await asyncio.to_thread(manager.load_state)
-    if not state.active_pulse:
-        return [TextContent(type="text", text=json.dumps({"error": "No active pulse"}))]
+    async with COMPASS_WRITE_LOCK:
+        state = await asyncio.to_thread(manager.load_state)
+        if not state.active_pulse:
+            return [TextContent(type="text", text=json.dumps({"error": "No active pulse"}))]
 
-    if arguments.get("token_burden"):
-        state.active_pulse.token_burden = arguments["token_burden"]
-        await asyncio.to_thread(manager.save_state, state)
+        if arguments.get("token_burden"):
+            state.active_pulse.token_burden = arguments["token_burden"]
+            await asyncio.to_thread(manager.save_state, state)
 
-    # If objective/message is provided, create a snapshot
-    snapshot_msg = ""
-    if arguments.get("objective"):
-        success, msg = await asyncio.to_thread(
-            create_snapshot,
-            state_path=paths.vessel_state,
-            staging_path=paths.staging_dir,
-            history_path=paths.history_dir,
-            label=arguments["objective"]
-        )
-        snapshot_msg = f" | {msg}"
+        # If objective/message is provided, create a snapshot
+        snapshot_msg = ""
+        if arguments.get("objective"):
+            success, msg = await asyncio.to_thread(
+                create_snapshot,
+                state_path=paths.vessel_state,
+                staging_path=paths.staging_dir,
+                history_path=paths.history_dir,
+                label=arguments["objective"]
+            )
+            snapshot_msg = f" | {msg}"
 
     assessment = {
         "pulse_id": state.active_pulse.pulse_id,
@@ -342,7 +347,8 @@ async def handle_spec_constitution(arguments: Dict[str, Any], paths: Any, regist
         except Exception as e:
             return {"success": False, "message": f"Error establishing constitution: {str(e)}"}
 
-    response = await asyncio.to_thread(_sync_impl)
+    async with COMPASS_WRITE_LOCK:
+        response = await asyncio.to_thread(_sync_impl)
     return [TextContent(type="text", text=json.dumps(response, indent=2))]
 
 
@@ -375,7 +381,8 @@ async def handle_spec_specify(arguments: Dict[str, Any], paths: Any, register_ar
         except Exception as e:
             return {"success": False, "message": f"Error creating specification: {str(e)}"}
 
-    response = await asyncio.to_thread(_sync_impl)
+    async with COMPASS_WRITE_LOCK:
+        response = await asyncio.to_thread(_sync_impl)
     return [TextContent(type="text", text=json.dumps(response, indent=2))]
 
 
@@ -407,7 +414,8 @@ async def handle_spec_plan(arguments: Dict[str, Any], paths: Any, register_artif
         except Exception as e:
             return {"success": False, "message": f"Error creating implementation plan: {str(e)}"}
 
-    response = await asyncio.to_thread(_sync_impl)
+    async with COMPASS_WRITE_LOCK:
+        response = await asyncio.to_thread(_sync_impl)
     return [TextContent(type="text", text=json.dumps(response, indent=2))]
 
 
@@ -439,7 +447,8 @@ async def handle_spec_tasks(arguments: Dict[str, Any], paths: Any, register_arti
         except Exception as e:
             return {"success": False, "message": f"Error generating tasks: {str(e)}"}
 
-    response = await asyncio.to_thread(_sync_impl)
+    async with COMPASS_WRITE_LOCK:
+        response = await asyncio.to_thread(_sync_impl)
     return [TextContent(type="text", text=json.dumps(response, indent=2))]
 
 

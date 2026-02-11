@@ -1,8 +1,8 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P7
-generated_at: '2026-02-06T19:31:27.609180+00:00'
-total_specs: 22
+generated_at: '2026-02-10T17:13:59.076717+00:00'
+total_specs: 23
 specs:
   AGENT_IDENTITIES:
     id: AGENT_IDENTITIES
@@ -61,6 +61,12 @@ specs:
     id: ADS_SCHEMAS
     file_path: AgentQMS/specs/schemas/ads_schemas.spec.md
     description: '**Tier**: Schemas'
+  FW-CORE-INTERFACES:
+    id: FW-CORE-INTERFACES
+    file_path: AgentQMS/specs/tier2-framework/core-interfaces.spec.md
+    tier: 2
+    description: Core/Interfaces layer for cross-domain data contracts
+    priority: high
   FW-OCR-ENGINE:
     id: FW-OCR-ENGINE
     file_path: AgentQMS/specs/tier2-framework/ocr-engine.spec.md

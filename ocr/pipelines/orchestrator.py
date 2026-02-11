@@ -55,9 +55,33 @@ class OCRProjectOrchestrator:
 
         self.mode = cfg.get("mode", "train")
 
+        self._validate_config_structure()
+
         logger.info("🎯 OCRProjectOrchestrator initialized")
         logger.info(f"   Domain: {self.domain}")
         logger.info(f"   Mode: {self.mode}")
+
+    def _validate_config_structure(self):
+        """Validate configuration structure to prevent common silent failures."""
+        # Check Logger Structure
+        if hasattr(self.cfg, "train") and hasattr(self.cfg.train, "logger") and self.cfg.train.logger:
+            logging_conf = self.cfg.train.logger
+            # If the container ITSELF has a target, it's likely a flat config (Bug!)
+            if "_target_" in logging_conf:
+                raise RuntimeError(
+                    "CRITICAL CONFIG ERROR: 'train.logger' seems to be a single Logger config. "
+                    "It MUST be a dictionary/list of loggers. "
+                    "Did you forget a nesting wrapper like '@package _group_' or '@package train.logger.wandb'?"
+                )
+
+        # Check Callbacks Structure (similar pattern)
+        if hasattr(self.cfg, "train") and hasattr(self.cfg.train, "callbacks") and self.cfg.train.callbacks:
+            callbacks_conf = self.cfg.train.callbacks
+            if "_target_" in callbacks_conf:
+                raise RuntimeError(
+                    "CRITICAL CONFIG ERROR: 'train.callbacks' seems to be a single Callback config. "
+                    "It MUST be a dictionary/list of callbacks."
+                )
 
     def setup_modules(self):
         """Create Lightning modules using existing factories.

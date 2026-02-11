@@ -1,5 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_OTHER",
-  "summary": "Comprehensive session handover documenting the persistent CUDA training failure that was incorrectly marked as resolved in the previous session. Includes environment survey post-SSD migration, error analysis, workspace assessment, tool feedback, pain points, hypotheses, and systematic debugging plan. Documents discrepancy between claimed fix and actual behavior, identifies terminal freezing issue, and proposes phased debugging approach.",
-  "updatedAt": "2026-02-08T13:59:39.267600445Z"
-}

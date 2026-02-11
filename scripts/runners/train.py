@@ -18,8 +18,8 @@ import torch
 import torch.multiprocessing as mp
 # ATTEMPT 1: Use spawn method (best for CUDA + multiprocessing)
 try:
-    mp.set_start_method('spawn', force=True)
-    print("[MULTIPROCESSING] Using 'spawn' start method for CUDA compatibility")
+    mp.set_start_method('fork', force=True)
+    print("[MULTIPROCESSING] Using 'fork' start method (Testing ext4 performance)")
 except RuntimeError as e:
     # Start method already set
     print(f"[MULTIPROCESSING] Start method already set: {mp.get_start_method()}")

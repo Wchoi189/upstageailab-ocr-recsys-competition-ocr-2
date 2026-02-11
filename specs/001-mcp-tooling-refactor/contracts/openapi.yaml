@@ -1,0 +1,133 @@
+openapi: 3.0.3
+info:
+  title: Unified MCP Dispatcher API
+  version: 1.0.0
+  description: Transport-agnostic contract for dispatcher capabilities exposed over MCP stdio/SSE.
+servers:
+  - url: http://localhost:8000
+paths:
+  /mcp/list-tools:
+    get:
+      summary: List available tools
+      responses:
+        "200":
+          description: Tool list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolList"
+  /mcp/call-tool:
+    post:
+      summary: Call a tool
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ToolCallRequest"
+      responses:
+        "200":
+          description: Tool result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ToolCallResponse"
+  /mcp/list-resources:
+    get:
+      summary: List available resources
+      responses:
+        "200":
+          description: Resource list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ResourceList"
+  /mcp/read-resource:
+    post:
+      summary: Read a resource by URI
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReadResourceRequest"
+      responses:
+        "200":
+          description: Resource content
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ReadResourceResponse"
+components:
+  schemas:
+    Tool:
+      type: object
+      properties:
+        name:
+          type: string
+        description:
+          type: string
+        inputSchema:
+          type: object
+      required: [name, description, inputSchema]
+    ToolList:
+      type: object
+      properties:
+        tools:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tool"
+    ToolCallRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        arguments:
+          type: object
+      required: [name]
+    ToolCallResponse:
+      type: object
+      properties:
+        status:
+          type: string
+          enum: [success, error, policy_violation]
+        output:
+          type: array
+          items:
+            type: object
+        error_message:
+          type: string
+      required: [status, output]
+    Resource:
+      type: object
+      properties:
+        uri:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        mimeType:
+          type: string
+      required: [uri, name, mimeType]
+    ResourceList:
+      type: object
+      properties:
+        resources:
+          type: array
+          items:
+            $ref: "#/components/schemas/Resource"
+    ReadResourceRequest:
+      type: object
+      properties:
+        uri:
+          type: string
+      required: [uri]
+    ReadResourceResponse:
+      type: object
+      properties:
+        contents:
+          type: array
+          items:
+            type: object
+      required: [contents]

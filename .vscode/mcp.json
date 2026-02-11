@@ -6,7 +6,7 @@
 				"-y",
 				"perplexity-mcp",
 				"--cwd",
-				"/workspaces"
+				"${workspaceFolder}"
 			],
 			"env": {
 				"PERPLEXITY_API_KEY": "${env:PERPLEXITY_API_KEY}"
@@ -17,7 +17,7 @@
 			"args": [
 				"run",
 				"--directory",
-				"/workspaces",
+				"${workspaceFolder}",
 				"python",
 				"scripts/mcp/unified_server.py"
 			]

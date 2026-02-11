@@ -41,7 +41,8 @@
         "DISABLE_ERROR_REPORTING": "1",
         "DISABLE_AUTOUPDATER": "1",
         "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1",
-        "DEBUG": ""
+        "DEBUG": "",
+        "OCR_PROJECT_ROOT": "/workspaces"
     },
     "onCreateCommand": "echo '✅ Container created (cloud-optimized)'",
     "updateContentCommand": "uv sync --no-install || uv sync",

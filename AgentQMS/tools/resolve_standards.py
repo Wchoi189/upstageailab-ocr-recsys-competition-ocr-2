@@ -24,7 +24,7 @@ import yaml
 
 # Project root and paths
 PROJECT_ROOT = Path(__file__).resolve().parents[2]
-STANDARDS_DIR = PROJECT_ROOT / "AgentQMS" / "standards"
+STANDARDS_DIR = PROJECT_ROOT / "AgentQMS" / ".agentqms"
 REGISTRY_PATH = STANDARDS_DIR / "registry.yaml"
 CACHE_PATH = STANDARDS_DIR / ".ads_cache.pickle"
 

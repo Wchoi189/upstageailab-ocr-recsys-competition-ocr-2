@@ -1,5 +1,0 @@
-{
-  "artifactType": "ARTIFACT_TYPE_IMPLEMENTATION_PLAN",
-  "summary": "Implementation plan to debug why the recognition training pipeline fails with num_workers>0 despite simplified DataLoader tests passing. Covers investigation of pipeline components (LMDB dataset, transforms, model initialization), root cause isolation, and solution strategies including configuration changes, code fixes, and fallback options. Includes detailed verification plan with both automated and manual tests.",
-  "updatedAt": "2026-02-08T14:02:54.353691512Z"
-}

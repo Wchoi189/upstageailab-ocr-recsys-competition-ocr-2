@@ -24,7 +24,12 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
 
-from omegaconf import OmegaConf
+from omegaconf import OmegaConf, DictConfig, ListConfig
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
+
 
 from ocr.core.utils.experiment_index import get_next_experiment_index
 
@@ -40,9 +45,11 @@ def _register_hydra_resolvers() -> None:
 
     try:
         OmegaConf.register_new_resolver("exp_index", lambda: get_next_experiment_index())
+        OmegaConf.register_new_resolver("project_root", lambda: str(PROJECT_ROOT))
     except ValueError as exc:
         # Resolver may already be registered if multiple modules import this helper.
-        if "exp_index" not in str(exc):
+        if "exp_index" not in str(exc) and "project_root" not in str(exc):
+
             raise
     finally:
         _HYDRA_RESOLVERS_REGISTERED = True

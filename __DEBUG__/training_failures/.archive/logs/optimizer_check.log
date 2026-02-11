@@ -1,7 +1,0 @@
-⚠️ Mismatch detected! Domain=detection but Model=PARSeq.
-⚠️ Forcing domain='recognition' to prevent runtime errors.
-Building model...
-Traceback (most recent call last):
-  File "/workspaces/__DEBUG__/training_failures/scripts/check_optimizer.py", line 17, in <module>
-    from ocr.core.factory import ModelFactory, DatasetFactory
-ModuleNotFoundError: No module named 'ocr.core.factory'

@@ -13,6 +13,7 @@ Supports both Stdio (for local desktop) and SSE (for cloud/remote).
 """
 
 import asyncio
+import itertools
 import json
 import sys
 import time
@@ -63,6 +64,47 @@ TELEMETRY_PIPELINE = TelemetryPipeline([
 app = Server("unified_project")
 config_loader = ConfigLoader(cache_size=5)
 SESSION_ID = str(uuid.uuid4())
+SEQ_COUNTER = itertools.count(1)
+
+DEFAULT_TIMEOUT_S = 60
+TOOL_TIMEOUTS = {
+    "adt_meta_query": 120,
+}
+
+TOOL_SEMAPHORES = {
+    "adt_meta_query": asyncio.Semaphore(2),
+    "adt_meta_edit": asyncio.Semaphore(1),
+}
+
+
+class AsyncRWLock:
+    """Async reader-writer lock for compass state isolation."""
+
+    def __init__(self) -> None:
+        self._readers = 0
+        self._readers_lock = asyncio.Lock()
+        self._writer_lock = asyncio.Lock()
+
+    async def acquire_read(self) -> None:
+        async with self._readers_lock:
+            self._readers += 1
+            if self._readers == 1:
+                await self._writer_lock.acquire()
+
+    async def release_read(self) -> None:
+        async with self._readers_lock:
+            self._readers -= 1
+            if self._readers == 0:
+                self._writer_lock.release()
+
+    async def acquire_write(self) -> None:
+        await self._writer_lock.acquire()
+
+    def release_write(self) -> None:
+        self._writer_lock.release()
+
+
+COMPASS_RW_LOCK = AsyncRWLock()
 
 # --- Telemetry ---
 TELEMETRY_FILE = PROJECT_ROOT / "AgentQMS" / ".mcp-telemetry.jsonl"
@@ -300,12 +342,16 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
     start_time = time.time()
     # Approx input tokens
     arg_str = json.dumps(arguments) if arguments else ""
+    request_id = str(uuid.uuid4())
+    sequence_index = next(SEQ_COUNTER)
     event = {
         "timestamp": datetime.now().isoformat(),
         "tool_name": name,
         "args_hash": hashlib.md5(str(arguments).encode()).hexdigest()[:8],
         "session_id": SESSION_ID,
         "input_tokens": len(arg_str) // 4,
+        "request_id": request_id,
+        "sequence_index": sequence_index,
     }
     try:
         # 1. Validation Logic
@@ -317,9 +363,41 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
             raise ValueError(f"Unknown tool: {name}")
 
         module_name = tool_def["implementation"]["module"]
+        event["module"] = module_name
         import importlib
         module = importlib.import_module(module_name)
-        result = await module.call_tool(name, arguments)
+        timeout_s = TOOL_TIMEOUTS.get(name, DEFAULT_TIMEOUT_S)
+
+        is_compass_write = False
+        is_compass_read = False
+        if module_name == "project_compass.mcp_server":
+            kind = arguments.get("kind") if isinstance(arguments, dict) else None
+            if name == "compass_meta_pulse":
+                if kind in {"init", "sync", "export", "checkpoint"}:
+                    is_compass_write = True
+                elif kind == "status":
+                    is_compass_read = True
+            elif name == "compass_meta_spec":
+                is_compass_write = True
+
+        semaphore = TOOL_SEMAPHORES.get(name)
+        if is_compass_write:
+            await COMPASS_RW_LOCK.acquire_write()
+        elif is_compass_read:
+            await COMPASS_RW_LOCK.acquire_read()
+
+        if semaphore:
+            await semaphore.acquire()
+
+        try:
+            result = await asyncio.wait_for(module.call_tool(name, arguments), timeout=timeout_s)
+        finally:
+            if semaphore:
+                semaphore.release()
+            if is_compass_write:
+                COMPASS_RW_LOCK.release_write()
+            elif is_compass_read:
+                await COMPASS_RW_LOCK.release_read()
 
         # Calculate output tokens
         res_str = ""
@@ -393,7 +471,15 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         event["duration_ms"] = round(duration_ms, 2)
         event["error"] = str(e)[:200]
         log_telemetry_event(event)
-        return [TextContent(type="text", text=f"Error executing {name}: {str(e)}")]
+        error_payload = {
+            "status": "error",
+            "tool": name,
+            "module": event.get("module"),
+            "request_id": request_id,
+            "sequence_index": sequence_index,
+            "message": f"Error executing {name}: {str(e)}",
+        }
+        return [TextContent(type="text", text=json.dumps(error_payload, indent=2))]
 
 # --- Server Start Logic ---
 

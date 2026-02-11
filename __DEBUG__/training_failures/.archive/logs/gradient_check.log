@@ -1,7 +1,0 @@
-⚠️ Mismatch detected! Domain=detection but Model=PARSeq.
-⚠️ Forcing domain='recognition' to prevent runtime errors.
-Traceback (most recent call last):
-  File "/workspaces/scripts/debug_gradients.py", line 12, in <module>
-    orch.build_model_and_datasets()
-    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-AttributeError: 'OCRProjectOrchestrator' object has no attribute 'build_model_and_datasets'

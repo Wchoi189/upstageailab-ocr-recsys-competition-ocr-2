@@ -1,0 +1,35 @@
+# @package _global_
+defaults:
+  - rec_baseline_official
+  - /train/scheduler: cosine    # ACTIVATE the learning rate scheduler
+  - /train/callbacks: recognition_wandb # Add missing image logging callback
+  - override /hardware: rtx3090   # ACTIVATE the optimizations (Workers=12, Batch=160)
+  - _self_
+
+# Experiment metadata
+experiment_name: rec_optimized_rtx3090
+exp_name: ${experiment_name}
+run_name: optimized_${now:%Y%m%d_%H%M%S}
+
+# Trainer overrides (Cumulative training strategy)
+trainer:
+  max_epochs: 100              # Total target (but run in chunks)
+  precision: "bf16-mixed"      # Optimization: Try BF16 for 3090
+  check_val_every_n_epoch: 1
+
+# Scheduler tweaks
+train:
+  lr_scheduler:
+    warmup_epochs: 1           # Fast warmup for resumed runs
+
+# Model Component Overrides for WandB Run Name
+# (Injects metadata for generate_run_name since PARSeqOfficial hides components)
+model:
+  architecture_name: parseq
+  optimizer:
+    lr: 1e-3
+  component_overrides:
+    encoder: {name: "timm-backbone"}
+    decoder: {name: "parseq-decoder"}
+    head: {name: "parseq-head"}
+    loss: {name: "cross-entropy"}
