@@ -15,22 +15,33 @@
 ## 2. Directory Structure
 
 ```text
-project_compass/
+project_compass/              # Project root
 ├── .vessel/                  # State storage (vessel_state.json)
 ├── vault/                    # Read-only rule library
 │   ├── directives/           # Core protocols
 │   └── milestones/           # Star-chart definitions
-├── pulse_staging/
+├── pulse_staging/            # Staging workspace
 │   └── artifacts/            # ACTIVE WORKSPACE (Write here)
 ├── history/                  # Archived pulses
 │   ├── {milestone_id}/       # Grouped by goal
 │   │   └── {timestamp}_{id}/ # Pulse snapshot
 │   └── legacy/               # Old session archives
-└── skills/                   # Skill definitions
-    ├── compass-start/
-    ├── compass-status/
-    └── ...
+├── skills/                   # Skill definitions
+│   ├── compass-start/
+│   ├── compass-status/
+│   └── ...
+└── project_compass/          # Python package (CODE ONLY)
+    ├── cli.py
+    └── src/
+        ├── core.py
+        ├── state_schema.py
+        └── ...
 ```
+
+**Key Architecture Principles:**
+- **Data directories** (`.vessel/`, `vault/`, `history/`, `pulse_staging/`) → Project root
+- **Python package** (`project_compass/`) → Code only, no data
+- **Path detection** → Simple: check standard location, then cwd, fail fast (no multi-tier fallbacks)
 
 ## 3. Skills Interface (Primary)
 

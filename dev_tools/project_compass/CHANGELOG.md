@@ -1,5 +1,29 @@
 # Project Compass Changelog
 
+## [3.0.1] - 2026-02-12 - Architecture Fix
+
+### Fixed
+- **Critical Bug**: Path auto-detection now uses `pyproject.toml` instead of directory name
+- **Follow-up Bug**: Fixed fallback logic creating `.vessel` at workspace root when called from external code
+- **Stricter Validation**: Now requires BOTH `vault/` AND (`history/` OR `.vessel/`) to confirm compass project
+- **Smart Search**: Added fallback search for `dev_tools/project_compass` in common locations
+- **Directory Structure**: Migrated `.vessel/` and `pulse_staging/` to project root (Python best practices)
+- **Path Resolution**: Robust detection works from ANY working directory (tested from workspace, dev_tools, and project)
+- Python package (`project_compass/`) now contains ONLY code
+
+### Changed
+- All data directories (`.vessel/`, `vault/`, `history/`, `pulse_staging/`) moved to project root
+- Skills updated to reference correct paths (compass-start, compass-resume, compass-finish)
+- Documentation updated: AGENTS.md, AGENTS.yaml reflect new structure
+- Version bumped to 3.0.1 to reflect bug fix
+
+### Technical Details
+- See [POST_NUCLEAR_AUDIT.md](POST_NUCLEAR_AUDIT.md) for detailed analysis
+- See [ARCHITECTURE_AUDIT_COMPLETE.md](ARCHITECTURE_AUDIT_COMPLETE.md) for complete summary
+- Root cause: Auto-detection confused package subdirectory with project root
+
+---
+
 ## [3.0.0] - 2026-02-12 - BREAKING CHANGES ⚠️
 
 ### BREAKING CHANGES

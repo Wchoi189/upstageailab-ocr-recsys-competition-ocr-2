@@ -46,7 +46,7 @@ async def _run_batch() -> list[list[unified_server.TextContent]]:
     base_calls = [
         ("list_artifact_templates", {}),
         ("list_artifact_templates", {}),
-        ("compass_meta_pulse", {"kind": "status"}),
+        ("get_context_bundle", {"task_description": "test context bundle"}),
         (
             "adt_meta_query",
             {

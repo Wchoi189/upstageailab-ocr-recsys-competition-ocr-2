@@ -1,0 +1,171 @@
+---
+# Project Compass Correction Requirements
+# Deviation from CLEANUP_FEEDBACK.md - Schema Only
+---
+
+deviations:
+  critical:
+    - id: DEV-001 - SKIP
+      issue: "Directory structure inverted from plan"
+      original_plan: "Move .vessel/ inside project_compass/project_compass/"
+      actual: "Moved .vessel/ to project root"
+      impact: "Violates Python packaging - data should be in package, not root"
+
+    - id: DEV-002
+      issue: "MCP not fully removed"
+      original_plan: "Remove MCP server, router, all MCP references"
+      actual: "Updated MCP resources to V3 instead of removing"
+      file: "scripts/mcp/config/resources.yaml"
+      impact: "MCP layer still referenced"
+
+    - id: DEV-003
+      issue: "Three-tiered fallback system"
+      original_plan: "Single path detection method"
+      actual: "Complex 3-tier: walk-up, search, fallback"
+      file: "project_compass/src/core.py:38-86"
+      impact: "Hidden behaviors, complex logic"
+
+  documentation_pollution:
+    - POST_NUCLEAR_AUDIT.md
+    - ARCHITECTURE_AUDIT_COMPLETE.md
+    - DOCUMENTATION_UPDATE_SUMMARY.md
+    - MCP_RESOURCES_UPDATE.md
+    - COMPLETE_UPDATE_SUMMARY.md
+    - PATH_DETECTION_BUG_FIX.md
+    note: "All extremely verbose despite user request against it"
+
+required_corrections:
+
+  # 1. Path Detection
+  path_detection:
+    file: "project_compass/src/core.py"
+    lines: "38-86"
+    action: "replace"
+    new_logic:
+      method: "single_env_var"
+      env_var: "COMPASS_ROOT"
+      fallback: "fail_fast"
+      no_search: true
+      no_multi_tier: true
+    pseudocode: |
+      project_root = os.getenv("COMPASS_ROOT")
+      if not project_root:
+          raise EnvironmentError("COMPASS_ROOT not set")
+      self.project_root = Path(project_root)
+
+  # 2. Directory Structure - SKIP
+  # directory_structure:
+  #   action: "revert_to_original_plan"
+  #   operations:
+  #     - move:
+  #         from: "/workspaces/dev_tools/project_compass/.vessel"
+  #         to: "/workspaces/dev_tools/project_compass/project_compass/.vessel"
+  #     - move:
+  #         from: "/workspaces/dev_tools/project_compass/pulse_staging"
+  #         to: "/workspaces/dev_tools/project_compass/project_compass/pulse_staging"
+  #     - move:
+  #         from: "/workspaces/dev_tools/project_compass/vault"
+  #         to: "/workspaces/dev_tools/project_compass/project_compass/vault"
+  #     - move:
+  #         from: "/workspaces/dev_tools/project_compass/history"
+  #         to: "/workspaces/dev_tools/project_compass/project_compass/history"
+  #   target_structure: |
+  #     project_compass/                    # Project root
+  #     ├── project_compass/                # Package (code + data)
+  #     │   ├── .vessel/                    # ← Here
+  #     │   ├── pulse_staging/              # ← Here
+  #     │   ├── vault/                      # ← Here
+  #     │   ├── history/                    # ← Here
+  #     │   └── src/
+  #     ├── skills/
+  #     └── pyproject.toml
+
+  # 3. MCP Complete Removal
+  mcp_removal:
+    files_to_delete:
+      - "scripts/mcp/config/resources.yaml"
+      - "scripts/mcp/unified_server.py"
+      - "scripts/mcp/sync_configs.py"
+    skills_update:
+      - file: "skills/compass-start/SKILL.md"
+        change: "Remove MCP references, use CLI only"
+      - file: "skills/compass-resume/SKILL.md"
+        change: "Remove MCP references, use CLI only"
+      - file: "skills/compass-finish/SKILL.md"
+        change: "Remove MCP references, use CLI only"
+    note: "As per original CLEANUP_FEEDBACK.md Phase 4"
+
+  # 4. Documentation Cleanup
+  documentation_cleanup:
+    action: "delete"
+    files:
+      - POST_NUCLEAR_AUDIT.md
+      - ARCHITECTURE_AUDIT_COMPLETE.md
+      - DOCUMENTATION_UPDATE_SUMMARY.md
+      - MCP_RESOURCES_UPDATE.md
+      - COMPLETE_UPDATE_SUMMARY.md
+      - PATH_DETECTION_BUG_FIX.md
+      - V3_MIGRATION_COMPLETE.md
+    keep_only:
+      - CLEANUP_FEEDBACK.md
+      - NUCLEAR_CLEANUP_REQUIREMENTS.md
+      - CHANGELOG.md
+      - AGENTS.md
+      - AGENTS.yaml
+
+  # 5. Version Revert
+  version:
+    file: "pyproject.toml"
+    revert_to: "3.0.0"
+    note: "3.0.1 was invalid patch, these are architectural changes"
+
+validation:
+  path_detection:
+    - "Only COMPASS_ROOT env var used"
+    - "No walk-up logic"
+    - "No search paths"
+    - "Fails fast if COMPASS_ROOT not set"
+
+  # directory_structure:
+  #   - "All data inside project_compass/ package"
+  #   - "Project root contains: pyproject.toml, skills/, project_compass/"
+  #   - "No .vessel at root"
+  #   - "No vault/ at root"
+
+  mcp:
+    - "No MCP files exist"
+    - "grep -r 'mcp' project_compass/ returns zero matches"
+    - "Skills use CLI only"
+
+  documentation:
+    - "Only 5 docs exist (listed in keep_only)"
+    - "No verbose audit files"
+
+execution_order:
+  - step: 1
+    action: "Delete documentation pollution"
+    duration: "5min"
+  - step: 2
+    action: "Move directories to correct locations"
+    duration: "10min"
+  - step: 3
+    action: "Simplify path detection (env var only)"
+    duration: "15min"
+  - step: 4
+    action: "Delete MCP files completely"
+    duration: "10min"
+  - step: 5
+    action: "Update skills to CLI only"
+    duration: "20min"
+  - step: 6
+    action: "Validation testing"
+    duration: "15min"
+  - step: 7
+    action: "Update CHANGELOG.md (brief entry)"
+    duration: "5min"
+
+breaking_changes:
+  - "COMPASS_ROOT environment variable required"
+  - "No auto-detection fallbacks"
+  - "MCP layer completely removed"
+  - "Directory structure matches original plan"

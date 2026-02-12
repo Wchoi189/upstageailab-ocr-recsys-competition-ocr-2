@@ -37,18 +37,21 @@ class VesselPaths:
         else:
             if project_root:
                 self.project_root = project_root
+                self.compass_dir = self.project_root
             else:
-                # Auto-detect project root by finding project_compass/
-                current = Path.cwd()
-                while current != current.parent:
-                    if (current / "project_compass").exists():
-                        self.project_root = current
-                        break
-                    current = current.parent
-                else:
+                # Simple path resolution: Check standard location, then cwd
+                default_path = Path("/workspaces/dev_tools/project_compass")
+                if default_path.exists() and (default_path / "pyproject.toml").exists():
+                    self.project_root = default_path
+                    self.compass_dir = self.project_root
+                elif (Path.cwd() / "pyproject.toml").exists():
                     self.project_root = Path.cwd()
-
-            self.compass_dir = self.project_root / "project_compass"
+                    self.compass_dir = self.project_root
+                else:
+                    raise RuntimeError(
+                        "Cannot locate project_compass. "
+                        "Run from project directory or pass project_root explicitly."
+                    )
 
         # V2 Directories
         self.vessel_dir = self.compass_dir / ".vessel"

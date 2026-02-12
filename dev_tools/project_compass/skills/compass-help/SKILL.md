@@ -147,4 +147,3 @@ Executes audit checklist systematically. See `/compass-help audit` for details.
 
 - Full docs: `dev_tools/project_compass/AGENTS.md`
 - Vault directives: `dev_tools/project_compass/vault/directives/`
-- MCP tools: See `AGENTS.yaml` entry_points

@@ -63,7 +63,7 @@ Every skill loads project directives using dynamic context:
 
 ### 2. Validation Before Execution
 
-Skills validate inputs before calling MCP tools:
+Skills validate inputs before calling CLI:
 - Pulse ID format checking
 - Banned term detection
 - Artifact type validation
@@ -92,7 +92,7 @@ Interactive prompts for complex operations:
 ### Nuclear Refactor Approach
 - **No legacy support**: Direct implementation
 - **Fail fast**: Validate early, surface errors immediately
-- **Clean migration**: Skills wrap MCP tools, no duplication
+- **Clean migration**: Skills call CLI directly, no duplication
 
 ### Skill Architecture
 ```
@@ -115,8 +115,8 @@ skills/
 
 ### CLI Command Mapping
 
-| Skill | MCP Tool Call |
-|-------|---------------|
+| Skill | CLI Command |
+|-------|-------------|
 | compass-start | `uv run compass pulse-init` |
 | compass-status | `uv run compass pulse-status` |
 | compass-register | `uv run compass pulse-sync --path ... --type ...` |
@@ -252,6 +252,6 @@ No skill changes needed when directives update.
 ## References
 
 - Core Docs: `AGENTS.md`
-- MCP Tools: `AGENTS.yaml`
+- Config: `AGENTS.yaml`
 - Vault Directives: `vault/directives/`
 - Skill System: [Claude Code Skills Reference](https://claude.ai/docs/skills)

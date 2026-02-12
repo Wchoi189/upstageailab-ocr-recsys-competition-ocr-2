@@ -2050,7 +2050,7 @@ wheels = [
 
 [[package]]
 name = "project-compass"
-version = "0.1.0"
+version = "3.0.1"
 source = { editable = "dev_tools/project_compass" }
 dependencies = [
     { name = "rich" },

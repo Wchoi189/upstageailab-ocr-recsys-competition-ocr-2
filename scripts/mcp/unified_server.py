@@ -3,7 +3,6 @@
 Unified Project MCP Server (SSE + Stdio)
 
 A single server that combines all project MCP functionality:
-- Project Compass resources and tools
 - AgentQMS artifact workflows and standards
 - Experiment Manager lifecycle tools
 - Middleware enforcement (Telemetry, Compliance, Proactive Feedback)
@@ -46,7 +45,7 @@ from AgentQMS.middleware.policies import (
 )
 
 PROJECT_ROOT = get_project_root()
-# Add dev_tools to path to support non-installed tools (project_compass, experiment_manager)
+# Add dev_tools to path to support non-installed tools (experiment_manager)
 sys.path.append(str(PROJECT_ROOT / "dev_tools"))  # noqa: path-hack
 
 EXPERIMENTS_DIR = PROJECT_ROOT / "experiments"
@@ -78,7 +77,7 @@ TOOL_SEMAPHORES = {
 
 
 class AsyncRWLock:
-    """Async reader-writer lock for compass state isolation."""
+    """Async reader-writer lock for state isolation."""
 
     def __init__(self) -> None:
         self._readers = 0
@@ -102,9 +101,6 @@ class AsyncRWLock:
 
     def release_write(self) -> None:
         self._writer_lock.release()
-
-
-COMPASS_RW_LOCK = AsyncRWLock()
 
 # --- Telemetry ---
 TELEMETRY_FILE = PROJECT_ROOT / "AgentQMS" / ".mcp-telemetry.jsonl"
@@ -133,7 +129,6 @@ async def load_resources_from_servers() -> list[dict]:
     # Servers to aggregate
     server_modules = [
         ("AgentQMS.mcp_server", "agentqms"),
-        ("project_compass.mcp_server", "compass"),
         ("etk.mcp_server", "experiments"),
     ]
 
@@ -240,9 +235,6 @@ async def _read_resource_impl(uri: str) -> list[ReadResourceContents]:
         if scheme == "agentqms":
             mod = importlib.import_module("AgentQMS.mcp_server")
             return await mod.read_resource(uri)
-        elif scheme == "compass":
-            mod = importlib.import_module("project_compass.mcp_server")
-            return await mod.read_resource(uri)
         elif scheme == "experiments":
             mod = importlib.import_module("etk.mcp_server")
             return await mod.read_resource(uri)
@@ -307,7 +299,6 @@ async def load_tools_from_servers() -> list[dict]:
     # Order matters for overriding
     servers = [
         ("AgentQMS.mcp_server", "agentqms"),
-        ("project_compass.mcp_server", "compass"),
         ("etk.mcp_server", "experiments"),
         ("agent_debug_toolkit.mcp_server", "adt"),
     ]
@@ -368,24 +359,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         module = importlib.import_module(module_name)
         timeout_s = TOOL_TIMEOUTS.get(name, DEFAULT_TIMEOUT_S)
 
-        is_compass_write = False
-        is_compass_read = False
-        if module_name == "project_compass.mcp_server":
-            kind = arguments.get("kind") if isinstance(arguments, dict) else None
-            if name == "compass_meta_pulse":
-                if kind in {"init", "sync", "export", "checkpoint"}:
-                    is_compass_write = True
-                elif kind == "status":
-                    is_compass_read = True
-            elif name == "compass_meta_spec":
-                is_compass_write = True
-
         semaphore = TOOL_SEMAPHORES.get(name)
-        if is_compass_write:
-            await COMPASS_RW_LOCK.acquire_write()
-        elif is_compass_read:
-            await COMPASS_RW_LOCK.acquire_read()
-
         if semaphore:
             await semaphore.acquire()
 
@@ -394,10 +368,6 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent | ImageConten
         finally:
             if semaphore:
                 semaphore.release()
-            if is_compass_write:
-                COMPASS_RW_LOCK.release_write()
-            elif is_compass_read:
-                await COMPASS_RW_LOCK.release_read()
 
         # Calculate output tokens
         res_str = ""

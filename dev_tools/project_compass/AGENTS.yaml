@@ -1,12 +1,13 @@
 # PROJECT COMPASS AI-INTERFACE V3.0
 # CONSUMPTION: ~40 Tokens (optimized from v2.x)
 # PROTOCOL: Use /compass-* skills as primary interface. CLI for automation only.
-# CHANGELOG: V3.0 removes MCP tools, adds Skills system. See CHANGELOG.md.
+# ARCHITECTURE: Simplified path detection, MCP layer removed, skills-first design.
+# CHANGELOG: V3.0 nuclear cleanup complete. See CHANGELOG.md.
 
 rules:
   - "Environment: Only use UV. Never overwrite Torch 2.6.0+cu124."
-  - "State: `project_compass/.vessel/vessel_state.json` is the Single Source of Truth."
-  - "Protocol: Follow [Pulse Lifecycle] in AGENTS.md. `project_compass/pulse_staging/artifacts/` is the ONLY write location."
+  - "State: `.vessel/vessel_state.json` is the Single Source of Truth."
+  - "Protocol: Follow [Pulse Lifecycle] in AGENTS.md. `pulse_staging/artifacts/` is the ONLY write location."
   - "Nomenclature: Use Skills (`/compass-*`) for interactive work. CLI (`uv run compass`) for scripts."
   - "Compass Sync: State is auto-managed. Do not edit JSON files manually."
 
@@ -29,7 +30,7 @@ automation_interface:
   pulse_export: "uv run compass pulse-export"
   pulse_checkpoint: "uv run compass pulse-checkpoint --burden {low|medium|high}"
 
-schema_root: "project_compass/src/state_schema.py"
+schema_root: "project_compass/src/state_schema.py"  # Python package (code only)
 
 # DEPRECATION NOTICE
 deprecated:

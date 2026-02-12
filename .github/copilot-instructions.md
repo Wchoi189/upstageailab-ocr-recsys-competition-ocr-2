@@ -19,7 +19,7 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 4) AgentQMS/specs/
 
 ## Non-Negotiables
-- Use `aqms` from PATH. Never `./aqms`.
+- Use `aqms` from PATH.
 - No manual artifacts. Specs and registry are the source of truth.
 - Use `uv run` for Python.
 - Load only required context (no global dumps).
@@ -43,13 +43,15 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 
 ## MCP Unified Server (Context Bundling)
 - Purpose: access context bundles and standards via MCP resources/tools.
+- Scope: AgentQMS and Experiment Manager only (Project Compass removed from MCP).
 - Docs: AgentQMS/mcp_server.py, AgentQMS/mcp_schema.yaml
 - Examples: resource `agentqms://context/bundles`, resource `agentqms://context/bundle/{name}`, tool `get_context_bundle`.
 
-## Project Compass (Vessel V2)
+## Project Compass (V3 - Skills-First)
 - Purpose: manage work cycles (pulses) and artifacts.
+- Interface: Use `/compass-*` skills (primary), CLI for automation only.
 - Docs: dev_tools/project_compass/AGENTS.md
-- Examples: `compass pulse-init --id <domain-action-target> --obj <objective> --milestone <id>`, `compass pulse-sync --path <file> --type <type>`
+- Examples: `/compass-start <id> "<objective>" <milestone>`, `/compass-register <file>`, `/compass-finish`
 - Write scope: `pulse_staging/artifacts/` only.
 
 ## Experiment Manager

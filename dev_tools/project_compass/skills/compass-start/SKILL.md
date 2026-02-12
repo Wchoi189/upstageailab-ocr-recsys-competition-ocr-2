@@ -7,7 +7,7 @@ disable-model-invocation: false
 # Compass Start - Pulse Initialization
 
 ## Current Vessel State
-!`cat /workspaces/dev_tools/project_compass/project_compass/.vessel/vessel_state.json | head -50`
+!`cat /workspaces/dev_tools/project_compass/.vessel/vessel_state.json | head -50`
 
 ## Auto-Injected Project Directives
 

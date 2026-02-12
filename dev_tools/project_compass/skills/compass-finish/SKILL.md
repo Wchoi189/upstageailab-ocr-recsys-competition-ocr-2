@@ -12,7 +12,7 @@ Before exporting, check:
 
 ### 1. List All Staging Files
 ```bash
-ls -la /workspaces/dev_tools/project_compass/project_compass/pulse_staging/artifacts/
+ls -la /workspaces/dev_tools/project_compass/pulse_staging/artifacts/
 ```
 
 ### 2. Get Registered Artifacts
@@ -59,7 +59,7 @@ uv run compass pulse-export
 ## Error Handling
 
 If export blocked:
-1. Show exact error from MCP tool
+1. Show exact error from CLI command
 2. List specific files causing block
 3. Provide corrective actions
 4. DO NOT manually move files or edit JSON

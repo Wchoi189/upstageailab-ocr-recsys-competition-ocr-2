@@ -1,6 +1,6 @@
 # Project Compass Skills - Quick Start Guide
 
-**TL;DR**: Use `/compass-*` commands instead of MCP tools. Directives auto-inject every session.
+**TL;DR**: Use `/compass-*` skills for guided workflows. Directives auto-inject every session.
 
 ---
 

@@ -4,8 +4,7 @@
       "Bash(uv run python:*)",
       "mcp__unified__get_context_bundle",
       "Bash( ls -lh *.md)",
-      "Read(//workspaces/dev_tools/project_compass/pulse_staging/artifacts/**)",
-      "mcp__unified__compass_meta_pulse"
+      "Read(//workspaces/dev_tools/project_compass/pulse_staging/artifacts/**)"
     ]
   },
   "enableAllProjectMcpServers": false
