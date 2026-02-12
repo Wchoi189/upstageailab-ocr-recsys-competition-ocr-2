@@ -14,11 +14,15 @@ def __getattr__(name):
     elif name == "PARSeqHead":
         from .head import PARSeqHead
         return PARSeqHead
+    elif name == "PermutationLanguageModeling":
+        from .plm import PermutationLanguageModeling
+        return PermutationLanguageModeling
     raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
 
 __all__ = [
     "PARSeq",
     "PARSeqDecoder",
     "PARSeqHead",
+    "PermutationLanguageModeling",
     "register_parseq_components",
 ]

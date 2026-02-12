@@ -9,6 +9,7 @@ Runs 1,000 mixed tool calls concurrently to verify:
 
 import asyncio
 import json
+import time
 from pathlib import Path
 
 from scripts.mcp import unified_server
@@ -16,6 +17,7 @@ from scripts.mcp import unified_server
 TOTAL_CALLS = 1000
 FAILURE_INDEX = 37
 MAX_CONCURRENCY = 50
+MAX_RUNTIME_S = 480
 
 
 def _telemetry_path() -> Path:
@@ -86,7 +88,12 @@ def test_mcp_mixed_batch_validation():
     telemetry_path = _telemetry_path()
     start_pos = telemetry_path.stat().st_size if telemetry_path.exists() else 0
 
+    start_time = time.perf_counter()
     results = asyncio.run(_run_batch())
+    duration_s = time.perf_counter() - start_time
+    assert duration_s <= MAX_RUNTIME_S, (
+        f"Batch runtime exceeded budget: {duration_s:.2f}s > {MAX_RUNTIME_S:.2f}s"
+    )
 
     error_payloads = 0
     for result in results:

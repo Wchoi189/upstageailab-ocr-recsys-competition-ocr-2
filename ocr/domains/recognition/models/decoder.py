@@ -6,7 +6,11 @@ from ocr.core.interfaces.models import BaseDecoder
 
 class PARSeqDecoder(BaseDecoder):
     """
-    Transformer Decoder capable of Autoregressive decoding.
+    Transformer Decoder capable of Autoregressive decoding and PLM training.
+
+    Supports two training modes:
+    - Standard AR: Causal autoregressive decoding (when plm_config=None)
+    - PLM: Permutation Language Modeling (when plm_config provided)
     """
 
     def __init__(
@@ -22,6 +26,7 @@ class PARSeqDecoder(BaseDecoder):
         pad_token_id=0,
         bos_token_id=1,
         eos_token_id=2,
+        plm_config=None,  # NEW: PLM configuration
         **kwargs,  # Accept extra kwargs
     ):
         if vocab_size is None:
@@ -52,6 +57,14 @@ class PARSeqDecoder(BaseDecoder):
         # Normalization
         self.norm = nn.LayerNorm(d_model)
 
+        # PLM integration (after other components initialized)
+        self.plm = None
+        if plm_config is not None:
+            from ocr.domains.recognition.models.plm import PermutationLanguageModeling
+            # Set device to 'cpu' initially, will be moved with model.to(device)
+            plm_config_with_device = {**plm_config, 'device': 'cpu'}
+            self.plm = PermutationLanguageModeling(**plm_config_with_device)
+
         self._init_weights()
 
     def _init_weights(self):
@@ -78,7 +91,25 @@ class PARSeqDecoder(BaseDecoder):
     def out_channels(self) -> int:
         return self.d_model
 
-    def forward(self, features, targets=None, memory_key_padding_mask=None, **kwargs):
+    def to(self, *args, **kwargs):
+        """Override to() to move PLM module to the correct device."""
+        super().to(*args, **kwargs)
+        if self.plm is not None:
+            # Extract device from args/kwargs
+            device = None
+            if args:
+                if isinstance(args[0], torch.device):
+                    device = str(args[0])
+                elif isinstance(args[0], str):
+                    device = args[0]
+            if device is None and 'device' in kwargs:
+                device = str(kwargs['device'])
+            if device is not None:
+                self.plm.to(device)
+        return self
+
+    def forward(self, features, targets=None, memory_key_padding_mask=None,
+                tgt_mask=None, tgt_query_mask=None, **kwargs):
         """
         Args:
             features: List of feature tensors from encoder OR pre-flattened memory [B, S, D].
@@ -86,6 +117,8 @@ class PARSeqDecoder(BaseDecoder):
             targets: [B, T] Token indices
             memory_key_padding_mask: [B, S] Boolean mask (True = ignore, False = attend).
                                       If None, assumes all visual tokens are valid.
+            tgt_mask: Optional [T, T] attention mask for PLM training (overrides causal mask)
+            tgt_query_mask: Optional [T, T] query mask for PLM training
         """
         # Handle BaseDecoder contract: features is list[torch.Tensor]
         if isinstance(features, list):
@@ -134,8 +167,11 @@ class PARSeqDecoder(BaseDecoder):
         pos_emb = self.pos_encoder[:, :T, :] * math.sqrt(self.d_model)
         tgt = tgt_emb + pos_emb
 
-        # Causal Mask (Upper triangular)
-        tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
+        # Attention Masks
+        # Use custom masks if provided (for PLM), otherwise use causal mask
+        if tgt_mask is None:
+            # Standard causal mask for AR decoding
+            tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
 
         # Padding Mask (Boolean: True = Ignore, False = Keep)
         # Using boolean mask is often more stable with Flash Attention backends

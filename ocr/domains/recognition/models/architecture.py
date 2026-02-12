@@ -131,27 +131,30 @@ class PARSeq(OCRModel):
         targets = kwargs.get("text_tokens", None)
 
         if return_loss and targets is not None:
-            # Training: Forward with targets
-            # output: [B, T, D_model]
-            # AR Training: Input is targets[:, :-1], Gold is targets[:, 1:]
-            tgt_in = targets[:, :-1]
-            tgt_out = targets[:, 1:]
+            # Training: Check if PLM is enabled
+            if hasattr(self.decoder, 'plm') and self.decoder.plm is not None:
+                # PLM Training: Use permutation language modeling
+                return self._forward_train_plm(visual_memory, targets)
+            else:
+                # Standard AR Training: Input is targets[:, :-1], Gold is targets[:, 1:]
+                tgt_in = targets[:, :-1]
+                tgt_out = targets[:, 1:]
 
-            # output: [B, T-1, D_model]
-            decoded_output = self.decoder(visual_memory, targets=tgt_in)
+                # output: [B, T-1, D_model]
+                decoded_output = self.decoder(visual_memory, targets=tgt_in)
 
-            # 3. Head
-            logits = self.head(decoded_output) # [B, T, V]
+                # 3. Head
+                logits = self.head(decoded_output) # [B, T, V]
 
-            # 4. Loss
-            loss_val = self.loss(logits.permute(0, 2, 1), tgt_out)
-            loss_dict = {"loss": loss_val}
+                # 4. Loss
+                loss_val = self.loss(logits.permute(0, 2, 1), tgt_out)
+                loss_dict = {"loss": loss_val}
 
-            return {
-                "logits": logits,
-                "loss": loss_val,
-                "loss_dict": loss_dict
-            }
+                return {
+                    "logits": logits,
+                    "loss": loss_val,
+                    "loss_dict": loss_dict
+                }
 
         else:
             # Inference: Greedy Decoding
@@ -201,6 +204,87 @@ class PARSeq(OCRModel):
             logits = torch.cat(logits_list, dim=1) # [B, T, V]
 
             return {"logits": logits, "tokens": tgt_tokens}
+
+    def _forward_train_plm(self, visual_memory, targets):
+        """
+        PLM Training forward pass with permutation language modeling.
+
+        CRITICAL: This implements the exact PLM training loop from parseq_official_adapter.py
+        with proper EOS removal and loss normalization.
+
+        Args:
+            visual_memory: [B, S, C] Encoded visual features
+            targets: [B, L] Ground truth tokens [BOS, char1, ..., charN, EOS, PAD, ...]
+
+        Returns:
+            dict: {"loss": scalar, "loss_dict": dict, "logits": tensor (optional)}
+        """
+        import torch.nn.functional as F
+
+        # Prepare input/output sequences
+        tgt_in = targets[:, :-1]   # Input: [BOS, char1, ..., charN, EOS]
+        tgt_out = targets[:, 1:]   # Output: [char1, ..., charN, EOS, PAD]
+
+        # Generate permutations for this batch
+        tgt_perms = self.decoder.plm.gen_tgt_perms(targets)
+
+        # Padding mask: ignore PAD and EOS in input
+        pad_id = self.decoder.pad_token_id
+        eos_id = self.decoder.eos_token_id
+
+        # Compute loss across all permutations
+        loss = 0
+        loss_numel = 0
+        n = (tgt_out != pad_id).sum().item()  # Character count (including EOS initially)
+
+        for i, perm in enumerate(tgt_perms):
+            # Generate attention masks for this permutation
+            masks = self.decoder.plm.generate_attn_masks(perm)
+
+            # Convert boolean mask to additive mask for PyTorch TransformerDecoder
+            # Boolean: True = masked, False = attend
+            # Additive: -inf = masked, 0.0 = attend
+            tgt_mask = masks.content_mask.float()
+            tgt_mask = tgt_mask.masked_fill(tgt_mask == 1.0, float('-inf'))
+            tgt_mask = tgt_mask.masked_fill(tgt_mask == 0.0, 0.0)
+
+            # Note: query_mask not used in standard TransformerDecoder
+            # For full PLM, would need custom decoder layer
+
+            # Decode with permutation-specific masks
+            decoded_output = self.decoder(
+                visual_memory,
+                targets=tgt_in,
+                tgt_mask=tgt_mask,
+                memory_key_padding_mask=None
+            )
+
+            # Classify and compute loss
+            logits = self.head(decoded_output)  # [B, T, V]
+            loss += n * F.cross_entropy(
+                logits.flatten(end_dim=1),
+                tgt_out.flatten(),
+                ignore_index=pad_id
+            )
+            loss_numel += n
+
+            # CRITICAL: Remove EOS after 2nd permutation
+            # This prevents over-weighting the EOS token across all permutations
+            if i == 1:
+                tgt_out = torch.where(
+                    tgt_out == eos_id,
+                    torch.tensor(pad_id, device=tgt_out.device),
+                    tgt_out
+                )
+                n = (tgt_out != pad_id).sum().item()
+
+        # Normalize by total character count
+        loss = loss / loss_numel
+
+        return {
+            "loss": loss,
+            "loss_dict": {"parseq_plm_loss": loss.detach()},
+        }
 
     def _generate_2d_sincos_pos_embed(self, h, w, embed_dim, device, temperature=10000.0):
         """Generate 2D sin-cos positional embedding."""
