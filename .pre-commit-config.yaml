@@ -83,7 +83,7 @@ repos:
         entry: uv run python AgentQMS/tools/sync_registry.py --dry-run
         language: system
         # Validate all tier directories with ADS v2.0 headers
-        files: ^AgentQMS/standards/(tier1-sst|tier2-framework|tier3-agents|tier4-workflows)/.*\.yaml$
+        files: ^AgentQMS/specs/.*\.spec\.md$
         pass_filenames: false
         always_run: false
 

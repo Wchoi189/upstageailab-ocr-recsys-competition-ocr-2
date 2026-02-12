@@ -22,6 +22,7 @@ References:
 - Walkthrough: dev_tools/project_compass/pulse_staging/artifacts/2026-02-12_0348_walkthrough_parseq-plm-flash.md
 """
 
+import logging
 import math
 import warnings
 from contextlib import contextmanager
@@ -31,6 +32,22 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
+
+# Configure logger
+logger = logging.getLogger(__name__)
+
+# ANSI color codes for terminal output
+class Colors:
+    """ANSI color codes for colored terminal output."""
+    YELLOW = '\033[93m'
+    RED = '\033[91m'
+    GREEN = '\033[92m'
+    BLUE = '\033[94m'
+    RESET = '\033[0m'
+    BOLD = '\033[1m'
+
+# Track if warning has been shown (show once per session)
+_backend_warning_shown = False
 
 
 def check_flash_attention_support() -> Tuple[bool, str]:
@@ -61,26 +78,62 @@ def check_flash_attention_support() -> Tuple[bool, str]:
 @contextmanager
 def enable_flash_attention_kernel():
     """
-    Context manager to enable Flash Attention backend.
+    Context manager to enable Flash Attention backend with smart fallback.
 
-    Forces PyTorch to use Flash Attention kernel (disable math/mem_efficient fallbacks).
-    Use this during training/inference to ensure optimal performance.
+    Prioritizes Flash Attention but allows MATH fallback for custom masks (PLM).
+    This prevents CUDA errors when Flash backend can't handle complex attention patterns.
 
     Example:
         >>> with enable_flash_attention_kernel():
         ...     output = model(inputs)
+
+    Note:
+        - Pure AR decoding: Uses Flash backend (2-4x speedup)
+        - PLM training: May fallback to MATH backend due to custom masks
+        - Disables MEM_EFFICIENT (slower than both Flash and MATH)
+
+    Logging:
+        - Logs colored warning on first use if Flash Attention not supported
+        - Logs colored warning if MATH fallback may occur with custom masks
     """
+    global _backend_warning_shown
+
+    # Check Flash Attention support
+    supported, message = check_flash_attention_support()
+
     # Use PyTorch's built-in context manager for SDPA kernel selection
-    # torch.backends.cuda.sdp_kernel is the context manager itself
     try:
-        with torch.backends.cuda.sdp_kernel(
-            enable_flash=True,
-            enable_math=False,
-            enable_mem_efficient=False
-        ):
-            yield
-    except (AttributeError, RuntimeError):
+        if not supported:
+            # Log warning for non-Ampere GPUs (show once per session)
+            if not _backend_warning_shown:
+                logger.warning(
+                    f"{Colors.YELLOW}{Colors.BOLD}⚠️  Flash Attention not supported: {message}{Colors.RESET}\n"
+                    f"{Colors.YELLOW}   Falling back to standard attention (no speedup expected){Colors.RESET}"
+                )
+                _backend_warning_shown = True
+            yield  # No context manager needed, use standard attention
+        else:
+            # Flash supported, but warn about potential MATH fallback with PLM masks
+            if not _backend_warning_shown:
+                logger.info(
+                    f"{Colors.GREEN}✓ Flash Attention enabled: {message}{Colors.RESET}\n"
+                    f"{Colors.YELLOW}  Note: PLM custom masks may force MATH backend fallback{Colors.RESET}"
+                )
+                _backend_warning_shown = True
+
+            with torch.backends.cuda.sdp_kernel(
+                enable_flash=True,
+                enable_math=True,  # Allow MATH fallback for PLM masks
+                enable_mem_efficient=False  # Disable slowest backend
+            ):
+                yield
+
+    except (AttributeError, RuntimeError) as e:
         # Fallback if CUDA not available or API not supported
+        logger.warning(
+            f"{Colors.RED}{Colors.BOLD}⚠️  Flash Attention context manager failed: {e}{Colors.RESET}\n"
+            f"{Colors.RED}   Using standard attention without backend selection{Colors.RESET}"
+        )
         yield
 
 

@@ -6,6 +6,7 @@ from pydantic import ValidationError
 from ocr.core.lightning.base import OCRPLModule
 from ocr.core.data.schemas import CacheConfig, ImageLoadingConfig
 from ocr.core.utils.config_utils import is_config
+from ocr.domains.recognition.models.flash_attention import enable_flash_attention_kernel
 
 
 class RecognitionPLModule(OCRPLModule):
@@ -31,7 +32,8 @@ class RecognitionPLModule(OCRPLModule):
 
     def training_step(self, batch, batch_idx):
         """Recognition-specific training step with optional tensor validation."""
-        pred = self.model(**batch)
+        with enable_flash_attention_kernel():
+            pred = self.model(**batch)
 
         # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
         # NOTE: Pydantic validation causes GPU sync - disabled by default for performance
@@ -68,7 +70,8 @@ class RecognitionPLModule(OCRPLModule):
 
         Decodes predicted tokens to text and computes character-level metrics.
         """
-        pred = self.model(**batch)
+        with enable_flash_attention_kernel():
+            pred = self.model(**batch)
 
         # Validate model outputs only in debug mode
         if self.config.get("global", {}).get("debug", False):
