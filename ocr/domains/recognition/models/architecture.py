@@ -247,6 +247,8 @@ class PARSeq(OCRModel):
             tgt_mask = masks.content_mask.float()
             tgt_mask = tgt_mask.masked_fill(tgt_mask == 1.0, float('-inf'))
             tgt_mask = tgt_mask.masked_fill(tgt_mask == 0.0, 0.0)
+            # Fix: Move mask to same device as targets
+            tgt_mask = tgt_mask.to(targets.device)
 
             # Note: query_mask not used in standard TransformerDecoder
             # For full PLM, would need custom decoder layer

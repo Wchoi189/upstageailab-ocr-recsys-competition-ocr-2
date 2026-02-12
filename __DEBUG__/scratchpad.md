@@ -60,3 +60,13 @@ uv run python scripts/runners/train.py \
   trainer.max_epochs=10 \
   +train/logger=wandb
 ```
+
+
+```bash
+uv run python scripts/runners/train.py \
+  domain=recognition \
+  ckpt_path="outputs/checkpoints/last.ckpt" \
+  experiment=rec_baseline_official \
+  trainer.max_epochs=1 \
+  +train/logger=wandb
+```

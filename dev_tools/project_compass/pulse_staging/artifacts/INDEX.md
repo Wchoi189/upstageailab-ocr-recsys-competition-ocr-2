@@ -1,259 +1,165 @@
 # Pulse Artifacts Index
 
-**Pulse**: recognition-parseq-optimization
-**Updated**: 2026-02-12 17:30 UTC
-**Status**: Phase 1+2 Complete → Ready for Phase 3 (Flash Attention)
-**Test Coverage**: 23/23 (100%) - Unit + Integration
+**Pulse**: recognition-parseq-audit
+**Updated**: 2026-02-12 20:10 UTC
+**Status**: Phase 6 - Audit Initialized
+**Previous Pulse**: recognition-parseq-optimization (Phase 1-5 Complete)
 
 ---
 
-## 🎯 Current Progress
+## 🎯 Audit Objectives
 
-| Phase | Status | Tests | Completion |
-|-------|--------|-------|------------|
-| Phase 0: Research & Planning | ✅ Complete | N/A | 100% |
-| Phase 1: PLM Extraction | ✅ Complete | 18/18 | 100% |
-| Phase 2: Decoder Integration | ✅ Complete | 5/5 | 100% |
-| **Phase 3: Flash Attention** | ⏳ **Next** | 0/0 | 0% |
-| Phase 4: Configuration | 📋 Pending | 0/0 | 0% |
-| Phase 5: Full Validation | 📋 Pending | 0/0 | 0% |
+**Pulse ID**: recognition-parseq-audit
+**Milestone**: v1.0-recognition-optimization
+**Phase**: Phase 6 (Correctness & Robustness Audit)
 
----
-
-## Active Artifacts (Chronological)
-
-### Session 1: Research & Planning (Complete)
-1. **2026-02-12_0316** - `design_session-handover-initial.md` - Initial handover
-2. **2026-02-12_0348** - `walkthrough_parseq-plm-flash.md` - Implementation guide (26KB)
-3. **2026-02-12_0349** - `design_session-handover-research.md` - Research findings
-4. **2026-02-12_0358** - `assessment_plm-research-addendum.md` - Official source verification
-5. **2026-02-12_1637** - `design_data-contracts-complete.md` - Phase 0 complete
-
-### Session 2: Implementation (Phase 1+2 Complete)
-6. **2026-02-12_1730** - `design_session-handover-phase1-2-complete.md` - **THIS SESSION**
-   - Phase 1: PLM Module Extraction (100% complete, 18/18 tests)
-   - Phase 2: Atomic Decoder Integration (100% complete, 5/5 tests)
-   - Total: 23/23 tests passing
-   - Files: plm.py, decoder.py, architecture.py, integration tests
+### Scope
+Validate the PARSeq implementation with Flash Attention and PLM for:
+- ✅ Correctness (PLM logic, loss computation, sequence handling)
+- ✅ Training Stability (gradient flow, numerical stability)
+- ✅ Memory Safety (device placement, CUDA context)
+- ✅ Configuration Consistency (Hydra composition)
+- ✅ Performance Validation (Flash Attention effectiveness)
 
 ---
 
-## Archived
-- `__archive/2026-02-12_session1/` - Verbose requirements docs (59KB total)
+## 📋 Previous Work (Phase 1-5)
+
+**Exported**: `/history/v1.0-recognition-optimization/20260212_200909_recognition-parseq-optimization/`
+
+### Implementation Summary
+- **Phase 1**: PLM Module Extraction (18/18 tests)
+- **Phase 2**: Decoder Integration (5/5 tests)
+- **Phase 3**: Flash Attention Integration
+- **Phase 4**: Hydra Configuration (4 variants)
+- **Phase 5**: Micro Training Validation (100 steps)
+
+### Validation Results
+| Variant | Throughput | Status | Issues |
+|---------|-----------|--------|--------|
+| baseline | 675 img/sec | ✅ Stable | - |
+| flash | 618 img/sec | ✅ Stable | ⚠️ No speedup |
+| plm | 161 img/sec | ✅ Stable | - |
+| plm_flash | 162 img/sec | ✅ Stable | ⚠️ No speedup |
+
+### Bugs Fixed
+1. **CUDA Initialization** - Multiprocessing method (fork → spawn)
+2. **PLM Device Mismatch** - Mask device placement
 
 ---
 
-## 🤖 Workflow Automation
+## 🔍 Audit Plan
 
-### Session Handover Protocol
+### Phase 6.1: Critical Path Audit
+**Focus**: Correctness & Training Stability
 
-**WHEN TO TRIGGER**:
-- Context window approaching saturation (>150K tokens)
-- Logical milestone reached (phase complete)
-- Before starting complex new phase (e.g., Phase 3 Flash Attention)
-- End of work session
+#### Checklist
+- [ ] PLM permutation generation correctness
+- [ ] Attention mask shape and conversion
+- [ ] Loss computation and averaging
+- [ ] EOS removal timing validation
+- [ ] Sequence handling (BOS/EOS/padding)
+- [ ] Flash Attention numerical equivalence
+- [ ] Device placement verification
+- [ ] Gradient flow through PLM
 
-**AUTOMATED ACTIONS**:
-1. Generate `design_session-handover-{phase}-{status}.md` artifact
-2. Update this INDEX.md with progress
-3. Create continuation prompt for next session
-4. Document pain points and blockers
-5. Archive verbose artifacts if context bloated
+### Phase 6.2: Testing & Validation
+**Focus**: Edge Cases & Integration
 
-**ARTIFACT TEMPLATE**:
-```markdown
-# Session Handover: {Phase Name} - {Status}
+#### Checklist
+- [ ] Empty sequence handling
+- [ ] Max length enforcement
+- [ ] Special tokens only
+- [ ] Single character sequences
+- [ ] Batch size variations
+- [ ] Long training runs (1000+ steps)
 
-**Date**: YYYY-MM-DD HH:MM UTC
-**Pulse ID**: recognition-parseq-optimization
-**Phase**: {Current Phase}
-**Status**: {In Progress / Complete / Blocked}
-**Test Coverage**: {X/Y tests passing}
+### Phase 6.3: Performance Analysis
+**Focus**: Flash Attention Investigation
 
-## Executive Summary
-{1-2 sentence summary of what was accomplished}
+#### Checklist
+- [ ] Flash vs Standard attention comparison
+- [ ] Throughput benchmarks (various batch sizes)
+- [ ] VRAM usage analysis
+- [ ] Kernel compilation overhead measurement
+- [ ] Optimal configuration recommendations
 
-## Completed Tasks
-- [x] Task 1
-- [x] Task 2
+---
 
-## In Progress
-- [ ] Task 3 (50% complete)
+## 📁 Audit Structure
 
-## Blockers / Pain Points
-{Document any issues with tooling, docs, or implementation}
+### Expected Artifacts
 
-## Files Modified
-- path/to/file.py - {brief description}
-
-## Test Results
-{Summary of test pass rates}
-
-## Next Session: {Next Phase Name}
-
-### Immediate Tasks
-1. {First task}
-2. {Second task}
-
-### Research Needed (if applicable)
-{Use Perplexity MCP for research if needed}
-
-### Continuation Prompt
 ```
-{Exact prompt to continue work}
-```
-
-## Technical Notes
-{Any critical implementation details for next session}
-```
-
----
-
-## 🔬 Research Protocol (Phase 3)
-
-### Flash Attention Research Needed
-
-**Use Perplexity MCP tools** (`mcp__perplexity__search`, `mcp__perplexity__reason`, `mcp__perplexity__deep_research`):
-
-**Research Questions**:
-1. **PyTorch Flash Attention 2026**:
-   - Latest `F.scaled_dot_product_attention` API changes
-   - PyTorch 2.x Flash Attention 2 features
-   - Ampere GPU (RTX 3090) optimal configuration
-
-2. **Numerical Precision**:
-   - fp16 vs bfloat16 for Flash Attention
-   - Acceptable numerical drift thresholds
-   - Mixed precision training best practices
-
-3. **Performance Benchmarking**:
-   - Expected speedup on RTX 3090
-   - Memory efficiency improvements
-   - Batch size impact on throughput
-
-**Research Tool Selection**:
-- `search`: Quick API lookups, version checks
-- `reason`: Implementation strategy, tradeoff analysis
-- `deep_research`: Comprehensive performance analysis
-
----
-
-## 📋 Next Session Start: Phase 3 (Flash Attention)
-
-**Prerequisites**:
-- ✅ Phase 1+2 complete (23/23 tests passing)
-- ✅ PLM module extracted and validated
-- ✅ Atomic decoder with PLM integration working
-
-**Context to Load**:
-- Session handover: `2026-02-12_1730_design_session-handover-phase1-2-complete.md`
-- Walkthrough: `2026-02-12_0348_walkthrough_parseq-plm-flash.md` (Phase 3 section)
-- Reference: `ocr/domains/recognition/models/decoder.py` (current implementation)
-
-**Immediate Tasks**:
-1. Research Flash Attention 2 with Perplexity MCP (if needed)
-2. Create `ocr/domains/recognition/models/flash_attention.py`
-3. Implement `FlashDecoderLayer` wrapping `F.scaled_dot_product_attention`
-4. Add `use_flash_attention` parameter to PARSeqDecoder
-5. Create performance benchmarks
-6. Validate numerical equivalence (ε ≤ 1e-3 for fp16)
-
-**Continuation Prompt**:
-```
-Continue PARSeq optimization implementation - Phase 3: Flash Attention Integration.
-
-Context:
-- Phase 1+2 complete (see session_handover_phase1_2_complete.md)
-- PLM module working (23/23 tests passing)
-- Atomic decoder with PLM integration validated
-
-Task:
-1. Optional: Research Flash Attention 2 updates using Perplexity MCP (COMPLETE)
-- See dev_tools/project_compass/pulse_staging/artifacts/research_flashattn_draft.md
-2. Create ocr/domains/recognition/models/flash_attention.py
-3. Implement FlashDecoderLayer with F.scaled_dot_product_attention
-4. Update PARSeqDecoder to support use_flash_attention parameter
-5. Create performance benchmarks (throughput, memory)
-6. Verify numerical equivalence (ε ≤ 1e-3 for fp16)
-7. Test on RTX 3090 with fp16/bfloat16
-
-References:
-- walkthrough_parseq_plm_flash.md (Phase 3 section)
-- decoder.py (current implementation)
-- PyTorch docs: torch.nn.functional.scaled_dot_product_attention
-
-Target: 2-4x throughput improvement on RTX 3090
-Risk: MEDIUM - Requires careful numerical validation
+pulse_staging/artifacts/
+├── INDEX.md (this file)
+├── audit/
+│   ├── 01_plm_correctness.md
+│   ├── 02_flash_attention.md
+│   ├── 03_device_placement.md
+│   ├── 04_gradient_flow.md
+│   ├── 05_configuration.md
+│   └── 06_performance.md
+├── tests/
+│   ├── test_plm_correctness.py
+│   ├── test_flash_equivalence.py
+│   ├── test_edge_cases.py
+│   └── test_device_placement.py
+├── findings/
+│   ├── critical_issues.md
+│   ├── high_priority_issues.md
+│   └── medium_priority_issues.md
+└── recommendations/
+    ├── immediate_fixes.md
+    └── production_config.md
 ```
 
 ---
 
-## 📊 Metrics Tracking
+## 🔗 Reference Materials
 
-### Test Coverage
-- **Unit Tests**: 18/18 (100%)
-  - PLM Extraction: 13/13
-  - PLM Contracts: 5/5
-- **Integration Tests**: 5/5 (100%)
-  - Permutation generation ✓
-  - Attention masks ✓
-  - Loss computation ✓
-  - EOS removal ✓
-  - Loss normalization ✓
+### From Previous Pulse
+- **Audit Prompt**: See exported pulse `/artifacts/darft_audit_prompt.md`
+- **Validation Results**: See exported pulse `/artifacts/2026-02-12_1940_validation_results-phase5-complete.md`
+- **Phase 4 Handover**: Implementation details and config structure
 
-### Implementation Progress
-- **Lines Added**: ~500 (plm.py, decoder.py, architecture.py, tests)
-- **Files Created**: 3 (plm.py, 2 test files)
-- **Files Modified**: 3 (decoder.py, architecture.py, __init__.py)
+### Key Implementation Files
+- `ocr/domains/recognition/models/plm.py`
+- `ocr/domains/recognition/models/decoder.py`
+- `ocr/domains/recognition/models/architecture.py`
+- `scripts/runners/train.py`
 
-### Performance Baseline (for Phase 3 comparison)
-- **Current Throughput**: ~100-120 img/sec (standard attention)
-- **Current VRAM**: ~18 GB (batch=64)
-- **Target**: 2-4x throughput, ≤18 GB VRAM
+### Configuration Files
+- `configs/experiment/parseq_*.yaml` (4 variants)
+- `configs/model/architectures/parseq_*.yaml`
+- `configs/model/decoder/parseq_*.yaml`
 
 ---
 
-## 🚨 Critical Notes
+## 📊 Success Criteria
 
-### Technical Debt
-- [ ] Query mask not used in standard TransformerDecoder (Phase 3: custom decoder layer)
-- [ ] Full end-to-end training validation pending (Phase 5)
-- [ ] Hydra configuration not yet created (Phase 4)
-
-### Blockers
-- None currently
-
-### Pain Points Documented
-- Initial RNG synchronization issues (resolved with explicit seed management)
-- Boolean→additive mask conversion required for PyTorch compatibility
-- Device handling for non-nn.Module PLM class (resolved with custom to() override)
+The audit is complete when:
+- ✅ All critical correctness issues identified and documented
+- ✅ Device placement verified for all code paths
+- ✅ Gradient flow validated through PLM and Flash Attention
+- ✅ Configuration consistency checked across all variants
+- ✅ Testing gaps identified with specific recommendations
+- ✅ Performance optimization opportunities prioritized
+- ✅ Production deployment recommendations provided
 
 ---
 
-## 🔗 Quick Links
+## 🚀 Next Steps
 
-**Key Artifacts**:
-- [Walkthrough Guide](2026-02-12_0348_walkthrough_parseq-plm-flash.md) - Complete Phase 1-5 guide
-- [Specification](specification.md) - Requirements and success criteria
-- [Current Handover](2026-02-12_1730_design_session-handover-phase1-2-complete.md) - Phase 1+2 summary
+1. **Review Audit Prompt** - Load from exported pulse
+2. **PLM Correctness Review** - Start with permutation logic
+3. **Create Test Suite** - For critical paths
+4. **Run Validation Tests** - Document findings
+5. **Performance Analysis** - Investigate Flash Attention
+6. **Generate Final Report** - Structured by severity
 
-**Implementation Files**:
-- [PLM Module](../../ocr/domains/recognition/models/plm.py)
-- [Decoder](../../ocr/domains/recognition/models/decoder.py)
-- [Architecture](../../ocr/domains/recognition/models/architecture.py)
-- [Integration Tests](../../tests/integration/recognition/test_atomic_plm.py)
+---
 
-**Test Commands**:
-```bash
-# Unit tests
-pytest tests/unit/recognition/ -v
-
-# Integration tests
-pytest tests/integration/recognition/ -v
-
-# All recognition tests
-pytest tests/unit/recognition/ tests/integration/recognition/ -v
-
-# Specific test
-pytest tests/unit/recognition/test_plm_extraction.py::TestPLMExtraction::test_gen_tgt_perms_1char_equivalence -v
-```
+**Status**: ✅ Audit workspace initialized
+**Ready**: Phase 6.1 - Critical Path Audit
+**Risk**: MEDIUM - Complex implementation needs thorough validation

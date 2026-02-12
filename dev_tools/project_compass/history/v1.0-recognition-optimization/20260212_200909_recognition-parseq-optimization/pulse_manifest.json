@@ -1,0 +1,93 @@
+{
+  "pulse_id": "recognition-parseq-optimization",
+  "objective": "Refactor PARSeq to atomic architecture with PLM logic and Flash Attention for 2-4x performance improvement while maintaining functional correctness",
+  "milestone_id": "v1.0-recognition-optimization",
+  "artifacts": [
+    {
+      "path": "mcp-batch-refactor/research.md",
+      "artifact_type": "research",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T04:19:43.178449"
+    },
+    {
+      "path": "mcp-batch-refactor/audit.md",
+      "artifact_type": "audit",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T04:19:43.531755"
+    },
+    {
+      "path": "mcp-batch-refactor/validation.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T04:19:43.536191"
+    },
+    {
+      "path": "2026-02-12_1637_design_data-contracts-complete.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T16:29:20.001342"
+    },
+    {
+      "path": "2026-02-12_1940_validation_results-phase5-complete.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:05.865400"
+    },
+    {
+      "path": "darft_audit_prompt.md",
+      "artifact_type": "audit",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:11.814632"
+    },
+    {
+      "path": "2026-02-12_0316_design_session-handover-initial.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:23.132943"
+    },
+    {
+      "path": "2026-02-12_0348_walkthrough_parseq-plm-flash.md",
+      "artifact_type": "walkthrough",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:24.082110"
+    },
+    {
+      "path": "2026-02-12_0349_design_session-handover-research.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:24.983738"
+    },
+    {
+      "path": "2026-02-12_0358_assessment_plm-research-addendum.md",
+      "artifact_type": "research",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:25.977248"
+    },
+    {
+      "path": "2026-02-12_1730_design_session-handover-phase1-2-complete.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:26.931084"
+    },
+    {
+      "path": "2026-02-12_1820_design_session-handover-phase3-complete.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:27.873733"
+    },
+    {
+      "path": "2026-02-12_1900_design_session-handover-phase4-complete.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:28.823837"
+    },
+    {
+      "path": "INDEX.md",
+      "artifact_type": "design",
+      "milestone_id": "v1.0-recognition-optimization",
+      "created_at": "2026-02-12T20:08:29.583131"
+    }
+  ],
+  "started_at": "2026-02-12 03:14:10.133282",
+  "exported_at": "2026-02-12T20:09:09.021075"
+}

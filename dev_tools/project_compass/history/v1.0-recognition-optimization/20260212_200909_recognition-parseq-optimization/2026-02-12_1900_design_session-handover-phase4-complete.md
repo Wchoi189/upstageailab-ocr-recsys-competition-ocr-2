@@ -117,7 +117,7 @@ Each command runs ~100 steps (5-10 min on RTX 3090):
 
 ```bash
 # Baseline (Standard AR, No Flash)
-python runners/train.py \
+uv run python runners/train.py \
   experiment=parseq_baseline \
   trainer.max_steps=100 \
   trainer.limit_train_batches=100 \
@@ -125,7 +125,7 @@ python runners/train.py \
   data.batch_size=64
 
 # Flash Attention (Standard AR, With Flash)
-python runners/train.py \
+uv run python runners/train.py \
   experiment=parseq_flash \
   trainer.max_steps=100 \
   trainer.limit_train_batches=100 \
@@ -133,7 +133,7 @@ python runners/train.py \
   data.batch_size=64
 
 # PLM (With PLM, No Flash)
-python runners/train.py \
+uv run python runners/train.py \
   experiment=parseq_plm \
   trainer.max_steps=100 \
   trainer.limit_train_batches=100 \
@@ -141,7 +141,7 @@ python runners/train.py \
   data.batch_size=64
 
 # PLM + Flash (Full Optimization)
-python runners/train.py \
+uv run python runners/train.py \
   experiment=parseq_plm_flash \
   trainer.max_steps=100 \
   trainer.limit_train_batches=100 \
@@ -151,7 +151,7 @@ python runners/train.py \
 
 **Profiling Command** (measure throughput):
 ```bash
-python runners/train.py \
+uv run python runners/train.py \
   experiment=parseq_plm_flash \
   trainer.max_steps=100 \
   trainer.profiler=simple \
@@ -280,7 +280,7 @@ Risk: LOW - Implementation already validated
 - `max_len=25` (Korean OCR)
 
 ### Smoke Test
-- Run: `python scripts/test_parseq_configs.py`
+- Run: `uv run python scripts/test_parseq_configs.py`
 - Validates Hydra composition for all 4 variants
 - All tests passing (4/4)
 
