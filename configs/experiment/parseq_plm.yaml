@@ -1,0 +1,32 @@
+# @package _global_
+# v5.0 Experiment | PARSeq PLM - With PLM, No Flash
+# ============================================================================
+# Purpose: Permutation Language Modeling training strategy
+# Performance: ~100-120 img/sec (similar to baseline), ~18GB VRAM
+# Training Mode: PLM with K=6 permutations per sequence
+# Expected Accuracy: Higher than baseline due to better training
+
+defaults:
+  - /data/runtime/performance/balanced@runtime
+  - override /domain: recognition_plm
+  - override /hardware: rtx3090
+  - _self_
+
+# Experiment-specific overrides
+trainer:
+  max_epochs: 50
+  precision: "16-mixed"
+
+data:
+  batch_size: 64  # Standard batch size
+
+# Experiment metadata
+experiment:
+  name: parseq_plm
+  description: "PARSeq with Permutation Language Modeling (K=6 permutations)"
+  variant: plm
+  optimization_level: plm_training
+  plm_config:
+    perm_num: 6
+    perm_forward: true
+    perm_mirrored: true

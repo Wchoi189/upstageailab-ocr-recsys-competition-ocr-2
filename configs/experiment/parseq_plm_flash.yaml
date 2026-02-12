@@ -1,0 +1,40 @@
+# @package _global_
+# v5.0 Experiment | PARSeq PLM+Flash - Full Optimization
+# ============================================================================
+# Purpose: Target configuration with all optimizations
+# Expected Performance: ~240-300 img/sec (2-2.5x baseline), ~16GB VRAM
+# Training Mode: PLM with K=6 permutations + Flash Attention
+# Expected Accuracy: Highest due to PLM training
+# Hardware Requirements: Ampere+ GPU (RTX 3090 supported)
+
+defaults:
+  - /data/runtime/performance/balanced@runtime
+  - override /domain: recognition_plm_flash
+  - override /hardware: rtx3090
+  - _self_
+
+# Experiment-specific overrides
+trainer:
+  max_epochs: 50
+  precision: "16-mixed"  # Required for Flash Attention
+
+data:
+  batch_size: 64  # Can potentially increase due to memory efficiency
+
+# Experiment metadata
+experiment:
+  name: parseq_plm_flash
+  description: "PARSeq with full optimization (PLM + Flash Attention)"
+  variant: plm_flash
+  optimization_level: full
+  plm_config:
+    perm_num: 6
+    perm_forward: true
+    perm_mirrored: true
+  expected_speedup: "2-4x"
+  expected_accuracy: "best"
+
+# Notes:
+# - This is the target configuration for production use
+# - Combines training strategy (PLM) with inference optimization (Flash)
+# - Requires Ampere+ GPU for Flash Attention auto-fallback on older GPUs

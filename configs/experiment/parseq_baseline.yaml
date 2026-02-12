@@ -1,0 +1,27 @@
+# @package _global_
+# v5.0 Experiment | PARSeq Baseline - Standard AR, No Flash
+# ============================================================================
+# Purpose: Baseline configuration for comparison
+# Performance: ~100-120 img/sec, ~18GB VRAM (batch=64)
+# Training Mode: Standard autoregressive decoding
+
+defaults:
+  - /data/runtime/performance/balanced@runtime
+  - override /domain: recognition_baseline
+  - override /hardware: rtx3090
+  - _self_
+
+# Experiment-specific overrides
+trainer:
+  max_epochs: 50
+  precision: "16-mixed"
+
+data:
+  batch_size: 64  # Baseline batch size for RTX 3090
+
+# Experiment metadata
+experiment:
+  name: parseq_baseline
+  description: "Baseline PARSeq with standard AR and standard attention"
+  variant: baseline
+  optimization_level: none

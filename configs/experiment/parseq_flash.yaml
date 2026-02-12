@@ -1,0 +1,29 @@
+# @package _global_
+# v5.0 Experiment | PARSeq Flash - Standard AR, With Flash
+# ============================================================================
+# Purpose: Flash Attention optimization benchmark
+# Expected Performance: ~240-300 img/sec (2-2.5x baseline), ~16GB VRAM
+# Training Mode: Standard autoregressive with Flash Attention
+# Hardware Requirements: Ampere+ GPU (RTX 3090 supported)
+
+defaults:
+  - /data/runtime/performance/balanced@runtime
+  - override /domain: recognition_flash
+  - override /hardware: rtx3090
+  - _self_
+
+# Experiment-specific overrides
+trainer:
+  max_epochs: 50
+  precision: "16-mixed"  # Required for Flash Attention
+
+data:
+  batch_size: 64  # Can potentially increase due to memory efficiency
+
+# Experiment metadata
+experiment:
+  name: parseq_flash
+  description: "PARSeq with Flash Attention optimization (2-4x speedup)"
+  variant: flash
+  optimization_level: flash_attention
+  expected_speedup: "2-4x"

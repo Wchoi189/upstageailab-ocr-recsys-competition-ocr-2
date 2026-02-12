@@ -1,0 +1,52 @@
+# @package model.architectures
+# v5.0 PLM | Purpose: PARSeq PLM - With PLM, No Flash
+# ============================================================================
+# Permutation Language Modeling: Enhanced training strategy with standard attention
+
+_target_: ocr.domains.recognition.models.architecture.PARSeq
+name: parseq_plm
+
+# Encoder Configuration
+encoder:
+  _target_: ocr.core.models.encoder.timm_backbone.TimmBackbone
+  model_name: resnet18
+  pretrained: true
+  features_only: true
+  output_indices: [3]  # Layer 3 outputs 256 channels
+
+# Decoder Configuration - Standard Attention, With PLM
+decoder:
+  _target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+  in_channels: 256  # Match encoder output
+  d_model: 384
+  nhead: 12
+  num_layers: 12
+  dim_feedforward: 1536
+  dropout: 0.1
+  max_len: 25
+  vocab_size: ${model.vocab_size}
+  use_flash_attention: false  # Standard attention
+  plm_config:  # Enable PLM training
+    max_label_length: 25
+    perm_num: 6  # K=6 permutations
+    perm_forward: true  # Include forward permutation
+    perm_mirrored: true  # Generate complementary pairs
+
+# Classification Head
+head:
+  _target_: torch.nn.Linear
+  in_features: 384  # Match decoder d_model
+  out_features: ${model.vocab_size}
+
+# Loss Configuration
+# Note: For PLM training, loss is computed internally in architecture._forward_train_plm()
+# This loss is used only for fallback/non-PLM modes
+loss:
+  _target_: torch.nn.CrossEntropyLoss
+  ignore_index: 0  # Ignore padding tokens
+
+# Architecture Constants
+max_len: 25
+
+# Note: Tokenizer configuration in domain controller
+# Note: PLM training uses K=6 permutations per sequence

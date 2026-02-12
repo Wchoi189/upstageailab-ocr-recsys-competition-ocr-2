@@ -1,25 +1,21 @@
-
-# v5.0 | Purpose: Recognition Domain Controller
+# v5.0 | Purpose: Recognition Domain Controller - PARSeq PLM+Flash Variant
 # ============================================================================
-# Domain controllers orchestrate components via defaults ONLY.
-# Inline overrides go to _group_ namespace and don't merge with loaded configs.
+# Full optimization variant: PLM training + Flash Attention
 # ============================================================================
 
 defaults:
   - /global/default
   - /global/paths
-  - /model/architectures: parseq  # Changed to allow override
+  - /model/architectures: parseq_plm_flash  # PLM + Flash architecture
   - /model/constants/recognition
   - /data/datasets: recognition
   - /train/optimizer: adam
   - _self_
 
-# Domain-specific keys (go to _group_ namespace, read by orchestrator)
+# Domain-specific keys
 task: recognition
 
-# ============================================================================
 # Recognition-Specific Configuration
-# ============================================================================
 recognition:
   max_label_length: 25
   charset: korean
@@ -29,9 +25,7 @@ recognition:
   use_eos_token: true
   use_pad_token: true
 
-# ============================================================================
 # Domain Isolation - Nullify Other Domains
-# ============================================================================
 detection: null
 max_polygons: null
 shrink_ratio: null

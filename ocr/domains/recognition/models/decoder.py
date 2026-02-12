@@ -26,7 +26,8 @@ class PARSeqDecoder(BaseDecoder):
         pad_token_id=0,
         bos_token_id=1,
         eos_token_id=2,
-        plm_config=None,  # NEW: PLM configuration
+        plm_config=None,  # PLM configuration
+        use_flash_attention=False,  # NEW: Flash Attention support
         **kwargs,  # Accept extra kwargs
     ):
         if vocab_size is None:
@@ -37,12 +38,27 @@ class PARSeqDecoder(BaseDecoder):
         self.pad_token_id = pad_token_id
         self.bos_token_id = bos_token_id
         self.eos_token_id = eos_token_id
+        self.use_flash_attention = use_flash_attention
 
-        # Transformer Decoder
-        decoder_layer = nn.TransformerDecoderLayer(
-            d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, dropout=dropout, activation="gelu", batch_first=True
-        )
-        self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
+        # Transformer Decoder with optional Flash Attention
+        if use_flash_attention:
+            from ocr.domains.recognition.models.flash_attention import create_flash_decoder
+            self.decoder = create_flash_decoder(
+                d_model=d_model,
+                nhead=nhead,
+                num_layers=num_layers,
+                dim_feedforward=dim_feedforward,
+                dropout=dropout,
+                activation="gelu",
+                batch_first=True,
+                norm_first=False,  # PARSeq uses Post-LN
+                enable_flash=True,
+            )
+        else:
+            decoder_layer = nn.TransformerDecoderLayer(
+                d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, dropout=dropout, activation="gelu", batch_first=True
+            )
+            self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
 
         # Positional Embeddings
         self.pos_encoder = nn.Parameter(torch.zeros(1, max_len + 1, d_model))

@@ -1,0 +1,30 @@
+# @package model.decoder
+# v5.0 PLM+Flash | Purpose: PARSeq Decoder - Full Optimization
+# ============================================================================
+# Target configuration: PLM training + Flash Attention (best performance)
+
+_target_: ocr.domains.recognition.models.decoder.PARSeqDecoder
+
+# Architecture Parameters
+d_model: 384
+nhead: 12
+num_layers: 12
+dim_feedforward: 1536
+dropout: 0.1
+
+# Sequence Parameters
+max_len: 25
+pad_token_id: 0
+bos_token_id: 1
+eos_token_id: 2
+
+# Optimization Features
+use_flash_attention: true  # Enable Flash Attention (2-4x speedup)
+plm_config:  # Enable PLM training
+  max_label_length: 25
+  perm_num: 6  # Number of permutations (K=6)
+  perm_forward: true  # Include forward permutation
+  perm_mirrored: true  # Generate complementary pairs
+
+# Vocab size will be injected from model level
+vocab_size: ${model.vocab_size}
