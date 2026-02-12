@@ -1,5 +1,5 @@
 """
-Project Compass V2 - Pulse Exporter
+Project Compass V3 - Pulse Exporter
 
 Strict export logic with staging audit.
 Ensures disk-vs-manifest consistency before archiving.
@@ -218,68 +218,3 @@ def register_artifact(
     return True, f"Registered: {artifact_path}"
 
 
-def create_snapshot(
-    state_path: Path,
-    staging_path: Path,
-    history_path: Path,
-    label: str = "checkpoint",
-) -> tuple[bool, str]:
-    """
-    Create a snapshot of the current pulse state and artifacts.
-
-    Args:
-        state_path: Path to vessel_state.json
-        staging_path: Path to pulse_staging/ directory
-        history_path: Path to history/ directory (snapshots stored in snapshots/)
-        label: Label/message for the snapshot
-
-    Returns:
-        Tuple of (success, message)
-    """
-    state_path = Path(state_path)
-    staging_path = Path(staging_path)
-    history_path = Path(history_path)
-
-    if not state_path.exists():
-        return False, "vessel_state.json not found"
-
-    state = VesselState.load(state_path)
-    if not state.active_pulse:
-        return False, "No active pulse to snapshot"
-
-    pulse_id = state.active_pulse.pulse_id
-    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    clean_label = "".join(c if c.isalnum() else "_" for c in label)[:50]
-
-    # Structure: project_compass/snapshots/{pulse_id}/{timestamp}_{label}
-    # Note: Using a separate 'snapshots' dir instead of 'history' to avoid confusion
-    snapshots_root = history_path.parent / "snapshots"
-    snapshot_dir = snapshots_root / pulse_id / f"{timestamp}_{clean_label}"
-
-    try:
-        snapshot_dir.mkdir(parents=True, exist_ok=True)
-
-        # 1. Copy State
-        shutil.copy2(state_path, snapshot_dir / "vessel_state.json")
-
-        # 2. Copy Artifacts
-        artifacts_src = staging_path / "artifacts"
-        artifacts_dst = snapshot_dir / "artifacts"
-        if artifacts_src.exists():
-            shutil.copytree(artifacts_src, artifacts_dst, dirs_exist_ok=True)
-
-        # 3. Create Metadata
-        metadata = {
-            "timestamp": timestamp,
-            "label": label,
-            "pulse_id": pulse_id,
-            "milestone_id": state.active_pulse.milestone_id,
-            "files": [a.path for a in state.active_pulse.artifacts]
-        }
-        with open(snapshot_dir / "snapshot_meta.json", "w") as f:
-            json.dump(metadata, f, indent=2)
-
-        return True, f"Snapshot created: {snapshot_dir.name}"
-
-    except Exception as e:
-        return False, f"Snapshot failed: {str(e)}"

@@ -39,14 +39,11 @@ If type not provided, detect from:
 
 1. Verify file exists in `pulse_staging/artifacts/`
 2. Determine type (provided or auto-detected)
-3. Call MCP tool:
-   ```
-   mcp__unified__compass_meta_pulse(
-     kind="sync",
-     path="[filename]",
-     artifact_type="[type]",
-     milestone_id="[current-milestone]"
-   )
+3. Execute CLI command via Bash tool:
+   ```bash
+   uv run compass pulse-sync \
+     --path "[filename]" \
+     --type "[type]"
    ```
 4. Confirm registration
 

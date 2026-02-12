@@ -7,7 +7,7 @@ disable-model-invocation: false
 # Compass Start - Pulse Initialization
 
 ## Current Vessel State
-!`cat /workspaces/dev_tools/project_compass/.vessel/vessel_state.json | head -50`
+!`cat /workspaces/dev_tools/project_compass/project_compass/.vessel/vessel_state.json | head -50`
 
 ## Auto-Injected Project Directives
 
@@ -48,12 +48,14 @@ Example: `/compass-start recognition-audit-plm "Audit PLM implementation" v1.0-r
 
 ### Execution
 1. Validate inputs against naming standards
-2. Call MCP tool: `mcp__unified__compass_meta_pulse`
-   - kind: "init"
-   - pulse_id: [validated-id]
-   - objective: [validated-objective]
-   - milestone_id: [validated-milestone]
-3. Confirm initialization with pulse-status
+2. Execute CLI command via Bash tool:
+   ```bash
+   uv run compass pulse-init \
+     --id [validated-id] \
+     --obj "[validated-objective]" \
+     --milestone [validated-milestone]
+   ```
+3. Confirm initialization success
 4. Remind user of directive constraints
 
 ### Post-Init Reminder

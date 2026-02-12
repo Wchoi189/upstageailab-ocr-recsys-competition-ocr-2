@@ -1,17 +1,27 @@
-# PROJECT COMPASS AI-INTERFACE V2.1
-# CONSUMPTION: ~60 Tokens
-# PROTOCOL: Check [Compass:Lock] before execution. Validate against schemas.
-# CHANGELOG: V2.1 adds global `compass` command and full Vessel integration.
+# PROJECT COMPASS AI-INTERFACE V3.0
+# CONSUMPTION: ~40 Tokens (optimized from v2.x)
+# PROTOCOL: Use /compass-* skills as primary interface. CLI for automation only.
+# CHANGELOG: V3.0 removes MCP tools, adds Skills system. See CHANGELOG.md.
 
 rules:
   - "Environment: Only use UV. Never overwrite Torch 2.6.0+cu124."
   - "State: `project_compass/.vessel/vessel_state.json` is the Single Source of Truth."
   - "Protocol: Follow [Pulse Lifecycle] in AGENTS.md. `project_compass/pulse_staging/artifacts/` is the ONLY write location."
-  - "Nomenclature: Use `pulse-init`, `pulse-sync`, `pulse-export` for work cycles."
+  - "Nomenclature: Use Skills (`/compass-*`) for interactive work. CLI (`uv run compass`) for scripts."
   - "Compass Sync: State is auto-managed. Do not edit JSON files manually."
 
-entry_points:
-  compass_help: "uv run compass --help"
+# PRIMARY INTERFACE: Skills (Interactive Work)
+primary_interface:
+  compass_start: "/compass-start [pulse-id] \"[objective]\" [milestone-id] - Initialize pulse"
+  compass_status: "/compass-status - Check current state"
+  compass_register: "/compass-register [filename] [type] - Register artifact"
+  compass_finish: "/compass-finish - Export pulse"
+  compass_resume: "/compass-resume - Load session context"
+  compass_help: "/compass-help - Command reference"
+  audit_run: "/audit-run [category] - Execute audit"
+
+# AUTOMATION INTERFACE: CLI (Scripts Only)
+automation_interface:
   check_env: "uv run compass check-env"
   pulse_init: "uv run compass pulse-init --id {domain-action-target} --obj {objective} --milestone {id}"
   pulse_status: "uv run compass pulse-status"
@@ -21,3 +31,8 @@ entry_points:
 
 schema_root: "project_compass/src/state_schema.py"
 
+# DEPRECATION NOTICE
+deprecated:
+  mcp_tools: "Removed in v3.0. Use Skills or CLI."
+  spec_kit: "Removed in v3.0. Spec-kit commands deleted."
+  snapshots: "Removed in v3.0. Use git commits for checkpoints."

@@ -8,9 +8,9 @@ disable-model-invocation: false
 
 ## Quick Status Check
 
-Get current pulse state:
+Get current pulse state via CLI:
 ```bash
-mcp__unified__compass_meta_pulse(kind="status")
+uv run compass pulse-status
 ```
 
 ## Display Format

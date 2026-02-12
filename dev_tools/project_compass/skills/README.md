@@ -5,7 +5,7 @@ Skills for improved discoverability and directive persistence across sessions.
 ## Problem Statement
 
 **Before Skills**:
-- MCP tools exist but not discoverable
+- V3.0 removes MCP layer entirely
 - Manual repetitive prompting required
 - Session handovers lose project directives
 - Instructions like "keep docs concise, AI-only" don't carry over
@@ -113,14 +113,14 @@ skills/
     └── SKILL.md          # Audit automation (forked context)
 ```
 
-### MCP Tool Mapping
+### CLI Command Mapping
 
 | Skill | MCP Tool Call |
 |-------|---------------|
-| compass-start | `compass_meta_pulse(kind="init")` |
-| compass-status | `compass_meta_pulse(kind="status")` |
-| compass-register | `compass_meta_pulse(kind="sync")` |
-| compass-finish | `compass_meta_pulse(kind="export")` |
+| compass-start | `uv run compass pulse-init` |
+| compass-status | `uv run compass pulse-status` |
+| compass-register | `uv run compass pulse-sync --path ... --type ...` |
+| compass-finish | `uv run compass pulse-export` |
 
 ---
 

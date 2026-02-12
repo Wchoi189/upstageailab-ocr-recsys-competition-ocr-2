@@ -12,12 +12,12 @@ Before exporting, check:
 
 ### 1. List All Staging Files
 ```bash
-ls -la /workspaces/dev_tools/project_compass/pulse_staging/artifacts/
+ls -la /workspaces/dev_tools/project_compass/project_compass/pulse_staging/artifacts/
 ```
 
 ### 2. Get Registered Artifacts
 ```bash
-mcp__unified__compass_meta_pulse(kind="status")
+uv run compass pulse-status
 ```
 
 ### 3. Identify Unregistered Files
@@ -43,9 +43,9 @@ Choose action:
 
 Only proceed if NO unregistered files exist or user confirms deletion.
 
-### Call MCP Tool
+### Execute Export
 ```bash
-mcp__unified__compass_meta_pulse(kind="export")
+uv run compass pulse-export
 ```
 
 ### Success Output

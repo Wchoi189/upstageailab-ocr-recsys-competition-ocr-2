@@ -69,14 +69,11 @@ Create in `pulse_staging/artifacts/audit/`:
   ```
 
 ### 4. Auto-Register
-Register audit artifact automatically:
+Register audit artifact automatically via CLI:
 ```bash
-mcp__unified__compass_meta_pulse(
-  kind="sync",
-  path="audit/[category]_audit.md",
-  artifact_type="audit",
-  milestone_id="[current]"
-)
+uv run compass pulse-sync \
+  --path "audit/[category]_audit.md" \
+  --type "audit"
 ```
 
 ---

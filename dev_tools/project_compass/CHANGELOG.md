@@ -1,5 +1,126 @@
 # Project Compass Changelog
 
+## [3.0.0] - 2026-02-12 - BREAKING CHANGES ⚠️
+
+### BREAKING CHANGES
+
+This is a **nuclear refactor** with zero backward compatibility. All MCP tools have been removed.
+
+#### Removed - MCP Architecture
+- **MCP Server** (`mcp_server.py` - 519 lines)
+- **MCP Tools**: `compass_meta_pulse`, `compass_meta_spec`
+- **MCP Resources**: `vessel://state`, `vessel://rules`, `vessel://staging`
+- **Router Module** (`router.py` - 91 lines)
+- **Snapshot System** (`create_snapshot()` function + `snapshots/` directory)
+
+#### Removed - Spec-Kit Integration
+- **CLI Commands**: `spec-constitution`, `spec-specify`, `spec-plan`, `spec-tasks` (180 lines)
+- **Artifact Types**: `specification`, `requirements`, `architecture`
+- **Design Documentation**: `spec-kit-integration.md`
+
+### Added - Skills System
+
+**7 New Skills** (Primary Interface):
+- `/compass-start` - Initialize pulse with vault directives
+- `/compass-status` - Check pulse state + directive reminders
+- `/compass-register` - Register artifacts (auto-type detection)
+- `/compass-finish` - Export with pre-checks
+- `/compass-resume` - Session context loader with directive re-injection
+- `/compass-help` - Command reference
+- `/audit-run` - Execute audit checklist systematically
+
+**Skills Documentation**:
+- `skills/README.md` - Comprehensive skill reference
+- `skills/QUICKSTART.md` - Quick start guide
+- `SKILLS_IMPLEMENTATION.md` - Implementation details
+
+### Changed - Architecture Simplification
+
+**Before (v2.x)**:
+```
+User → Skills/CLI/MCP → MCP Server → Router → Core
+4 layers, ~2000 lines, 3 entry points
+```
+
+**After (v3.0)**:
+```
+User → Skills/CLI → Core
+2 layers, ~800 lines, skills primary
+```
+
+**Path Consolidation**:
+- Moved `.vessel/` to `project_compass/.vessel/` (consistent with code)
+- Consolidated duplicate `pulse_staging/` directories
+- Single, clean directory structure
+
+**Skills Architecture**:
+- Skills now call CLI directly (not MCP)
+- Vault directives auto-injected via dynamic context (`!`command``)
+- Session handover protection (directives persist)
+
+### Migration Guide
+
+#### For AI Agents
+
+**Before (v2.x)**: MCP tools
+```python
+mcp__unified__compass_meta_pulse(
+  kind="init",
+  pulse_id="recognition-audit-plm",
+  objective="Audit PLM implementation",
+  milestone_id="v1.0-recognition-optimization"
+)
+```
+
+**After (v3.0)**: Skills (primary)
+```bash
+/compass-start recognition-audit-plm "Audit PLM implementation" v1.0-recognition-optimization
+```
+
+**Directive Persistence**:
+- Use `/compass-resume` at session start to reload directives
+- All skills auto-inject vault directives
+- No more lost instructions between sessions
+
+#### For Automation Scripts
+
+**CLI commands unchanged** (backward compatible):
+```bash
+uv run compass pulse-init --id recognition-audit-plm \
+  --obj "Audit PLM implementation" \
+  --milestone v1.0-recognition-optimization
+```
+
+#### Breaking: External MCP Usage
+
+If you were calling MCP tools directly:
+- **Migration**: Use skills (`/compass-*`) or CLI (`uv run compass`)
+- **No MCP tools exist** in v3.0+
+
+### Impact Summary
+
+**Code Reduction**: ~60% (removed ~1200 lines)
+- MCP server: 519 lines
+- Router: 91 lines
+- Spec-kit: 180 lines
+- Snapshot: 65 lines
+- Docs cleanup: ~345 lines
+
+**Architecture Layers**: 4 → 2 (50% reduction)
+
+**Clarity**: Single primary interface (skills), clear workflow
+
+### Success Metrics
+
+- ✅ Zero MCP code remains
+- ✅ All skills call CLI (no MCP dependencies)
+- ✅ Single directory structure (no duplicates)
+- ✅ Complete documentation update
+- ✅ 60% code reduction
+- ✅ 2-layer architecture
+
+---
+
 ## [2.1.0] - 2026-01-21
 
 ### Added

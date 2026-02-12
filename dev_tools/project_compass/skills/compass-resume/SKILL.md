@@ -14,7 +14,7 @@ Load full project context when resuming work, ensuring directives and state are 
 ## Auto-Injected Context
 
 ### 1. Current Vessel State
-!`cat /workspaces/dev_tools/project_compass/.vessel/vessel_state.json`
+!`cat /workspaces/dev_tools/project_compass/project_compass/.vessel/vessel_state.json`
 
 ### 2. Project Directives (Re-Injection)
 !`cat /workspaces/dev_tools/project_compass/vault/directives/00_meta_cognition.md`
@@ -22,7 +22,7 @@ Load full project context when resuming work, ensuring directives and state are 
 !`cat /workspaces/dev_tools/project_compass/vault/directives/02_artifact_purity.md`
 
 ### 3. Active Pulse Artifacts
-!`ls -la /workspaces/dev_tools/project_compass/pulse_staging/artifacts/ 2>/dev/null | tail -20`
+!`ls -la /workspaces/dev_tools/project_compass/project_compass/pulse_staging/artifacts/ 2>/dev/null | tail -20`
 
 ### 4. Recent Git Status
 !`git -C /workspaces status --short 2>/dev/null | head -20`
@@ -75,7 +75,7 @@ Analyze loaded state and provide:
 ## Previous Pulse Context
 
 If INDEX.md exists, also load:
-!`cat /workspaces/dev_tools/project_compass/pulse_staging/artifacts/INDEX.md 2>/dev/null | head -50`
+!`cat /workspaces/dev_tools/project_compass/project_compass/pulse_staging/artifacts/INDEX.md 2>/dev/null | head -50`
 
 Summarize:
 - Previous pulse ID and status
