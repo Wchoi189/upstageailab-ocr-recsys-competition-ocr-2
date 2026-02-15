@@ -1,0 +1,21 @@
+# @package _global_
+# v5.0 Experiment | PARSeq Flash - Custom Logger
+# ============================================================================
+# Based on parseq_flash with WandB logger configured
+
+defaults:
+  - parseq_flash
+  - _self_
+
+# Add WandB logger with custom settings
+train:
+  logger:
+    wandb:
+      _target_: lightning.pytorch.loggers.WandbLogger
+      project: "receipt-text-recognition-ocr-project"
+      log_model: false
+      save_dir: "${global.paths.wandb}"
+      settings:
+        offline: false
+        save_code: false
+        sync_dir: "${global.paths.wandb_sync_root}"

@@ -1,0 +1,12 @@
+# @package _global_
+# v5.0 Experiment | PARSeq Flash - No Logger
+# ============================================================================
+# Based on parseq_flash but with wandb logging disabled
+
+defaults:
+  - parseq_flash
+  - _self_
+
+# Explicitly disable logger
+train:
+  logger: null

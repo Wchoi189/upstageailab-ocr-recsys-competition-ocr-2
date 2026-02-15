@@ -34,3 +34,11 @@ help: ## Display this help screen
 	@echo ""
 	@grep -hE '^[a-zA-Z_-]+:.*?## .*$$' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-25s\033[0m %s\n", $$1, $$2}'
 	@echo ""
+
+.PHONY: fix-hydra
+fix-hydra: ## Fix Hydra CLI overrides by auto-adding + prefix (pass CMD="your command")
+	@if [ -z "$(CMD)" ]; then \
+		echo "Usage: make fix-hydra CMD='uv run python scripts/runners/train.py mode=train ...'"; \
+		exit 1; \
+	fi
+	@uv run python scripts/utils/fix_hydra_overrides.py "$(CMD)" --verbose
