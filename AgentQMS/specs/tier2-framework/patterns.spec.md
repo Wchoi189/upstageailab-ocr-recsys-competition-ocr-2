@@ -52,6 +52,9 @@ failure_index:
   orphaned_logic:
     symptom: Config references non-existent paths
     line_ref: L205
+  double_component_instantiation:
+    symptom: Components loaded 2x (duplicate log messages)
+    line_ref: L240
 design_patterns:
   self_mounting_components:
     name: Self-Mounting Atomic Units
@@ -237,6 +240,50 @@ failure_modes:
     - Move logic to domain controller or experiment configs
     - Update defaults lists to remove stale references
     detection: grep -r "defaults:" configs/ | grep -v "^#" | sort | uniq
+  double_component_instantiation:
+    symptom: "Components loaded 2x (e.g., 'Loading pretrained weights' appears twice)"
+    root_cause: Passing redundant cfg parameter with nested _target_ to hydra.utils.instantiate()
+    detection:
+    - Count duplicate log messages during initialization
+    - Stack trace profiling shows two instantiation paths
+    - Timing gap between duplicate loads (1-2 seconds)
+    example_incorrect: |
+      # ❌ WRONG: Both architectures and cfg contain encoder with _target_
+      architectures = config.architectures  # Contains encoder._target_
+      return hydra.utils.instantiate(architectures, cfg=config)
+      # Result: Hydra instantiates encoder from BOTH sources
+    example_correct: |
+      # ✅ CORRECT: Only pass config with component definitions
+      architectures = config.architectures
+      return hydra.utils.instantiate(architectures)
+      # Result: Encoder instantiated once
+    explanation: |
+      When calling hydra.utils.instantiate(config, cfg=extra_config):
+      1. Hydra instantiates nested _target_ fields in 'config'
+      2. Hydra ALSO processes 'cfg' parameter recursively
+      3. If both contain the same component definitions → double instantiation
+    investigation_method:
+    - Add stack trace logging using traceback.format_stack()
+    - Count specific log messages with grep -c "Loading pretrained weights"
+    - Profile timing between duplicate operations
+    resolution: Remove redundant cfg parameter if config already contains all definitions
+    validation: |
+      # Before fix
+      uv run python scripts/runners/train.py ... 2>&1 | grep -c "Loading pretrained"
+      # Output: 2
+
+      # After fix
+      uv run python scripts/runners/train.py ... 2>&1 | grep -c "Loading pretrained"
+      # Output: 1
+    related_patterns:
+    - singleton_caching (Use for tokenizers, global resources)
+    - lazy_loading (Load only required components per mode)
+    impact:
+    - Performance degradation (1-2s per duplicate load)
+    - Memory overhead (duplicate objects in memory temporarily)
+    - Potential race conditions if components have side effects
+    spec_reference: specs/002-training-performance-optimization/findings.md
+    fix_commit: c958ae98
 validation_checklist:
   flattening:
   - All @package _group_ files have no top-level key matching folder name
