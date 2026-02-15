@@ -1,301 +1,244 @@
 # Session Handover: Training Performance Optimization
 
 **Spec**: `002-training-performance-optimization`
-**Date**: February 15, 2026
-**Session Status**: Implementation Complete, Commit Pending
+**Handover Date**: February 15, 2026
+**Status**: Planning Complete → Ready for Implementation
 
-## Summary
+---
 
-✅ **All optimizations implemented and tested successfully on branch `001-wandb-config-logging`**
+## Context Summary
 
-**Key Achievements**:
-- Tokenizer caching: 5 loads → 1 load (80% reduction)
-- Lazy dataset loading: Mode-specific dataset creation working
-- All 8 unit tests passing
-- All modes (train/eval/test/predict) tested and functional
+During WandB config logging investigation, identified multiple performance bottlenecks in training pipeline initialization:
 
-## What Was Done
+1. **Tokenizer loaded 5x per training start** (~0.5-1s overhead)
+2. **Pretrained model weights loaded 2x** from HuggingFace
+3. **Unused datasets instantiated** (test/predict in train mode)
+4. **Debug prints in validation hot path**
 
-### Phase 1: Tokenizer Singleton Cache ✅
+**Total Estimated Impact**: 2-3s wasted on every training start.
 
-**Files Modified**:
-1. `/workspaces/ocr/domains/recognition/data/tokenizer.py`
-   - Added `_TOKENIZER_CACHE` module-level dict
-   - Implemented `get_or_create()` classmethod
-   - Cache key: `(resolved_path, max_len)`
+---
 
-2. `/workspaces/ocr/pipelines/strategies/recognition_config.py` (or orchestrator on main)
-   - Updated vocab injection to use `KoreanOCRTokenizer.get_or_create()`
-   - Removed `hydra.utils.instantiate()` for tokenizer
+## Specification Status
 
-3. `/workspaces/ocr/data/datasets/__init__.py`
-   - Pre-instantiate tokenizer once using `get_or_create()`
-   - Pass as override to `hydra.instantiate(dataset_cfg, tokenizer=instance)`
-   - Avoids OmegaConf non-primitive type restriction
+### Completed Artifacts
 
-4. `/workspaces/ocr/domains/recognition/data/lmdb_dataset.py`
-   - Added type hint support for dict tokenizer config (not used but kept for flexibility)
+✅ **Spec Document**: `specs/002-training-performance-optimization/spec.md`
+- Problem statement with evidence from logs
+- Root cause analysis for each bottleneck
+- Optimization plan with priorities (P0-P3)
+- Success criteria and testing strategy
 
-**Tests Added**:
-- `/workspaces/tests/ocr/domains/recognition/test_tokenizer_cache.py` (8 tests, all passing)
+✅ **Task Breakdown**: `specs/002-training-performance-optimization/tasks.md`
+- 15 tasks across 5 phases
+- Estimated time per task
+- Critical path identified
+- Validation steps for each task
 
-### Phase 2: Lazy Dataset Loading ✅
+✅ **Performance Contract**: `specs/002-training-performance-optimization/contracts/performance-contract.md`
+- Baseline metrics documented
+- Target metrics defined
+- API stability guarantees
+- Rollback procedure
+- Acceptance criteria
 
-**Files Modified**:
-1. `/workspaces/ocr/data/datasets/__init__.py`
-   - Added `splits` parameter (default: `None` for backward compatibility)
-   - Only instantiate datasets in requested splits
-   - Return `None` for unused splits
+✅ **Implementation Checklist**: `specs/002-training-performance-optimization/checklists/implementation-checklist.md`
+- Pre-implementation setup
+- Per-task validation steps
+- Final validation requirements
+- Post-merge monitoring
 
-2. `/workspaces/ocr/pipelines/orchestrator.py`
-   - Added `_get_required_splits()` method
-   - Mode mapping:
-     - `train` → `["train", "val"]`
-     - `eval` → `["val"]`
-     - `test` → `["test"]`
-     - `predict` → `["predict"]`
-   - Pass `splits=required_splits` to dataset factory
+---
 
-3. `/workspaces/ocr/data/lightning_data.py`
-   - Handle `None` datasets gracefully
-   - Return `None` from dataloader methods when dataset missing
+## Key Files to Modify
 
-**Scripts Created**:
-- `/workspaces/scripts/test_lazy_datasets.sh` - Integration test for all modes
-- `/workspaces/scripts/benchmark_startup_time.sh` - Performance benchmark
-
-**Documentation**:
-- `/workspaces/specs/002-training-performance-optimization/findings.md` - Detailed results
-
-## Verification
-
-All functionality tested and working:
-```bash
-# Tokenizer caching verified
-uv run python scripts/runners/train.py experiment=parseq_flash_fast trainer.limit_train_batches=0 trainer.enable_checkpointing=false 2>&1 | grep "Loaded tokenizer"
-# Output: 1 line (was 5)
-
-# Lazy loading verified
-uv run python scripts/runners/train.py experiment=parseq_flash_fast mode=train trainer.limit_train_batches=0 2>&1 | grep "Creating datasets"
-# Output: Creating datasets for splits: ['train', 'val']
-
-uv run python scripts/runners/train.py experiment=parseq_flash_fast mode=eval trainer.limit_val_batches=1 2>&1 | grep "Creating datasets"
-# Output: Creating datasets for splits: ['val']
-
-uv run python scripts/runners/train.py experiment=parseq_flash_fast mode=test trainer.limit_test_batches=1 2>&1 | grep "Creating datasets"
-# Output: Creating datasets for splits: ['test']
+### Phase 1: Tokenizer Caching (P0 - Highest Impact)
+```
+ocr/domains/recognition/data/tokenizer.py          # Add singleton cache
+ocr/pipelines/strategies/recognition_config.py    # Update vocab injection
+configs/data/datasets/recognition.yaml             # Update dataset configs
+tests/ocr/domains/recognition/test_tokenizer_cache.py  # New unit tests
 ```
 
-## Current Situation
-
-**Problem**: Branch management complexity
-- All changes implemented and tested on branch `001-wandb-config-logging`
-- Attempted to create new branch `002-training-performance-optimization` from main
-- Main branch has diverged significantly → merge conflicts
-- Need to cleanly apply only performance optimization changes to new branch
-
-**Why This Happened**:
-- Started work on wrong branch (001 instead of 002)
-- Main branch underwent significant refactoring (file moves, deletions)
-- Stash contained changes from multiple features
-
-## Next Steps for New Session
-
-### Option 1: Commit on Current Branch (Recommended)
-
-1. Switch back to `001-wandb-config-logging`:
-   ```bash
-   git checkout 001-wandb-config-logging
-   ```
-
-2. Commit the performance optimization changes:
-   ```bash
-   git add ocr/domains/recognition/data/tokenizer.py \
-           ocr/data/datasets/__init__.py \
-           ocr/pipelines/strategies/recognition_config.py \
-           ocr/pipelines/orchestrator.py \
-           ocr/data/lightning_data.py \
-           ocr/domains/recognition/data/lmdb_dataset.py \
-           tests/ocr/domains/recognition/test_tokenizer_cache.py \
-           scripts/test_lazy_datasets.sh \
-           scripts/benchmark_startup_time.sh \
-           specs/002-training-performance-optimization/
-
-   git commit -m "feat(perf): implement tokenizer caching and lazy dataset loading
-
-Phase 1: Tokenizer Singleton Cache
-- Add module-level cache in KoreanOCRTokenizer
-- Implement get_or_create() classmethod
-- Update vocab injection to use cached tokenizer
-- Pass tokenizer as override to dataset instantiation
-- Result: 5 tokenizer loads → 1 (80% reduction)
-
-Phase 2: Lazy Dataset Loading
-- Add splits parameter to get_datasets_by_cfg()
-- Implement mode-specific dataset creation
-- Update orchestrator to pass required splits
-- Handle None datasets in Lightning DataModule
-- Result: Only create datasets needed for current mode
-
-Testing:
-- 8 unit tests for tokenizer caching (all passing)
-- Integration tests for all modes (train/eval/test/predict)
-- Performance validated (tokenizer + lazy loading working)
-
-Closes: #002-training-performance-optimization
-
-Co-Authored-By: Claude Sonnet 4.5 <noreply@anthropic.com>"
-   ```
-
-3. Verify commit:
-   ```bash
-   git log -1 --stat
-   git show HEAD
-   ```
-
-4. Optionally cherry-pick to new branch:
-   ```bash
-   git checkout main
-   git checkout -b 002-training-performance-optimization
-   git cherry-pick <commit-hash>
-   ```
-
-### Option 2: Manual File-by-File Reapplication on Clean Branch
-
-1. Stay on clean `002-training-performance-optimization` branch
-
-2. Apply changes file by file (code preserved in findings.md):
-   - Copy tokenizer changes from findings.md or rework
-   - Apply vocab injection update
-   - Apply dataset factory changes
-   - Apply orchestrator changes
-   - Apply data module changes
-   - Copy test files
-   - Copy scripts
-
-3. Test everything again
-
-4. Commit
-
-### Option 3: Use Git Worktree (Clean Parallel Workspace)
-
-1. Create worktree for clean work:
-   ```bash
-   git worktree add ../ocr-perf-opt 002-training-performance-optimization
-   cd ../ocr-perf-opt
-   ```
-
-2. Apply changes there
-
-3. Test and commit
-
-4. Remove worktree:
-   ```bash
-   cd /workspaces
-   git worktree remove ../ocr-perf-opt
-   ```
-
-## Files to Commit
-
-**Core Changes** (must include):
-- `ocr/domains/recognition/data/tokenizer.py`
-- `ocr/data/datasets/__init__.py`
-- `ocr/pipelines/orchestrator.py` (or `strategies/recognition_config.py` if exists)
-- `ocr/data/lightning_data.py`
-- `ocr/domains/recognition/data/lmdb_dataset.py`
-
-**Tests & Scripts**:
-- `tests/ocr/domains/recognition/test_tokenizer_cache.py`
-- `scripts/test_lazy_datasets.sh`
-- `scripts/benchmark_startup_time.sh`
-
-**Documentation**:
-- `specs/002-training-performance-optimization/` (all files)
-
-## Technical Notes for Implementation
-
-### Key Implementation Detail: OmegaConf Workaround
-
-**Problem**: Cannot inject Python objects into OmegaConf configs
-```python
-# This fails:
-cfg.tokenizer = tokenizer_instance  # UnsupportedValueType error
+### Phase 2: Lazy Dataset Loading (P1)
+```
+ocr/data/datasets/__init__.py                      # Add splits parameter
+ocr/pipelines/orchestrator.py                      # Mode-specific dataset loading
+ocr/data/lightning_data.py                         # Handle missing splits
+scripts/test_lazy_datasets.sh                      # New test script
 ```
 
-**Solution**: Use Hydra's instantiate override parameter
-```python
-# This works:
-tokenizer_instance = KoreanOCRTokenizer.get_or_create(...)
-dataset = instantiate(dataset_cfg, tokenizer=tokenizer_instance)
+### Phase 3: Investigation (P2)
 ```
-
-The override parameter bypasses OmegaConf serialization and directly injects the tokenizer instance into the dataset constructor.
-
-### Architecture Difference Between Branches
-
-**Main branch structure**:
-- Vocab injection in `orchestrator.py:_inject_vocab_size()`
-- No `strategies/recognition_config.py`
-
-**001 branch structure** (where work was done):
-- Vocab injection may be in `strategies/recognition_config.py`
-
-**When applying to main**: Check where `inject_vocab_size` is located and update accordingly.
-
-## Success Criteria Verification
-
-✅ **Tokenizer load count**: 5 → 1
-✅ **Lazy dataset loading**: Only required splits created
-✅ **No regressions**: All modes functional
-✅ **Backward compatible**: Default behavior unchanged
-✅ **Tests added**: 8 unit tests passing
-✅ **Clean logs**: Mode-specific dataset creation logged
-
-## Remaining Work (Optional - P2/P3)
-
-- **OPT-003**: Investigate model weight duplication (still seeing 2x weight loading)
-- **OPT-005**: Replace debug prints with logger.debug()
-- **OPT-004**: Config serialization caching (low priority)
-
-## Questions to Answer in Next Session
-
-None - implementation is complete and verified. Only commit/branch management remains.
-
-## Recommended Action
-
-**Immediate**: Use Option 1 (commit on 001 branch, then cherry-pick to 002 if needed)
-
-This is the quickest path to completion and avoids re-implementing already-tested code.
-
-## Performance Impact Summary
-
-**Before**:
-- 5 tokenizer loads
-- 4 dataset splits always created
-- Estimated overhead: 2-3s
-
-**After**:
-- 1 tokenizer load (cached, reused)
-- Only required splits created (50-75% reduction depending on mode)
-- Measurable improvement in startup time
-
-## Continuation Prompt
-
-```
-I'm continuing the training performance optimization work from the previous session.
-
-Status: All optimizations implemented and tested successfully, but need to commit changes.
-
-Current situation:
-- On branch: 001-wandb-config-logging (all changes here)
-- Need to commit performance optimization work
-- Changes verified working (tokenizer caching + lazy dataset loading)
-
-Please review SESSION_HANDOVER.md and commit the changes using Option 1 (commit on current branch).
-
-Files to commit are listed in the handover document.
+ocr/pipelines/orchestrator.py                      # Add profiling
+ocr/pipelines/strategies/recognition_config.py    # Check vocab injection
+specs/002-training-performance-optimization/findings.md  # Document results
 ```
 
 ---
 
-**Session End**: Implementation complete, ready for commit in next session.
+## Evidence from Investigation
+
+### Tokenizer Duplication (Log Extract)
+```
+[2026-02-15 15:46:03,206][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-15 15:46:05,574][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-15 15:46:05,580][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-15 15:46:05,584][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+[2026-02-15 15:46:05,588][ocr.domains.recognition.data.tokenizer][INFO] - Loaded tokenizer: 1023 chars, vocab_size=1027, max_len=25
+```
+
+### Model Weight Duplication (Log Extract)
+```
+[2026-02-15 15:46:04,843][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+[2026-02-15 15:46:05,274][timm.models._builder][INFO] - Loading pretrained weights from Hugging Face hub (timm/resnet18.a1_in1k)
+```
+
+### Debug Prints in Hot Path (Code Reference)
+```python
+# ocr/domains/recognition/module.py:114-128
+if batch_idx == 0:
+    print(f"\n[Validation Debug] Samples:")
+    print(f"  Pred Type: {type(inference_out)}")
+    # ... more prints
+```
+
+---
+
+## Implementation Priority
+
+**Critical Path** (Implement First):
+1. Phase 1: Tokenizer Caching (80% of low-hanging fruit)
+2. Phase 2: Lazy Dataset Loading (mode-specific benefits)
+3. Phase 5: Benchmarking (validate improvements)
+
+**Secondary** (Implement After Critical Path):
+3. Phase 3: Model Weight Investigation (requires profiling)
+4. Phase 4: Debug Logging Cleanup (polish)
+
+**Optional** (Defer to Future):
+- Config serialization caching (low impact unless `log_config=true` becomes common)
+
+---
+
+## Risks & Mitigations
+
+| Risk | Mitigation |
+|------|------------|
+| Tokenizer state mutation breaks training | Make tokenizer immutable after `__init__` |
+| Dataset factory API break | Add backward-compatible `splits=None` default |
+| Mode-specific bugs | Test all 4 modes (train/eval/test/predict) |
+| Cache invalidation issues | Use immutable tuple keys (charset_path, max_len) |
+
+---
+
+## Testing Strategy
+
+### Unit Tests (Mandatory)
+```bash
+pytest tests/ocr/domains/recognition/test_tokenizer_cache.py -v
+pytest tests/ocr/data/test_dataset_factory.py -v
+```
+
+### Integration Tests (Mandatory)
+```bash
+bash scripts/test_lazy_datasets.sh  # Test all modes
+```
+
+### Performance Regression Test (Mandatory)
+```bash
+scripts/benchmark_startup_time.sh  # Fail if >2.0s startup
+```
+
+---
+
+## Success Metrics
+
+**Baseline (Pre-Optimization)**:
+- Tokenizer loads: 5
+- Model weight loads: 2
+- Startup time: ~3.5s
+- Datasets: All 4 splits created regardless of mode
+
+**Target (Post-Optimization)**:
+- Tokenizer loads: 1 (80% reduction) ✓
+- Model weight loads: 1 (if fixable) 🎯
+- Startup time: ≤2.0s (≥43% reduction) ✓
+- Datasets: Only required splits per mode ✓
+
+---
+
+## Continuation Prompt
+
+```
+# CONTINUATION PROMPT FOR NEXT SESSION
+
+I'm continuing work on `002-training-performance-optimization`.
+
+**Current Status**: Planning complete, ready for implementation.
+
+**Context**:
+- Training pipeline has 2-3s startup overhead due to redundant processing
+- Tokenizer loaded 5x per start (should be cached singleton)
+- Pretrained model weights loaded 2x from HuggingFace (needs investigation)
+- Unused datasets instantiated in wrong modes (need lazy loading)
+
+**Spec Location**: `/workspaces/specs/002-training-performance-optimization/`
+
+**What to do**:
+1. Read the spec: `spec.md` (problem statement, root causes, optimization plan)
+2. Review tasks: `tasks.md` (15 tasks, 5 phases, estimated 2-3 days)
+3. Follow checklist: `checklists/implementation-checklist.md`
+4. Start with Phase 1: Tokenizer caching (highest impact/effort ratio)
+
+**First Task**: TASK-001 - Implement tokenizer singleton in `ocr/domains/recognition/data/tokenizer.py`
+
+**Target**: Reduce training startup time from 3.5s to ≤2.0s (43% improvement)
+
+**Validation**: Run `uv run python scripts/runners/train.py experiment=parseq_flash_fast trainer.limit_train_batches=0` and verify tokenizer loaded only 1x (check logs).
+
+Begin with Phase 1.
+```
+
+---
+
+## Related Documentation
+
+**AgentQMS Specs**:
+- `/workspaces/AgentQMS/specs/tier2-framework/patterns.spec.md` - Hydra patterns
+- `/workspaces/AgentQMS/specs/tier2-framework/configuration.spec.md` - Config standards
+
+**Recent Work**:
+- `001-wandb-config-logging` - Just completed, revealed these bottlenecks
+- WandB serialization fix in `orchestrator.py:186-230` - Performance considerations documented
+
+**Related Files**:
+- Orchestrator: `/workspaces/ocr/pipelines/orchestrator.py`
+- Tokenizer: `/workspaces/ocr/domains/recognition/data/tokenizer.py`
+- Dataset factory: `/workspaces/ocr/data/datasets/__init__.py`
+
+---
+
+## Questions for Next Session
+
+1. **Tokenizer Immutability**: Can tokenizer be made immutable after init? Check if any code mutates tokenizer state.
+2. **Hydra Instantiate**: Does `hydra.utils.instantiate()` support factory methods? May need wrapper for `get_or_create()`.
+3. **Model Weight Duplication**: Is timm caching weights internally? Or are we actually creating encoder twice?
+4. **Dataset Split Validation**: Should DataModule raise error or return None for missing optional splits?
+
+---
+
+## Handover Checklist
+
+- [x] Spec document written (`spec.md`)
+- [x] Task breakdown complete (`tasks.md`)
+- [x] Performance contract defined (`contracts/performance-contract.md`)
+- [x] Implementation checklist created (`checklists/implementation-checklist.md`)
+- [x] Evidence collected (log extracts, code references)
+- [x] Success criteria defined (baseline → target metrics)
+- [x] Continuation prompt provided
+- [x] Related documentation linked
+- [x] Risks documented with mitigations
+- [x] Testing strategy outlined
+
+**Next Agent**: Ready to implement. Start with continuation prompt above.
