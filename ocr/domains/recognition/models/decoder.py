@@ -2,6 +2,7 @@ import math
 import torch
 import torch.nn as nn
 from ocr.core.interfaces.models import BaseDecoder
+from ocr.domains.recognition.models.two_stream_decoder import TwoStreamDecoderLayer, TwoStreamDecoder
 
 
 class PARSeqDecoder(BaseDecoder):
@@ -40,28 +41,18 @@ class PARSeqDecoder(BaseDecoder):
         self.eos_token_id = eos_token_id
         self.use_flash_attention = use_flash_attention
 
-        # Transformer Decoder with optional Flash Attention
-        if use_flash_attention:
-            from ocr.domains.recognition.models.flash_attention import create_flash_decoder
-            self.decoder = create_flash_decoder(
-                d_model=d_model,
-                nhead=nhead,
-                num_layers=num_layers,
-                dim_feedforward=dim_feedforward,
-                dropout=dropout,
-                activation="gelu",
-                batch_first=True,
-                norm_first=False,  # PARSeq uses Post-LN
-                enable_flash=True,
-            )
-        else:
-            decoder_layer = nn.TransformerDecoderLayer(
-                d_model=d_model, nhead=nhead, dim_feedforward=dim_feedforward, dropout=dropout, activation="gelu", batch_first=True
-            )
-            self.decoder = nn.TransformerDecoder(decoder_layer, num_layers=num_layers)
+        # Two-Stream Decoder (like original PARSeq)
+        decoder_layer = TwoStreamDecoderLayer(
+            d_model=d_model,
+            nhead=nhead,
+            dim_feedforward=dim_feedforward,
+            dropout=dropout,
+            activation="gelu"
+        )
+        self.decoder = TwoStreamDecoder(decoder_layer, num_layers=num_layers, norm=nn.LayerNorm(d_model))
 
-        # Positional Embeddings
-        self.pos_encoder = nn.Parameter(torch.zeros(1, max_len + 1, d_model))
+        # Positional queries (learned, like original PARSeq)
+        self.pos_queries = nn.Parameter(torch.zeros(1, max_len + 1, d_model))
 
         # Token Embeddings
         self.embed_tokens = nn.Embedding(vocab_size, d_model)
@@ -70,8 +61,8 @@ class PARSeqDecoder(BaseDecoder):
         # This is necessary when encoder output != d_model
         self.input_proj = nn.Linear(in_channels, d_model) if in_channels != d_model else nn.Identity()
 
-        # Normalization
-        self.norm = nn.LayerNorm(d_model)
+        # Dropout
+        self.dropout = nn.Dropout(p=dropout)
 
         # PLM integration (after other components initialized)
         self.plm = None
@@ -84,24 +75,10 @@ class PARSeqDecoder(BaseDecoder):
         self._init_weights()
 
     def _init_weights(self):
-        # FIX: standard transformer initialization (Xavier) works better for Post-Norm
-        # trunc_normal(std=0.02) is too small and causes vanishing gradients without warmup
+        # Initialize like original PARSeq
         nn.init.xavier_uniform_(self.embed_tokens.weight)
-
-        # Init Pos Encoder with Sinusoidal
-        # self.pos_encoder: [1, max_len, d_model]
-        max_len = self.max_len + 1 # Account for the +1 in pos_encoder definition
-        d_model = self.d_model
-
-        pe = torch.zeros(max_len, d_model)
-        position = torch.arange(0, max_len, dtype=torch.float).unsqueeze(1)
-        div_term = torch.exp(torch.arange(0, d_model, 2).float() * (-math.log(10000.0) / d_model))
-
-        pe[:, 0::2] = torch.sin(position * div_term)
-        pe[:, 1::2] = torch.cos(position * div_term)
-
-        with torch.no_grad():
-            self.pos_encoder.copy_(pe.unsqueeze(0))
+        # Positional queries initialized with small std
+        nn.init.trunc_normal_(self.pos_queries, std=0.02)
 
     @property
     def out_channels(self) -> int:
@@ -171,33 +148,53 @@ class PARSeqDecoder(BaseDecoder):
 
         B, T = targets.shape
 
-        # Create input sequence
-        # Usually input is BOS + targets (excluding EOS if present at end? or just length constraint)
-        # Simplified: Use targets directly as input (assuming it starts with BOS)
-        tgt_emb = self.embed_tokens(targets) * math.sqrt(self.d_model)
+        # Two-stream architecture (like original PARSeq)
+        # Content stream: token embeddings with position info
+        # Query stream: positional queries only
 
-        # Add positional encoding
-        # Use T positions
-        # FIX: Scale pos_emb too, or use Sinusoidal.
-        # If we use Learned with Xavier, it must be scaled to match tgt_emb.
-        pos_emb = self.pos_encoder[:, :T, :] * math.sqrt(self.d_model)
-        tgt = tgt_emb + pos_emb
+        # Scale token embeddings
+        scaled_emb = self.embed_tokens(targets) * math.sqrt(self.d_model)
 
-        # Attention Masks
-        # Use custom masks if provided (for PLM), otherwise use causal mask
-        if tgt_mask is None:
+        # BOS token: just token embedding (null context)
+        null_ctx = scaled_emb[:, :1]
+
+        # BUGFIX (BUG-001): Shift content stream to prevent information leakage
+        # Original: content[i] = pos_queries[i-1] + embed(token[i])
+        # Fixed: content[i] = pos_queries[i] + embed(token[i-1])
+        # This ensures Query[i] cannot see token[i] when predicting next token
+        if T > 1:
+            # Shift embeddings: use tokens [0:T-1] instead of [1:T]
+            # Use positions [1:T] to maintain proper positional encoding alignment
+            tgt_emb_rest = self.pos_queries[:, 1:T] + scaled_emb[:, :T-1]
+            tgt_emb = torch.cat([null_ctx, tgt_emb_rest], dim=1)
+        else:
+            tgt_emb = null_ctx
+
+        # Apply dropout to content stream
+        tgt_emb = self.dropout(tgt_emb)
+
+        # Query stream: just positional queries
+        tgt_query = self.pos_queries[:, :T].expand(B, -1, -1)
+        tgt_query = self.dropout(tgt_query)
+
+        # Attention masks
+        if tgt_mask is None and tgt_query_mask is None:
             # Standard causal mask for AR decoding
-            tgt_mask = nn.Transformer.generate_square_subsequent_mask(T, device=device)
+            causal_mask = torch.triu(torch.ones((T, T), dtype=torch.bool, device=device), 1)
+            tgt_mask = causal_mask
+            tgt_query_mask = causal_mask
 
-        # Padding Mask (Boolean: True = Ignore, False = Keep)
-        # Using boolean mask is often more stable with Flash Attention backends
+        # Padding mask
         tgt_key_padding_mask = (targets == self.pad_token_id)
 
+        # Two-stream decoder forward
         output = self.decoder(
-            tgt, memory,
-            tgt_mask=tgt_mask,
-            tgt_key_padding_mask=tgt_key_padding_mask,
-            memory_key_padding_mask=memory_key_padding_mask  # FIX: Prevent attention to padded visual features
+            query=tgt_query,
+            content=tgt_emb,
+            memory=memory,
+            query_mask=tgt_query_mask,
+            content_mask=tgt_mask,
+            content_key_padding_mask=tgt_key_padding_mask
         )
 
-        return self.norm(output)
+        return output

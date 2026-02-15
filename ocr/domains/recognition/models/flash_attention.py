@@ -32,6 +32,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch import Tensor
+from torch.nn.attention import SDPBackend, sdpa_kernel
 
 # Configure logger
 logger = logging.getLogger(__name__)
@@ -76,7 +77,7 @@ def check_flash_attention_support() -> Tuple[bool, str]:
 
 
 @contextmanager
-def enable_flash_attention_kernel():
+def enable_flash_attention_kernel(plm_enabled: bool | None = None):
     """
     Context manager to enable Flash Attention backend with smart fallback.
 
@@ -90,7 +91,8 @@ def enable_flash_attention_kernel():
     Note:
         - Pure AR decoding: Uses Flash backend (2-4x speedup)
         - PLM training: May fallback to MATH backend due to custom masks
-        - Disables MEM_EFFICIENT (slower than both Flash and MATH)
+        - Uses torch.nn.attention.sdpa_kernel (PyTorch 2.0+ API)
+        - Only enables FLASH_ATTENTION and MATH backends (skips EFFICIENT_ATTENTION)
 
     Logging:
         - Logs colored warning on first use if Flash Attention not supported
@@ -115,17 +117,16 @@ def enable_flash_attention_kernel():
         else:
             # Flash supported, but warn about potential MATH fallback with PLM masks
             if not _backend_warning_shown:
-                logger.info(
-                    f"{Colors.GREEN}✓ Flash Attention enabled: {message}{Colors.RESET}\n"
-                    f"{Colors.YELLOW}  Note: PLM custom masks may force MATH backend fallback{Colors.RESET}"
-                )
+                log_message = f"{Colors.GREEN}✓ Flash Attention enabled: {message}{Colors.RESET}"
+                if plm_enabled or plm_enabled is None:
+                    log_message = (
+                        f"{log_message}\n"
+                        f"{Colors.YELLOW}  Note: PLM custom masks may force MATH backend fallback{Colors.RESET}"
+                    )
+                logger.info(log_message)
                 _backend_warning_shown = True
 
-            with torch.backends.cuda.sdp_kernel(
-                enable_flash=True,
-                enable_math=True,  # Allow MATH fallback for PLM masks
-                enable_mem_efficient=False  # Disable slowest backend
-            ):
+            with sdpa_kernel([SDPBackend.FLASH_ATTENTION, SDPBackend.MATH]):
                 yield
 
     except (AttributeError, RuntimeError) as e:
@@ -260,10 +261,13 @@ class FlashMultiheadAttention(nn.Module):
         # Combine attn_mask and key_padding_mask
         if key_padding_mask is not None:
             # key_padding_mask: [B, S] -> [B, 1, 1, S] for broadcasting
-            key_padding_mask = key_padding_mask.view(B, 1, 1, S)
+            key_padding_mask_reshaped = key_padding_mask.view(B, 1, 1, S)
             if attn_mask is None:
                 attn_mask = torch.zeros(1, 1, T, S, dtype=q.dtype, device=q.device)
-            attn_mask = attn_mask.masked_fill(key_padding_mask, float('-inf'))
+            else:
+                # Ensure attn_mask is same dtype as query (required for consistency)
+                attn_mask = attn_mask.to(dtype=q.dtype)
+            attn_mask = attn_mask.masked_fill(key_padding_mask_reshaped, float('-inf'))
 
         # Apply Flash Attention
         # F.scaled_dot_product_attention automatically selects Flash Attention backend

@@ -1,7 +1,8 @@
 #!/bin/bash
 # Test script for lazy dataset loading across all modes
+# Verifies that each mode only creates required datasets
 
-set -e
+set -e  # Exit on error
 
 echo "======================================"
 echo "Testing Lazy Dataset Loading"
@@ -10,6 +11,8 @@ echo "======================================"
 EXPERIMENT="parseq_flash_fast"
 LIMIT_BATCHES=1
 MAX_EPOCHS=1
+
+# Disable checkpointing during tests as per requirements
 CHECKPOINT_ARGS="trainer.enable_checkpointing=false"
 
 echo ""

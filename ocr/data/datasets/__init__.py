@@ -7,7 +7,6 @@ To keep import-time dependencies minimal, heavy submodules are loaded lazily.
 from __future__ import annotations
 
 import importlib
-import logging
 from typing import Any
 
 from ocr.core.utils.config_utils import ensure_dict
@@ -18,7 +17,6 @@ __all__ = [
     "get_datasets_by_cfg",
 ]
 
-logger = logging.getLogger(__name__)
 
 _LAZY_EXPORTS: dict[str, tuple[str, str]] = {
     "ValidatedOCRDataset": ("ocr.domains.detection.data.dataset", "ValidatedOCRDataset"),
@@ -49,11 +47,14 @@ def get_datasets_by_cfg(datasets_config, data_config=None, full_config=None, spl
                 Valid values: ["train", "val", "test", "predict"]
 
     Returns:
-        Dictionary mapping split names to Dataset instances (or None for unused splits)
+        Dictionary mapping split names to Dataset instances
     """
     from hydra.utils import instantiate
     from omegaconf import OmegaConf
     from torch.utils.data import Subset
+    import logging
+
+    logger = logging.getLogger(__name__)
 
     # Default: create all splits (backward compatible)
     if splits is None:
@@ -77,6 +78,7 @@ def get_datasets_by_cfg(datasets_config, data_config=None, full_config=None, spl
         if tokenizer_instance is not None:
             # Use Hydra's instantiate with tokenizer override
             # This bypasses OmegaConf's restriction on non-primitive types
+            # by passing the tokenizer directly as a kwarg
             return instantiate(dataset_cfg, tokenizer=tokenizer_instance)
         return instantiate(dataset_cfg)
 

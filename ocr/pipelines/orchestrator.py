@@ -14,7 +14,7 @@ import logging
 from ocr.core.models import get_model_by_cfg
 from ocr.data.datasets import get_datasets_by_cfg
 from ocr.data.lightning_data import OCRDataPLModule
-from ocr.core.utils.config_utils import is_config
+from ocr.core.utils.config_utils import ensure_dict, is_config
 
 logger = logging.getLogger(__name__)
 
@@ -58,6 +58,23 @@ class OCRProjectOrchestrator:
         self._validate_config_structure()
 
         logger.info("🎯 OCRProjectOrchestrator initialized")
+
+    def _get_required_splits(self):
+        """
+        Determine which dataset splits are needed for the current mode.
+
+        This enables lazy dataset loading to avoid instantiating unused splits.
+
+        Returns:
+            List of required split names
+        """
+        mode_to_splits = {
+            "train": ["train", "val"],
+            "eval": ["val"],
+            "test": ["test"],
+            "predict": ["predict"]
+        }
+        return mode_to_splits.get(self.mode, ["train", "val"])
         logger.info(f"   Domain: {self.domain}")
         logger.info(f"   Mode: {self.mode}")
 
@@ -82,23 +99,6 @@ class OCRProjectOrchestrator:
                     "CRITICAL CONFIG ERROR: 'train.callbacks' seems to be a single Callback config. "
                     "It MUST be a dictionary/list of callbacks."
                 )
-
-    def _get_required_splits(self):
-        """
-        Determine which dataset splits are needed for the current mode.
-
-        This enables lazy dataset loading to avoid instantiating unused splits.
-
-        Returns:
-            List of required split names
-        """
-        mode_to_splits = {
-            "train": ["train", "val"],
-            "eval": ["val"],
-            "test": ["test"],
-            "predict": ["predict"]
-        }
-        return mode_to_splits.get(self.mode, ["train", "val"])
 
     def setup_modules(self):
         """Create Lightning modules using existing factories.
@@ -190,10 +190,62 @@ class OCRProjectOrchestrator:
         if hasattr(self.cfg, "train"):
             # Instantiate loggers
             if hasattr(self.cfg.train, "logger") and self.cfg.train.logger:
-                loggers = [
-                    hydra.utils.instantiate(logger_cfg)
-                    for logger_cfg in self.cfg.train.logger.values()
-                ]
+                loggers = []
+                for logger_cfg in self.cfg.train.logger.values():
+                    if is_config(logger_cfg):
+                        target = logger_cfg.get("_target_", "")
+                        # WandB Configuration Logging Constraint (CONFIG-WANDB-001)
+                        # -----------------------------------------------------
+                        # Full config logging (log_config=true) disabled by default to prevent
+                        # serialization errors when Hydra DictConfig contains callable references
+                        # (_target_ fields). Essential config visibility maintained via run naming.
+                        # Override at own risk: train.logger.wandb.log_config=true
+                        # Spec: AgentQMS/specs/tier2-framework/configuration.spec.md (Section 5)
+                        if "WandbLogger" in str(target):
+                            standardize_name = bool(logger_cfg.get("standardize_name", False))
+                            log_config = bool(logger_cfg.get("log_config", False))
+
+                            if standardize_name:
+                                from ocr.core.utils.wandb_base import generate_run_name
+                                logger_cfg["name"] = generate_run_name(self.cfg)
+
+                            # Convert entire config to plain Python types to avoid WandB serialization issues
+                            # This resolves interpolations and removes OmegaConf wrappers
+                            logger_cfg_dict = OmegaConf.to_container(logger_cfg, resolve=True)
+
+                            if log_config:
+                                # Add Hydra config as YAML string in plain dict
+                                yaml_str = OmegaConf.to_yaml(self.cfg, resolve=True)
+                                logger_cfg_dict["config"] = {"hydra_config_yaml": yaml_str}
+
+                            # Remove internal keys and problematic fields that aren't WandB params
+                            for internal_key in (
+                                "standardize_name",
+                                "log_config",
+                                "enabled",
+                                "log_recognition_images",
+                                "per_batch_image_logging",
+                                "_recursive_",
+                                "settings",  # Remove settings - causes serialization issues with WandB
+                            ):
+                                logger_cfg_dict.pop(internal_key, None)
+
+                            # Manual instantiation for WandB to avoid Hydra's DictConfig serialization issues
+                            from lightning.pytorch.loggers import WandbLogger
+                            wandb_logger = WandbLogger(
+                                project=logger_cfg_dict.get("project"),
+                                name=logger_cfg_dict.get("name"),
+                                save_dir=logger_cfg_dict.get("save_dir"),
+                                log_model=logger_cfg_dict.get("log_model", False),
+                                config=logger_cfg_dict.get("config"),
+                            )
+                            loggers.append(wandb_logger)
+                        else:
+                            # Use Hydra instantiation for other loggers
+                            loggers.append(hydra.utils.instantiate(logger_cfg))
+                    else:
+                        # Instantiate non-WandB logger normally
+                        loggers.append(hydra.utils.instantiate(logger_cfg))
                 trainer_kwargs["logger"] = loggers
                 logger.info(f"   ✓ {len(loggers)} logger(s) configured")
 

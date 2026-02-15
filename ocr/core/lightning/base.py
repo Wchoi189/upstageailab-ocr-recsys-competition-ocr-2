@@ -7,12 +7,20 @@ Domain-specific logic is implemented in:
 """
 
 from abc import abstractmethod
+import logging
+
+import torch
 
 import lightning.pytorch as pl
 from hydra.utils import instantiate
-from omegaconf import DictConfig
+from omegaconf import DictConfig, OmegaConf
 
 from ocr.core.lightning.utils import CheckpointHandler, extract_metric_kwargs, extract_normalize_stats
+from ocr.core.utils.config_utils import is_config
+from ocr.core.utils.wandb_base import finalize_run
+
+
+logger = logging.getLogger(__name__)
 
 
 class OCRPLModule(pl.LightningModule):
@@ -121,6 +129,37 @@ class OCRPLModule(pl.LightningModule):
         """
         pass
 
+    def on_fit_end(self):
+        """Finalize W&B run name using the best available metric."""
+        if not self._wandb_enabled():
+            return
+
+        metrics = {}
+        if self.trainer is not None:
+            metrics = dict(self.trainer.callback_metrics)
+
+        try:
+            finalize_run(metrics)
+        except Exception:
+            logger.exception("Failed to finalize W&B run name.")
+
+    def _get_wandb_cfg(self):
+        if hasattr(self.config, "train") and hasattr(self.config.train, "logger"):
+            logger_cfg = self.config.train.logger
+            if is_config(logger_cfg) and "wandb" in logger_cfg:
+                return logger_cfg.get("wandb")
+        return None
+
+    def _wandb_enabled(self) -> bool:
+        wandb_cfg = self._get_wandb_cfg()
+        if is_config(wandb_cfg):
+            return wandb_cfg.get("enabled", False)
+        return False
+
+    def _wandb_image_logging_enabled(self) -> bool:
+        """Override in subclasses to enable image logging."""
+        return False
+
 
 
     def on_save_checkpoint(self, checkpoint):
@@ -133,10 +172,10 @@ class OCRPLModule(pl.LightningModule):
 
     def configure_optimizers(self):
         """Configure optimizers from V5 Hydra config ONLY.
-        
+
         V5 Standard: config.train.optimizer (Hydra _target_)
         NO LEGACY SUPPORT. NO FALLBACKS. FAIL FAST.
-        
+
         Raises:
             ValueError: If config.train.optimizer is missing or invalid
         """
@@ -146,11 +185,40 @@ class OCRPLModule(pl.LightningModule):
                 "Legacy model.get_optimizers() is no longer supported.\n"
                 "See configs/train/optimizer/adam.yaml for template."
             )
-        
+
         opt_cfg = self.config.train.optimizer
-        
+
         # Hydra instantiate ONLY - no manual fallbacks
-        return instantiate(opt_cfg, params=self.model.parameters())
+        optimizer = instantiate(opt_cfg, params=self.model.parameters())
+
+        if hasattr(self.config.train, "lr_scheduler") and self.config.train.lr_scheduler:
+            scheduler_cfg = self.config.train.lr_scheduler
+            if is_config(scheduler_cfg):
+                scheduler_cfg = OmegaConf.to_container(scheduler_cfg, resolve=True)
+
+            warmup_epochs = 0
+            warmup_start_factor = 0.1
+            if isinstance(scheduler_cfg, dict):
+                warmup_epochs = int(scheduler_cfg.pop("warmup_epochs", 0))
+                warmup_start_factor = float(scheduler_cfg.pop("warmup_start_factor", warmup_start_factor))
+
+            scheduler = instantiate(scheduler_cfg, optimizer=optimizer)
+
+            if warmup_epochs > 0:
+                warmup_scheduler = torch.optim.lr_scheduler.LinearLR(
+                    optimizer,
+                    start_factor=warmup_start_factor,
+                    total_iters=warmup_epochs,
+                )
+                scheduler = torch.optim.lr_scheduler.SequentialLR(
+                    optimizer,
+                    schedulers=[warmup_scheduler, scheduler],
+                    milestones=[warmup_epochs],
+                )
+
+            self.lr_scheduler = scheduler
+
+        return optimizer
 
     def on_train_epoch_end(self):
         """Handle cache statistics logging and LR scheduler step."""

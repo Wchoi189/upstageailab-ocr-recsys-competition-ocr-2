@@ -4,7 +4,12 @@
 
 from __future__ import annotations
 
+import logging
+
 from ocr.core.utils.wandb_base import _to_u8_bgr
+
+
+logger = logging.getLogger(__name__)
 
 
 def log_recognition_images(
@@ -39,9 +44,17 @@ def log_recognition_images(
     import wandb
     from PIL import Image, ImageDraw, ImageFont
 
-    # Ensure list types
     if gt_texts is None:
-        gt_texts = [""] * len(pred_texts)
+        logger.warning("Skipping WandB logging: gt_texts is missing.")
+        return
+
+    if len(pred_texts) != len(gt_texts):
+        logger.warning(
+            "Skipping WandB logging: pred_texts (%s) and gt_texts (%s) length mismatch.",
+            len(pred_texts),
+            len(gt_texts),
+        )
+        return
 
     num_samples = len(images)
     if num_samples == 0:
