@@ -1,72 +1,81 @@
-## Notes
+# Flash Attention Decoder Fix - Complete ✅
 
+**Status**: Decoder fixed, ready for training
+**Date**: 2026-02-14
+**Experiment**: `dev_tools/experiment_manager/experiments/20260212_191401_flashattentionlearningfailu/`
 
+## Quick Summary
 
+**Problem**: Repeated token predictions `"김김김..."` (val_acc=0.000)
+**Cause**: Single-stream decoder replaced original two-stream architecture
+**Fix**: Implemented `TwoStreamDecoder` from original PARSeq
+**Result**: ✅ Diverse predictions, logits change per step
 
+## Key Files
 
-### Commonly used Repomix CLI
+- `ocr/domains/recognition/models/two_stream_decoder.py` - NEW two-stream decoder
+- `ocr/domains/recognition/models/decoder.py` - Updated to use two-stream
+- `SESSION_HANDOVER.md` - Full handover doc in experiment directory
+
+## Next Steps
+
+1. **Train baseline** (30 epochs) → restore 82% accuracy
+2. **Add Flash Attention** to TwoStreamDecoderLayer
+3. **Enable PLM training** with Flash
+
+## Train Commands
 
 ```bash
-repomix --style markdown \
-  --include 'AgentQMS/*,AgentQMS/standards/tier3-agents/multi-agent-system.yaml' \
-  --ignore 'AgentQMS/standards/tier3-agents/*,*.jsonl,*.bak,AgentQMS/bin/artifacts_violations_history.json,AgentQMS/bin/cli_tools/audio,AgentQMS/mcp_server.py,AgentQMS/mcp_schema.yaml,AgentQMS/context-tooling-2.0-plan.md,' \
-  --output /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS_2026-01-26.md
-
-```
-
-```bash
-repomix --style markdown \
-  --include 'AgentQMS/' \
-  --ignore 'AgentQMS/tests,AgentQMS/standards/tier3-agents/*,AgentQMS/.mcp-telemetry.jsonl,*.bak,AgentQMS/bin/artifacts_violations_history.json,AgentQMS/bin/cli_tools/audio,AgentQMS/mcp_schema.yaml,AgentQMS/context-tooling-2.0-plan.md,AgentQMS/.archive,*.py,*.pyc,AgentQMS/mcp_server.py' \
-  --output /workspaces/upstageailab-ocr-recsys-competition-ocr-2/AgentQMS_2026-01-27.md
-
-```
-
-
-
-### Commonly used OCR module
-
-```bash
-repomix --style markdown \
-  --include 'ocr/core/infrastructure' \
-  --ignore '' \
-  --output /workspaces/upstageailab-ocr-recsys-competition-ocr-2/ocr_infrastructure_for_multi-agent_2026-01-23.md
-
-```
-
-
-### Quick GPU Test (Recommended)
-```bash
+# Baseline (verify learning)
 uv run python scripts/runners/train.py \
-  domain=recognition \
   experiment=rec_baseline_official \
-  trainer.max_epochs=10 \
-  data.batch_size=64 \
-  dataloaders.train_dataloader.num_workers=4 \
-  dataloaders.val_dataloader.num_workers=4 \
-  dataloaders.train_dataloader.pin_memory=true \
-  dataloaders.val_dataloader.pin_memory=true \
-  +dataloaders.train_dataloader.batch_size=64 \
-  +dataloaders.val_dataloader.batch_size=64 \
+  trainer.max_epochs=30 \
   +train/logger=wandb
-```
 
-
-```bash
+# Quick test (5 min)
 uv run python scripts/runners/train.py \
-  domain=recognition \
-  ckpt_path="outputs/checkpoints/last.ckpt" \
-  experiment=rec_baseline_official \
-  trainer.max_epochs=10 \
-  +train/logger=wandb
-```
-
-
-```bash
-uv run python scripts/runners/train.py \
-  domain=recognition \
-  ckpt_path="outputs/checkpoints/last.ckpt" \
-  experiment=rec_baseline_official \
+  experiment=parseq_flash_fast \
   trainer.max_epochs=1 \
-  +train/logger=wandb
+  trainer.limit_train_batches=100 \
+  trainer.limit_val_batches=50
+```
+
+## Verification
+
+```bash
+# Check diverse predictions
+uv run python dev_tools/experiment_manager/experiments/20260212_191401_flashattentionlearningfailu/scripts/check_model_learning.py
+
+# Step-by-step logit analysis
+uv run python dev_tools/experiment_manager/experiments/20260212_191401_flashattentionlearningfailu/scripts/test_inference_fix.py
+```
+
+## Architecture Change
+
+**Before (Broken):**
+```python
+nn.TransformerDecoder  # Single-stream
+→ Identical logits across all steps
+```
+
+**After (Fixed):**
+```python
+TwoStreamDecoder  # Query + content streams
+→ Logits change: Step1=mean:-0.0276, Step2=mean:-0.0238
+```
+
+## References
+
+- Original: `__DEBUG__/training_failures_2026-02-07/implementations/baudm_parseq/`
+- Handover: `dev_tools/experiment_manager/experiments/20260212_191401_flashattentionlearningfailu/SESSION_HANDOVER.md`
+- Bug report: `docs/artifacts/bug_reports/2026-02-13_0134_bug_001_attention-plm-cuda-error.md`
+
+---
+
+## Common Repomix CLI
+
+```bash
+repomix --style markdown \
+  --include 'ocr/domains/recognition/models/' \
+  --output ocr_recognition_models_2026-02-14.md
 ```
