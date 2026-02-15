@@ -8,7 +8,9 @@ def get_model_by_cfg(config):
     architectures = getattr(config, "architectures", None)
     if architectures and "_target_" in architectures:
         import hydra
-        return hydra.utils.instantiate(architectures, cfg=config)
+        # FIX: Don't pass cfg=config to avoid double instantiation of components
+        # The architectures config already contains all component definitions
+        return hydra.utils.instantiate(architectures)
 
     # Legacy: Check for singular architecture with _target_
     if "architecture" in config and "_target_" in config.architecture:
