@@ -48,6 +48,9 @@ class OCRDataPLModule(pl.LightningDataModule):
         return collate_fn
 
     def train_dataloader(self):
+        # Handle lazy loading: dataset may be None if not required for current mode
+        if self.dataset.get("train") is None:
+            return None
         train_loader_config = self.dataloaders_cfg['train_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if train_loader_config.get("num_workers", 0) == 0:
@@ -56,6 +59,9 @@ class OCRDataPLModule(pl.LightningDataModule):
         return DataLoader(self.dataset["train"], collate_fn=collate_fn, **train_loader_config)
 
     def val_dataloader(self):
+        # Handle lazy loading: dataset may be None if not required for current mode
+        if self.dataset.get("val") is None:
+            return None
         val_loader_config = self.dataloaders_cfg['val_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if val_loader_config.get("num_workers", 0) == 0:
@@ -64,6 +70,9 @@ class OCRDataPLModule(pl.LightningDataModule):
         return DataLoader(self.dataset["val"], collate_fn=collate_fn, **val_loader_config)
 
     def test_dataloader(self):
+        # Handle lazy loading: dataset may be None if not required for current mode
+        if self.dataset.get("test") is None:
+            return None
         test_loader_config = self.dataloaders_cfg['test_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if test_loader_config.get("num_workers", 0) == 0:
@@ -72,6 +81,9 @@ class OCRDataPLModule(pl.LightningDataModule):
         return DataLoader(self.dataset["test"], collate_fn=collate_fn, **test_loader_config)
 
     def predict_dataloader(self):
+        # Handle lazy loading: dataset may be None if not required for current mode
+        if self.dataset.get("predict") is None:
+            return None
         predict_loader_config = self.dataloaders_cfg['predict_dataloader']
         # Filter out multiprocessing-only parameters when num_workers == 0
         if predict_loader_config.get("num_workers", 0) == 0:

@@ -2,6 +2,8 @@ import logging
 import hydra
 from omegaconf import DictConfig, OmegaConf
 
+from ocr.domains.recognition.data.tokenizer import KoreanOCRTokenizer
+
 logger = logging.getLogger(__name__)
 
 class RecognitionConfigStrategy:
@@ -14,7 +16,13 @@ class RecognitionConfigStrategy:
             return
 
         logger.info("💉 Injecting vocab_size for recognition model...")
-        tokenizer = hydra.utils.instantiate(cfg.data.tokenizer)
+
+        # Use cached tokenizer via get_or_create() to avoid redundant loading
+        tokenizer_cfg = cfg.data.tokenizer
+        tokenizer = KoreanOCRTokenizer.get_or_create(
+            charset_path=tokenizer_cfg.charset_path,
+            max_len=tokenizer_cfg.max_len
+        )
         vocab_size = tokenizer.vocab_size
 
         # Disable struct mode safely

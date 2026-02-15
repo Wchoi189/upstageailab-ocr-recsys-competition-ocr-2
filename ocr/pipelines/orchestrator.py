@@ -83,6 +83,23 @@ class OCRProjectOrchestrator:
                     "It MUST be a dictionary/list of callbacks."
                 )
 
+    def _get_required_splits(self):
+        """
+        Determine which dataset splits are needed for the current mode.
+
+        This enables lazy dataset loading to avoid instantiating unused splits.
+
+        Returns:
+            List of required split names
+        """
+        mode_to_splits = {
+            "train": ["train", "val"],
+            "eval": ["val"],
+            "test": ["test"],
+            "predict": ["predict"]
+        }
+        return mode_to_splits.get(self.mode, ["train", "val"])
+
     def setup_modules(self):
         """Create Lightning modules using existing factories.
 
@@ -100,10 +117,11 @@ class OCRProjectOrchestrator:
         model = get_model_by_cfg(self.cfg.model)
         logger.info(f"   ✓ Model created: {type(model).__name__}")
 
-        # Use existing dataset factory
+        # Use existing dataset factory with lazy loading
         data_config = getattr(self.cfg, "data", None)
-        dataset = get_datasets_by_cfg(self.cfg.data, data_config, self.cfg)
-        logger.info("   ✓ Datasets created")
+        required_splits = self._get_required_splits()
+        dataset = get_datasets_by_cfg(self.cfg.data, data_config, self.cfg, splits=required_splits)
+        logger.info(f"   ✓ Datasets created for splits: {required_splits}")
 
         # Extract metric config
         metric_cfg = None
