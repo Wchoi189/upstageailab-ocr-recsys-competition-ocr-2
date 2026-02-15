@@ -1,0 +1,119 @@
+# @package _global_
+# v5.0 Experiment | PARSeq Flash - Complete Training Config with Wandb
+# ============================================================================
+# Purpose: Production-ready Flash Attention training with all optimizations
+# Based on: rec_baseline_official + Flash Attention + Optimized validation
+# Expected Performance: ~240-300 img/sec, ~16GB VRAM
+# ============================================================================
+
+defaults:
+  - /data/runtime/performance/balanced@runtime
+  - /train/optimizer: adam                  # Adam optimizer
+  - /train/scheduler: cosine                # Cosine annealing LR scheduler
+  - override /domain: recognition_flash      # Flash Attention domain
+  - override /hardware: rtx3090             # Optimized dataloader settings
+  - _self_
+
+# Experiment metadata
+experiment_name: parseq_flash_fast_chkpt2
+exp_name: ${experiment_name}
+run_name: flash_${now:%Y%m%d_%H%M%S}
+
+# Experiment metadata (for parseq_flash compatibility)
+experiment:
+  name: ${experiment_name}
+  description: "PARSeq with Flash Attention - Production Training"
+  variant: flash_optimized
+  optimization_level: flash_attention
+  expected_speedup: "2-4x"
+
+# Training configuration
+trainer:
+  max_epochs: 50                       # Extended run for LR restarts
+  precision: "16-mixed"                # Required for Flash Attention
+  gradient_clip_val: 5.0
+  log_every_n_steps: 50                # Frequent logging for wandb
+  enable_checkpointing: true           # Enable checkpoint saving # TESTING IN PROGRESS
+
+  # Validation settings - optimized for speed
+  num_sanity_val_steps: 2              # Quick sanity check at start
+  check_val_every_n_epoch: 1           # Validate once per epoch
+  val_check_interval: 1000             # Also validate every 1000 steps
+  limit_val_batches: 200               # Fast validation (200 batches = 102k samples)
+
+  # Training limits (remove for full training)
+  limit_train_batches: null            # Full training (no artificial cap)
+
+# Resume from the last good checkpoint (avoid filenames with '=' for Hydra)
+# checkpoint_path: ${global.paths.checkpoint_dir}/last-v5.ckpt  # DISABLED for testing
+
+# Optimizer configuration (override from /train/optimizer: adam)
+train:
+  optimizer:
+    _target_: torch.optim.Adam
+    lr: 0.002                          # Higher base learning rate with restarts
+    betas: [0.9, 0.999]
+    eps: 1.0e-8
+    weight_decay: 0.0001
+
+  # LR Scheduler configuration (override from /train/scheduler: cosine)
+  lr_scheduler:
+    _target_: torch.optim.lr_scheduler.CosineAnnealingWarmRestarts
+    T_0: 20
+    T_mult: 2
+    eta_min: 1e-6
+    last_epoch: -1
+    warmup_epochs: 2
+    warmup_start_factor: 0.1
+
+  # Callbacks - Checkpointing DISABLED (enable_checkpointing: false)
+  # callbacks:
+  #   checkpoint:
+  #     _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
+  #     dirpath: ${global.paths.checkpoint_dir}
+  #     experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}}
+  #     training_phase: "training"
+  #     add_timestamp: true
+  #     filename: "best"
+  #     monitor: "val/acc"
+  #     mode: "max"
+  #     save_top_k: 3
+  #     save_last: true
+  #     every_n_epochs: 1
+
+
+  # Logger - Wandb configuration
+  logger:
+    wandb:
+      _target_: lightning.pytorch.loggers.WandbLogger
+      project: "receipt-text-recognition-ocr-project"
+      name: ${run_name}
+      log_model: false                 # Set to "all" for production runs
+      save_dir: "${global.paths.wandb}"
+      standardize_name: true # user_parseq-timm-backbone-parseq-decoder-parseq-head-cross-entropy-bs32-lr1e-3_hmean0.000,
+      log_config: false # ensures the W&B “Config” tab is populated
+      settings:
+        offline: false
+        save_code: false
+        sync_dir: "${global.paths.wandb_sync_root}"
+
+# Data configuration - optimized batch size
+data:
+  batch_size: 512                      # High batch size thanks to Flash Attention
+  sequence:
+    trim_pad_to_batch_max: true        # Phase B opt-in (single experiment only)
+    min_keep_tokens: 4                 # BOS/EOS safety guard
+    log_length_stats: false            # Keep training logs clean; enable only for debug
+
+# DataLoader optimizations for RTX 3090
+dataloaders:
+  train_dataloader:
+    num_workers: 12                    # Match RTX3090 profile (16-core CPU)
+    pin_memory: true                   # Async CPU->GPU transfer
+    persistent_workers: true           # Keep workers alive between epochs
+    prefetch_factor: 4                 # Pre-load 4 batches per worker
+  val_dataloader:
+    num_workers: 12
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 4

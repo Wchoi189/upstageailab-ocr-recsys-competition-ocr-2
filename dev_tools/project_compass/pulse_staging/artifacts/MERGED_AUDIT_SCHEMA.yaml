@@ -1,0 +1,588 @@
+audit_schema:
+  metadata:
+    pulse_name: recognition-parseq-audit
+    phase: 6
+    previous_pulse: recognition-parseq-optimization
+    status: ready
+    risk_level: MEDIUM
+    estimated_duration: 2-4 sessions
+
+  context:
+    previous_results:
+      status: all_configs_validated
+      configs_tested:
+        - baseline_ar
+        - flash_attention
+        - plm_baseline
+        - plm_flash_combined
+      bugs_fixed:
+        - multiprocessing: fork → spawn
+        - plm_device_placement: masks to correct device
+      outstanding_issues:
+        - flash_attention_speedup_not_achieved
+        - untested_edge_cases
+
+    performance_baseline:
+      baseline_ar:
+        throughput: 675 img/sec
+      plm_baseline:
+        throughput: ~169 img/sec  # 4x slower, expected for K=6
+        vram: ~10GB
+      flash_attention:
+        throughput: 618 img/sec  # 0.92x speedup - disappointing
+        cer: 2.67  # vs 1.76 baseline - potential numerical drift
+      plm_flash:
+        throughput: similar to plm_baseline
+        loss: 4.99  # elevated but stable
+
+    likely_causes:
+      warmup_overhead:
+        description: Compilation/JIT for SDP kernels on first steps
+        mitigation: needs 1000+ steps or explicit warmup loops
+      seq_batch_mismatch:
+        description: seq=25/batch=64 too small for flash benefits
+        optimal_range: seq>512, batch~12-256
+      custom_masks:
+        description: PLM additive -inf masks or need_weights=True may fallback to slow math kernel
+        check: verify backend selection
+      no_errors:
+        description: Fixes resolved CUDA/device issues correctly
+        status: validated
+
+  phases:
+    phase_6_1:
+      name: Critical Correctness
+      priority: CRITICAL
+      symbol: 🔴
+
+      directives:
+        plm_implementation:
+          checks:
+            - name: Permutation generation correctness
+              location: architecture.py:217-279
+              validation:
+                - verify K=6 permutations generated correctly
+                - check permutation indices within vocab bounds
+                - ensure no duplicate permutations
+
+            - name: Loss computation and averaging
+              location: architecture.py:_forward_train_plm
+              validation:
+                - verify loss / loss_numel calculation
+                - check per-permutation loss aggregation
+                - ensure EOS token handled at i=1 (not i=0)
+              reference: perplexity_directive_7
+
+            - name: Attention mask shape and conversion
+              location: decoder.py
+              validation:
+                - boolean → additive mask conversion
+                - shape compatibility [B, H, L, S]
+                - -inf placement for masked positions
+              reference: perplexity_directive_5
+
+            - name: Sequence handling
+              location: architecture.py, module.py
+              validation:
+                - BOS token placement
+                - EOS removal timing (after 2nd permutation)
+                - padding token consistency
+
+        flash_attention_integration:
+          checks:
+            - name: Backend confirmation
+              location: decoder.py:FlashDecoderLayer
+              validation:
+                - log SDP backend post-context_mgr
+                - verify "FLASH" not "MATH" or "MEM_EFF"
+                - check torch.backends.cuda.sdp_kernel()
+              reference: perplexity_directive_1
+              priority: HIGH
+
+            - name: Numerical equivalence
+              location: decoder.py
+              validation:
+                - compute torch.max(torch.abs(flash_out - mha_out))
+                - assert max_diff < 1e-3 per layer
+                - test across multiple batches
+              reference: perplexity_directive_2
+              priority: HIGH
+              expected_tolerance: 1e-3
+
+            - name: Custom layer logic audit
+              location: decoder.py:FlashDecoderLayer
+              validation:
+                - ensure no extra transposes wrapping SDP
+                - verify no extra matmul operations
+                - match MHA shapes exactly
+                - check for unnecessary tensor copies
+              reference: perplexity_directive_4
+              priority: HIGH
+
+            - name: Mask compatibility
+              location: decoder.py
+              validation:
+                - test SDP with boolean→additive masks
+                - try is_causal=True baseline for parity
+                - verify no fallback to slow kernel
+              reference: perplexity_directive_5
+              priority: MEDIUM
+
+            - name: Fallback logic
+              location: decoder.py
+              validation:
+                - test on non-Ampere GPU (if available)
+                - verify graceful degradation
+                - check warning messages
+
+            - name: Mixed precision compatibility
+              location: decoder.py, module.py
+              validation:
+                - log autocast dtype during forward
+                - force bf16-only forward (RTX 3090 optimal)
+                - verify gradient scaling consistency
+              reference: perplexity_directive_6
+              priority: MEDIUM
+
+    phase_6_2:
+      name: Memory Safety
+      priority: HIGH
+      symbol: 🟡
+
+      directives:
+        device_placement:
+          checks:
+            - name: PLM mask device placement
+              location: architecture.py:_forward_train_plm
+              validation:
+                - verify masks created on correct device
+                - check mask.to(device) calls
+                - ensure no CPU→GPU transfers in loop
+              status: fixed_needs_verification
+
+            - name: Padding mask device consistency
+              location: architecture.py, decoder.py
+              validation:
+                - check padding_mask device matches input
+                - verify memory_padding_mask device
+                - ensure all attention masks on same device
+
+            - name: Tensor device consistency
+              location: all model files
+              validation:
+                - register forward hooks to check device
+                - verify all intermediate tensors on cuda
+                - check for accidental .cpu() calls
+
+        gradient_flow:
+          checks:
+            - name: PLM backpropagation
+              location: architecture.py:_forward_train_plm
+              validation:
+                - verify gradients flow through all K permutations
+                - check no detached tensors breaking flow
+                - ensure loss.backward() propagates correctly
+
+            - name: In-place operations
+              location: architecture.py, decoder.py
+              validation:
+                - audit for unsafe in-place ops (+=, *=, [:]=)
+                - verify no gradient corruption
+                - check requires_grad preservation
+
+            - name: Mixed precision gradient scaling
+              location: module.py
+              validation:
+                - verify GradScaler applied correctly
+                - check for inf/nan gradients
+                - ensure unscale before optimizer step
+
+    phase_6_3:
+      name: Performance Analysis
+      priority: MEDIUM
+      symbol: 🟢
+
+      directives:
+        flash_attention_investigation:
+          root_cause_analysis:
+            - name: Warmup profiling
+              validation:
+                - add torch.profiler with 2 warmup + 98 timed steps
+                - measure kernel time vs Python overhead
+                - identify compilation bottlenecks
+              reference: perplexity_directive_3
+              priority: HIGH
+              expected_outcome: isolate overheads
+
+            - name: Long-run benchmark
+              validation:
+                - rerun with 1000 steps (vs 100)
+                - test batch sizes: 128, 256
+                - extend seq_len via padding to 128+
+                - measure throughput stabilization
+              reference: perplexity_directive_8
+              priority: HIGH
+              expected_outcome: 2-4x speedup proof
+
+            - name: Sequence/batch sweep
+              validation:
+                - sweep batch=[16, 32, 64, 128, 256]
+                - sweep seq_len=[25, 64, 128, 256, 512]
+                - plot speedup heatmap
+                - identify optimal operating point
+              priority: MEDIUM
+              expected_outcome: find flash-optimal regime
+
+          actionable_fixes:
+            immediate:
+              - name: Add warmup phase
+                implementation: 5 dummy forwards pre-training loop
+                expected_impact: reduce compilation overhead
+                priority: HIGH
+
+              - name: Enable profiling
+                implementation: torch.profiler context manager
+                expected_impact: identify bottlenecks
+                priority: HIGH
+
+            benchmark:
+              - name: Batch/sequence sweep
+                implementation: grid search script
+                expected_impact: find optimal config
+                priority: MEDIUM
+
+            production:
+              - name: PLM+Flash for training
+                rationale: stable loss, longer sequences
+                expected_benefit: 2-4x at scale
+
+              - name: Pure Flash for inference
+                rationale: longer autoregressive sequences
+                expected_benefit: ">2x for seq>128"
+
+        configuration_validation:
+          checks:
+            - name: Hydra composition correctness
+              location: configs/experiment/parseq_*.yaml
+              validation:
+                - verify defaults list order
+                - check override precedence
+                - test CLI override handling
+
+            - name: Vocab size injection
+              location: configs/model/architectures/parseq_*.yaml
+              validation:
+                - verify vocab_size propagated correctly
+                - check decoder head size matches
+                - ensure embedding dimensions consistent
+
+            - name: Architecture overrides
+              location: configs/model/decoder/parseq_*.yaml
+              validation:
+                - check use_flash_attention flag
+                - verify plm_enabled propagation
+                - ensure no conflicting settings
+
+  deliverables:
+    audit_reports:
+      location: pulse_staging/artifacts/audit/
+      reports:
+        - name: 01_plm_correctness.md
+          focus: permutation logic, loss computation, EOS handling
+          references: [phase_6_1.plm_implementation, perplexity_directive_7]
+
+        - name: 02_flash_attention.md
+          focus: numerical equivalence, backend selection, performance
+          references: [phase_6_1.flash_attention_integration, perplexity_directives_1_2_4]
+
+        - name: 03_device_placement.md
+          focus: tensor device consistency, mask placement
+          references: [phase_6_2.device_placement]
+
+        - name: 04_gradient_flow.md
+          focus: backpropagation verification, in-place ops
+          references: [phase_6_2.gradient_flow]
+
+        - name: 05_configuration.md
+          focus: Hydra composition, vocab injection
+          references: [phase_6_3.configuration_validation]
+
+        - name: 06_performance.md
+          focus: Flash Attention investigation, benchmarks
+          references: [phase_6_3.flash_attention_investigation, perplexity_directives_3_8]
+
+    test_suite:
+      location: pulse_staging/artifacts/tests/
+      tests:
+        - name: test_plm_correctness.py
+          coverage:
+            - permutation generation
+            - loss computation
+            - EOS removal timing
+            - mask shape validation
+
+        - name: test_flash_equivalence.py
+          coverage:
+            - numerical equivalence (max_diff < 1e-3)
+            - backend selection verification
+            - precision consistency
+
+        - name: test_edge_cases.py
+          coverage:
+            - empty sequences
+            - max length sequences
+            - single character inputs
+            - batch size edge cases
+
+        - name: test_device_placement.py
+          coverage:
+            - forward hook device checks
+            - mask device consistency
+            - gradient device validation
+
+    findings_report:
+      location: pulse_staging/artifacts/findings/
+      categories:
+        critical:
+          file: critical_issues.md
+          symbol: 🔴
+          criteria: must fix before production
+
+        high_priority:
+          file: high_priority_issues.md
+          symbol: 🟡
+          criteria: should fix soon
+
+        medium_priority:
+          file: medium_priority_issues.md
+          symbol: 🟢
+          criteria: can defer or optimize later
+
+    recommendations:
+      location: pulse_staging/artifacts/recommendations/
+      files:
+        - name: immediate_fixes.md
+          content: critical fixes with code patches
+
+        - name: production_config.md
+          content: recommended deployment configuration
+          recommendations:
+            training: use PLM+Flash with warmup, batch≥128, seq_len padded
+            inference: use pure Flash for autoregressive
+            fallback: use PLM baseline if timeline tight
+
+        - name: optimization_roadmap.md
+          content: performance improvement plan
+          phases:
+            - warmup implementation
+            - batch/sequence optimization
+            - long-term profiling
+
+  testing_methodology:
+    correctness_validation:
+      approach: unit tests with known inputs
+      example_test: test_plm_loss_correctness
+      assertions:
+        - not torch.isnan(loss)
+        - 0 < loss < 10
+        - loss decreases over iterations
+
+    numerical_equivalence:
+      approach: deterministic comparison with seed
+      example_test: test_flash_equivalence
+      tolerance:
+        atol: 1e-3
+        rtol: 1e-3
+      reference: perplexity_directive_2
+
+    device_placement:
+      approach: forward hooks on all modules
+      example_test: test_device_consistency
+      validation: assert output.device.type == 'cuda'
+
+    performance_profiling:
+      approach: torch.profiler with warmup
+      configuration:
+        warmup_steps: 2
+        timed_steps: 98
+        total_steps: 1000  # for long-run validation
+      metrics:
+        - kernel execution time
+        - python overhead
+        - memory bandwidth utilization
+      reference: perplexity_directive_3
+
+  issue_template:
+    structure:
+      title: "[Short descriptive title]"
+      location: "file/path.py:line_number"
+      severity: [CRITICAL, HIGH, MEDIUM]
+      category: [PLM Correctness, Flash Attention, Device Placement, Gradient Flow, Configuration, Performance]
+      description: "What's wrong and why it matters"
+      current_code: "Problematic code snippet"
+      recommendation: "Fixed code snippet"
+      validation: "How to test the fix"
+      impact: "What breaks without this fix"
+
+    example:
+      title: "Flash Attention backend falls back to MATH kernel"
+      location: "decoder.py:45"
+      severity: HIGH
+      category: Flash Attention
+      description: "Custom boolean masks cause SDP to use slow MATH kernel instead of FLASH"
+      recommendation: "Convert masks to additive format before SDP, or use is_causal=True"
+      validation: "Log torch.backends.cuda.sdp_kernel() and verify FLASH backend"
+      impact: "No speedup gain, defeats purpose of Flash Attention"
+
+  priority_matrix:
+    high_priority:
+      - directive: Numerical drift check
+        expected_outcome: confirm ε < 1e-3
+        reference: perplexity_directive_2
+        effort: LOW
+        impact: HIGH
+
+      - directive: Backend logging
+        expected_outcome: confirm FLASH active
+        reference: perplexity_directive_1
+        effort: LOW
+        impact: HIGH
+
+      - directive: Warmup profiler
+        expected_outcome: isolate overheads
+        reference: perplexity_directive_3
+        effort: MEDIUM
+        impact: HIGH
+
+    medium_priority:
+      - directive: Long sequence sweep
+        expected_outcome: 2-4x speedup proof
+        reference: perplexity_directive_8
+        effort: HIGH
+        impact: MEDIUM
+
+      - directive: Precision audit
+        expected_outcome: verify bf16 usage
+        reference: perplexity_directive_6
+        effort: LOW
+        impact: MEDIUM
+
+      - directive: Mask compatibility
+        expected_outcome: test is_causal baseline
+        reference: perplexity_directive_5
+        effort: MEDIUM
+        impact: MEDIUM
+
+  success_criteria:
+    checklist:
+      - item: All critical correctness issues identified and documented
+        status: pending
+
+      - item: Device placement verified for all code paths
+        status: pending
+
+      - item: Gradient flow validated through PLM and Flash Attention
+        status: pending
+
+      - item: Configuration consistency checked across all variants
+        status: pending
+
+      - item: Numerical equivalence proven (max_diff < 1e-3)
+        status: pending
+        reference: perplexity_directive_2
+
+      - item: Flash backend confirmed or fallback explained
+        status: pending
+        reference: perplexity_directive_1
+
+      - item: Performance bottlenecks identified via profiling
+        status: pending
+        reference: perplexity_directive_3
+
+      - item: Testing gaps identified with specific recommendations
+        status: pending
+
+      - item: Production deployment recommendations provided
+        status: pending
+
+    exit_conditions:
+      minimum:
+        - all_critical_issues_documented
+        - device_placement_verified
+        - numerical_equivalence_proven
+
+      ideal:
+        - all_high_priority_directives_completed
+        - performance_bottlenecks_identified
+        - production_config_validated
+        - test_suite_implemented
+
+  key_files:
+    critical_path:
+      - path: /workspaces/ocr/domains/recognition/models/architecture.py
+        focus: _forward_train_plm() lines 217-279
+        directives: [plm_implementation, loss_divergence]
+
+      - path: /workspaces/ocr/domains/recognition/models/decoder.py
+        focus: FlashDecoderLayer, attention mechanism
+        directives: [flash_attention_integration, custom_layer_logic, mask_compatibility]
+
+      - path: /workspaces/ocr/domains/recognition/module.py
+        focus: training/validation steps, mixed precision
+        directives: [gradient_flow, precision_check]
+
+      - path: /workspaces/scripts/runners/train.py
+        focus: entry point, multiprocessing
+        directives: [configuration_validation]
+
+    configuration:
+      - path: /workspaces/configs/experiment/parseq_*.yaml
+        focus: Hydra composition, defaults list
+
+      - path: /workspaces/configs/model/architectures/parseq_*.yaml
+        focus: vocab_size injection, architecture overrides
+
+      - path: /workspaces/configs/model/decoder/parseq_*.yaml
+        focus: use_flash_attention, plm_enabled flags
+
+  perplexity_integration:
+    directives_mapping:
+      1:
+        name: Flash Confirmation
+        action: Log SDP backend/kernel post-context_mgr
+        mapped_to: phase_6_1.flash_attention_integration.backend_confirmation
+
+      2:
+        name: Numerical Drift
+        action: Compute torch.max(torch.abs(flash_out - mha_out))
+        mapped_to: phase_6_1.flash_attention_integration.numerical_equivalence
+
+      3:
+        name: Warmup Profile
+        action: Add torch.profiler (2 warmup + 98 timed steps)
+        mapped_to: phase_6_3.flash_attention_investigation.warmup_profiling
+
+      4:
+        name: Custom Layer Logic
+        action: Audit FlashDecoderLayer for extra transposes/matmul
+        mapped_to: phase_6_1.flash_attention_integration.custom_layer_logic_audit
+
+      5:
+        name: Mask Compatibility
+        action: Test SDP with boolean→additive masks, try is_causal=True
+        mapped_to: phase_6_1.flash_attention_integration.mask_compatibility
+
+      6:
+        name: Precision Check
+        action: Log autocast dtype, force bf16-only
+        mapped_to: phase_6_1.flash_attention_integration.mixed_precision_compatibility
+
+      7:
+        name: Loss Divergence
+        action: Verify EOS removal at i=1, loss_numel normalization
+        mapped_to: phase_6_1.plm_implementation.loss_computation_and_averaging
+
+      8:
+        name: Long-Run Test
+        action: Rerun 1000 steps/batch=128
+        mapped_to: phase_6_3.flash_attention_investigation.long_run_benchmark

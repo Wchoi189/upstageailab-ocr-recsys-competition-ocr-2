@@ -1,0 +1,23 @@
+name: ocr-dev
+# docker compose -f docker/docker-compose.yml -f docker/docker-compose.synthetic.yml build text-recognition-data-generator
+# docker compose -f docker/docker-compose.yml -f docker/docker-compose.synthetic.yml up text-recognition-data-generator
+# docker compose -f docker/docker-compose.yml -f docker/docker-compose.synthetic.yml --profile synthetic up -d
+services:
+  text-recognition-data-generator:
+    build:
+      context: ../../DATA_SYNTHETIC/TextRecognitionDataGenerator
+      dockerfile: Dockerfile
+    image: text-recognition-data-generator:local
+    container_name: ocr-text-recognition-data-generator
+    hostname: trdg
+    profiles:
+      - synthetic
+    working_dir: /app
+    tty: true
+    stdin_open: true
+    volumes:
+      - ../../DATA_SYNTHETIC/TextRecognitionDataGenerator:/app
+      - ../../DATA_SYNTHETIC/TextRecognitionDataGenerator/out:/app/out
+      - /data/pseudo_label:/app/pseudo_label
+    networks:
+      - default

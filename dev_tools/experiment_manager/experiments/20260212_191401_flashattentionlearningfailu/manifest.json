@@ -1,0 +1,48 @@
+{
+  "experiment_id": "20260212_191401_flashattentionlearningfailu",
+  "name": "flash-attention-learning-failure",
+  "status": "active",
+  "created_at": "2026-02-12T19:14:01.084017",
+  "updated_at": "2026-02-13T18:01:57.418708",
+  "intention": "Investigate why Flash Attention prevents model from learning - outputs repeated single tokens",
+  "tasks": [
+    {
+      "id": "task_001",
+      "description": "Review flash attention implementation code",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "task_002",
+      "description": "Analyze model prediction patterns from training logs",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "task_003",
+      "description": "Check gradient flow and attention mask handling",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "task_004",
+      "description": "Identify root cause of repeated token outputs",
+      "status": "backlog",
+      "completed_at": null
+    },
+    {
+      "id": "task_005",
+      "description": "Document findings and recommendations",
+      "status": "backlog",
+      "completed_at": null
+    }
+  ],
+  "insights": [],
+  "artifacts": [
+    {
+      "path": "Fixed: Implemented two-stream decoder architecture from original PARSeq. Decoder now produces diverse predictions instead of repeated tokens.",
+      "type": "other",
+      "timestamp": "2026-02-13T18:01:57.418698"
+    }
+  ]
+}
