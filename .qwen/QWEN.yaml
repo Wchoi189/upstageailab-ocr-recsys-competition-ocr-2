@@ -12,7 +12,7 @@ project:
 
 # AI Instructions System
 instructions:
-  general_standards: "AgentQMS/standards/"
+  general_standards: "AgentQMS/specs/"
   experiment_protocols: "dev_tools/experiment_manager/.ai-instructions/"
   # NOTE: These are independent systems with different purposes
 
@@ -36,7 +36,7 @@ context:
 # Key Configuration Files
 config_files:
   - "AGENTS.yaml"
-  - "AgentQMS/standards/INDEX.yaml"
+  - "AgentQMS/.agentqms/registry.yaml"
   - ".qwen/settings.json"
   - "pyproject.toml"
   - "README.md"
@@ -65,7 +65,7 @@ task_types:
 
 # System Architecture
 architecture:
-  general_standards: "AgentQMS/standards/ (tier1-4)"
+  general_standards: "AgentQMS/specs/ (tier1-4)"
   experiment_protocols: "dev_tools/experiment_manager/.ai-instructions/ (independent)"
   context_bundling_system: "AgentQMS/.agentqms/plugins/context_bundles/ (task-specific file collections)"
   distinction: "These systems operate independently with context bundling providing task-specific file loading"

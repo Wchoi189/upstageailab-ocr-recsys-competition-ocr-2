@@ -3,6 +3,9 @@ import sys
 import lmdb
 from PIL import Image
 from torch.utils.data import Dataset
+from typing import Union, Optional
+
+from ocr.domains.recognition.data.tokenizer import KoreanOCRTokenizer
 
 class LMDBRecognitionDataset(Dataset):
     """
@@ -14,12 +17,43 @@ class LMDBRecognitionDataset(Dataset):
     - label-{index}: Text label (1-indexed string)
     """
 
-    def __init__(self, lmdb_path, tokenizer, max_len=25, transform=None, config=None, **kwargs):
+    def __init__(
+        self,
+        lmdb_path,
+        tokenizer: Union[KoreanOCRTokenizer, dict],
+        max_len=25,
+        transform=None,
+        config=None,
+        **kwargs
+    ):
+        """
+        Initialize LMDB dataset.
+
+        Args:
+            lmdb_path: Path to LMDB directory
+            tokenizer: Either a KoreanOCRTokenizer instance OR a dict with keys:
+                       - charset_path: Path to charset.json
+                       - max_len: Maximum sequence length
+                       If dict, will use cached tokenizer via get_or_create()
+            max_len: Maximum sequence length (for backward compatibility)
+            transform: Image transform pipeline
+            config: Deprecated config parameter
+        """
         self.lmdb_path = str(lmdb_path)
-        self.tokenizer = tokenizer
         self.max_len = max_len
         self.transform = transform
         self.env = None
+
+        # Handle tokenizer: support both instance and config dict
+        if isinstance(tokenizer, dict):
+            # Use cached tokenizer via get_or_create()
+            self.tokenizer = KoreanOCRTokenizer.get_or_create(
+                charset_path=tokenizer.get("charset_path"),
+                max_len=tokenizer.get("max_len", max_len)
+            )
+        else:
+            # Use provided tokenizer instance directly
+            self.tokenizer = tokenizer
 
         # Open temporarily to read dataset length
         env = lmdb.open(

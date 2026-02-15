@@ -89,11 +89,11 @@ agent_debug_toolkit:
     - "Find symbol definitions by name or qualified path with fuzzy matching"
 
 agent_configurations:
-  gemini: "AgentQMS/standards/tier3-agents/gemini-identity.yaml"
-  qwen: "AgentQMS/standards/tier3-agents/qwen-identity.yaml"
+  gemini: "AgentQMS/specs/tier3-agents/agent_identities.spec.md"
+  qwen: "AgentQMS/specs/tier3-agents/agent_identities.spec.md"
 
 critical_directives:
-  - "Do not hallucinate project standards. Read the `INDEX.yaml` first."
+  - "Do not hallucinate project specs. Read the `registry.yaml` first."
   - "Follow the Agentic Documentation Standard (ADS) v1.0."
-  - "Always check `AgentQMS/standards` for the latest rules."
+  - "Always check `AgentQMS/specs` for the latest rules."
   - "Project Compass uses Vessel V2: read dev_tools/project_compass/AGENTS.md for pulse lifecycle."

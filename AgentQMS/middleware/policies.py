@@ -270,15 +270,15 @@ class FileOperationInterceptor:
         path_str = str(path)
 
         # RULE 1: AgentQMS/config/ is READ-ONLY for agents (except manual overrides)
-        # Agents should write to AgentQMS/standards/ or AgentQMS/env/
+        # Agents should write to AgentQMS/specs/ or AgentQMS/env/
         if "AgentQMS/config" in path_str and not self._is_override(arguments):
              raise PolicyViolation(
                 message="Architecture Violation: AgentQMS/config is read-only.",
                 feedback_to_ai=(
                     "ARCHITECTURE VIOLATION: You cannot write to 'AgentQMS/config/'. "
-                    "Configurations should be placed in 'AgentQMS/standards/' (if shared) "
+                    "Configurations should be placed in 'AgentQMS/specs/' (if shared) "
                     "or 'AgentQMS/env/' (if environment specific). "
-                    "For external tools, use 'AgentQMS/standards/tier2-framework/'."
+                    "For external tools, use 'AgentQMS/specs/tier2-framework/'."
                 )
             )
 

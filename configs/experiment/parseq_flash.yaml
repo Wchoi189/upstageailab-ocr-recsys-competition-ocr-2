@@ -18,7 +18,7 @@ trainer:
   precision: "16-mixed"  # Required for Flash Attention
 
 data:
-  batch_size: 64  # Can potentially increase due to memory efficiency
+  batch_size: 512  # Can potentially increase due to memory efficiency
 
 # Experiment metadata
 experiment:

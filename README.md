@@ -441,9 +441,9 @@ For AI agents working with this codebase, please refer to the following context 
 
 ### Documentation
 
-- [System Architecture](AgentQMS/standards/tier1-sst/system-architecture.yaml)
-- [API Contracts](AgentQMS/standards/tier2-framework/api-contracts.yaml)
-- [File Placement Rules](AgentQMS/standards/tier1-sst/file-placement-rules.yaml)
+- [System Architecture](AgentQMS/specs/tier1-contracts/architecture.spec.md)
+- [API Contracts](AgentQMS/specs/tier2-framework/api.spec.md)
+- [File Placement Rules](AgentQMS/specs/tier1-contracts/file-placement-rules.spec.md)
 
 ### Artifacts
 

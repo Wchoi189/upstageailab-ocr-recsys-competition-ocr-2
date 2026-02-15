@@ -81,6 +81,13 @@ logging_rules:
   - f-strings in log calls (eager evaluation)
   - Logging secrets, passwords, API keys
   - Logging entire tensors or large arrays
+  fallback_policy:
+    rule: No silent fallbacks in observability paths (logging, metrics, visualization)
+    required_patterns:
+    - Fallbacks must emit WARNING with context and be gated by an explicit config flag
+    prohibited_patterns:
+    - Placeholder outputs like "?" or "(no pred)" without a warning
+    - Silent try/except that suppresses logging failures
   patterns:
     prohibited:
       example: 'print(f"Processing {filename}")\nlogger.info(f"Result: {large_tensor}")\n'

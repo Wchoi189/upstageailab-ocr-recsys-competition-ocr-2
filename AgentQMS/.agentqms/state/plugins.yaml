@@ -1,5 +1,5 @@
 metadata:
-  generated_at: '2026-02-10T09:07:46.349311+00:00'
+  generated_at: '2026-02-14T18:51:01.234972+00:00'
   generator: AgentQMS PluginLoader
   schema_version: '1.0'
 discovery_paths:
@@ -1078,6 +1078,9 @@ resolved:
         - yq
         - batch edit
         - bulk update
+        - serialization
+        - wandb
+        - log_config
         patterns:
         - hydra.*config
         - config.*hydra

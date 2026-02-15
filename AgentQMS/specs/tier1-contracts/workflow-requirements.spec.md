@@ -61,6 +61,6 @@ blueprint_protocol:
   - Progress Tracker
   - Goal-Execute-Update Loop
   auto_applied: true
-runbook_reference: AgentQMS/standards/tier4-workflows/validation-runbook.yaml
+runbook_reference: AgentQMS/specs/tier4-workflows/validation.spec.md
 
 ```

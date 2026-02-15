@@ -1,7 +1,7 @@
 # MCP Tools Testing Guide (Post-Spec-Kit Migration)
 
-**Date**: 2026-02-02  
-**Context**: Phase 7.2 Spec-Kit Migration  
+**Date**: 2026-02-02
+**Context**: Phase 7.2 Spec-Kit Migration
 **Purpose**: Test MCP tools after YAML → Markdown specs migration
 
 ---
@@ -9,7 +9,7 @@
 ## Executive Summary
 
 **What Changed (Phase 7.2)**:
-- Standards moved: `AgentQMS/standards/` → `AgentQMS/specs/`
+- Specs location: `AgentQMS/specs/` (legacy standards directory removed)
 - Format: YAML files → Markdown `.spec.md` files
 - Registry: Now auto-generated from specs → `AgentQMS/.agentqms/registry.yaml`
 - Validation: Uses `SpecParser` instead of hard-coded YAML paths
@@ -60,11 +60,11 @@ For manual testing, you can use the MCP inspector or call tools directly via the
 
 ## Tool-by-Tool Testing
 
-### 1. `create_artifact` 
+### 1. `create_artifact`
 
 **What it does**: Creates new artifacts using plugin templates
 
-**Phase 7 Impact**: 
+**Phase 7 Impact**:
 - ✅ Uses plugin system (updated in Phase 7.1)
 - ✅ Validation uses SpecParser (updated in Phase 7.3)
 - **Risk**: Low
@@ -318,7 +318,7 @@ done
 ```
 
 **If this fails**, the tool needs updating to:
-1. Search in `AgentQMS/specs/` instead of `AgentQMS/standards/`
+1. Search in `AgentQMS/specs/` (legacy standards directory removed)
 2. Handle `.spec.md` extension
 3. Use fuzzy matching across spec files
 
@@ -355,7 +355,7 @@ uv run python AgentQMS/tools/core/context/get_context.py \
 Files:
   - AgentQMS/specs/tier1-contracts/compliance.spec.md
   - AgentQMS/tools/compliance/validate_artifacts.py
-  - AgentQMS/.agentqms/standards_db.json
+  - AgentQMS/.agentqms/registry.yaml
 
 Token count: ~8,500 tokens
 ```
@@ -454,13 +454,13 @@ bash scripts/test/test_mcp_tools.sh
 **`get_standard` fails** 🔴:
 - **Likely cause**: Tool still references old `standards/` path
 - **Fix**: Update to use `SpecParser` and search in `specs/`
-- **Files to check**: 
+- **Files to check**:
   - `AgentQMS/mcp_server.py` (tool implementation)
   - Search for hard-coded `standards/` paths
 
 **`validate_artifact` fails** 🟡:
 - **Likely cause**: Spec parsing or strict constraint loading
-- **Check**: `AgentQMS/.agentqms/standards_db.json` exists
+- **Check**: `AgentQMS/.agentqms/registry.yaml` exists
 - **Verify**: `SpecParser` can load specs
 
 **`create_artifact` fails** 🟡:
@@ -508,7 +508,7 @@ kill $MCP_PID
 2. **High**: `validate_artifact`, `check_compliance` (use SpecParser)
 3. **Medium**: Others (use plugin system)
 
-**Manual Test Time**: ~10 minutes  
+**Manual Test Time**: ~10 minutes
 **Automated Test Time**: ~2 minutes
 
 **Next Steps**:
@@ -519,6 +519,6 @@ kill $MCP_PID
 
 ---
 
-**Last Updated**: 2026-02-02  
-**Test Status**: Pending execution  
+**Last Updated**: 2026-02-02
+**Test Status**: Pending execution
 **Phase**: 7.2 Post-Migration Validation

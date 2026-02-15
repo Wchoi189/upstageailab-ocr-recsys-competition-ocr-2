@@ -16,11 +16,30 @@
 # ============================================================================
 import torch
 import torch.multiprocessing as mp
-# ATTEMPT 1: Use spawn method (best for CUDA + multiprocessing)
+
+# PYTORCH 2.6 CHECKPOINT LOADING FIX
+# ============================================================================
+# PyTorch 2.6 changed default weights_only=True, breaking OmegaConf in checkpoints
+# Monkey-patch torch.load directly to force weights_only=False
+# ============================================================================
+_original_torch_load = torch.load
+
+def _patched_torch_load(f, map_location=None, pickle_module=None, *, weights_only=None, mmap=None, **kwargs):
+    """Patched torch.load that forces weights_only=False for checkpoint compatibility."""
+    return _original_torch_load(
+        f,
+        map_location=map_location,
+        pickle_module=pickle_module,
+        weights_only=False,  # Force False to allow OmegaConf objects
+        mmap=mmap,
+        **kwargs
+    )
+
+torch.load = _patched_torch_load
+# ATTEMPT 1: Use forkserver method (faster than spawn, safer than fork)
 try:
-    mp.set_start_method('fork', force=True) # Testing 'fork' first
-    #print("[MULTIPROCESSING] Using 'spawn' start method (CUDA-safe)")
-    print("[MULTIPROCESSING] Using 'fork' start method")
+    mp.set_start_method('fork', force=True)  # Hybrid: fast + CUDA-safe
+    print("[MULTIPROCESSING] Using 'fork' start method (fast + CUDA-safe)")
 except RuntimeError as e:
     # Start method already set
     print(f"[MULTIPROCESSING] Start method already set: {mp.get_start_method()}")

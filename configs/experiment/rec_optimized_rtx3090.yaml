@@ -2,7 +2,7 @@
 defaults:
   - rec_baseline_official
   - /train/scheduler: cosine    # ACTIVATE the learning rate scheduler
-  - /train/callbacks: recognition_wandb # Add missing image logging callback
+  # Recognition images are logged from the module; legacy callback disabled
   - override /hardware: rtx3090   # ACTIVATE the optimizations (Workers=12, Batch=160)
   - _self_
 

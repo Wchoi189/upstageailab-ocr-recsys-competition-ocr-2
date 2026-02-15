@@ -85,10 +85,25 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         Returns:
             Formatted checkpoint filename path
         """
+        def _sanitize_stem(raw_stem: str) -> str:
+            return (
+                raw_stem
+                .replace("/", "_")
+                .replace("\\", "_")
+                .replace("=", "-")
+                .replace(":", "-")
+                .replace(" ", "-")
+            )
+
         # Trainer might not be attached during initialization
         trainer = getattr(self, "trainer", None)
         if trainer is None:
-            return super().format_checkpoint_name(metrics or {}, filename, ver, prefix)
+            fallback_path = super().format_checkpoint_name(metrics or {}, filename, ver, prefix)
+            fallback_dir = os.path.dirname(fallback_path)
+            fallback_name = os.path.basename(fallback_path)
+            fallback_stem, fallback_ext = os.path.splitext(fallback_name)
+            safe_name = f"{_sanitize_stem(fallback_stem)}{fallback_ext or self.FILE_EXTENSION}"
+            return os.path.join(fallback_dir, safe_name)
 
         # 1. Get authoritative epoch and step directly from the trainer
         epoch = trainer.current_epoch
@@ -128,6 +143,8 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         # 4. Add version if provided
         if ver is not None:
             stem = f"{stem}_v{ver}"
+
+        stem = _sanitize_stem(stem)
 
         # 5. Combine and return the final path
         dirpath = self.dirpath or "."

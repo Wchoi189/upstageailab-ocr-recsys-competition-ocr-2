@@ -27,7 +27,7 @@ train:
       experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}}
       training_phase: "training"
       add_timestamp: true
-      filename: "best-acc-{val/acc:.4f}"
+      filename: "best"
       monitor: "val/acc"
       mode: "max"
       save_top_k: 3
@@ -37,8 +37,21 @@ train:
 
 # Data
 data:
-  batch_size: 256  # Official recommends 256-512
-  num_workers: 4
+  batch_size: 512  # Increased from 256 - using only 3.8GB/24GB (Flash Attention optimization)
+  num_workers: 12  # Increased from 4 - match RTX3090 profile for 16-core CPU
+
+# DataLoader optimizations for RTX 3090
+dataloaders:
+  train_dataloader:
+    num_workers: 12
+    pin_memory: true              # Async CPU->GPU transfer
+    persistent_workers: true      # Keep workers alive between epochs
+    prefetch_factor: 4            # Pre-load 4 batches per worker
+  val_dataloader:
+    num_workers: 8
+    pin_memory: true
+    persistent_workers: true
+    prefetch_factor: 2
 
 # Override model architecture to use official PARSeq
 model:

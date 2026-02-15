@@ -61,8 +61,7 @@
         "**/docs/generated/**",
         "**/dev_tools/experiment_manager/experiments/**/outputs/**",
         "**/dev_tools/experiment_manager/experiments/**/checkpoints/**",
-        "**/dev_tools/experiment_manager/experiments/**/__pycache__/**",
-        "**/AgentQMS/standards/tier3-agents/claude/**/*"
+        "**/dev_tools/experiment_manager/experiments/**/__pycache__/**"
       ]
     },
     "includeDirectories": [

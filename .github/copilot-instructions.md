@@ -39,7 +39,7 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 ## Context Bundling (Engine 2.0)
 - Purpose: discover and load only relevant files for a task.
 - Docs: AgentQMS/AGENTS.yaml
-- Examples: `uv run python AgentQMS/tools/utilities/suggest_context.py "<task>"`, `uv run python AgentQMS/tools/utilities/context_inspector.py --list`
+- Examples: `uv run python AgentQMS/tools/core/context/suggest_context.py "<task>"`, `uv run python AgentQMS/tools/core/context/context_inspector.py --list`
 
 ## MCP Unified Server (Context Bundling)
 - Purpose: access context bundles and standards via MCP resources/tools.
@@ -70,13 +70,13 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 - Docs: .github/agents/
 
 ## Documentation Architecture
-- Tree: AgentQMS/specs/ (tier1-contracts, tier2-framework, tier3-implementation).
+- Tree: AgentQMS/specs/ (tier1-contracts, tier2-framework, tier3-agents, tier4-workflows).
 - Project docs: docs/architecture/, docs/guides/, docs/planning/, docs/reports/.
 - Examples: configs/README.md, docker/README.md, AgentQMS/ARCHITECTURE.md.
 
 ## Artifacts and Plugins
 - Artifacts: standardized outputs defined by specs; create/validate via `aqms artifact ...`.
-- Plugins: framework in AgentQMS/.agentqms/plugins/ and project in .agentqms/plugins/ (e.g., context bundles).
+- Plugins: framework in AgentQMS/.agentqms/plugins/ (project overrides optional at .agentqms/plugins/).
 
 ## Feedback Loop
 - Proactively flag redundant tools, broken context bundling, or workflow friction.

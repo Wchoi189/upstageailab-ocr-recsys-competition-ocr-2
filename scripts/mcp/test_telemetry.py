@@ -47,7 +47,7 @@ memory_footprint: 100
 description: "Test"
 """
         self.standards.validate("write_to_file", {
-            "TargetFile": "/abs/path/to/AgentQMS/standards/test.yaml",
+            "TargetFile": "/abs/path/to/AgentQMS/specs/test.spec.md",
             "CodeContent": valid_yaml
         })
 
@@ -58,7 +58,7 @@ description: "Missing keys"
 """
         with self.assertRaises(PolicyViolation) as cm:
             self.standards.validate("write_to_file", {
-                "TargetFile": "/abs/path/to/AgentQMS/standards/tier2-framework/invalid.yaml",
+                "TargetFile": "/abs/path/to/AgentQMS/specs/tier2-framework/invalid.spec.md",
                 "CodeContent": invalid_yaml
             })
         self.assertIn("ADS VIOLATION: Missing required ADS v1.0 frontmatter keys", cm.exception.feedback_to_ai)

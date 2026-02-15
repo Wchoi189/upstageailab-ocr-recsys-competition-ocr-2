@@ -32,13 +32,13 @@ ensure_project_root_on_sys_path()
 
 PROJECT_ROOT = get_project_root()
 
-STANDARDS_CONFIG_DIR = PROJECT_ROOT / "AgentQMS" / "standards" / "tier4-workflows"
-CONFIG_PATH = STANDARDS_CONFIG_DIR / "workflow-detector.yaml"
+SPECS_CONFIG_DIR = PROJECT_ROOT / "AgentQMS" / "specs" / "tier4-workflows"
+CONFIG_PATH = SPECS_CONFIG_DIR / "workflow-detector.spec.md"
 _CONFIG_CACHE: dict[str, Any] | None = None
 _CONFIG_LOADER = ConfigLoader(cache_size=5)
 
 # DEFAULT_CONFIG removed - all workflow detection config now loaded from:
-# AgentQMS/standards/tier1-foundations/workflow-detector.yaml
+# AgentQMS/specs/tier4-workflows/workflow-detector.spec.md
 # This enforces the plugin/YAML-only architecture with no hardcoded fallbacks.
 # System will fail loudly if config is missing, making issues immediately visible.
 
@@ -48,13 +48,31 @@ def _get_config() -> dict[str, Any]:
     global _CONFIG_CACHE
     if _CONFIG_CACHE is None:
         # Fail-fast: no defaults, must load from YAML
-        _CONFIG_CACHE = _CONFIG_LOADER.get_config(CONFIG_PATH)
+        if CONFIG_PATH.suffix == ".md":
+            raw_text = CONFIG_PATH.read_text(encoding="utf-8") if CONFIG_PATH.exists() else ""
+            yaml_block = _extract_yaml_block(raw_text)
+            _CONFIG_CACHE = yaml.safe_load(yaml_block) if yaml_block else {}
+        else:
+            _CONFIG_CACHE = _CONFIG_LOADER.get_config(CONFIG_PATH)
         if not _CONFIG_CACHE:
             raise ValueError(
                 f"Workflow detection config missing: {CONFIG_PATH}. "
                 "No hardcoded fallbacks - config must be explicitly defined in YAML."
             )
     return _CONFIG_CACHE
+
+
+def _extract_yaml_block(content: str) -> str | None:
+    start_token = "```yaml"
+    end_token = "```"
+    start_idx = content.find(start_token)
+    if start_idx == -1:
+        return None
+    start_idx += len(start_token)
+    end_idx = content.find(end_token, start_idx)
+    if end_idx == -1:
+        return None
+    return content[start_idx:end_idx].strip()
 
 
 def detect_artifact_type(task_description: str) -> str | None:

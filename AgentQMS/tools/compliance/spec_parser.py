@@ -11,7 +11,8 @@ class SpecParser:
     def parse_artifact_types(self) -> Dict[str, Dict[str, str]]:
         """
         Parses the Artifact Types table from compliance.spec.md.
-        Returns: { 'implementation_plan': {'prefix': 'implementation_plan_', 'directory': 'implementation_plans/'} }
+        Returns a dict with required keys: 'prefix' and 'directory'.
+        Example: { 'implementation_plan': {'prefix': 'implementation_plan_', 'directory': 'implementation_plans/'} }
         """
         types = {}
         if not self.compliance_spec.exists():

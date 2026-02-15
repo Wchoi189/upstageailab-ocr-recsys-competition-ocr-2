@@ -1,5 +1,6 @@
 #!/bin/bash
 # Benchmark script for measuring training startup time
+# Measures time from orchestrator init to first batch
 
 set -e
 
@@ -22,6 +23,7 @@ TOTAL_TIME=0
 for i in $(seq 1 $RUNS); do
     echo "Run $i/$RUNS:"
 
+    # Run training with limit_train_batches=0 to measure startup time only
     START=$(date +%s.%N)
 
     uv run python scripts/runners/train.py \

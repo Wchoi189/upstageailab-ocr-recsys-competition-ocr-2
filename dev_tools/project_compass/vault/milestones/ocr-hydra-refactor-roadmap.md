@@ -168,8 +168,8 @@ bash scripts/preflight.sh
 - [ADT Usage Patterns](__DEBUG__/2026-01-22_hydra_configs_legacy_imports/artifacts/tool_guides/adt_usage_patterns.md)
 - [Shim Antipatterns](__DEBUG__/2026-01-22_hydra_configs_legacy_imports/artifacts/refactoring_patterns/shim_antipatterns_guide.md)
 
-### Standards & Tools
-- [AgentQMS Standards](AgentQMS/standards/registry.yaml)
+### Specs & Tools
+- [AgentQMS Specs](AgentQMS/.agentqms/registry.yaml)
 - [OCR Domain Refactor Milestone](project_compass/vault/milestones/ocr-domain-refactor.md)
 - [Master Audit Script](scripts/audit/master_audit.py)
 - [Auto-Alignment Script](scripts/audit/auto_align_hydra.py)
@@ -238,7 +238,7 @@ uv run aqms validate --all
 ## Constraints
 
 1. **Do Not Modify Artifacts Outside Pulse Staging**: All new artifacts must be created via `uv run compass pulse-sync` after initialization.
-2. **Use AgentQMS Standards**: All validation must follow [AgentQMS standards](AgentQMS/standards/registry.yaml).
+2. **Use AgentQMS Specs**: All validation must follow [AgentQMS specs](AgentQMS/.agentqms/registry.yaml).
 3. **Preserve Debug Session**: Keep `__DEBUG__/2026-01-22_hydra_configs_legacy_imports/` as raw archive; do not restructure.
 4. **Incremental Validation**: Run validation after each import/config fix to avoid cascading errors.
 5. **Document Patterns**: Add reusable patterns to AgentQMS artifacts for future reference.

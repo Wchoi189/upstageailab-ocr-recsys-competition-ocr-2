@@ -1,0 +1,53 @@
+# Progressive Batch Size Testing Guide
+# Test these configurations in order to find optimal batch size
+
+# Test 1: Current optimized config (SAFE)
+test_1_batch_512:
+  data:
+    batch_size: 512
+  dataloaders:
+    train_dataloader:
+      num_workers: 12
+      pin_memory: true
+      persistent_workers: true
+      prefetch_factor: 4
+  expected_vram: "7-8GB"
+  expected_throughput: "15-20 it/s"
+
+# Test 2: Aggressive batch size (RECOMMENDED IF TEST 1 SUCCEEDS)
+test_2_batch_768:
+  data:
+    batch_size: 768
+  dataloaders:
+    train_dataloader:
+      num_workers: 12
+      pin_memory: true
+      persistent_workers: true
+      prefetch_factor: 4
+  expected_vram: "10-12GB"
+  expected_throughput: "20-25 it/s"
+
+# Test 3: Maximum batch size (EXPERIMENTAL - May OOM)
+test_3_batch_1024:
+  data:
+    batch_size: 1024
+  dataloaders:
+    train_dataloader:
+      num_workers: 12
+      pin_memory: true
+      persistent_workers: true
+      prefetch_factor: 4
+  expected_vram: "14-16GB"
+  expected_throughput: "25-30 it/s"
+  note: "Flash Attention's memory efficiency makes this possible"
+
+# Fallback: If workers cause issues
+fallback_fewer_workers:
+  data:
+    batch_size: 512
+  dataloaders:
+    train_dataloader:
+      num_workers: 8  # Reduce if multiprocessing issues
+      pin_memory: true
+      persistent_workers: true
+      prefetch_factor: 4

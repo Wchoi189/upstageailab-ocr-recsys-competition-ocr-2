@@ -3,7 +3,7 @@
 Systematic Configuration Standards Audit for ocr/ Module
 
 This script audits the ocr/ module for compliance with:
-AgentQMS/standards/tier2-framework/configuration-standards.yaml
+AgentQMS/specs/tier2-framework/configuration.spec.md
 
 It uses:
 1. Existing AST analysis outputs (config_access.txt)

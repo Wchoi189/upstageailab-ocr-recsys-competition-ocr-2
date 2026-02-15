@@ -18,7 +18,7 @@ memory_footprint: 100
     """
     try:
         interceptor.validate("write_to_file", {
-            "TargetFile": "/path/to/AgentQMS/standards/my-standard.yaml",
+            "TargetFile": "/path/to/AgentQMS/specs/my-spec.spec.md",
             "CodeContent": valid_content
         })
         print("✅ Valid content passed.")
@@ -33,7 +33,7 @@ version: 1.0
     """
     try:
         interceptor.validate("write_to_file", {
-            "TargetFile": "/path/to/AgentQMS/standards/my-standard.yaml",
+            "TargetFile": "/path/to/AgentQMS/specs/my-spec.spec.md",
             "CodeContent": bad_content
         })
         print("❌ Invalid content PASSED (Policy failed)")
@@ -44,7 +44,7 @@ version: 1.0
     # Force Override
     try:
         interceptor.validate("write_to_file", {
-            "TargetFile": "/path/to/AgentQMS/standards/my-standard.yaml",
+            "TargetFile": "/path/to/AgentQMS/specs/my-spec.spec.md",
             "CodeContent": bad_content,
             "force": True
         })

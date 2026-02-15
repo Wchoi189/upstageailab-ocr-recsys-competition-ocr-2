@@ -95,12 +95,19 @@ class ContextEngine:
         if self.keyword_cache is not None:
              return self.keyword_cache
 
-        config_path = PROJECT_ROOT / "AgentQMS/standards/tier2-framework/discovery/discovery-rules.yaml"
+        config_path = PROJECT_ROOT / "AgentQMS/specs/tier2-framework/discovery.spec.md"
         if not config_path.exists():
             return {}
 
-        # relying on ConfigLoader for parsing
-        raw_config = CONFIG_LOADER.get_config(config_path, defaults={})
+        raw_config: dict[str, Any] = {}
+        if config_path.suffix == ".md":
+            raw_text = config_path.read_text(encoding="utf-8")
+            yaml_block = self._extract_yaml_block(raw_text)
+            if yaml_block:
+                raw_config = yaml.safe_load(yaml_block) or {}
+        else:
+            # relying on ConfigLoader for parsing
+            raw_config = CONFIG_LOADER.get_config(config_path, defaults={})
 
         # Filter metadata keys from discovery-rules which contains other fields
         # valid task types should have a list of strings as values
@@ -111,6 +118,18 @@ class ContextEngine:
                 self.keyword_cache[k] = v
 
         return self.keyword_cache
+
+    def _extract_yaml_block(self, content: str) -> str | None:
+        start_token = "```yaml"
+        end_token = "```"
+        start_idx = content.find(start_token)
+        if start_idx == -1:
+            return None
+        start_idx += len(start_token)
+        end_idx = content.find(end_token, start_idx)
+        if end_idx == -1:
+            return None
+        return content[start_idx:end_idx].strip()
 
     def analyze_task_type(self, description: str) -> str:
         """
@@ -589,7 +608,7 @@ def auto_suggest_context(task_description: str) -> dict[str, Any]:
         suggestions["suggested_tools"] = workflow_suggestions.get("tools", [])
         if workflow_suggestions.get("artifact_type"):
             suggestions["artifact_type"] = workflow_suggestions["artifact_type"]
-    except ImportError:
+    except Exception:
         pass
 
     # Universal Utils Injection

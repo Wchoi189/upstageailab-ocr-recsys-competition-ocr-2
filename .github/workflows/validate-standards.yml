@@ -1,16 +1,16 @@
-name: Validate ADS v2.0 Standards
+name: Validate ADS v2.0 Specs
 
 on:
   push:
     paths:
-      - 'AgentQMS/standards/**/*.yaml'
-      - 'AgentQMS/standards/schemas/ads-header.json'
+      - 'AgentQMS/specs/**/*'
+      - 'AgentQMS/.agentqms/registry.yaml'
       - 'AgentQMS/tools/sync_registry.py'
       - 'AgentQMS/tools/resolve_standards.py'
   pull_request:
     paths:
-      - 'AgentQMS/standards/**/*.yaml'
-      - 'AgentQMS/standards/schemas/ads-header.json'
+      - 'AgentQMS/specs/**/*'
+      - 'AgentQMS/.agentqms/registry.yaml'
       - 'AgentQMS/tools/sync_registry.py'
       - 'AgentQMS/tools/resolve_standards.py'
   workflow_dispatch:
@@ -18,7 +18,7 @@ on:
 jobs:
   validate-standards:
     runs-on: ubuntu-latest
-    name: Validate ADS v2.0 Standards
+    name: Validate ADS v2.0 Specs
 
     steps:
       - name: Checkout repository
@@ -56,7 +56,7 @@ jobs:
       - name: Test resolver functionality
         if: success()
         run: |
-          echo "📋 Testing standards resolver..."
+          echo "📋 Testing specs resolver..."
           # Test that resolver can load the registry
           uv run python AgentQMS/tools/resolve_standards.py --query "config" --no-cache || echo "⚠️  Resolver test warning (non-fatal)"
 
@@ -66,7 +66,7 @@ jobs:
           echo "## ADS v2.0 Validation Report" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           if [ "${{ steps.validate.outputs.exit_code }}" = "0" ]; then
-            echo "✅ All standards validated successfully" >> $GITHUB_STEP_SUMMARY
+            echo "✅ All specs validated successfully" >> $GITHUB_STEP_SUMMARY
           else
             echo "❌ Validation failed - see logs above" >> $GITHUB_STEP_SUMMARY
           fi
@@ -113,7 +113,7 @@ jobs:
       - name: Verify registry structure
         run: |
           echo "🔍 Verifying registry structure..."
-          if [ ! -f "AgentQMS/standards/registry.yaml" ]; then
+          if [ ! -f "AgentQMS/.agentqms/registry.yaml" ]; then
             echo "❌ Registry file not generated"
             exit 1
           fi
@@ -122,11 +122,11 @@ jobs:
       - name: Check graph generation
         run: |
           echo "🎨 Checking dependency graph..."
-          if [ -f "AgentQMS/standards/architecture_map.dot" ]; then
+          if [ -f "AgentQMS/.agentqms/architecture_map.dot" ]; then
             echo "✅ Architecture graph generated"
             # Try to render if graphviz is available
             if command -v dot &> /dev/null; then
-              dot -Tpng AgentQMS/standards/architecture_map.dot -o architecture.png
+              dot -Tpng AgentQMS/.agentqms/architecture_map.dot -o architecture.png
               echo "✅ Graph rendered successfully"
             fi
           else
@@ -139,7 +139,7 @@ jobs:
         with:
           name: registry-artifacts
           path: |
-            AgentQMS/standards/registry.yaml
-            AgentQMS/standards/architecture_map.dot
+            AgentQMS/.agentqms/registry.yaml
+            AgentQMS/.agentqms/architecture_map.dot
             architecture.png
           if-no-files-found: warn

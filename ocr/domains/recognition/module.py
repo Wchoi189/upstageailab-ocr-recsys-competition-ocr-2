@@ -1,5 +1,7 @@
 """Recognition-specific PyTorch Lightning Module."""
 
+import logging
+
 import torch
 from pydantic import ValidationError
 
@@ -7,6 +9,9 @@ from ocr.core.lightning.base import OCRPLModule
 from ocr.core.data.schemas import CacheConfig, ImageLoadingConfig
 from ocr.core.utils.config_utils import is_config
 from ocr.domains.recognition.models.flash_attention import enable_flash_attention_kernel
+
+
+logger = logging.getLogger(__name__)
 
 
 class RecognitionPLModule(OCRPLModule):
@@ -30,9 +35,13 @@ class RecognitionPLModule(OCRPLModule):
         from torchmetrics.text import CharErrorRate
         self.rec_cer = CharErrorRate()
 
+    def _plm_enabled(self) -> bool:
+        decoder = getattr(self.model, "decoder", None)
+        return bool(getattr(decoder, "plm", None))
+
     def training_step(self, batch, batch_idx):
         """Recognition-specific training step with optional tensor validation."""
-        with enable_flash_attention_kernel():
+        with enable_flash_attention_kernel(plm_enabled=self._plm_enabled()):
             pred = self.model(**batch)
 
         # Validate model outputs only in debug mode (BUG-20251112-001/013 prevention)
@@ -70,7 +79,7 @@ class RecognitionPLModule(OCRPLModule):
 
         Decodes predicted tokens to text and computes character-level metrics.
         """
-        with enable_flash_attention_kernel():
+        with enable_flash_attention_kernel(plm_enabled=self._plm_enabled()):
             pred = self.model(**batch)
 
         # Validate model outputs only in debug mode
@@ -164,15 +173,19 @@ class RecognitionPLModule(OCRPLModule):
         if batch_idx >= 2:
             return
 
-        use_wandb = False
-        try:
-            if hasattr(self.config, "train") and hasattr(self.config.train, "logger"):
-                if "wandb" in self.config.train.logger:
-                    use_wandb = self.config.train.logger.wandb.get("enabled", False)
-        except Exception:
-            pass
+        if not pred_texts or not gt_texts:
+            logger.warning("Skipping WandB logging: missing pred_texts or gt_texts.")
+            return
 
-        if use_wandb:
+        if len(pred_texts) != len(gt_texts):
+            logger.warning(
+                "Skipping WandB logging: pred_texts (%s) and gt_texts (%s) length mismatch.",
+                len(pred_texts),
+                len(gt_texts),
+            )
+            return
+
+        if self._wandb_enabled() and self._wandb_image_logging_enabled():
             from ocr.domains.recognition.callbacks.wandb_logging import log_recognition_images
 
             log_recognition_images(
@@ -185,3 +198,9 @@ class RecognitionPLModule(OCRPLModule):
                 filenames=batch.get("image_filename", None),
                 caption_prefix="val_recognition_samples",
             )
+
+    def _wandb_image_logging_enabled(self) -> bool:
+        wandb_cfg = self._get_wandb_cfg()
+        if is_config(wandb_cfg):
+            return wandb_cfg.get("log_recognition_images", False)
+        return False

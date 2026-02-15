@@ -9,18 +9,27 @@ defaults:
 batch_size: 128
 num_workers: 2  # Reduced from 4 - baudm/parseq proven value for Docker CUDA
 
+# Sequence Runtime Controls (discoverable + checkpoint-safe)
+# Keep tokenizer/model architectural max length unchanged for compatibility.
+sequence:
+  tokenizer_max_len: 25
+  trim_pad_to_batch_max: false
+  min_keep_tokens: 4
+  pad_token_id: 0
+  log_length_stats: false
+
 # Tokenizer
 tokenizer:
   _target_: ocr.domains.recognition.data.tokenizer.KoreanOCRTokenizer
   charset_path: ${global.paths.root_dir}/ocr/data/charset.json
-  max_len: 25
+  max_len: ${data.sequence.tokenizer_max_len}
 
 # Dataset Template
 _dataset_template: &dataset_template
   _target_: ocr.domains.recognition.data.lmdb_dataset.LMDBRecognitionDataset
   lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
   tokenizer: ${data.tokenizer}
-  max_len: ${data.tokenizer.max_len}
+  max_len: ${data.sequence.tokenizer_max_len}
   transform: ${data.transforms}
   config: null  # Suppress inherited 'config' key from base.yaml merge
 
@@ -41,3 +50,7 @@ predict_dataset:
 collate_fn:
   _target_: ocr.domains.recognition.data.collate.recognition_collate_fn
   _partial_: true
+  trim_pad_to_batch_max: ${data.sequence.trim_pad_to_batch_max}
+  min_keep_tokens: ${data.sequence.min_keep_tokens}
+  pad_token_id: ${data.sequence.pad_token_id}
+  log_length_stats: ${data.sequence.log_length_stats}

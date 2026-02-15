@@ -36,7 +36,7 @@
     },
     "remoteUser": "vscode",
     "remoteEnv": {
-        "CLAUDE_CONFIG_DIR": "${containerWorkspaceFolder}/AgentQMS/standards/tier3-agents/claude",
+        "CLAUDE_CONFIG_DIR": "${containerWorkspaceFolder}/AgentQMS/specs/tier3-agents",
         "DISABLE_TELEMETRY": "1",
         "DISABLE_ERROR_REPORTING": "1",
         "DISABLE_AUTOUPDATER": "1",

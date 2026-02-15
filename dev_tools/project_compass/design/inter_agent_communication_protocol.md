@@ -37,7 +37,7 @@ All messages **MUST** be wrapped in a standard JSON envelope. This allows the ro
 | **error**    | Failure signal.                     | No                    | `err.timeout`          |
 
 ## 3. Payload Schemas
-Payloads **MUST** validate against a Pydantic model registered in the `AgentQMS/standards/schemas/iacp/` registry.
+Payloads **MUST** validate against a Pydantic model registered in the `AgentQMS/specs/` IACP schema registry.
 
 ### Example: `cmd.lint_code`
 ```json

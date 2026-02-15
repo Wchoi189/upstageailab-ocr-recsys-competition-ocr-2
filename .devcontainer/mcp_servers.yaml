@@ -7,9 +7,9 @@ servers:
     description: Unified MCP server aggregating all tools/resources from individual servers
     note: Runtime aggregation - imports from AgentQMS, dev_tools/experiment_manager, dev_tools/agent_debug_toolkit
     resources:
-      - agentqms://standards/index
-      - agentqms://standards/artifact_types
-      - agentqms://standards/workflows
+      - agentqms://specs/index
+      - agentqms://specs/artifact_types
+      - agentqms://specs/workflows
       - agentqms://templates/list
       - agentqms://plugins/artifact_types
       - agentqms://config/settings
@@ -19,8 +19,8 @@ servers:
       - experiments://schemas/artifact
       - utilities://quick-reference
       - utilities://index
-      - standards://router
-      - standards://frontmatter
+      - specs://discovery
+      - specs://frontmatter
       - bundle://list
     tools:
       # AgentQMS tools
@@ -44,9 +44,9 @@ servers:
     description: Artifact workflow, validation, compliance
     note: Individual server - tools hardcoded in list_tools()
     resources:
-      - agentqms://standards/index
-      - agentqms://standards/artifact_types
-      - agentqms://standards/workflows
+      - agentqms://specs/index
+      - agentqms://specs/artifact_types
+      - agentqms://specs/workflows
       - agentqms://templates/list
       - agentqms://plugins/artifact_types
       - agentqms://config/settings

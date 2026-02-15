@@ -80,9 +80,9 @@ repos:
 
       - id: ads-compliance-check
         name: ADS v2.0 Compliance Check
-        entry: uv run python AgentQMS/tools/sync_registry.py --dry-run
+        entry: uv run python scripts/utils/generate_registry.py
         language: system
-        # Validate all tier directories with ADS v2.0 headers
+        # Regenerate registry when spec files change to keep it in sync
         files: ^AgentQMS/specs/.*\.spec\.md$
         pass_filenames: false
         always_run: false

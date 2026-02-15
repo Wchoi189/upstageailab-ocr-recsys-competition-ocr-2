@@ -6,7 +6,6 @@ priority: critical
 validates_with: "validation-rules.json"
 compliance_status: pass
 memory_footprint: 476_tokens
----
 
 # Experiment Documentation Standard (EDS) v1.0
 
@@ -18,11 +17,10 @@ created: "2025-12-17"
 supersedes: null
 compatible_with: ["ADS v1.0"]
 
-## Purpose
+# Purpose: Machine-readable YAML specification for experiment artifact documentation.
+#          Optimized for AI agent consumption. Zero user-oriented content permitted.
 
-Machine-readable YAML specification for experiment artifact documentation. Optimized for AI agent consumption. Zero user-oriented content permitted.
-
-## Document Types
+# Document Types
 
 experiment_manifest:
   purpose: "Experiment state tracking"
@@ -258,10 +256,10 @@ directory_structure:
     pattern: "experiments/{experiment_id}/"
     subdirectories:
       - ".metadata/"       # REQUIRED - EDS artifacts (validated)
-        - "assessments/"   # Failure analysis documents
-        - "reports/"       # Quantitative metrics documents
-        - "guides/"        # Command sequence documents
-        - "plans/"         # Experiment plan documents
+      - "assessments/"     # Failure analysis documents
+      - "reports/"         # Quantitative metrics documents
+      - "guides/"          # Command sequence documents
+      - "plans/"           # Experiment plan documents
       - "scripts/"         # Executable Python/Bash scripts
       - "outputs/"         # Intermediate work (debug, validation, comparisons)
       - "artifacts/"       # Final curated deliverables (published results)
@@ -427,7 +425,7 @@ migration_path:
 ## References
 
 related_standards:
-  - "ADS v2.0 (AgentQMS/standards/schemas/ads-v2.0-spec.yaml)"
+  - "ADS v2.0 (AgentQMS/specs/schemas/ads_schemas.spec.md)"
   - "AgentQMS Tier 1 SST (naming, placement, workflow rules)"
 
 enforcement_tools:
