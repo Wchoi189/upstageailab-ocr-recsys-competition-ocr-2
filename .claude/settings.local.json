@@ -4,7 +4,20 @@
       "Bash(uv run python:*)",
       "mcp__unified__get_context_bundle",
       "Bash( ls -lh *.md)",
-      "Read(//workspaces/dev_tools/project_compass/pulse_staging/artifacts/**)"
+      "Read(//workspaces/dev_tools/project_compass/pulse_staging/artifacts/**)",
+      "Bash(python etk.py:*)",
+      "Bash(grep:*)",
+      "Bash(python3:*)",
+      "Bash(test:*)",
+      "Bash(pre-commit run:*)",
+      "Bash(uv run pre-commit run:*)",
+      "Bash(for file in \"dev_tools/project_compass/pulse_staging/artifacts/MERGED_AUDIT_SCHEMA.yaml\" \"dev_tools/project_compass/history/docs-archive-2026-02-12/CORRECTION_REQUIREMENTS.yaml\" \"dev_tools/experiment_manager/.ai-instructions/schema/eds-v1.0-spec.yaml\")",
+      "Bash(do)",
+      "Bash(if python3 -c \"import yaml; yaml.safe_load\\(open\\(''$file''\\)\\)\")",
+      "Bash(then)",
+      "Bash(else)",
+      "Bash(fi)",
+      "Bash(done)"
     ]
   },
   "enableAllProjectMcpServers": false

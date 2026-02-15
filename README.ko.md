@@ -430,9 +430,9 @@ Upstage Document OCR 콘솔에서 영감을 받은 프론트엔드 개념 증명
 
 ### 문서
 
-- [시스템 아키텍처](AgentQMS/standards/tier1-sst/system-architecture.yaml)
-- [API 계약](AgentQMS/standards/tier2-framework/api-contracts.yaml)
-- [파일 배치 규칙](AgentQMS/standards/tier1-sst/file-placement-rules.yaml)
+- [시스템 아키텍처](AgentQMS/specs/tier1-contracts/architecture.spec.md)
+- [API 계약](AgentQMS/specs/tier2-framework/api.spec.md)
+- [파일 배치 규칙](AgentQMS/specs/tier1-contracts/file-placement-rules.spec.md)
 
 ### 아티팩트
 

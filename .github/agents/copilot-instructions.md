@@ -22,6 +22,7 @@ cd src [ONLY COMMANDS FOR ACTIVE TECHNOLOGIES][ONLY COMMANDS FOR ACTIVE TECHNOLO
 Python 3.11: Follow standard conventions
 
 ## Recent Changes
+- 001-wandb-config-logging: Added [if applicable, e.g., PostgreSQL, CoreData, files or N/A]
 
 - 001-mcp-tooling-refactor: Added Python 3.11 + `mcp`, `asyncio`, AgentQMS middleware, `project_compass`, `agent_debug_toolkit`, `starlette`/`uvicorn` (SSE transport)
 

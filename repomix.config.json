@@ -41,7 +41,6 @@
       "*.tar.gz",
       "*.jsonl",
       "AgentQMS/.mcp-telemetry.jsonl",
-      "AgentQMS/standards/tier3-agents/claude",
       "repomix_output*.md"
     ]
   }

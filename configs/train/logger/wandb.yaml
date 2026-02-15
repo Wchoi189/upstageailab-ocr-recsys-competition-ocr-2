@@ -4,22 +4,28 @@ _target_: lightning.pytorch.loggers.WandbLogger
 project: "receipt-text-recognition-ocr-project"
 log_model: "all"
 save_dir: "${global.paths.wandb}"
-# enabled: true
+enabled: false
+log_recognition_images: false
+standardize_name: true
+# CONFIG-WANDB-001: Disabled to prevent serialization errors with Hydra _target_ fields
+# See: AgentQMS/specs/tier2-framework/configuration.spec.md (Section 5)
+log_config: false
 
 
 # Configure W&B to save offline data under the canonical outputs root
 settings:
-  offline: false  # Don't run in offline mode
+  offline: false  # Online mode - streams to wandb.ai
   save_code: false  # Don't save code snapshots
   sync_dir: "${global.paths.wandb_sync_root}"  # Custom sync directory under outputs/
 
 
+# DIFFERENT FROM VALIDATION IMAGE LOGGING. USE FOR DEBUGGING ONLY.
 # Per batch image logging for error analysis
-# per_batch_image_logging:
-#   enabled: false
-#   recall_threshold: 0.4
-#   max_batches_per_epoch: 2
-#   max_images_per_batch: 4
-#   use_transformed_batch: true
-#   image_format: jpeg
-#   max_image_side: 640
+per_batch_image_logging:
+  enabled: false  # Enable validation image logging [EXCESSIVE IMAGE LOGGING]
+  recall_threshold: 0.4
+  max_batches_per_epoch: 2
+  max_images_per_batch: 8  # Increased from 4 for better analysis
+  use_transformed_batch: true
+  image_format: jpeg
+  max_image_side: 640

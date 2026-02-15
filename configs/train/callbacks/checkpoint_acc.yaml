@@ -10,7 +10,7 @@ training_phase: "training"
 add_timestamp: true
 
 # Checkpoint naming
-filename: "best-acc-{val/acc:.4f}"
+filename: "best"
 auto_insert_metric_name: false
 
 # Monitoring
