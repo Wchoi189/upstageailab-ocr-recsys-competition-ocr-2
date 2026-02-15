@@ -2,20 +2,20 @@
 """
 AgentQMS MCP Server
 
-Exposes artifact workflow tools and standards as MCP resources and tools.
+Exposes artifact workflow tools and specs as MCP resources and tools.
 
 Resources:
-- agentqms://standards/index - Standards hierarchy
-- agentqms://standards/artifact_types - Artifact types and locations
-- agentqms://standards/workflows - Workflow requirements
+- agentqms://specs/index - Specs registry index
+- agentqms://specs/artifact_types - Artifact types and locations
+- agentqms://specs/workflows - Workflow requirements
 - agentqms://templates/list - Available templates
 - agentqms://config/settings - QMS settings
 - agentqms://context/bundles - List of available context bundles
 - agentqms://context/bundle/{name} - Specific context bundle file list
 
 Tools:
-- create_artifact - Create new artifact following standards
-- validate_artifact - Validate artifact against standards
+- create_artifact - Create new artifact following specs
+- validate_artifact - Validate artifact against specs
 - list_artifact_templates - List available templates
 - check_compliance - Check overall compliance status
 - get_context_bundle - Get file paths for a specific task or bundle name
@@ -550,7 +550,7 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
 
         elif name == "get_standard":
             query = arguments["name"].lower()
-            # Phase 7.2: Search in specs/ directory (not standards/)
+            # Phase 7.2: Search in specs/ directory (standards removed)
             specs_dir = AGENTQMS_DIR / "specs"
             matches = []
 
@@ -562,29 +562,15 @@ async def call_tool(name: str, arguments: Any) -> list[TextContent]:
                         if query in path.stem.lower():
                             matches.append(path)
 
-            # Fallback: Also check legacy standards/ for backwards compatibility
-            standards_dir = AGENTQMS_DIR / "standards"
-            if standards_dir.exists():
-                for path in standards_dir.rglob("*"):
-                    if path.is_file() and path.suffix in [".yaml", ".md", ".json"]:
-                        if query in path.stem.lower() and path not in matches:
-                            matches.append(path)
-
             if not matches:
-                return [TextContent(type="text", text=json.dumps({"error": f"No standards/specs found matching '{query}'"}, indent=2))]
+                return [TextContent(type="text", text=json.dumps({"error": f"No specs found matching '{query}'"}, indent=2))]
 
             if len(matches) == 1:
                 content = matches[0].read_text(encoding="utf-8")
-                return [TextContent(type="text", text=f"Standard: {matches[0].name}\nLocation: {matches[0]}\n\n{content}")]
+                return [TextContent(type="text", text=f"Spec: {matches[0].name}\nLocation: {matches[0]}\n\n{content}")]
 
-            # Multiple matches - prioritize specs/ over standards/
-            specs_matches = [m for m in matches if "specs/" in str(m)]
-            if len(specs_matches) == 1:
-                content = specs_matches[0].read_text(encoding="utf-8")
-                return [TextContent(type="text", text=f"Standard: {specs_matches[0].name}\nLocation: {specs_matches[0]}\n\n{content}")]
-
-            # Multiple matches from different locations
-            names = [f"{str(p.relative_to(AGENTQMS_DIR))} ({'spec' if 'specs/' in str(p) else 'legacy'})" for p in matches]
+            # Multiple matches from specs
+            names = [str(p.relative_to(AGENTQMS_DIR)) for p in matches]
             return [
                 TextContent(
                     type="text", text=json.dumps({"message": "Multiple matches found. Please specify:", "matches": names}, indent=2)

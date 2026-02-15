@@ -94,9 +94,9 @@ This release represents a complete architectural overhaul of AgentQMS, aggressiv
 - `AgentQMS/tools/compliance/documentation_quality_monitor.py` - **Still exists**, replaced by `qms quality` subcommand
 
 **Deleted Archived Files:**
-- `AgentQMS/standards/.archive/INDEX.yaml` - Consolidated into registry.yaml
-- `AgentQMS/standards/.archive/standards-router.yaml` - Consolidated into registry.yaml
-- `AgentQMS/standards/.archive/` - Entire directory removed
+- Legacy standards archive INDEX - Consolidated into registry.yaml
+- Legacy standards router archive - Consolidated into registry.yaml
+- Legacy standards archive directory removed
 
 **Removed Makefile Commands:**
 - All legacy Makefile artifact commands removed from AGENTS.yaml
@@ -114,8 +114,8 @@ This release represents a complete architectural overhaul of AgentQMS, aggressiv
   - `qms generate-config` - Path-aware configuration generation
 
 **New Configuration System:**
-- `AgentQMS/standards/registry.yaml` (419 lines) - Unified standards registry
-  - Consolidates INDEX.yaml and standards-router.yaml
+- `AgentQMS/.agentqms/registry.yaml` (419 lines) - Unified specs registry
+  - Consolidates INDEX.yaml and router definitions
   - Supports both keyword and path_pattern triggers
   - Enables path-aware discovery (85% token reduction)
 

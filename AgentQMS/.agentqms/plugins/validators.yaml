@@ -1,7 +1,7 @@
 # Validator Extensions Plugin
 # Example plugin demonstrating validator extensibility
 #
-# Schema: AgentQMS/standards/schemas/plugin_validators.json
+# Schema: AgentQMS/specs/schemas/validation.spec.md
 
 ads_version: "1.0"
 description: |

@@ -190,7 +190,7 @@ critical_logic:
 
     - transform_pipeline: List[str] (names of albumentations transforms)
 
-    See: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+    See: AgentQMS/specs/tier2-framework/patterns.spec.md
 
     '
 - id: display-modes
@@ -312,7 +312,7 @@ critical_logic:
     Auto-Discovery: If ''checkpoint.pth'' is at ''/foo/bar/checkpoints/epoch=1.ckpt'',
     manager looks for ''.hydra/config.yaml'' or ''config.yaml'' in parent directories.
 
-    See: AgentQMS/standards/tier2-framework/hydra-v5-rules.yaml
+    See: AgentQMS/specs/tier2-framework/patterns.spec.md
 
     '
 - id: resource-management

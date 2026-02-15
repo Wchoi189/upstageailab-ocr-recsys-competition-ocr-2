@@ -1,5 +1,5 @@
 # Artifact Type Validation Rules
-# Source: SC-002 (AgentQMS/standards/tier1-sst/artifact-types.yaml)
+# Source: SC-002 (AgentQMS/specs/tier1-contracts/artifact-types.spec.md)
 #
 # This file is the SINGLE SOURCE OF TRUTH for artifact type validation.
 # The plugin validation system is PROHIBITED from hard-coding any of these rules.

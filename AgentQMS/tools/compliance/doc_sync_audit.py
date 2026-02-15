@@ -1,9 +1,29 @@
 import yaml
 import subprocess
+from pathlib import Path
 
-def run_compliance_audit(standards_path: str, target_dir: str):
-    with open(standards_path) as f:
-        standards = yaml.safe_load(f)
+def _extract_yaml_block(content: str) -> str | None:
+    start_token = "```yaml"
+    end_token = "```"
+    start_idx = content.find(start_token)
+    if start_idx == -1:
+        return None
+    start_idx += len(start_token)
+    end_idx = content.find(end_token, start_idx)
+    if end_idx == -1:
+        return None
+    return content[start_idx:end_idx].strip()
+
+
+def run_compliance_audit(spec_path: str, target_dir: str):
+    spec_file = Path(spec_path)
+    if spec_file.suffix == ".md":
+        raw_text = spec_file.read_text(encoding="utf-8") if spec_file.exists() else ""
+        yaml_block = _extract_yaml_block(raw_text)
+        standards = yaml.safe_load(yaml_block) if yaml_block else {}
+    else:
+        with open(spec_file, encoding="utf-8") as f:
+            standards = yaml.safe_load(f)
 
     for rule in standards.get('rules', []):
         print(f"Checking Rule: {rule['id']}...")
@@ -20,6 +40,6 @@ def run_compliance_audit(standards_path: str, target_dir: str):
 
 if __name__ == "__main__":
     run_compliance_audit(
-        "AgentQMS/standards/tier2-framework/configuration-standards.yaml",
+        "AgentQMS/specs/tier2-framework/configuration.spec.md",
         "ocr/"
     )

@@ -39,7 +39,7 @@ placement_rules:
     - LICENSE
     all_others: PROHIBITED at docs/ root
   knowledge_base:
-    location: AgentQMS/standards/
+    location: AgentQMS/specs/
     purpose: Long-form guidance (not for agents)
     structure:
     - agent/ - Agent instruction references

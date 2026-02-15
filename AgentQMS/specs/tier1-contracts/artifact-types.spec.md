@@ -99,6 +99,6 @@ naming_convention: YYYY-MM-DD_HHMM_{type}_{description}.md
 plugin_development:
   guide: AgentQMS/docs/guides/creating-artifact-type-plugins.md
   example: AgentQMS/.agentqms/plugins/artifact_types/audit.yaml
-  schema: AgentQMS/standards/schemas/plugin_artifact_type.json
+  schema: AgentQMS/.agentqms/schemas/artifact_type_validation.yaml
 
 ```

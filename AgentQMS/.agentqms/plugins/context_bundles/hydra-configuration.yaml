@@ -39,6 +39,9 @@ triggers:
   - yq
   - batch edit
   - bulk update
+  - serialization
+  - wandb
+  - log_config
   patterns:
   - hydra.*config
   - config.*hydra

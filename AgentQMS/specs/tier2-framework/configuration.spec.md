@@ -46,3 +46,13 @@ description: 'Configuration Specification for framework tier'
 4. Hydra Merging Pitfalls
 *   **Avoid**: `@package _group_` in domain configs (e.g., `domain/recognition.yaml`).
 *   **Reason**: It forces content into a literal `_group_` key instead of merging into the parent node, breaking domain detection logic.
+
+## 5. Serialization Constraints
+
+### WandB Configuration Logging (CONFIG-WANDB-001)
+**Rule**: Set `log_config: false` when Hydra config contains `_target_` fields
+**Rationale**: WandB dataclass converter cannot serialize callable references
+**Default**: Enforced in `/workspaces/configs/train/logger/wandb.yaml`
+**Visibility**: Essential config values captured via `generate_run_name()`
+**Override**: Possible via CLI (`train.logger.wandb.log_config=true`), may fail
+**Discovery**: Keywords: `wandb`, `log_config`, `serialization`, `_target_`

@@ -4,7 +4,7 @@ from pathlib import Path
 def validate_directory_placement(
     file_path: Path,
     artifacts_root: Path,
-    valid_artifact_types: dict[str, str],
+    valid_artifact_types: dict[str, dict[str, str] | str],
     artifact_type_details: dict[str, dict],
     error_templates: dict = None
 ) -> tuple[bool, str]:
@@ -32,7 +32,13 @@ def validate_directory_placement(
     matched_prefix = None
     for artifact_type, directory in valid_artifact_types.items():
         if after_timestamp.startswith(artifact_type):
-            expected_dir = directory.rstrip("/")
+            if isinstance(directory, dict):
+                if "directory" not in directory:
+                    raise ValueError(
+                        f"Artifact type '{artifact_type}' is missing required 'directory' key."
+                    )
+                directory = directory["directory"]
+            expected_dir = str(directory).rstrip("/")
             matched_prefix = artifact_type
             break
 

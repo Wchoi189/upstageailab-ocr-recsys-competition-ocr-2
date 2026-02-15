@@ -35,8 +35,8 @@ Concise entrypoint for registry + plugin + context tooling.
 ## Key Locations
 - Framework plugins: AgentQMS/.agentqms/plugins/
 - Project plugins: .agentqms/plugins/
-- Standards registry: AgentQMS/.agentqms/registry.yaml (auto-generated)
-- Standards specs: AgentQMS/specs/ (source of truth)
-- Architecture graph: AgentQMS/standards/architecture_map.dot
+- Specs registry: AgentQMS/.agentqms/registry.yaml (auto-generated)
+- Specs source: AgentQMS/specs/ (source of truth)
+- Architecture graph: AgentQMS/.agentqms/architecture_map.dot
 - Middleware logs: outputs/logs/middleware/
 - Middleware metrics: outputs/metrics/
