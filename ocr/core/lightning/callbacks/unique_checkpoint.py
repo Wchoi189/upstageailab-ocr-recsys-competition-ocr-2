@@ -119,12 +119,17 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         elif is_best_checkpoint:
             # Best checkpoint: best-<metric_name>-<value>.ckpt
             stem = "best"
-            if self.monitor and metrics:
+            if self.auto_insert_metric_name and self.monitor and metrics:
                 metric_val = metrics.get(self.monitor)
-                if isinstance(metric_val, torch.Tensor):
+                if metric_val is not None:
+                    # Handle both Tensor and float/int types
+                    if isinstance(metric_val, torch.Tensor):
+                        metric_val_float = metric_val.item()
+                    else:
+                        metric_val_float = float(metric_val)
                     # Clean up the metric name (e.g., "val/hmean" -> "hmean")
                     metric_name_clean = self.monitor.split("/")[-1]
-                    stem = f"best-{metric_name_clean}-{metric_val.item():.4f}"
+                    stem = f"best-{metric_name_clean}-{metric_val_float:.4f}"
         else:
             # Epoch checkpoint: epoch-<epoch>_step-<step>.ckpt
             stem = f"epoch-{epoch:02d}_step-{step:06d}"
@@ -132,9 +137,14 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             # Optionally add metric value for epoch checkpoints
             if self.auto_insert_metric_name and metrics and self.monitor:
                 metric_val = metrics.get(self.monitor)
-                if isinstance(metric_val, torch.Tensor):
+                if metric_val is not None:
+                    # Handle both Tensor and float/int types
+                    if isinstance(metric_val, torch.Tensor):
+                        metric_val_float = metric_val.item()
+                    else:
+                        metric_val_float = float(metric_val)
                     metric_name_clean = self.monitor.split("/")[-1]
-                    stem = f"{stem}_{metric_name_clean}-{metric_val.item():.4f}"
+                    stem = f"{stem}_{metric_name_clean}-{metric_val_float:.4f}"
 
         # 3. Add prefix if provided
         if prefix:

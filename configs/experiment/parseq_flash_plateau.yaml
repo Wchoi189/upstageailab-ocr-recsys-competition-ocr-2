@@ -26,14 +26,16 @@ train:
       training_phase: "training"
       add_timestamp: true
       filename: "best"
+      auto_insert_metric_name: true  # Include metric in filename
       monitor: "val/acc"
       mode: "max"
       save_top_k: 3
       save_last: true
-      every_n_train_steps: null
+      every_n_train_steps: 0  # Changed from null to 0 for Lightning compatibility
       every_n_epochs: 1
       train_time_interval: null
-      save_on_train_epoch_end: false
+      save_on_train_epoch_end: true  # FIX: Save at epoch end to avoid mid-epoch warning
+      verbose: true  # Log when checkpoints are saved
 
   # Ensure descriptive run names are generated
   logger:

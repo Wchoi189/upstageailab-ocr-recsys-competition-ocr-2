@@ -66,20 +66,24 @@ train:
     warmup_epochs: 2
     warmup_start_factor: 0.1
 
-  # Callbacks - Checkpointing DISABLED (enable_checkpointing: false)
-  # callbacks:
-  #   checkpoint:
-  #     _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
-  #     dirpath: ${global.paths.checkpoint_dir}
-  #     experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}}
-  #     training_phase: "training"
-  #     add_timestamp: true
-  #     filename: "best"
-  #     monitor: "val/acc"
-  #     mode: "max"
-  #     save_top_k: 3
-  #     save_last: true
-  #     every_n_epochs: 1
+  # Callbacks - Checkpointing configuration
+  callbacks:
+    checkpoint:
+      _target_: ocr.core.lightning.callbacks.unique_checkpoint.UniqueModelCheckpoint
+      dirpath: ${global.paths.checkpoint_dir}
+      experiment_tag: ${oc.env:EXPERIMENT_TAG,${exp_name}}
+      training_phase: "training"
+      add_timestamp: true
+      filename: "best"
+      auto_insert_metric_name: true    # Include metric in filename
+      monitor: "val/acc"
+      mode: "max"
+      save_top_k: 3
+      save_last: true
+      every_n_train_steps: 0          # Match Lightning checkpoint compatibility
+      every_n_epochs: 1
+      save_on_train_epoch_end: true   # FIX: Save at epoch end to avoid mid-epoch warning
+      verbose: true                    # Log checkpoint saves
 
 
   # Logger - Wandb configuration
