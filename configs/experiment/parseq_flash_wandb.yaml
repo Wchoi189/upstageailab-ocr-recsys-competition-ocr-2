@@ -14,7 +14,8 @@ train:
       _target_: lightning.pytorch.loggers.WandbLogger
       project: "receipt-text-recognition-ocr-project"
       log_model: false
-      save_dir: "${global.paths.wandb}"
+      save_dir: "${global.paths.wandb}"  # WandB auto-creates wandb/ subdirectory
+      standardize_name: true  # Generate descriptive run names from config
       settings:
         offline: false
         save_code: false

@@ -196,9 +196,18 @@ class OCRPLModule(pl.LightningModule):
             if is_config(scheduler_cfg):
                 scheduler_cfg = OmegaConf.to_container(scheduler_cfg, resolve=True)
 
+            # Extract Lightning-specific metadata (not passed to scheduler __init__)
+            lightning_metadata = {}
             warmup_epochs = 0
             warmup_start_factor = 0.1
+
             if isinstance(scheduler_cfg, dict):
+                # Extract Lightning scheduler config keys
+                lightning_metadata['monitor'] = scheduler_cfg.pop("monitor", None)
+                lightning_metadata['interval'] = scheduler_cfg.pop("interval", "epoch")
+                lightning_metadata['frequency'] = scheduler_cfg.pop("frequency", 1)
+
+                # Extract warmup config
                 warmup_epochs = int(scheduler_cfg.pop("warmup_epochs", 0))
                 warmup_start_factor = float(scheduler_cfg.pop("warmup_start_factor", warmup_start_factor))
 
@@ -218,10 +227,28 @@ class OCRPLModule(pl.LightningModule):
 
             self.lr_scheduler = scheduler
 
+            # Return Lightning format for ReduceLROnPlateau and other metric-based schedulers
+            if lightning_metadata.get('monitor'):
+                return {
+                    "optimizer": optimizer,
+                    "lr_scheduler": {
+                        "scheduler": scheduler,
+                        "monitor": lightning_metadata['monitor'],
+                        "interval": lightning_metadata['interval'],
+                        "frequency": lightning_metadata['frequency'],
+                    }
+                }
+
         return optimizer
 
     def on_train_epoch_end(self):
-        """Handle cache statistics logging and LR scheduler step."""
+        """Handle cache statistics logging.
+
+        Note: LR scheduler stepping is now handled by Lightning when using
+        ReduceLROnPlateau or other metric-based schedulers via the dict return
+        format in configure_optimizers. For simple schedulers, manual stepping
+        is still performed here.
+        """
         # Log cache statistics from datasets if caching is enabled
         if hasattr(self, "train_dataloader"):
             try:
@@ -231,11 +258,17 @@ class OCRPLModule(pl.LightningModule):
             except Exception:
                 pass  # Silently skip if dataset doesn't support cache statistics
 
+        # Only manually step scheduler if Lightning isn't managing it
+        # (i.e., when configure_optimizers returned just an optimizer, not a dict)
         if self.lr_scheduler is None:
             return
 
         if self.trainer is not None and self.trainer.sanity_checking:
             return
+
+        # Check if scheduler is ReduceLROnPlateau (Lightning manages these)
+        if isinstance(self.lr_scheduler, torch.optim.lr_scheduler.ReduceLROnPlateau):
+            return  # Lightning handles stepping via the dict config
 
         optimizer = getattr(self.lr_scheduler, "optimizer", None)
         if optimizer is None:

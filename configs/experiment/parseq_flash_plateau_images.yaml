@@ -1,0 +1,19 @@
+# @package _global_
+# v5.0 Experiment | PARSeq Flash with ReduceLROnPlateau + Image Logging
+# ============================================================================
+# Based on parseq_flash_plateau with WandB validation image logging enabled
+# ============================================================================
+
+defaults:
+  - parseq_flash_plateau
+  - _self_
+
+# Enable WandB validation image logging
+train:
+  callbacks:
+    checkpoint:
+      experiment_tag: ${oc.env:EXPERIMENT_TAG,parseq_flash_plateau_images}
+
+  logger:
+    wandb:
+      log_recognition_images: true  # Log 8 validation samples per epoch

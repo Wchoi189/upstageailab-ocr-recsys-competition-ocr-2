@@ -125,7 +125,7 @@ __OLD__/
 # *.json
 # *.sqlite
 # *.db
-
+.env copy
 # Deprecated and Debug
 DEPRECATED/
 !.ai-instructions/DEPRECATED/
@@ -224,3 +224,4 @@ packages/
 # __DEBUG__/
 __DEBUG__/training_failures/implementations/baudm_parseq/
 profiler_logs/
+brain/

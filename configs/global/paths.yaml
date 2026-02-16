@@ -39,8 +39,8 @@ global:
 
     # Logging
     logs: ${global.paths.output_dir}/lightning_logs
-    wandb: ${global.paths.output_dir}/wandb
-    wandb_sync_root: ${global.paths.output_dir}/wandb/sync
+    wandb: ${global.paths.output_dir}  # WandB creates wandb/ subdirectory automatically
+    wandb_sync_root: ${global.paths.wandb}/wandb/sync  # sync dir inside wandb folder
 
     # Transient
     cache: ${global.paths.output_dir}/cache

@@ -89,7 +89,7 @@ train:
       project: "receipt-text-recognition-ocr-project"
       name: ${run_name}
       log_model: false                 # Set to "all" for production runs
-      save_dir: "${global.paths.wandb}"
+      save_dir: "${global.paths.wandb}"  # WandB auto-creates wandb/ subdirectory
       standardize_name: true # user_parseq-timm-backbone-parseq-decoder-parseq-head-cross-entropy-bs32-lr1e-3_hmean0.000,
       log_config: false # ensures the W&B “Config” tab is populated
       settings:

@@ -11,14 +11,14 @@ add_timestamp: true
 
 # Checkpoint naming
 filename: "best"
-auto_insert_metric_name: false
+auto_insert_metric_name: true  # Include metric in filename (e.g., best-acc-0.8620.ckpt)
 
 # Monitoring
 monitor: "val/acc"
 mode: "max"
-save_top_k: 3
+save_top_k: 3  # Keep only top 3 checkpoints to save disk space
 save_last: true
-verbose: false
+verbose: true  # Log checkpoint save events
 
 every_n_epochs: 1
 save_on_train_epoch_end: false

@@ -3,7 +3,7 @@
 _target_: lightning.pytorch.loggers.WandbLogger
 project: "receipt-text-recognition-ocr-project"
 log_model: "all"
-save_dir: "${global.paths.wandb}"
+save_dir: "${global.paths.wandb}"  # WandB auto-creates wandb/ subdirectory
 enabled: false
 log_recognition_images: false
 standardize_name: true

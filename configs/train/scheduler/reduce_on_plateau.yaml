@@ -1,0 +1,35 @@
+# @package train.lr_scheduler
+# PyTorch ReduceLROnPlateau - Reduces LR when metric plateaus
+# ============================================================================
+# This scheduler monitors a validation metric and reduces learning rate
+# when the metric stops improving.
+#
+# Lightning-specific keys:
+#   - monitor: metric to track (e.g., "val/loss", "val/acc")
+#   - interval: "epoch" or "step" (when to check metric)
+#   - frequency: how often to check (default: 1)
+#
+# Scheduler parameters (passed to ReduceLROnPlateau.__init__):
+#   - mode: "min" (for loss) or "max" (for accuracy)
+#   - factor: multiply LR by this on plateau (default: 0.1)
+#   - patience: epochs to wait before reducing (default: 10)
+#   - threshold: minimum change to qualify as improvement
+#   - min_lr: minimum learning rate
+# ============================================================================
+
+_target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+
+# Lightning configuration (not passed to scheduler)
+monitor: "val/loss"  # Metric to monitor (change to val/acc for accuracy)
+interval: "epoch"    # Check metric every epoch
+frequency: 1         # Check every 1 epoch
+
+# Scheduler parameters
+mode: "min"          # "min" for loss, "max" for accuracy
+factor: 0.5          # Reduce LR by half when plateau detected
+patience: 3          # Wait 3 epochs before reducing LR
+threshold: 0.0001    # Minimum change to count as improvement
+threshold_mode: "rel"  # "rel" for relative change, "abs" for absolute
+cooldown: 0          # Epochs to wait after LR reduction before resuming
+min_lr: 1.0e-6       # Don't reduce LR below this value
+eps: 1.0e-8          # Minimum LR decay

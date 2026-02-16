@@ -8,8 +8,8 @@ a comprehensive markdown report documenting current bottlenecks.
 Usage:
     uv run python scripts/performance/generate_baseline_report.py \
         --run-id <wandb_run_id> \
-        --output docs/reports/baseline_2025-10-07.md \
-        --project OCR_Performance_Baseline
+        --output docs/reports/baseline_2026-02-16.md \
+        --project receipt-text-recognition-ocr-project
 """
 
 import argparse

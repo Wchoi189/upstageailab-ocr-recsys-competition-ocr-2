@@ -1,0 +1,22 @@
+# @package train.lr_scheduler
+# PyTorch ReduceLROnPlateau - For maximizing accuracy metrics
+# ============================================================================
+# Reduces learning rate when validation accuracy plateaus
+# ============================================================================
+
+_target_: torch.optim.lr_scheduler.ReduceLROnPlateau
+
+# Lightning configuration (not passed to scheduler)
+monitor: "val/acc"   # Monitor validation accuracy
+interval: "epoch"    # Check metric every epoch
+frequency: 1         # Check every 1 epoch
+
+# Scheduler parameters
+mode: "max"          # Maximize accuracy
+factor: 0.5          # Reduce LR by half when plateau detected
+patience: 3          # Wait 3 epochs before reducing LR
+threshold: 0.0001    # Minimum change to count as improvement
+threshold_mode: "rel"  # Relative change
+cooldown: 0          # No cooldown period
+min_lr: 1.0e-6       # Minimum learning rate
+eps: 1.0e-8          # Minimum LR decay
