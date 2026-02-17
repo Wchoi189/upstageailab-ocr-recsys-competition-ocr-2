@@ -1,177 +1,125 @@
-# Quickstart: WandB Configuration Logging (Safe Defaults)
+# Quickstart: Bounded High-Loss Image Audit on WandB
 
-**Feature**: `001-wandb-config-logging`
-**Audience**: Data Scientists, ML Engineers, AI Agents
-**Time**: 2 minutes read
+**Feature**: `001-wandb-config-logging` (follow-up extension)
+**Audience**: OCR training engineers
+**Time**: ~5 minutes setup
 
-## What Changed
+## Goal
 
-WandB configuration logging is now **disabled by default** to prevent serialization errors with Hydra configs containing `_target_` fields.
+Inspect unstable/jagged training behavior by logging only the worst validation samples per epoch (Top-K high-loss), without re-enabling excessive per-batch image logging.
 
-## For Users: Default Behavior
+## Prerequisites
 
-### Before (would crash)
-```bash
-uv run python scripts/runners/train.py experiment=parseq_flash_fast
-# ❌ Error: Cannot serialize DictConfig with _target_ fields
+1. Keep WandB config safety default:
+   - `train.logger.wandb.log_config=false`
+2. Ensure WandB logger is enabled for the run.
+3. Ensure a Korean-capable font is available for recognition image rendering:
+   - Preferred: `fonts-nanum` package
+   - Or set `OCR_WANDB_FONT_PATH` to a valid Hangul-capable `.ttf/.otf/.ttc`
+
+## Recommended Config
+
+In `configs/train/logger/wandb.yaml`:
+
+```yaml
+log_recognition_images: false
+recognition_patch_native_view: false  # regular val image logging: keep overlay captions
+high_loss_audit:
+  enabled: true
+  top_k: 16
+  log_every_n_epochs: 1
+  min_global_step: 0
+  max_image_side: 768
+  include_table: true
+  include_correct_but_high_loss: false
+   patch_native_view: true  # high-loss patches: keep native image without extra canvas
 ```
 
-### After (works out of box)
-```bash
-uv run python scripts/runners/train.py experiment=parseq_flash_fast
-# ✅ Training starts successfully
-# ✅ Run name encodes key config: model, batch size, LR, optimizer
-# ✅ Metrics logged normally to WandB dashboard
-```
-
-**No action required** - training works with default config.
-
-## Configuration Visibility
-
-### What You Still See in WandB
-
-1. **Run Name** (auto-generated):
-   ```
-   parseq-b32-lr0.001-adam-mjsynth
-   ```
-   Includes: model architecture, batch size, learning rate, optimizer, dataset
-
-2. **Metrics Tab**: All scalar metrics (loss, accuracy, etc.)
-
-3. **Files Tab**: Full config saved in checkpoint metadata
-
-4. **Model Tab**: Saved checkpoints (when `log_model: "all"`)
-
-### What's Different
-
-- **Config Tab**: Now empty (was causing crashes)
-- **Workaround**: View config in Files tab or local `outputs/` directory
-
-## Re-enabling Full Config Logging (Not Recommended)
-
-If you need the Config tab populated **and** understand the risks:
+Optional strict rendering override:
 
 ```bash
-# Override at runtime
-uv run python scripts/runners/train.py \
-  experiment=my_experiment \
-  train.logger.wandb.log_config=true
-
-# ⚠️ May crash if config has _target_ fields
-# ⚠️ Error: "Cannot serialize callable reference"
+export OCR_WANDB_FONT_PATH=/usr/share/fonts/truetype/nanum/NanumGothic.ttf
 ```
 
-## For AI Agents: Discovery Pattern
+## Run
 
-### When to Check This Constraint
-
-**Triggers**:
-- Modifying WandB logger configuration
-- Adding new experiment tracking integrations
-- Debugging serialization errors in training initialization
-
-**Discovery**:
-```bash
-# Semantic search: "WandB config logging constraints"
-# Returns: /workspaces/AgentQMS/specs/tier2-framework/configuration.spec.md
-
-# Code search: "log_config" in configs/train/logger/wandb.yaml
-# Shows: log_config: false  # Default safe value
-
-# Context bundle: HYDRA-CONFIGURATION
-# References: Serialization constraints section
-```
-
-### Decision Tree for Config Logging
-
-```
-Does config contain _target_ fields?
-├─ YES → Set log_config: false (safe)
-│   └─ Use run naming for visibility
-├─ NO → log_config: true is safe
-    └─ Full config tab will populate
-```
-
-### Code Location Reference
-
-| File | Line | Purpose |
-|------|------|---------|
-| `/workspaces/configs/train/logger/wandb.yaml` | 10 | Default `log_config: false` |
-| `/workspaces/ocr/pipelines/orchestrator.py` | 183 | Extract `log_config` value |
-| `/workspaces/ocr/pipelines/orchestrator.py` | 190-192 | Build config dict if enabled |
-| `/workspaces/ocr/core/utils/wandb_base.py` | 110+ | `generate_run_name()` function |
-
-## Troubleshooting
-
-### Symptom: "Cannot serialize config" error
-
-**Cause**: `log_config: true` with Hydra config containing `_target_` fields
-
-**Fix**:
-```bash
-# Method 1: Use default config (log_config: false)
-uv run python scripts/runners/train.py experiment=my_experiment
-
-# Method 2: Explicitly disable
-uv run python scripts/runners/train.py \
-  experiment=my_experiment \
-  train.logger.wandb.log_config=false
-```
-
-### Symptom: Can't find config values in WandB
-
-**Solution**: Check these locations:
-1. Run name (filter by model, batch size, etc.)
-2. Files tab → `hydra_config.yaml`
-3. Local `outputs/<run_name>/hydra/` directory
-4. Checkpoint file metadata
-
-### Symptom: Need config search in WandB dashboard
-
-**Workaround**:
-1. Use run tags: `train.logger.wandb.tags=['batch32','lr0.001']`
-2. Use run notes: `train.logger.wandb.notes='Config: batch=32, lr=0.001'`
-3. Filter by run name patterns
-
-## Examples
-
-### Standard Training (Default Behavior)
 ```bash
 cd /workspaces
 uv run python scripts/runners/train.py \
-  experiment=parseq_flash_fast \
-  trainer.max_epochs=10
-
-# ✅ Config logging disabled automatically
-# ✅ Run name: parseq-b32-lr0.001-adam-mjsynth
+  experiment=parseq_flash_plateau \
+  trainer.max_epochs=40 \
+  train.logger.wandb.enabled=true
 ```
 
-### Override Config Logging (Advanced)
-```bash
-# Only if you removed all _target_ fields from config
-uv run python scripts/runners/train.py \
-  experiment=simple_experiment \
-  train.logger.wandb.log_config=true \
-  +train.logger.wandb.config.custom_note='Manual config tracking'
-```
+## What to Check in WandB
 
-### Check Current Setting
-```bash
-# View current logger config
-cat /workspaces/configs/train/logger/wandb.yaml | grep log_config
-# Output: log_config: false
-```
+1. `audit/high_loss_samples` image panel
+   - Confirm images are truly difficult (stamps, handwriting, low contrast) vs mislabeled.
+2. `audit/high_loss_table`
+   - Sort by `loss`, inspect `gt_text`, `pred_text`, filename, batch index.
+3. Compare with scalar curves
+   - Correlate high-loss sample content with spike windows in `train/loss` and plateaus in `val/acc`.
 
-## Related Documentation
+## Triage Policy
 
-- **Feature Spec**: `/workspaces/specs/001-wandb-config-logging/spec.md`
-- **Research**: `/workspaces/specs/001-wandb-config-logging/research.md`
-- **Config Spec**: `/workspaces/AgentQMS/specs/tier2-framework/configuration.spec.md`
-- **Context Bundle**: `/workspaces/AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml`
+Use this decision table after collecting 2-3 epochs of audits:
 
-## Questions?
+- Clean image + wrong GT → label fix/prune candidate.
+- Hard but valid image → keep; consider targeted augmentation or weighting.
+- OOV/symbol mismatch → charset/tokenizer update.
+- Preprocessing artifact (crop/rotation) → pipeline fix.
 
-- **Why disabled?**: Hydra's `_target_` fields (callable references) can't be JSON-serialized by WandB
-- **Lost visibility?**: No - run names encode key values, metrics/files still logged
-- **Can I re-enable?**: Yes, but may crash if config has `_target_` anywhere in tree
-- **Better solution?**: Future: selective scalar whitelisting (P3 priority)
+## Guardrails
+
+- Keep `top_k` small (`8-16`) to avoid upload bloat.
+- Do not enable legacy/full per-batch image logging for long runs.
+- Log once per epoch; avoid per-step `wandb.log` loops.
+- Keep `max_image_side` bounded (recommended `<=768`) to avoid oversized media panels.
+
+## Troubleshooting (Fail-Fast)
+
+If strict mode fails, use the exact error text to resolve quickly:
+
+1. **Missing WandB run for recognition images**
+   - Error: `Recognition image logging is enabled, but no active WandB experiment is attached to the trainer.`
+   - Fix: Attach a real `WandbLogger` run or disable `log_recognition_images`.
+
+2. **No Korean-capable font**
+   - Error: `No Korean-capable font found for WandB recognition image logging.`
+   - Fix: Install `fonts-nanum` (or equivalent) and/or set `OCR_WANDB_FONT_PATH`.
+
+3. **Invalid image size config**
+   - Error: `train.logger.wandb.recognition_image_max_side must be an integer or null.`
+   - Fix: Set integer value (e.g., `640`, `768`) or `null`.
+
+4. **Invalid high-loss audit config values**
+   - Errors include:
+     - `train.logger.wandb.high_loss_audit.top_k must be > 0.`
+     - `train.logger.wandb.high_loss_audit.log_every_n_epochs must be >= 1.`
+     - `train.logger.wandb.high_loss_audit.min_global_step must be >= 0.`
+   - Fix: Correct invalid values in `wandb.yaml` or Hydra overrides.
+
+## Fast Compare Recipe (for your two-run scenario)
+
+Use same checkpoint/start epoch and run A/B with only one variable changed:
+
+1. Baseline LR (e.g., `2e-4`) + high-loss audit on
+2. Lower LR (e.g., `5e-5`) + same audit settings
+
+Then compare not only final `val/acc`, but overlap of top-K failure sample types.
+
+## Expected Outcome
+
+You should be able to answer:
+
+1. Are spikes driven by a small repeated subset of hard/noisy samples?
+2. Are failures mostly data quality, charset coverage, or preprocessing defects?
+3. Whether next change should be data curation, augmentation, tokenizer updates, or scheduler tuning.
+
+## Validation Evidence
+
+- Online strict validation run (media upload verified):
+   - https://wandb.ai/ocr-team2/receipt-text-recognition-ocr-project/runs/v4y4yrbt
+- Local integration smoke with high-loss audit enabled (fast-dev):
+   - Command: `uv run python scripts/runners/train.py experiment=parseq_flash_plateau_images +trainer.fast_dev_run=true train.logger.wandb.settings.offline=true train.logger.wandb.log_recognition_images=false +train.logger.wandb.high_loss_audit.enabled=true`
+   - Result: Completed successfully; `val/acc` and `val/cer` emitted; high-loss audit path executed without runtime exceptions.

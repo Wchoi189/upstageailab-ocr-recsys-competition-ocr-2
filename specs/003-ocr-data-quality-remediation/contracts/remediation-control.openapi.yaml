@@ -1,0 +1,180 @@
+openapi: 3.0.3
+info:
+  title: OCR Data-Quality Remediation Control API
+  version: 0.1.0
+  description: |
+    Planning contract for controlled OCR data-quality remediation workflow.
+    This contract defines interfaces for filtering previews, review queue actions,
+    synthetic mix planning, and phase gate checks.
+
+servers:
+  - url: https://planning.local
+
+paths:
+  /v1/remediation/filter/preview:
+    post:
+      summary: Preview filtering outcomes without mutating source data
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FilterPreviewRequest'
+      responses:
+        '200':
+          description: Preview generated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FilterPreviewResponse'
+
+  /v1/remediation/review-queue:
+    post:
+      summary: Enqueue uncertain samples for human-in-the-loop review
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ReviewQueueRequest'
+      responses:
+        '201':
+          description: Queue item created
+
+  /v1/remediation/synthetic-plan:
+    post:
+      summary: Define synthetic augmentation mix plan
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SyntheticPlanRequest'
+      responses:
+        '200':
+          description: Synthetic strategy accepted
+
+  /v1/remediation/gates/{phaseId}/evaluate:
+    post:
+      summary: Evaluate phase gate readiness from submitted metrics
+      parameters:
+        - name: phaseId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GateEvaluationRequest'
+      responses:
+        '200':
+          description: Gate evaluation result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GateEvaluationResponse'
+
+components:
+  schemas:
+    DefectClass:
+      type: string
+      enum:
+        - script_mismatch
+        - missing_char_due_to_clipping
+        - hallucinated_gt_chars
+        - unreadable_sample
+        - truncation_misalignment
+
+    FilterPreviewRequest:
+      type: object
+      required: [manifestPath, rules]
+      properties:
+        manifestPath:
+          type: string
+        rules:
+          type: object
+          properties:
+            dropScriptMismatch: { type: boolean }
+            dropClippingRisk: { type: boolean }
+            dropIllegible: { type: boolean }
+            maxLossPercentile: { type: number, minimum: 0, maximum: 100 }
+
+    FilterPreviewResponse:
+      type: object
+      required: [total, keep, drop, review]
+      properties:
+        total: { type: integer }
+        keep: { type: integer }
+        drop: { type: integer }
+        review: { type: integer }
+        byDefectClass:
+          type: object
+          additionalProperties:
+            type: integer
+
+    ReviewQueueRequest:
+      type: object
+      required: [experimentId, samples]
+      properties:
+        experimentId:
+          type: string
+        samples:
+          type: array
+          items:
+            type: object
+            required: [sampleId, defectClasses, severity]
+            properties:
+              sampleId: { type: string }
+              defectClasses:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DefectClass'
+              severity:
+                type: string
+                enum: [low, medium, high, critical]
+
+    SyntheticPlanRequest:
+      type: object
+      required: [experimentId, syntheticRatio, tools]
+      properties:
+        experimentId: { type: string }
+        syntheticRatio:
+          type: number
+          minimum: 0
+          maximum: 1
+        tools:
+          type: array
+          items:
+            type: string
+            enum: [SynthDoG, TRDG, Custom]
+        targetCoverage:
+          type: array
+          items:
+            type: string
+
+    GateEvaluationRequest:
+      type: object
+      required: [metrics]
+      properties:
+        metrics:
+          type: object
+          required: [clean_holdout_cer, clean_holdout_wer, truncation_rate, annotation_consistency]
+          properties:
+            clean_holdout_cer: { type: number }
+            clean_holdout_wer: { type: number }
+            truncation_rate: { type: number }
+            annotation_consistency: { type: number }
+
+    GateEvaluationResponse:
+      type: object
+      required: [phaseId, passed, failedMetrics]
+      properties:
+        phaseId: { type: string }
+        passed: { type: boolean }
+        failedMetrics:
+          type: array
+          items: { type: string }
+        notes: { type: string }

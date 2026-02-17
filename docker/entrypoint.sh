@@ -132,6 +132,10 @@ if [ -d "$PARENT_DIR" ]; then
         # Install as vscode user, skip global link (bin is already in PATH)
         # We use explicit install/build steps and swallow errors solely for preventing crash
         sudo -u vscode bash -c "cd '$PARENT_DIR/repomix' && pnpm install && pnpm run build" || echo "  ❌ Failed to install repomix (non-fatal)"
+    else
+        # Fallback: install repomix globally if local source not available
+        echo "  📦 Installing repomix globally..."
+        sudo -u vscode bash -c 'export PATH="/home/vscode/.local/share/pnpm:$PATH" && pnpm add -g repomix' || echo "  ❌ Failed to install repomix globally (non-fatal)"
     fi
 
     # Spec-kit (requires Python 3.11+, use project venv)

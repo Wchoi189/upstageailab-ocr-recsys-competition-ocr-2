@@ -1,0 +1,17 @@
+{
+  "experiment_id": "20260217_150713_ocr_data_quality_remediation",
+  "name": "ocr_data_quality_remediation",
+  "status": "active",
+  "created_at": "2026-02-17T15:07:13.932467",
+  "updated_at": "2026-02-17T15:07:56.349898",
+  "intention": "Plan-first OCR label-noise remediation and controlled testing",
+  "tasks": [],
+  "insights": [],
+  "artifacts": [
+    {
+      "path": "experiments/20260217_150713_ocr_data_quality_remediation/.metadata/reports/20260218_0000_report_ocr-high-loss-data-quality-remediation-plan.md",
+      "type": "report",
+      "timestamp": "2026-02-17T15:07:56.349888"
+    }
+  ]
+}

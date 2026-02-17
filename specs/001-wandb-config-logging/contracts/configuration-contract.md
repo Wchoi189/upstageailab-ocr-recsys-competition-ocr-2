@@ -1,170 +1,115 @@
-# Contracts: WandB Configuration Logging Constraints
+# Contracts: WandB Config Safety + Recognition High-Loss Audit
 
-**Feature**: `001-wandb-config-logging`
-**Date**: February 15, 2026
+**Feature**: `001-wandb-config-logging` (follow-up extension)
+**Date**: 2026-02-17
 
-## No API Contracts Required
+## Scope
 
-This feature establishes **configuration constraints** and **documentation standards**, not external interfaces or APIs.
+This contract governs:
+
+1. Existing WandB config serialization safety (`log_config: false` by default)
+2. New recognition high-loss audit behavior with bounded image/table logging
 
 ## Configuration Contract
 
-### Input: YAML Configuration
+### Input YAML
+
 **File**: `/workspaces/configs/train/logger/wandb.yaml`
 
-**Schema**:
 ```yaml
 type: object
 properties:
   _target_:
     type: string
-    const: "lightning.pytorch.loggers.WandbLogger"
+    const: lightning.pytorch.loggers.WandbLogger
   log_config:
     type: boolean
-    default: false                    # CONSTRAINT: Must be false for configs with _target_
-    description: "Enable full config logging to WandB (may fail with Hydra DictConfig)"
-  project:
-    type: string
-  log_model:
-    type: string
-    enum: ["all", "best", false]
-  save_dir:
-    type: string
-  enabled:
-    type: boolean
+    default: false
   log_recognition_images:
     type: boolean
-  standardize_name:
-    type: boolean
+    default: false
+  high_loss_audit:
+    type: object
+    properties:
+      enabled: {type: boolean, default: false}
+      top_k: {type: integer, minimum: 1, default: 16}
+      log_every_n_epochs: {type: integer, minimum: 1, default: 1}
+      min_global_step: {type: integer, minimum: 0, default: 0}
+      max_image_side: {type: integer, minimum: 128, default: 768}
+      include_table: {type: boolean, default: true}
+      include_correct_but_high_loss: {type: boolean, default: false}
 ```
 
-**Validation**: Schema enforced by Hydra at runtime (dynamic typing)
+### Output Behavior
 
-### Output: Logger Behavior
+#### A) Config serialization safety
 
-**When `log_config: false` (default)**:
-- WandB logger instantiates successfully
-- Config tab in WandB dashboard is empty
-- Run name encodes key configuration values
-- Training proceeds without serialization errors
+- `log_config: false` (default) must always initialize WandB logger safely.
+- `log_config: true` is user override and may fail for Hydra configs with `_target_` fields.
 
-**When `log_config: true` (user override)**:
-- If config has `_target_` fields → Serialization error at trainer init
-- If config is pure scalars → Config tab populates successfully
-- Error message directs user to constraint documentation
+#### B) High-loss audit behavior
 
-## Documentation Contract
+When `high_loss_audit.enabled: true`:
 
-### Specification Update
-**File**: `/workspaces/AgentQMS/specs/tier2-framework/configuration.spec.md`
+1. System computes/consumes per-sample validation loss.
+2. System retains only epoch top-K worst samples.
+3. System logs once per configured epoch cadence:
+   - image panel key: `audit/high_loss_samples`
+   - optional table key: `audit/high_loss_table`
 
-**Required Section**:
-```markdown
-## 5. Serialization Constraints
+When disabled, no additional image/table logging occurs from this feature.
 
-### WandB Configuration Logging
-*Constraint ID*: `CONFIG-WANDB-001`
-*Rule*: Disable `log_config` when Hydra config contains `_target_` fields
-*Rationale*: WandB serialization cannot handle callable references
-*Default*: `log_config: false`
-*Override Risk*: May crash if DictConfig has `_target_` anywhere in tree
-```
+## Module Contract
 
-**Discovery Contract**: AI agents searching for "configuration constraints", "WandB", or "serialization" must find this section within 2 semantic search queries.
+### Producer contract (`RecognitionPLModule.validation_step`)
 
-### Context Bundle Update
-**File**: `/workspaces/AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml`
+Must expose enough data for high-loss audit:
 
-**Required Addition**:
-```yaml
-triggers:
-  keywords:
-    # ... existing keywords ...
-    - serialization        # NEW
-    - wandb               # NEW
-    - log_config          # NEW
-```
+- `per_sample_loss` (`Tensor[B]` or equivalent list)
+- decoded prediction text
+- ground truth text
+- images
+- optional filename metadata
 
-**Discovery Contract**: Context bundling system returns HYDRA-CONFIGURATION bundle when task mentions WandB config issues.
+### Consumer contract (epoch-end logger)
 
-### Code Comment Contract
-**File**: `/workspaces/ocr/pipelines/orchestrator.py`
+Must:
 
-**Location**: Before line 179 (`if "WandbLogger" in str(target):`)
+- ignore NaN/inf losses
+- apply top-K cap strictly
+- avoid per-batch `wandb.log` flood
+- gracefully no-op if WandB logger/run unavailable
 
-**Required Content**:
-```python
-# WandB Configuration Logging Constraint (CONFIG-WANDB-001):
-# - log_config=false by default to prevent serialization errors
-# - Hydra DictConfig with _target_ fields cannot be JSON-serialized
-# - Essential config visibility maintained via generate_run_name()
-# - See: /workspaces/specs/001-wandb-config-logging/spec.md
-```
+## Non-Functional Contract
 
-## Behavioral Contract
+- Upload volume bounded by `top_k`
+- Runtime overhead bounded by small in-memory top-K tracking
+- No new external dependencies
+- No changes to detection callback behavior
 
-### Backward Compatibility
+## Backward Compatibility
 
-**Guaranteed**:
-- Existing experiments with `log_config: false` continue to work (no change)
-- Experiments with explicit `log_config: true` override still work (user accepts risk)
-- Logger instantiation API unchanged (no breaking changes to orchestrator interface)
+Guaranteed:
 
-**Not Guaranteed**:
-- Config tab population in WandB dashboard (by design, constraint enforcement)
-- Serialization success if user overrides to `log_config: true` with incompatible config
+- Existing runs with `log_recognition_images` unchanged
+- Existing config logging constraint unchanged
+- Existing run naming and metric logging unchanged
 
-### Error Handling Contract
+Not guaranteed:
 
-**Current State** (no change in this feature):
-- Serialization failures raise exception from WandB library
-- Exception propagates to user as trainer initialization error
-- Error message is technical (JSON serialization traceback)
+- Historical comparability of image panels if panel key names are changed by users
 
-**Future Enhancement** (out of scope):
-- Catch serialization errors
-- Show user-friendly message: "Config logging failed. See [constraint docs]. Continuing with log_config=false."
-- Auto-fallback to safe default
+## Validation Contract
 
-## Non-Functional Contracts
+Pass criteria for this extension:
 
-### Performance
-- **No runtime overhead**: Single boolean check in orchestrator (line 183)
-- **No additional I/O**: YAML file size unchanged (~30 lines)
-- **No memory impact**: Config dictionary not built when `log_config: false`
+1. With `high_loss_audit.enabled=false`, no new image/table keys appear.
+2. With `enabled=true`, image count per epoch never exceeds `top_k`.
+3. Logged samples correspond to highest per-sample losses in that epoch.
+4. Training remains stable (no serialization crashes or callback exceptions).
 
-### Maintainability
-- **No new dependencies**: Uses existing Hydra/OmegaConf/WandB libraries
-- **No abstraction layers**: Direct config value modification
-- **Minimal touch points**: 4 files modified (1 config, 1 spec, 1 context bundle, 1 code comment)
+## Explicit Rejections
 
-## Testing Contract
-
-### Validation Criteria
-
-**SC-001**: Training launches without manual `log_config` overrides
-- **Test**: Run default experiment → No serialization error
-- **Pass**: Exit code 0, WandB logger initialized
-
-**SC-002**: AI agents discover constraint within 2 searches
-- **Test**: Semantic search "WandB config logging" → Find spec section
-- **Pass**: Specification retrieved in first or second query
-
-**SC-003**: Zero serialization failures post-implementation
-- **Test**: Run 5 different experiments with default config
-- **Pass**: All 5 complete training initialization without errors
-
-**SC-004**: Essential config visible in WandB dashboard
-- **Test**: Run experiment → Check run name encoding
-- **Pass**: Run name contains model, batch_size, lr, optimizer
-
-## Change Tracking
-
-| File | Change Type | Contract Impact |
-|------|-------------|-----------------|
-| `configs/train/logger/wandb.yaml` | Default value | User-facing (safe behavior) |
-| `AgentQMS/specs/tier2-framework/configuration.spec.md` | Documentation | AI discoverability |
-| `AgentQMS/.agentqms/plugins/context_bundles/hydra-configuration.yaml` | Metadata | AI discoverability |
-| `ocr/pipelines/orchestrator.py` | Code comment | Developer/AI guidance |
-
-**No interfaces changed, no breaking changes.**
+- No unrestricted per-batch image logging (known excessive volume).
+- No auto-pruning/deleting samples from dataset during training.
+- No forced unification of detection and recognition image logging in this iteration.

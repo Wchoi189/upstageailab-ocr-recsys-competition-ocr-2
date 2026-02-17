@@ -1,0 +1,17 @@
+{
+  "experiment_id": "20260217_154031_ocr_dq_exec_phase1_filtered",
+  "name": "ocr_dq_exec_phase1_filtered",
+  "status": "active",
+  "created_at": "2026-02-17T15:40:31.661087",
+  "updated_at": "2026-02-17T17:25:12.125946",
+  "intention": "Phase 1 execution for OCR data-quality remediation using filtered manifests and gate metrics",
+  "tasks": [],
+  "insights": [],
+  "artifacts": [
+    {
+      "path": "experiments/20260217_150713_ocr_data_quality_remediation/.metadata/reports/20260218_0000_report_ocr-high-loss-data-quality-remediation-plan.md",
+      "type": "report",
+      "timestamp": "2026-02-17T17:25:12.125934"
+    }
+  ]
+}

@@ -6,6 +6,7 @@ from typing import Any
 
 import torch
 from lightning.pytorch.callbacks import ModelCheckpoint
+from lightning.pytorch.utilities.rank_zero import rank_zero_info
 
 from ocr.core.utils.config_utils import ensure_dict, is_config
 
@@ -39,6 +40,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         experiment_tag: str | None = None,
         training_phase: str = "training",
         config: dict | Any | None = None,
+        min_score_threshold: float | None = None,
         **kwargs,
     ):
         """
@@ -49,6 +51,7 @@ class UniqueModelCheckpoint(ModelCheckpoint):
             experiment_tag: Optional experiment identifier (deprecated in favor of index-based structure)
             training_phase: Stage of the experiment (e.g., "training", "validation", "finetuning")
             config: Resolved training configuration to save alongside checkpoints
+            min_score_threshold: Minimum metric score to save checkpoint (prevents saving failed training runs)
             **kwargs: Additional arguments passed to ModelCheckpoint
         """
         super().__init__(*args, **kwargs)
@@ -56,10 +59,46 @@ class UniqueModelCheckpoint(ModelCheckpoint):
         self.experiment_tag = experiment_tag
         self.training_phase = training_phase
         self._resolved_config = config
+        self.min_score_threshold = min_score_threshold
 
         # Generate unique identifier once at initialization (for legacy compatibility)
         if self.add_timestamp:
             self.timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+    def check_monitor_top_k(self, trainer: "pl.Trainer", current: torch.Tensor | None) -> bool:
+        """
+        Check if current metric score qualifies for top-k saving.
+
+        Extended to skip checkpoints with invalid or too-low scores.
+
+        Args:
+            trainer: The trainer instance
+            current: Current metric value
+
+        Returns:
+            True if checkpoint should be saved, False otherwise
+        """
+        # Skip if no current value
+        if current is None:
+            return False
+
+        # Skip NaN or Inf values
+        if isinstance(current, torch.Tensor):
+            if torch.isnan(current) or torch.isinf(current):
+                return False
+            current_val = current.item()
+        else:
+            current_val = float(current)
+
+        # Skip checkpoints with score below threshold (prevents saving failed training runs)
+        if self.min_score_threshold is not None and current_val < self.min_score_threshold:
+            rank_zero_info(
+                f"Skipping checkpoint: score {current_val:.4f} below threshold {self.min_score_threshold}"
+            )
+            return False
+
+        # Call parent implementation for top-k check
+        return super().check_monitor_top_k(trainer, current)
 
     def format_checkpoint_name(
         self,

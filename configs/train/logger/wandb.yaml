@@ -4,8 +4,19 @@ _target_: lightning.pytorch.loggers.WandbLogger
 project: "receipt-text-recognition-ocr-project"
 log_model: "all"
 save_dir: "${global.paths.wandb}"  # WandB auto-creates wandb/ subdirectory
-enabled: false
+enabled: true
 log_recognition_images: false
+recognition_image_max_side: 384  # Cap recognition sample image size uploaded to WandB
+recognition_patch_native_view: false  # If true, log raw patch images without GT/Pr canvas overlay
+high_loss_audit:
+  enabled: true
+  top_k: 16
+  log_every_n_epochs: 1
+  min_global_step: 5000
+  max_image_side: 384
+  include_table: true
+  include_correct_but_high_loss: false
+  patch_native_view: true  # Keep tiny patch images at native size (no extra text canvas)
 standardize_name: true
 # CONFIG-WANDB-001: Disabled to prevent serialization errors with Hydra _target_ fields
 # See: AgentQMS/specs/tier2-framework/configuration.spec.md (Section 5)

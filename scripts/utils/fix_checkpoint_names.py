@@ -83,9 +83,17 @@ def rename_checkpoints(checkpoint_dir: Path, monitor: str = "val/acc", apply: bo
             print(f"⏭️  Skipping (already has metric): {ckpt_path.name}")
             continue
 
-        # Skip 'last' checkpoint
+        # Skip 'last' checkpoint unless --rename-last is specified
         if ckpt_path.name.startswith("last"):
-            print(f"⏭️  Skipping (last checkpoint): {ckpt_path.name}")
+            if args.rename_last:
+                pass  # Will be processed below
+            else:
+                print(f"⏭️  Skipping (last checkpoint, use --rename-last to include): {ckpt_path.name}")
+                continue
+
+        # Skip backup checkpoints
+        if "backup" in ckpt_path.name:
+            print(f"⏭️  Skipping (backup): {ckpt_path.name}")
             continue
 
         to_rename.append(ckpt_path)
@@ -110,24 +118,37 @@ def rename_checkpoints(checkpoint_dir: Path, monitor: str = "val/acc", apply: bo
             failed_count += 1
             continue
 
-        # Build new filename
-        # Extract version if present (best-v1.ckpt -> v1)
-        stem = ckpt_path.stem
-        version_suffix = ""
-        if "-v" in stem:
-            parts = stem.rsplit("-v", 1)
-            if len(parts) == 2 and parts[1].isdigit():
-                version_suffix = f"_v{parts[1]}"
+        # Skip checkpoints with 0.0 score (likely from failed training runs)
+        if metric_val == 0.0:
+            print(f"  ⚠️  Invalid score 0.0 (failed training) - skipping")
+            failed_count += 1
+            continue
 
-        new_name = f"best-{metric_name}-{metric_val:.4f}{version_suffix}.ckpt"
+        # Build new filename
+        is_last_ckpt = ckpt_path.name.startswith("last")
+        
+        if is_last_ckpt:
+            # last.ckpt -> last-acc-0.8656.ckpt
+            new_name = f"last-{metric_name}-{metric_val:.4f}.ckpt"
+        else:
+            # best.ckpt, best-v1.ckpt -> best-acc-0.8656.ckpt, best-acc-0.8656_v1.ckpt
+            stem = ckpt_path.stem
+            version_suffix = ""
+            if "-v" in stem:
+                parts = stem.rsplit("-v", 1)
+                if len(parts) == 2 and parts[1].isdigit():
+                    version_suffix = f"_v{parts[1]}"
+
+            new_name = f"best-{metric_name}-{metric_val:.4f}{version_suffix}.ckpt"
+        
         new_path = ckpt_path.parent / new_name
 
         print(f"  Metric value: {metric_val:.4f}")
         print(f"  New name: {new_name}")
 
         if apply:
-            # Create backup first
-            backup_name = f"{ckpt_path.stem}_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}.ckpt"
+            # Create backup with score in filename for meaningful identification
+            backup_name = f"{ckpt_path.stem}_backup_{metric_name}-{metric_val:.4f}_{datetime.now().strftime('%Y%m%d_%H%M%S')}.ckpt"
             backup_path = ckpt_path.parent / backup_name
 
             try:
@@ -166,7 +187,7 @@ def rename_checkpoints(checkpoint_dir: Path, monitor: str = "val/acc", apply: bo
         print(f"✓ Renamed: {renamed_count}")
         print(f"✗ Failed: {failed_count}")
         if renamed_count > 0:
-            print(f"\n✓ Backups created with '_backup_TIMESTAMP' suffix")
+            print(f"\n✓ Backups created with '<original>_backup_<metric>_<timestamp>' suffix")
     else:
         print(f"Would rename: {renamed_count}")
         print(f"Would skip: {failed_count}")
@@ -195,6 +216,11 @@ def main():
         "--apply",
         action="store_true",
         help="Apply changes (default is dry-run only)",
+    )
+    parser.add_argument(
+        "--rename-last",
+        action="store_true",
+        help="Also rename last.ckpt to include score (default: skip last checkpoints)",
     )
 
     args = parser.parse_args()

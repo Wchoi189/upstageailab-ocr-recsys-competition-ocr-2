@@ -156,6 +156,30 @@ class OCRPLModule(pl.LightningModule):
             return wandb_cfg.get("enabled", False)
         return False
 
+    def _get_wandb_experiment(self):
+        """Return active WandB experiment from trainer loggers when available."""
+        trainer = getattr(self, "trainer", None)
+        if trainer is None:
+            return None
+
+        loggers = getattr(trainer, "loggers", None)
+        if not loggers:
+            return None
+
+        for logger_instance in loggers:
+            if logger_instance is None:
+                continue
+
+            logger_type = type(logger_instance).__name__
+            logger_module = getattr(type(logger_instance), "__module__", "").lower()
+            if logger_type == "WandbLogger" or "wandb" in logger_module:
+                try:
+                    return logger_instance.experiment
+                except Exception:
+                    return None
+
+        return None
+
     def _wandb_image_logging_enabled(self) -> bool:
         """Override in subclasses to enable image logging."""
         return False

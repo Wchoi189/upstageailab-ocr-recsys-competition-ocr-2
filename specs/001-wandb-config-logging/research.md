@@ -1,182 +1,132 @@
-# Research: WandB Configuration Logging Constraints
+# Research: High-Loss Image Audit Strategy for Recognition Training
 
-**Feature**: `001-wandb-config-logging`
-**Date**: February 15, 2026
+**Feature**: `001-wandb-config-logging` (follow-up extension)
+**Date**: 2026-02-17
 
 ## Executive Summary
 
-Investigation confirms that WandB's configuration logging (`log_config: true`) fails when Hydra's `instantiate()` passes DictConfig objects to WandB. The issue occurs because:
-1. Hydra's `instantiate()` preserves DictConfig types when passing parameters
-2. WandB's serialization attempts to convert nested DictConfigs (like `settings`) to dataclasses
-3. The dataclass conversion fails with "TypeError: first argument must be callable or None"
+Two continuation runs from the same checkpoint/epoch range (19-39) show persistent high train-loss volatility while producing materially different validation outcomes:
 
-**Solution**: Manually instantiate WandbLogger with plain Python types instead of using `hydra.utils.instantiate()`
+- Previous run (`lr=2e-4`): final/best `val/acc ~= 0.862`, `val_loss ~= 0.243`
+- Current run (`lr=5e-5`): final/best `val/acc ~= 0.828`, `val_loss ~= 0.319`
 
-## Research Findings
+The volatility signature remains in both runs, so LR reduction alone did not remove instability. The immediate highest-value next step is selective high-loss sample auditing (not blanket image logging) to identify whether spikes are dominated by label noise, OOV symbols, or genuinely hard samples (stamps/handwriting).
 
-### 1. Root Cause Analysis
+## Run Comparison (Objective 1)
 
-**Decision**: Disable `log_config` by default in WandB logger configuration
+### Observation
+
+1. **Generalization gap exists in both runs**
+    - Previous: train/loss `0.041` vs val_loss `0.243`
+    - Current: train/loss `0.036` vs val_loss `0.319`
+2. **Lower LR underperformed in this horizon**
+    - Same final epoch/global step, but `val/acc` dropped by ~3.45 points (`0.862 -> 0.8275`)
+3. **Spiky train/loss persists across LR settings**
+    - Indicates data/batch heterogeneity or difficult-token dynamics, not just optimizer step size.
+
+### Decision
+
+**Decision**: Treat spikes as data-visibility problem first; instrument difficult samples before further LR/scheduler changes.
+
 **Rationale**:
-- Hydra DictConfig objects with `_target_` fields (e.g., `_target_: torch.optim.Adam`) are not JSON-serializable
-- WandB's dataclass converter traverses the entire config tree attempting to serialize all nested objects
-- This traversal triggers serialization errors when encountering callable references
-- Alternative: parseq_flash_fast.yaml already demonstrates this workaround (line 94: `log_config: false`)
+- Existing random validation image logging is informative but not targeted to failure regions.
+- Per-batch full logging previously caused excessive upload volume and was disabled.
+- High-loss-focused sampling gives direct signal with bounded overhead.
 
 **Alternatives considered**:
-- Custom serialization hooks: Rejected (violates simplification principle, requires ongoing maintenance)
-- Selective whitelisting: Deferred to P3 priority (enhancement, not MVP requirement)
-- Config flattening before logging: Rejected (loses hierarchical structure, requires complex transformation logic)
+- Lower LR further: rejected as first move (already reduced with worse quality).
+- Re-enable unrestricted per-batch logging: rejected (known volume issue).
+- Full offline dataset audit only: useful, but slower feedback loop than in-run validation auditing.
 
-### 2. Configuration Value Visibility Strategy
+## Existing System Review (Objective 3)
 
-**Decision**: Rely on existing run naming convention (`generate_run_name()`) for essential config visibility
+### What already exists
+
+1. **Safe WandB logger construction** in orchestrator
+    - `ocr/pipelines/orchestrator.py` manually instantiates `WandbLogger` and strips unsafe fields.
+2. **Recognition image logging path** (module-based)
+    - `ocr/domains/recognition/module.py::_log_validation_images`
+    - gated by `train.logger.wandb.log_recognition_images`
+    - currently logs sampled images from first two validation batches.
+3. **Detection-specific problematic batch logger/callback**
+    - `ocr/core/lightning/loggers/wandb_loggers.py` and `ocr/domains/detection/callbacks/wandb_image_logging.py`
+    - tuned for box metrics (`recall`, `precision`, `hmean`), not recognition token loss.
+4. **Disabled high-volume toggle already present**
+    - `configs/train/logger/wandb.yaml -> per_batch_image_logging.enabled: false`
+
+### Design implication
+
+**Decision**: Implement high-loss auditing in recognition path, do not repurpose detection callback directly.
+
 **Rationale**:
-- `/workspaces/ocr/core/utils/wandb_base.py` already extracts key configuration values for run names
-- Run names encode: model architecture, batch size, learning rate, optimizer, dataset
-- WandB dashboard search/filter functionality works with run names
-- Per-metric scalar logging continues to track all hyperparameters independently
+- Recognition has different failure semantics (sequence/token loss, CER/edit mismatch).
+- Existing recognition path already has decoded predictions and GT text.
+- Minimal-risk integration point: `validation_step` output + `on_validation_epoch_end` summarization.
 
 **Alternatives considered**:
-- Log flattened scalar subset: Enhancement-level (P3), not required for MVP
-- Store full config as artifact: Already happens through checkpoint files and output directories
+- Unify detection/recognition logger now: rejected (larger refactor, mixed domain assumptions).
+- Implement as standalone callback immediately: possible, but module-level integration is lower churn and can be callbackized later.
 
-### 3. AI Discoverability Mechanisms
+## Recommended Feasible Approach (Objective 2)
 
-**Decision**: Document constraint in three locations for multi-modal discovery
-**Rationale**:
-- Tier 2 spec update: Agents querying configuration patterns discover the constraint
-- Context bundle reference: HYDRA-CONFIGURATION bundle already has semantic triggers for config-related queries
-- Inline code comments: Agents reviewing logger instantiation code see constraint explanation
+### Decision
 
-**Alternatives considered**:
-- Separate constraint specification file: Rejected (adds indirection, violates "tiny specs" principle)
-- Runtime validation with warnings: Rejected (adds code complexity, users may ignore warnings)
+Add a **bounded Top-K High-Loss Audit** for recognition validation.
 
-### 4. Testing Strategy
+### Proposed behavior
 
-**Decision**: No new test infrastructure required
-**Rationale**:
-- SC-001 (no manual overrides): Validated by default config value (`log_config: false`)
-- SC-002 (AI discovery): Validated by semantic search against updated specs
-- SC-003 (zero serialization failures): Validated by existing training smoke tests
-- SC-004 (config visibility): Validated by inspecting WandB dashboard after training run
+1. Compute `per_sample_loss` in recognition validation step (length-normalized sequence CE/NLL).
+2. Keep only epoch Top-K worst samples (e.g., `K=16`) in memory using bounded structure.
+3. Log once per epoch to WandB as:
+    - Image panel (`wandb.Image`) with caption: `loss`, `gt`, `pred`, `batch_idx`, optional filename
+    - Table (`wandb.Table`) with structured columns for sortable diagnosis
+4. Keep existing random sample logger optional and separate.
 
-**Alternatives considered**:
-- Integration test for serialization failure: Rejected (testing for negative case is redundant)
-- Unit test for config value: Rejected (YAML file validation is trivial, not worth test overhead)
+### Minimal config extension
 
-### 5. Technology-Specific Patterns
+Add under `train.logger.wandb`:
 
-**Hydra Configuration Best Practices**:
-- Use `_recursive_: false` when passing DictConfig to external libraries (already implemented in orchestrator.py line 180)
-- Convert to primitives before serialization: `OmegaConf.to_yaml()` or `OmegaConf.to_container()`
-- Document any external integration that receives DictConfig objects
+```yaml
+high_loss_audit:
+  enabled: false
+  top_k: 16
+  min_global_step: 0
+  log_every_n_epochs: 1
+  max_image_side: 768
+  include_table: true
+  include_correct_but_high_loss: false
+```
 
-**WandB Logger Integration**:
-- `log_model: "all"` safely logs model checkpoints (binary files, not config objects)
-- Scalar metrics logged via `self.log()` are unaffected by config serialization issues
-- Custom `config` dict (line 191) should only contain primitive types or YAML strings
+### Why this is feasible now
 
-## Implementation Implications
+- Reuses existing WandB + recognition image rendering path.
+- Avoids flood by strict top-k and epoch-only upload.
+- Directly answers the spike question with visual evidence.
 
-### Minimal Change Principle
-- **1 file change**: `/workspaces/configs/train/logger/wandb.yaml` (line 10: `true` → `false`)
-- **1 spec update**: `/workspaces/AgentQMS/specs/tier2-framework/configuration.spec.md` (add constraint section)
-- **1 context bundle update**: Reference constraint in HYDRA-CONFIGURATION triggers
-- **1 code comment block**: Add explanation in `/workspaces/ocr/pipelines/orchestrator.py` (lines 179-192)
+## Data-Centric Action Policy
 
-### No New Abstractions Required
-- Existing `generate_run_name()` function provides config visibility
-- Existing orchestrator logic handles WandB logger instantiation
-- No utility modules, wrapper classes, or serialization helpers needed
+After 2-3 audited runs, bucket high-loss samples:
 
-### Backward Compatibility
-- Users can override default: `train.logger.wandb.log_config=true` (will fail with error message)
-- Error message should reference constraint documentation for self-service resolution
-- No breaking changes to logger interface or callback behavior
+1. **Label issue** (clean image, incorrect GT): fix/prune labels.
+2. **Hard but valid** (handwriting/stamp/noise): keep, optionally reweight.
+3. **Charset/OOV** (missing symbol coverage): update tokenizer charset or normalize labels.
+4. **Pipeline issue** (crop/rotation artifact): fix preprocessing/metadata.
 
-## Decision Criteria Documentation
+Do not delete all high-loss samples blindly; first classify by cause.
 
-**When to disable full configuration logging**:
-1. Configuration contains `_target_` fields referencing callables (classes, functions)
-2. Configuration includes complex nested objects (datasets, transforms, models)
-3. Configuration uses Hydra/OmegaConf DictConfig types (not plain dicts)
+## Open Questions Resolved (Phase 0)
 
-**When selective logging is safe**:
-1. Logging only scalar values (integers, floats, strings, booleans)
-2. Logging flat dictionaries with primitive types
-3. Logging pre-converted config via `OmegaConf.to_yaml()` (string serialization)
-
-**Verification checklist** (for AI agents):
-- [ ] Does config have `_target_` anywhere in tree?
-- [ ] Is config a DictConfig/ListConfig from OmegaConf?
-- [ ] Will external library attempt to serialize it?
-- If YES to all three → disable full config logging
+- Q: Is batch-level image logging needed?
+  **A**: Yes, but only selective (Top-K worst), not full batch logging.
+- Q: Are spikes substantial?
+  **A**: Yes, amplitude is substantial and persistent across LR settings.
+- Q: Should filtering be attempted?
+  **A**: Yes, but only after high-loss sample triage (label noise vs hard-valid split).
 
 ## References
-- [Hydra Documentation: Structured Configs](https://hydra.cc/docs/tutorials/structured_config/intro/)
-- [OmegaConf Documentation: Type Safety](https://omegaconf.readthedocs.io/)
-- [WandB Documentation: Config Tracking](https://docs.wandb.ai/guides/track/config)
-- [Lightning Documentation: Logger Integration](https://lightning.ai/docs/pytorch/stable/extensions/logging.html)
 
-## Implementation Fix (2026-02-15)
-
-### Root Cause Discovered
-
-The original analysis was partially correct but missed the deeper issue:
-
-**Problem**: Hydra's `instantiate()` doesn't fully convert DictConfig to plain types
-- Even with `OmegaConf.to_container(resolve=True)`, Hydra reassigns the config
-- The `settings` field (containing `sync_dir: ${global.paths.wandb_sync_root}`) remained a DictConfig
-- WandB's serialization called `asdict()` on DictConfig, triggering dataclass conversion errors
-
-**Solution Implemented**: Manual WandB Logger instantiation
-```python
-# In orchestrator.py lines 186-217
-if "WandbLogger" in str(target):
-    # Convert to plain dict with resolved interpolations
-    logger_cfg_dict = OmegaConf.to_container(logger_cfg, resolve=True)
-
-    if log_config:
-        logger_cfg_dict["config"] = {
-            "hydra_config_yaml": OmegaConf.to_yaml(self.cfg, resolve=True)
-        }
-
-    # Remove fields that cause serialization issues
-    for internal_key in ["settings", "standardize_name", "log_config", ...]:
-        logger_cfg_dict.pop(internal_key, None)
-
-    # Manual instantiation with explicit parameters
-    wandb_logger = WandbLogger(
-        project=logger_cfg_dict.get("project"),
-        name=logger_cfg_dict.get("name"),
-        save_dir=logger_cfg_dict.get("save_dir"),
-        log_model=logger_cfg_dict.get("log_model", False),
-        config=logger_cfg_dict.get("config"),
-    )
-```
-
-### Why This Works
-
-1. **Explicit type control**: We control exactly what types get passed to WandB
-2. **No DictConfig leakage**: All parameters are plain Python types (str, bool, dict)
-3. **Settings field removed**: Avoids the dataclass serialization issue entirely
-4. **Config as plain dict**: The `config` parameter is a plain dict with a YAML string
-
-### Testing Confirmation
-
-```bash
-uv run python scripts/runners/train.py \
-  experiment=parseq_flash_fast \
-  train.logger.wandb.log_config=true \
-  checkpoint_path=null \
-  trainer.max_epochs=1 \
-  trainer.val_check_interval=0.5
-
-# Result: ✅ WandB initializes successfully
-# Config tab populated with hydra_config_yaml
-```
-
-## Open Questions
-None. Fix validated and working in production.
+- `/workspaces/docs/reports/baseline_2026-02-16.md`
+- `/workspaces/docs/reports/baseline_epoch_19_39_lr5e-5_2026-02-17.md`
+- `/workspaces/ocr/domains/recognition/module.py`
+- `/workspaces/ocr/domains/recognition/callbacks/wandb_logging.py`
+- `/workspaces/configs/train/logger/wandb.yaml`

@@ -23,6 +23,7 @@ from pathlib import Path
 from omegaconf import OmegaConf, DictConfig
 from hydra import initialize_config_dir, compose
 from hydra.core.global_hydra import GlobalHydra
+from AgentQMS.tools.utils.paths import get_project_root
 
 
 def parse_cli_overrides(command: str) -> tuple[str, list[str]]:
@@ -84,6 +85,21 @@ def check_key_exists(cfg: DictConfig, key: str) -> bool:
         return False
 
 
+def get_nested_value(cfg: DictConfig, key: str):
+    """Get nested config value by dotted key, or None if missing."""
+    keys = key.split('.')
+    current = cfg
+
+    try:
+        for k in keys:
+            if k not in current:
+                return None
+            current = current[k]
+        return current
+    except (KeyError, AttributeError, TypeError):
+        return None
+
+
 def fix_overrides(command: str, verbose: bool = False) -> str:
     """Analyze command and add + prefix where needed."""
 
@@ -96,7 +112,7 @@ def fix_overrides(command: str, verbose: bool = False) -> str:
 
     # Extract the config path from the training script
     # We know it uses PROJECT_ROOT / "configs" and config_name="main"
-    config_path = Path(__file__).parent.parent.parent / "configs"
+    config_path = get_project_root() / "configs"
 
     # Initialize Hydra to load the base config
     GlobalHydra.instance().clear()
@@ -136,11 +152,21 @@ def fix_overrides(command: str, verbose: bool = False) -> str:
             for prefix, key, value in other_overrides:
                 needs_plus = not check_key_exists(cfg, key)
 
-                # Warn about incomplete logger configs
+                # Warn about incomplete logger configs (only when logger root is truly incomplete)
                 if 'train.logger.' in key and needs_plus:
-                    # Check if we're trying to create a partial logger config
-                    logger_name = key.split('.')[2] if len(key.split('.')) > 2 else None
-                    if logger_name:
+                    key_parts = key.split('.')
+                    logger_name = key_parts[2] if len(key_parts) > 2 else None
+                    logger_root_key = f"train.logger.{logger_name}" if logger_name else None
+                    logger_root = get_nested_value(cfg, logger_root_key) if logger_root_key else None
+                    logger_has_target = False
+
+                    if logger_root is not None:
+                        try:
+                            logger_has_target = '_target_' in logger_root
+                        except TypeError:
+                            logger_has_target = False
+
+                    if logger_name and not logger_has_target:
                         warnings.append(
                             f"⚠️  WARNING: Creating incomplete logger config for '{logger_name}'!\n"
                             f"   Key: {key}\n"
@@ -161,7 +187,7 @@ def fix_overrides(command: str, verbose: bool = False) -> str:
                     print(f"  - {key} {status}, prefix={prefix!r}")
 
                 fixed_overrides.append(f"{prefix}{key}={value}")
-            
+
             # Print warnings after processing all overrides
             if warnings:
                 print("\n" + "!"*80)
