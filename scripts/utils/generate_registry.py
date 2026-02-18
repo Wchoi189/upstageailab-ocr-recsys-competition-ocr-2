@@ -136,6 +136,16 @@ def generate_registry(specs_dir: Path, output_path: Path) -> None:
     # Scan specs
     specs = scan_specs(specs_dir)
 
+    # Check if specs content changed vs existing registry (ignore generated_at)
+    if output_path.exists():
+        try:
+            existing = yaml.safe_load(output_path.read_text(encoding="utf-8")) or {}
+            if existing.get("specs") == specs:
+                print(f"✓ Registry up to date with {len(specs)} specs (no changes)")
+                return
+        except yaml.YAMLError:
+            pass  # Corrupted file — regenerate
+
     # Build registry structure
     registry = {
         "ads_version": "2.0",

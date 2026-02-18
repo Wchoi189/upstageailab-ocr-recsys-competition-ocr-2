@@ -1,8 +1,8 @@
 ads_version: '2.0'
 type: unified_registry
 name: AgentQMS Registry v2.0 P7
-generated_at: '2026-02-14T19:25:01.637873+00:00'
-total_specs: 23
+generated_at: '2026-02-18T19:12:49.726776+00:00'
+total_specs: 26
 specs:
   AGENT_IDENTITIES:
     id: AGENT_IDENTITIES
@@ -61,6 +61,12 @@ specs:
     id: ADS_SCHEMAS
     file_path: AgentQMS/specs/schemas/ads_schemas.spec.md
     description: '**Tier**: Schemas'
+  FW-026:
+    id: FW-026
+    file_path: AgentQMS/specs/tier2-framework/performance-audit-prompts.spec.md
+    tier: 2
+    description: Example prompts for triggering performance audits with AI agents
+    priority: low
   FW-CORE-INTERFACES:
     id: FW-CORE-INTERFACES
     file_path: AgentQMS/specs/tier2-framework/core-interfaces.spec.md
@@ -108,7 +114,8 @@ specs:
     id: AG-006
     file_path: AgentQMS/specs/tier2-framework/agent-infra.spec.md
     tier: 3
-    description: Ollama model catalog with specifications for Qwen model family
+    description: Ollama model catalog for Qwen and hybrid OCR agent families. Covers local inference,
+      DashScope API, and hybrid pipeline configurations.
     dependencies:
     - SC-007
     - FW-034
@@ -145,3 +152,15 @@ specs:
     tier: 2
     description: Constraints Specification for framework tier
     priority: high
+  FW-025:
+    id: FW-025
+    file_path: AgentQMS/specs/tier2-framework/performance-checklist.spec.md
+    tier: 2
+    description: Quick reference checklist for common initialization performance anti-patterns
+    priority: high
+  FW-024:
+    id: FW-024
+    file_path: AgentQMS/specs/tier2-framework/performance-audit.spec.md
+    tier: 2
+    description: Performance audit methodology for detecting initialization bottlenecks and resource duplication
+    priority: medium

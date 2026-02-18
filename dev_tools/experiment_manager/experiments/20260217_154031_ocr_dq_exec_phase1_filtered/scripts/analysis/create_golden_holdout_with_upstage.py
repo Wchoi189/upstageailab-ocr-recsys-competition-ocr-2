@@ -7,7 +7,11 @@ using the tiered validation pipeline (golden_set_validator.py).
 Pipeline:
   1. Load candidate pool from JSONL manifest
   2. Stratified sampling across text length buckets and script classes
-  3. Route samples through TieredGoldenValidator (Tier 1–3 + manual fallback)
+  3. Route samples through TieredGoldenValidator (Tier 1–4 + manual fallback):
+       Tier 1:   model confidence triage
+       Tier 2:   PaddleOCR local inference
+       Tier 2.5: Ollama VLM (olmocr2:7b-q8) — local, zero API cost
+       Tier 3:   Upstage OCR API (dual-key pool: UPSTAGE_API_KEY 3rps + UPSTAGE_API_KEY2 1rps = 4rps)
   4. Emit clean holdout (auto_accept) and review queue (manual_review)
   5. Validate Gate 4.5: Upstage call ratio must be within 20%–40% of pool
 
@@ -24,7 +28,13 @@ Usage:
     [--upstage_budget_ratio 0.40] \\
     [--tier1_threshold 0.95] \\
     [--seed 42] \\
+    [--no_paddle] \\
+    [--no_ollama] \\
     [--dry_run]
+
+Environment variables:
+  UPSTAGE_API_KEY  — Tier-3 primary key (3 rps)
+  UPSTAGE_API_KEY2 — Tier-3 secondary key (1 rps); optional, extends pool to 4 rps
 """
 from __future__ import annotations
 
@@ -48,8 +58,9 @@ from scripts.data.quality.golden_set_validator import (
     CandidateSample,
     TieredGoldenValidator,
 )
+from scripts.data.quality.ollama_validator import OllamaOCRClient
 from scripts.data.quality.paddle_validator import PaddleOCRValidator
-from scripts.data.quality.upstage_validator import UpstageOCRClient
+from scripts.data.quality.upstage_validator import UpstageKeyPool
 
 _GATE_45_MIN_RATIO = 0.20
 _GATE_45_MAX_RATIO = 0.40
@@ -192,6 +203,11 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Skip Tier-2 PaddleOCR (use when not installed)",
     )
+    p.add_argument(
+        "--no_ollama",
+        action="store_true",
+        help="Skip Tier-2.5 Ollama VLM (use when Ollama is unavailable or VRAM is constrained)",
+    )
     p.add_argument("--dry_run", action="store_true", help="Skip validation API calls; emit empty outputs")
     p.add_argument("--output_root", default=".", help="Repository root for output paths")
     return p.parse_args()
@@ -242,15 +258,32 @@ def main() -> None:
         print(f"[T036] DRY_RUN artifacts written to {clean_out}, {review_out}, {summary_out}")
         return
 
-    # Build validator
+    # --- Tier-2: PaddleOCR ---
     paddle = None if args.no_paddle else PaddleOCRValidator()
+
+    # --- Tier-2.5: Ollama VLM ---
+    ollama: OllamaOCRClient | None = None
+    if not args.no_ollama:
+        client = OllamaOCRClient()
+        if client.is_available():
+            ollama = client
+            print("[T036] Tier-2.5: Ollama olmocr2:7b-q8 available — enabled")
+        else:
+            print("[T036] WARN: Ollama unavailable — Tier-2.5 disabled")
+
+    # --- Tier-3: Upstage dual-key pool ---
     upstage_key = os.environ.get("UPSTAGE_API_KEY")
-    upstage = UpstageOCRClient(api_key=upstage_key) if upstage_key else None
-    if upstage is None:
+    upstage: UpstageKeyPool | None = None
+    if upstage_key:
+        upstage = UpstageKeyPool()  # reads UPSTAGE_API_KEY + UPSTAGE_API_KEY2 from env
+        key_count = upstage.key_count
+        print(f"[T036] Tier-3: UpstageKeyPool — {key_count} key(s) active")
+    else:
         print("[T036] WARN: UPSTAGE_API_KEY not set — Tier-3 disabled; all ambiguous → manual_review")
 
     validator = TieredGoldenValidator(
         paddle_validator=paddle,
+        ollama_client=ollama,
         upstage_client=upstage,
         tier1_accept_threshold=args.tier1_threshold,
         upstage_budget_ratio=args.upstage_budget_ratio,
