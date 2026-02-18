@@ -157,6 +157,9 @@ AgentQMS/.agentqms/state/plugins.yaml
 AgentQMS/.mcp-telemetry.jsonl
 AgentQMS/vlm/cache/
 !outputs/README_outputs_structure.md
+!dev_tools/experiment_manager/experiments/*/outputs
+!scripts/data/quality/
+!configs/data/quality/
 .archive/
 .env copy
 __DEBUG__/training_failures_2026-02-07/implementations/baudm_parseq

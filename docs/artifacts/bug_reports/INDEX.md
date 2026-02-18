@@ -2,13 +2,14 @@
 
 Active bug reports and development roadmaps.
 
-**Last Updated**: 2026-02-18 02:37:10
-**Total Artifacts**: 6
+**Last Updated**: 2026-02-18 16:22:50
+**Total Artifacts**: 7
 
-## Active (2)
+## Active (3)
 
 - [Flash Attention causes CUDA initialization error with high dataloader workers](2026-02-13_0134_bug_001_attention-plm-cuda-error.md) (📅 2026-02-13 01:34 (KST), 📄 bug_report) - Bug ID: BUG-2026-02-13-001
-- [Checkpoint Metric Accumulation Bug](2026-02-18_0237_bug_001_metric-accumulation-bug.md) (📅 2026-02-18 02:37 (KST), 📄 bug_report) - Bug ID: BUG-XXX
+- [Checkpoint Metric Accumulation Bug](2026-02-18_0237_bug_001_metric-accumulation-bug.md) (📅 2026-02-18 02:37 (KST), 📄 bug_report) - Bug ID: BUG-20260218-001
+- [Checkpoint Score 0.0 and Accuracy Drop on Resume Bug](2026-02-18_1622_bug_001_score-zero-bug.md) (📅 2026-02-18 16:22 (KST), 📄 bug_report) - Bug ID: BUG-XXX
 
 ## Completed (4)
 
@@ -21,7 +22,7 @@ Active bug reports and development roadmaps.
 
 | Status | Count |
 |--------|-------|
-| Active | 2 |
+| Active | 3 |
 | Completed | 4 |
 
 ---
