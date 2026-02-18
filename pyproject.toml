@@ -88,6 +88,9 @@ dependencies = [
     "aiofiles>=25.1.0",
     "nltk>=3.8.1",
     "redis>=5.0.0",
+    "trdg",
+    "paddleocr>=2.10.0",
+    "paddlepaddle>=3.1.1",
 ]
 
 
@@ -116,6 +119,9 @@ members = [
     "dev_tools/project_compass",
     "dev_tools/airflow_batch_processor",
 ]
+
+[tool.uv.sources]
+trdg = { path = "../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator" }
 
 # Note: No [tool.uv.sources] needed - UV auto-discovers workspace members
 # from [tool.uv.workspace]. Explicit sources would force resolution even

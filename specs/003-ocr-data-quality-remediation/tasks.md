@@ -11,11 +11,11 @@
 
 **Purpose**: Confirm workspace readiness and set canonical planning artifacts.
 
-- [ ] T000 Verify experiment workspace exists at `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/`
-- [ ] T001 Create remediation workspace README in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/README.md`
-- [ ] T002 Create planning status tracker in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/00-status/2026-02-18_planning-status.md`
-- [ ] T003 [P] Create remediation config skeleton in `configs/data/quality/remediation.yaml`
-- [ ] T004 [P] Create artifact index for this feature in `specs/003-ocr-data-quality-remediation/ARTIFACT_INDEX.md`
+- [x] T000 Verify experiment workspace exists at `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/`
+- [x] T001 Create remediation workspace README in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/README.md`
+- [x] T002 Create planning status tracker in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/00-status/2026-02-18_planning-status.md`
+- [x] T003 [P] Create remediation config skeleton in `configs/data/quality/remediation.yaml`
+- [x] T004 [P] Create artifact index for this feature in `specs/003-ocr-data-quality-remediation/ARTIFACT_INDEX.md`
 
 ---
 
@@ -25,16 +25,16 @@
 
 **⚠️ CRITICAL**: No user story execution work should begin until this phase is complete.
 
-- [ ] T005 Implement manifest I/O utilities in `scripts/data/quality/manifest_io.py`
-- [ ] T006 Implement defect rule engine in `scripts/data/quality/defect_rules.py`
-- [ ] T007 [P] Implement script mismatch heuristic in `scripts/data/quality/defect_rules.py`
-- [ ] T008 [P] Implement clipping risk heuristic in `scripts/data/quality/defect_rules.py`
-- [ ] T009 [P] Implement sample quality scoring utilities in `scripts/data/quality/quality_scoring.py`
-- [ ] T010 Implement gate metric calculator in `scripts/data/quality/gate_metrics.py`
-- [ ] T011 Implement non-mutating defect distribution analyzer in `scripts/audit/analyze_defect_distribution.py`
-- [ ] T012 [P] Implement non-mutating loss distribution analyzer in `scripts/audit/compute_loss_distribution.py`
-- [ ] T013 [P] Implement non-mutating sequence-length analyzer in `scripts/audit/analyze_sequence_lengths.py`
-- [ ] T014 Generate baseline diagnostics under `data/audit/`
+- [x] T005 Implement manifest I/O utilities in `scripts/data/quality/manifest_io.py`
+- [x] T006 Implement defect rule engine in `scripts/data/quality/defect_rules.py`
+- [x] T007 [P] Implement script mismatch heuristic in `scripts/data/quality/defect_rules.py`
+- [x] T008 [P] Implement clipping risk heuristic in `scripts/data/quality/defect_rules.py`
+- [x] T009 [P] Implement sample quality scoring utilities in `scripts/data/quality/quality_scoring.py`
+- [x] T010 Implement gate metric calculator in `scripts/data/quality/gate_metrics.py`
+- [x] T011 Implement non-mutating defect distribution analyzer in `scripts/audit/analyze_defect_distribution.py`
+- [x] T012 [P] Implement non-mutating loss distribution analyzer in `scripts/audit/compute_loss_distribution.py`
+- [x] T013 [P] Implement non-mutating sequence-length analyzer in `scripts/audit/analyze_sequence_lengths.py`
+- [x] T014 Generate baseline diagnostics under `data/audit/`
 
 **Checkpoint**: Foundational modules and baseline diagnostics are complete.
 
@@ -46,13 +46,13 @@
 
 **Independent Test**: Review generated report artifact and verify all required defect classes, threshold calibration, and evidence summaries are present.
 
-- [ ] T015 [P] [US1] Implement high-loss sample export utility in `scripts/analysis/export_high_loss_samples.py`
-- [ ] T016 [P] [US1] Implement defect taxonomy labeling utility in `scripts/analysis/label_defect_classes.py`
-- [ ] T017 [US1] Implement baseline summary generator in `scripts/analysis/build_data_quality_baseline_report.py`
-- [ ] T018 [US1] Add p95 threshold calibration section to report generation in `scripts/analysis/build_data_quality_baseline_report.py`
-- [ ] T019 [US1] Create reusable audit report template in `docs/reports/templates/ocr-data-quality-audit-template.md`
-- [ ] T020 [US1] Generate baseline report artifact in `docs/reports/2026-02-xx_ocr-high-loss-baseline.md`
-- [ ] T021 [US1] Register baseline report in experiment metadata `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/manifest.json`
+- [x] T015 [P] [US1] Implement high-loss sample export utility in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/export_high_loss_samples.py`
+- [x] T016 [P] [US1] Implement defect taxonomy labeling utility in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/label_defect_classes.py`
+- [x] T017 [US1] Implement baseline summary generator in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/build_data_quality_baseline_report.py`
+- [x] T018 [US1] Add p95 threshold calibration section to report generation in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/build_data_quality_baseline_report.py`
+- [x] T019 [US1] Create reusable audit report template in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/templates/ocr-data-quality-audit-template.md`
+- [x] T020 [US1] Generate baseline report artifact in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1600_report_ocr-high-loss-baseline.md`
+- [x] T021 [US1] Register baseline report in experiment metadata `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/manifest.json`
 
 **Checkpoint**: High-loss baseline report is persisted with calibrated thresholds.
 
@@ -97,12 +97,12 @@
 
 **Independent Test**: Run golden-set pipeline on pilot batch and produce categorized outputs (`auto_accept`, `auto_correct`, `manual_review`) with confidence provenance.
 
-- [ ] T033 [P] [US4] Implement Upstage OCR client module in `scripts/data/quality/upstage_validator.py`
-- [ ] T034 [P] [US4] Implement PaddleOCR local validator wrapper in `scripts/data/quality/paddle_validator.py`
-- [ ] T035 [US4] Implement tiered validation orchestrator in `scripts/data/quality/golden_set_validator.py`
-- [ ] T036 [US4] Implement golden holdout builder in `scripts/analysis/create_golden_holdout_with_upstage.py`
-- [ ] T037 [US4] Add synthetic data generation target spec in `specs/003-ocr-data-quality-remediation/planning/ocr-synthetic-data-spec.md`
-- [ ] T038 [US4] Document tiered golden validation policy in `specs/003-ocr-data-quality-remediation/planning/ocr-golden-validation-strategy.md`
+- [x] T033 [P] [US4] Implement Upstage OCR client module in `scripts/data/quality/upstage_validator.py`
+- [x] T034 [P] [US4] Implement PaddleOCR local validator wrapper in `scripts/data/quality/paddle_validator.py`
+- [x] T035 [US4] Implement tiered validation orchestrator in `scripts/data/quality/golden_set_validator.py`
+- [x] T036 [US4] Implement golden holdout builder in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/create_golden_holdout_with_upstage.py`
+- [x] T037 [US4] Add synthetic data generation target spec in `specs/003-ocr-data-quality-remediation/planning/ocr-synthetic-data-spec.md`
+- [x] T038 [US4] Document tiered golden validation policy in `specs/003-ocr-data-quality-remediation/planning/ocr-golden-validation-strategy.md`
 
 **Checkpoint**: Tiered golden validation pipeline is documented and execution-ready.
 
@@ -112,9 +112,9 @@
 
 **Purpose**: Final consistency, compliance, and handoff quality checks.
 
-- [ ] T039 [P] Validate feature artifact naming and structure in `specs/003-ocr-data-quality-remediation/tasks.md`
-- [ ] T040 [P] Reconcile experiment artifact registry in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/manifest.json`
-- [ ] T041 Create final planning summary for execution session in `docs/reports/2026-02-xx_ocr-data-quality-remediation-execution-ready.md`
+- [x] T039 [P] Validate feature artifact naming and structure in `specs/003-ocr-data-quality-remediation/tasks.md`
+- [x] T040 [P] Reconcile experiment artifact registry in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/manifest.json`
+- [x] T041 Create final planning summary for execution session in `docs/reports/2026-02-19_ocr-data-quality-remediation-execution-ready.md`
 
 ---
 

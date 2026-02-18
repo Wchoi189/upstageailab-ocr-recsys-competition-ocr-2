@@ -1,6 +1,6 @@
 # Session Handover: OCR Data-Quality Remediation
 
-**LATEST**: `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_2100_SESSION_HANDOVER.md`
+**LATEST**: `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260219_1000_SESSION_HANDOVER.md`
 
 ## Gate Summary
 
@@ -26,20 +26,34 @@ Tiered golden validation pipeline implemented: Upstage API client, PaddleOCR wra
 ### T040 — COMPLETE
 Manifest path migration: `path_roots` removed; all `experiments/*` paths prefixed with `dev_tools/experiment_manager/`.
 
+### Phase 7 (T039, T041) — COMPLETE
+T039: Artifact naming audit — 7 path drifts corrected, all tasks marked [x] in tasks.md.
+T041: Final execution-ready summary at `docs/reports/2026-02-19_ocr-data-quality-remediation-execution-ready.md`.
+
 ## Next Session Entry Point
 
-**Resume at: Phase 7 Polish (T039, T041) + Pre-Gate 4 blockers.**
+**PLANNING PHASE COMPLETE. Resume at: Gate 2 Execution — Construct clean holdout v1.**
 
-### Immediate Actions (Priority Order)
+### Pre-Gate 4 Blockers — ALL CLEARED
 
-1. **BLOCKER** — Install PaddleOCR: `uv add paddlepaddle paddleocr`
-2. **BLOCKER** — Install TRDG: install from `../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator/`
-3. **BLOCKER** — Source ≥ 2 Korean TTF fonts (NanumGothic, NanumMyeongjo, or Noto Sans KR)
-4. T039: Artifact naming audit on `tasks.md`
-5. T041: Final planning summary for execution session
+- [x] RQ-01: Korean fonts — 54 fonts installed (NanumGothic, NanumMyeongjo, UnBatang, NEXONLv1Gothic)
+- [x] RQ-03: TRDG v1.8.0 installed via `uv add /parent/DATA_SYNTHETIC/TextRecognitionDataGenerator/`
+- [x] PaddleOCR v2.10.0 + paddlepaddle v3.1.1 installed via `uv add paddleocr paddlepaddle`
 
-> All tiered validation modules are implemented and tested. Run Gate 4.5 pilot via:
-> `uv run python dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/create_golden_holdout_with_upstage.py --candidates <path> --version 1 --dry_run`
+### Phase 7 (Polish) — COMPLETE
+
+- [x] T039: Artifact naming audit — 7 path drifts corrected in tasks.md; all tasks marked [x]
+- [x] T041: Final planning summary → `docs/reports/2026-02-19_ocr-data-quality-remediation-execution-ready.md`
+
+### Gate 2 Entry Sequence
+
+1. Set `UPSTAGE_API_KEY` env var
+2. Dry run holdout builder:
+   ```
+   uv run python dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/create_golden_holdout_with_upstage.py --candidates <path> --version 1 --dry_run
+   ```
+3. Remove `--dry_run` to run Gate 4.5 pilot (Upstage call ratio: 20–40%)
+4. Run training baseline with clean holdout → per-sample CTC loss eval (RISK-01)
 
 ## Locked Planning Artifacts
 
