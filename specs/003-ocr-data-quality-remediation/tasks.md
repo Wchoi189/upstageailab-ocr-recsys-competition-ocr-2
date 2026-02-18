@@ -64,13 +64,13 @@
 
 **Independent Test**: Verify workflow artifacts define phases, entry/exit gates, rollback triggers, and required metrics without mutating training data.
 
-- [ ] T022 [P] [US2] Define canonical phase gate matrix in `specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-phase-gates.md`
-- [ ] T023 [P] [US2] Define rollback triggers in `specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-phase-gates.md`
-- [ ] T024 [P] [US2] Define metric thresholds and formulas in `specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-metric-criteria.md`
-- [ ] T025 [US2] Add clean holdout construction protocol in `specs/003-ocr-data-quality-remediation/planning/ocr-clean-holdout-protocol.md`
-- [ ] T026 [US2] Add annotation quality assurance protocol in `specs/003-ocr-data-quality-remediation/planning/ocr-annotation-qa-protocol.md`
-- [ ] T027 [US2] Add emergency stop and checkpoint preservation runbook in `specs/003-ocr-data-quality-remediation/EXECUTION_RUNBOOK.md`
-- [ ] T028 [US2] Create next-session handoff checklist in `specs/003-ocr-data-quality-remediation/SESSION_HANDOVER.md`
+- [x] T022 [P] [US2] Define canonical phase gate matrix in `specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-phase-gates.md`
+- [x] T023 [P] [US2] Define rollback triggers in `specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-phase-gates.md`
+- [x] T024 [P] [US2] Define metric thresholds and formulas in `specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-metric-criteria.md`
+- [x] T025 [US2] Add clean holdout construction protocol in `specs/003-ocr-data-quality-remediation/planning/ocr-clean-holdout-protocol.md`
+- [x] T026 [US2] Add annotation quality assurance protocol in `specs/003-ocr-data-quality-remediation/planning/ocr-annotation-qa-protocol.md`
+- [x] T027 [US2] Add emergency stop and checkpoint preservation runbook in `specs/003-ocr-data-quality-remediation/EXECUTION_RUNBOOK.md`
+- [x] T028 [US2] Create next-session handoff checklist in `specs/003-ocr-data-quality-remediation/SESSION_HANDOVER.md`
 
 **Checkpoint**: Workflow governance is explicit, measurable, and rollback-safe.
 
@@ -82,10 +82,10 @@
 
 **Independent Test**: Confirm workspace metadata and artifact links can be audited without additional context.
 
-- [ ] T029 [P] [US3] Create experiment bootstrap helper in `scripts/experiment/init_ocr_data_quality_experiment.sh`
-- [ ] T030 [US3] Add experiment operating guide in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/guides/2026-02-18_guide_experiment-operations.md`
-- [ ] T031 [US3] Add artifact linkage report in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/2026-02-18_report_artifact-linkage-audit.md`
-- [ ] T032 [US3] Record workflow tasks and linked artifacts in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/manifest.json`
+- [x] T029 [P] [US3] Create experiment bootstrap helper in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/experiment/init_ocr_data_quality_experiment.sh`
+- [x] T030 [US3] Add experiment operating guide in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/guides/20260218_1900_guide_experiment-operations.md`
+- [x] T031 [US3] Add artifact linkage report in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1900_report_artifact-linkage-audit.md`
+- [x] T032 [US3] Record workflow tasks and linked artifacts in `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/manifest.json`
 
 **Checkpoint**: Controlled experiment workspace is fully linked and reproducible.
 

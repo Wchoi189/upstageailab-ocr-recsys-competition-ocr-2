@@ -3,11 +3,36 @@
   "name": "ocr_dq_exec_phase1_filtered",
   "status": "active",
   "created_at": "2026-02-17T15:40:31.661087",
-  "updated_at": "2026-02-18T16:00:00.000000",
+  "updated_at": "2026-02-18T20:00:00.000000",
+  "tools": [
+    {
+      "id": "TRDG",
+      "version": "1.8.0",
+      "location": "../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator/",
+      "license": "MIT",
+      "purpose": "T037: Synthetic Korean OCR training data generation",
+      "attributed_at": "2026-02-18T20",
+      "korean_font_bundled": "trdg/fonts/ko/NEXONLv1GothicRegular.ttf",
+      "korean_dict_bundled": "trdg/dicts/ko.txt (2349 Hangul syllables)",
+      "python_api": "trdg.generators.GeneratorFromStrings (primary), GeneratorFromDict (fallback)",
+      "open_research": ["RQ-01:fonts", "RQ-02:lmdb-schema", "RQ-03:uv-install", "RQ-04:char-frequency", "RQ-05:domain-backgrounds", "RQ-06:discriminator-strategy"]
+    }
+  ],
+  "path_roots": {
+    "experiments/": "dev_tools/experiment_manager/",
+    "data/": "<repo_root>/",
+    "specs/": "<repo_root>/",
+    "scripts/": "<repo_root>/",
+    "configs/": "<repo_root>/"
+  },
   "intention": "Phase 1 execution for OCR data-quality remediation using filtered manifests and gate metrics",
   "tasks": [
     {"id": "T015", "description": "Implement export_high_loss_samples.py", "status": "completed"},
     {"id": "T016", "description": "Implement label_defect_classes.py", "status": "completed"},
+    {"id": "T029", "description": "Implement experiment bootstrap helper", "status": "completed"},
+    {"id": "T030", "description": "Add experiment operating guide", "status": "completed"},
+    {"id": "T031", "description": "Add artifact linkage audit report", "status": "completed"},
+    {"id": "T032", "description": "Register US3 workflow tasks and artifact links in manifest", "status": "completed"},
     {"id": "T017", "description": "Implement build_data_quality_baseline_report.py", "status": "completed"},
     {"id": "T018", "description": "Add p95 threshold calibration to baseline report", "status": "completed"},
     {"id": "T019", "description": "Create audit report template", "status": "completed"},
@@ -96,6 +121,104 @@
       "type": "handover",
       "description": "Session handover: Critical findings resolved, US1 (T015-T021) complete.",
       "timestamp": "2026-02-18T17:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-phase-gates.md",
+      "type": "planning",
+      "description": "T022+T023: Canonical phase gate matrix (Gates 0-5+4.5) with rollback triggers per gate.",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-metric-criteria.md",
+      "type": "planning",
+      "description": "T024: Metric formulas and thresholds for CER/WER, truncation rate, kappa, defect purity, provenance coverage, Upstage call ratio.",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/planning/ocr-clean-holdout-protocol.md",
+      "type": "planning",
+      "description": "T025: Clean holdout construction protocol — stratified sampling, verification pipeline, immutability rules.",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/planning/ocr-annotation-qa-protocol.md",
+      "type": "planning",
+      "description": "T026: Annotation QA protocol — reviewer workflow, kappa thresholds, escalation rules, audit outputs.",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/EXECUTION_RUNBOOK.md",
+      "type": "runbook",
+      "description": "T027: Execution runbook — session checklist, phase run sequence, emergency stop procedure, rollback triggers, gate evidence requirements.",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/SESSION_HANDOVER.md",
+      "type": "handover",
+      "description": "T028: Live session handover pointer — updated each gate to reference latest timestamped handover.",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1800_SESSION_HANDOVER.md",
+      "type": "handover",
+      "description": "Session handover: Gate 1 PASS, US2 (T022-T028) complete. Next: US3 (T029-T032).",
+      "timestamp": "2026-02-18T18:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/experiment/init_ocr_data_quality_experiment.sh",
+      "type": "script",
+      "description": "T029: Non-mutating workspace readiness checker — validates experiment dir, Gate 0/1 artifacts, shared modules, locked config.",
+      "timestamp": "2026-02-18T19:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/guides/20260218_1900_guide_experiment-operations.md",
+      "type": "guide",
+      "description": "T030: Experiment operating guide — directory map, gate reference, diagnostic commands, emergency stop, artifact naming conventions.",
+      "timestamp": "2026-02-18T19:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1900_report_artifact-linkage-audit.md",
+      "type": "report",
+      "description": "T031: Artifact linkage audit — 22/22 artifacts verified on disk; dual-root path schema documented; PASS.",
+      "timestamp": "2026-02-18T19:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1900_SESSION_HANDOVER.md",
+      "type": "handover",
+      "description": "Session handover: US3 (T029-T032) complete. Next: US4 (T033-T038).",
+      "timestamp": "2026-02-18T19:00:00.000000"
+    }
+  ],
+  "gate_log": [
+    {
+      "gate_id": "Gate 0",
+      "status": "pass",
+      "timestamp": "2026-02-18T16:00:00.000000",
+      "artifacts": [
+        "data/audit/defect_prevalence.json",
+        "data/audit/loss_percentiles.json",
+        "data/audit/truncation_analysis.json"
+      ],
+      "metrics": {
+        "defective_count": 33591,
+        "defective_rate": 0.0251,
+        "high_loss_count": 88257,
+        "high_loss_threshold_p95": 0.32,
+        "unreadable_min_len": 0
+      }
+    },
+    {
+      "gate_id": "Gate 1",
+      "status": "pass",
+      "timestamp": "2026-02-18T18:00:00.000000",
+      "artifacts": [
+        "specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-phase-gates.md",
+        "specs/003-ocr-data-quality-remediation/planning/ocr-data-quality-metric-criteria.md",
+        "specs/003-ocr-data-quality-remediation/planning/ocr-clean-holdout-protocol.md",
+        "specs/003-ocr-data-quality-remediation/planning/ocr-annotation-qa-protocol.md",
+        "specs/003-ocr-data-quality-remediation/EXECUTION_RUNBOOK.md"
+      ],
+      "decision": "pass"
     }
   ]
 }
