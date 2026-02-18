@@ -1,0 +1,52 @@
+# @package data.quality
+# OCR Data-Quality Remediation Configuration
+# Feature: 003-ocr-data-quality-remediation
+
+## Dataset Source
+lmdb_path: ${global.paths.root_dir}/data/processed/recognition/aihub_lmdb_validation
+
+## Audit Output
+audit_dir: ${global.paths.root_dir}/data/audit
+
+## Defect Detection Thresholds
+defect_rules:
+  # Script mismatch: non-Korean chars as ratio of total chars
+  script_mismatch_ratio_threshold: 0.30
+  # Clipping risk: label length approaching tokenizer max
+  clipping_risk_min_len: 22
+  tokenizer_max_len: 25
+  # Hallucination: repeated char run threshold
+  hallucination_repeat_threshold: 4
+  # Unreadable: empty label only (single-char Korean syllables are valid)
+  unreadable_min_len: 0
+  # Truncation misalignment: label at exact tokenizer max
+  truncation_exact_max: true
+
+## Quality Scoring
+quality_scoring:
+  # Severity weights for composite score (lower = worse)
+  severity_weights:
+    critical: 0.0
+    high: 0.25
+    medium: 0.60
+    low: 0.90
+    clean: 1.00
+
+## Gate Metric Thresholds
+gate_metrics:
+  # Gate 2 — Filter Stage
+  max_filtered_out_ratio: 0.40
+  # Gate 3 — Correction Stage
+  max_clean_holdout_cer_delta: 0.20
+  min_annotation_kappa: 0.70
+  # Gate 4 — Validation
+  max_upstage_call_ratio: 0.40
+  min_defect_purity: 0.80
+  min_provenance_coverage: 0.95
+
+## Loss Distribution
+loss_distribution:
+  # Percentile boundaries for high-loss bucketing
+  percentiles: [50, 75, 90, 95, 99]
+  # p95 label length treated as high-loss threshold proxy
+  high_loss_percentile: 95

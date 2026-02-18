@@ -1,0 +1,372 @@
+{
+  "total_images": 6,
+  "avg_total_time_ms": 1014.02,
+  "results": [
+    {
+      "image": "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_000699.jpg",
+      "original_shape": [
+        1280,
+        1280,
+        3
+      ],
+      "steps": {
+        "1_rembg": {
+          "time_ms": 2192.12,
+          "mask_shape": [
+            1280,
+            1280
+          ]
+        },
+        "2_perspective": {
+          "time_ms": 14.68,
+          "output_shape": [
+            1209,
+            543,
+            3
+          ]
+        },
+        "3_background_norm": {
+          "time_ms": 23.43,
+          "metrics": {
+            "method": "gray-world",
+            "processing_time_ms": 23.43,
+            "original": {
+              "mean_bgr": [
+                153.49201096242825,
+                150.88315942557645,
+                153.38264106206924
+              ],
+              "color_variance": 34.61,
+              "color_tint_score": 2.61
+            },
+            "normalized": {
+              "mean_bgr": [
+                152.47786706783106,
+                151.76466757345202,
+                152.33744430719838
+              ],
+              "color_variance": 34.69,
+              "color_tint_score": 0.71
+            },
+            "improvements": {
+              "variance_reduction": -0.08,
+              "tint_reduction": 1.9,
+              "variance_reduction_pct": -0.2,
+              "tint_reduction_pct": 72.8
+            }
+          }
+        },
+        "4_deskew": {
+          "time_ms": 20.28,
+          "angle_degrees": -1.88
+        }
+      },
+      "total_time_ms": 2250.51
+    },
+    {
+      "image": "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_000712.jpg",
+      "original_shape": [
+        1280,
+        1280,
+        3
+      ],
+      "steps": {
+        "1_rembg": {
+          "time_ms": 768.1,
+          "mask_shape": [
+            1280,
+            1280
+          ]
+        },
+        "2_perspective": {
+          "time_ms": 14.75,
+          "output_shape": [
+            1162,
+            469,
+            3
+          ]
+        },
+        "3_background_norm": {
+          "time_ms": 16.58,
+          "metrics": {
+            "method": "gray-world",
+            "processing_time_ms": 16.58,
+            "original": {
+              "mean_bgr": [
+                171.49640448676675,
+                170.40310752651735,
+                172.34047917584465
+              ],
+              "color_variance": 18.1,
+              "color_tint_score": 1.94
+            },
+            "normalized": {
+              "mean_bgr": [
+                171.47246973587363,
+                170.3943782837722,
+                170.3771644489368
+              ],
+              "color_variance": 18.07,
+              "color_tint_score": 1.1
+            },
+            "improvements": {
+              "variance_reduction": 0.03,
+              "tint_reduction": 0.84,
+              "variance_reduction_pct": 0.2,
+              "tint_reduction_pct": 43.3
+            }
+          }
+        },
+        "4_deskew": {
+          "time_ms": 15.75,
+          "angle_degrees": -4.09
+        }
+      },
+      "total_time_ms": 815.18
+    },
+    {
+      "image": "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_000732.jpg",
+      "original_shape": [
+        1280,
+        1280,
+        3
+      ],
+      "steps": {
+        "1_rembg": {
+          "time_ms": 763.28,
+          "mask_shape": [
+            1280,
+            1280
+          ]
+        },
+        "2_perspective": {
+          "time_ms": 12.79,
+          "output_shape": [
+            1107,
+            453,
+            3
+          ]
+        },
+        "3_background_norm": {
+          "time_ms": 14.96,
+          "metrics": {
+            "method": "gray-world",
+            "processing_time_ms": 14.96,
+            "original": {
+              "mean_bgr": [
+                168.35147731550305,
+                146.1868576022254,
+                146.59304120915928
+              ],
+              "color_variance": 20.28,
+              "color_tint_score": 22.16
+            },
+            "normalized": {
+              "mean_bgr": [
+                153.4906806068323,
+                153.175411262613,
+                152.9148681592199
+              ],
+              "color_variance": 20.1,
+              "color_tint_score": 0.58
+            },
+            "improvements": {
+              "variance_reduction": 0.18,
+              "tint_reduction": 21.58,
+              "variance_reduction_pct": 0.9,
+              "tint_reduction_pct": 97.4
+            }
+          }
+        },
+        "4_deskew": {
+          "time_ms": 12.24,
+          "angle_degrees": 2.65
+        }
+      },
+      "total_time_ms": 803.27
+    },
+    {
+      "image": "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_001007.jpg",
+      "original_shape": [
+        1280,
+        1280,
+        3
+      ],
+      "steps": {
+        "1_rembg": {
+          "time_ms": 674.99,
+          "mask_shape": [
+            1280,
+            1280
+          ]
+        },
+        "2_perspective": {
+          "time_ms": 15.0,
+          "output_shape": [
+            1203,
+            450,
+            3
+          ]
+        },
+        "3_background_norm": {
+          "time_ms": 16.28,
+          "metrics": {
+            "method": "gray-world",
+            "processing_time_ms": 16.28,
+            "original": {
+              "mean_bgr": [
+                171.86001819338233,
+                151.82466682444127,
+                150.51779031757067
+              ],
+              "color_variance": 19.83,
+              "color_tint_score": 21.34
+            },
+            "normalized": {
+              "mean_bgr": [
+                156.70815111577056,
+                157.88537891268533,
+                158.30060655983226
+              ],
+              "color_variance": 19.54,
+              "color_tint_score": 1.59
+            },
+            "improvements": {
+              "variance_reduction": 0.29,
+              "tint_reduction": 19.75,
+              "variance_reduction_pct": 1.5,
+              "tint_reduction_pct": 92.5
+            }
+          }
+        },
+        "4_deskew": {
+          "time_ms": 15.48,
+          "angle_degrees": 1.88
+        }
+      },
+      "total_time_ms": 721.75
+    },
+    {
+      "image": "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_001012.jpg",
+      "original_shape": [
+        1280,
+        1280,
+        3
+      ],
+      "steps": {
+        "1_rembg": {
+          "time_ms": 675.55,
+          "mask_shape": [
+            1280,
+            1280
+          ]
+        },
+        "2_perspective": {
+          "time_ms": 15.74,
+          "output_shape": [
+            1112,
+            646,
+            3
+          ]
+        },
+        "3_background_norm": {
+          "time_ms": 21.84,
+          "metrics": {
+            "method": "gray-world",
+            "processing_time_ms": 21.84,
+            "original": {
+              "mean_bgr": [
+                162.35694453264915,
+                151.85502025885611,
+                154.2428217601707
+              ],
+              "color_variance": 21.0,
+              "color_tint_score": 10.5
+            },
+            "normalized": {
+              "mean_bgr": [
+                154.8754937142828,
+                155.77598278707913,
+                156.1963997324469
+              ],
+              "color_variance": 20.83,
+              "color_tint_score": 1.32
+            },
+            "improvements": {
+              "variance_reduction": 0.17,
+              "tint_reduction": 9.18,
+              "variance_reduction_pct": 0.8,
+              "tint_reduction_pct": 87.4
+            }
+          }
+        },
+        "4_deskew": {
+          "time_ms": 21.55,
+          "angle_degrees": -1.07
+        }
+      },
+      "total_time_ms": 734.68
+    },
+    {
+      "image": "experiment-tracker/experiments/20251217_024343_image_enhancements_implementation/outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_001161.jpg",
+      "original_shape": [
+        1280,
+        1280,
+        3
+      ],
+      "steps": {
+        "1_rembg": {
+          "time_ms": 709.77,
+          "mask_shape": [
+            1280,
+            1280
+          ]
+        },
+        "2_perspective": {
+          "time_ms": 14.72,
+          "output_shape": [
+            1219,
+            491,
+            3
+          ]
+        },
+        "3_background_norm": {
+          "time_ms": 17.83,
+          "metrics": {
+            "method": "gray-world",
+            "processing_time_ms": 17.83,
+            "original": {
+              "mean_bgr": [
+                190.5101075216503,
+                161.26093461126788,
+                157.34452843728715
+              ],
+              "color_variance": 46.25,
+              "color_tint_score": 33.17
+            },
+            "normalized": {
+              "mean_bgr": [
+                168.26422208347927,
+                169.42713000045683,
+                170.08158491830238
+              ],
+              "color_variance": 45.29,
+              "color_tint_score": 1.82
+            },
+            "improvements": {
+              "variance_reduction": 0.96,
+              "tint_reduction": 31.35,
+              "variance_reduction_pct": 2.1,
+              "tint_reduction_pct": 94.5
+            }
+          }
+        },
+        "4_deskew": {
+          "time_ms": 16.4,
+          "angle_degrees": -0.34
+        }
+      },
+      "total_time_ms": 758.72
+    }
+  ]
+}

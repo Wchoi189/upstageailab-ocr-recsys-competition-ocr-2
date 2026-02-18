@@ -3,15 +3,99 @@
   "name": "ocr_dq_exec_phase1_filtered",
   "status": "active",
   "created_at": "2026-02-17T15:40:31.661087",
-  "updated_at": "2026-02-17T17:25:12.125946",
+  "updated_at": "2026-02-18T16:00:00.000000",
   "intention": "Phase 1 execution for OCR data-quality remediation using filtered manifests and gate metrics",
-  "tasks": [],
-  "insights": [],
+  "tasks": [
+    {"id": "T015", "description": "Implement export_high_loss_samples.py", "status": "completed"},
+    {"id": "T016", "description": "Implement label_defect_classes.py", "status": "completed"},
+    {"id": "T017", "description": "Implement build_data_quality_baseline_report.py", "status": "completed"},
+    {"id": "T018", "description": "Add p95 threshold calibration to baseline report", "status": "completed"},
+    {"id": "T019", "description": "Create audit report template", "status": "completed"},
+    {"id": "T020", "description": "Generate baseline report artifact", "status": "completed"},
+    {"id": "T021", "description": "Register baseline report in manifest", "status": "completed"}
+  ],
+  "insights": [
+    {
+      "type": "decision",
+      "insight": "unreadable_min_len recalibrated 1->0: 247,512 single-char Korean syllable samples reclassified as clean. True defect rate: 2.51% (was 19.95% with false positives).",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "type": "insight",
+      "insight": "2,247 samples with label len>25 confirmed as silently truncated multi-line document stamps. Max len=299 (phone+fax+address chains). Highest-risk GT contamination class.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "type": "insight",
+      "insight": "Loss proxy (label_len/max_len) p95=0.32 -> 88,257 high-loss samples (6.59%). Actual CTC loss inference pending (Priority 3).",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    }
+  ],
   "artifacts": [
     {
       "path": "experiments/20260217_150713_ocr_data_quality_remediation/.metadata/reports/20260218_0000_report_ocr-high-loss-data-quality-remediation-plan.md",
       "type": "report",
       "timestamp": "2026-02-17T17:25:12.125934"
+    },
+    {
+      "path": "data/audit/defect_prevalence.json",
+      "type": "audit",
+      "description": "Recalibrated defect prevalence (unreadable_min_len=0). Defective: 33,591 (2.51%).",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "data/audit/defect_taxonomy.json",
+      "type": "audit",
+      "description": "Per-class defect taxonomy with example samples.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "data/audit/high_loss_samples.json",
+      "type": "audit",
+      "description": "88,257 high-loss samples (proxy >= p95=0.32), sorted by loss_proxy desc.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1600_report_ocr-high-loss-baseline.md",
+      "type": "report",
+      "description": "US1 baseline report: defect taxonomy, loss distribution, p95 calibration, gate readiness.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/templates/ocr-data-quality-audit-template.md",
+      "type": "template",
+      "description": "Reusable audit report template for OCR data quality assessments.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/export_high_loss_samples.py",
+      "type": "script",
+      "description": "T015: High-loss sample export utility (LMDB -> high_loss_samples.json).",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/label_defect_classes.py",
+      "type": "script",
+      "description": "T016: Defect taxonomy labeling utility (LMDB -> defect_taxonomy.json).",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/build_data_quality_baseline_report.py",
+      "type": "script",
+      "description": "T017+T018: Baseline report generator with p95 calibration.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1600_SESSION_HANDOVER.md",
+      "type": "handover",
+      "description": "Session handover: Phase 2 complete, Gate 0 PASS, baseline diagnostics.",
+      "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1700_SESSION_HANDOVER.md",
+      "type": "handover",
+      "description": "Session handover: Critical findings resolved, US1 (T015-T021) complete.",
+      "timestamp": "2026-02-18T17:00:00.000000"
     }
   ]
 }

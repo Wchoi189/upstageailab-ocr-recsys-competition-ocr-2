@@ -1,0 +1,80 @@
+{
+  "image": "outputs/full_pipeline_correct/test_images/drp.en_ko.in_house.selectstar_000732.jpg",
+  "original_shape": [
+    1280,
+    1280,
+    3
+  ],
+  "steps": {
+    "1_rembg": {
+      "time_ms": 2612.86,
+      "mask_shape": [
+        1280,
+        1280
+      ]
+    },
+    "2_perspective": {
+      "time_ms": 40.95,
+      "output_shape": [
+        1128,
+        475,
+        3
+      ],
+      "algorithm": "dominant_extension",
+      "corners": [
+        [
+          418.0,
+          107.0
+        ],
+        [
+          815.0,
+          104.0
+        ],
+        [
+          802.0,
+          1232.0
+        ],
+        [
+          327.0,
+          1226.0
+        ]
+      ]
+    },
+    "3_background_norm": {
+      "time_ms": 17.17,
+      "metrics": {
+        "method": "gray-world",
+        "processing_time_ms": 17.17,
+        "original": {
+          "mean_bgr": [
+            162.69197781646997,
+            143.6126031059287,
+            145.79790358606377
+          ],
+          "color_variance": 24.16,
+          "color_tint_score": 19.08
+        },
+        "normalized": {
+          "mean_bgr": [
+            149.86242844620153,
+            150.2835207116257,
+            150.50561546562182
+          ],
+          "color_variance": 23.83,
+          "color_tint_score": 0.64
+        },
+        "improvements": {
+          "variance_reduction": 0.33,
+          "tint_reduction": 18.44,
+          "variance_reduction_pct": 1.4,
+          "tint_reduction_pct": 96.6
+        }
+      }
+    },
+    "4_deskew": {
+      "time_ms": 16.48,
+      "angle_degrees": 0.88
+    }
+  },
+  "total_time_ms": 2687.46
+}

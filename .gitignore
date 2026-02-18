@@ -1,79 +1,76 @@
-# UV virtual environment
-.venv/
-
+# =============================================================================
 # Python
+# =============================================================================
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
 .Python
+*.egg-info/
+.installed.cfg
+*.egg
+*.pyc
+*.pid
+
+# Build artifacts
 build/
 develop-eggs/
 dist/
 downloads/
 eggs/
-# .eggs/
 lib/
 lib64/
 parts/
 sdist/
 var/
 wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-
 
 # PyInstaller
 *.manifest
 *.spec
 
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# IPython
-profile_default/
-ipython_config.py
-
-# pyenv
-# .python-version
-
-# MyPy
-.mypy_cache/
-
-# Environments
-.env
-.env.local
-.venv
-env/
+# Environments & Virtual Environments
+.venv/
 venv/
 ENV/
+env/
+.venv
+.env
+.env.local
+.env copy
 env.bak/
 venv.bak/
 
-# Node
-node_modules/
+# =============================================================================
+# Testing & Coverage
+# =============================================================================
+.tox/
+.pytest_cache/
+.coverage
+.coverage.*
+*.cover
+coverage.xml
+nosetests.xml
+htmlcov/
+.hypothesis/
 
-# IDE
+# Type Checking & Linting
+.mypy_cache/
+.ruff_cache/
+.cache/
+
+# =============================================================================
+# IDE & Editor
+# =============================================================================
 .vscode/
 .idea/
 *.swp
 *.swo
 *~
 
+# =============================================================================
 # OS
+# =============================================================================
 .DS_Store
 .DS_Store?
 ._*
@@ -82,150 +79,132 @@ node_modules/
 ehthumbs.db
 Thumbs.db
 
-# Logs and Outputs
-# logs/
-# *.log
-!DEBUG_WORKSPACE/2026-01-15_decoder_refactor_failure/logs/
+# =============================================================================
+# Logs & Outputs
+# =============================================================================
+logs/
+*.log
 lightning_logs/
-# /outputs/
+wandb/
+offline-*/
+outputs/
+hydra_outputs/
+multirun/
+profiler_logs/
+resource_logs/
+
+# Hydra
+.hydra/hydra.log
+
+# Checkpoints & Models
 checkpoints/
 *.pth
 *.ckpt
-wandb/
-offline-*/
-/archive/
-# Model files
 *.onnx
 frontend/public/models/*.onnx
-!ocr/core/utils/checkpoints/
 
+# Data files
+*.parquet
 
-# Agent-specific settings
-.ai-instructions/tier3-agents/*/settings.local.json
-!archive/archive_agentqms/*
-# Data
-# Experiments and Archives
-multirun/
+# =============================================================================
+# Archives & Temporary
+# =============================================================================
+.archive/
 _archive/
 __OLD__/
-# /archive/
-*.parquet
-# Temporary files
+archive/
 *.tmp
 *.temp
 *.bak
-*.pyc
-*.pid
 *.xml
 *.jpg
 *.png
 *.svg
-# *.md
-# *.csv
-# *.json
-# *.sqlite
-# *.db
-.env copy
-# Deprecated and Debug
-DEPRECATED/
-!.ai-instructions/DEPRECATED/
-_deprecated/
+
+# =============================================================================
+# Node.js
+# =============================================================================
+node_modules/
+package-lock.json
+pnpm-lock.yaml
+
+# =============================================================================
+# Jupyter & IPython
+# =============================================================================
+.ipynb_checkpoints
+profile_default/
+ipython_config.py
+
+# =============================================================================
+# Project-Specific: AgentQMS
+# =============================================================================
+AgentQMS/.agentqms/
+AgentQMS/vlm/cache/
+AgentQMS/.mcp-telemetry.jsonl
+AgentQMS/bin/artifacts_violations_history.json
+
+# =============================================================================
+# Project-Specific: Project Compass
+# =============================================================================
+project_compass/dependency_graph.txt
+project_compass/config_access.txt
+project_compass/context_tree.txt
+project_compass/config_deps.txt
+
+# =============================================================================
+# Project-Specific: Debug & Experiments
+# =============================================================================
 DEBUG_OUTPUT_WORKSPACE/
+DEBUG_WORKSPACE/
+__DEBUG__/
 framework_export/
 preprocessing_results/
 profiler_traces/
 real_demo_simple/
 real_noise_elimination_demo/
-# reports/
-resource_logs/
 test_*/
-# zero_prediction_*/
-/outputs/
-# !aws-batch-processor/data/output
-# AgentQMS
-# .agentqms/state.json
-# .agentqms/sessions/
-# .agentqms/backups/
-# .agentqms/*.bak
-# !.agentqms/config.yaml
-# !.agentqms/schemas/
-# !.agentqms/*.md
-# .agentqms/state/agent_state.json
-# .agentqms/state/*.sqlite
-AgentQMS/.agentqms/registry.yaml
-AgentQMS/.agentqms/state/plugins.yaml
-AgentQMS/.mcp-telemetry.jsonl
-AgentQMS/vlm/cache/
+data_gen_exp/
+brain/
+repomix-output.xml
+run.log
+.uptraint_cache/
+project-artifacts/
+
+# =============================================================================
+# Data Directories (with exceptions)
+# =============================================================================
+data/datasets/
+data/
+
+# Exceptions - keep these tracked
+!/data/audit/
+!/data/metadata/
+!/data/export/
 !outputs/README_outputs_structure.md
 !dev_tools/experiment_manager/experiments/*/outputs
 !scripts/data/quality/
 !configs/data/quality/
-.archive/
-.env copy
-__DEBUG__/training_failures_2026-02-07/implementations/baudm_parseq
-# Project-specific files (review and remove if no longer needed)
-# notepad.md
-# root-cause.md
-data_gen_exp/
-repomix-output.xml
-run.log
-brain/
-# aws-batch-processor/
-# data/metadata/dataset_catalog.yml
-*.log
-# data
-data/datasets/
-/data/
-!/data/audit/
-!/data/metadata/
-!/data/export/
-logs/
-.hydra/hydra.log
 !__DEBUG__/**/logs
 !__DEBUG__/**/artifacts
 !scripts/checkpoints
-# Claude Code - Runtime directories
-AgentQMS/.agentqms/effective.yaml
-AgentQMS/.agentqms/settings.yaml
-# AgentQMS generated state files
-AgentQMS/.agentqms/state/
-!AgentQMS/.agentqms/state/README.md
-AgentQMS/bin/artifacts_violations_history.json
-AgentQMS/.mcp-telemetry.jsonl
+!ocr/core/utils/checkpoints/
+!archive/archive_agentqms/*
 !archive/__TEMP__
-# Project Compass large analysis files
-project_compass/dependency_graph.txt
-project_compass/config_access.txt
-project_compass/context_tree.txt
-project_compass/config_deps.txt
 !project_compass/pulse_staging/archive
-# External Artifacts (Moved out of root)
-wandb/
-lightning_logs/
-outputs/
-hydra_outputs/
-data/
-project-artifacts/
-.uptraint_cache/
-__pycache__/
-*.pyc
 
-# Archives
-# archive/
-# _archive/
-# .archive/
+# =============================================================================
+# Deprecated
+# =============================================================================
+DEPRECATED/
+_deprecated/
+
+# =============================================================================
+# Other Projects & Dependencies
+# =============================================================================
 apps/
-
-# Dependencies & Venvs (External)
-node_modules/
 global/
-.ruff_cache/
-mcp-visibility-extension/
 packages/
+mcp-visibility-extension/
 
-# Debug
-# __DEBUG__/
-__DEBUG__/training_failures/implementations/baudm_parseq/
-profiler_logs/
-brain/
-outputs/recovery
+# AI Agent Settings
+.ai-instructions/tier3-agents/*/settings.local.json
