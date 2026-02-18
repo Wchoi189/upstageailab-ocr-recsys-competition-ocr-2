@@ -48,7 +48,7 @@ Synthetic set should cover:
 
 - **Tokenizer boundary**: Pre-filter all strings to `len(text) <= 25` before passing to generator
 - **Mixed Korean/ASCII**: Construct strings manually in wrapper (e.g., `가나다123`, `ABC전화`); TRDG's `ko` dict is single-script only
-- **Font diversity**: Minimum ≥ 3 distinct Korean font families supplied via `fonts=` parameter; bundled `NEXONLv1GothicRegular.ttf` alone is insufficient for discriminator variance
+- **Font diversity**: Minimum ≥ 3 distinct Korean font families supplied via `fonts=` parameter. Resolved (RQ-01): use `/usr/share/fonts/truetype/nanum/NanumGothic.ttf` (sans), `/usr/share/fonts/truetype/nanum/NanumMyeongjo.ttf` (serif), `/usr/share/fonts/truetype/unfonts-core/UnBatang.ttf` (traditional). Recommended blend: 40% NanumGothic, 30% NanumMyeongjo, 20% NEXONLv1Gothic, 10% UnBatang.
 - **Reproducibility**: Call `random.seed(SEED)` + `numpy.seed(SEED)` before generator instantiation; capture seed in metadata
 - **Metadata wrapper**: TRDG does not natively log per-sample params; a thin wrapper must emit `synthetic_metadata_v{N}.json` with seed, font list, background type, distortion flags
 
@@ -57,16 +57,16 @@ Synthetic set should cover:
 TRDG outputs `{id}.jpg` + `labels.txt`. Training pipeline expects LMDB or JSONL manifest.
 A conversion script (`scripts/data/quality/trdg_to_jsonl.py`) must be implemented to bridge this gap before robustness training begins.
 
-### Open Research Questions (Pre-Implementation)
+### Research Questions — Resolved (2026-02-18)
 
-| ID | Question | Blocks |
-|---|---|---|
-| RQ-01 | Are additional Korean `.ttf` fonts available in `../parent/` or project corpus? | Font diversity constraint |
-| RQ-02 | What is the LMDB key/value schema in the training pipeline? | `trdg_to_jsonl.py` or `trdg_to_lmdb.py` |
-| RQ-03 | Is TRDG installed in the active `uv` environment? (`uv run python -c "from trdg.generators import GeneratorFromStrings"`) | All wrapper scripting |
-| RQ-04 | Character/word frequency distribution of real training data (from LMDB labels) | Custom `strings` list for `GeneratorFromStrings` |
-| RQ-05 | Are domain-specific background images (scanned Korean document paper) available? | Background type decision |
-| RQ-06 | Will the existing trained OCR model's CTC loss distribution serve as the discriminator, or is a separate binary classifier needed? | Gate 4 discriminator check |
+| ID | Question | Status | Finding |
+|---|---|---|---|
+| RQ-01 | Additional Korean `.ttf` fonts in `../parent/`? | **RESOLVED** | Installed via `apt`: `fonts-nanum`, `fonts-noto-cjk`, `fonts-unfonts-core` (Ubuntu 22.04). 54 Korean-capable fonts available; 12 Nanum TTFs at `/usr/share/fonts/truetype/nanum/`. Recommended TRDG set: `NanumGothic.ttf` (sans), `NanumMyeongjo.ttf` (serif), `UnBatang.ttf` (traditional serif). Font diversity constraint MET (≥ 3 families). |
+| RQ-02 | LMDB key/value schema in training pipeline? | **RESOLVED** | `image-{idx:09d}` (bytes), `label-{idx:09d}` (UTF-8 str), `num-samples` (int). Pipeline entry: `ocr/domains/recognition/data/lmdb_dataset.py`. Conversion script target: `scripts/data/quality/trdg_to_jsonl.py` (JSONL manifest → LMDB via existing ingestion path). |
+| RQ-03 | TRDG installed in active `uv` env? | **BLOCKED** | NOT installed. `uv run python -c "from trdg.generators import GeneratorFromStrings"` raises `ModuleNotFoundError`. Action: `uv add trdg` or install from `../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator/` before Gate 4. |
+| RQ-04 | Character/word frequency distribution of real training data? | **OPEN** | Not computed. Requires LMDB label scan. Defer until Gate 3 (correction queue complete). Use uniform syllable sampling from TRDG bundled dict as interim fallback. |
+| RQ-05 | Domain-specific background images available? | **RESOLVED** | No Korean document paper backgrounds found. `synthtiger/resources/image/` contains only generic stock photos (bedroom, coffee, farm, etc.). Decision: use `background_type=0` (Gaussian noise) as default; `background_type=3` (custom) only if corpus backgrounds are sourced post-Gate-3. |
+| RQ-06 | CTC loss distribution as discriminator vs. separate classifier? | **DEFERRED** | Requires trained model in eval mode (RISK-01). Default recommendation: use CTC loss distribution as discriminator proxy (lower implementation cost); escalate to binary classifier only if discriminator accuracy > 70% threshold is exceeded in Gate 4 pilot. |
 
 ---
 

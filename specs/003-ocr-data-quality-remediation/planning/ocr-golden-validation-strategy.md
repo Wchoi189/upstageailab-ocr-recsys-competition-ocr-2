@@ -16,36 +16,36 @@ Define a cost-aware and quality-controlled method to build a clean holdout set f
 - Full-document OCR output cannot be reliably mapped back to each patch label.
 - Patch-level confidence/provenance is required for correction and manual-review routing.
 
-## Tiered Validation Workflow
+## Tiered Validation Workflow (Implemented: US4)
 
-1. **Tier 1 — Model Confidence Triage**
-   - Auto-accept obvious clean samples where model prediction matches GT and confidence is high.
-2. **Tier 2 — Local OCR Validator (PaddleOCR)**
-   - Run low-cost local OCR as the primary secondary check.
-3. **Tier 3 — Local VLM Triage (Ollama `qwen2.5vl:7b`)**
-   - Use VLM only for triage/ambiguity classification, not final character-level judgment.
-4. **Tier 4 — Upstage OCR Verification**
-   - Use Upstage OCR API as high-accuracy judge for ambiguous/high-risk samples only.
-5. **Manual Review**
-   - Route unresolved or low-confidence disagreements to human review.
+| Tier | Component | Implementation | Cost |
+|---|---|---|---|
+| Tier 1 | Model confidence triage | In-memory, zero cost | Free |
+| Tier 2 | PaddleOCR local validator | `paddle_validator.py` | Low (local) |
+| Tier 3 | Upstage OCR API | `upstage_validator.py` | High (per-call) |
+| Fallback | Manual review queue | Human annotation | Human cost |
 
-## Suggested Thresholds
+Routing: `TieredGoldenValidator` in `golden_set_validator.py`.
 
-- Tier 1:
-  - `model_conf >= 0.95` and `pred == gt`: `auto_accept`
-  - `model_conf >= 0.90` and `pred != gt`: high-priority API candidate
-  - `model_conf < 0.70`: ambiguous candidate
-- Tier 2 (PaddleOCR):
-  - strong match with confidence `>= 0.95`: `auto_accept`
-- Tier 3 (Ollama triage):
-  - agreement with GT across model + Paddle + Ollama: `auto_accept_candidate`
-  - disagreement or low confidence: escalate to Upstage
-- Tier 4 (Upstage):
-  - `upstage_conf >= 0.98` and `text == gt`: `auto_accept`
-  - `upstage_conf >= 0.98` and `text != gt`: `auto_correct_candidate`
-  - otherwise: `manual_review`
+**Note**: Ollama VLM (`qwen2.5vl:7b`) triage was considered but deferred. May be inserted
+between Tier 2 and Tier 3 in a future version to reduce Upstage call ratio.
 
-Thresholds are initial defaults and must be recalibrated with observed distributions.
+## Confidence Policy (Locked)
+
+Applied identically at Tier 2 and Tier 3:
+
+| Condition | Disposition |
+|---|---|
+| confidence >= 0.95 AND CER(ocr, gt) <= 0.05 | `auto_accept` |
+| confidence >= 0.98 AND CER(ocr, gt) > 0.05 | `auto_correct` candidate |
+| Any other | `manual_review` |
+
+- CER: `editdistance(normalize(ocr), normalize(gt)) / len(normalize(gt))`
+- Normalization: NFKC + strip
+
+Tier 1 routing: `model_confidence >= 0.95` → `auto_accept` without CER check.
+
+Thresholds are locked for this version. Recalibration requires Gate 4.5 PASS evidence.
 
 ## API Efficiency Policy
 
@@ -86,11 +86,21 @@ Thresholds are initial defaults and must be recalibrated with observed distribut
 - Track inter-annotator agreement (Cohen’s kappa)
 - Escalate low agreement to protocol review
 
+## Implementation References
+
+| Component | Path |
+|---|---|
+| Tier-2 validator | `scripts/data/quality/paddle_validator.py` |
+| Tier-3 client | `scripts/data/quality/upstage_validator.py` |
+| Orchestrator | `scripts/data/quality/golden_set_validator.py` |
+| Holdout builder CLI | `<experiment_dir>/scripts/analysis/create_golden_holdout_with_upstage.py` |
+| Contract types | `scripts/data/quality/contracts.py` (`HoldoutRecord`) |
+
 ## Artifacts
 
 - `data/audit/loss_percentiles.json`
 - `data/audit/defect_prevalence.json`
 - `data/audit/truncation_analysis.json`
-- `data/processed/recognition/holdout_clean_v*.jsonl`
-- `data/processed/recognition/holdout_review_queue_v*.jsonl`
-- `data/audit/upstage_api_usage_summary_v*.json`
+- `data/processed/recognition/holdout_clean_v{N}.jsonl`
+- `data/processed/recognition/holdout_review_queue_v{N}.jsonl`
+- `data/audit/holdout_construction_summary_v{N}.json`

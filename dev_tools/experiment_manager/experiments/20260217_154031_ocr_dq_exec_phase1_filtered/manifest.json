@@ -3,7 +3,7 @@
   "name": "ocr_dq_exec_phase1_filtered",
   "status": "active",
   "created_at": "2026-02-17T15:40:31.661087",
-  "updated_at": "2026-02-18T20:00:00.000000",
+  "updated_at": "2026-02-18T21:30:00.000000",
   "tools": [
     {
       "id": "TRDG",
@@ -15,29 +15,36 @@
       "korean_font_bundled": "trdg/fonts/ko/NEXONLv1GothicRegular.ttf",
       "korean_dict_bundled": "trdg/dicts/ko.txt (2349 Hangul syllables)",
       "python_api": "trdg.generators.GeneratorFromStrings (primary), GeneratorFromDict (fallback)",
-      "open_research": ["RQ-01:fonts", "RQ-02:lmdb-schema", "RQ-03:uv-install", "RQ-04:char-frequency", "RQ-05:domain-backgrounds", "RQ-06:discriminator-strategy"]
+      "open_research": {
+        "RQ-01": "RESOLVED — apt install: fonts-nanum fonts-noto-cjk fonts-unfonts-core. 54 Korean fonts available; 12 Nanum TTFs at /usr/share/fonts/truetype/nanum/. Recommended TRDG set: NanumGothic.ttf (sans), NanumMyeongjo.ttf (serif), UnBatang.ttf (traditional). Font diversity constraint MET.",
+        "RQ-02": "RESOLVED — LMDB schema: image-{idx:09d} (bytes), label-{idx:09d} (UTF-8), num-samples (int). Pipeline: ocr/domains/recognition/data/lmdb_dataset.py.",
+        "RQ-03": "BLOCKED — TRDG not installed in active uv env. Run: uv add trdg (or install from ../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator/).",
+        "RQ-04": "OPEN — character frequency not computed. Defer to Gate 3. Interim: use TRDG bundled ko.txt dict.",
+        "RQ-05": "RESOLVED — No Korean document paper backgrounds available. Use background_type=0 (Gaussian noise) as default.",
+        "RQ-06": "DEFERRED — Use CTC loss distribution as discriminator proxy (lower cost). Escalate to binary classifier only if Gate 4 accuracy > 70%."
+      }
     }
   ],
-  "path_roots": {
-    "experiments/": "dev_tools/experiment_manager/",
-    "data/": "<repo_root>/",
-    "specs/": "<repo_root>/",
-    "scripts/": "<repo_root>/",
-    "configs/": "<repo_root>/"
-  },
   "intention": "Phase 1 execution for OCR data-quality remediation using filtered manifests and gate metrics",
   "tasks": [
     {"id": "T015", "description": "Implement export_high_loss_samples.py", "status": "completed"},
     {"id": "T016", "description": "Implement label_defect_classes.py", "status": "completed"},
-    {"id": "T029", "description": "Implement experiment bootstrap helper", "status": "completed"},
-    {"id": "T030", "description": "Add experiment operating guide", "status": "completed"},
-    {"id": "T031", "description": "Add artifact linkage audit report", "status": "completed"},
-    {"id": "T032", "description": "Register US3 workflow tasks and artifact links in manifest", "status": "completed"},
     {"id": "T017", "description": "Implement build_data_quality_baseline_report.py", "status": "completed"},
     {"id": "T018", "description": "Add p95 threshold calibration to baseline report", "status": "completed"},
     {"id": "T019", "description": "Create audit report template", "status": "completed"},
     {"id": "T020", "description": "Generate baseline report artifact", "status": "completed"},
-    {"id": "T021", "description": "Register baseline report in manifest", "status": "completed"}
+    {"id": "T021", "description": "Register baseline report in manifest", "status": "completed"},
+    {"id": "T029", "description": "Implement experiment bootstrap helper", "status": "completed"},
+    {"id": "T030", "description": "Add experiment operating guide", "status": "completed"},
+    {"id": "T031", "description": "Add artifact linkage audit report", "status": "completed"},
+    {"id": "T032", "description": "Register US3 workflow tasks and artifact links in manifest", "status": "completed"},
+    {"id": "T033", "description": "Implement Upstage OCR API client in scripts/data/quality/upstage_validator.py", "status": "completed"},
+    {"id": "T034", "description": "Implement PaddleOCR local validator in scripts/data/quality/paddle_validator.py", "status": "completed"},
+    {"id": "T035", "description": "Implement tiered validation orchestrator in scripts/data/quality/golden_set_validator.py", "status": "completed"},
+    {"id": "T036", "description": "Implement golden holdout builder in scripts/analysis/create_golden_holdout_with_upstage.py", "status": "completed"},
+    {"id": "T037", "description": "Finalize synthetic data spec with resolved RQ-01 through RQ-06", "status": "completed"},
+    {"id": "T038", "description": "Update tiered golden validation strategy to reflect 3-tier implementation", "status": "completed"},
+    {"id": "T040", "description": "Migrate manifest paths: prefix experiments/* with dev_tools/experiment_manager/; remove path_roots", "status": "completed"}
   ],
   "insights": [
     {
@@ -54,11 +61,21 @@
       "type": "insight",
       "insight": "Loss proxy (label_len/max_len) p95=0.32 -> 88,257 high-loss samples (6.59%). Actual CTC loss inference pending (Priority 3).",
       "timestamp": "2026-02-18T16:00:00.000000"
+    },
+    {
+      "type": "decision",
+      "insight": "Tiered validation: 3-tier architecture (model triage → PaddleOCR → Upstage). Ollama VLM deferred. PaddleOCR not installed in active env (lazy-load RuntimeError on use). TRDG not installed (Gate 4 blocker).",
+      "timestamp": "2026-02-18T21:00:00.000000"
+    },
+    {
+      "type": "decision",
+      "insight": "RQ-01 RESOLVED: Korean fonts installed via apt (fonts-nanum, fonts-noto-cjk, fonts-unfonts-core). 54 Korean-capable fonts on disk. TRDG font set: NanumGothic.ttf (sans, 40%), NanumMyeongjo.ttf (serif, 30%), NEXONLv1GothicRegular.ttf (screen, 20%), UnBatang.ttf (traditional, 10%). Font diversity constraint MET. Gate 4 font blocker CLEARED.",
+      "timestamp": "2026-02-18T21:30:00.000000"
     }
   ],
   "artifacts": [
     {
-      "path": "experiments/20260217_150713_ocr_data_quality_remediation/.metadata/reports/20260218_0000_report_ocr-high-loss-data-quality-remediation-plan.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_150713_ocr_data_quality_remediation/.metadata/reports/20260218_0000_report_ocr-high-loss-data-quality-remediation-plan.md",
       "type": "report",
       "timestamp": "2026-02-17T17:25:12.125934"
     },
@@ -81,43 +98,43 @@
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1600_report_ocr-high-loss-baseline.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1600_report_ocr-high-loss-baseline.md",
       "type": "report",
       "description": "US1 baseline report: defect taxonomy, loss distribution, p95 calibration, gate readiness.",
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/templates/ocr-data-quality-audit-template.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/templates/ocr-data-quality-audit-template.md",
       "type": "template",
       "description": "Reusable audit report template for OCR data quality assessments.",
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/export_high_loss_samples.py",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/export_high_loss_samples.py",
       "type": "script",
       "description": "T015: High-loss sample export utility (LMDB -> high_loss_samples.json).",
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/label_defect_classes.py",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/label_defect_classes.py",
       "type": "script",
       "description": "T016: Defect taxonomy labeling utility (LMDB -> defect_taxonomy.json).",
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/build_data_quality_baseline_report.py",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/build_data_quality_baseline_report.py",
       "type": "script",
       "description": "T017+T018: Baseline report generator with p95 calibration.",
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1600_SESSION_HANDOVER.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1600_SESSION_HANDOVER.md",
       "type": "handover",
       "description": "Session handover: Phase 2 complete, Gate 0 PASS, baseline diagnostics.",
       "timestamp": "2026-02-18T16:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1700_SESSION_HANDOVER.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1700_SESSION_HANDOVER.md",
       "type": "handover",
       "description": "Session handover: Critical findings resolved, US1 (T015-T021) complete.",
       "timestamp": "2026-02-18T17:00:00.000000"
@@ -159,34 +176,70 @@
       "timestamp": "2026-02-18T18:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1800_SESSION_HANDOVER.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1800_SESSION_HANDOVER.md",
       "type": "handover",
       "description": "Session handover: Gate 1 PASS, US2 (T022-T028) complete. Next: US3 (T029-T032).",
       "timestamp": "2026-02-18T18:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/experiment/init_ocr_data_quality_experiment.sh",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/experiment/init_ocr_data_quality_experiment.sh",
       "type": "script",
       "description": "T029: Non-mutating workspace readiness checker — validates experiment dir, Gate 0/1 artifacts, shared modules, locked config.",
       "timestamp": "2026-02-18T19:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/guides/20260218_1900_guide_experiment-operations.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/guides/20260218_1900_guide_experiment-operations.md",
       "type": "guide",
       "description": "T030: Experiment operating guide — directory map, gate reference, diagnostic commands, emergency stop, artifact naming conventions.",
       "timestamp": "2026-02-18T19:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1900_report_artifact-linkage-audit.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/reports/20260218_1900_report_artifact-linkage-audit.md",
       "type": "report",
       "description": "T031: Artifact linkage audit — 22/22 artifacts verified on disk; dual-root path schema documented; PASS.",
       "timestamp": "2026-02-18T19:00:00.000000"
     },
     {
-      "path": "experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1900_SESSION_HANDOVER.md",
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1900_SESSION_HANDOVER.md",
       "type": "handover",
       "description": "Session handover: US3 (T029-T032) complete. Next: US4 (T033-T038).",
       "timestamp": "2026-02-18T19:00:00.000000"
+    },
+    {
+      "path": "scripts/data/quality/upstage_validator.py",
+      "type": "module",
+      "description": "T033: Upstage OCR API client — Tier-3 validator. UpstageOCRClient + ValidationResult. Auth: UPSTAGE_API_KEY env var.",
+      "timestamp": "2026-02-18T21:00:00.000000"
+    },
+    {
+      "path": "scripts/data/quality/paddle_validator.py",
+      "type": "module",
+      "description": "T034: PaddleOCR local validator — Tier-2. Lazy-load; RuntimeError if not installed. Interface mirrors upstage_validator.",
+      "timestamp": "2026-02-18T21:00:00.000000"
+    },
+    {
+      "path": "scripts/data/quality/golden_set_validator.py",
+      "type": "module",
+      "description": "T035: Tiered golden validation orchestrator. TieredGoldenValidator routes samples through Tier 1–3. Gate 4.5 upstage_call_ratio tracked.",
+      "timestamp": "2026-02-18T21:00:00.000000"
+    },
+    {
+      "path": "dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/create_golden_holdout_with_upstage.py",
+      "type": "script",
+      "description": "T036: Golden holdout builder CLI. Stratified sampling + tiered validation + Gate 4.5 check. Outputs: holdout_clean_v{N}.jsonl, holdout_review_queue_v{N}.jsonl, holdout_construction_summary_v{N}.json.",
+      "timestamp": "2026-02-18T21:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/planning/ocr-synthetic-data-spec.md",
+      "type": "planning",
+      "description": "T037: Synthetic data target spec — TRDG parameters, coverage targets, quality constraints. RQ-01 through RQ-06 resolved.",
+      "timestamp": "2026-02-18T21:00:00.000000"
+    },
+    {
+      "path": "specs/003-ocr-data-quality-remediation/planning/ocr-golden-validation-strategy.md",
+      "type": "planning",
+      "description": "T038: Tiered golden validation policy — 3-tier routing, confidence policy, Gate 4.5 thresholds, implementation references.",
+      "timestamp": "2026-02-18T21:00:00.000000"
     }
   ],
   "gate_log": [

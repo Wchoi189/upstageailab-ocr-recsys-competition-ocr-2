@@ -1,6 +1,6 @@
 # Session Handover: OCR Data-Quality Remediation
 
-**LATEST**: `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_1900_SESSION_HANDOVER.md`
+**LATEST**: `dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/.metadata/20260218_2100_SESSION_HANDOVER.md`
 
 ## Gate Summary
 
@@ -17,22 +17,29 @@ High-loss baseline report with calibrated thresholds. Defect taxonomy, p95 loss 
 ### US2 (T022–T028) — COMPLETE
 Phase gate matrix, rollback triggers, metric formulas, holdout protocol, annotation QA, execution runbook, and handover template all finalized.
 
+### US3 (T029–T032) — COMPLETE
+Experiment bootstrap helper, operating guide, artifact linkage audit, and manifest update complete.
+
+### US4 (T033–T038) — COMPLETE
+Tiered golden validation pipeline implemented: Upstage API client, PaddleOCR wrapper, orchestrator, holdout builder CLI, synthetic data spec (RQ-01–06 resolved), and golden validation strategy policy.
+
+### T040 — COMPLETE
+Manifest path migration: `path_roots` removed; all `experiments/*` paths prefixed with `dev_tools/experiment_manager/`.
+
 ## Next Session Entry Point
 
-**Resume at: Phase 5 (US3), T029.**
+**Resume at: Phase 7 Polish (T039, T041) + Pre-Gate 4 blockers.**
 
-### Immediate Actions
+### Immediate Actions (Priority Order)
 
-Run T029–T032 sequentially (US3 — Controlled Experiment Workspace):
+1. **BLOCKER** — Install PaddleOCR: `uv add paddlepaddle paddleocr`
+2. **BLOCKER** — Install TRDG: install from `../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator/`
+3. **BLOCKER** — Source ≥ 2 Korean TTF fonts (NanumGothic, NanumMyeongjo, or Noto Sans KR)
+4. T039: Artifact naming audit on `tasks.md`
+5. T041: Final planning summary for execution session
 
-1. T029: `scripts/experiment/init_ocr_data_quality_experiment.sh` — experiment bootstrap helper
-2. T030: `.metadata/guides/2026-02-18_guide_experiment-operations.md` — operating guide
-3. T031: `.metadata/reports/2026-02-18_report_artifact-linkage-audit.md` — artifact linkage audit
-4. T032: Update `manifest.json` with US3 workflow tasks and artifact links
-
-Then begin US4 (T033–T038) — Phase 6: Tiered Golden Validation.
-
-> **Do NOT start US4 (T033–T038) until T025 holdout protocol is confirmed executable** (protocol documented; T036 implementation depends on `ocr-clean-holdout-protocol.md`).
+> All tiered validation modules are implemented and tested. Run Gate 4.5 pilot via:
+> `uv run python dev_tools/experiment_manager/experiments/20260217_154031_ocr_dq_exec_phase1_filtered/scripts/analysis/create_golden_holdout_with_upstage.py --candidates <path> --version 1 --dry_run`
 
 ## Locked Planning Artifacts
 
