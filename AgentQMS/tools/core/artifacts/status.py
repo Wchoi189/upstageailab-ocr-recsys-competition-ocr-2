@@ -22,19 +22,7 @@ from pathlib import Path
 
 from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
 from AgentQMS.tools.utils.paths import get_project_root
-try:
-    from AgentQMS.tools.utilities.versioning import (
-        ArtifactAgeDetector,
-        VersionManager,
-    )
-except ImportError:
-    # Fallback/Mock for missing dependencies to allow module loading
-    class ArtifactAgeDetector:
-        def get_artifact_age(self, path): return 0
-        def get_age_category(self, days): return "unknown"
-
-    class VersionManager:
-        def extract_version_from_frontmatter(self, path): return None
+from AgentQMS.tools.core.artifacts.versioning import ArtifactAgeDetector, VersionManager
 
 ensure_project_root_on_sys_path()
 

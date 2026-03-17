@@ -25,6 +25,8 @@ Available Commands:
 """
 
 import argparse
+import os
+import subprocess
 import sys
 from pathlib import Path
 
@@ -402,7 +404,7 @@ def run_quality_command(args):
 
 def run_generate_config_command(args):
     """Execute generate-config subcommand."""
-    from AgentQMS.tools.utils.config.loader import ConfigLoader
+    from AgentQMS.tools.utils.config import YamlCacheLoader
     import json
 
     try:
@@ -413,7 +415,7 @@ def run_generate_config_command(args):
             print("Error: PyYAML not available. Install with: pip install pyyaml or use --json")
             return 1
 
-    loader = ConfigLoader()
+    loader = YamlCacheLoader()
 
     # Generate virtual effective config
     effective = loader.generate_virtual_config(
@@ -534,6 +536,37 @@ def setup_check_infra_parser(subparsers):
     return parser
 
 
+def setup_plugin_parser(subparsers):
+    """Setup plugin compatibility subcommand on canonical CLI surface."""
+    parser = subparsers.add_parser(
+        "plugin",
+        help="Plugin tooling compatibility commands",
+        description="Temporary compatibility commands for plugin inspection/validation",
+    )
+    plugin_subparsers = parser.add_subparsers(dest="plugin_command", help="Plugin commands")
+
+    list_parser = plugin_subparsers.add_parser("list", help="List plugin contributions")
+    list_parser.add_argument("--artifact-types", action="store_true")
+    list_parser.add_argument("--context-bundles", action="store_true")
+    list_parser.add_argument("--validators", action="store_true")
+    list_parser.add_argument("--json", action="store_true")
+
+    validate_parser = plugin_subparsers.add_parser("validate", help="Validate plugin definitions")
+    validate_parser.add_argument("--artifact-types", action="store_true")
+    validate_parser.add_argument("--context-bundles", action="store_true")
+    validate_parser.add_argument("--validators", action="store_true")
+    validate_parser.add_argument("--json", action="store_true")
+
+    show_parser = plugin_subparsers.add_parser("show", help="Show plugin details")
+    show_parser.add_argument("name", help="Plugin name")
+    show_parser.add_argument("--artifact-types", action="store_true")
+    show_parser.add_argument("--context-bundles", action="store_true")
+    show_parser.add_argument("--validators", action="store_true")
+    show_parser.add_argument("--json", action="store_true")
+
+    return parser
+
+
 def run_registry_command(args):
     """Execute registry subcommand."""
     import subprocess
@@ -615,6 +648,37 @@ def run_check_infra_command(args):
     return 0 if success else 1
 
 
+def run_plugin_command(args):
+    """Execute plugin compatibility subcommand using legacy plugin module."""
+    if not args.plugin_command:
+        print("Error: missing plugin action (list|validate|show)")
+        return 1
+
+    cmd = ["uv", "run", "python", "-m", "AgentQMS.tools.core.plugins"]
+    if args.plugin_command == "list":
+        cmd.append("--list")
+    elif args.plugin_command == "validate":
+        cmd.append("--validate")
+    elif args.plugin_command == "show":
+        cmd.extend(["--show", args.name])
+    else:
+        print(f"Error: unknown plugin action '{args.plugin_command}'")
+        return 1
+
+    for flag_name in ("artifact_types", "context_bundles", "validators", "json"):
+        if getattr(args, flag_name, False):
+            cmd.append(f"--{flag_name.replace('_', '-')}")
+
+    env = os.environ.copy()
+    env["PYTHONPATH"] = f"{project_root}:{env.get('PYTHONPATH', '')}"
+    print(
+        "DEPRECATION: `plugin` compatibility commands remain temporary. "
+        "Prefer canonical `python -m AgentQMS.cli ...` command paths.",
+        file=sys.stderr,
+    )
+    return subprocess.run(cmd, env=env, check=False).returncode
+
+
 def main():
     """Main CLI entry point."""
     parser = argparse.ArgumentParser(
@@ -636,6 +700,7 @@ def main():
     setup_generate_config_parser(subparsers)
     setup_registry_parser(subparsers)
     setup_check_infra_parser(subparsers)
+    setup_plugin_parser(subparsers)
 
     args = parser.parse_args()
 
@@ -661,6 +726,8 @@ def main():
             return run_registry_command(args)
         elif args.command == "check-infra":
             return run_check_infra_command(args)
+        elif args.command == "plugin":
+            return run_plugin_command(args)
         else:
             print(f"Error: Unknown command '{args.command}'")
             return 1

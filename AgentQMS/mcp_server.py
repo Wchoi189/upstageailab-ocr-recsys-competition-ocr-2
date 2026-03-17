@@ -59,11 +59,12 @@ PROJECT_ROOT = find_project_root()
 AGENTQMS_DIR = find_framework_root()
 
 
-from AgentQMS.tools.utils.config.loader import ConfigLoader
+from AgentQMS.tools.utils.config import YamlCacheLoader
 from AgentQMS.tools.core.context.context_bundle import get_context_bundle, list_available_bundles
+from AgentQMS.tools.core.mcp.handlers import HandlerContext, TOOL_HANDLERS, text_payload
 
-# Initialize ConfigLoader
-CONFIG_LOADER = ConfigLoader()
+# Initialize YAML/cache loader for MCP schema reads.
+CONFIG_LOADER = YamlCacheLoader()
 
 def load_mcp_schema() -> dict[str, list[dict]]:
     """Load MCP resources from schema."""
@@ -454,209 +455,31 @@ async def list_tools() -> list[Tool]:
     ]
 
 
+HANDLER_CONTEXT = HandlerContext(agentqms_dir=AGENTQMS_DIR)
+
+
 @app.call_tool()
 async def call_tool(name: str, arguments: Any) -> list[TextContent]:
     """Execute an AgentQMS tool."""
     try:
         from AgentQMS.tools.core.artifacts.workflow import ArtifactWorkflow
 
+        handler = TOOL_HANDLERS.get(name)
+        if handler is None:
+            return text_payload({"error": f"Unknown tool: {name}"})
         workflow = ArtifactWorkflow(quiet=True)
-
-        if name == "create_artifact":
-            artifact_type = arguments["artifact_type"]
-            art_name = arguments["name"]
-            title = arguments["title"]
-
-            kwargs = {}
-            if "description" in arguments:
-                kwargs["description"] = arguments["description"]
-            if "tags" in arguments:
-                kwargs["tags"] = arguments["tags"]
-
-            file_path = workflow.create_artifact(artifact_type, art_name, title, **kwargs)
-
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(
-                        {
-                            "success": True,
-                            "file_path": file_path,
-                            "message": f"Created {artifact_type}: {file_path}",
-                        },
-                        indent=2,
-                    ),
-                )
-            ]
-
-        elif name == "validate_artifact":
-            if arguments.get("validate_all"):
-                success = workflow.validate_all()
-                return [
-                    TextContent(
-                        type="text",
-                        text=json.dumps(
-                            {
-                                "success": success,
-                                "message": "Validation complete. Check output above.",
-                            },
-                            indent=2,
-                        ),
-                    )
-                ]
-            elif "file_path" in arguments:
-                file_path = arguments["file_path"]
-                success = workflow.validate_artifact(file_path)
-                return [
-                    TextContent(
-                        type="text",
-                        text=json.dumps(
-                            {
-                                "success": success,
-                                "file_path": file_path,
-                            },
-                            indent=2,
-                        ),
-                    )
-                ]
-            else:
-                return [
-                    TextContent(
-                        type="text",
-                        text=json.dumps(
-                            {
-                                "error": "Must specify either file_path or validate_all=true",
-                            },
-                            indent=2,
-                        ),
-                    )
-                ]
-
-        elif name == "list_artifact_templates":
-            templates = workflow.get_available_templates()
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(
-                        {
-                            "templates": templates,
-                        },
-                        indent=2,
-                    ),
-                )
-            ]
-
-        elif name == "check_compliance":
-            report = workflow.check_compliance()
-            return [TextContent(type="text", text=json.dumps(report, indent=2))]
-
-        elif name == "get_standard":
-            query = arguments["name"].lower()
-            # Phase 7.2: Search in specs/ directory (standards removed)
-            specs_dir = AGENTQMS_DIR / "specs"
-            matches = []
-
-            # Recursive search for .spec.md, .yaml, and .json files
-            if specs_dir.exists():
-                for path in specs_dir.rglob("*"):
-                    if path.is_file() and path.suffix in [".md", ".yaml", ".json"]:
-                        # Match against stem (filename without extension)
-                        if query in path.stem.lower():
-                            matches.append(path)
-
-            if not matches:
-                return [TextContent(type="text", text=json.dumps({"error": f"No specs found matching '{query}'"}, indent=2))]
-
-            if len(matches) == 1:
-                content = matches[0].read_text(encoding="utf-8")
-                return [TextContent(type="text", text=f"Spec: {matches[0].name}\nLocation: {matches[0]}\n\n{content}")]
-
-            # Multiple matches from specs
-            names = [str(p.relative_to(AGENTQMS_DIR)) for p in matches]
-            return [
-                TextContent(
-                    type="text", text=json.dumps({"message": "Multiple matches found. Please specify:", "matches": names}, indent=2)
-                )
-            ]
-
-
-        elif name == "get_context_bundle":
-            task_description = arguments["task_description"]
-            task_type = arguments.get("task_type")
-
-            # Always use auto_suggest_context to get rich metadata including tokens
-            # If task_type is explicit, it might override, but let's stick to the suggestion logic for richness
-            # or we can call low-level if strictness is needed.
-            # Given the user wants visibility, let's use the rich suggester.
-
-            from AgentQMS.tools.core.context.context_bundle import auto_suggest_context
-
-            # If task_type is provided, effectively we might want to force it,
-            # but auto_suggest_context calculates tokens which we want.
-            # Let's rely on auto_suggest_context and if it differs from explicit task_type, we note it.
-            # Actually, `analyze_task_type` is called inside `auto_suggest_context`.
-            # To respect explicit task_type, we might need to patch/pass it, but `auto_suggest_context` doesn't take it.
-            # For now, let's just return the suggestion which includes detection + tokens.
-
-            # Set budget if provided
-            if "budget" in arguments:
-                # We need to set the global budget on the engine or pass it down
-                # Since _ENGINE is a singleton in context_bundle.py, we can strictly set it
-                from AgentQMS.tools.core.context.context_bundle import _ENGINE
-                _ENGINE.max_tokens = int(arguments["budget"])
-
-            suggestion = auto_suggest_context(task_description)
-
-            # If explicit task_type was requested but different from detected, we might want to fetch that specific bundle's files too
-            # to be safe, but typically detection is what's desired.
-
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(
-                        {
-                            "task_description": task_description,
-                            "files": suggestion["bundle_files"],
-                            "detected": suggestion,
-                            "token_usage": suggestion.get("token_usage"),
-                            "stats": {
-                                "total_files": len(suggestion["bundle_files"]),
-                                "total_tokens": suggestion.get("token_usage", {}).get("total_tokens", 0)
-                            }
-                        },
-                        indent=2,
-                    ),
-                )
-            ]
-
-        else:
-            return [
-                TextContent(
-                    type="text",
-                    text=json.dumps(
-                        {
-                            "error": f"Unknown tool: {name}",
-                        },
-                        indent=2,
-                    ),
-                )
-            ]
-
+        safe_arguments = arguments if isinstance(arguments, dict) else {}
+        return await handler(workflow, safe_arguments, HANDLER_CONTEXT)
     except Exception as e:
         import traceback
-        return [
-            TextContent(
-                type="text",
-                text=json.dumps(
-                    {
-                        "error": str(e),
-                        "traceback": traceback.format_exc(),
-                        "tool": name,
-                    },
-                    indent=2,
-                ),
-            )
-        ]
+
+        return text_payload(
+            {
+                "error": str(e),
+                "traceback": traceback.format_exc(),
+                "tool": name,
+            }
+        )
 
 
 async def main():

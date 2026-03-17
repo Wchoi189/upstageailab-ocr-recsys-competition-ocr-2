@@ -24,7 +24,7 @@ except ImportError:
     sys.exit(1)
 
 from AgentQMS.tools.core.context.context_bundle import TASK_KEYWORDS, analyze_task_type
-from AgentQMS.tools.utils.config.loader import ConfigLoader
+from AgentQMS.tools.utils.config import YamlCacheLoader
 from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
 
@@ -35,7 +35,7 @@ PROJECT_ROOT = get_project_root()
 SPECS_CONFIG_DIR = PROJECT_ROOT / "AgentQMS" / "specs" / "tier4-workflows"
 CONFIG_PATH = SPECS_CONFIG_DIR / "workflow-detector.spec.md"
 _CONFIG_CACHE: dict[str, Any] | None = None
-_CONFIG_LOADER = ConfigLoader(cache_size=5)
+_CONFIG_LOADER = YamlCacheLoader(cache_size=5)
 
 # DEFAULT_CONFIG removed - all workflow detection config now loaded from:
 # AgentQMS/specs/tier4-workflows/workflow-detector.spec.md

@@ -7,7 +7,7 @@ Provides timezone-aware timestamp utilities for artifact metadata.
 Supports timezone configuration from environment, settings, or fallback to KST.
 
 Usage:
-    from AgentQMS.tools.utils.timestamps import get_kst_timestamp
+    from AgentQMS.tools.utils.system.timestamps import get_kst_timestamp
 
     timestamp = get_kst_timestamp()  # Returns "2025-12-06 12:00 (KST)"
 """

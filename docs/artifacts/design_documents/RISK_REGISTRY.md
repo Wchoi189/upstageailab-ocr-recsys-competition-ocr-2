@@ -20,12 +20,12 @@ Generated from AST analysis (`adt analyze-dependencies`, `adt analyze-complexity
 
 ## Risk Summary
 
-| Severity | Open | Resolved | Category |
-|----------|------|----------|----------|
-| Critical | 1    | 2        | Cascading Regression (R-01, R-03 resolved) |
-| High     | 1    | 4        | Orphaned Features / Broken Imports (R-04, R-05, R-07 resolved) |
-| Medium   | 3    | 2        | Redundancy / Confusion (R-09 resolved, R-11 fully resolved) |
-| Low      | 1    | 1        | Cosmetic / Technical Debt (R-15 resolved) |
+| Severity | Open | Resolved/Mitigated | Category |
+|----------|------|--------------------|----------|
+| Critical | 0    | 3                  | Cascading Regression (R-01, R-02, R-03 closed) |
+| High     | 0    | 5                  | Orphaned Features / Broken Imports (R-04, R-05, R-07, R-08 closed) |
+| Medium   | 0    | 5                  | Redundancy / Confusion (R-10, R-12, R-13 closed) |
+| Low      | 0    | 3                  | Technical Debt (R-14, R-15 resolved) |
 
 ---
 
@@ -44,18 +44,18 @@ Generated from AST analysis (`adt analyze-dependencies`, `adt analyze-complexity
 | **Resolution** | Completed in Spec A execution: replaced local root-finder hacks and validated convergence across entry points. |
 | **Trigger** | Keep monitor query: `rg "parents\\[2\\]|parent\\.parent|def find_project_root\\(" AgentQMS/` should only show canonical delegations and no hardcoded traversal hacks. |
 
-### R-02: Two Incompatible `ConfigLoader` Classes
+### R-02: Two Incompatible `ConfigLoader` Classes — RESOLVED
 
 | Field | Value |
 |:---|:---|
 | **Risk ID** | R-02 |
 | **Category** | Cascading Regression |
-| **Impact** | Critical |
+| **Impact** | ~~Critical~~ → Resolved |
 | **Affected Files** | `tools/utils/config/config.py`, `tools/utils/config/loader.py` |
-| **Description** | Two classes named `ConfigLoader` still coexist (`config.py` canonical resolver, `loader.py` YAML/Redis utility), but package-level ambiguity has been reduced. |
-| **Evidence** | `tools/utils/config/__init__.py` now exists and explicitly exports canonical `ConfigLoader`/`load_config` and exposes utility loader via `YamlCacheLoader` alias. |
-| **Mitigation** | Keep follow-up: rename `loader.py::ConfigLoader` to `YamlCacheLoader` (with compatibility alias) and migrate direct `...config.loader import ConfigLoader` call sites. |
-| **Trigger** | `rg "from AgentQMS.tools.utils.config" --type py` — verify all imports resolve unambiguously. |
+| **Description** | Utility loader has been renamed to `YamlCacheLoader`; canonical root resolver remains `config.py::ConfigLoader`. |
+| **Evidence** | `tools/utils/config/loader.py` now defines `YamlCacheLoader` with compatibility alias `ConfigLoader = YamlCacheLoader`; imports in `cli.py`, `mcp_server.py`, `workflow_detector.py`, `context_bundle.py`, and `artifact_templates.py` were migrated to explicit `from AgentQMS.tools.utils.config import YamlCacheLoader`. |
+| **Resolution** | Class rename and call-site migration completed. Package exports stay explicit: canonical `ConfigLoader` (root-aware) + `YamlCacheLoader` (YAML/cache utility). |
+| **Trigger** | `rg "from AgentQMS.tools.utils.config.loader import ConfigLoader" AgentQMS/ --type py` should return 0 matches. |
 
 ### R-03: Singleton `get_config_loader()` Caches Stale Root on Re-entry — RESOLVED
 
@@ -120,17 +120,18 @@ Generated from AST analysis (`adt analyze-dependencies`, `adt analyze-complexity
 | **Resolution** | Added `tools/utils/config/__init__.py` with canonical exports (`ConfigLoader`, `load_config`, `get_config_loader`) and `YamlCacheLoader` alias. |
 | **Trigger** | `python -c "from AgentQMS.tools.utils.config import load_config, ConfigLoader"` should succeed. |
 
-### R-08: 38 Modules Depend on `tools.utils.paths` — Single Point of Failure
+### R-08: `tools.utils.paths` Consumers — VERIFIED/RESOLVED
 
 | Field | Value |
 |:---|:---|
 | **Risk ID** | R-08 |
 | **Category** | Cascading Regression |
-| **Impact** | High |
+| **Impact** | ~~High~~ → Verified/Resolved |
 | **Affected Files** | `tools/utils/paths.py` → `tools/utils/system/paths.py` → `config.py` |
-| **Description** | ADT analysis confirms 38 import sites depend on `AgentQMS.tools.utils.paths`. This module is a thin re-export layer over `system/paths.py`, which calls `get_config_loader()`. Any behavioral change to root resolution propagates to every consumer instantly. |
-| **Mitigation** | Spec A must include integration tests that exercise all 38 consumer modules with the new resolution logic. At minimum, a smoke-import test for each. |
-| **Trigger** | `adt analyze-dependencies AgentQMS/ | grep "AgentQMS.tools.utils.paths"` — count must be verified pre/post refactor. |
+| **Description** | Consumer import stability and root/path behavior have been smoke-verified against env-override and marker-traversal scenarios. |
+| **Evidence** | Added `scripts/mcp/smoke_paths_consumers.py`; run output: `Env Override PASS`, `Marker Traversal PASS`, `modules checked=29`, `import failures=0`, `root mismatches=0`. Existing root gate (`scripts/mcp/smoke_project_root_resolution.py`) also passes all scenarios after changes. |
+| **Resolution** | Dependency fan-out remains, but regression risk is now covered by an executable consumer smoke integration gate and root behavior evidence. |
+| **Trigger** | `python scripts/mcp/smoke_paths_consumers.py` and `python scripts/mcp/smoke_project_root_resolution.py` must both pass. |
 
 ---
 
@@ -148,17 +149,18 @@ Generated from AST analysis (`adt analyze-dependencies`, `adt analyze-complexity
 | **Resolution** | Duplicate `tools/maintenance/init_debug_session.py` removed; canonical implementation remains under `tools/core/artifacts/`. |
 | **Trigger** | `ls AgentQMS/tools/maintenance/init_debug_session.py` should fail (deleted). |
 
-### R-10: `bin/aqms` vs `cli.py` — Overlapping CLI Surfaces
+### R-10: `bin/aqms` vs `cli.py` — RESOLVED (Canonical CLI Consolidated)
 
 | Field | Value |
 |:---|:---|
 | **Risk ID** | R-10 |
 | **Category** | Redundancy |
-| **Impact** | Medium |
+| **Impact** | ~~Medium~~ → Resolved |
 | **Affected Files** | `bin/aqms`, `cli.py` |
-| **Description** | Both define an `aqms` CLI with overlapping subcommands (`registry`, `plugin`, `artifact`). `bin/aqms` delegates to subprocess calls; `cli.py` uses direct Python imports. Spec B says "locate existing CLI entry points and decide canonical command name" but doesn't address the fact that two exist with different architectures. |
-| **Mitigation** | Spec B1 must explicitly choose one as canonical and deprecate/delete the other. Recommendation: keep `cli.py` (richer subcommands) and make `bin/aqms` a thin wrapper that calls `cli.py::main()`. |
-| **Trigger** | Only one of `bin/aqms` or `cli.py` should define argparse parsers post-merge. |
+| **Description** | Canonical CLI is `python -m AgentQMS.cli`; wrapper surface is reduced to pure deprecation + forwarder behavior. |
+| **Evidence** | `AgentQMS/cli.py` now owns plugin compatibility routing (`plugin list|validate|show`), while `AgentQMS/bin/aqms` emits deprecation guidance and delegates all commands to canonical CLI. Active docs and specs command examples were migrated to `python -m AgentQMS.cli ...` (`AGENTS.md`, `AgentQMS/AGENTS.yaml`, tier specs, copilot instructions). |
+| **Resolution** | Wrapper compatibility branch retired (including plugin-specific handler). `bin/aqms` remains only as a temporary deprecation shim to avoid abrupt breaking change. |
+| **Trigger** | Keep canonical-doc checks (`rg "python -m AgentQMS\\.cli" AGENTS.md AgentQMS/AGENTS.yaml AgentQMS/specs/ .github/copilot-instructions.md`) plus wrapper parser-free check (`rg "argparse.ArgumentParser" AgentQMS/bin/aqms`). |
 
 ### R-11: Orphaned Modules Never Imported — RESOLVED
 
@@ -171,44 +173,48 @@ Generated from AST analysis (`adt analyze-dependencies`, `adt analyze-complexity
 | **Resolution** | Completed A0 orphan cleanup. No active call sites for removed telemetry stub. |
 | **Trigger** | `rg "tools.utils.telemetry|doc_sync_audit|janitor|rabbitmq_transport" AgentQMS/ --type py` should only match `_deprecated` references (or none). |
 
-### R-12: Legacy Path References in Code
+### R-12: Legacy Path References in Code — RESOLVED
 
 | Field | Value |
 |:---|:---|
 | **Risk ID** | R-12 |
 | **Category** | Orphaned Features |
-| **Impact** | Medium |
+| **Impact** | ~~Medium~~ → Resolved |
 | **Affected Files** | Multiple modules |
-| **Description** | Several modules contain import paths or string references to `tools/utilities/` and `tools/documentation/` — directories that no longer exist. These include `AgentQMS.tools.utilities.versioning`, `AgentQMS.tools.utilities.tracking_integration`, `AgentQMS.tools.utils.git` (should be `system.git`), `AgentQMS.tools.utils.timestamps` (should be `system.timestamps`). |
-| **Mitigation** | Run `rg "tools.utilities\|tools.documentation\|tools\.utils\.git\b\|tools\.utils\.timestamps\b" AgentQMS/` and fix all hits before Spec A implementation. |
-| **Trigger** | `rg` command above should return 0 matches post-fix. |
+| **Description** | Removed obsolete module references and moved call sites to current import surfaces. |
+| **Evidence** | `workflow.py` now imports tracking boundary from `tools/core/artifacts/tracking_integration.py`; `status.py` imports `tools/core/artifacts/versioning.py`; `artifact_templates.py` now imports `tools.utils.system.git` and `tools.utils.system.timestamps`; legacy references removed from utility docs/comments. |
+| **Resolution** | `rg "tools.utilities\|tools.documentation\|tools\.utils\.git\b\|tools\.utils\.timestamps\b" AgentQMS/ --type py` now returns 0 matches. |
+| **Trigger** | Keep zero-match `rg` check in pre-merge validation. |
 
-### R-13: `generate_mechanized_graph.py` — Extreme Complexity
+### R-13: `generate_mechanized_graph.py` — RESOLVED (Refactor + Deterministic Smoke Gate)
 
 | Field | Value |
 |:---|:---|
 | **Risk ID** | R-13 |
 | **Category** | Cascading Regression |
-| **Impact** | Medium |
+| **Impact** | ~~Medium~~ → Resolved |
 | **Affected Files** | `tools/generate_mechanized_graph.py` |
-| **Description** | Cyclomatic complexity of 60 (highest in the codebase), 290 LOC, nesting depth 5. This module generates dependency graphs from the registry. If the registry format or paths change during Spec A/B refactoring, this module will silently produce incorrect graphs without failing. |
-| **Mitigation** | Add a known-good graph output as a regression test fixture. Verify after each spec completion. |
-| **Trigger** | Diff of graph output pre/post refactor should be intentional only. |
+| **Description** | Graph generation path had high complexity and weak regression detection. |
+| **Evidence** | `tools/generate_mechanized_graph.py` is now decomposed into focused helpers for tier rendering, edge rendering, legend rendering, parser/output orchestration, and edge counting. Added deterministic smoke gate: `scripts/mcp/smoke_mechanized_graph.py` asserting same-input/same-output and required governance/dependency/critical-path edges. |
+| **Resolution** | Complexity surface split into smaller pure functions while preserving output behavior and CLI contract (`--no-legend`, `--no-domains`, `--dry-run`, `--output`). |
+| **Trigger** | `python scripts/mcp/smoke_mechanized_graph.py` must pass and output diffs should be intentional only. |
 
 ---
 
 ## Low Risks — Technical Debt
 
-### R-14: `mcp_server.py::call_tool` — Nesting Depth 10
+### R-14: `mcp_server.py::call_tool` — RESOLVED (Handlers Extracted)
 
 | Field | Value |
 |:---|:---|
 | **Risk ID** | R-14 |
 | **Category** | Technical Debt |
-| **Impact** | Low |
+| **Impact** | ~~Low~~ → Resolved |
 | **Affected Files** | `mcp_server.py:456-641` |
-| **Description** | CC=21, nesting=10. The `call_tool` function is a monolithic if/elif chain. Adding new tools or modifying root resolution within it is error-prone. |
-| **Mitigation** | After Spec A/B, refactor to a tool dispatch registry pattern. Not blocking for initial implementation. |
+| **Description** | `mcp_server.py` previously contained both wiring and concrete tool handlers, limiting testability and raising change-coupling risk. |
+| **Evidence** | Extracted handlers to `AgentQMS/tools/core/mcp/handlers.py` with `TOOL_HANDLERS` registry + `HandlerContext`; `mcp_server.py` now remains a thin server wiring + dispatch layer. Added smoke gate `scripts/mcp/smoke_mcp_dispatch.py` verifying handler registry keys, known-tool dispatch shape, and unknown-tool error behavior. |
+| **Resolution** | Slice 2 completed: concrete handlers isolated from transport/wiring without changing MCP tool contracts. |
+| **Trigger** | `python scripts/mcp/smoke_mcp_dispatch.py` must pass and unknown-tool path must return JSON payload with `error`. |
 
 ### R-15: Deprecated Command Aliases Not Guarded — RESOLVED
 
@@ -244,7 +250,7 @@ Based on AST analysis, the following should be consolidated or removed **before*
 ## Review Schedule
 
 - **Spec A0 (pre-flight):** R-04, R-05, R-07 — completed (imports + package init)
-- **Spec A (root resolution):** R-01 and R-03 completed; R-02 (partial, naming cleanup pending), R-08 (ongoing cascade risk)
-- **After Spec A, before Spec B:** R-09, R-10, R-12 (duplicate files, CLI consolidation, legacy paths)
-- **After Spec B:** R-13, R-14 (complexity and debt)
-- **Resolved:** R-01, R-03, R-04, R-05, R-06, R-07, R-09, R-11, R-15
+- **Spec A (root resolution):** R-01, R-02, R-03 completed; R-08 verification completed with consumer smoke gate
+- **After Spec A, before Spec B:** R-09 done, R-10 and R-12 closed
+- **After Spec B:** R-13 refactor + deterministic smoke closure, R-14 handler extraction closure
+- **Resolved/Mitigated:** R-01, R-02, R-03, R-04, R-05, R-06, R-07, R-08, R-09, R-10, R-11, R-12, R-13, R-14, R-15

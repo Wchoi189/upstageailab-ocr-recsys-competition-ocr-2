@@ -35,5 +35,5 @@ The architecture is defined by the **Registry** (`AgentQMS/governance/specificat
 *   **Domain Switching**: Enabled (`python runners/train.py domain=X`).
 
 ## 3. Required Actions
-*   **Sync Registry**: `aqms registry sync`
+*   **Sync Registry**: `python -m AgentQMS.cli registry sync`
 *   **Gen Graph**: `python AgentQMS/tools/generate_mechanized_graph.py`

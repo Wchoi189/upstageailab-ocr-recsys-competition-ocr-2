@@ -6,7 +6,7 @@ available as ``YamlCacheLoader`` to avoid class-name ambiguity.
 """
 
 from .config import ConfigLoader, get_config_loader, load_config, reset_config_loader
-from .loader import ConfigLoader as YamlCacheLoader
+from .loader import YamlCacheLoader
 
 __all__ = [
     "ConfigLoader",

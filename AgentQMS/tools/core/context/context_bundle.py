@@ -27,12 +27,12 @@ except ImportError:
 
 from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path
-from AgentQMS.tools.utils.config.loader import ConfigLoader
+from AgentQMS.tools.utils.config import YamlCacheLoader
 
 ensure_project_root_on_sys_path()
 PROJECT_ROOT = get_project_root()
 BUNDLES_DIR = PROJECT_ROOT / "AgentQMS" / ".agentqms" / "plugins" / "context_bundles"
-CONFIG_LOADER = ConfigLoader()
+CONFIG_LOADER = YamlCacheLoader()
 
 # Try to import plugin registry
 try:

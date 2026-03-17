@@ -7,11 +7,11 @@ AI-only quick start. For machine-readable values use AGENTS.yaml.
 2) AgentQMS/.agentqms/registry.yaml (auto-generated from specs)
 3) AgentQMS/specs/ (source of truth)
 
-## Commands (AgentQMS/bin)
-- ./aqms registry resolve --task <task>
-- ./aqms registry resolve --path <path>
-- ./aqms registry sync  # Generates registry from specs
-- ./aqms plugin validate
+## Commands (Canonical CLI)
+- python -m AgentQMS.cli registry resolve --task <task>
+- python -m AgentQMS.cli registry resolve --path <path>
+- python -m AgentQMS.cli registry sync  # Generates registry from specs
+- python -m AgentQMS.cli plugin validate
 
 ## Middleware Observability (Phase C)
 - make qms-middleware-health  # Check policy enforcement

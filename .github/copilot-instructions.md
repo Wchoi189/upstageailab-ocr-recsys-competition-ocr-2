@@ -19,7 +19,7 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 4) AgentQMS/specs/
 
 ## Non-Negotiables
-- Use `aqms` from PATH.
+- Use canonical CLI module path: `python -m AgentQMS.cli`.
 - No manual artifacts. Specs and registry are the source of truth.
 - Use `uv run` for Python.
 - Load only required context (no global dumps).
@@ -34,7 +34,7 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 ## AQMS CLI (Framework Ops)
 - Purpose: Resolve specs, validate artifacts, and keep standards in sync.
 - Docs: AgentQMS/AGENTS.yaml, AgentQMS/specs/
-- Examples: `aqms registry resolve --task <task>`, `aqms artifact validate --all`
+- Examples: `python -m AgentQMS.cli registry resolve --task <task>`, `python -m AgentQMS.cli artifact validate --all`
 
 ## Context Bundling (Engine 2.0)
 - Purpose: discover and load only relevant files for a task.
@@ -75,12 +75,12 @@ AgentQMS is an AI-native quality management framework that keeps work spec-drive
 - Examples: configs/README.md, docker/README.md, AgentQMS/ARCHITECTURE.md.
 
 ## Artifacts and Plugins
-- Artifacts: standardized outputs defined by specs; create/validate via `aqms artifact ...`.
+- Artifacts: standardized outputs defined by specs; create/validate via `python -m AgentQMS.cli artifact ...`.
 - Plugins: framework in AgentQMS/.agentqms/plugins/ (project overrides optional at .agentqms/plugins/).
 
 ## Feedback Loop
 - Proactively flag redundant tools, broken context bundling, or workflow friction.
-- Use `aqms feedback report --issue-type <type> --description "<desc>"` or tell the user directly.
+- Use `python -m AgentQMS.cli feedback report --issue-type <type> --description "<desc>"` or tell the user directly.
 
 ## Quick Links
 - Specs: AgentQMS/specs/

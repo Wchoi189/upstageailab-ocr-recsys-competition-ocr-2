@@ -286,7 +286,7 @@ class ArtifactWorkflow:
             owner: Artifact owner
         """
         try:
-            from AgentQMS.tools.utilities.tracking_integration import (
+            from AgentQMS.tools.core.artifacts.tracking_integration import (
                 register_artifact_in_tracking,
             )
 

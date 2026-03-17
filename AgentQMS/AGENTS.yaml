@@ -16,28 +16,28 @@ resources:
   compass_entrypoint: "project_compass/AGENTS.md"
   mcp_server: "AgentQMS/mcp_server.py"
   plugin_snapshot: "AgentQMS/.agentqms/state/plugins.yaml"
-  cli: "bin/aqms"
+  cli: "AgentQMS/cli.py"
   middleware_dashboard: "AgentQMS/tools/middleware/dashboard.py"
   middleware_logs: "outputs/logs/middleware/"
   middleware_metrics: "outputs/metrics/"
 
 commands:
-  # Unified CLI - Use 'aqms' (single interface)
-  help: "aqms --help"
-  validate_all: "aqms validate --all"
-  validate_file: "aqms validate --file <path>"
-  monitor_check: "aqms monitor --check"
-  monitor_report: "aqms monitor --report"
-  artifact_create: "aqms artifact create --type <type> --name <name> --title \"<title>\""
-  artifact_validate: "aqms artifact validate --all"
-  generate_config: "aqms generate-config --path <current_path>"
-  qms_feedback_report: "aqms feedback report --issue-type <type> --description \"<desc>\""
-  qms_quality_check: "aqms quality --check"
+  # Unified CLI - Canonical module entrypoint
+  help: "python -m AgentQMS.cli --help"
+  validate_all: "python -m AgentQMS.cli validate --all"
+  validate_file: "python -m AgentQMS.cli validate --file <path>"
+  monitor_check: "python -m AgentQMS.cli monitor --check"
+  monitor_report: "python -m AgentQMS.cli monitor --report"
+  artifact_create: "python -m AgentQMS.cli artifact create --type <type> --name <name> --title \"<title>\""
+  artifact_validate: "python -m AgentQMS.cli artifact validate --all"
+  generate_config: "python -m AgentQMS.cli generate-config --path <current_path>"
+  qms_feedback_report: "python -m AgentQMS.cli feedback report --issue-type <type> --description \"<desc>\""
+  qms_quality_check: "python -m AgentQMS.cli quality --check"
   qms_token_analysis: "python AgentQMS/bin/monitor-token-usage.py"
 
   # Registry Management (Phase 7.2)
-  registry_sync: "aqms registry sync"  # Generates from specs
-  registry_resolve: "aqms registry resolve --task <task>"
+  registry_sync: "python -m AgentQMS.cli registry sync"  # Generates from specs
+  registry_resolve: "python -m AgentQMS.cli registry resolve --task <task>"
 
   # Middleware Observability (Phase C)
   middleware_health: "make qms-middleware-health"
@@ -59,11 +59,11 @@ notes:
   - "AgentQMS v0.4.0 - Phase 7+ complete: Plugin schemas fixed, registry auto-generated, deep validation operational"
   - "Registry: AgentQMS/.agentqms/registry.yaml (auto-generated from AgentQMS/specs/)"
   - "Standards source of truth: AgentQMS/specs/ (Markdown specifications)"
-  - "Use 'aqms' CLI for ALL operations - legacy tools removed"
-  - "Path-aware discovery reduces token usage by 85% (aqms generate-config)"
+  - "Use canonical CLI module path: python -m AgentQMS.cli for all operations"
+  - "Path-aware discovery reduces token usage by 85% (python -m AgentQMS.cli generate-config)"
   - "Context Engine 2.0: Caching, parallel I/O, and strict token budgeting (default 32k) enabled"
   - "Use KST ISO-8601 timestamps with timezone in generated files (e.g., 2026-02-02T05:00:00+0900)"
   - "Canonical artifact types: assessment, audit, bug_report, design_document, implementation_plan, vlm_report, walkthrough"
   - "Middleware observability (Phase C): Structured logging to outputs/logs/middleware/, policy enforcement metrics"
   - "Health checks: 'make qms-middleware-health' for policy validation status"
-  - "For help: aqms --help or see AgentQMS/README.md"
+  - "For help: python -m AgentQMS.cli --help or see AgentQMS/README.md"

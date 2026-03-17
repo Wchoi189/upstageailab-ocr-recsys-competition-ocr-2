@@ -14,19 +14,19 @@ Design principles:
 - Minimal dependencies
 
 Usage:
-    from AgentQMS.tools.utils.config.loader import ConfigLoader
+    from AgentQMS.tools.utils.config.loader import YamlCacheLoader
 
     # Simple YAML loading
-    config = ConfigLoader.load_yaml("path/to/config.yaml")
+    config = YamlCacheLoader.load_yaml("path/to/config.yaml")
 
     # With fallback defaults
-    config = ConfigLoader.load_yaml(
+    config = YamlCacheLoader.load_yaml(
         "path/to/config.yaml",
         defaults={"enabled": True, "timeout": 30}
     )
 
     # With caching (Redis -> Memory -> Disk)
-    loader = ConfigLoader()
+    loader = YamlCacheLoader()
     config1 = loader.get_config("path/to/config.yaml")
     config2 = loader.get_config("path/to/config.yaml")  # From cache
 
@@ -58,7 +58,7 @@ except ImportError:
     REDIS_AVAILABLE = False
 
 
-class ConfigLoader:
+class YamlCacheLoader:
     """
     Framework-agnostic configuration loader with caching and fallbacks.
 
@@ -81,7 +81,7 @@ class ConfigLoader:
 
     def __init__(self, cache_size: int = 10, redis_ttl: int = 3600):
         """
-        Initialize ConfigLoader with optional caching.
+        Initialize YamlCacheLoader with optional caching.
 
         Args:
             cache_size: Maximum number of configs to keep in local memory cache (default: 10).
@@ -435,8 +435,13 @@ class ConfigLoader:
         return effective
 
 
+# Temporary compatibility alias for legacy imports.
+# Canonical name is YamlCacheLoader.
+ConfigLoader = YamlCacheLoader
+
+
 # Module-level convenience instance for basic use cases
-_default_loader = ConfigLoader(cache_size=10)
+_default_loader = YamlCacheLoader(cache_size=10)
 
 
 def load_config(config_path: Path | str, key: str | None = None) -> dict[str, Any] | Any:
@@ -451,12 +456,12 @@ if __name__ == "__main__":
     # Example usage and testing
     from tempfile import NamedTemporaryFile
 
-    print("ConfigLoader Examples (with Redis Support):")
+    print("YamlCacheLoader Examples (with Redis Support):")
     print("=" * 50)
 
     # Example 1: Load with defaults
     print("\n1. Load non-existent file with defaults:")
-    config = ConfigLoader.load_yaml("nonexistent.yaml", defaults={"status": "default"})
+    config = YamlCacheLoader.load_yaml("nonexistent.yaml", defaults={"status": "default"})
     print(f"   Result: {config}")
 
     # Example 2: Create temp YAML file
@@ -466,7 +471,7 @@ if __name__ == "__main__":
         f.flush()
         temp_path = Path(f.name)
 
-        loader = ConfigLoader() # Will try to connect to Redis
+        loader = YamlCacheLoader() # Will try to connect to Redis
         
         # First load (miss)
         print("   First load (IO):")

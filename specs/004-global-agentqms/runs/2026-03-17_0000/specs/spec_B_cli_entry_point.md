@@ -6,7 +6,7 @@ Provide a global CLI entry point so `AgentQMS` can be invoked like a stateless t
 ## In scope
 - CLI module (e.g., `AgentQMS/cli.py` or existing CLI updated)
 - `pyproject.toml` entry point registration
-- Command namespace alignment (design doc notes: cli should be `aqms` to align with existing `./aqms` usage)
+- Command namespace alignment via canonical module entrypoint: `python -m AgentQMS.cli`
 
 ## Acceptance criteria
 - Entry point is installed/registered via `pyproject.toml`.

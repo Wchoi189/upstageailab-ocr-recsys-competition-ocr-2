@@ -4,7 +4,7 @@
 **Scope**: Execution logic for Validation and Compliance.
 
 ## 1. Validation Runbook
-**Command**: `aqms validate` (or `make qms-validate`)
+**Command**: `python -m AgentQMS.cli validate` (or `make qms-validate`)
 
 ### Triggers
 *   **Pre-Commit**: Fast check (names, placement).
@@ -17,7 +17,7 @@
 4.  **Retry**: Verify fix.
 
 ## 2. Compliance Reporting
-**Command**: `aqms artifact check-compliance`
+**Command**: `python -m AgentQMS.cli artifact check-compliance`
 *   **Output**: JSON report of all artifacts.
 *   **Metric**: % of artifacts passing schema validation.
 *   **Goal**: Maintain > 95% compliance health.

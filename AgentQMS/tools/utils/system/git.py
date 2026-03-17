@@ -5,7 +5,7 @@ Git Utilities for AgentQMS
 Provides functions to detect and manage git branch information for artifact metadata.
 
 Usage:
-    from AgentQMS.tools.utils.git import get_current_branch, validate_branch_name
+    from AgentQMS.tools.utils.system.git import get_current_branch, validate_branch_name
 
     branch = get_current_branch()  # Returns current branch or "main" as fallback
     is_valid = validate_branch_name(branch)

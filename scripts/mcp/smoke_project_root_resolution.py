@@ -127,19 +127,21 @@ def _scenario_marker_traversal() -> ScenarioResult:
 def _scenario_duality_check() -> ScenarioResult:
     from AgentQMS.tools.utils.config import ConfigLoader as PackageConfigLoader
     from AgentQMS.tools.utils.config.config import ConfigLoader as RootConfigLoader
-    from AgentQMS.tools.utils.config.loader import ConfigLoader as UtilityConfigLoader
+    from AgentQMS.tools.utils.config import YamlCacheLoader
+    from AgentQMS.tools.utils.config.loader import ConfigLoader as LegacyUtilityAlias
 
-    assert RootConfigLoader is not UtilityConfigLoader, "Two ConfigLoader classes must remain distinct"
+    assert RootConfigLoader is not YamlCacheLoader, "Root and YAML/cache loaders must remain distinct"
     assert PackageConfigLoader is RootConfigLoader, "Package ConfigLoader must map to canonical root resolver"
+    assert LegacyUtilityAlias is YamlCacheLoader, "loader.ConfigLoader alias must map to YamlCacheLoader"
     assert RootConfigLoader.__module__.endswith(".config"), "Root ConfigLoader module mismatch"
-    assert UtilityConfigLoader.__module__.endswith(".loader"), "Utility ConfigLoader module mismatch"
+    assert YamlCacheLoader.__module__.endswith(".loader"), "YamlCacheLoader module mismatch"
 
     actual = (
         f"package={PackageConfigLoader.__module__}, "
         f"root={RootConfigLoader.__module__}, "
-        f"utility={UtilityConfigLoader.__module__}"
+        f"yaml_cache={YamlCacheLoader.__module__}"
     )
-    expected = "package/root -> ...config, utility -> ...loader"
+    expected = "package/root -> ...config, yaml_cache -> ...loader"
     return ScenarioResult("Duality Check", expected, actual, "PASS")
 
 

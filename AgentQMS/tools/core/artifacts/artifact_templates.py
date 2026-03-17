@@ -23,7 +23,7 @@ import re
 from pathlib import Path
 from typing import Any
 
-from AgentQMS.tools.utils.config.loader import ConfigLoader
+from AgentQMS.tools.utils.config import YamlCacheLoader
 
 
 DEFAULT_CONFIG: dict[str, Any] = {
@@ -76,8 +76,8 @@ except ImportError:
     PLUGINS_AVAILABLE = False
 # Try to import new utilities for branch and timestamp handling
 try:
-    from AgentQMS.tools.utils.git import get_current_branch
-    from AgentQMS.tools.utils.timestamps import get_kst_timestamp, format_timestamp_for_filename
+    from AgentQMS.tools.utils.system.git import get_current_branch
+    from AgentQMS.tools.utils.system.timestamps import get_kst_timestamp, format_timestamp_for_filename
 
     UTILITIES_AVAILABLE = True
     _get_current_branch = get_current_branch
@@ -113,7 +113,7 @@ class ArtifactTemplates:
         No hardcoded templates - all types must be defined as plugins.
         """
         self.templates: dict[str, dict[str, Any]] = {}
-        self._config_loader = ConfigLoader(cache_size=5)
+        self._config_loader = YamlCacheLoader(cache_size=5)
         self._config_cache: dict[str, Any] | None = None
 
         # Load all templates from plugin registry

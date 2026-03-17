@@ -220,7 +220,7 @@ def extract_suggestions_from_violations(violations: list[dict[str, Any]]) -> lis
             # if "[E001]" in error or "[E002]" in error or "[E003]" in error:
             #     # Suggest rename using Migrator logic
             #     try:
-            #         from AgentQMS.tools.utilities.legacy_migrator import LegacyArtifactMigrator
+            #         from AgentQMS.tools.core.artifacts.legacy_migrator import LegacyArtifactMigrator
             #         migrator = LegacyArtifactMigrator()
             #         new_name = migrator.generate_new_filename(file_path)
             #

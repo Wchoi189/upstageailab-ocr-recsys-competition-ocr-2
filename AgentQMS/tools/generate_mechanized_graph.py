@@ -149,6 +149,154 @@ def find_domain_for_standard(std_id: str) -> str:
     return "other"
 
 
+def _priority_style(priority: str) -> str | None:
+    """Return DOT style fragment for priority highlighting."""
+    if priority == "critical":
+        return "penwidth=2, color=red"
+    if priority == "high":
+        return "penwidth=1.5, color=orange"
+    return None
+
+
+def _node_label(std_id: str, header: dict[str, Any]) -> str:
+    """Build node label from ID + truncated description."""
+    desc = header.get("description", "")
+    if desc and len(desc) > 40:
+        desc = desc[:37] + "..."
+    return f"{std_id}\\n{desc}" if desc else std_id
+
+
+def _render_standard_node(std_id: str, header: dict[str, Any], indent: str) -> str:
+    """Render one standard node line."""
+    label = _node_label(std_id, header)
+    style = _priority_style(header.get("priority", "medium"))
+    if style:
+        return f'{indent}"{std_id}" [label="{label}", {style}];'
+    return f'{indent}"{std_id}" [label="{label}"];'
+
+
+def _render_tier_cluster(
+    tier: int,
+    tier_name: str,
+    tier_color: str,
+    standards_in_tier: list[tuple[str, dict[str, Any]]],
+) -> list[str]:
+    """Render a standard tier subgraph."""
+    lines = [
+        f"  subgraph cluster_tier{tier} {{",
+        f'    label="{tier_name}";',
+        "    style=filled;",
+        f'    color="{tier_color}";',
+        "    fontsize=14;",
+        '    fontname="Arial Bold";',
+        "",
+    ]
+    for std_id, header in sorted(standards_in_tier):
+        lines.append(_render_standard_node(std_id, header, "    "))
+    lines.extend(["  }", ""])
+    return lines
+
+
+def _render_tier2_domains(standards_in_tier: list[tuple[str, dict[str, Any]]]) -> list[str]:
+    """Render Tier 2 grouped by functional domains."""
+    lines = [
+        "  subgraph cluster_tier2 {",
+        '    label="Framework (Tier 2)";',
+        "    style=filled;",
+        '    color="#CCCCCC";',
+        "    fontsize=14;",
+        '    fontname="Arial Bold";',
+        "",
+    ]
+
+    domain_standards: dict[str, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
+    for std_id, header in standards_in_tier:
+        domain_standards[find_domain_for_standard(std_id)].append((std_id, header))
+
+    ordered_domains = ["core_infra", "ocr_engine", "configuration", "validation", "patterns", "tooling"]
+    for domain_id in ordered_domains:
+        if domain_id not in domain_standards or not domain_standards[domain_id]:
+            continue
+        domain_info = TIER2_DOMAINS.get(domain_id, {})
+        domain_label = domain_info.get("label", domain_id)
+        domain_color = domain_info.get("color", "#FFFFFF")
+        lines.extend(
+            [
+                f"    subgraph cluster_{domain_id} {{",
+                f'      label="{domain_label}";',
+                "      style=filled;",
+                f'      color="{domain_color}";',
+                "      fontsize=11;",
+                "",
+            ]
+        )
+        for std_id, header in sorted(domain_standards[domain_id]):
+            lines.append(_render_standard_node(std_id, header, "      "))
+        lines.extend(["    }", ""])
+
+    lines.extend(["  }", ""])
+    return lines
+
+
+def _render_legend() -> list[str]:
+    """Render legend subgraph lines."""
+    return [
+        "  subgraph cluster_legend {",
+        '    label="Legend";',
+        "    style=filled;",
+        '    color="#F5F5F5";',
+        "    fontsize=12;",
+        '    fontname="Arial Bold";',
+        "",
+        '    legend_critical [label="Critical (Red)", penwidth=2, color=red, shape=box, style=rounded];',
+        '    legend_high [label="High Priority (Orange)", penwidth=1.5, color=orange, shape=box, style=rounded];',
+        '    legend_dep [label="Dependency\\n(Solid Arrow)", shape=plaintext];',
+        '    legend_gov [label="Governance\\n(Dashed Arrow)", shape=plaintext];',
+        "",
+        "    legend_critical -> legend_high [style=invis];",
+        "    legend_high -> legend_dep [style=invis];",
+        "    legend_dep -> legend_gov [style=invis];",
+        "  }",
+        "",
+    ]
+
+
+def _render_declared_dependency_edges(standards: dict[str, dict[str, Any]]) -> list[str]:
+    """Render dependency edges declared directly in registry."""
+    lines = ["  // Declared Dependencies (from registry.yaml)"]
+    for std_id, header in standards.items():
+        for dep_id in header.get("dependencies", []):
+            if dep_id in standards:
+                lines.append(f'  "{dep_id}" -> "{std_id}" [color=blue, penwidth=1.5];')
+    lines.append("")
+    return lines
+
+
+def _render_mapping_edges(
+    standards: dict[str, dict[str, Any]], mappings: list[tuple[str, str, str]]
+) -> list[str]:
+    """Render fixed mapping edges for governance/dependency relations."""
+    lines = []
+    for source, target, _edge_type in mappings:
+        if source in standards and target in standards:
+            if mappings is GOVERNANCE_MAPPINGS:
+                lines.append(f'  "{source}" -> "{target}" [style=dashed, color="#666666", penwidth=1.0];')
+            else:
+                lines.append(f'  "{source}" -> "{target}" [color="#0066CC", penwidth=1.5];')
+    return lines
+
+
+def _render_critical_path_edges(standards: dict[str, dict[str, Any]]) -> list[str]:
+    """Render highlighted critical chain edges."""
+    lines = ["  // Critical Path Chain"]
+    for i in range(len(CRITICAL_PATH) - 1):
+        source = CRITICAL_PATH[i]
+        target = CRITICAL_PATH[i + 1]
+        if source in standards and target in standards:
+            lines.append(f'  "{source}" -> "{target}" [color=red, penwidth=2.5, label="CRITICAL"];')
+    return lines
+
+
 def generate_mechanized_graph(
     standards: dict[str, dict[str, Any]],
     include_legend: bool = True,
@@ -174,8 +322,7 @@ def generate_mechanized_graph(
         "",
     ]
 
-    # Group standards by tier
-    tier_groups = defaultdict(list)
+    tier_groups: dict[int, list[tuple[str, dict[str, Any]]]] = defaultdict(list)
     for std_id, header in standards.items():
         tier = header.get("tier", 0)
         tier_groups[tier].append((std_id, header))
@@ -195,253 +342,51 @@ def generate_mechanized_graph(
         4: "Workflows (Tier 4)",
     }
 
-    # Generate Tier 1 (Constitution)
     if 1 in tier_groups:
-        lines.append('  subgraph cluster_tier1 {')
-        lines.append(f'    label="{tier_names[1]}";')
-        lines.append('    style=filled;')
-        lines.append(f'    color="{tier_colors[1]}";')
-        lines.append('    fontsize=14;')
-        lines.append('    fontname="Arial Bold";')
-        lines.append("")
+        lines.extend(_render_tier_cluster(1, tier_names[1], tier_colors[1], tier_groups[1]))
 
-        for std_id, header in sorted(tier_groups[1]):
-            desc = header.get("description", "")
-            if desc and len(desc) > 40:
-                desc = desc[:37] + "..."
-            label = f"{std_id}\\n{desc}" if desc else std_id
-            priority = header.get("priority", "medium")
-
-            # Style by priority - FIX: Remove trailing comma
-            if priority == "critical":
-                style = 'penwidth=2, color=red'
-            elif priority == "high":
-                style = 'penwidth=1.5, color=orange'
-            else:
-                style = None
-
-            if style:
-                lines.append(f'    "{std_id}" [label="{label}", {style}];')
-            else:
-                lines.append(f'    "{std_id}" [label="{label}"];')
-
-        lines.append("  }")
-        lines.append("")
-
-    # Generate Tier 2 (Framework) with functional domains
     if 2 in tier_groups and include_domains:
-        lines.append('  subgraph cluster_tier2 {')
-        lines.append(f'    label="{tier_names[2]}";')
-        lines.append('    style=filled;')
-        lines.append('    color="#CCCCCC";')  # Gray border for main tier
-        lines.append('    fontsize=14;')
-        lines.append('    fontname="Arial Bold";')
-        lines.append("")
-
-        # Group standards by domain
-        domain_standards = defaultdict(list)
-        for std_id, header in tier_groups[2]:
-            domain = find_domain_for_standard(std_id)
-            domain_standards[domain].append((std_id, header))
-
-        # Generate domain subgraphs
-        for domain_id in ["core_infra", "ocr_engine", "configuration", "validation", "patterns", "tooling"]:
-            if domain_id not in domain_standards or not domain_standards[domain_id]:
-                continue
-
-            domain_info = TIER2_DOMAINS.get(domain_id, {})
-            domain_label = domain_info.get("label", domain_id)
-            domain_color = domain_info.get("color", "#FFFFFF")
-
-            lines.append(f'    subgraph cluster_{domain_id} {{')
-            lines.append(f'      label="{domain_label}";')
-            lines.append('      style=filled;')
-            lines.append(f'      color="{domain_color}";')
-            lines.append('      fontsize=11;')
-            lines.append("")
-
-            for std_id, header in sorted(domain_standards[domain_id]):
-                desc = header.get("description", "")
-                if desc and len(desc) > 40:
-                    desc = desc[:37] + "..."
-                label = f"{std_id}\\n{desc}" if desc else std_id
-                priority = header.get("priority", "medium")
-
-                # Style by priority - FIX: Remove trailing comma
-                if priority == "critical":
-                    style = 'penwidth=2, color=red'
-                elif priority == "high":
-                    style = 'penwidth=1.5, color=orange'
-                else:
-                    style = None
-
-                if style:
-                    lines.append(f'      "{std_id}" [label="{label}", {style}];')
-                else:
-                    lines.append(f'      "{std_id}" [label="{label}"];')
-
-            lines.append("    }")
-            lines.append("")
-
-        lines.append("  }")
-        lines.append("")
-
+        lines.extend(_render_tier2_domains(tier_groups[2]))
     elif 2 in tier_groups:
-        # Fallback: No domain grouping
-        lines.append('  subgraph cluster_tier2 {')
-        lines.append(f'    label="{tier_names[2]}";')
-        lines.append('    style=filled;')
-        lines.append(f'    color="{tier_colors[2]}";')
-        lines.append('    fontsize=14;')
-        lines.append('    fontname="Arial Bold";')
-        lines.append("")
+        lines.extend(_render_tier_cluster(2, tier_names[2], tier_colors[2], tier_groups[2]))
 
-        for std_id, header in sorted(tier_groups[2]):
-            desc = header.get("description", "")
-            if desc and len(desc) > 40:
-                desc = desc[:37] + "..."
-            label = f"{std_id}\\n{desc}" if desc else std_id
-            priority = header.get("priority", "medium")
-
-            if priority == "critical":
-                style = 'penwidth=2, color=red'
-            elif priority == "high":
-                style = 'penwidth=1.5, color=orange'
-            else:
-                style = None
-
-            if style:
-                lines.append(f'    "{std_id}" [label="{label}", {style}];')
-            else:
-                lines.append(f'    "{std_id}" [label="{label}"];')
-
-        lines.append("  }")
-        lines.append("")
-
-    # Generate Tier 3 (Agents)
     if 3 in tier_groups:
-        lines.append('  subgraph cluster_tier3 {')
-        lines.append(f'    label="{tier_names[3]}";')
-        lines.append('    style=filled;')
-        lines.append(f'    color="{tier_colors[3]}";')
-        lines.append('    fontsize=14;')
-        lines.append('    fontname="Arial Bold";')
-        lines.append("")
+        lines.extend(_render_tier_cluster(3, tier_names[3], tier_colors[3], tier_groups[3]))
 
-        for std_id, header in sorted(tier_groups[3]):
-            desc = header.get("description", "")
-            if desc and len(desc) > 40:
-                desc = desc[:37] + "..."
-            label = f"{std_id}\\n{desc}" if desc else std_id
-            priority = header.get("priority", "medium")
-
-            if priority == "critical":
-                style = 'penwidth=2, color=red'
-            elif priority == "high":
-                style = 'penwidth=1.5, color=orange'
-            else:
-                style = None
-
-            if style:
-                lines.append(f'    "{std_id}" [label="{label}", {style}];')
-            else:
-                lines.append(f'    "{std_id}" [label="{label}"];')
-
-        lines.append("  }")
-        lines.append("")
-
-    # Generate Tier 4 (Workflows)
     if 4 in tier_groups:
-        lines.append('  subgraph cluster_tier4 {')
-        lines.append(f'    label="{tier_names[4]}";')
-        lines.append('    style=filled;')
-        lines.append(f'    color="{tier_colors[4]}";')
-        lines.append('    fontsize=14;')
-        lines.append('    fontname="Arial Bold";')
-        lines.append("")
-
-        for std_id, header in sorted(tier_groups[4]):
-            desc = header.get("description", "")
-            if desc and len(desc) > 40:
-                desc = desc[:37] + "..."
-            label = f"{std_id}\\n{desc}" if desc else std_id
-            priority = header.get("priority", "medium")
-
-            if priority == "critical":
-                style = 'penwidth=2, color=red'
-            elif priority == "high":
-                style = 'penwidth=1.5, color=orange'
-            else:
-                style = None
-
-            if style:
-                lines.append(f'    "{std_id}" [label="{label}", {style}];')
-            else:
-                lines.append(f'    "{std_id}" [label="{label}"];')
-
-        lines.append("  }")
-        lines.append("")
+        lines.extend(_render_tier_cluster(4, tier_names[4], tier_colors[4], tier_groups[4]))
 
     # Add legend
     if include_legend:
-        lines.append('  subgraph cluster_legend {')
-        lines.append('    label="Legend";')
-        lines.append('    style=filled;')
-        lines.append('    color="#F5F5F5";')
-        lines.append('    fontsize=12;')
-        lines.append('    fontname="Arial Bold";')
-        lines.append('')
-        lines.append('    legend_critical [label="Critical (Red)", penwidth=2, color=red, shape=box, style=rounded];')
-        lines.append('    legend_high [label="High Priority (Orange)", penwidth=1.5, color=orange, shape=box, style=rounded];')
-        lines.append('    legend_dep [label="Dependency\\n(Solid Arrow)", shape=plaintext];')
-        lines.append('    legend_gov [label="Governance\\n(Dashed Arrow)", shape=plaintext];')
-        lines.append('')
-        lines.append('    legend_critical -> legend_high [style=invis];')
-        lines.append('    legend_high -> legend_dep [style=invis];')
-        lines.append('    legend_dep -> legend_gov [style=invis];')
-        lines.append('  }')
-        lines.append('')
+        lines.extend(_render_legend())
 
-    # Add edges: Declared dependencies (from registry)
-    lines.append("  // Declared Dependencies (from registry.yaml)")
-    for std_id, header in standards.items():
-        for dep_id in header.get("dependencies", []):
-            if dep_id in standards:
-                # Dependencies flow upward (dep -> dependent)
-                lines.append(f'  "{dep_id}" -> "{std_id}" [color=blue, penwidth=1.5];')
-
-    lines.append("")
-
-    # Add edges: Governance mappings (dashed, downward)
+    lines.extend(_render_declared_dependency_edges(standards))
     lines.append("  // Governance Mappings (Constitutional laws enforce lower tiers)")
-    for source, target, edge_type in GOVERNANCE_MAPPINGS:
-        if source in standards and target in standards:
-            lines.append(f'  "{source}" -> "{target}" [style=dashed, color="#666666", penwidth=1.0];')
-
+    lines.extend(_render_mapping_edges(standards, GOVERNANCE_MAPPINGS))
     lines.append("")
-
-    # Add edges: Dependency mappings (solid, upward)
     lines.append("  // Architectural Dependencies (Framework consumed by Agents/Workflows)")
-    for source, target, edge_type in DEPENDENCY_MAPPINGS:
-        if source in standards and target in standards:
-            lines.append(f'  "{source}" -> "{target}" [color="#0066CC", penwidth=1.5];')
-
+    lines.extend(_render_mapping_edges(standards, DEPENDENCY_MAPPINGS))
     lines.append("")
-
-    # Add critical path highlighting
-    lines.append("  // Critical Path Chain")
-    for i in range(len(CRITICAL_PATH) - 1):
-        source = CRITICAL_PATH[i]
-        target = CRITICAL_PATH[i + 1]
-        if source in standards and target in standards:
-            lines.append(f'  "{source}" -> "{target}" [color=red, penwidth=2.5, label="CRITICAL"];')
+    lines.extend(_render_critical_path_edges(standards))
 
     lines.append("}")
 
     return "\n".join(lines)
 
 
-def main():
+def _count_edges(dot_content: str) -> tuple[int, int]:
+    """Count governance and dependency edge lines in generated DOT."""
+    governance_edges = sum(1 for line in dot_content.split("\n") if "style=dashed" in line)
+    dependency_edges = sum(
+        1
+        for line in dot_content.split("\n")
+        if "-> " in line and "style=dashed" not in line and "style=invis" not in line
+    )
+    return governance_edges, dependency_edges
+
+
+def _build_parser() -> argparse.ArgumentParser:
+    """Build command-line parser for graph generation."""
     parser = argparse.ArgumentParser(
         description="Phase 6.5: Mechanized Architecture Graph Generator"
     )
@@ -467,9 +412,26 @@ def main():
         action="store_true",
         help="Print graph to stdout without saving"
     )
+    return parser
 
-    args = parser.parse_args()
 
+def _orchestrate_output(dot_content: str, output_path: Path, dry_run: bool) -> None:
+    """Print or persist generated graph output with usage hints."""
+    if dry_run:
+        print("\n📄 Graph content (dry-run):")
+        print(dot_content)
+        return
+
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    output_path.write_text(dot_content, encoding="utf-8")
+    print(f"\n💾 Saved to: {output_path}")
+    print("\n💡 Render with:")
+    print(f"   dot -Tpng {output_path} -o {output_path.with_suffix('.png')}")
+    print(f"   dot -Tsvg {output_path} -o {output_path.with_suffix('.svg')}")
+
+
+def main() -> int:
+    args = _build_parser().parse_args()
     print("🎨 Phase 6.5: Mechanized Architecture Graph Generator")
     print("="*60)
 
@@ -488,27 +450,14 @@ def main():
             include_domains=not args.no_domains,
         )
 
-        # Count edges
-        governance_edges = sum(1 for line in dot_content.split('\n') if 'style=dashed' in line)
-        dependency_edges = sum(1 for line in dot_content.split('\n') if '-> ' in line and 'style=dashed' not in line and 'style=invis' not in line)
+        governance_edges, dependency_edges = _count_edges(dot_content)
 
         print("   ✓ Generated graph:")
         print(f"     - Governance edges: {governance_edges}")
         print(f"     - Dependency edges: {dependency_edges}")
         print(f"     - Total edges: {governance_edges + dependency_edges}")
 
-        if args.dry_run:
-            print("\n📄 Graph content (dry-run):")
-            print(dot_content)
-        else:
-            # Write to file
-            args.output.parent.mkdir(parents=True, exist_ok=True)
-            with open(args.output, "w", encoding="utf-8") as f:
-                f.write(dot_content)
-            print(f"\n💾 Saved to: {args.output}")
-            print("\n💡 Render with:")
-            print(f"   dot -Tpng {args.output} -o {args.output.with_suffix('.png')}")
-            print(f"   dot -Tsvg {args.output} -o {args.output.with_suffix('.svg')}")
+        _orchestrate_output(dot_content, args.output, args.dry_run)
 
         print("\n" + "="*60)
         print("✅ Mechanized architecture graph generated successfully!")
