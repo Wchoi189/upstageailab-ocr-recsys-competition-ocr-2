@@ -27,7 +27,7 @@ class ConfigLoader:
     def __init__(self) -> None:
         self._config_cache: dict[str, Any] | None = None
         self.framework_root = self._detect_framework_root()
-        self.project_root = self._detect_project_root(self.framework_root)
+        self.project_root = self._detect_project_root()
 
     # ------------------------------------------------------------------
     # Public API
@@ -37,18 +37,19 @@ class ConfigLoader:
         if self._config_cache is not None and not force:
             return deepcopy(self._config_cache)
 
+        # Merge order (low -> high precedence):
+        # defaults -> project overrides -> settings.yaml -> environment overrides.
+        config = deepcopy(_DEFAULT_CONFIG)
+        config = self._merge_config(config, self._load_framework_defaults())
+        config = self._merge_config(config, self._load_project_overrides())
+
         # Prefer consolidated .agentqms/settings.yaml when present.
-        settings_path = self.framework_root / ".agentqms" / "settings.yaml"
+        settings_path = self.project_root / ".agentqms" / "settings.yaml"
         if settings_path.exists():
-            config = self._load_yaml(settings_path)
-            config = self._merge_config(config, self._load_environment_overrides())
-            self._write_runtime_snapshot(config, settings_path=settings_path)
-        else:
-            config = deepcopy(_DEFAULT_CONFIG)
-            config = self._merge_config(config, self._load_framework_defaults())
-            config = self._merge_config(config, self._load_project_overrides())
-            config = self._merge_config(config, self._load_environment_overrides())
-            self._write_runtime_snapshot(config)
+            config = self._merge_config(config, self._load_yaml(settings_path))
+
+        config = self._merge_config(config, self._load_environment_overrides())
+        self._write_runtime_snapshot(config, settings_path=settings_path if settings_path.exists() else None)
 
         self._config_cache = config
         return deepcopy(config)
@@ -75,53 +76,60 @@ class ConfigLoader:
                 return parent
         raise RuntimeError("Could not determine framework root. Is AgentQMS installed?")
 
-    def _detect_project_root(self, framework_root: Path) -> Path:
-        # Check if we are running nested in a project (look for AGENTS.yaml or .git in parent)
-        if (framework_root.parent / "AGENTS.yaml").exists() or (framework_root.parent / ".git").exists():
-            return framework_root.parent
+    def _detect_project_root(self) -> Path:
+        env_override = os.getenv("AGENTQMS_PROJECT_ROOT")
+        if env_override:
+            return Path(env_override).expanduser().resolve()
 
-        # Check if we are running in self-contained mode (AgentQMS has its own .agentqms)
-        if (framework_root / ".agentqms").exists():
-            return framework_root
+        current = Path.cwd().resolve()
+        marker_names = (".agentqms", "AGENTS.yaml", ".git", "pyproject.toml")
+        for candidate in (current,) + tuple(current.parents):
+            if any((candidate / marker).exists() for marker in marker_names):
+                return candidate
 
-        if framework_root.name == "AgentQMS":
-            return framework_root.parent
-        return framework_root
+        # Fallback supports init in empty directories.
+        return current
 
     def _load_framework_defaults(self) -> dict[str, Any]:
         defaults_dir = self.framework_root / "config_defaults"
         config: dict[str, Any] = {}
-        yaml_files: Iterable[Path] = (
-            defaults_dir / "framework.yaml",
-            defaults_dir / "interface.yaml",
-            defaults_dir / "paths.yaml",
-        )
-        for path in yaml_files:
-            config = self._merge_yaml_if_exists(config, path)
 
-        tool_mappings = defaults_dir / "tool_mappings.json"
-        if tool_mappings.exists():
-            with tool_mappings.open("r", encoding="utf-8") as handle:
-                config["tool_mappings"] = json.load(handle)
+        if defaults_dir.exists():
+            yaml_files: Iterable[Path] = (
+                defaults_dir / "framework.yaml",
+                defaults_dir / "interface.yaml",
+                defaults_dir / "paths.yaml",
+            )
+            for path in yaml_files:
+                config = self._merge_yaml_if_exists(config, path)
+
+            tool_mappings = defaults_dir / "tool_mappings.json"
+            if tool_mappings.exists():
+                with tool_mappings.open("r", encoding="utf-8") as handle:
+                    config["tool_mappings"] = json.load(handle)
+        else:
+            # Backward compatibility: legacy framework defaults live here.
+            legacy_settings = self.framework_root / ".agentqms" / "settings.yaml"
+            config = self._merge_yaml_if_exists(config, legacy_settings)
         return config
 
     def _load_project_overrides(self) -> dict[str, Any]:
         # Framework project's own config in .agentqms/project_config/
         # (avoids conflicts when framework is imported into projects with their own config/)
-        framework_config_dir = self.framework_root / ".agentqms" / "project_config"
+        project_config_dir = self.project_root / ".agentqms" / "project_config"
         config: dict[str, Any] = {}
 
-        if framework_config_dir.exists():
+        if project_config_dir.exists():
             yaml_files = (
-                framework_config_dir / "framework.yaml",
-                framework_config_dir / "interface.yaml",
-                framework_config_dir / "paths.yaml",
+                project_config_dir / "framework.yaml",
+                project_config_dir / "interface.yaml",
+                project_config_dir / "paths.yaml",
             )
             for path in yaml_files:
                 config = self._merge_yaml_if_exists(config, path)
 
-            config = self._merge_directory_overrides(config, framework_config_dir / "environments")
-            config = self._merge_directory_overrides(config, framework_config_dir / "overrides")
+            config = self._merge_directory_overrides(config, project_config_dir / "environments")
+            config = self._merge_directory_overrides(config, project_config_dir / "overrides")
 
         return config
 
@@ -161,7 +169,7 @@ class ConfigLoader:
         return result
 
     def _write_runtime_snapshot(self, config: dict[str, Any], *, settings_path: Path | None = None) -> None:
-        runtime_dir = self.framework_root / ".agentqms"
+        runtime_dir = self.project_root / ".agentqms"
         runtime_dir.mkdir(parents=True, exist_ok=True)
         runtime_config = runtime_dir / "effective.yaml"
 
@@ -180,11 +188,11 @@ class ConfigLoader:
                     "tool_mappings": "AgentQMS/config_defaults/tool_mappings.json",
                 },
                 "project": {
-                    "framework": "config/framework.yaml",
-                    "interface": "config/interface.yaml",
-                    "paths": "config/paths.yaml",
-                    "environments": "config/environments/",
-                    "overrides": "config/overrides/",
+                    "framework": ".agentqms/project_config/framework.yaml",
+                    "interface": ".agentqms/project_config/interface.yaml",
+                    "paths": ".agentqms/project_config/paths.yaml",
+                    "environments": ".agentqms/project_config/environments/",
+                    "overrides": ".agentqms/project_config/overrides/",
                 },
             }
 
@@ -229,14 +237,24 @@ class ConfigLoader:
 
 
 _config_loader: ConfigLoader | None = None
+_config_loader_signature: tuple[str | None, str] | None = None
 
 
 def get_config_loader() -> ConfigLoader:
     """Return a singleton configuration loader."""
-    global _config_loader
-    if _config_loader is None:
+    global _config_loader, _config_loader_signature
+    signature = (os.getenv("AGENTQMS_PROJECT_ROOT"), str(Path.cwd().resolve()))
+    if _config_loader is None or _config_loader_signature != signature:
         _config_loader = ConfigLoader()
+        _config_loader_signature = signature
     return _config_loader
+
+
+def reset_config_loader() -> None:
+    """Reset singleton state for tests and multi-project workflows."""
+    global _config_loader, _config_loader_signature
+    _config_loader = None
+    _config_loader_signature = None
 
 
 def load_config(force: bool = False) -> dict[str, Any]:

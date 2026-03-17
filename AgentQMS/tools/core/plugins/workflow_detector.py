@@ -23,7 +23,7 @@ except ImportError:
     print("ERROR: PyYAML not installed. Fix with: uv sync", file=sys.stderr)
     sys.exit(1)
 
-from AgentQMS.tools.core.context_bundle import TASK_KEYWORDS, analyze_task_type
+from AgentQMS.tools.core.context.context_bundle import TASK_KEYWORDS, analyze_task_type
 from AgentQMS.tools.utils.config.loader import ConfigLoader
 from AgentQMS.tools.utils.paths import get_project_root
 from AgentQMS.tools.utils.system.runtime import ensure_project_root_on_sys_path

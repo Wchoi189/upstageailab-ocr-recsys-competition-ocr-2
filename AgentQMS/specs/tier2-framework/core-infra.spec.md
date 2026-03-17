@@ -114,6 +114,18 @@ path_resolution_rules:
   enforcement:
     detection: pre-commit hook (validate-path-usage)
     command: pre-commit run validate-path-usage --all-files
+  root_resolution_contract:
+    canonical_source: AgentQMS.tools.utils.config.config.ConfigLoader
+    algorithm:
+    - If AGENTQMS_PROJECT_ROOT is set, use it as absolute project root
+    - Else traverse upward from CWD for markers (.agentqms/, AGENTS.yaml, .git/, pyproject.toml)
+    - Else fallback to CWD (supports init in empty directories)
+    entrypoint_requirements:
+    - mcp_server.py, cli.py, and bin/aqms must delegate to get_project_root()
+    - Do not implement local root finders in entrypoints
+    singleton_behavior:
+      requirement: get_config_loader() must invalidate when AGENTQMS_PROJECT_ROOT or CWD changes
+      rationale: avoid stale project_root during tests and multi-project execution
 deprecation_rules:
   lifecycle_phases:
     phase_1_soft:

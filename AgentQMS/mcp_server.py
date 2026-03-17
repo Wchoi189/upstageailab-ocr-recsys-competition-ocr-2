@@ -33,28 +33,30 @@ from mcp.types import Resource, Tool, TextContent
 from mcp.server.lowlevel.helper_types import ReadResourceContents
 
 
-# Auto-discover project root
+# Bootstrap import path when running as a script from source checkout.
+for parent in Path(__file__).resolve().parents:
+    if (parent / "AgentQMS").exists():
+        if str(parent) not in sys.path:
+            sys.path.insert(0, str(parent))
+        break
+
+
 def find_project_root() -> Path:
-    """Find project root by locating AgentQMS/ directory."""
-    current = Path(__file__).resolve().parent
+    """Resolve project root via canonical path resolver."""
+    from AgentQMS.tools.utils.paths import get_project_root
 
-    # We're already in AgentQMS/
-    if current.name == "AgentQMS":
-        return current.parent
+    return get_project_root().resolve()
 
-    # Search upward
-    for parent in current.parents:
-        if (parent / "AgentQMS").exists():
-            return parent
 
-    raise RuntimeError("Cannot find project root with AgentQMS/")
+def find_framework_root() -> Path:
+    """Resolve framework root via canonical path resolver."""
+    from AgentQMS.tools.utils.paths import get_framework_root
+
+    return get_framework_root().resolve()
 
 
 PROJECT_ROOT = find_project_root()
-AGENTQMS_DIR = PROJECT_ROOT / "AgentQMS"
-
-# Add AgentQMS to Python path for imports
-sys.path.insert(0, str(PROJECT_ROOT))
+AGENTQMS_DIR = find_framework_root()
 
 
 from AgentQMS.tools.utils.config.loader import ConfigLoader
@@ -184,7 +186,7 @@ async def read_resource(uri: str) -> list[ReadResourceContents]:
 async def _get_template_list() -> str:
     """Get list of available artifact templates with source metadata."""
     try:
-        from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
+        from AgentQMS.tools.core.artifacts.artifact_templates import ArtifactTemplates
 
         templates_obj = ArtifactTemplates()
         templates_with_metadata = templates_obj.get_available_templates_with_metadata()
@@ -240,7 +242,7 @@ async def _get_plugin_artifact_types() -> str:
     """
     try:
         from datetime import datetime
-        from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
+        from AgentQMS.tools.core.artifacts.artifact_templates import ArtifactTemplates
 
         templates_obj = ArtifactTemplates()
         types_dict = templates_obj._get_available_artifact_types()
@@ -347,7 +349,7 @@ async def _get_plugin_artifact_types() -> str:
 async def _get_available_artifact_types() -> list[str]:
     """Get list of available artifact types dynamically from templates and plugins."""
     try:
-        from AgentQMS.tools.core.artifact_templates import ArtifactTemplates
+        from AgentQMS.tools.core.artifacts.artifact_templates import ArtifactTemplates
 
         templates_obj = ArtifactTemplates()
         types_list = templates_obj.get_available_templates()

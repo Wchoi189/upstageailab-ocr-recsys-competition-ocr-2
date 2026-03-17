@@ -21,6 +21,15 @@ description: 'Configuration Specification for framework tier'
 *   **Structure**: `domain/`, `model/`, `data/`, `training/`.
 *   **Constraint**: All configurations must be externalized (YAML/JSON), never hardcoded.
 
+### AgentQMS Config Layering Contract
+For `AgentQMS.tools.utils.config.config.ConfigLoader`, merge order must be:
+1. Framework defaults
+2. Project overrides (`.agentqms/project_config/*`)
+3. Project settings (`.agentqms/settings.yaml`) when present
+4. Environment overrides
+
+This guarantees required baseline keys (e.g., `paths.artifacts`) remain available while still allowing project and environment customization.
+
 ### Externalization Checklist
 1.  Is the value likely to change experiments? -> **Yes**: Config.
 2.  Is it a secret? -> **Yes**: Env Var (via `omega_conf`).

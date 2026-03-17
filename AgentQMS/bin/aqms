@@ -34,8 +34,15 @@ import subprocess
 import sys
 from pathlib import Path
 
-# Project root detection
-PROJECT_ROOT = Path(__file__).resolve().parents[2]
+for parent in Path(__file__).resolve().parents:
+    if (parent / "AgentQMS").exists():
+        if str(parent) not in sys.path:
+            sys.path.insert(0, str(parent))
+        break
+
+from AgentQMS.tools.utils.paths import get_project_root
+
+PROJECT_ROOT = get_project_root().resolve()
 AGENTQMS_ROOT = PROJECT_ROOT / "AgentQMS"
 
 # Tool paths (Discovery vs Enforcement)
