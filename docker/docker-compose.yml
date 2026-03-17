@@ -92,7 +92,47 @@ services:
       retries: 5
 
 
+  # docker compose up postgres -d
+  postgres:
+    image: postgres:16-alpine
+    container_name: ocr-postgres
+    hostname: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-ocr_user}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ocr_password}
+      POSTGRES_DB: ${POSTGRES_DB:-ocr_stt}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - "${POSTGRES_HOST_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      default:
+      shared-db:
+        aliases:
+          - ocr-postgres
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-ocr_user} -d ${POSTGRES_DB:-ocr_stt}" ]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+
 volumes:
   codescene:
   redis_data:
+  postgres_data:
   vscode_home:  # Persists /home/vscode across container resets
+
+networks:
+  # Attach external compose stacks by setting this network as external.
+  # Example in another compose file:
+  # networks:
+  #   shared-db:
+  #     external: true
+  #     name: ocr-shared-db-net
+  shared-db:
+    name: ocr-shared-db-net
+    driver: bridge

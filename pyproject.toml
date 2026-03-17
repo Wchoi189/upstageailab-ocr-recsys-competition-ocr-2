@@ -121,7 +121,7 @@ members = [
 ]
 
 [tool.uv.sources]
-trdg = { path = "../parent/DATA_SYNTHETIC/TextRecognitionDataGenerator" }
+trdg = { path = "../DATA_SYNTHETIC/TextRecognitionDataGenerator" }
 
 # Note: No [tool.uv.sources] needed - UV auto-discovers workspace members
 # from [tool.uv.workspace]. Explicit sources would force resolution even

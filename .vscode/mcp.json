@@ -1,17 +1,17 @@
 {
 	"servers": {
-		"perplexity": {
-			"command": "npx",
-			"args": [
-				"-y",
-				"perplexity-mcp",
-				"--cwd",
-				"${workspaceFolder}"
-			],
-			"env": {
-				"PERPLEXITY_API_KEY": "${env:PERPLEXITY_API_KEY}"
-			}
-		},
+		// "perplexity": {
+		// 	"command": "npx",
+		// 	"args": [
+		// 		"-y",
+		// 		"perplexity-mcp",
+		// 		"--cwd",
+		// 		"${workspaceFolder}"
+		// 	],
+		// 	"env": {
+		// 		"PERPLEXITY_API_KEY": "${env:PERPLEXITY_API_KEY}"
+		// 	}
+		// },
 		"unified_project": {
 			"command": "uv",
 			"args": [
