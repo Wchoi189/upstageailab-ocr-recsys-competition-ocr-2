@@ -32,7 +32,7 @@ class TestPolicyHealthChecks:
 class TestInfrastructureChecks:
     """Test infrastructure health checks."""
 
-   def test_logging_infrastructure_check(self, tmp_path, monkeypatch):
+    def test_logging_infrastructure_check(self, tmp_path, monkeypatch):
         """Test log directory writable check."""
         from AgentQMS.middleware import health as health_module
 

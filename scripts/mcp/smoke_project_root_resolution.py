@@ -9,6 +9,7 @@ This script is intentionally strict:
 from __future__ import annotations
 
 import os
+import json
 import subprocess
 import sys
 import tempfile
@@ -90,6 +91,23 @@ def _resolve_entry_points(*, cwd: Path, env: dict[str, str]) -> dict[str, str]:
         env=py_env,
     )
 
+    cli_proc = subprocess.run(
+        [PYTHON, "-m", "AgentQMS.cli", "status", "--json"],
+        cwd=str(cwd),
+        env=py_env,
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    if cli_proc.returncode != 0:
+        message = cli_proc.stderr.strip() or cli_proc.stdout.strip() or "aqms status failed"
+        raise AssertionError(f"aqms status failed: {message}")
+    try:
+        cli_status = json.loads(cli_proc.stdout.strip() or "{}")
+        roots["cli.status.project_root"] = str(Path(cli_status["project_root"]).resolve())
+    except Exception as exc:  # pragma: no cover - defensive decode guard
+        raise AssertionError(f"unable to parse aqms status output: {exc}") from exc
+
     return roots
 
 
@@ -122,6 +140,19 @@ def _scenario_marker_traversal() -> ScenarioResult:
             assert root == expected, f"{name} resolved {root}, expected {expected}"
 
         return ScenarioResult("Marker Traversal", expected, expected, "PASS")
+
+
+def _scenario_fallback_to_cwd() -> ScenarioResult:
+    with tempfile.TemporaryDirectory(prefix="smoke_fallback_") as tmp:
+        expected = str(Path(tmp).resolve())
+        env = dict(os.environ)
+        env.pop("AGENTQMS_PROJECT_ROOT", None)
+
+        roots = _resolve_entry_points(cwd=Path(tmp), env=env)
+        for name, root in roots.items():
+            assert root == expected, f"{name} resolved {root}, expected {expected}"
+
+        return ScenarioResult("Fallback to CWD", expected, expected, "PASS")
 
 
 def _scenario_duality_check() -> ScenarioResult:
@@ -184,6 +215,7 @@ def _scenario_global_install_simulation() -> ScenarioResult:
 SCENARIOS: dict[str, Callable[[], ScenarioResult]] = {
     "override": _scenario_env_override,
     "traversal": _scenario_marker_traversal,
+    "fallback": _scenario_fallback_to_cwd,
     "duality": _scenario_duality_check,
     "global-install": _scenario_global_install_simulation,
 }
@@ -231,6 +263,6 @@ def main(argv: list[str]) -> int:
 if __name__ == "__main__":
     valid = {"all", *SCENARIOS.keys()}
     if len(sys.argv) > 1 and sys.argv[1] not in valid:
-        print(f"Usage: {Path(__file__).name} [all|override|traversal|duality|global-install]")
+        print(f"Usage: {Path(__file__).name} [all|override|traversal|fallback|duality|global-install]")
         sys.exit(1)
     raise SystemExit(main(sys.argv))

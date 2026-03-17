@@ -15,6 +15,9 @@ Usage:
     aqms check-infra
 
 Available Commands:
+    status            Show resolved framework/project roots
+    server            Start AgentQMS server processes
+    init              Initialize project-local AgentQMS scaffolding (Spec C delegation)
     artifact          Artifact workflow management (create, validate, update)
     validate          Validate artifacts and compliance
     monitor           Monitor artifact organization and compliance
@@ -42,6 +45,35 @@ from AgentQMS.tools.utils.paths import get_project_root
 project_root = get_project_root().resolve()
 if str(project_root) not in sys.path:
     sys.path.insert(0, str(project_root))
+
+_INIT_SETTINGS_YAML = """resolved:
+  paths:
+    artifacts: docs/artifacts
+    docs: docs
+  validation:
+    strict_mode: true
+"""
+
+_INIT_REGISTRY_YAML = """ads_version: "2.0"
+type: unified_registry
+name: AgentQMS Registry (initialized)
+generated_at: "init"
+total_specs: 0
+specs: {}
+task_mappings: {}
+"""
+
+_INIT_AGENTS_YAML = """---
+ads_version: "2.0"
+title: "Project Agent Entrypoint"
+description: "Machine-readable entrypoint for project-local AgentQMS state"
+resources:
+  standards_registry: ".agentqms/registry.yaml"
+  settings: ".agentqms/settings.yaml"
+commands:
+  help: "python -m AgentQMS.cli --help"
+  init: "python -m AgentQMS.cli init"
+"""
 
 
 def setup_artifact_parser(subparsers):
@@ -76,6 +108,58 @@ def setup_artifact_parser(subparsers):
     # artifact check-compliance
     artifact_subparsers.add_parser("check-compliance", help="Run compliance checks")
 
+    return parser
+
+
+def setup_status_parser(subparsers):
+    """Setup status subcommand."""
+    parser = subparsers.add_parser(
+        "status",
+        help="Show resolved roots and runtime context",
+        description="Display canonical framework/project root resolution state",
+    )
+    parser.add_argument("--json", action="store_true", help="Output as machine-readable JSON")
+    return parser
+
+
+def setup_server_parser(subparsers):
+    """Setup server subcommand."""
+    parser = subparsers.add_parser(
+        "server",
+        help="Run AgentQMS server processes",
+        description="Start MCP server processes from the canonical CLI entry point",
+    )
+    server_subparsers = parser.add_subparsers(dest="server_command", help="Server commands")
+    start_parser = server_subparsers.add_parser("start", help="Start unified MCP server")
+    start_parser.add_argument(
+        "--script",
+        default="scripts/mcp/unified_server.py",
+        help="Relative server startup script path (default: scripts/mcp/unified_server.py)",
+    )
+    return parser
+
+
+def setup_init_parser(subparsers):
+    """Setup init subcommand (delegates to Spec C implementation)."""
+    parser = subparsers.add_parser(
+        "init",
+        help="Initialize .agentqms scaffolding",
+        description="Delegates init flow to Spec C implementation surface",
+    )
+    parser.add_argument(
+        "--root",
+        help="Optional explicit target root (defaults to resolved project_root)",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Overwrite existing .agentqms scaffolding if present",
+    )
+    parser.add_argument(
+        "--with-starters",
+        action="store_true",
+        help="Create optional starter directories (docs/, docs/artifacts/)",
+    )
     return parser
 
 
@@ -228,6 +312,89 @@ def run_artifact_command(args):
     else:
         print("Error: Unknown artifact command")
         return 1
+
+
+def run_status_command(args):
+    """Execute status subcommand."""
+    from AgentQMS.tools.utils.paths import get_framework_root
+
+    resolved_project_root = get_project_root().resolve()
+    resolved_framework_root = get_framework_root().resolve()
+    payload = {
+        "project_root": str(resolved_project_root),
+        "framework_root": str(resolved_framework_root),
+        "cwd": str(Path.cwd().resolve()),
+        "env_override": os.getenv("AGENTQMS_PROJECT_ROOT"),
+    }
+
+    if args.json:
+        import json
+
+        print(json.dumps(payload, indent=2))
+        return 0
+
+    print(f"project_root: {payload['project_root']}")
+    print(f"framework_root: {payload['framework_root']}")
+    print(f"cwd: {payload['cwd']}")
+    print(f"AGENTQMS_PROJECT_ROOT: {payload['env_override'] or '(unset)'}")
+    return 0
+
+
+def run_server_command(args):
+    """Execute server subcommand."""
+    if args.server_command != "start":
+        print("Error: Unknown server command. Use `server start`.")
+        return 1
+
+    script_path = (project_root / args.script).resolve()
+    if not script_path.exists():
+        print(f"Error: Server script not found: {script_path}")
+        return 1
+
+    return subprocess.run([sys.executable, str(script_path)], cwd=project_root).returncode
+
+
+def run_init_command(args):
+    """Execute init subcommand (Spec C delegation boundary)."""
+    target_root = Path(args.root).expanduser().resolve() if args.root else get_project_root().resolve()
+    agentqms_dir = target_root / ".agentqms"
+
+    if agentqms_dir.exists() and not args.force:
+        print(
+            "Initialization skipped: `.agentqms/` already exists at "
+            f"{agentqms_dir}. Re-run with `--force` to overwrite."
+        )
+        return 0
+
+    agentqms_dir.mkdir(parents=True, exist_ok=True)
+    settings_path = agentqms_dir / "settings.yaml"
+    registry_path = agentqms_dir / "registry.yaml"
+    agents_path = target_root / "AGENTS.yaml"
+
+    settings_path.write_text(_INIT_SETTINGS_YAML, encoding="utf-8")
+    registry_path.write_text(_INIT_REGISTRY_YAML, encoding="utf-8")
+    agents_path.write_text(_INIT_AGENTS_YAML, encoding="utf-8")
+
+    created = [
+        settings_path.relative_to(target_root),
+        registry_path.relative_to(target_root),
+        agents_path.relative_to(target_root),
+    ]
+
+    if args.with_starters:
+        (target_root / "docs").mkdir(parents=True, exist_ok=True)
+        (target_root / "docs" / "artifacts").mkdir(parents=True, exist_ok=True)
+        created.extend(
+            [
+                Path("docs/"),
+                Path("docs/artifacts/"),
+            ]
+        )
+
+    print(f"Initialized AgentQMS scaffolding at: {target_root}")
+    for path in created:
+        print(f"  - {path}")
+    return 0
 
 
 def run_validate_command(args):
@@ -692,6 +859,9 @@ def main():
     subparsers = parser.add_subparsers(dest="command", help="Available commands")
 
     # Setup all subcommands
+    setup_status_parser(subparsers)
+    setup_server_parser(subparsers)
+    setup_init_parser(subparsers)
     setup_artifact_parser(subparsers)
     setup_validate_parser(subparsers)
     setup_monitor_parser(subparsers)
@@ -712,6 +882,12 @@ def main():
     try:
         if args.command == "artifact":
             return run_artifact_command(args)
+        elif args.command == "status":
+            return run_status_command(args)
+        elif args.command == "server":
+            return run_server_command(args)
+        elif args.command == "init":
+            return run_init_command(args)
         elif args.command == "validate":
             return run_validate_command(args)
         elif args.command == "monitor":

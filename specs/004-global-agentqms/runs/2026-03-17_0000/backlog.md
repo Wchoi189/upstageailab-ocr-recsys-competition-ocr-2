@@ -26,12 +26,12 @@ Status values: `todo` | `in_progress` | `blocked` | `done`
 - [done] A12: Run `adt analyze-imports` regression check against baseline.
 
 ## Spec B — CLI entry point
-- [todo] B1: Consolidate `bin/aqms` and `cli.py` — choose `cli.py` as canonical, make `bin/aqms` a thin wrapper.
-- [todo] B2: Register entry point in `pyproject.toml` (`aqms = "AgentQMS.cli:main"`).
-- [todo] B3: Ensure CLI commands route through Spec A root resolution.
-- [todo] B4: Add verification commands for "run anywhere".
+- [done] B1: Consolidate `bin/aqms` and `cli.py` — choose `cli.py` as canonical, make `bin/aqms` a thin wrapper.
+- [done] B2: Register entry point in `pyproject.toml` (`aqms = "AgentQMS.cli:main"`).
+- [done] B3: Ensure CLI commands route through Spec A root resolution.
+- [done] B4: Add verification commands for "run anywhere".
 
 ## Spec C — init scaffolding
-- [todo] C1: Implement `init` command to create `.agentqms/` + minimal templates in resolved root.
-- [todo] C2: Enforce idempotency/no overwrite without explicit flag.
-- [todo] C3: Add verification commands for empty-dir init + idempotency.
+- [done] C1: Implement `init` command to create `.agentqms/` + minimal templates in resolved root.
+- [done] C2: Enforce idempotency/no overwrite without explicit flag.
+- [done] C3: Add verification commands for empty-dir init + idempotency.
