@@ -1,0 +1,39 @@
+services:
+  ollama:
+    image: ollama/ollama:latest
+    container_name: ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      # Use Docker Desktop host path; it sees the VHDX under /mnt/host/wsl
+      - /mnt/host/wsl/ollama-models:/ollama_storage
+      # Persist config (keys, etc) in a named volume
+      - ollama_config:/root/.ollama
+    environment:
+      # Allow access from both inside Docker and Windows host
+      - OLLAMA_HOST=0.0.0.0
+      - OLLAMA_MODELS=/ollama_storage
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    networks:
+      - default
+      - shared-db
+      - ocr-network
+    restart: unless-stopped
+
+volumes:
+  ollama_config:
+
+networks:
+  # Join the existing OCR project network
+  shared-db:
+    external: true
+    name: ocr-shared-db-net
+  ocr-network:
+    external: true
+    name: ocr-dev_default
