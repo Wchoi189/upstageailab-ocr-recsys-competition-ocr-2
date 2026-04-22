@@ -39,6 +39,7 @@ services:
       - "6006:6006" # TensorBoard
       - "2223:22" # SSH
       - "5173:5173" # Vite dev server
+      # - "3000:3000" # React dev server
     # Uncomment for GPU support
     deploy:
       resources:

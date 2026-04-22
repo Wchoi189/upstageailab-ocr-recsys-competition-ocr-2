@@ -233,18 +233,6 @@ wheels = [
 ]
 
 [[package]]
-name = "arabic-reshaper"
-version = "2.1.4"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "future" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/e5/2c/9fd2d9dc186548d9d115b122db0f8e316f23bdc8f00e0c30c9cf17eddaf7/arabic_reshaper-2.1.4.tar.gz", hash = "sha256:e84b3b0ad8eae395641c94d3010b53bfed2c2b1ab80f25eb8cdc01019ddf6426", size = 24423, upload-time = "2022-09-21T21:35:06.337Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/53/4f/57672149b352821fb463d50491890dc039106454acefbd8d1708849d4703/arabic_reshaper-2.1.4-py3-none-any.whl", hash = "sha256:a06297fa436f56bdade4f7751710dbea5645b404debdca5017999e5233daf34a", size = 20500, upload-time = "2022-09-21T21:35:04.78Z" },
-]
-
-[[package]]
 name = "astor"
 version = "0.8.1"
 source = { registry = "https://pypi.org/simple" }
@@ -594,15 +582,6 @@ wheels = [
 ]
 
 [[package]]
-name = "diffimg"
-version = "0.2.3"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "pillow" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/3d/fa/de925a7c2203b52f007ad6b9cce343c21dbe389a221a4f51f25960c83d8b/diffimg-0.2.3.tar.gz", hash = "sha256:f2dccd7f1ec988005448d3aaf2ac907ce0a18f4d36c0ab78e41e4768a4784ff3", size = 4149, upload-time = "2019-09-15T16:46:10.575Z" }
-
-[[package]]
 name = "dill"
 version = "0.3.8"
 source = { registry = "https://pypi.org/simple" }
@@ -712,10 +691,10 @@ wheels = [
 [[package]]
 name = "filelock"
 version = "3.20.3"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/1d/65/ce7f1b70157833bf3cb851b556a37d4547ceafc158aa9b34b36782f23696/filelock-3.20.3.tar.gz", hash = "sha256:18c57ee915c7ec61cff0ecf7f0f869936c7c30191bb0cf406f1341778d0834e1", size = 19485, upload-time = "2026-01-09T17:55:05.421Z" }
+source = { registry = "https://download.pytorch.org/whl/cu124" }
+sdist = { url = "https://files.pythonhosted.org/packages/1d/65/ce7f1b70157833bf3cb851b556a37d4547ceafc158aa9b34b36782f23696/filelock-3.20.3.tar.gz", hash = "sha256:18c57ee915c7ec61cff0ecf7f0f869936c7c30191bb0cf406f1341778d0834e1" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/b5/36/7fb70f04bf00bc646cd5bb45aa9eddb15e19437a28b8fb2b4a5249fac770/filelock-3.20.3-py3-none-any.whl", hash = "sha256:4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1", size = 16701, upload-time = "2026-01-09T17:55:04.334Z" },
+    { url = "https://files.pythonhosted.org/packages/b5/36/7fb70f04bf00bc646cd5bb45aa9eddb15e19437a28b8fb2b4a5249fac770/filelock-3.20.3-py3-none-any.whl", hash = "sha256:4b0dda527ee31078689fc205ec4f1c1bf7d56cf88b6dc9426c4f230e46c2dce1" },
 ]
 
 [[package]]
@@ -792,15 +771,6 @@ wheels = [
 [package.optional-dependencies]
 http = [
     { name = "aiohttp" },
-]
-
-[[package]]
-name = "future"
-version = "1.0.0"
-source = { registry = "https://pypi.org/simple" }
-sdist = { url = "https://files.pythonhosted.org/packages/a7/b2/4140c69c6a66432916b26158687e821ba631a4c9273c474343badf84d3ba/future-1.0.0.tar.gz", hash = "sha256:bd2968309307861edae1458a4f8a4f3598c03be43b97521076aebf5d94c07b05", size = 1228490, upload-time = "2024-02-21T11:52:38.461Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/da/71/ae30dadffc90b9006d77af76b393cb9dfbfc9629f339fc1574a1c52e6806/future-1.0.0-py3-none-any.whl", hash = "sha256:929292d34f5872e70396626ef385ec22355a1fae8ad29e1a734c3e43f9fbc216", size = 491326, upload-time = "2024-02-21T11:52:35.956Z" },
 ]
 
 [[package]]
@@ -2463,18 +2433,6 @@ wheels = [
 ]
 
 [[package]]
-name = "python-bidi"
-version = "0.4.2"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "six" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/25/3372ce50082776134b0467a4616722ff7494f3bcd9cf11e1180d0eddb248/python-bidi-0.4.2.tar.gz", hash = "sha256:5347f71e82b3e9976dc657f09ded2bfe39ba8d6777ca81a5b2c56c30121c496e", size = 40373, upload-time = "2019-07-04T10:54:23.135Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/33/b0/f942d146a2f457233baaafd6bdf624eba8e0f665045b4abd69d1b62d097d/python_bidi-0.4.2-py2.py3-none-any.whl", hash = "sha256:50eef6f6a0bbdd685f9e8c207f3c9050f5b578d0a46e37c76a9c4baea2cc2e13", size = 30812, upload-time = "2019-07-04T10:54:21.189Z" },
-]
-
-[[package]]
 name = "python-dateutil"
 version = "2.9.0.post0"
 source = { registry = "https://pypi.org/simple" }
@@ -3363,8 +3321,8 @@ dependencies = [
     { name = "typing-extensions", marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')" },
 ]
 wheels = [
-    { url = "https://download.pytorch.org/whl/cu124/torch-2.6.0%2Bcu124-cp311-cp311-linux_x86_64.whl", hash = "sha256:d4c3e9a8d31a7c0fcbb9da17c31a1917e1fac26c566a4cfbd8c9568ad7cade79" },
-    { url = "https://download.pytorch.org/whl/cu124/torch-2.6.0%2Bcu124-cp311-cp311-win_amd64.whl", hash = "sha256:6a1fb2714e9323f11edb6e8abf7aad5f79e45ad25c081cde87681a18d99c29eb" },
+    { url = "https://download-r2.pytorch.org/whl/cu124/torch-2.6.0%2Bcu124-cp311-cp311-linux_x86_64.whl", hash = "sha256:d4c3e9a8d31a7c0fcbb9da17c31a1917e1fac26c566a4cfbd8c9568ad7cade79" },
+    { url = "https://download-r2.pytorch.org/whl/cu124/torch-2.6.0%2Bcu124-cp311-cp311-win_amd64.whl", hash = "sha256:6a1fb2714e9323f11edb6e8abf7aad5f79e45ad25c081cde87681a18d99c29eb" },
 ]
 
 [[package]]
@@ -3418,8 +3376,8 @@ dependencies = [
     { name = "torch", version = "2.6.0+cu124", source = { registry = "https://download.pytorch.org/whl/cu124" }, marker = "(platform_machine != 'aarch64' and sys_platform == 'linux') or (platform_python_implementation != 'CPython' and sys_platform == 'linux') or (sys_platform != 'darwin' and sys_platform != 'linux')" },
 ]
 wheels = [
-    { url = "https://download.pytorch.org/whl/cu124/torchvision-0.21.0%2Bcu124-cp311-cp311-linux_x86_64.whl", hash = "sha256:137376805aca5ba57bd2c7a3ecb8569df961dbe82b128aac9b3b0a7125ef9385" },
-    { url = "https://download.pytorch.org/whl/cu124/torchvision-0.21.0%2Bcu124-cp311-cp311-win_amd64.whl", hash = "sha256:000a013584ad2304ab30496318145f284ac364622addb5ee3a5abd2769ba146f" },
+    { url = "https://download-r2.pytorch.org/whl/cu124/torchvision-0.21.0%2Bcu124-cp311-cp311-linux_x86_64.whl", hash = "sha256:137376805aca5ba57bd2c7a3ecb8569df961dbe82b128aac9b3b0a7125ef9385" },
+    { url = "https://download-r2.pytorch.org/whl/cu124/torchvision-0.21.0%2Bcu124-cp311-cp311-win_amd64.whl", hash = "sha256:000a013584ad2304ab30496318145f284ac364622addb5ee3a5abd2769ba146f" },
 ]
 
 [[package]]
@@ -3476,30 +3434,17 @@ wheels = [
 
 [[package]]
 name = "trdg"
-version = "1.8.0"
-source = { directory = "../DATA_SYNTHETIC/TextRecognitionDataGenerator" }
+version = "0.1.1"
+source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "arabic-reshaper" },
-    { name = "diffimg" },
+    { name = "beautifulsoup4" },
+    { name = "numpy" },
     { name = "opencv-python" },
     { name = "pillow" },
-    { name = "python-bidi" },
     { name = "requests" },
     { name = "tqdm" },
-    { name = "wikipedia" },
 ]
-
-[package.metadata]
-requires-dist = [
-    { name = "arabic-reshaper", specifier = "==2.1.4" },
-    { name = "diffimg", specifier = "==0.2.3" },
-    { name = "opencv-python", specifier = ">=4.2.0.32" },
-    { name = "pillow", specifier = ">=7.0.0" },
-    { name = "python-bidi", specifier = "==0.4.2" },
-    { name = "requests", specifier = ">=2.20.0" },
-    { name = "tqdm", specifier = ">=4.23.0" },
-    { name = "wikipedia", specifier = ">=1.4.0" },
-]
+sdist = { url = "https://files.pythonhosted.org/packages/2f/06/f29c7989154a97fd2928ad42b299b49090cc43838f56a876f4d40da4ec01/trdg-0.1.1.tar.gz", hash = "sha256:685ecc5db4029a0c9f3cc81a5cf03f3f2ca652e58ed12d90fdc7fcb3056d013d", size = 47542725, upload-time = "2019-08-29T17:25:55.367Z" }
 
 [[package]]
 name = "tree-sitter"
@@ -3541,8 +3486,8 @@ name = "triton"
 version = "3.2.0"
 source = { registry = "https://download.pytorch.org/whl/cu124" }
 wheels = [
-    { url = "https://download.pytorch.org/whl/triton-3.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8009a1fb093ee8546495e96731336a33fb8856a38e45bb4ab6affd6dbc3ba220" },
-    { url = "https://download.pytorch.org/whl/triton-3.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f1679fde231fb04c96cb5a01b160c8d0294ce6f7c122565d8b33ad8a910422d7" },
+    { url = "https://download-r2.pytorch.org/whl/triton-3.2.0-cp311-cp311-manylinux_2_17_x86_64.manylinux2014_x86_64.whl", hash = "sha256:8009a1fb093ee8546495e96731336a33fb8856a38e45bb4ab6affd6dbc3ba220" },
+    { url = "https://download-r2.pytorch.org/whl/triton-3.2.0-cp311-cp311-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl", hash = "sha256:f1679fde231fb04c96cb5a01b160c8d0294ce6f7c122565d8b33ad8a910422d7" },
 ]
 
 [[package]]
@@ -3830,7 +3775,7 @@ requires-dist = [
     { name = "torchvision", specifier = "==0.21.0" },
     { name = "tqdm", specifier = "==4.66.1" },
     { name = "transformers", specifier = ">=4.0.0" },
-    { name = "trdg", directory = "../DATA_SYNTHETIC/TextRecognitionDataGenerator" },
+    { name = "trdg" },
     { name = "tree-sitter", specifier = "==0.21.3" },
     { name = "tree-sitter-languages", specifier = "==1.10.2" },
     { name = "typer", specifier = "==0.21.0" },
@@ -4041,16 +3986,6 @@ sdist = { url = "https://files.pythonhosted.org/packages/5a/70/1469ef1d3542ae7c2
 wheels = [
     { url = "https://files.pythonhosted.org/packages/ad/e4/8d97cca767bcc1be76d16fb76951608305561c6e056811587f36cb1316a8/werkzeug-3.1.5-py3-none-any.whl", hash = "sha256:5111e36e91086ece91f93268bb39b4a35c1e6f1feac762c9c822ded0a4e322dc", size = 225025, upload-time = "2026-01-08T17:49:21.859Z" },
 ]
-
-[[package]]
-name = "wikipedia"
-version = "1.4.0"
-source = { registry = "https://pypi.org/simple" }
-dependencies = [
-    { name = "beautifulsoup4" },
-    { name = "requests" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/67/35/25e68fbc99e672127cc6fbb14b8ec1ba3dfef035bf1e4c90f78f24a80b7d/wikipedia-1.4.0.tar.gz", hash = "sha256:db0fad1829fdd441b1852306e9856398204dc0786d2996dd2e0c8bb8e26133b2", size = 27748, upload-time = "2014-11-15T15:59:49.808Z" }
 
 [[package]]
 name = "xxhash"

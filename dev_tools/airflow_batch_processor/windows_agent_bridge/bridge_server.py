@@ -1,13 +1,32 @@
-import pika
+"""Windows Agent Bridge Server.
+
+Routes RabbitMQ messages to appropriate handlers:
+- agent_exec_request → Docker/Airflow command execution
+- kiwoom_request → Kiwoom API via pykiwoom
+"""
+
 import json
-import subprocess
+import logging
 import os
-import sys
+
+import pika
+
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s | %(levelname)-8s | %(name)-30s | %(message)s",
+    datefmt="%Y-%m-%d %H:%M:%S",
+)
+logger = logging.getLogger("bridge-server")
 
 # Configuration
-RABBITMQ_HOST = "localhost"
-QUEUE_REQUEST = "agent_exec_request"
-QUEUE_REPLY = "agent_exec_reply"
+RABBITMQ_HOST = os.getenv("RABBITMQ_HOST", "localhost")
+
+# ---------------------------------------------------------------------------
+# Handler 1: Docker/Airflow command execution (original)
+# ---------------------------------------------------------------------------
+
+QUEUE_AGENT_EXEC = "agent_exec_request"
 
 ALLOWED_COMMANDS = {
     "docker ps": "List running containers",
@@ -15,91 +34,108 @@ ALLOWED_COMMANDS = {
     "docker logs": "Fetch logs",
     "docker exec": "Execute command in container",
     "docker compose": "Manage stack",
-    "airflow tasks test": "Run airflow debug command"  # Specific allowance
+    "airflow tasks test": "Run airflow debug command",
 }
 
+
 def validate_command(cmd_str):
-    """
-    Very basic validation. Ensure command starts with an allowed prefix.
-    In production, use strict parsing.
-    """
     for allowed in ALLOWED_COMMANDS:
         if cmd_str.startswith(allowed):
             return True
     return False
 
-def on_request(ch, method, props, body):
+
+def on_agent_exec_request(ch, method, props, body):
+    """Handle Docker/Airflow command execution requests."""
     try:
         payload = json.loads(body)
         cmd = payload.get("cmd")
         req_id = payload.get("id")
 
-        print(f" [.] Received request {req_id}: {cmd}")
+        logger.info("Exec request %s: %s", req_id, cmd)
 
         response = {}
-
         if not cmd:
             response = {"status": "error", "output": "No command provided"}
         elif not validate_command(cmd):
             response = {"status": "denied", "output": f"Command not allowed: {cmd}"}
         else:
-            # Execute
-            try:
-                # shell=True required for complex args, but dangerous.
-                # Since we validate strictly (in theory), acceptable for dev bridge.
-                result = subprocess.run(
-                    cmd,
-                    shell=True,
-                    capture_output=True,
-                    text=True,
-                    timeout=30
-                )
-                response = {
-                    "status": "ok" if result.returncode == 0 else "failed",
-                    "returncode": result.returncode,
-                    "stdout": result.stdout,
-                    "stderr": result.stderr
-                }
-            except Exception as e:
-                response = {"status": "error", "output": str(e)}
+            import subprocess  # noqa: PLC0415
 
-        # Reply
+            result = subprocess.run(
+                cmd, shell=True, capture_output=True, text=True, timeout=30
+            )
+            response = {
+                "status": "ok" if result.returncode == 0 else "failed",
+                "returncode": result.returncode,
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+            }
+
         ch.basic_publish(
-            exchange='',
+            exchange="",
             routing_key=props.reply_to,
             properties=pika.BasicProperties(correlation_id=props.correlation_id),
-            body=json.dumps(response)
+            body=json.dumps(response),
         )
         ch.basic_ack(delivery_tag=method.delivery_tag)
-        print(f" [x] Sent reply for {req_id}")
+        logger.info("Sent exec reply for %s", req_id)
 
     except Exception as e:
-        print(f" [!] Error processing message: {e}")
-        # Ack anyway to avoid loop
+        logger.error("Exec handler error: %s", e, exc_info=True)
         ch.basic_ack(delivery_tag=method.delivery_tag)
+
+
+# ---------------------------------------------------------------------------
+# Handler 2: Kiwoom API (from kiwoom_handler.py)
+# ---------------------------------------------------------------------------
+
+try:
+    from kiwoom_handler import QUEUE_KIWOOM_REQUEST, register_kiwoom_handler
+
+    KIWOOOM_AVAILABLE = True
+except ImportError as e:
+    logger.warning("Kiwoom handler not available: %s", e)
+    KIWOOOM_AVAILABLE = False
+
+
+# ---------------------------------------------------------------------------
+# Main: Register handlers and start consuming
+# ---------------------------------------------------------------------------
+
 
 def main():
-    print(" [*] Connecting to RabbitMQ at localhost...")
+    handlers = []
+
+    logger.info("Connecting to RabbitMQ at %s...", RABBITMQ_HOST)
+    connection = pika.BlockingConnection(pika.ConnectionParameters(host=RABBITMQ_HOST))
+    logger.info("Connected to RabbitMQ at %s", RABBITMQ_HOST)
+
+    # Register Docker/Airflow handler
+    ch1 = connection.channel()
+    ch1.queue_declare(queue=QUEUE_AGENT_EXEC, durable=True)
+    ch1.basic_qos(prefetch_count=1)
+    ch1.basic_consume(queue=QUEUE_AGENT_EXEC, on_message_callback=on_agent_exec_request)
+    handlers.append(("Docker command execution handler", QUEUE_AGENT_EXEC))
+    logger.info("Registered handler: %s (queue: %s)", handlers[-1][0], handlers[-1][1])
+
+    # Register Kiwoom handler (if available)
+    if KIWOOOM_AVAILABLE:
+        handler_name, queue_name = register_kiwoom_handler(connection)
+        handlers.append((handler_name, queue_name))
+        logger.info("Registered handler: %s (queue: %s)", handler_name, queue_name)
+
+    logger.info(
+        "Bridge server started with %d handler(s). Press CTRL+C to exit.",
+        len(handlers),
+    )
+
     try:
-        connection = pika.BlockingConnection(
-            pika.ConnectionParameters(host=RABBITMQ_HOST)
-        )
-        channel = connection.channel()
-
-        channel.queue_declare(queue=QUEUE_REQUEST)
-        channel.basic_qos(prefetch_count=1)
-        channel.basic_consume(queue=QUEUE_REQUEST, on_message_callback=on_request)
-
-        print(f" [*] Waiting for commands in queue '{QUEUE_REQUEST}'. To exit press CTRL+C")
-        channel.start_consuming()
+        connection.start_consuming()
     except KeyboardInterrupt:
-        print("Interrupted")
-        try:
-            sys.exit(0)
-        except SystemExit:
-            os._exit(0)
-    except Exception as e:
-        print(f"Fatal error: {e}")
+        logger.info("Shutting down...")
+        connection.close()
+
 
 if __name__ == "__main__":
     main()

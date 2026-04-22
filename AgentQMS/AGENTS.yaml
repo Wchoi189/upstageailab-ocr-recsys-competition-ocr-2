@@ -22,6 +22,12 @@ resources:
   middleware_metrics: "outputs/metrics/"
 
 commands:
+  # Global CLI (when installed via pip/uv)
+  init: "aqms init"  # Scaffold .agentqms/ in current directory
+  init_force: "aqms init --force"  # Overwrite existing scaffolding
+  status: "aqms status"  # Show resolved project/framework roots
+  status_json: "aqms status --json"  # Machine-readable status
+
   # Unified CLI - Canonical module entrypoint
   help: "python -m AgentQMS.cli --help"
   validate_all: "python -m AgentQMS.cli validate --all"
@@ -45,6 +51,9 @@ commands:
   middleware_stats: "uv run python AgentQMS/tools/middleware/dashboard.py --json"
   middleware_logs: "make qms-middleware-logs"
 
+environment:
+  AGENTQMS_PROJECT_ROOT: "Override project root detection (absolute or relative path)"
+
 context_bundles:
   - name: "compliance-check"
     path: "AgentQMS/.agentqms/plugins/context_bundles/compliance-check.yaml"
@@ -56,7 +65,9 @@ context_bundles:
     path: "AgentQMS/.agentqms/plugins/context_bundles/ocr-experiment.yaml"
 
 notes:
-  - "AgentQMS v0.4.0 - Phase 7+ complete: Plugin schemas fixed, registry auto-generated, deep validation operational"
+  - "AgentQMS v1.2.0 - Global AgentQMS: Stateless, globally installable tool with dynamic project root resolution"
+  - "Use 'aqms init' to scaffold new projects; 'aqms status' to verify root resolution"
+  - "Environment: AGENTQMS_PROJECT_ROOT overrides project root detection for cross-project workflows"
   - "Registry: AgentQMS/.agentqms/registry.yaml (auto-generated from AgentQMS/specs/)"
   - "Standards source of truth: AgentQMS/specs/ (Markdown specifications)"
   - "Use canonical CLI module path: python -m AgentQMS.cli for all operations"

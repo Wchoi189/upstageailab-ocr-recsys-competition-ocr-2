@@ -5,6 +5,22 @@ All notable changes to AgentQMS will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2026-03-17 (Global AgentQMS)
+
+### Added
+- **Global Installation Support**: AgentQMS is now a stateless, globally installable tool that can manage any project from any location (decoupled framework scope from project scope).
+- **Dynamic Project Root Resolution**: `ConfigLoader._detect_project_root()` now supports:
+  - `AGENTQMS_PROJECT_ROOT` environment variable override
+  - CWD upward traversal for markers (`.agentqms/`, `AGENTS.yaml`, `.git`, `pyproject.toml`)
+  - Fallback to CWD for empty directories (supports `init` in new projects)
+- **CLI Entry Point**: Registered `aqms` console script in `pyproject.toml` for global invocation.
+- **`init` Command**: New `aqms init` subcommand scaffolds `.agentqms/` directory with `settings.yaml`, `registry.yaml`, and `AGENTS.yaml` (idempotent, requires `--force` to overwrite).
+- **Singleton Invalidation**: `get_config_loader()` now resets when `AGENTQMS_PROJECT_ROOT` or CWD changes.
+
+### Changed
+- **Canonical Root Resolver**: All entry points (`cli.py`, `mcp_server.py`, `bin/aqms`) now delegate to `ConfigLoader._detect_project_root()` — single source of truth for project root resolution.
+- **Pre-flight Cleanup**: Consolidated duplicate `ConfigLoader` classes, fixed broken imports, and established baselines for import analysis.
+
 ## [1.1.0] - 2026-01-25 (IACP & Infrastructure)
 
 ### Added

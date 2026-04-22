@@ -120,9 +120,6 @@ members = [
     "dev_tools/airflow_batch_processor",
 ]
 
-[tool.uv.sources]
-trdg = { path = "../DATA_SYNTHETIC/TextRecognitionDataGenerator" }
-
 # Note: No [tool.uv.sources] needed - UV auto-discovers workspace members
 # from [tool.uv.workspace]. Explicit sources would force resolution even
 # with --no-dev, causing Docker builds to fail.
