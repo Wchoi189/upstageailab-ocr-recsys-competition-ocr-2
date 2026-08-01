@@ -1,5 +1,12 @@
 name: ocr-dev
-# docker-compose --profile up -d
+# Default `docker compose up -d` (incl. Dockge's Start button) brings up ONLY
+# ocr-dev. postgres+redis+litellm and rabbitmq are opt-in via --profile:
+#   docker compose --profile llm up -d     # postgres, redis, litellm
+#   docker compose --profile queue up -d   # rabbitmq
+#   docker compose --profile llm --profile queue up -d   # everything
+# redis lives in the "llm" profile (not "queue") because litellm depends_on
+# redis with a healthcheck condition and litellm.env sets REDIS_HOST=redis --
+# litellm will not start without it. See MAINTENANCE.md 2026-07-25 entry.
 services:
   ocr-dev:
     build:
@@ -8,14 +15,21 @@ services:
     image: ocr-dev
     container_name: ocr-recsys-dev
     hostname: ocr-dev
+    restart: unless-stopped
     volumes:
-      - ..:/workspaces:cached
+      # 2026-07-25: migrated off WSL2/Docker Desktop to native Linux.
+      # Old /data (WSL2-side mount) -> new /mnt/projects (native mount of the
+      # same VHDX-backed drive). See knowledge-base/decisions in agentic-workspace
+      # for the container-recovery ADR.
+      - /mnt/projects/upstageailab-ocr-recsys-competition-ocr-2:/workspaces:cached
       - /tmp/.X11-unix:/tmp/.X11-unix:rw
       - ~/.ssh:/home/vscode/.ssh-mount
-      - ../..:/parent:cached
-      # THE ONE BRIDGE: Mount the entire artifacts folder once
-      # The entrypoint script will create symlinks from here to /workspaces
-      - ../../project-artifacts/ocr-external-storage:/mnt/external_artifacts:cached
+      - /mnt/projects:/parent:cached
+      # 2026-07-25: dropped, source path (/data/project-artifacts/ocr-external-storage)
+      # did not survive the migration. entrypoint.sh handles this mount being absent
+      # gracefully (`if [ -d "$SOURCE_ROOT" ]`), so this is safe to leave commented
+      # out until the data is located/recovered.
+      # - /mnt/projects/project-artifacts/ocr-external-storage:/mnt/external_artifacts:cached
 
       # Persist /home/vscode for IDE state (Antigravity, Copilot, shell history, etc.)
       # This includes: .vscode-server, .cache, .local, .config, .pyenv, .npm, etc.
@@ -52,11 +66,11 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # docker-compose --profile up rabbitmq -d
   rabbitmq:
     image: rabbitmq:3-management
     container_name: ocr-rabbitmq
     hostname: rabbitmq
+    profiles: [ "queue" ]
     ports:
       - "5672:5672" # AMQP
       - "15672:15672" # Management UI
@@ -73,11 +87,11 @@ services:
       retries: 5
 
 
-  # docker compose --profile up redis -d
   redis:
     image: redis:7-alpine
     container_name: ocr-redis
     hostname: redis
+    profiles: [ "llm" ]
     ports:
       - "6379:6379"
     # Configured for low-latency virtual state storage
@@ -93,12 +107,12 @@ services:
       retries: 5
 
 
-  # docker compose up postgres -d
   postgres:
     image: postgres:16-alpine
     container_name: ocr-postgres
     hostname: postgres
     restart: unless-stopped
+    profiles: [ "llm" ]
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-ocr_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-ocr_password}
@@ -119,6 +133,31 @@ services:
       timeout: 5s
       retries: 10
       start_period: 10s
+
+  litellm:
+    image: ghcr.io/berriai/litellm:main-stable
+    container_name: litellm-proxy
+    restart: unless-stopped
+    profiles: [ "llm" ]
+    ports:
+      - "4000:4000"
+    networks:
+      - default
+      - shared-db
+    env_file:
+      - litellm.env
+    # 2026-07-26: prod_entrypoint.sh's default CMD is just `--port 4000` -- it
+    # does NOT auto-detect /app/config.yaml. Without this, config.yaml was
+    # silently ignored (confirmed via empty /v1/models response).
+    command: [ "--config", "/app/config.yaml", "--port", "4000" ]
+    volumes:
+      # Mount the config from the LLM project directory
+      - /parent/LLM/litellm/proxy_server_config.yaml:/app/config.yaml
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
 
 
 volumes:

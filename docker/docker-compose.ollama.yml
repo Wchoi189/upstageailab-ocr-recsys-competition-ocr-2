@@ -5,8 +5,12 @@ services:
     ports:
       - "11434:11434"
     volumes:
-      # Use Docker Desktop host path; it sees the VHDX under /mnt/host/wsl
-      - /mnt/host/wsl/ollama-models:/ollama_storage
+      # 2026-07-25: migrated off WSL2/Docker Desktop to native Linux.
+      # Old /opt/wsl-data (WSL2-side mount) -> new /mnt/ollama-models, its own
+      # native ext4 drive (/dev/nbd1p1), already populated (138G, blobs +
+      # manifests present, no data recovery from /mnt/docker_data needed --
+      # this drive was never part of the Docker Desktop docker_data VHDX).
+      - /mnt/ollama-models:/ollama_storage
       # Persist config (keys, etc) in a named volume
       - ollama_config:/root/.ollama
     environment:
