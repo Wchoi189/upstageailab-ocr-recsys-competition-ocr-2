@@ -17,6 +17,13 @@ services:
       # Allow access from both inside Docker and Windows host
       - OLLAMA_HOST=0.0.0.0
       - OLLAMA_MODELS=/ollama_storage
+      # 2026-08-16: screenshot (~1100 tok) + canonical prompt (~1185 tok) VLM
+      # calls exceed Ollama's 2048-token default num_ctx, causing truncation/
+      # empty completions. Raised to 8192. Also pin keep_alive so the model
+      # isn't unloaded mid-batch-run (default 5m) -- run one model at a time
+      # so this doesn't fight for VRAM on the RTX 3090 (24GB).
+      - OLLAMA_NUM_CTX=8192
+      - OLLAMA_KEEP_ALIVE=24h
     deploy:
       resources:
         reservations:
